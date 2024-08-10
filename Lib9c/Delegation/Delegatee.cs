@@ -29,7 +29,7 @@ namespace Nekoyume.Delegation
             Delegators = ImmutableSortedSet<Address>.Empty;
             TotalDelegated = Currency * 0;
             TotalShares = BigInteger.Zero;
-            LastRewardPeriodStartHeight = -1;
+            LastRewardPeriodStartHeight = null;
         }
 
         public Delegatee(Address address, IValue bencoded)
@@ -43,7 +43,7 @@ namespace Nekoyume.Delegation
                   ((List)bencoded[0]).Select(item => new Address(item)),
                   new FungibleAssetValue(bencoded[1]),
                   (Integer)bencoded[2],
-                  (Integer)bencoded[3])
+                  (Integer?)bencoded.ElementAtOrDefault(3))
         {
         }
 
@@ -52,7 +52,7 @@ namespace Nekoyume.Delegation
             IEnumerable<Address> delegators,
             FungibleAssetValue totalDelegated,
             BigInteger totalShares,
-            long lastRewardPeriodStartHeight)
+            long? lastRewardPeriodStartHeight)
         {
             if (!totalDelegated.Currency.Equals(Currency))
             {
@@ -106,13 +106,23 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; private set; }
 
-        public long LastRewardPeriodStartHeight { get; private set; }
+        public long? LastRewardPeriodStartHeight { get; private set; }
 
-        public List Bencoded => List.Empty
-            .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
-            .Add(TotalDelegated.Serialize())
-            .Add(TotalShares)
-            .Add(LastRewardPeriodStartHeight);
+        public List Bencoded
+        {
+            get
+            {
+                var bencoded = List.Empty
+                    .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
+                    .Add(TotalDelegated.Serialize())
+                    .Add(TotalShares);
+
+                return LastRewardPeriodStartHeight is long lastRewardPeriodStartHeight
+                    ? bencoded.Add(lastRewardPeriodStartHeight)
+                    : bencoded;
+            }
+        }
+        
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -147,7 +157,7 @@ namespace Nekoyume.Delegation
             Delegators = Delegators.Add(delegator.Address);
             TotalShares += share;
             TotalDelegated += fav;
-            var lumpSumRewardsRecord = StartNewRewardPeriod(LastRewardPeriodStartHeight);
+            var lumpSumRewardsRecord = StartNewRewardPeriod(height, LastRewardPeriodStartHeight);
             LastRewardPeriodStartHeight = height;
             
             return new BondResult(
@@ -171,7 +181,7 @@ namespace Nekoyume.Delegation
 
             TotalShares -= share;
             TotalDelegated -= fav;
-            var lumpSumRewardsRecord = StartNewRewardPeriod(LastRewardPeriodStartHeight);
+            var lumpSumRewardsRecord = StartNewRewardPeriod(height, LastRewardPeriodStartHeight);
             LastRewardPeriodStartHeight = height;
 
             return new UnbondResult(
@@ -208,7 +218,7 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            var lumpSumRewardsRecord = StartNewRewardPeriod(LastRewardPeriodStartHeight);
+            var lumpSumRewardsRecord = StartNewRewardPeriod(height, LastRewardPeriodStartHeight);
             LastRewardPeriodStartHeight = height;
 
             return new RewardResult(reward, lumpSumRewardsRecord);
@@ -264,13 +274,27 @@ namespace Nekoyume.Delegation
             return new Address(hashed);
         }
 
-        private LumpSumRewardsRecord StartNewRewardPeriod(long lastStartHeight = -1)
+        private (LumpSumRewardsRecord New, LumpSumRewardsRecord? Saved) StartNewRewardPeriod(
+            long height, LumpSumRewardsRecord? currentRecord)
+        {
+            currentRecord = currentRecord is null ? null : SaveRewardPeriod(currentRecord);
+            LumpSumRewardsRecord newRecord = new LumpSumRewardsRecord(
+                LumpSumRewardsRecordAddress(),
+                height,
+                TotalShares,
+                RewardCurrency,
+                currentRecord?.StartHeight);
+            return (newRecord, currentRecord);
+        }
+
+        private LumpSumRewardsRecord SaveRewardPeriod(LumpSumRewardsRecord record)
         {
             return new LumpSumRewardsRecord(
-                LumpSumRewardsRecordAddress(),
-                RewardCurrency,
-                TotalShares,
-                lastStartHeight);
+                LumpSumRewardsRecordAddress(record.StartHeight),
+                record.StartHeight,
+                record.TotalShares,
+                record.LumpSumRewards,
+                record.LastStartHeight);
         }
     }
 }

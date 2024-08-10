@@ -13,33 +13,35 @@ namespace Nekoyume.Delegation
     {
         public LumpSumRewardsRecord(
             Address address,
-            Currency currency,
-            BigInteger totalShares)
-            : this(address, totalShares, -1, currency * 0, null)
+            long startHeight,
+            BigInteger totalShares,
+            Currency currency)
+            : this(address, startHeight, totalShares, currency, null)
         {
         }
 
         public LumpSumRewardsRecord(
             Address address,
-            Currency currency,
+            long startHeight,
             BigInteger totalShares,
-            long lastStartHeight)
-            : this(address, totalShares, lastStartHeight, currency * 0, null)
+            Currency currency,
+            long? lastStartHeight)
+            : this(address, startHeight, totalShares, currency * 0, lastStartHeight)
         {
         }
 
         public LumpSumRewardsRecord(
             Address address,
+            long startHeight,
             BigInteger totalShares,
-            long lastStartHeight,
             FungibleAssetValue lumpSumRewards,
-            long? startHeight)
+            long? lastStartHeight)
         {
             Address = address;
-            TotalShares = totalShares;
-            LastStartHeight = lastStartHeight;
-            LumpSumRewards = lumpSumRewards;
             StartHeight = startHeight;
+            TotalShares = totalShares;
+            LumpSumRewards = lumpSumRewards;
+            LastStartHeight = lastStartHeight;
         }
 
         public LumpSumRewardsRecord(Address address, IValue bencoded)
@@ -59,44 +61,38 @@ namespace Nekoyume.Delegation
 
         public Address Address { get; }
 
-        public BigInteger TotalShares { get; }
+        public long StartHeight { get; }
 
-        public long LastStartHeight { get; }
+        public BigInteger TotalShares { get; }
 
         public FungibleAssetValue LumpSumRewards { get; }
 
-        public long? StartHeight { get; }
-
-        public bool IsStarted => StartHeight is long;
+        public long? LastStartHeight { get; }
 
         public List Bencoded
         {
             get
             {
                 var bencoded = List.Empty
+                    .Add(StartHeight)
                     .Add(TotalShares)
-                    .Add(LastStartHeight)
                     .Add(LumpSumRewards.Serialize());
 
-                return StartHeight is long startHeight
-                    ? bencoded.Add(startHeight)
+                return LastStartHeight is long lastStartHeight
+                    ? bencoded.Add(lastStartHeight)
                     : bencoded;
             }
         }
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public LumpSumRewardsRecord Start(long height)
-            => new LumpSumRewardsRecord(
-                Address, TotalShares, LastStartHeight, LumpSumRewards, height);
-
         public LumpSumRewardsRecord AddLumpSumReward(FungibleAssetValue reward)
             => new LumpSumRewardsRecord(
                 Address,
+                StartHeight,
                 TotalShares,
-                LastStartHeight,
                 LumpSumRewards + reward,
-                StartHeight);
+                LastStartHeight);
 
         public FungibleAssetValue RewardsDuringPeriod(BigInteger share)
             => (LumpSumRewards * share).DivRem(TotalShares, out _);
@@ -108,8 +104,8 @@ namespace Nekoyume.Delegation
             => ReferenceEquals(this, other)
             || (other is LumpSumRewardsRecord lumpSumRewardRecord
             && Address == lumpSumRewardRecord.Address
-            && TotalShares == lumpSumRewardRecord.TotalShares
             && StartHeight == lumpSumRewardRecord.StartHeight
+            && TotalShares == lumpSumRewardRecord.TotalShares
             && LumpSumRewards.Equals(lumpSumRewardRecord.LumpSumRewards)
             && LastStartHeight == lumpSumRewardRecord.LastStartHeight);
 
