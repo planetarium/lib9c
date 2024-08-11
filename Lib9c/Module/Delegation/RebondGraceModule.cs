@@ -2,7 +2,6 @@
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
-using Nekoyume.Extensions;
 
 namespace Nekoyume.Module.Delegation
 {
@@ -45,13 +44,5 @@ namespace Nekoyume.Module.Delegation
                 return false;
             }
         }
-
-        public static IWorld SetRebondGrace(
-            this IWorld world, RebondGrace rebondGrace)
-            => world.MutateAccount(
-                Addresses.RebondGrace,
-                account => rebondGrace.IsEmpty
-                    ? account.RemoveState(rebondGrace.Address)
-                    : account.SetState(rebondGrace.Address, rebondGrace.Bencoded));
     }
 }

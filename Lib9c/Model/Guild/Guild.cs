@@ -17,15 +17,27 @@ namespace Nekoyume.Model.Guild
 
         public readonly AgentAddress GuildMasterAddress;
 
-        public Guild(AgentAddress guildMasterAddress, Currency rewardCurrency)
-            : base(guildMasterAddress)
+        public Guild(
+            AgentAddress guildMasterAddress, Currency rewardCurrency)
+            : this(guildMasterAddress, rewardCurrency, null)
+        {
+        }
+
+        public Guild(List list, Currency rewardCurrency)
+            : this(list, rewardCurrency, null)
+        {
+        }
+
+        public Guild(
+            AgentAddress guildMasterAddress, Currency rewardCurrency, IDelegationRepository repository)
+            : base(guildMasterAddress, repository)
         {
             GuildMasterAddress = guildMasterAddress;
             RewardCurrency = rewardCurrency;
         }
 
-        public Guild(List list, Currency rewardCurrency)
-            : base(new Address(list[2]), list[3])
+        public Guild(List list, Currency rewardCurrency, IDelegationRepository repository)
+            : base(new Address(list[2]), list[3], repository)
         {
             GuildMasterAddress = new AgentAddress(list[2]);
             RewardCurrency = rewardCurrency;
@@ -39,7 +51,6 @@ namespace Nekoyume.Model.Guild
             {
                 throw new FailedLoadStateException("Un-deserializable state.");
             }
-
         }
 
         public override Currency Currency => Currencies.GuildGold;

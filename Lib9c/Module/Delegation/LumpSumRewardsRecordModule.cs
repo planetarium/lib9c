@@ -1,30 +1,17 @@
 #nullable enable
 using System;
-using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
-using Nekoyume.Extensions;
 
 namespace Nekoyume.Module.Delegation
 {
     public static class LumpSumRewardsRecordModule
     {
-        public static List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(
-            this IWorldState world, IDelegatee delegatee, long height, long startHeight)
-        {
-            var records = new List<LumpSumRewardsRecord>();
-            LumpSumRewardsRecord record;
-            while (height >= startHeight)
-            {
-                record = world.GetLumpSumRewardsRecord(delegatee, height);
-                records.Add(record);
-                height = record.LastStartHeight;
-            }
-
-            return records;
-        }
+        public static LumpSumRewardsRecord GetCurrentLumpSumRewardsRecord(
+            this IWorldState world, IDelegatee delegatee)
+            => GetLumpSumRewardsRecord(world, delegatee.CurrentLumpSumRewardsRecordAddress());
 
         public static LumpSumRewardsRecord GetLumpSumRewardsRecord(
             this IWorldState world, IDelegatee delegatee, long height)
@@ -57,10 +44,5 @@ namespace Nekoyume.Module.Delegation
                 return false;
             }
         }
-
-        public static IWorld SetLumpSumRewardsRecord(this IWorld world, LumpSumRewardsRecord lumpSumRewardsRecord)
-            => world.MutateAccount(
-                Addresses.LumpSumRewardsRecord,
-                account => account.SetState(lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded));
     }
 }

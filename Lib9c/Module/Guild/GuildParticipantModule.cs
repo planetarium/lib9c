@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Delegation;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.Delegation;
@@ -47,7 +48,23 @@ namespace Nekoyume.Module.Guild
                 .LeaveGuild(new AgentAddress(context.Signer));
         }
 
-        // TODO: Implement `MoveGuild()`, `MoveGuildWithRedelegate()`, `Redelegate()` method.
+        public static IWorld MoveGuildWithRedelegate(
+            this IWorld world,
+            IActionContext context,
+            GuildAddress srcGuildAddress,
+            GuildAddress dstGuildAddress)
+        {
+            var agentAddress = new AgentAddress(context.Signer);
+            var srcGuild = world.GetGuild(srcGuildAddress);
+            return world
+                .Redelegate(
+                    context,
+                    srcGuildAddress,
+                    dstGuildAddress,
+                    world.GetBond(srcGuild, context.Signer).Share)
+                .LeaveGuild(agentAddress)
+                .JoinGuild(dstGuildAddress, agentAddress);
+        }
 
         public static IWorld JoinGuild(
             this IWorld world,
@@ -95,13 +112,29 @@ namespace Nekoyume.Module.Guild
                 .DecreaseGuildMemberCount(guildParticipant.GuildAddress);
         }
 
-        private static Model.Guild.GuildParticipant GetGuildParticipant(this IWorldState worldState, AgentAddress agentAddress)
+        private static Model.Guild.GuildParticipant GetGuildParticipant(
+            this IWorldState worldState, AgentAddress agentAddress)
         {
             var value = worldState.GetAccountState(Addresses.GuildParticipant)
                 .GetState(agentAddress);
             if (value is List list)
             {
                 return new Model.Guild.GuildParticipant(agentAddress, list);
+            }
+
+            throw new FailedLoadStateException("It may not join any guild.");
+        }
+
+        private static Model.Guild.GuildParticipant GetGuildParticipant(
+            this IWorldState worldState,
+            AgentAddress agentAddress,
+            IDelegationRepository repository)
+        {
+            var value = worldState.GetAccountState(Addresses.GuildParticipant)
+                .GetState(agentAddress);
+            if (value is List list)
+            {
+                return new Model.Guild.GuildParticipant(agentAddress, list, repository);
             }
 
             throw new FailedLoadStateException("It may not join any guild.");
@@ -123,6 +156,23 @@ namespace Nekoyume.Module.Guild
             }
         }
 
+        private static bool TryGetGuildParticipant(this IWorldState worldState,
+            AgentAddress agentAddress,
+            IDelegationRepository repository,
+            [NotNullWhen(true)] out Model.Guild.GuildParticipant? guildParticipant)
+        {
+            try
+            {
+                guildParticipant = GetGuildParticipant(worldState, agentAddress, repository);
+                return true;
+            }
+            catch
+            {
+                guildParticipant = null;
+                return false;
+            }
+        }
+
         private static IWorld RemoveGuildParticipant(this IWorld world, AgentAddress agentAddress)
         {
             return world.MutateAccount(Addresses.GuildParticipant,
@@ -135,23 +185,18 @@ namespace Nekoyume.Module.Guild
             GuildAddress guildAddress,
             FungibleAssetValue fav)
         {
-            world = world.ClaimReward(context, guildAddress);
+            var repo = new DelegationRepository(world, context);
 
             var agentAddress = new AgentAddress(context.Signer);
-            var guildParticipant = world.TryGetGuildParticipant(agentAddress, out var p)
+            var guildParticipant = world.TryGetGuildParticipant(agentAddress, repo, out var p)
                 ? p
-                : new GuildParticipant(agentAddress, guildAddress);
-            var guild = world.TryGetGuild(guildAddress, out var g)
+                : throw new InvalidOperationException("The signer was not joined to any guild.");
+            var guild = world.TryGetGuild(guildAddress, repo, out var g)
                 ? g
                 : throw new InvalidOperationException("The guild does not exist.");
-            var bond = world.GetBond(guild, agentAddress);
-            var result = guildParticipant.Delegate(guild, fav, context.BlockIndex, bond);
+            guildParticipant.Delegate(guild, fav, context.BlockIndex);
 
-            return world
-                .SetBond(result.Bond)
-                .SetGuild(result.Delegatee)
-                .SetGuildParticipant(guildParticipant)
-                .TransferAsset(context, agentAddress, guildAddress, result.DelegatedFAV);
+            return repo.World.SetGuild(guild).SetGuildParticipant(guildParticipant);
         }
 
         private static IWorld Undelegate(
@@ -160,27 +205,42 @@ namespace Nekoyume.Module.Guild
             GuildAddress guildAddress,
             BigInteger share)
         {
-            world = world.ClaimReward(context, guildAddress);
+            var repo = new DelegationRepository(world, context);
 
             var agentAddress = new AgentAddress(context.Signer);
-            var guildParticipant = world.TryGetGuildParticipant(agentAddress, out var p)
+            var guildParticipant = world.TryGetGuildParticipant(agentAddress, repo, out var p)
                 ? p
-                : new GuildParticipant(agentAddress, guildAddress);
-            var guild = world.TryGetGuild(guildAddress, out var g)
+                : throw new InvalidOperationException("The signer was not joined to any guild.");
+            var guild = world.TryGetGuild(guildAddress, repo, out var g)
                 ? g
                 : throw new InvalidOperationException("The guild does not exist.");
-            var bond = world.GetBond(guild, agentAddress);
-            var unbondLockIn = world.GetUnbondLockIn(guild, agentAddress);
-            var unbondingSet = world.GetUnbondingSet();
-            var result = guildParticipant.Undelegate(
-                guild, share, context.BlockIndex, bond, unbondLockIn, unbondingSet);
+            guildParticipant.Undelegate(guild, share, context.BlockIndex);
 
-            return world
-                .SetBond(result.Bond)
-                .SetGuild(result.Delegatee)
-                .SetGuildParticipant(guildParticipant)
-                .SetUnbondLockIn(result.UnbondLockIn)
-                .SetUnbondingSet(result.UnbondingSet);
+            return repo.World.SetGuild(guild).SetGuildParticipant(guildParticipant);
+        }
+
+        public static IWorld Redelegate(
+            this IWorld world,
+            IActionContext context,
+            GuildAddress srcGuildAddress,
+            GuildAddress dstGuildAddress,
+            BigInteger share)
+        {
+            var repo = new DelegationRepository(world, context);
+
+            var agentAddress = new AgentAddress(context.Signer);
+            var guildParticipant = world.TryGetGuildParticipant(agentAddress, repo, out var p)
+                ? p
+                : throw new InvalidOperationException("The signer was not joined to any guild.");
+            var srcGuild = world.TryGetGuild(srcGuildAddress, repo, out var s)
+                ? s
+                : throw new InvalidOperationException("The guild does not exist.");
+            var dstGuild = world.TryGetGuild(srcGuildAddress, repo, out var d)
+                ? d
+                : throw new InvalidOperationException("The guild does not exist.");
+            guildParticipant.Redelegate(srcGuild, dstGuild, share, context.BlockIndex);
+
+            return repo.World.SetGuild(srcGuild).SetGuild(dstGuild).SetGuildParticipant(guildParticipant);
         }
 
         private static IWorld ClaimReward(
@@ -188,25 +248,18 @@ namespace Nekoyume.Module.Guild
             IActionContext context,
             GuildAddress guildAddress)
         {
+            var repo = new DelegationRepository(world, context);
+
             var agentAddress = new AgentAddress(context.Signer);
             var guildParticipant = world.TryGetGuildParticipant(agentAddress, out var p)
                 ? p
-                : new GuildParticipant(agentAddress, guildAddress);
+                : throw new InvalidOperationException("The signer was not joined to any guild.");
             var guild = world.TryGetGuild(guildAddress, out var g)
                 ? g
                 : throw new InvalidOperationException("The guild does not exist.");
-            var bond = world.GetBond(guild, agentAddress);
-            var rewardRecords = world.GetLumpSumRewardsRecords(
-                guild, context.BlockIndex, guildParticipant.LastRewardHeight);
+            guildParticipant.ClaimReward(guild, context.BlockIndex);
 
-            var claimRewardResult = guildParticipant.ClaimReward(
-                guild, rewardRecords, bond, context.BlockIndex);
-
-            return world
-                .SetLumpSumRewardsRecord(claimRewardResult.LumpSumRewardsRecord)
-                .SetGuild(claimRewardResult.Delegatee)
-                .SetGuildParticipant(guildParticipant)
-                .TransferAsset(context, guild.RewardPoolAddress, agentAddress, claimRewardResult.Reward);
+            return repo.World.SetGuild(guild).SetGuildParticipant(guildParticipant);
         }
 
         private static IWorld SetGuildParticipant(
