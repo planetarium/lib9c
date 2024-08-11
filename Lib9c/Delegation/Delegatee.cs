@@ -23,9 +23,9 @@ namespace Nekoyume.Delegation
         protected readonly byte[] RewardPoolId = new byte[] { 0x72 };            // `r`
         protected readonly byte[] PoolId = new byte[] { 0x70 };                  // `p`
 
-        private readonly IDelegationRepository _repository;
+        private readonly IDelegationRepository? _repository;
 
-        public Delegatee(Address address, IDelegationRepository repository)
+        public Delegatee(Address address, IDelegationRepository? repository = null)
         {
             Address = address;
             Delegators = ImmutableSortedSet<Address>.Empty;
@@ -34,12 +34,12 @@ namespace Nekoyume.Delegation
             _repository = repository;
         }
 
-        public Delegatee(Address address, IValue bencoded, IDelegationRepository repository)
+        public Delegatee(Address address, IValue bencoded, IDelegationRepository? repository = null)
             : this(address, (List)bencoded, repository)
         {
         }
 
-        public Delegatee(Address address, List bencoded, IDelegationRepository repository)
+        public Delegatee(Address address, List bencoded, IDelegationRepository? repository = null)
             : this(
                   address,
                   ((List)bencoded[0]).Select(item => new Address(item)),
@@ -54,7 +54,7 @@ namespace Nekoyume.Delegation
             IEnumerable<Address> delegators,
             FungibleAssetValue totalDelegated,
             BigInteger totalShares,
-            IDelegationRepository repository)
+            IDelegationRepository? repository)
         {
             if (!totalDelegated.Currency.Equals(Currency))
             {
@@ -108,6 +108,8 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; private set; }
 
+        public IDelegationRepository? Repository => _repository;
+
         public List Bencoded => List.Empty
             .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
             .Add(TotalDelegated.Serialize())
@@ -138,13 +140,14 @@ namespace Nekoyume.Delegation
 
         public BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
+            CannotMutateWithoutRepository(delegator);
             if (!fav.Currency.Equals(Currency))
             {
                 throw new InvalidOperationException(
                     "Cannot bond with invalid currency.");
             }
 
-            Bond bond = _repository.GetBond(this, delegator.Address);
+            Bond bond = _repository!.GetBond(this, delegator.Address);
             BigInteger share = ShareToBond(fav);
             bond = bond.AddShare(share);
             Delegators = Delegators.Add(delegator.Address);
@@ -158,13 +161,14 @@ namespace Nekoyume.Delegation
 
         public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
+            CannotMutateWithoutRepository(delegator);
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
                 throw new InvalidOperationException(
                     "Cannot unbond without bonding.");
             }
 
-            Bond bond = _repository.GetBond(this, delegator.Address);
+            Bond bond = _repository!.GetBond(this, delegator.Address);
             FungibleAssetValue fav = FAVToUnbond(share);
             bond = bond.SubtractShare(share);
             if (bond.Share.IsZero)
@@ -182,7 +186,8 @@ namespace Nekoyume.Delegation
 
         public void Reward(T delegator, long height)
         {
-            BigInteger share = _repository.GetBond(this, delegator.Address).Share;
+            CannotMutateWithoutRepository(delegator);
+            BigInteger share = _repository!.GetBond(this, delegator.Address).Share;
             IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
                 GetLumpSumRewardsRecords(delegator.LastRewardHeight);
             FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
@@ -244,7 +249,8 @@ namespace Nekoyume.Delegation
 
         private void StartNewRewardPeriod(long height)
         {
-            LumpSumRewardsRecord? currentRecord = _repository.GetCurrentLumpSumRewardsRecord(this);
+            CannotMutateWithoutRepository();
+            LumpSumRewardsRecord? currentRecord = _repository!.GetCurrentLumpSumRewardsRecord(this);
             long? lastStartHeight = null;
             if (currentRecord is LumpSumRewardsRecord lastRecord)
             {
@@ -298,8 +304,9 @@ namespace Nekoyume.Delegation
 
         private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
         {
+            CannotMutateWithoutRepository();
             List<LumpSumRewardsRecord> records = new();
-            if (!(_repository.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
+            if (!(_repository!.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
             {
                 return records;
             }
@@ -320,6 +327,25 @@ namespace Nekoyume.Delegation
             while (record.StartHeight >= lastRewardHeight);
 
             return records;
+        }
+
+        private void CannotMutateWithoutRepository(T delegator)
+        {
+            CannotMutateWithoutRepository();
+            if (!_repository!.Equals(delegator.Repository))
+            {
+                throw new InvalidOperationException(
+                    "Cannot mutate with different repository.");
+            }
+        }
+
+        private void CannotMutateWithoutRepository()
+        {
+            if (_repository is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot mutate without repository.");
+            }
         }
     }
 }
