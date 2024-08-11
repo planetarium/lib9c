@@ -14,19 +14,19 @@ namespace Nekoyume.Delegation
         where T : Delegatee<TSelf, T>
         where TSelf : Delegator<T, TSelf>
     {
-        private readonly IDelegationRepository _repository;
+        private readonly IDelegationRepository? _repository;
 
-        public Delegator(Address address, IDelegationRepository repository)
+        public Delegator(Address address, IDelegationRepository? repository = null)
             : this(address, ImmutableSortedSet<Address>.Empty, 0L, repository)
         {
         }
 
-        public Delegator(Address address, IValue bencoded, IDelegationRepository repository)
+        public Delegator(Address address, IValue bencoded, IDelegationRepository? repository = null)
             : this(address, (List)bencoded, repository)
         {
         }
 
-        public Delegator(Address address, List bencoded, IDelegationRepository repository)
+        public Delegator(Address address, List bencoded, IDelegationRepository? repository = null)
             : this(
                 address,
                 ((List)bencoded[0]).Select(item => new Address(item)).ToImmutableSortedSet(),
@@ -39,7 +39,7 @@ namespace Nekoyume.Delegation
             Address address,
             ImmutableSortedSet<Address> delegatees,
             long lastRewardHeight,
-            IDelegationRepository repository)
+            IDelegationRepository? repository)
         {
             Address = address;
             Delegatees = delegatees;
@@ -52,6 +52,8 @@ namespace Nekoyume.Delegation
         public ImmutableSortedSet<Address> Delegatees { get; private set; }
 
         public long LastRewardHeight { get; private set; }
+
+        public IDelegationRepository? Repository => _repository;
 
         public List Bencoded
             => List.Empty
@@ -79,6 +81,7 @@ namespace Nekoyume.Delegation
         public void Delegate(
             T delegatee, FungibleAssetValue fav, long height)
         {
+            CannotMutateWithoutRepository(delegatee);
             if (fav.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -87,12 +90,13 @@ namespace Nekoyume.Delegation
 
             delegatee.Bond((TSelf)this, fav, height);
             Delegatees = Delegatees.Add(delegatee.Address);
-            _repository.TransferAsset(Address, delegatee.Address, fav);
+            _repository!.TransferAsset(Address, delegatee.Address, fav);
         }
 
         public void Undelegate(
             T delegatee, BigInteger share, long height)
         {
+            CannotMutateWithoutRepository(delegatee);
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -105,7 +109,7 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
-            UnbondLockIn unbondLockIn = _repository.GetUnbondLockIn(delegatee, Address);
+            UnbondLockIn unbondLockIn = _repository!.GetUnbondLockIn(delegatee, Address);
 
             if (unbondLockIn.IsFull)
             {
@@ -129,6 +133,8 @@ namespace Nekoyume.Delegation
         public void Redelegate(
             T srcDelegatee, T dstDelegatee, BigInteger share, long height)
         {
+            CannotMutateWithoutRepository(srcDelegatee);
+            CannotMutateWithoutRepository(dstDelegatee);
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -145,7 +151,7 @@ namespace Nekoyume.Delegation
                 (TSelf)this, share, height);
             dstDelegatee.Bond(
                 (TSelf)this, fav, height);
-            RebondGrace srcRebondGrace = _repository.GetRebondGrace(srcDelegatee, Address).Grace(
+            RebondGrace srcRebondGrace = _repository!.GetRebondGrace(srcDelegatee, Address).Grace(
                 dstDelegatee.Address,
                 fav,
                 height,
@@ -166,6 +172,7 @@ namespace Nekoyume.Delegation
         public void CancelUndelegate(
             T delegatee, FungibleAssetValue fav, long height)
         {
+            CannotMutateWithoutRepository(delegatee);
             if (fav.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -178,7 +185,7 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
-            UnbondLockIn unbondLockIn = _repository.GetUnbondLockIn(delegatee, Address);
+            UnbondLockIn unbondLockIn = _repository!.GetUnbondLockIn(delegatee, Address);
 
             if (unbondLockIn.IsFull)
             {
@@ -220,5 +227,24 @@ namespace Nekoyume.Delegation
 
         public override int GetHashCode()
             => Address.GetHashCode();
+
+        private void CannotMutateWithoutRepository(T delegatee)
+        {
+            CannotMutateWithoutRepository();
+            if (!_repository!.Equals(delegatee.Repository))
+            {
+                throw new InvalidOperationException(
+                    "Cannot mutate with different repository.");
+            }
+        }
+
+        private void CannotMutateWithoutRepository()
+        {
+            if (_repository is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot mutate without repository.");
+            }
+        }
     }
 }
