@@ -197,7 +197,7 @@ namespace Nekoyume.Module.Guild
                 : throw new InvalidOperationException("The guild does not exist.");
             var bond = world.GetBond(guild, agentAddress);
             var rewardRecords = world.GetLumpSumRewardsRecords(
-                guild, context.BlockIndex, guildParticipant.LastClaimRewardHeight);
+                guild, context.BlockIndex, guildParticipant.LastRewardHeight);
 
             var claimRewardResult = guildParticipant.ClaimReward(
                 guild, rewardRecords, bond, context.BlockIndex);

@@ -23,27 +23,29 @@ namespace Nekoyume.Delegation
         protected readonly byte[] RewardPoolId = new byte[] { 0x72 };            // `r`
         protected readonly byte[] PoolId = new byte[] { 0x70 };                  // `p`
 
-        public Delegatee(Address address)
+        private readonly IDelegationRepository _repository;
+
+        public Delegatee(Address address, IDelegationRepository repository)
         {
             Address = address;
             Delegators = ImmutableSortedSet<Address>.Empty;
             TotalDelegated = Currency * 0;
             TotalShares = BigInteger.Zero;
-            LastRewardPeriodStartHeight = null;
+            _repository = repository;
         }
 
-        public Delegatee(Address address, IValue bencoded)
-            : this(address, (List)bencoded)
+        public Delegatee(Address address, IValue bencoded, IDelegationRepository repository)
+            : this(address, (List)bencoded, repository)
         {
         }
 
-        public Delegatee(Address address, List bencoded)
+        public Delegatee(Address address, List bencoded, IDelegationRepository repository)
             : this(
                   address,
                   ((List)bencoded[0]).Select(item => new Address(item)),
                   new FungibleAssetValue(bencoded[1]),
                   (Integer)bencoded[2],
-                  (Integer?)bencoded.ElementAtOrDefault(3))
+                  repository)
         {
         }
 
@@ -52,7 +54,7 @@ namespace Nekoyume.Delegation
             IEnumerable<Address> delegators,
             FungibleAssetValue totalDelegated,
             BigInteger totalShares,
-            long? lastRewardPeriodStartHeight)
+            IDelegationRepository repository)
         {
             if (!totalDelegated.Currency.Equals(Currency))
             {
@@ -79,7 +81,7 @@ namespace Nekoyume.Delegation
             Delegators = delegators.ToImmutableSortedSet();
             TotalDelegated = totalDelegated;
             TotalShares = totalShares;
-            LastRewardPeriodStartHeight = lastRewardPeriodStartHeight;
+            _repository = repository;
         }
 
         public Address Address { get; }
@@ -106,23 +108,10 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; private set; }
 
-        public long? LastRewardPeriodStartHeight { get; private set; }
-
-        public List Bencoded
-        {
-            get
-            {
-                var bencoded = List.Empty
-                    .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
-                    .Add(TotalDelegated.Serialize())
-                    .Add(TotalShares);
-
-                return LastRewardPeriodStartHeight is long lastRewardPeriodStartHeight
-                    ? bencoded.Add(lastRewardPeriodStartHeight)
-                    : bencoded;
-            }
-        }
-        
+        public List Bencoded => List.Empty
+            .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
+            .Add(TotalDelegated.Serialize())
+            .Add(TotalShares);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -136,15 +125,18 @@ namespace Nekoyume.Delegation
                 ? TotalDelegated
                 : (TotalDelegated * share).DivRem(TotalShares, out _);
 
-        BondResult IDelegatee.Bond(
-            IDelegator delegator, FungibleAssetValue fav, long height, Bond bond)
-            => Bond((T)delegator, fav, height, bond);
+        BigInteger IDelegatee.Bond(
+            IDelegator delegator, FungibleAssetValue fav, long height)
+            => Bond((T)delegator, fav, height);
 
-        UnbondResult IDelegatee.Unbond(
-            IDelegator delegator, BigInteger share, long height, Bond bond)
-            => Unbond((T)delegator, share, height, bond);
+        FungibleAssetValue IDelegatee.Unbond(
+            IDelegator delegator, BigInteger share, long height)
+            => Unbond((T)delegator, share, height);
 
-        public BondResult Bond(T delegator, FungibleAssetValue fav, long height, Bond bond)
+        void IDelegatee.Reward(IDelegator delegator, long height)
+            => Reward((T)delegator, height);
+
+        public BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
             if (!fav.Currency.Equals(Currency))
             {
@@ -152,19 +144,19 @@ namespace Nekoyume.Delegation
                     "Cannot bond with invalid currency.");
             }
 
+            Bond bond = _repository.GetBond(this, delegator.Address);
             BigInteger share = ShareToBond(fav);
             bond = bond.AddShare(share);
             Delegators = Delegators.Add(delegator.Address);
             TotalShares += share;
             TotalDelegated += fav;
-            var lumpSumRewardsRecord = StartNewRewardPeriod(height, LastRewardPeriodStartHeight);
-            LastRewardPeriodStartHeight = height;
-            
-            return new BondResult(
-                bond, share, lumpSumRewardsRecord);
+            _repository.SetBond(bond);
+            Reward(delegator, height);
+
+            return share;
         }
 
-        public UnbondResult Unbond(T delegator, BigInteger share, long height, Bond bond)
+        public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
@@ -172,6 +164,7 @@ namespace Nekoyume.Delegation
                     "Cannot unbond without bonding.");
             }
 
+            Bond bond = _repository.GetBond(this, delegator.Address);
             FungibleAssetValue fav = FAVToUnbond(share);
             bond = bond.SubtractShare(share);
             if (bond.Share.IsZero)
@@ -181,16 +174,98 @@ namespace Nekoyume.Delegation
 
             TotalShares -= share;
             TotalDelegated -= fav;
-            var lumpSumRewardsRecord = StartNewRewardPeriod(height, LastRewardPeriodStartHeight);
-            LastRewardPeriodStartHeight = height;
+            _repository.SetBond(bond);
+            Reward(delegator, height);
 
-            return new UnbondResult(
-                bond, fav, lumpSumRewardsRecord);
+            return fav;
         }
 
-        public RewardResult Reward(
+        public void Reward(T delegator, long height)
+        {
+            BigInteger share = _repository.GetBond(this, delegator.Address).Share;
+            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
+                GetLumpSumRewardsRecords(delegator.LastRewardHeight);
+            FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
+            _repository.TransferAsset(RewardPoolAddress, delegator.Address, reward);
+            StartNewRewardPeriod(height);
+            delegator.UpdateLastRewardHeight(height);
+        }
+
+        public Address BondAddress(Address delegatorAddress)
+            => DeriveAddress(BondId, delegatorAddress);
+
+        public Address UnbondLockInAddress(Address delegatorAddress)
+            => DeriveAddress(UnbondLockInId, delegatorAddress);
+
+        public Address RebondGraceAddress(Address delegatorAddress)
+            => DeriveAddress(RebondGraceId, delegatorAddress);
+
+        public Address CurrentLumpSumRewardsRecordAddress()
+            => DeriveAddress(LumpSumRewardsRecordId);
+
+        public Address LumpSumRewardsRecordAddress(long height)
+            => DeriveAddress(LumpSumRewardsRecordId, BitConverter.GetBytes(height));
+
+
+        public override bool Equals(object? obj)
+            => obj is IDelegatee other && Equals(other);
+
+        public bool Equals(IDelegatee? other)
+            => ReferenceEquals(this, other)
+            || (other is Delegatee<T, TSelf> delegatee
+            && (GetType() != delegatee.GetType())
+            && Address.Equals(delegatee.Address)
+            && Currency.Equals(delegatee.Currency)
+            && PoolAddress.Equals(delegatee.PoolAddress)
+            && UnbondingPeriod == delegatee.UnbondingPeriod
+            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
+            && Delegators.SequenceEqual(delegatee.Delegators)
+            && TotalDelegated.Equals(delegatee.TotalDelegated)
+            && TotalShares.Equals(delegatee.TotalShares)
+            && DelegateeId.SequenceEqual(delegatee.DelegateeId));
+
+        public override int GetHashCode()
+            => Address.GetHashCode();
+
+        protected Address DeriveAddress(byte[] typeId, Address address)
+            => DeriveAddress(typeId, address.ByteArray);
+
+        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte>? bytes = null)
+        {
+            byte[] hashed;
+            using (HMACSHA1 hmac = new(DelegateeId.Concat(typeId).ToArray()))
+            {
+                hashed = hmac.ComputeHash(
+                    Address.ByteArray.Concat(bytes ?? Array.Empty<byte>()).ToArray());
+            }
+
+            return new Address(hashed);
+        }
+
+        private void StartNewRewardPeriod(long height)
+        {
+            LumpSumRewardsRecord? currentRecord = _repository.GetCurrentLumpSumRewardsRecord(this);
+            long? lastStartHeight = null;
+            if (currentRecord is LumpSumRewardsRecord lastRecord)
+            {
+                _repository.SetLumpSumRewardsRecord(
+                    lastRecord.MoveAddress(
+                        CurrentLumpSumRewardsRecordAddress()));
+                lastStartHeight = lastRecord.StartHeight;
+            }
+
+            LumpSumRewardsRecord newRecord = new(
+                CurrentLumpSumRewardsRecordAddress(),
+                height,
+                TotalShares,
+                RewardCurrency,
+                lastStartHeight);
+
+            _repository.SetLumpSumRewardsRecord(newRecord);
+        }
+
+        private FungibleAssetValue CalculateReward(
             BigInteger share,
-            long height,
             IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords)
         {
             FungibleAssetValue reward = RewardCurrency * 0;
@@ -218,83 +293,33 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            var lumpSumRewardsRecord = StartNewRewardPeriod(height, LastRewardPeriodStartHeight);
-            LastRewardPeriodStartHeight = height;
-
-            return new RewardResult(reward, lumpSumRewardsRecord);
+            return reward;
         }
 
-        public Address BondAddress(Address delegatorAddress)
-            => DeriveAddress(BondId, delegatorAddress);
-
-        public Address UnbondLockInAddress(Address delegatorAddress)
-            => DeriveAddress(UnbondLockInId, delegatorAddress);
-
-        public Address RebondGraceAddress(Address delegatorAddress)
-            => DeriveAddress(RebondGraceId, delegatorAddress);
-
-        public Address LumpSumRewardsRecordAddress(long? height = null)
-            => height is long heightValue
-                ? DeriveAddress(LumpSumRewardsRecordId, BitConverter.GetBytes(heightValue))
-                : DeriveAddress(LumpSumRewardsRecordId);
-
-        public override bool Equals(object? obj)
-            => obj is IDelegatee other && Equals(other);
-
-        public bool Equals(IDelegatee? other)
-            => ReferenceEquals(this, other)
-            || (other is Delegatee<T, TSelf> delegatee
-            && (GetType() != delegatee.GetType())
-            && Address.Equals(delegatee.Address)
-            && Currency.Equals(delegatee.Currency)
-            && PoolAddress.Equals(delegatee.PoolAddress)
-            && UnbondingPeriod == delegatee.UnbondingPeriod
-            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
-            && Delegators.SequenceEqual(delegatee.Delegators)
-            && TotalDelegated.Equals(delegatee.TotalDelegated)
-            && TotalShares.Equals(delegatee.TotalShares)
-            && LastRewardPeriodStartHeight.Equals(delegatee.LastRewardPeriodStartHeight)
-            && DelegateeId.SequenceEqual(delegatee.DelegateeId));
-
-        public override int GetHashCode()
-            => Address.GetHashCode();
-
-        protected Address DeriveAddress(byte[] typeId, Address address)
-            => DeriveAddress(typeId, address.ByteArray);
-
-        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte>? bytes = null)
+        private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
         {
-            byte[] hashed;
-            using (var hmac = new HMACSHA1(DelegateeId.Concat(typeId).ToArray()))
+            List<LumpSumRewardsRecord> records = new();
+            if (!(_repository.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
             {
-                hashed = hmac.ComputeHash(
-                    Address.ByteArray.Concat(bytes ?? Array.Empty<byte>()).ToArray());
+                return records;
             }
 
-            return new Address(hashed);
-        }
+            do
+            {
+                records.Add(record);
 
-        private (LumpSumRewardsRecord New, LumpSumRewardsRecord? Saved) StartNewRewardPeriod(
-            long height, LumpSumRewardsRecord? currentRecord)
-        {
-            currentRecord = currentRecord is null ? null : SaveRewardPeriod(currentRecord);
-            LumpSumRewardsRecord newRecord = new LumpSumRewardsRecord(
-                LumpSumRewardsRecordAddress(),
-                height,
-                TotalShares,
-                RewardCurrency,
-                currentRecord?.StartHeight);
-            return (newRecord, currentRecord);
-        }
+                if (!(record.LastStartHeight is long lastStartHeight))
+                {
+                    break;
+                }
 
-        private LumpSumRewardsRecord SaveRewardPeriod(LumpSumRewardsRecord record)
-        {
-            return new LumpSumRewardsRecord(
-                LumpSumRewardsRecordAddress(record.StartHeight),
-                record.StartHeight,
-                record.TotalShares,
-                record.LumpSumRewards,
-                record.LastStartHeight);
+                record = _repository.GetLumpSumRewardsRecord(this, lastStartHeight)
+                    ?? throw new InvalidOperationException(
+                        $"Lump sum rewards record for #{lastStartHeight} is missing");
+            }
+            while (record.StartHeight >= lastRewardHeight);
+
+            return records;
         }
     }
 }

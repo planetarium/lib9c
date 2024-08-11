@@ -1,6 +1,5 @@
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -15,34 +14,24 @@ namespace Nekoyume.Delegation
 
         ImmutableSortedSet<Address> Delegatees { get; }
 
-        IDelegateResult Delegate(
+        void Delegate(
             IDelegatee delegatee,
             FungibleAssetValue fav,
-            long height,
-            Bond bond);
+            long height);
 
-        IUndelegateResult Undelegate(
+        void Undelegate(
             IDelegatee delegatee,
             BigInteger share,
-            long height,
-            Bond bond,
-            UnbondLockIn unbondLockIn,
-            UnbondingSet unbondingSet);
+            long height);
 
-        IRedelegateResult Redelegate(
+        void Redelegate(
             IDelegatee srcDelegatee,
             IDelegatee dstDelegatee,
             BigInteger share,
-            long height,
-            Bond srcBond,
-            Bond dstBond,
-            RebondGrace srcRebondGrace,
-            UnbondingSet unbondingSet);
+            long height);
 
-        IClaimRewardResult ClaimReward(
+        void ClaimReward(
             IDelegatee delegatee,
-            IEnumerable<LumpSumRewardsRecord> lumpSumRewardRecords,
-            Bond bond,
             long height);
     }
 }

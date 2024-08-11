@@ -86,6 +86,14 @@ namespace Nekoyume.Delegation
 
         IValue IBencodable.Bencoded => Bencoded;
 
+        public LumpSumRewardsRecord MoveAddress(Address address)
+            => new LumpSumRewardsRecord(
+                address,
+                StartHeight,
+                TotalShares,
+                LumpSumRewards,
+                LastStartHeight);
+
         public LumpSumRewardsRecord AddLumpSumReward(FungibleAssetValue reward)
             => new LumpSumRewardsRecord(
                 Address,
