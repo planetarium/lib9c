@@ -33,14 +33,11 @@ namespace Nekoyume.Delegation
 
         BigInteger TotalShares { get; }
 
-        BondResult Bond(IDelegator delegator, FungibleAssetValue fav, long height, Bond bond);
+        BigInteger Bond(IDelegator delegator, FungibleAssetValue fav, long height);
 
-        UnbondResult Unbond(IDelegator delegator, BigInteger share, long height, Bond bond);
+        FungibleAssetValue Unbond(IDelegator delegator, BigInteger share, long height);
 
-        RewardResult Reward(
-            BigInteger share,
-            long height,
-            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords);
+        void Reward(IDelegator delegator, long height);
 
         Address BondAddress(Address delegatorAddress);
 
@@ -48,6 +45,8 @@ namespace Nekoyume.Delegation
 
         Address RebondGraceAddress(Address delegatorAddress);
 
-        Address LumpSumRewardsRecordAddress(long? height = null);
+        Address CurrentLumpSumRewardsRecordAddress();
+
+        Address LumpSumRewardsRecordAddress(long height);
     }
 }

@@ -53,6 +53,8 @@ namespace Nekoyume.Delegation
 
         public long LastDistributeHeight { get; }
 
+        public bool IsEmpty => Share.IsZero;
+
         public List Bencoded => List.Empty
             .Add(Share)
             .Add(LastDistributeHeight);

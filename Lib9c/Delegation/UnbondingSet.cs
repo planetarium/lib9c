@@ -87,6 +87,8 @@ namespace Nekoyume.Delegation
 
         IValue IBencodable.Bencoded => Bencoded;
 
+        public bool IsEmpty => Unbondings.IsEmpty;
+
         public UnbondingSet SetUnbondings(IEnumerable<IUnbonding> unbondings)
         {
             UnbondingSet result = this;
