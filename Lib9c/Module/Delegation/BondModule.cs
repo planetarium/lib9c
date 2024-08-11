@@ -3,7 +3,6 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
-using Nekoyume.Extensions;
 
 namespace Nekoyume.Module.Delegation
 {
@@ -39,12 +38,5 @@ namespace Nekoyume.Module.Delegation
                 return false;
             }
         }
-
-        public static IWorld SetBond(this IWorld world, Bond bond)
-            => world.MutateAccount(
-                Addresses.Bond,
-                account => bond.Share.IsZero
-                    ? account.RemoveState(bond.Address)
-                    : account.SetState(bond.Address, bond.Bencoded));
     }
 }

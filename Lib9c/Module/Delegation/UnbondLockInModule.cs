@@ -3,7 +3,6 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
-using Nekoyume.Extensions;
 
 namespace Nekoyume.Module.Delegation
 {
@@ -46,13 +45,5 @@ namespace Nekoyume.Module.Delegation
                 return false;
             }
         }
-
-        public static IWorld SetUnbondLockIn(
-            this IWorld world, UnbondLockIn unbondLockIn)
-            => world.MutateAccount(
-                Addresses.UnbondLockIn,
-                account => unbondLockIn.IsEmpty
-                    ? account.RemoveState(unbondLockIn.Address)
-                    : account.SetState(unbondLockIn.Address, unbondLockIn.Bencoded));
     }
 }

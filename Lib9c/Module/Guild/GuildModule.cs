@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Nekoyume.Action;
+using Nekoyume.Delegation;
 using Nekoyume.Extensions;
 using Nekoyume.TypedAddress;
 
@@ -22,12 +23,42 @@ namespace Nekoyume.Module.Guild
             throw new FailedLoadStateException("There is no such guild.");
         }
 
+        public static Model.Guild.Guild GetGuild(
+            this IWorldState worldState, GuildAddress guildAddress, IDelegationRepository repository)
+        {
+            var value = worldState.GetAccountState(Addresses.Guild).GetState(guildAddress);
+            if (value is List list)
+            {
+                return new Model.Guild.Guild(list, worldState.GetGoldCurrency(), repository);
+            }
+
+            throw new FailedLoadStateException("There is no such guild.");
+        }
+
         public static bool TryGetGuild(this IWorldState worldState,
             GuildAddress guildAddress, [NotNullWhen(true)] out Model.Guild.Guild? guild)
         {
             try
             {
                 guild = GetGuild(worldState, guildAddress);
+                return true;
+            }
+            catch
+            {
+                guild = null;
+                return false;
+            }
+        }
+
+        public static bool TryGetGuild(
+            this IWorldState worldState,
+            GuildAddress guildAddress,
+            IDelegationRepository repository,
+            [NotNullWhen(true)] out Model.Guild.Guild? guild)
+        {
+            try
+            {
+                guild = GetGuild(worldState, guildAddress, repository);
                 return true;
             }
             catch

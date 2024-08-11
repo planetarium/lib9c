@@ -40,11 +40,6 @@ namespace Nekoyume.Module.Delegation
             }
         }
 
-        public static IWorld SetUnbondingSet(this IWorld world, UnbondingSet unbondingSet)
-            => world.MutateAccount(
-                Addresses.UnbondingSet,
-                account => account.SetState(UnbondingSet.Address, unbondingSet.Bencoded));
-
         public static IWorld Release(this IWorld world, IActionContext context)
         {
             var unbondingSet = world.GetUnbondingSet();
@@ -64,12 +59,34 @@ namespace Nekoyume.Module.Delegation
             return world.SetUnbondingSet(unbondingSet);
         }
 
-        public static IUnbonding[] ReleaseUnbondings(this IWorld world, IActionContext context, UnbondingSet unbondingSet)
+        private static IUnbonding[] ReleaseUnbondings(
+            this IWorld world, IActionContext context, UnbondingSet unbondingSet)
             => unbondingSet.ReleaseUnbondings(
                 context.BlockIndex,
                 (address, type) => world.GetAccount(AccountAddress(type)).GetState(address)
                     ?? throw new FailedLoadStateException(
                         $"Tried to release unbonding on {address}, but unbonding does not exist."));
+
+        private static IWorld SetUnbondingSet(this IWorld world, UnbondingSet unbondingSet)
+            => world.MutateAccount(
+                Addresses.UnbondingSet,
+                account => account.SetState(UnbondingSet.Address, unbondingSet.Bencoded));
+
+        private static IWorld SetUnbondLockIn(
+            this IWorld world, UnbondLockIn unbondLockIn)
+            => world.MutateAccount(
+                Addresses.UnbondLockIn,
+                account => unbondLockIn.IsEmpty
+                    ? account.RemoveState(unbondLockIn.Address)
+                    : account.SetState(unbondLockIn.Address, unbondLockIn.Bencoded));
+
+        public static IWorld SetRebondGrace(
+            this IWorld world, RebondGrace rebondGrace)
+            => world.MutateAccount(
+                Addresses.RebondGrace,
+                account => rebondGrace.IsEmpty
+                    ? account.RemoveState(rebondGrace.Address)
+                    : account.SetState(rebondGrace.Address, rebondGrace.Bencoded));
 
         private static Address AccountAddress(Type type) => type switch
         {

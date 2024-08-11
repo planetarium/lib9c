@@ -15,14 +15,26 @@ namespace Nekoyume.Model.Guild
 
         public readonly GuildAddress GuildAddress;
 
-        public GuildParticipant(AgentAddress agentAddress, GuildAddress guildAddress)
-            : base(agentAddress)
+        public GuildParticipant(
+            AgentAddress agentAddress, GuildAddress guildAddress)
+            : this(agentAddress, guildAddress, null)
+        {
+        }
+
+        public GuildParticipant(AgentAddress agentAddress, List list)
+            : this(agentAddress, list, null)
+        {
+        }
+
+        public GuildParticipant(
+            AgentAddress agentAddress, GuildAddress guildAddress, IDelegationRepository repository)
+            : base(agentAddress, repository)
         {
             GuildAddress = guildAddress;
         }
 
-        public GuildParticipant(AgentAddress agentAddress, List list)
-            : base(agentAddress, list[3])
+        public GuildParticipant(AgentAddress agentAddress, List list, IDelegationRepository repository)
+            : base(agentAddress, list[3], repository)
         {
             GuildAddress = new GuildAddress(list[2]);
 
