@@ -140,12 +140,12 @@ namespace Nekoyume.Action
 
             avatarState.Customize(hair, lens, ear, tail);
             
-            // TODO: Apply AllCombinationSlotState
-            for (var i = 0; i < avatarState.combinationSlotAddresses.Count; i++)
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var address = avatarState.combinationSlotAddresses[i];
-                var slotState = new CombinationSlotState(address, i);
-                states = states.SetLegacyState(address, slotState.Serialize());
+                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, i);
+                var slot = new CombinationSlotState(slotAddr, i);
+                allCombinationSlotState.AddCombinationSlotState(slot);
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
@@ -244,6 +244,7 @@ namespace Nekoyume.Action
                 .SetAgentState(signer, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetActionPoint(avatarAddress, DailyReward.ActionPointMax)
+                .SetCombinationSlotState(avatarAddress, allCombinationSlotState)
                 .SetDailyRewardReceivedBlockIndex(avatarAddress, 0L);
         }
 
