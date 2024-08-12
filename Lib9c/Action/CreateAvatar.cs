@@ -150,7 +150,6 @@ namespace Nekoyume.Action
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
-
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             // prepare for test when executing on editor mode.
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");

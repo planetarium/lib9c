@@ -141,16 +141,18 @@ namespace Lib9c.DevExtensions.Action
 
             avatarState.Customize(0, 0, 0, 0);
 
-            for (var i = 0; i < avatarState.combinationSlotAddresses.Count; i++)
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var address = avatarState.combinationSlotAddresses[i];
-                var slotState = new CombinationSlotState(address, i);
-                states = states.SetLegacyState(address, slotState.Serialize());
+                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, i);
+                var slot = new CombinationSlotState(slotAddr, i);
+                allCombinationSlotState.AddCombinationSlotState(slot);
             }
 
             avatarState.UpdateQuestRewards(materialItemSheet);
             states = states
                 .SetAgentState(agentAddress, agentState)
+                .SetCombinationSlotState(avatarAddress, allCombinationSlotState)
                 .SetLegacyState(Addresses.Ranking, rankingState.Serialize())
                 .SetAvatarState(avatarAddress, avatarState);
             // ~Create Agent and avatar && ~Add item
