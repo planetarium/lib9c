@@ -143,7 +143,9 @@ namespace Nekoyume.Model.State
             var allCombinationSlotState = new AllCombinationSlotState();
             for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var combinationSlotState = worldState.GetCombinationSlotState(avatarAddress, i);
+#pragma warning disable CS0618 // Type or member is obsolete
+                var combinationSlotState = worldState.GetCombinationSlotStateLegacy(avatarAddress, i);
+#pragma warning restore CS0618 // Type or member is obsolete
                 allCombinationSlotState.AddCombinationSlotState(combinationSlotState);
             }
 

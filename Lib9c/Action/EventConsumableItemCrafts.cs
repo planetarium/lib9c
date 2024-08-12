@@ -145,7 +145,7 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex);
 
-            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");

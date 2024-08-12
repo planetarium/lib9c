@@ -58,7 +58,7 @@ namespace Nekoyume.Action
                 throw new InvalidSlotIndexException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
             
-            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
             var combinationSlot = allSlotState.GetCombinationSlotState(SlotIndex);
             if (combinationSlot.IsUnlocked)
             {

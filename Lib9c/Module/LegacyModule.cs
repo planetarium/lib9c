@@ -273,7 +273,7 @@ namespace Nekoyume.Module
         }
 
         [Obsolete("Use AllCombinationSlotState.GetRuneState() instead.")]
-        public static CombinationSlotState GetCombinationSlotState(
+        public static CombinationSlotState GetCombinationSlotStateLegacy(
             this IWorldState worldState,
             Address avatarAddress,
             int index)
@@ -298,7 +298,7 @@ namespace Nekoyume.Module
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotStateLegacy)}()");
                 throw;
             }
         }
@@ -318,7 +318,7 @@ namespace Nekoyume.Module
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetGameConfigState)}()");
                 throw;
             }
         }
@@ -338,7 +338,7 @@ namespace Nekoyume.Module
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetRedeemCodeState)}()");
                 throw;
             }
         }

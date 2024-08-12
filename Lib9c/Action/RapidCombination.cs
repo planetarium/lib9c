@@ -55,7 +55,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(avatarAddress);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");

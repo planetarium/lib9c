@@ -82,7 +82,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = states.GetCombinationSlotStateLegacy(avatarAddress, slotIndex);
             if (slotState?.Result is null)
             {
                 throw new CombinationSlotResultNullException($"{addressesHex}CombinationSlot Result is null. ({avatarAddress}), ({slotIndex})");

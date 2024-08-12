@@ -196,7 +196,7 @@ namespace Nekoyume.Action
             }
 
             // Validate combination slot
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
+            var slotState = states.GetCombinationSlotStateLegacy(avatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException(

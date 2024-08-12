@@ -163,7 +163,7 @@ namespace Nekoyume.Action
                 );
             }
 
-            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(avatarAddress);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
