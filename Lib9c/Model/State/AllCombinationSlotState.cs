@@ -33,12 +33,6 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public bool TryGetCombinationSlotState(int slotStateIndex, out CombinationSlotState? combinationSlotState)
-        {
-            combinationSlotState = CombinationSlots.TryGetValue(slotStateIndex, out var rs) ? rs : null;
-            return combinationSlotState is not null;
-        }
-
         public CombinationSlotState GetCombinationSlotState(int slotStateIndex)
         {
             return CombinationSlots.TryGetValue(slotStateIndex, out var combinationSlotState)

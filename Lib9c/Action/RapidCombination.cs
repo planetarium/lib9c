@@ -60,19 +60,12 @@ namespace Nekoyume.Action
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
-            
-            // Validate SlotIndex
-            if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
-            }
 
+            var slotState = allSlotState.GetCombinationSlotState(slotIndex);
             if (slotState.Result is null)
-            {                
+            {
                 throw new CombinationSlotResultNullException($"{addressesHex}CombinationSlot Result is null. ({avatarAddress}), ({slotIndex})");
             }
-            // ~Validate SlotIndex
 
             var diff = slotState.Result.itemUsable.RequiredBlockIndex - context.BlockIndex;
             if (diff <= 0)

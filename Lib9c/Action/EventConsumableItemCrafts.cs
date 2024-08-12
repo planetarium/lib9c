@@ -152,12 +152,7 @@ namespace Nekoyume.Action
             }
 
             // Validate SlotIndex
-            if (!allSlotState.TryGetCombinationSlotState(SlotIndex, out var slotState) || slotState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {SlotIndex}");
-            }
-
+            var slotState = allSlotState.GetCombinationSlotState(SlotIndex);
             if (!slotState.ValidateV2(avatarState, context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
