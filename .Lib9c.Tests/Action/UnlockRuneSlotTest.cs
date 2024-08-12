@@ -17,12 +17,7 @@ namespace Lib9c.Tests.Action
 
     public class UnlockRuneSlotTest
     {
-        private readonly Currency _goldCurrency;
-
-        public UnlockRuneSlotTest()
-        {
-            _goldCurrency = Currency.Legacy("NCG", 2, null);
-        }
+        private readonly Currency _goldCurrency = Currency.Legacy("NCG", 2, null);
 
         public IWorld Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
         {
@@ -46,13 +41,6 @@ namespace Lib9c.Tests.Action
             }
 
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
-                avatarAddress,
-                agentAddress,
-                0,
-                tableSheets.GetAvatarSheets(),
-                default
-            );
             return state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
         }
 
@@ -125,14 +113,6 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            var ctx = new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = state,
-                RandomSeed = 0,
-                Signer = agentAddress,
-            };
-
             Assert.Throws<InsufficientBalanceException>(() =>
                 action.Execute(new ActionContext()
                 {
@@ -153,14 +133,6 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 99,
             };
 
-            var ctx = new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = state,
-                RandomSeed = 0,
-                Signer = agentAddress,
-            };
-
             Assert.Throws<SlotNotFoundException>(() =>
                 action.Execute(new ActionContext()
                 {
@@ -179,14 +151,6 @@ namespace Lib9c.Tests.Action
             {
                 AvatarAddress = avatarAddress,
                 SlotIndex = 0,
-            };
-
-            var ctx = new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = state,
-                RandomSeed = 0,
-                Signer = agentAddress,
             };
 
             Assert.Throws<MismatchRuneSlotTypeException>(() =>
