@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Nekoyume.Action.Exceptions
 {
@@ -6,6 +7,12 @@ namespace Nekoyume.Action.Exceptions
     public class DuplicatedCraftSlotIndexException : Exception
     {
         public DuplicatedCraftSlotIndexException(string message) : base(message)
+        {
+        }
+
+        protected DuplicatedCraftSlotIndexException(
+            SerializationInfo info, StreamingContext context
+        ) : base(info, context)
         {
         }
     }
