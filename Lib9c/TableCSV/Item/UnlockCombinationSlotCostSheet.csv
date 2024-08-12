@@ -1,4 +1,4 @@
-slo_id,crystal_price,golden_dust_price,ruby_dust_price,ncg_price
+slot_id,crystal_price,golden_dust_price,ruby_dust_price,ncg_price
 4,30,0,0,0
 5,0,30,0,0
 6,0,0,30,0
