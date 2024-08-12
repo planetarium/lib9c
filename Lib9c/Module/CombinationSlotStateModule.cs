@@ -24,7 +24,7 @@ namespace Nekoyume.Module
             AllCombinationSlotState allCombinationSlotState;
             if (serialized is null)
             {
-                allCombinationSlotState = AllCombinationSlotState.MigrationLegacyCombinationSlotState(avatarAddress);
+                allCombinationSlotState = AllCombinationSlotState.MigrationLegacyCombinationSlotState(worldState, avatarAddress);
                 migrateRequired = true;
             }
             else

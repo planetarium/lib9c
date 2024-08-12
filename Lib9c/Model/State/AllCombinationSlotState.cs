@@ -4,7 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Module;
 using Nekoyume.Module.CombinationSlot;
 
 namespace Nekoyume.Model.State
@@ -100,6 +102,18 @@ namespace Nekoyume.Model.State
             {
                 var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
                 allCombinationSlotState.AddCombinationSlotState(new CombinationSlotState(combinationAddress, i));
+            }
+
+            return allCombinationSlotState;
+        }
+        
+        public static AllCombinationSlotState MigrationLegacyCombinationSlotState(IWorldState worldState, Address avatarAddress)
+        {
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
+            {
+                var combinationSlotState = worldState.GetCombinationSlotState(avatarAddress, i);
+                allCombinationSlotState.AddCombinationSlotState(combinationSlotState);
             }
 
             return allCombinationSlotState;
