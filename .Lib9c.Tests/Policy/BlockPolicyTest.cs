@@ -441,13 +441,24 @@ namespace Lib9c.Tests
             var adminPrivateKey = new PrivateKey();
             var adminPublicKey = adminPrivateKey.PublicKey;
             var blockPolicySource = new BlockPolicySource();
+            var policyBlockRegistry = new PolicyActionsRegistry(
+                new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                new IAction[]
+                    {
+                        new RecordProposer(),
+                        new RewardGold(),
+                    }
+                    .ToImmutableArray(),
+                new IAction[] { new Mortgage() }.ToImmutableArray(),
+                new IAction[] { new Nekoyume.Action.DPoS.Sys.Reward(), new Refund() }.ToImmutableArray());
             IBlockPolicy policy = blockPolicySource.GetPolicy(
                 maxTransactionsBytesPolicy: null,
                 minTransactionsPerBlockPolicy: null,
                 maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
-                maxTransactionsPerSignerPerBlockPolicy: null);
+                maxTransactionsPerSignerPerBlockPolicy: null,
+                policyActionsRegistry: policyBlockRegistry);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis =
                 MakeGenesisBlock(
@@ -460,13 +471,7 @@ namespace Lib9c.Tests
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             // Exclude UpdateValidators action to keep validator set just for testing
             var actionEvaluator = new ActionEvaluator(
-                new PolicyActionsRegistry(
-                    beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
-                    endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
-                        .Where(action => action is not UpdateValidators)
-                        .ToImmutableArray(),
-                    beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
-                    endTxActions: policy.PolicyActionsRegistry.EndTxActions),
+                policyBlockRegistry,
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -498,50 +503,50 @@ namespace Lib9c.Tests
 
             Assert.Equal(1, blockChain.Count);
             var txs = GenerateTransactions(5).OrderBy(tx => tx.Id).ToList();
-            var preEvalBlock1 = new BlockContent(
-                new BlockMetadata(
-                    index: 1,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: null,
-                    evidenceHash: null),
-                transactions: txs,
-                evidence: Array.Empty<EvidenceBase>()).Propose();
-            Block block1 = EvaluateAndSign(store, preEvalBlock1, adminPrivateKey);
+            Block block1 = new BlockContent(
+                    new BlockMetadata(
+                        index: 1,
+                        timestamp: DateTimeOffset.MinValue,
+                        publicKey: adminPublicKey,
+                        previousHash: blockChain.Tip.Hash,
+                        txHash: BlockContent.DeriveTxHash(txs),
+                        lastCommit: null,
+                        evidenceHash: null),
+                    transactions: txs,
+                    evidence: Array.Empty<EvidenceBase>()).Propose()
+                .Sign(adminPrivateKey, blockChain.DetermineNextBlockStateRootHash(genesis, out _));
             blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
-            PreEvaluationBlock preEvalBlock2 = new BlockContent(
-                new BlockMetadata(
-                    index: 2,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    evidenceHash: null),
-                transactions: txs,
-                evidence: Array.Empty<EvidenceBase>()).Propose();
-            Block block2 = EvaluateAndSign(store, preEvalBlock2, adminPrivateKey);
+            Block block2 = new BlockContent(
+                    new BlockMetadata(
+                        index: 2,
+                        timestamp: DateTimeOffset.MinValue,
+                        publicKey: adminPublicKey,
+                        previousHash: blockChain.Tip.Hash,
+                        txHash: BlockContent.DeriveTxHash(txs),
+                        lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                        evidenceHash: null),
+                    transactions: txs,
+                    evidence: Array.Empty<EvidenceBase>()).Propose()
+                .Sign(adminPrivateKey, blockChain.DetermineNextBlockStateRootHash(block1, out _));
             blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
             txs = GenerateTransactions(11).OrderBy(tx => tx.Id).ToList();
-            PreEvaluationBlock preEvalBlock3 = new BlockContent(
-                new BlockMetadata(
-                    index: 3,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    evidenceHash: null),
-                transactions: txs,
-                evidence: Array.Empty<EvidenceBase>()).Propose();
-            Block block3 = EvaluateAndSign(store, preEvalBlock3, adminPrivateKey);
+            Block block3 = new BlockContent(
+                    new BlockMetadata(
+                        index: 3,
+                        timestamp: DateTimeOffset.MinValue,
+                        publicKey: adminPublicKey,
+                        previousHash: blockChain.Tip.Hash,
+                        txHash: BlockContent.DeriveTxHash(txs),
+                        lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                        evidenceHash: null),
+                    transactions: txs,
+                    evidence: Array.Empty<EvidenceBase>()).Propose()
+                .Sign(adminPrivateKey, blockChain.DetermineNextBlockStateRootHash(block2, out _));
             Assert.Throws<InvalidBlockTxCountException>(
                 () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
             Assert.Equal(3, blockChain.Count);
@@ -554,6 +559,16 @@ namespace Lib9c.Tests
             var adminPrivateKey = new PrivateKey();
             var adminPublicKey = adminPrivateKey.PublicKey;
             var blockPolicySource = new BlockPolicySource();
+            var policyBlockRegistry = new PolicyActionsRegistry(
+                new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                new IAction[]
+                    {
+                        new RecordProposer(),
+                        new RewardGold(),
+                    }
+                    .ToImmutableArray(),
+                new IAction[] { new Mortgage() }.ToImmutableArray(),
+                new IAction[] { new Nekoyume.Action.DPoS.Sys.Reward(), new Refund() }.ToImmutableArray());
             IBlockPolicy policy = blockPolicySource.GetPolicy(
                 maxTransactionsBytesPolicy: null,
                 minTransactionsPerBlockPolicy: null,
@@ -562,7 +577,8 @@ namespace Lib9c.Tests
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
                 maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy
                     .Default
-                    .Add(new SpannedSubPolicy<int>(2, null, null, 5)));
+                    .Add(new SpannedSubPolicy<int>(2, null, null, 5)),
+                policyActionsRegistry: policyBlockRegistry);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis =
                 MakeGenesisBlock(
@@ -575,13 +591,7 @@ namespace Lib9c.Tests
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             // Exclude UpdateValidators action to keep validator set just for testing
             var actionEvaluator = new ActionEvaluator(
-                new PolicyActionsRegistry(
-                    beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
-                    endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
-                        .Where(action => action is not UpdateValidators)
-                        .ToImmutableArray(),
-                    beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
-                    endTxActions: policy.PolicyActionsRegistry.EndTxActions),
+                policyBlockRegistry,
                 stateStore: stateStore,
                 actionTypeLoader: new NCActionLoader()
             );
@@ -613,18 +623,18 @@ namespace Lib9c.Tests
 
             Assert.Equal(1, blockChain.Count);
             var txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
-            PreEvaluationBlock preEvalBlock1 = new BlockContent(
-                new BlockMetadata(
-                    index: 1,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: null,
-                    evidenceHash: null),
-                transactions: txs,
-                evidence: Array.Empty<EvidenceBase>()).Propose();
-            Block block1 = EvaluateAndSign(store, preEvalBlock1, adminPrivateKey);
+            Block block1 = new BlockContent(
+                    new BlockMetadata(
+                        index: 1,
+                        timestamp: DateTimeOffset.MinValue,
+                        publicKey: adminPublicKey,
+                        previousHash: blockChain.Tip.Hash,
+                        txHash: BlockContent.DeriveTxHash(txs),
+                        lastCommit: null,
+                        evidenceHash: null),
+                    transactions: txs,
+                    evidence: Array.Empty<EvidenceBase>()).Propose()
+                .Sign(adminPrivateKey, blockChain.DetermineNextBlockStateRootHash(genesis, out _));
 
             // Should be fine since policy hasn't kicked in yet.
             blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
@@ -632,18 +642,18 @@ namespace Lib9c.Tests
             Assert.True(blockChain.ContainsBlock(block1.Hash));
 
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
-            PreEvaluationBlock preEvalBlock2 = new BlockContent(
-                new BlockMetadata(
-                    index: 2,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    evidenceHash: null),
-                transactions: txs,
-                evidence: Array.Empty<EvidenceBase>()).Propose();
-            Block block2 = EvaluateAndSign(store, preEvalBlock2, adminPrivateKey);
+            Block block2 = new BlockContent(
+                    new BlockMetadata(
+                        index: 2,
+                        timestamp: DateTimeOffset.MinValue,
+                        publicKey: adminPublicKey,
+                        previousHash: blockChain.Tip.Hash,
+                        txHash: BlockContent.DeriveTxHash(txs),
+                        lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                        evidenceHash: null),
+                    transactions: txs,
+                    evidence: Array.Empty<EvidenceBase>()).Propose()
+                .Sign(adminPrivateKey, blockChain.DetermineNextBlockStateRootHash(block1, out _));
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
@@ -655,18 +665,18 @@ namespace Lib9c.Tests
 
             // Limit should also pass.
             txs = GenerateTransactions(5).OrderBy(tx => tx.Id).ToList();
-            PreEvaluationBlock preEvalBlock3 = new BlockContent(
-                new BlockMetadata(
-                    index: 2,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    evidenceHash: null),
-                transactions: txs,
-                evidence: Array.Empty<EvidenceBase>()).Propose();
-            Block block3 = EvaluateAndSign(store, preEvalBlock3, adminPrivateKey);
+            Block block3 = new BlockContent(
+                    new BlockMetadata(
+                        index: 2,
+                        timestamp: DateTimeOffset.MinValue,
+                        publicKey: adminPublicKey,
+                        previousHash: blockChain.Tip.Hash,
+                        txHash: BlockContent.DeriveTxHash(txs),
+                        lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                        evidenceHash: null),
+                    transactions: txs,
+                    evidence: Array.Empty<EvidenceBase>()).Propose()
+                .Sign(adminPrivateKey, blockChain.DetermineNextBlockStateRootHash(block1, out _));
             blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
@@ -723,31 +733,6 @@ namespace Lib9c.Tests
                 privateKey: privateKey ?? _privateKey,
                 timestamp: timestamp ?? DateTimeOffset.MinValue,
                 actionBases: actionBases);
-        }
-
-        private Block EvaluateAndSign(
-            IStore store,
-            PreEvaluationBlock preEvaluationBlock,
-            PrivateKey privateKey
-        )
-        {
-            if (preEvaluationBlock.Index < 1)
-            {
-                throw new ArgumentException(
-                    $"Given {nameof(preEvaluationBlock)} must have block index " +
-                    $"higher than 0");
-            }
-
-            if (preEvaluationBlock.ProtocolVersion < BlockMetadata.SlothProtocolVersion)
-            {
-                throw new ArgumentException(
-                    $"{nameof(preEvaluationBlock)} of which protocol version less than" +
-                    $"{BlockMetadata.SlothProtocolVersion} is not acceptable");
-            }
-
-            var stateRootHash = store.GetStateRootHash((BlockHash)preEvaluationBlock.PreviousHash);
-
-            return preEvaluationBlock.Sign(privateKey, (HashDigest<SHA256>)stateRootHash);
         }
     }
 }

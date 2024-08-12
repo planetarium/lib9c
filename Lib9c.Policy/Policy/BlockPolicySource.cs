@@ -110,7 +110,8 @@ namespace Nekoyume.Blockchain.Policy
             IVariableSubPolicy<long> maxTransactionsBytesPolicy,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
+            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
+            PolicyActionsRegistry? policyActionsRegistry = null)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -137,18 +138,19 @@ namespace Nekoyume.Blockchain.Policy
                     maxTransactionsPerSignerPerBlockPolicy);
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
+            policyActionsRegistry ??= new PolicyActionsRegistry(
+                new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                new IAction[]
+                    {
+                        new UpdateValidators(),
+                        new RecordProposer(),
+                        new RewardGold()
+                    }
+                    .ToImmutableArray(),
+                new IAction[] { new Mortgage() }.ToImmutableArray(),
+                new IAction[] { new Reward(), new Refund() }.ToImmutableArray());
             return new BlockPolicy(
-                new PolicyActionsRegistry(
-                    new IAction[] { new AllocateReward() }.ToImmutableArray(),
-                    new IAction[]
-                        {
-                            new UpdateValidators(),
-                            new RecordProposer(),
-                            new RewardGold()
-                        }
-                        .ToImmutableArray(),
-                    new IAction[] { new Mortgage() }.ToImmutableArray(),
-                    new IAction[] { new Reward(), new Refund() }.ToImmutableArray()),
+                policyActionsRegistry: policyActionsRegistry,
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
