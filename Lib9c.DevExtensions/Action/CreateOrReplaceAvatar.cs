@@ -21,12 +21,12 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Action
 {
     [Serializable]
     [ActionType("create_or_replace_avatar")]
+    // Don't use on client
     public class CreateOrReplaceAvatar : GameAction, ICreateOrReplaceAvatar
     {
         public int AvatarIndex { get; private set; }
@@ -412,7 +412,6 @@ namespace Lib9c.DevExtensions.Action
                     typeof(CostumeItemSheet),
                     typeof(CrystalStageBuffGachaSheet),
                 });
-            var gameConfig = states.GetGameConfigState();
 
             // Set AvatarState.
             var avatar = new AvatarState(
@@ -561,14 +560,12 @@ namespace Lib9c.DevExtensions.Action
 
             // Set CombinationSlot.
             var allCombinationSlotState = new AllCombinationSlotState();
-            // TODO: Need Migration TO AllCombinationSlotState
-            for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
                 var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddr, i);
                 var slot = new CombinationSlotState(slotAddr, i);
-                states = states.SetLegacyState(slotAddr, slot.Serialize());
+                allCombinationSlotState.AddCombinationSlotState(slot);
             }
-
             states = states.SetCombinationSlotState(avatarAddr, allCombinationSlotState);
             // ~Set CombinationSlot.
 

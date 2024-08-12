@@ -147,6 +147,7 @@ namespace Nekoyume.Action
                 var slot = new CombinationSlotState(slotAddr, i);
                 allCombinationSlotState.AddCombinationSlotState(slot);
             }
+            states = states.SetCombinationSlotState(avatarAddress, allCombinationSlotState);
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
@@ -243,7 +244,6 @@ namespace Nekoyume.Action
                 .SetAgentState(signer, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetActionPoint(avatarAddress, DailyReward.ActionPointMax)
-                .SetCombinationSlotState(avatarAddress, allCombinationSlotState)
                 .SetDailyRewardReceivedBlockIndex(avatarAddress, 0L);
         }
 
