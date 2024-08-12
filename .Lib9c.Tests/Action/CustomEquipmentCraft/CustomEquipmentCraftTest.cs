@@ -363,7 +363,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 var iconIdList = inventory.Equipments.Select(e => e.IconId).ToList();
                 foreach (var craftData in craftList)
                 {
-                    var slotState = resultState.GetCombinationSlotState(_avatarAddress, 0);
+                    var slotState = resultState.GetCombinationSlotStateLegacy(_avatarAddress, 0);
                     Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
 
                     var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values

@@ -24,7 +24,7 @@ namespace Nekoyume.Model.State
     public class AvatarState : State, ICloneable
     {
         public const int DefaultCombinationSlotCount = 4;
-        
+
         public const int CombinationSlotCapacity = 8;
         public const int CurrentVersion = 2;
         public string name;
@@ -103,8 +103,8 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) createEvent, 1),
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
-            
-            combinationSlotAddresses = default;
+
+            combinationSlotAddresses = new List<Address>();
             RankingMapAddress = rankingMapAddress;
             UpdateGeneralQuest(new[] { createEvent, levelEvent });
             UpdateCompletedQuest();

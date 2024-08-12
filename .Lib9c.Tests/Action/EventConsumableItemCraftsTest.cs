@@ -146,7 +146,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var allCombinationSlotState = nextStates.GetCombinationSlotState(_avatarAddress, out var _);
+            var allCombinationSlotState = nextStates.GetAllCombinationSlotState(_avatarAddress);
             var slotState = allCombinationSlotState.GetCombinationSlotState(slotIndex);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);

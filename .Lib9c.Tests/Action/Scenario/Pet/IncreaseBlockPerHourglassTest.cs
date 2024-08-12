@@ -174,7 +174,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 RandomSeed = random.Seed,
             });
 
-            var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var _);
+            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
             var slotState = allSlotState.GetCombinationSlotState(0);
             // TEST: Combination should be done
             Assert.Equal(

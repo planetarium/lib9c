@@ -18,11 +18,11 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.CombinationSlot;
     using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class CombinationEquipmentTest
     {
@@ -111,7 +111,7 @@ namespace Lib9c.Tests.Action
         // AvatarState not exist.
         [InlineData(typeof(FailedLoadStateException), true, true, true, false, 3, 0, true, 0L, 1, null, true, false, false, false)]
         // CombinationSlotState not exist.
-        [InlineData(typeof(FailedLoadStateException), true, true, true, true, 3, 5, true, 0L, 1, null, true, false, false, false)]
+        [InlineData(typeof(CombinationSlotNotFoundException), true, true, true, true, 3, 5, true, 0L, 1, null, true, false, false, false)]
         // CombinationSlotState locked.
         [InlineData(typeof(CombinationSlotUnlockException), true, true, true, true, 3, 0, false, 0L, 1, null, true, false, false, false)]
         // Stage not cleared.
@@ -276,7 +276,7 @@ namespace Lib9c.Tests.Action
                 var currency = nextState.GetGoldCurrency();
                 Assert.Equal(0 * currency, nextState.GetBalance(_agentAddress, currency));
 
-                var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+                var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
                 var slotState = allSlotState.GetCombinationSlotState(0);
                 Assert.NotNull(slotState.Result);
                 Assert.NotNull(slotState.Result.itemUsable);
@@ -445,7 +445,7 @@ namespace Lib9c.Tests.Action
                 else
                 {
                     Assert.Equal(0, hammerPointState.HammerPoint);
-                    var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
+                    var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
                     var slotState = allSlotState.GetCombinationSlotState(0);
                     Assert.NotNull(slotState.Result);
                     Assert.NotNull(slotState.Result.itemUsable);

@@ -50,7 +50,7 @@ namespace Nekoyume.Model.State
                 AddCombinationSlotState(newCombinationSlot);
                 return;
             }
-            
+
             targetSlot.Unlock();
         }
 
@@ -121,12 +121,19 @@ namespace Nekoyume.Model.State
         /// <param name="stateFactory">CombinationSlotState을 생성할 함수</param>
         /// <param name="avatarAddress">Migration을 진행할 아바타</param>
         /// <returns>Migration된 AllCombinationSlotState</returns>
-        public static AllCombinationSlotState MigrationLegacyCombinationSlotState(Func<int, CombinationSlotState> stateFactory, Address avatarAddress)
+        public static AllCombinationSlotState MigrationLegacyCombinationSlotState(Func<int, CombinationSlotState?> stateFactory, Address avatarAddress)
         {
             var allCombinationSlotState = new AllCombinationSlotState();
             for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
                 var combinationSlotState = stateFactory.Invoke(i);
+
+                if (combinationSlotState == null)
+                {
+                    var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
+                    combinationSlotState = new CombinationSlotState(combinationAddress, i);
+                }
+
                 allCombinationSlotState.AddCombinationSlotState(combinationSlotState);
             }
 
@@ -147,6 +154,13 @@ namespace Nekoyume.Model.State
 #pragma warning disable CS0618 // Type or member is obsolete
                 var combinationSlotState = worldState.GetCombinationSlotStateLegacy(avatarAddress, i);
 #pragma warning restore CS0618 // Type or member is obsolete
+
+                if (combinationSlotState == null)
+                {
+                    var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
+                    combinationSlotState = new CombinationSlotState(combinationAddress, i);
+                }
+
                 allCombinationSlotState.AddCombinationSlotState(combinationSlotState);
             }
 
