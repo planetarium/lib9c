@@ -49,6 +49,7 @@ namespace Nekoyume.Model.State
         public int lens;
         public int ear;
         public int tail;
+        [Obsolete("don't use this field, use AllCombinationSlotState instead.")]
         public List<Address> combinationSlotAddresses;
 
         public string NameWithHash { get; private set; }
@@ -103,24 +104,7 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
             
-            // TODO: Remove this code after the migration.
-            combinationSlotAddresses = new List<Address>(DefaultCombinationSlotCount);
-            for (var i = 0; i < DefaultCombinationSlotCount; i++)
-            {
-                var slotAddress = address.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        i
-                    )
-                );
-                combinationSlotAddresses.Add(slotAddress);
-            }
-
-            combinationSlotAddresses = combinationSlotAddresses
-                .OrderBy(element => element)
-                .ToList();
-
+            combinationSlotAddresses = default;
             RankingMapAddress = rankingMapAddress;
             UpdateGeneralQuest(new[] { createEvent, levelEvent });
             UpdateCompletedQuest();
