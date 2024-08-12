@@ -92,6 +92,7 @@ namespace Nekoyume.Model.State
 
         /// <summary>
         /// 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
+        /// 해당 메서드는 기존 슬롯의 상태값을 가져올 worldState가 없어서 빈 슬롯을 반환한다.
         /// </summary>
         /// <param name="avatarAddress">Migration을 진행할 아바타</param>
         /// <returns>Migration된 AllCombinationSlotState</returns>
@@ -106,7 +107,13 @@ namespace Nekoyume.Model.State
 
             return allCombinationSlotState;
         }
-        
+
+        /// <summary>
+        /// 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
+        /// </summary>
+        /// <param name="worldState">Slot 상태를 가져올 world state</param>
+        /// <param name="avatarAddress">Migration을 진행할 아바타</param>
+        /// <returns>Migration된 AllCombinationSlotState</returns>
         public static AllCombinationSlotState MigrationLegacyCombinationSlotState(IWorldState worldState, Address avatarAddress)
         {
             var allCombinationSlotState = new AllCombinationSlotState();
