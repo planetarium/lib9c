@@ -25,7 +25,7 @@ namespace Nekoyume.Model.State
     {
         public const int DefaultCombinationSlotCount = 4;
         
-        public const int CombinationSlotCapacity = 4;
+        public const int CombinationSlotCapacity = 8;
         public const int CurrentVersion = 2;
         public string name;
         public int characterId;
@@ -104,8 +104,8 @@ namespace Nekoyume.Model.State
             };
             
             // TODO: Remove this code after the migration.
-            combinationSlotAddresses = new List<Address>(CombinationSlotCapacity);
-            for (var i = 0; i < CombinationSlotCapacity; i++)
+            combinationSlotAddresses = new List<Address>(DefaultCombinationSlotCount);
+            for (var i = 0; i < DefaultCombinationSlotCount; i++)
             {
                 var slotAddress = address.Derive(
                     string.Format(
