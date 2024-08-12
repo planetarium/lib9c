@@ -1,5 +1,6 @@
 #nullable enable
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,17 +117,17 @@ namespace Nekoyume.Model.State
 
         /// <summary>
         /// 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
-        /// 해당 메서드는 기존 슬롯의 상태값을 가져올 worldState가 없어서 빈 슬롯을 반환한다.
         /// </summary>
+        /// <param name="stateFactory">CombinationSlotState을 생성할 함수</param>
         /// <param name="avatarAddress">Migration을 진행할 아바타</param>
         /// <returns>Migration된 AllCombinationSlotState</returns>
-        public static AllCombinationSlotState MigrationLegacyCombinationSlotState(Address avatarAddress)
+        public static AllCombinationSlotState MigrationLegacyCombinationSlotState(Func<int, CombinationSlotState> stateFactory, Address avatarAddress)
         {
             var allCombinationSlotState = new AllCombinationSlotState();
             for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
-                allCombinationSlotState.AddCombinationSlotState(new CombinationSlotState(combinationAddress, i));
+                var combinationSlotState = stateFactory.Invoke(i);
+                allCombinationSlotState.AddCombinationSlotState(combinationSlotState);
             }
 
             return allCombinationSlotState;
