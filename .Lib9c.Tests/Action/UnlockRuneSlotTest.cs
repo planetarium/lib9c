@@ -19,16 +19,17 @@ namespace Lib9c.Tests.Action
     {
         private readonly Currency _goldCurrency = Currency.Legacy("NCG", 2, null);
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public IWorld Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
         {
             agentAddress = new PrivateKey().Address;
             avatarAddress = new PrivateKey().Address;
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
-            blockIndex = tableSheets.WorldBossListSheet.Values
-                .OrderBy(x => x.StartedBlockIndex)
+            blockIndex = tableSheets.ArenaSheet.Values.First().Round
+                .OrderBy(x => x.StartBlockIndex)
                 .First()
-                .StartedBlockIndex;
+                .StartBlockIndex;
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var state = new World(MockUtil.MockModernWorldState)
