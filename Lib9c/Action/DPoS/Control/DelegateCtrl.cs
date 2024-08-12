@@ -123,27 +123,12 @@ namespace Nekoyume.Action.DPoS.Control
 
             foreach (Currency nativeToken in nativeTokens)
             {
-                FungibleAssetValue delegationRewardSum = ValidatorRewardsCtrl.RewardSumBetween(
-                    states,
-                    delegation.ValidatorAddress,
-                    nativeToken,
-                    delegation.LatestDistributeHeight,
-                    blockHeight);
-
-                // Skip if there is no reward to distribute.
-                if (delegationRewardSum.RawValue == 0)
-                {
-                    continue;
-                }
-
-                if (!(ValidatorCtrl.TokenPortionByShare(
-                    states,
-                    delegation.ValidatorAddress,
-                    delegationRewardSum,
-                    states.GetBalance(delegationAddress, Asset.Share)) is { } reward))
-                {
-                    throw new InvalidExchangeRateException(validator.Address);
-                }
+                FungibleAssetValue reward;
+                (states, reward) = states.Reward(
+                    ctx,
+                    delegation,
+                    validator,
+                    nativeToken);
 
                 if (reward.Sign > 0)
                 {
