@@ -20,6 +20,7 @@ namespace Nekoyume.TableData.Garages
 
             public int Id { get; private set; }
 
+            public int ItemId { get; private set; }
             public string CurrencyTicker { get; private set; }
 
             public HashDigest<SHA256>? FungibleId { get; private set; }
@@ -34,6 +35,14 @@ namespace Nekoyume.TableData.Garages
                     ? (HashDigest<SHA256>?)null
                     : HashDigest<SHA256>.FromString(fields[2]);
                 GarageCostPerUnit = ParseDecimal(fields[3]);
+                ItemId = 0;
+                if (fields.Count > 4)
+                {
+                    if (TryParseInt(fields[4], out var itemId))
+                    {
+                        ItemId = itemId;
+                    }
+                }
             }
         }
 
@@ -50,6 +59,12 @@ namespace Nekoyume.TableData.Garages
         public decimal GetGarageCostPerUnit(HashDigest<SHA256> fungibleId)
         {
             var row = OrderedList!.First(r => r.FungibleId?.Equals(fungibleId) ?? false);
+            return row.GarageCostPerUnit;
+        }
+
+        public decimal GetGarageCostPerUnit(int itemId)
+        {
+            var row = OrderedList!.First(r => r.ItemId == itemId);
             return row.GarageCostPerUnit;
         }
 
@@ -85,6 +100,27 @@ namespace Nekoyume.TableData.Garages
                 (unitCost * count).ToString(CultureInfo.InvariantCulture));
         }
 
+        public FungibleAssetValue GetGarageCost(int itemId, int count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count),
+                    count,
+                    "count must be positive.");
+            }
+
+            if (count == 0)
+            {
+                return new FungibleAssetValue(Currencies.Garage);
+            }
+
+            var unitCost = GetGarageCostPerUnit(itemId);
+            return FungibleAssetValue.Parse(
+                Currencies.Garage,
+                (unitCost * count).ToString(CultureInfo.InvariantCulture));
+        }
+
         public FungibleAssetValue GetGarageCost(
             IEnumerable<FungibleAssetValue> fungibleAssetValues,
             IEnumerable<(HashDigest<SHA256> fungibleId, int count)> fungibleIdAndCounts)
@@ -109,6 +145,23 @@ namespace Nekoyume.TableData.Garages
             return cost;
         }
 
+        public FungibleAssetValue GetGarageCost(
+            IEnumerable<FungibleAssetValue> fungibleAssetValues,
+            IEnumerable<(int itemId, int count, bool tradable)> itemIdAndCounts)
+        {
+            var cost = new FungibleAssetValue(Currencies.Garage);
+            foreach (var fav in fungibleAssetValues)
+            {
+                cost += GetGarageCost(fav);
+            }
+
+            foreach (var (itemId, count, _) in itemIdAndCounts)
+            {
+                cost += GetGarageCost(itemId, count);
+            }
+
+            return cost;
+        }
         public bool HasCost(string currencyTicker)
         {
             return OrderedList!.Any(r => r.CurrencyTicker == currencyTicker);

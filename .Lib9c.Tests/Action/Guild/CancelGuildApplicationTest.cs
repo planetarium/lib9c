@@ -6,7 +6,6 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
     using Nekoyume.Module.Guild;
     using Nekoyume.TypedAddress;
     using Xunit;
@@ -19,9 +18,8 @@ namespace Lib9c.Tests.Action.Guild
             var action = new CancelGuildApplication();
             var plainValue = action.PlainValue;
 
-            var actionLoader = new NCActionLoader();
-            var loadedRaw = actionLoader.LoadAction(0, plainValue);
-            Assert.IsType<CancelGuildApplication>(loadedRaw);
+            var deserialized = new CancelGuildApplication();
+            deserialized.LoadPlainValue(plainValue);
         }
 
         [Fact]

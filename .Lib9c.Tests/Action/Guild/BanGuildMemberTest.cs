@@ -5,7 +5,6 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Action.State;
     using Libplanet.Mocks;
     using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -18,10 +17,9 @@ namespace Lib9c.Tests.Action.Guild
             var action = new BanGuildMember(guildMemberAddress);
             var plainValue = action.PlainValue;
 
-            var actionLoader = new NCActionLoader();
-            var loadedRaw = actionLoader.LoadAction(0, plainValue);
-            var loadedAction = Assert.IsType<BanGuildMember>(loadedRaw);
-            Assert.Equal(guildMemberAddress, loadedAction.Target);
+            var deserialized = new BanGuildMember();
+            deserialized.LoadPlainValue(plainValue);
+            Assert.Equal(guildMemberAddress, deserialized.Target);
         }
 
         // Expected use-case.

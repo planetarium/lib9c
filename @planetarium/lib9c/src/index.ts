@@ -48,3 +48,12 @@ export {
   CreateAvatar,
   type CreateAvatarArgs,
 } from "./actions/create_avatar.js";
+export {
+  ApprovePledge,
+  type ApprovePledgeArgs,
+} from "./actions/approve_pledge.js";
+export {
+  MigratePledgeToGuild,
+  type MigratePledgeToGuildArgs,
+} from "./actions/migrate_pledge_to_guild.js";
+export { MakeGuild } from "./actions/make_guild.js";
