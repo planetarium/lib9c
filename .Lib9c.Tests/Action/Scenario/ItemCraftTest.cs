@@ -140,7 +140,7 @@ namespace Lib9c.Tests.Action.Scenario
                     RandomSeed = randomSeed,
                 });
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
-                var slotState = allSlotState.GetCombinationSlotState(i);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(equipmentRecipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -225,7 +225,7 @@ namespace Lib9c.Tests.Action.Scenario
                 });
 
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
-                var slotState = allSlotState.GetCombinationSlotState(i);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -306,7 +306,7 @@ namespace Lib9c.Tests.Action.Scenario
                     RandomSeed = randomSeed,
                 });
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
-                var slotState = allSlotState.GetCombinationSlotState(i);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }

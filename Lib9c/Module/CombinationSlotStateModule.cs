@@ -23,7 +23,7 @@ namespace Nekoyume.Module
             AllCombinationSlotState allCombinationSlotState;
             if (serialized is null)
             {
-                allCombinationSlotState = AllCombinationSlotState.MigrationLegacyCombinationSlotState(worldState, avatarAddress);
+                allCombinationSlotState = AllCombinationSlotState.MigrationLegacySlotState(worldState, avatarAddress);
             }
             else
             {

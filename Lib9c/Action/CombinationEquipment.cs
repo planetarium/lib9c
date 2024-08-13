@@ -113,7 +113,7 @@ namespace Nekoyume.Action
             }
 
             // Validate SlotIndex
-            var slotState = allSlotState.GetCombinationSlotState(slotIndex);
+            var slotState = allSlotState.GetSlot(slotIndex);
             if (!slotState.ValidateV2(avatarState, context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException($"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
@@ -475,7 +475,7 @@ namespace Nekoyume.Action
                 subRecipeId = subRecipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex, petId);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
             // ~Update Slot
 
             // Update Pet

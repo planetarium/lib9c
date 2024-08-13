@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
             for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
                 var addr = CombinationSlotState.DeriveAddress(_avatarAddress, i);
-                allSlotState.AddCombinationSlotState(addr, i);
+                allSlotState.AddSlot(addr, i);
             }
 
             _initialStates = _initialStates
@@ -147,7 +147,7 @@ namespace Lib9c.Tests.Action
             });
 
             var allCombinationSlotState = nextStates.GetAllCombinationSlotState(_avatarAddress);
-            var slotState = allCombinationSlotState.GetCombinationSlotState(slotIndex);
+            var slotState = allCombinationSlotState.GetSlot(slotIndex);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 

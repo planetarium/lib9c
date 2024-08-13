@@ -170,7 +170,7 @@ namespace Nekoyume.Action
             }
 
             // Validate SlotIndex
-            var slotState = allSlotState.GetCombinationSlotState(slotIndex);
+            var slotState = allSlotState.GetSlot(slotIndex);
             if (!slotState.ValidateV2(avatarState, context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
@@ -420,7 +420,7 @@ namespace Nekoyume.Action
 
             // Update slot state
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
 
             // Set state
             sw.Restart();

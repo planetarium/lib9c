@@ -564,7 +564,7 @@ namespace Lib9c.DevExtensions.Action
             {
                 var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddr, i);
                 var slot = new CombinationSlotState(slotAddr, i);
-                allCombinationSlotState.AddCombinationSlotState(slot);
+                allCombinationSlotState.AddSlot(slot);
             }
             states = states.SetCombinationSlotState(avatarAddr, allCombinationSlotState);
             // ~Set CombinationSlot.

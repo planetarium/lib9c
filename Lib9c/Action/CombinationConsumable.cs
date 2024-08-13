@@ -75,7 +75,7 @@ namespace Nekoyume.Action
             }
 
             // Validate SlotIndex
-            var slotState = allSlotState.GetCombinationSlotState(slotIndex);
+            var slotState = allSlotState.GetSlot(slotIndex);
             if (!slotState.ValidateV2(avatarState, context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
@@ -200,7 +200,7 @@ namespace Nekoyume.Action
                 recipeId = recipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
             // ~Update Slot
 
             // Create Mail

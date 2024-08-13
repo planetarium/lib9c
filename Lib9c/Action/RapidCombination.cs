@@ -61,7 +61,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
-            var slotState = allSlotState.GetCombinationSlotState(slotIndex);
+            var slotState = allSlotState.GetSlot(slotIndex);
             if (slotState.Result is null)
             {
                 throw new CombinationSlotResultNullException($"{addressesHex}CombinationSlot Result is null. ({avatarAddress}), ({slotIndex})");
@@ -140,7 +140,7 @@ namespace Nekoyume.Action
             }
 
             slotState.UpdateV2(context.BlockIndex, hourGlass, costHourglassCount);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
             avatarState.UpdateFromRapidCombinationV2(
                 (RapidCombination5.ResultModel)slotState.Result,
                 context.BlockIndex);

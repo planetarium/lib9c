@@ -197,8 +197,8 @@ namespace Lib9c.Tests.Action
                     {
                         var allSlotState = new AllCombinationSlotState();
                         var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
-                        allSlotState.AddCombinationSlotState(addr);
-                        var slotState = allSlotState.GetCombinationSlotState(0);
+                        allSlotState.AddSlot(addr);
+                        var slotState = allSlotState.GetSlot(0);
                         slotState.Update(null, 0, blockIndex + 1);
 
                         state = state
@@ -277,7 +277,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(0 * currency, nextState.GetBalance(_agentAddress, currency));
 
                 var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
-                var slotState = allSlotState.GetCombinationSlotState(0);
+                var slotState = allSlotState.GetSlot(0);
                 Assert.NotNull(slotState.Result);
                 Assert.NotNull(slotState.Result.itemUsable);
 
@@ -446,7 +446,7 @@ namespace Lib9c.Tests.Action
                 {
                     Assert.Equal(0, hammerPointState.HammerPoint);
                     var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
-                    var slotState = allSlotState.GetCombinationSlotState(0);
+                    var slotState = allSlotState.GetSlot(0);
                     Assert.NotNull(slotState.Result);
                     Assert.NotNull(slotState.Result.itemUsable);
                     Assert.NotEmpty(slotState.Result.itemUsable.Skills);
