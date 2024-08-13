@@ -80,7 +80,7 @@ namespace Nekoyume.Model.State
             {
                 PetId = petId.ToNullableInteger();
             }
-            
+
             if (serialized.TryGetValue((Text)IsUnlockedKey, out var isUnlocked))
             {
                 IsUnlocked = isUnlocked.ToBoolean();
@@ -104,9 +104,9 @@ namespace Nekoyume.Model.State
                    blockIndex >= UnlockBlockIndex;
         }
 
-        public bool ValidateV2(AvatarState avatarState, long blockIndex)
+        public bool ValidateV2(long blockIndex)
         {
-            if (avatarState is null || IsUnlocked == false)
+            if (!IsUnlocked)
             {
                 return false;
             }
@@ -147,7 +147,7 @@ namespace Nekoyume.Model.State
             };
             Result = result;
         }
-        
+
         public bool Unlock()
         {
             if (IsUnlocked)

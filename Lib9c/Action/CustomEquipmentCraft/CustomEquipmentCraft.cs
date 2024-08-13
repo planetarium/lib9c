@@ -120,7 +120,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                         $"[{addressesHex}] Aborted as the craft slot state is failed to load: # {craftData.SlotIndex}");
                 }
 
-                if (!slotState.ValidateV2(avatarState, context.BlockIndex))
+                if (!slotState.ValidateV2(context.BlockIndex))
                 {
                     throw new CombinationSlotUnlockException(
                         $"[{addressesHex}] Aborted as the craft slot state is invalid: {slotState} @ {craftData.SlotIndex}");
