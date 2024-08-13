@@ -61,7 +61,7 @@ namespace Nekoyume.Model.State
 
             if (serialized.TryGetValue((Text)IndexKey, out var index))
             {
-                Index = index.ToInteger();
+                Index = (Integer)index;
             }
 
             if (serialized.TryGetValue((Text)ResultKey, out var result))
@@ -143,7 +143,7 @@ namespace Nekoyume.Model.State
             {
                 [(Text)UnlockBlockIndexKey] = UnlockBlockIndex.Serialize(),
                 [(Text)StartBlockIndexKey] = StartBlockIndex.Serialize(),
-                [(Text)IndexKey] = Index.Serialize(),
+                [(Text)IndexKey] = (Integer)Index,
             };
 
             if (Result is not null)
