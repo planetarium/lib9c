@@ -106,8 +106,7 @@ namespace Nekoyume.Model.State
 
         public bool ValidateV2(AvatarState avatarState, long blockIndex)
         {
-            // TODO: Lock상태인지 확인하는 로직 추가
-            if (avatarState is null)
+            if (avatarState is null || IsUnlocked == false)
             {
                 return false;
             }
