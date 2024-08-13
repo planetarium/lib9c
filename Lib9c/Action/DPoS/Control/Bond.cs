@@ -36,6 +36,15 @@ namespace Nekoyume.Action.DPoS.Control
                 throw new NullValidatorException(validatorAddress);
             }
 
+            ValidatorDelegationSet validatorDelegationSet;
+            (states, validatorDelegationSet) =
+                ValidatorDelegationSetCtrl.FetchValidatorDelegationSet(states, validator.Address);
+
+            foreach (Address addrs in validatorDelegationSet.Set)
+            {
+                states = DelegateCtrl.Distribute(states, ctx, nativeTokens, addrs);
+            }
+
             // If validator share is zero, exchange rate is 1
             // Else, exchange rate is validator share / token
             if (!(ValidatorCtrl.ShareFromConsensusToken(
@@ -54,21 +63,25 @@ namespace Nekoyume.Action.DPoS.Control
             validator.DelegatorShares += issuedShare;
             states = states.SetDPoSState(validator.Address, validator.Serialize());
             states = ValidatorPowerIndexCtrl.Update(states, validator.Address);
+            states = ValidatorDelegationSetCtrl.Add(
+                states: states,
+                validatorAddress: validatorAddress,
+                delegationAddress: delegationAddress
+            );
 
-            ValidatorDelegationSet validatorDelegationSet;
-            (states, validatorDelegationSet) =
-                ValidatorDelegationSetCtrl.FetchValidatorDelegationSet(states, validator.Address);
-
-            foreach (Address addrs in validatorDelegationSet.Set)
+            foreach (var nativeToken in nativeTokens)
             {
-                states = DelegateCtrl.Distribute(states, ctx, nativeTokens, addrs);
+                states = states.StartNew(ctx, nativeToken, validator.Address, validator.DelegatorShares);
+
             }
 
-            states = ValidatorDelegationSetCtrl.Add(
-                    states: states,
-                    validatorAddress: validatorAddress,
-                    delegationAddress: delegationAddress
-                );
+            if (!(DelegateCtrl.GetDelegation(states, delegationAddress) is { } delegation))
+            {
+                throw new NullDelegationException(delegationAddress);
+            }
+
+            delegation.LatestDistributeHeight = ctx.BlockIndex;
+            states = states.SetDPoSState(delegation.Address, delegation.Serialize());
 
             return (states, issuedShare);
         }
@@ -100,6 +113,15 @@ namespace Nekoyume.Action.DPoS.Control
             if (!(ValidatorCtrl.GetValidator(states, validatorAddress) is { } validator))
             {
                 throw new NullValidatorException(validatorAddress);
+            }
+
+            ValidatorDelegationSet validatorDelegationSet;
+            (states, validatorDelegationSet) =
+                ValidatorDelegationSetCtrl.FetchValidatorDelegationSet(states, validator.Address);
+
+            foreach (Address addrs in validatorDelegationSet.Set)
+            {
+                states = DelegateCtrl.Distribute(states, ctx, nativeTokens, addrs);
             }
 
             // Delegator share burn
@@ -136,20 +158,23 @@ namespace Nekoyume.Action.DPoS.Control
 
             states = ValidatorPowerIndexCtrl.Update(states, validator.Address);
 
-            ValidatorDelegationSet validatorDelegationSet;
-            (states, validatorDelegationSet) =
-                ValidatorDelegationSetCtrl.FetchValidatorDelegationSet(states, validator.Address);
-
-            foreach (Address addrs in validatorDelegationSet.Set)
-            {
-                states = DelegateCtrl.Distribute(states, ctx, nativeTokens, addrs);
-            }
-
             states = ValidatorDelegationSetCtrl.Remove(
                     states: states,
                     validatorAddress: validatorAddress,
-                    delegationAddress: delegationAddress
-                );
+                    delegationAddress: delegationAddress);
+
+            foreach (var nativeToken in nativeTokens)
+            {
+                states = states.StartNew(ctx, nativeToken, validator.Address, validator.DelegatorShares);
+            }
+
+            if (!(DelegateCtrl.GetDelegation(states, delegationAddress) is { } delegation))
+            {
+                throw new NullDelegationException(delegationAddress);
+            }
+
+            delegation.LatestDistributeHeight = ctx.BlockIndex;
+            states = states.SetDPoSState(delegation.Address, delegation.Serialize());
 
             return (states, unbondingConsensusToken);
         }

@@ -99,8 +99,6 @@ namespace Nekoyume.Action.DPoS.Control
                 delegation.Address,
                 nativeTokens);
 
-            states = states.SetDPoSState(delegation.Address, delegation.Serialize());
-
             return states;
         }
 
@@ -124,7 +122,7 @@ namespace Nekoyume.Action.DPoS.Control
             foreach (Currency nativeToken in nativeTokens)
             {
                 FungibleAssetValue reward;
-                (states, reward) = states.Reward(
+                reward = states.Reward(
                     ctx,
                     delegation,
                     validator,

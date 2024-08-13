@@ -18,7 +18,7 @@ namespace Nekoyume.Action.DPoS.Model
             Address = DeriveAddress(delegatorAddress, validatorAddress);
             DelegatorAddress = delegatorAddress;
             ValidatorAddress = validatorAddress;
-            LatestDistributeHeight = 0;
+            LatestDistributeHeight = -1;
         }
 
         public Delegation(IValue serialized)
