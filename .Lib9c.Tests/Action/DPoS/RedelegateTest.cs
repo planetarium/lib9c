@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action.DPoS
+namespace Lib9c.Tests.Action.DPoS
 {
     using System;
     using System.Collections.Immutable;
@@ -147,6 +147,14 @@
             Assert.Equal(257, validator1Reward);
             Assert.Equal(171, validator2Reward);
 
+            states = new RecordProposer().Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = states,
+                    Miner = validator1OperatorAddress,
+                });
+
             // Redelegate to validator 2
             states = new Redelegate(
                 validator1Address,
@@ -154,6 +162,30 @@
                 Asset.Share * 30 * 100).Execute(
                 new ActionContext
                     { PreviousState = states, BlockIndex = 1, Signer = delegatorAddress });
+
+            validator1OperatorReward = states.GetBalance(
+                AllocateRewardCtrl.RewardAddress(validator1OperatorAddress),
+                GovernanceToken).RawValue;
+            validator2OperatorReward = states.GetBalance(
+                AllocateRewardCtrl.RewardAddress(validator2OperatorAddress),
+                GovernanceToken).RawValue;
+            validator1Reward = states.GetBalance(
+                ValidatorRewards.DeriveAddress(validator1Address, GovernanceToken),
+                GovernanceToken).RawValue;
+            validator2Reward = states.GetBalance(
+                ValidatorRewards.DeriveAddress(validator2Address, GovernanceToken),
+                GovernanceToken).RawValue;
+            var delegatorReward = states.GetBalance(
+                AllocateRewardCtrl.RewardAddress(delegatorAddress),
+                GovernanceToken).RawValue;
+
+            // Sum is 1000
+            Assert.Equal(224, validator1OperatorReward);
+            Assert.Equal(190, validator2OperatorReward);
+            Assert.Equal(1, validator1Reward);
+            Assert.Equal(0, validator2Reward);
+            Assert.Equal(85, delegatorReward);
+
             states = new UpdateValidators().Execute(new ActionContext { PreviousState = states });
 
             new Random().NextBytes(bytes);
@@ -215,16 +247,16 @@
             validator2Reward = states.GetBalance(
                 ValidatorRewards.DeriveAddress(validator2Address, GovernanceToken),
                 GovernanceToken).RawValue;
-            var delegatorReward = states.GetBalance(
+            delegatorReward = states.GetBalance(
                 AllocateRewardCtrl.RewardAddress(delegatorAddress),
                 GovernanceToken).RawValue;
 
             // Sum is 1000
-            Assert.Equal(291, validator1OperatorReward);
-            Assert.Equal(176, validator2OperatorReward);
-            Assert.Equal(217, validator1Reward);
-            Assert.Equal(274, validator2Reward);
-            Assert.Equal(42, delegatorReward);
+            Assert.Equal(271, validator1OperatorReward);
+            Assert.Equal(214, validator2OperatorReward);
+            Assert.Equal(207, validator1Reward);
+            Assert.Equal(223, validator2Reward);
+            Assert.Equal(85, delegatorReward);
         }
     }
 }

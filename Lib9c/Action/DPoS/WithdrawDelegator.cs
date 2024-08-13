@@ -4,6 +4,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.DPoS.Control;
+using Nekoyume.Action.DPoS.Exception;
 using Nekoyume.Action.DPoS.Model;
 using Nekoyume.Action.DPoS.Util;
 using Nekoyume.Module;
@@ -64,7 +65,17 @@ namespace Nekoyume.Action.DPoS
                 nativeTokens,
                 Delegation.DeriveAddress(context.Signer, Validator));
 
+            if (!(ValidatorCtrl.GetValidator(states, Validator) is { } validator))
+            {
+                throw new NullValidatorException(Validator);
+            }
+
 #pragma warning disable LAA1002
+            foreach (var nativeToken in nativeTokens)
+            {
+                states = states.StartNew(ctx, nativeToken, Validator, validator.DelegatorShares);
+            }
+
             foreach (Currency nativeToken in nativeTokens)
             {
                 FungibleAssetValue reward = states.GetBalance(

@@ -190,6 +190,7 @@ namespace Nekoyume.Action.DPoS.Control
 
                 states = states.AddRewardToWipRecord(
                     Validator.DeriveAddress(vote.ValidatorPublicKey.Address),
+                    nativeToken,
                     delegationRewardSum);
             }
 
