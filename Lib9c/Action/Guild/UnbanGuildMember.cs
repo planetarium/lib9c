@@ -9,7 +9,8 @@ using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
 {
-    [ActionType(TypeIdentifier)]
+    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
+    // [ActionType(TypeIdentifier)]
     public class UnbanGuildMember : ActionBase
     {
         public const string TypeIdentifier = "unban_guild_member";
