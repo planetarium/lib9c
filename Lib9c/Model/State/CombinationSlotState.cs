@@ -11,41 +11,70 @@ namespace Nekoyume.Model.State
 {
     public class CombinationSlotState : State
     {
+        private const string UnlockBlockIndexKey = "unlockBlockIndex";
+        private const string StartBlockIndexKey = "startBlockIndex";
+        private const string ResultKey = "result";
+        private const string PetIdKey = "petId";
+        private const string IndexKey = "index";
+
         public const string DeriveFormat = "combination-slot-{0}";
         public long UnlockBlockIndex { get; private set; }
-        [Obsolete("Not used anymore since v200092")]
-        public int UnlockStage { get; private set; }
         public long StartBlockIndex { get; private set; }
         public AttachmentActionResult Result { get; private set; }
         public int? PetId { get; private set; }
         public long RequiredBlockIndex => UnlockBlockIndex - StartBlockIndex;
+        /// <summary>
+        /// It is a CombinationSlot index. start from 0.
+        /// </summary>
+        public int Index { get; private set; }
+        // TODO: Add IsUnlocked property
 
+        /// <summary>
+        /// Is only used for migration legacy state.
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="slotIndex"></param>
+        /// <returns></returns>
         public static Address DeriveAddress(Address address, int slotIndex) =>
             address.Derive(string.Format(
                 CultureInfo.InvariantCulture,
                 DeriveFormat,
                 slotIndex));
 
-        public CombinationSlotState(Address address, int unlockStage) : base(address)
+        public CombinationSlotState(Address address, int index = 0) : base(address)
         {
-            UnlockStage = unlockStage;
+            if (index < 0 || index >= AvatarState.CombinationSlotCapacity)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(index),
+                    index,
+                    "The index of the combination slot must be between 0 and CombinationSlotCapacity.");
+            }
+
+            UnlockBlockIndex = 0;
+            Index = index;
         }
 
         public CombinationSlotState(Dictionary serialized) : base(serialized)
         {
-            UnlockBlockIndex = serialized["unlockBlockIndex"].ToLong();
-            UnlockStage = serialized["unlockStage"].ToInteger();
-            if (serialized.TryGetValue((Text) "result", out var result))
+            UnlockBlockIndex = serialized[UnlockBlockIndexKey].ToLong();
+
+            if (serialized.TryGetValue((Text)IndexKey, out var index))
+            {
+                Index = (Integer)index;
+            }
+
+            if (serialized.TryGetValue((Text)ResultKey, out var result))
             {
                 Result = AttachmentActionResult.Deserialize((Dictionary) result);
             }
 
-            if (serialized.TryGetValue((Text) "startBlockIndex", out var value))
+            if (serialized.TryGetValue((Text)StartBlockIndexKey, out var value))
             {
                 StartBlockIndex = value.ToLong();
             }
 
-            if (serialized.TryGetValue((Text) "petId", out var petId))
+            if (serialized.TryGetValue((Text)PetIdKey, out var petId))
             {
                 PetId = petId.ToNullableInteger();
             }
@@ -60,12 +89,12 @@ namespace Nekoyume.Model.State
             }
 
             return avatarState.worldInformation != null &&
-                   avatarState.worldInformation.IsStageCleared(UnlockStage) &&
                    blockIndex >= UnlockBlockIndex;
         }
 
         public bool ValidateV2(AvatarState avatarState, long blockIndex)
         {
+            // TODO: Lock상태인지 확인하는 로직 추가
             if (avatarState is null)
             {
                 return false;
@@ -112,20 +141,21 @@ namespace Nekoyume.Model.State
         {
             var values = new Dictionary<IKey, IValue>
             {
-                [(Text) "unlockBlockIndex"] = UnlockBlockIndex.Serialize(),
-                [(Text) "unlockStage"] = UnlockStage.Serialize(),
-                [(Text) "startBlockIndex"] = StartBlockIndex.Serialize(),
+                [(Text)UnlockBlockIndexKey] = UnlockBlockIndex.Serialize(),
+                [(Text)StartBlockIndexKey] = StartBlockIndex.Serialize(),
+                [(Text)IndexKey] = (Integer)Index,
             };
 
-            if (!(Result is null))
+            if (Result is not null)
             {
-                values.Add((Text)"result", Result.Serialize());
+                values.Add((Text)ResultKey, Result.Serialize());
             }
 
-            if (!(PetId is null))
+            if (PetId is not null)
             {
-                values.Add((Text)"petId", PetId.Serialize());
+                values.Add((Text)PetIdKey, PetId.Serialize());
             }
+
 #pragma warning disable LAA1002
             return new Dictionary(values.Union((Dictionary) base.Serialize()));
 #pragma warning restore LAA1002
