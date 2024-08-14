@@ -115,7 +115,7 @@ namespace Nekoyume.Action
                     {
                         var currency = Currencies.GetUnwrappedCurrency(tokenCurrency);
                         var recipientAddress =
-                            Currencies.SelectRecipientAddress(currency, avatarState.agentAddress,
+                            Currencies.PickAddress(currency, avatarState.agentAddress,
                                 avatarAddress);
                         var fav = FungibleAssetValue.FromRawValue(currency, fungibleAssetValue.RawValue);
                         states = states

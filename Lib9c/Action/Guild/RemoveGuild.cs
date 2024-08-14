@@ -10,7 +10,8 @@ namespace Nekoyume.Action.Guild
     /// <summary>
     /// An action to remove the guild.
     /// </summary>
-    [ActionType(TypeIdentifier)]
+    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
+    // [ActionType(TypeIdentifier)]
     public class RemoveGuild : ActionBase
     {
         public const string TypeIdentifier = "remove_guild";

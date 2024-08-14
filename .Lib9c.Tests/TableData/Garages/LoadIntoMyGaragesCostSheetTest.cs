@@ -17,16 +17,16 @@ namespace Lib9c.Tests.TableData.Garages
         public LoadIntoMyGaragesCostSheetTest()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("id,currency_ticker,fungible_id,garage_cost_per_unit");
+            sb.AppendLine("id,currency_ticker,fungible_id,garage_cost_per_unit,item_id");
             sb.AppendLine(
-                "1,,00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe,0.16");
+                "1,,00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe,0.16,500000");
             sb.AppendLine(
-                "2,,3991e04dd808dc0bc24b21f5adb7bf1997312f8700daf1334bf34936e8a0813a,0.0016");
+                "2,,3991e04dd808dc0bc24b21f5adb7bf1997312f8700daf1334bf34936e8a0813a,0.0016,400000");
             sb.AppendLine(
-                "3,,1a755098a2bc0659a063107df62e2ff9b3cdaba34d96b79519f504b996f53820,1");
+                "3,,1a755098a2bc0659a063107df62e2ff9b3cdaba34d96b79519f504b996f53820,1,800201");
             sb.AppendLine(
-                "4,,f8faf92c9c0d0e8e06694361ea87bfc8b29a8ae8de93044b98470a57636ed0e0,10");
-            sb.AppendLine("5,RUNE_GOLDENLEAF,,10");
+                "4,,f8faf92c9c0d0e8e06694361ea87bfc8b29a8ae8de93044b98470a57636ed0e0,10,600201");
+            sb.AppendLine("5,RUNE_GOLDENLEAF,,10,");
             _sheet = new LoadIntoMyGaragesCostSheet();
             _sheet.Set(sb.ToString());
         }
@@ -75,9 +75,9 @@ namespace Lib9c.Tests.TableData.Garages
         public void Set_InvalidFungibleId()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("id,currency_ticker,fungible_id,garage_cost_per_unit");
+            sb.AppendLine("id,currency_ticker,fungible_id,garage_cost_per_unit,item_id");
             sb.AppendLine(
-                "1,,INVALID,0.16");
+                "1,,INVALID,0.16,500000");
 
             var sheet = new LoadIntoMyGaragesCostSheet();
             Assert.Throws<ArgumentOutOfRangeException>(() => sheet.Set(sb.ToString()));
@@ -87,9 +87,9 @@ namespace Lib9c.Tests.TableData.Garages
         public void Set_InvalidGarageCostPerUnit()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("id,currency_ticker,fungible_id,garage_cost_per_unit");
+            sb.AppendLine("id,currency_ticker,fungible_id,garage_cost_per_unit,item_id");
             sb.AppendLine(
-                "1,,00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe,INVALID");
+                "1,,00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe,INVALID,500000");
 
             var sheet = new LoadIntoMyGaragesCostSheet();
             Assert.Throws<ArgumentException>(() => sheet.Set(sb.ToString()));
@@ -242,6 +242,36 @@ namespace Lib9c.Tests.TableData.Garages
             fungibleId = HashDigest<SHA256>.FromString(
                 "1234567890123456789012345678901234567890123456789012345678901234");
             Assert.False(_sheet.HasCost(fungibleId));
+        }
+
+        [Fact]
+        public void GetGarageCostPerUnit_ItemId()
+        {
+            foreach (var row in _sheet.Values.Where(i => i.FungibleId is not null))
+            {
+                Assert.Equal(_sheet.GetGarageCostPerUnit((HashDigest<SHA256>)row.FungibleId!), _sheet.GetGarageCostPerUnit(row.ItemId));
+            }
+        }
+
+        [Fact]
+        public void GetGarageCost_ItemId()
+        {
+            foreach (var row in _sheet.Values.Where(i => i.FungibleId is not null))
+            {
+                Assert.Equal(_sheet.GetGarageCost((HashDigest<SHA256>)row.FungibleId!, 3), _sheet.GetGarageCost(row.ItemId, 3));
+            }
+        }
+
+        [Fact]
+        public void Set_Without_ItemId()
+        {
+            var row = new LoadIntoMyGaragesCostSheet.Row();
+            row.Set("1,,00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe,0.16".Split(","));
+            Assert.Equal(1, row.Id);
+            Assert.True(string.IsNullOrEmpty(row.CurrencyTicker));
+            Assert.Equal(HashDigest<SHA256>.FromString("00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe"), row.FungibleId);
+            Assert.Equal(0.16m, row.GarageCostPerUnit);
+            Assert.Equal(0, row.ItemId);
         }
     }
 }

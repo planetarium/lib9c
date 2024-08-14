@@ -414,13 +414,8 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     // CRYSTAL's minorUnit is not actually used in network, avoid cost calculate exception in test.
                     var value = 1 * fav.Currency;
-                    if (Currencies.IsRuneTicker(fav.Currency.Ticker) ||
-                        Currencies.IsSoulstoneTicker(fav.Currency.Ticker))
-                    {
-                        return (avatarAddr, value);
-                    }
-
-                    return (agentAddr, value);
+                    var recipient = Currencies.PickAddress(fav.Currency, agentAddr, avatarAddr);
+                    return (recipient, value);
                 })
                 .ToArray();
         }

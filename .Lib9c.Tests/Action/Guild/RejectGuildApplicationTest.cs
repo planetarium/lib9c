@@ -18,10 +18,9 @@ namespace Lib9c.Tests.Action.Guild
             var action = new RejectGuildApplication(agentAddress);
             var plainValue = action.PlainValue;
 
-            var actionLoader = new NCActionLoader();
-            var loadedRaw = actionLoader.LoadAction(0, plainValue);
-            var loadedAction = Assert.IsType<RejectGuildApplication>(loadedRaw);
-            Assert.Equal(agentAddress, loadedAction.Target);
+            var deserialized = new RejectGuildApplication();
+            deserialized.LoadPlainValue(plainValue);
+            Assert.Equal(agentAddress, deserialized.Target);
         }
 
         [Fact]
