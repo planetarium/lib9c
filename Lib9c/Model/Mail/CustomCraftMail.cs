@@ -4,20 +4,20 @@ using Nekoyume.Model.Item;
 
 namespace Nekoyume.Model.Mail
 {
-    public class CustomCraftMail: Mail
+    public class CustomCraftMail : Mail
     {
         public Equipment Equipment;
 
         public override MailType MailType => MailType.CustomCraft;
+        protected override string TypeId => nameof(CustomCraftMail);
 
         public override void Read(IMail mail)
         {
             mail.Read(this);
         }
 
-        protected override string TypeId { get; }
-
-        public CustomCraftMail(long blockIndex, Guid id, long requiredBlockIndex, Equipment equipment) : base(blockIndex, id, requiredBlockIndex)
+        public CustomCraftMail(long blockIndex, Guid id, long requiredBlockIndex,
+            Equipment equipment) : base(blockIndex, id, requiredBlockIndex)
         {
             Equipment = equipment;
         }
