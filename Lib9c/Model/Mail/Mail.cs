@@ -15,6 +15,7 @@ namespace Nekoyume.Model.Mail
         System,
         Grinding,
         Summon,
+        CustomCraft,
     }
 
     [Serializable]
