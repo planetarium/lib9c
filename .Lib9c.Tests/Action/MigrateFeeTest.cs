@@ -102,4 +102,36 @@ public class MigrateFeeTest
 
         Assert.Equal(memo, !string.IsNullOrEmpty(des.Memo));
     }
+
+    [Fact]
+    public void Execute_Throw_InsufficientBalanceException()
+    {
+        var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
+        var context = new ActionContext();
+        var state = new World(MockUtil.MockModernWorldState)
+            .SetLegacyState(AdminState.Address, new AdminState(admin, 100).Serialize())
+            .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(_ncgCurrency).Serialize());
+        var recipient = new PrivateKey().Address;
+        var transferData = new List<(Address sender, Address recipient, BigInteger amount)>();
+        var amount = 1 * _ncgCurrency;
+        var address = new PrivateKey().Address;
+        var balance = 0.1m;
+        var fav = FungibleAssetValue.Parse(_ncgCurrency, balance.ToString(CultureInfo.InvariantCulture));
+        state = state.MintAsset(context, address, fav);
+        transferData.Add((address, recipient, amount.RawValue));
+
+        var action = new MigrateFee
+        {
+            TransferData = transferData,
+            Memo = "memo",
+        };
+
+        Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
+        {
+            BlockIndex = 1L,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = admin,
+        }));
+    }
 }
