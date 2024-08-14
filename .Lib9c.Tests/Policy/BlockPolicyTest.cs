@@ -5,14 +5,12 @@ namespace Lib9c.Tests
     using System.Collections.Immutable;
     using System.Linq;
     using System.Numerics;
-    using System.Security.Cryptography;
     using Bencodex.Types;
     using Lib9c.Renderers;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
-    using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Store;
     using Libplanet.Store.Trie;
@@ -23,6 +21,7 @@ namespace Lib9c.Tests
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.DPoS;
     using Nekoyume.Action.DPoS.Control;
     using Nekoyume.Action.DPoS.Model;
     using Nekoyume.Action.DPoS.Sys;
@@ -30,7 +29,6 @@ namespace Lib9c.Tests
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class BlockPolicyTest
@@ -353,6 +351,7 @@ namespace Lib9c.Tests
             var adminPrivateKey = new PrivateKey();
             var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
+            var currency = Currency.Legacy("NCG", 2, adminPrivateKey.Address);
 
             (ActivationKey ak, PendingActivationState ps) = ActivationKey.Create(
                 new PrivateKey(),
@@ -371,7 +370,8 @@ namespace Lib9c.Tests
                     10
                 ),
                 new Dictionary<PublicKey, BigInteger> { { adminPrivateKey.PublicKey, BigInteger.One } },
-                pendingActivations: new[] { ps }
+                pendingActivations: new[] { ps },
+                privateKey: adminPrivateKey
             );
 
             using var store = new DefaultStore(null);
@@ -391,13 +391,24 @@ namespace Lib9c.Tests
                 renderers: new[] { new BlockRenderer() }
             );
 
+            var mintSpecs = new MintAssets.MintSpec[]
+            {
+                new (adminPrivateKey.Address, currency * 1, null),
+            };
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new DailyReward(), }
+                new ActionBase[] { new MintAssets(mintSpecs, null) }
             );
-
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             BlockCommit blockCommit = GenerateBlockCommit(block, adminPrivateKey);
+            blockChain.Append(block, blockCommit);
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { new PromoteValidator(adminPrivateKey.PublicKey, 1), }
+            );
+            block = blockChain.ProposeBlock(adminPrivateKey, lastCommit: blockCommit);
+            blockCommit = GenerateBlockCommit(block, adminPrivateKey);
             blockChain.Append(block, blockCommit);
 
             // Append an empty block since the block reward allocation
@@ -406,14 +417,16 @@ namespace Lib9c.Tests
             blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
             FungibleAssetValue rewardBalance = blockChain
                 .GetNextWorldState()
-                .GetBalance(AllocateRewardCtrl.RewardAddress(adminAddress), _currency);
+                .GetBalance(AllocateRewardCtrl.RewardAddress(adminAddress), currency);
             FungibleAssetValue validatorRewardBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(
                     ValidatorRewards.DeriveAddress(
                         Nekoyume.Action.DPoS.Model.Validator.DeriveAddress(adminAddress),
-                        _currency), _currency);
-            FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 5, 0);
+                        currency), currency);
+
+            // Expected to have 5 * 2 NCG since two blocks were appended.
+            FungibleAssetValue expectedBalance = new FungibleAssetValue(currency, 5 * 2, 0);
 
             // Sum of validation reward and delegation reward is equal to single RewardGold reward.
             Assert.Equal(expectedBalance, rewardBalance + validatorRewardBalance);
@@ -706,7 +719,7 @@ namespace Lib9c.Tests
             var sheets = TableSheetsImporter.ImportSheets();
             return BlockHelper.ProposeGenesisBlock(
                 sheets,
-                new GoldDistribution[0],
+                Array.Empty<GoldDistribution>(),
                 pendingActivations,
                 new AdminState(adminAddress, 1500000),
                 authorizedMinersState: authorizedMinersState,
