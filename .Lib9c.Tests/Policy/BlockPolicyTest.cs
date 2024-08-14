@@ -54,7 +54,7 @@ namespace Lib9c.Tests
             var adminAddress = adminPrivateKey.Address;
 
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
+            IBlockPolicy policy = blockPolicySource.GetTestBlockPolicy();
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 adminAddress,
@@ -72,13 +72,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
-                        endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
-                            .Where(action => action is not UpdateValidators)
-                            .ToImmutableArray(),
-                        beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
-                        endTxActions: policy.PolicyActionsRegistry.EndTxActions),
+                    policyActionsRegistry: policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),
@@ -366,11 +360,7 @@ namespace Lib9c.Tests
             );
 
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(
-                maxTransactionsBytesPolicy: null,
-                minTransactionsPerBlockPolicy: null,
-                maxTransactionsPerBlockPolicy: null,
-                maxTransactionsPerSignerPerBlockPolicy: null);
+            IBlockPolicy policy = blockPolicySource.GetTestBlockPolicy();
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 adminAddress,
@@ -394,13 +384,7 @@ namespace Lib9c.Tests
                 stateStore,
                 genesis,
                 new ActionEvaluator(
-                    new PolicyActionsRegistry(
-                        beginBlockActions: policy.PolicyActionsRegistry.BeginBlockActions,
-                        endBlockActions: policy.PolicyActionsRegistry.EndBlockActions
-                            .Where(action => action is not UpdateValidators)
-                            .ToImmutableArray(),
-                        beginTxActions: policy.PolicyActionsRegistry.BeginTxActions,
-                        endTxActions: policy.PolicyActionsRegistry.EndTxActions),
+                    policyActionsRegistry: policy.PolicyActionsRegistry,
                     stateStore: stateStore,
                     actionTypeLoader: new NCActionLoader()
                 ),

@@ -93,6 +93,25 @@ namespace Nekoyume.Blockchain.Policy
             };
         }
 
+        public IBlockPolicy GetTestBlockPolicy()
+        {
+            return GetPolicy(
+                maxTransactionsBytesPolicy: null,
+                minTransactionsPerBlockPolicy: null,
+                maxTransactionsPerBlockPolicy: null,
+                maxTransactionsPerSignerPerBlockPolicy: null,
+                policyActionsRegistry: new PolicyActionsRegistry(
+                    new IAction[] { new AllocateReward() }.ToImmutableArray(),
+                    new IAction[]
+                        {
+                            new RecordProposer(),
+                            new RewardGold()
+                        }
+                        .ToImmutableArray(),
+                    new IAction[] { new Mortgage() }.ToImmutableArray(),
+                    new IAction[] { new Reward(), new Refund() }.ToImmutableArray()));
+        }
+
         /// <summary>
         /// Gets a <see cref="BlockPolicy"/> constructed from given parameters.
         /// </summary>
@@ -107,10 +126,10 @@ namespace Nekoyume.Blockchain.Policy
         /// can have.</param>
         /// <returns>A <see cref="BlockPolicy"/> constructed from given parameters.</returns>
         internal IBlockPolicy GetPolicy(
-            IVariableSubPolicy<long> maxTransactionsBytesPolicy,
-            IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
-            IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy,
+            IVariableSubPolicy<long>? maxTransactionsBytesPolicy,
+            IVariableSubPolicy<int>? minTransactionsPerBlockPolicy,
+            IVariableSubPolicy<int>? maxTransactionsPerBlockPolicy,
+            IVariableSubPolicy<int>? maxTransactionsPerSignerPerBlockPolicy,
             PolicyActionsRegistry? policyActionsRegistry = null)
         {
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
