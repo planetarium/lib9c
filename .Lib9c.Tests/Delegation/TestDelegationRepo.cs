@@ -1,14 +1,14 @@
 #nullable enable
-using System;
-using Bencodex.Types;
-using Libplanet.Action;
-using Libplanet.Action.State;
-using Libplanet.Crypto;
-using Libplanet.Types.Assets;
-
 namespace Nekoyume.Delegation
 {
-    public class DelegationRepository : IDelegationRepository
+    using System;
+    using Bencodex.Types;
+    using Libplanet.Action;
+    using Libplanet.Action.State;
+    using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
+
+    public class TestDelegationRepo : IDelegationRepository
     {
         private readonly Address bondAddress = Addresses.Bond;
         private readonly Address unbondLockInAddress = Addresses.UnbondLockIn;
@@ -24,7 +24,7 @@ namespace Nekoyume.Delegation
         private IAccount _unbondingSet;
         private IAccount _lumpSumRewardsRecord;
 
-        public DelegationRepository(IWorld world, IActionContext context)
+        public TestDelegationRepo(IWorld world, IActionContext context)
         {
             _world = world;
             _context = context;
@@ -144,5 +144,8 @@ namespace Nekoyume.Delegation
 
         public void TransferAsset(Address sender, Address recipient, FungibleAssetValue value)
             => _world = _world.TransferAsset(_context, sender, recipient, value);
+
+        public void MintAsset(Address recipient, FungibleAssetValue value)
+            => _world = _world.MintAsset(_context, recipient, value);
     }
 }

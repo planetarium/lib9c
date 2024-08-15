@@ -5,8 +5,8 @@ using Nekoyume.Delegation;
 
 public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
 {
-    public DummyDelegatee(Address address)
-        : base(address)
+    public DummyDelegatee(Address address, IDelegationRepository repository)
+        : base(address, repository)
     {
     }
 
@@ -14,7 +14,7 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
 
     public override Currency RewardCurrency => DelegationFixture.TestCurrency;
 
-    public override Address PoolAddress => DelegationFixture.FixedPoolAddress;
+    public override Address DelegationPoolAddress => DelegationFixture.FixedPoolAddress;
 
     public override long UnbondingPeriod => 3;
 

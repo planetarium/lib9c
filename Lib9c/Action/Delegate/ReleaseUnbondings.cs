@@ -25,7 +25,7 @@ namespace Nekoyume.Action.Delegate
 
             var world = context.PreviousState;
 
-            return world.Release(context);
+            return world.ReleaseUnbondings(context);
         }
     }
 }

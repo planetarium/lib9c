@@ -16,7 +16,7 @@ namespace Nekoyume.Delegation
 
         Currency RewardCurrency { get; }
 
-        Address PoolAddress { get; }
+        Address DelegationPoolAddress { get; }
 
         long UnbondingPeriod { get; }
 

@@ -57,7 +57,7 @@ namespace Nekoyume.Model.Guild
 
         public override Currency RewardCurrency { get; }
 
-        public override Address PoolAddress => DeriveAddress(PoolId);
+        public override Address DelegationPoolAddress => DeriveAddress(PoolId);
 
         public override long UnbondingPeriod => 75600L;
 

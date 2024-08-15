@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -15,7 +16,7 @@ namespace Nekoyume.Module.Delegation
         public static Bond GetBond(this IWorldState world, Address address)
             => TryGetBond(world, address, out var bond)
                 ? bond!
-                : new Bond(address);
+                : throw new InvalidOperationException("Bond not found");
 
         public static bool TryGetBond(
             this IWorldState world, Address address, out Bond? bond)

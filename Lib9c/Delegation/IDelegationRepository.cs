@@ -13,7 +13,11 @@ namespace Nekoyume.Delegation
 
         UnbondLockIn GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress);
 
+        UnbondLockIn GetUnlimitedUnbondLockIn(Address address);
+
         RebondGrace GetRebondGrace(IDelegatee delegatee, Address delegatorAddress);
+
+        RebondGrace GetUnlimitedRebondGrace(Address address);
 
         UnbondingSet GetUnbondingSet();
 

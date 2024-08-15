@@ -90,7 +90,7 @@ namespace Nekoyume.Delegation
 
         public abstract Currency RewardCurrency { get; }
 
-        public abstract Address PoolAddress { get; }
+        public abstract Address DelegationPoolAddress { get; }
 
         public abstract long UnbondingPeriod { get; }
 
@@ -140,7 +140,9 @@ namespace Nekoyume.Delegation
 
         public BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
-            CannotMutateWithoutRepository(delegator);
+            CannotMutateReleationsWithoutRepository(delegator);
+            Reward(delegator, height);
+
             if (!fav.Currency.Equals(Currency))
             {
                 throw new InvalidOperationException(
@@ -154,14 +156,14 @@ namespace Nekoyume.Delegation
             TotalShares += share;
             TotalDelegated += fav;
             _repository.SetBond(bond);
-            Reward(delegator, height);
 
             return share;
         }
 
         public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
-            CannotMutateWithoutRepository(delegator);
+            CannotMutateReleationsWithoutRepository(delegator);
+            Reward(delegator, height);
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
                 throw new InvalidOperationException(
@@ -179,18 +181,22 @@ namespace Nekoyume.Delegation
             TotalShares -= share;
             TotalDelegated -= fav;
             _repository.SetBond(bond);
-            Reward(delegator, height);
-
+            
             return fav;
         }
 
         public void Reward(T delegator, long height)
         {
-            CannotMutateWithoutRepository(delegator);
+            CannotMutateReleationsWithoutRepository(delegator);
             BigInteger share = _repository!.GetBond(this, delegator.Address).Share;
             IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
                 GetLumpSumRewardsRecords(delegator.LastRewardHeight);
             FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
+            if (reward.Sign <= 0)
+            {
+                return;
+            }
+
             _repository.TransferAsset(RewardPoolAddress, delegator.Address, reward);
             StartNewRewardPeriod(height);
             delegator.UpdateLastRewardHeight(height);
@@ -221,7 +227,7 @@ namespace Nekoyume.Delegation
             && (GetType() != delegatee.GetType())
             && Address.Equals(delegatee.Address)
             && Currency.Equals(delegatee.Currency)
-            && PoolAddress.Equals(delegatee.PoolAddress)
+            && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
             && UnbondingPeriod == delegatee.UnbondingPeriod
             && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
             && Delegators.SequenceEqual(delegatee.Delegators)
@@ -249,7 +255,7 @@ namespace Nekoyume.Delegation
 
         private void StartNewRewardPeriod(long height)
         {
-            CannotMutateWithoutRepository();
+            CannotMutateRelationsWithoutRepository();
             LumpSumRewardsRecord? currentRecord = _repository!.GetCurrentLumpSumRewardsRecord(this);
             long? lastStartHeight = null;
             if (currentRecord is LumpSumRewardsRecord lastRecord)
@@ -304,14 +310,15 @@ namespace Nekoyume.Delegation
 
         private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
         {
-            CannotMutateWithoutRepository();
+            CannotMutateRelationsWithoutRepository();
             List<LumpSumRewardsRecord> records = new();
-            if (!(_repository!.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
+            if (lastRewardHeight is null
+                || !(_repository!.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
             {
                 return records;
             }
 
-            do
+            while (record.StartHeight >= lastRewardHeight)
             {
                 records.Add(record);
 
@@ -324,14 +331,13 @@ namespace Nekoyume.Delegation
                     ?? throw new InvalidOperationException(
                         $"Lump sum rewards record for #{lastStartHeight} is missing");
             }
-            while (record.StartHeight >= lastRewardHeight);
 
             return records;
         }
 
-        private void CannotMutateWithoutRepository(T delegator)
+        private void CannotMutateReleationsWithoutRepository(T delegator)
         {
-            CannotMutateWithoutRepository();
+            CannotMutateRelationsWithoutRepository();
             if (!_repository!.Equals(delegator.Repository))
             {
                 throw new InvalidOperationException(
@@ -339,7 +345,7 @@ namespace Nekoyume.Delegation
             }
         }
 
-        private void CannotMutateWithoutRepository()
+        private void CannotMutateRelationsWithoutRepository()
         {
             if (_repository is null)
             {

@@ -15,39 +15,58 @@ namespace Nekoyume.Delegation
         private static readonly IComparer<UnbondLockInEntry> _entryComparer
             = new UnbondLockInEntryComparer();
 
-        private FungibleAssetValue? _releasedFAV;
+        private readonly IDelegationRepository? _repository;
 
-        public UnbondLockIn(Address address, int maxEntries)
+        public UnbondLockIn(
+            Address address,
+            int maxEntries,
+            Address sender,
+            Address recipient,
+            IDelegationRepository? repository)
             : this(
                   address,
                   maxEntries,
-                  ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>>.Empty)
+                  sender,
+                  recipient,
+                  ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>>.Empty,
+                  repository)
+        {
+            _repository = repository;
+        }
+
+        public UnbondLockIn(
+            Address address, int maxEntries, IValue bencoded, IDelegationRepository? repository = null)
+            : this(address, maxEntries, (List)bencoded, repository)
         {
         }
 
-        public UnbondLockIn(Address address, int maxEntries, IValue bencoded)
-            : this(address, maxEntries, (List)bencoded)
-        {
-        }
-
-        public UnbondLockIn(Address address, int maxEntries, List bencoded)
+        public UnbondLockIn(
+            Address address, int maxEntries, List bencoded, IDelegationRepository? repository = null)
             : this(
                   address,
                   maxEntries,
-                  bencoded.Select(kv => kv is List list
+                  new Address(bencoded[0]),
+                  new Address(bencoded[1]),
+                  ((List)bencoded[2]).Select(kv => kv is List list
                       ? new KeyValuePair<long, ImmutableList<UnbondLockInEntry>>(
                           (Integer)list[0],
                           ((List)list[1]).Select(e => new UnbondLockInEntry(e)).ToImmutableList())
                       : throw new InvalidCastException(
                           $"Unable to cast object of type '{kv.GetType()}' " +
                           $"to type '{typeof(List)}'."))
-                  .ToImmutableSortedDictionary())
+                  .ToImmutableSortedDictionary(),
+                  repository)
         {
         }
 
         public UnbondLockIn(
-            Address address, int maxEntries, IEnumerable<UnbondLockInEntry> entries)
-            : this(address, maxEntries)
+            Address address,
+            int maxEntries,
+            Address sender,
+            Address recipient,
+            IEnumerable<UnbondLockInEntry> entries,
+            IDelegationRepository? repository = null)
+            : this(address, maxEntries, sender, recipient, repository)
         {
             foreach (var entry in entries)
             {
@@ -58,8 +77,10 @@ namespace Nekoyume.Delegation
         private UnbondLockIn(
             Address address,
             int maxEntries,
+            Address sender,
+            Address recipient,
             ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> entries,
-            FungibleAssetValue? releasedFAV = null)
+            IDelegationRepository? repository)
         {
             if (maxEntries < 0)
             {
@@ -72,12 +93,21 @@ namespace Nekoyume.Delegation
             Address = address;
             MaxEntries = maxEntries;
             Entries = entries;
-            _releasedFAV = releasedFAV;
+            Sender = sender;
+            Recipient = recipient;
+            _repository = repository;
         }
 
         public Address Address { get; }
 
         public int MaxEntries { get; }
+
+        public Address Sender { get; }
+
+        public Address Recipient { get; }
+
+        // TODO: Use better custom collection type
+        public ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> Entries { get; }
 
         public long LowestExpireHeight => Entries.First().Key;
 
@@ -85,23 +115,24 @@ namespace Nekoyume.Delegation
 
         public bool IsEmpty => Entries.IsEmpty;
 
-        // TODO: Use better custom collection type
-        public ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> Entries { get; }
-
         public ImmutableArray<UnbondLockInEntry> FlattenedEntries
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
 
         public List Bencoded
-            => new List(
-                Entries.Select(
-                    sortedDict => new List(
-                        (Integer)sortedDict.Key,
-                        new List(sortedDict.Value.Select(e => e.Bencoded)))));
+            => List.Empty
+                .Add(Sender.Bencoded)
+                .Add(Recipient.Bencoded)
+                .Add(new List(
+                    Entries.Select(
+                        sortedDict => new List(
+                            (Integer)sortedDict.Key,
+                            new List(sortedDict.Value.Select(e => e.Bencoded))))));
 
         IValue IBencodable.Bencoded => Bencoded;
 
         public UnbondLockIn Release(long height)
         {
+            CannotMutateRelationsWithoutRepository();
             if (height <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -111,7 +142,7 @@ namespace Nekoyume.Delegation
             }
 
             var updatedEntries = Entries;
-            FungibleAssetValue? releasedFAV = null;
+            FungibleAssetValue? releasingFAV = null;
             foreach (var (expireHeight, entries) in updatedEntries)
             {
                 if (expireHeight <= height)
@@ -119,10 +150,11 @@ namespace Nekoyume.Delegation
                     FungibleAssetValue entriesFAV = entries
                         .Select(e => e.LockInFAV)
                         .Aggregate((accum, next) => accum + next);
-                    releasedFAV = _releasedFAV is null
-                        ? entriesFAV
-                        : _releasedFAV + entriesFAV;
+                    releasingFAV = releasingFAV.HasValue
+                        ? releasingFAV.Value + entriesFAV
+                        : entriesFAV;
                     updatedEntries = updatedEntries.Remove(expireHeight);
+                    
                 }
                 else
                 {
@@ -130,7 +162,12 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            return UpdateEntries(updatedEntries, releasedFAV);
+            if (releasingFAV.HasValue)
+            {
+                _repository!.TransferAsset(Sender, Recipient, releasingFAV.Value);
+            }
+
+            return UpdateEntries(updatedEntries);
         }
 
         IUnbonding IUnbonding.Release(long height) => Release(height);
@@ -141,12 +178,6 @@ namespace Nekoyume.Delegation
 
         IUnbonding IUnbonding.Slash() => Slash();
 
-        public FungibleAssetValue? FlushReleasedFAV()
-        {
-            var releasedFAV = _releasedFAV;
-            _releasedFAV = null;
-            return releasedFAV;
-        }
 
         public override bool Equals(object? obj)
             => obj is UnbondLockIn other && Equals(other);
@@ -156,6 +187,8 @@ namespace Nekoyume.Delegation
             || (other is UnbondLockIn unbondLockIn
             && Address.Equals(unbondLockIn.Address)
             && MaxEntries == unbondLockIn.MaxEntries
+            && Sender.Equals(unbondLockIn.Sender)
+            && Recipient.Equals(unbondLockIn.Recipient)
             && FlattenedEntries.SequenceEqual(unbondLockIn.FlattenedEntries));
 
         public override int GetHashCode()
@@ -244,9 +277,8 @@ namespace Nekoyume.Delegation
                 .Aggregate((accum, next) => accum + next);
 
         private UnbondLockIn UpdateEntries(
-            ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> entries,
-            FungibleAssetValue? releasedFAV=null)
-            => new UnbondLockIn(Address, MaxEntries, entries, releasedFAV);
+            ImmutableSortedDictionary<long, ImmutableList<UnbondLockInEntry>> entries)
+            => new UnbondLockIn(Address, MaxEntries, Sender, Recipient, entries, _repository);
 
         private UnbondLockIn AddEntry(UnbondLockInEntry entry)
         {
@@ -267,6 +299,15 @@ namespace Nekoyume.Delegation
             return UpdateEntries(
                 Entries.Add(
                     entry.ExpireHeight, ImmutableList<UnbondLockInEntry>.Empty.Add(entry)));
+        }
+
+        private void CannotMutateRelationsWithoutRepository()
+        {
+            if (_repository is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot mutate without repository.");
+            }
         }
 
         public class UnbondLockInEntry : IUnbondingEntry, IBencodable, IEquatable<UnbondLockInEntry>

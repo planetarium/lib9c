@@ -14,30 +14,32 @@ namespace Nekoyume.Delegation
         private static readonly byte[] _unbondLockInTypeBytes = new byte[] { 0x75 }; // 'u'
         private static readonly byte[] _rebondGraceTypeBytes = new byte[] { 0x72 };  // 'r'
 
+        private readonly IDelegationRepository _repository;
         private ImmutableSortedDictionary<Address, long> _lowestExpireHeights;
         private ImmutableSortedDictionary<Address, byte[]> _typeDict;
 
-        public UnbondingSet()
+        public UnbondingSet(IDelegationRepository repository)
             : this(
                   ImmutableSortedDictionary<long, ImmutableSortedSet<Address>>.Empty,
                   ImmutableSortedDictionary<Address, long>.Empty,
-                  ImmutableSortedDictionary<Address, byte[]>.Empty)
+                  ImmutableSortedDictionary<Address, byte[]>.Empty,
+                  repository)
         {
         }
 
-        public UnbondingSet(IValue bencoded)
-            : this((List)bencoded)
+        public UnbondingSet(IValue bencoded, IDelegationRepository repository)
+            : this((List)bencoded, repository)
         {
         }
 
-        public UnbondingSet(List bencoded)
+        public UnbondingSet(List bencoded, IDelegationRepository repository)
             : this(
-                ((List)bencoded[1]).Select(
+                ((List)bencoded[0]).Select(
                     kv => new KeyValuePair<long, ImmutableSortedSet<Address>>(
                         (Integer)((List)kv)[0],
                         ((List)((List)kv)[1]).Select(a => new Address(a)).ToImmutableSortedSet()))
                   .ToImmutableSortedDictionary(),
-                ((List)bencoded[2]).Select(
+                ((List)bencoded[1]).Select(
                     kv => new KeyValuePair<Address, long>(
                         new Address(((List)kv)[0]),
                         (Integer)((List)kv)[1]))
@@ -46,18 +48,21 @@ namespace Nekoyume.Delegation
                     kv => new KeyValuePair<Address, byte[]>(
                         new Address(((List)kv)[0]),
                         ((Binary)((List)kv)[1]).ToArray()))
-                  .ToImmutableSortedDictionary())
+                  .ToImmutableSortedDictionary(),
+                repository)
         {
         }
 
         private UnbondingSet(
             ImmutableSortedDictionary<long, ImmutableSortedSet<Address>> unbondings,
             ImmutableSortedDictionary<Address, long> lowestExpireHeights,
-            ImmutableSortedDictionary<Address, byte[]> typeDict)
+            ImmutableSortedDictionary<Address, byte[]> typeDict,
+            IDelegationRepository repository)
         {
             Unbondings = unbondings;
             _lowestExpireHeights = lowestExpireHeights;
             _typeDict = typeDict;
+            _repository = repository;
         }
 
         public static Address Address => new Address(
@@ -66,6 +71,11 @@ namespace Nekoyume.Delegation
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00));
 
         public ImmutableSortedDictionary<long, ImmutableSortedSet<Address>> Unbondings { get; }
+
+        public ImmutableArray<Address> FlattenedUnbondings
+            => Unbondings.Values.SelectMany(e => e).ToImmutableArray();
+
+        public IDelegationRepository Repository => _repository;
 
         public List Bencoded
             => List.Empty
@@ -88,6 +98,18 @@ namespace Nekoyume.Delegation
         IValue IBencodable.Bencoded => Bencoded;
 
         public bool IsEmpty => Unbondings.IsEmpty;
+
+        public ImmutableArray<IUnbonding> UnbondingsToRelease(long height)
+            => Unbondings
+                .TakeWhile(kv => kv.Key <= height)
+                .SelectMany(kv => kv.Value)
+                .Select(address => (
+                    Address: address,
+                    Type: ToUnbondingType(_typeDict[address])))
+                .Select(tuple => LoadUnbonding(
+                    tuple.Address,
+                    tuple.Type))
+                .ToImmutableArray();
 
         public UnbondingSet SetUnbondings(IEnumerable<IUnbonding> unbondings)
         {
@@ -122,7 +144,8 @@ namespace Nekoyume.Delegation
                     _lowestExpireHeights.SetItem(
                         unbonding.Address, unbonding.LowestExpireHeight),
                     _typeDict.SetItem(
-                        unbonding.Address, ToTypeBytes(unbonding)));
+                        unbonding.Address, ToTypeBytes(unbonding)),
+                    _repository);
             }
 
             return new UnbondingSet(
@@ -132,10 +155,12 @@ namespace Nekoyume.Delegation
                 _lowestExpireHeights.SetItem(
                     unbonding.Address, unbonding.LowestExpireHeight),
                 _typeDict.SetItem(
-                    unbonding.Address, ToTypeBytes(unbonding)));
+                    unbonding.Address, ToTypeBytes(unbonding)),
+                _repository);
         }
 
-        public UnbondingSet RemoveUnbonding(Address address)
+
+        private UnbondingSet RemoveUnbonding(Address address)
         {
             if (_lowestExpireHeights.TryGetValue(address, out var expireHeight)
                 && Unbondings.TryGetValue(expireHeight, out var addresses))
@@ -143,27 +168,13 @@ namespace Nekoyume.Delegation
                 return new UnbondingSet(
                     Unbondings.SetItem(expireHeight, addresses.Remove(address)),
                     _lowestExpireHeights.Remove(address),
-                    _typeDict.Remove(address));
+                    _typeDict.Remove(address),
+                    _repository);
             }
             else
             {
                 throw new ArgumentException("The address is not in the unbonding set.");
             }
-        }
-
-        public IUnbonding[] ReleaseUnbondings(long height, Func<Address, Type, IValue> bencodedGetter)
-        {
-            return Unbondings
-                .TakeWhile(kv => kv.Key <= height)
-                .SelectMany(kv => kv.Value)
-                .Select(address => (
-                    Address: address,
-                    Type: ToUnbondingType(_typeDict[address])))
-                .Select(tuple => LoadUnbonding(
-                    tuple.Address,
-                    tuple.Type,
-                    bencodedGetter(tuple.Address, tuple.Type)))
-                .Select(u => u.Release(height)).ToArray();
         }
 
         private static byte[] ToTypeBytes(IUnbonding unbonding)
@@ -183,11 +194,11 @@ namespace Nekoyume.Delegation
             _ => throw new ArgumentException("Invalid type bytes.")
         };
 
-        private static IUnbonding LoadUnbonding(Address address, Type type, IValue bencoded)
+        private IUnbonding LoadUnbonding(Address address, Type type)
             => type switch
         {
-            var t when t == typeof(UnbondLockIn) => new UnbondLockIn(address, int.MaxValue, bencoded),
-            var t when t == typeof(RebondGrace) => new RebondGrace(address, int.MaxValue, bencoded),
+            var t when t == typeof(UnbondLockIn) => _repository.GetUnlimitedUnbondLockIn(address),
+            var t when t == typeof(RebondGrace) => _repository.GetUnlimitedRebondGrace(address),
             _ => throw new ArgumentException("Invalid unbonding type.")
         };
     }

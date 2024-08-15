@@ -15,20 +15,23 @@ namespace Nekoyume.Delegation
         private static readonly IComparer<RebondGraceEntry> _entryComparer
             = new RebondGraceEntryComparer();
 
-        public RebondGrace(Address address, int maxEntries)
+        private readonly IDelegationRepository? _repository;
+
+        public RebondGrace(Address address, int maxEntries, IDelegationRepository? repository = null)
             : this(
                   address,
                   maxEntries,
-                  ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>>.Empty)
+                  ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>>.Empty,
+                  repository)
         {
         }
 
-        public RebondGrace(Address address, int maxEntries, IValue bencoded)
-            : this(address, maxEntries, (List)bencoded)
+        public RebondGrace(Address address, int maxEntries, IValue bencoded, IDelegationRepository? repository = null)
+            : this(address, maxEntries, (List)bencoded, repository)
         {
         }
 
-        public RebondGrace(Address address, int maxEntries, List bencoded)
+        public RebondGrace(Address address, int maxEntries, List bencoded, IDelegationRepository? repository = null)
             : this(
                   address,
                   maxEntries,
@@ -38,12 +41,17 @@ namespace Nekoyume.Delegation
                           ((List)list[1]).Select(e => new RebondGraceEntry(e)).ToImmutableList())
                       : throw new InvalidCastException(
                           $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
-                  .ToImmutableSortedDictionary())
+                  .ToImmutableSortedDictionary(),
+                  repository)
         {
         }
 
-        public RebondGrace(Address address, int maxEntries, IEnumerable<RebondGraceEntry> entries)
-            : this(address, maxEntries)
+        public RebondGrace(
+            Address address,
+            int maxEntries,
+            IEnumerable<RebondGraceEntry> entries,
+            IDelegationRepository? repository = null)
+            : this(address, maxEntries, repository)
         {
             foreach (var entry in entries)
             {
@@ -54,7 +62,8 @@ namespace Nekoyume.Delegation
         private RebondGrace(
             Address address,
             int maxEntries,
-            ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries)
+            ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries,
+            IDelegationRepository? repository)
         {
             if (maxEntries < 0)
             {
@@ -67,11 +76,14 @@ namespace Nekoyume.Delegation
             Address = address;
             MaxEntries = maxEntries;
             Entries = entries;
+            _repository = repository;
         }
 
         public Address Address { get; }
 
         public int MaxEntries { get; }
+
+        public IDelegationRepository? Repository => _repository;
 
         public long LowestExpireHeight => Entries.First().Key;
 
@@ -180,7 +192,16 @@ namespace Nekoyume.Delegation
 
         private RebondGrace UpdateEntries(
             ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries)
-            => new RebondGrace(Address, MaxEntries, entries);
+            => new RebondGrace(Address, MaxEntries, entries, _repository);
+
+        private void CannotMutateRelationsWithoutRepository()
+        {
+            if (_repository is null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot mutate without repository.");
+            }
+        }
 
         public class RebondGraceEntry : IUnbondingEntry, IBencodable, IEquatable<RebondGraceEntry>
         {
