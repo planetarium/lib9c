@@ -142,6 +142,18 @@ namespace Nekoyume.Delegation
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
         }
 
+        public void Reward(IDelegatee delegatee, long height, FungibleAssetValue reward)
+        {
+            LumpSumRewardsRecord record = GetCurrentLumpSumRewardsRecord(delegatee)
+                ?? new LumpSumRewardsRecord(
+                    delegatee.CurrentLumpSumRewardsRecordAddress(),
+                    height,
+                    delegatee.TotalShares,
+                    delegatee.RewardCurrency);
+            record = record.AddLumpSumReward(reward);
+            SetLumpSumRewardsRecord(record);
+        }
+
         public void TransferAsset(Address sender, Address recipient, FungibleAssetValue value)
             => _world = _world.TransferAsset(_context, sender, recipient, value);
     }

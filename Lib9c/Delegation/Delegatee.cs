@@ -156,6 +156,7 @@ namespace Nekoyume.Delegation
             TotalShares += share;
             TotalDelegated += fav;
             _repository.SetBond(bond);
+            StartNewRewardPeriod(height);
 
             return share;
         }
@@ -181,7 +182,8 @@ namespace Nekoyume.Delegation
             TotalShares -= share;
             TotalDelegated -= fav;
             _repository.SetBond(bond);
-            
+            StartNewRewardPeriod(height);
+
             return fav;
         }
 
@@ -192,13 +194,11 @@ namespace Nekoyume.Delegation
             IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
                 GetLumpSumRewardsRecords(delegator.LastRewardHeight);
             FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
-            if (reward.Sign <= 0)
+            if (reward.Sign > 0)
             {
-                return;
+                _repository.TransferAsset(RewardPoolAddress, delegator.Address, reward);
             }
 
-            _repository.TransferAsset(RewardPoolAddress, delegator.Address, reward);
-            StartNewRewardPeriod(height);
             delegator.UpdateLastRewardHeight(height);
         }
 
@@ -260,10 +260,23 @@ namespace Nekoyume.Delegation
             long? lastStartHeight = null;
             if (currentRecord is LumpSumRewardsRecord lastRecord)
             {
+                lastStartHeight = lastRecord.StartHeight;
+                if (lastStartHeight == height)
+                {
+                    currentRecord = new(
+                        currentRecord.Address,
+                        currentRecord.StartHeight,
+                        TotalShares,
+                        RewardCurrency,
+                        currentRecord.LastStartHeight);
+
+                    _repository.SetLumpSumRewardsRecord(currentRecord);
+                    return;
+                }
+
                 _repository.SetLumpSumRewardsRecord(
                     lastRecord.MoveAddress(
-                        CurrentLumpSumRewardsRecordAddress()));
-                lastStartHeight = lastRecord.StartHeight;
+                        LumpSumRewardsRecordAddress(lastRecord.StartHeight)));
             }
 
             LumpSumRewardsRecord newRecord = new(
