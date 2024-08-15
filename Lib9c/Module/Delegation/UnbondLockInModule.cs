@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -19,7 +20,7 @@ namespace Nekoyume.Module.Delegation
             this IWorldState world, Address address, int maxEntries)
             => TryGetUnbondLockIn(world, address, maxEntries, out var unbondLockIn)
                 ? unbondLockIn!
-                : new UnbondLockIn(address, maxEntries);
+                : throw new InvalidOperationException("UnbondLockIn not found");
 
         public static bool TryGetUnbondLockIn(
             this IWorldState world,

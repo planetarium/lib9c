@@ -1,4 +1,5 @@
 #nullable enable
+using System;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
@@ -18,7 +19,7 @@ namespace Nekoyume.Module.Delegation
             this IWorldState world, Address address, int maxEntries)
             => TryGetRebondGrace(world, address, maxEntries, out var rebondGrace)
                 ? rebondGrace!
-                : new RebondGrace(address, maxEntries);
+                : throw new InvalidOperationException("RebondGrace not found");
 
         public static bool TryGetRebondGrace(
             this IWorldState world,

@@ -7,13 +7,13 @@ namespace Lib9c.Tests.Delegation
 
     public sealed class TestDelegatee : Delegatee<TestDelegator, TestDelegatee>
     {
-        public TestDelegatee(Address address)
-            : base(address)
+        public TestDelegatee(Address address, IDelegationRepository repository)
+            : base(address, repository)
         {
         }
 
-        public TestDelegatee(Address address, IValue bencoded)
-            : base(address, bencoded)
+        public TestDelegatee(Address address, IValue bencoded, IDelegationRepository repository)
+            : base(address, bencoded, repository)
         {
         }
 
@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Delegation
 
         public override long UnbondingPeriod => 3;
 
-        public override Address PoolAddress => DeriveAddress(PoolId);
+        public override Address DelegationPoolAddress => DeriveAddress(PoolId);
 
         public override byte[] DelegateeId => new byte[] { 0x01 };
 

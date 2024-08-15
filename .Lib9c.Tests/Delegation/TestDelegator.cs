@@ -6,13 +6,13 @@ namespace Lib9c.Tests.Delegation
 
     public sealed class TestDelegator : Delegator<TestDelegatee, TestDelegator>
     {
-        public TestDelegator(Address address)
-            : base(address)
+        public TestDelegator(Address address, IDelegationRepository repo)
+            : base(address, repo)
         {
         }
 
-        public TestDelegator(Address address, IValue bencoded)
-            : base(address, bencoded)
+        public TestDelegator(Address address, IValue bencoded, IDelegationRepository repo)
+            : base(address, bencoded, repo)
         {
         }
     }
