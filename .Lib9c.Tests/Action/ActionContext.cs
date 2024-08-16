@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
 
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
-        public bool IsPolicyAction { get; }
+        public bool IsPolicyAction { get; set; }
 
         public IReadOnlyList<ITransaction> Txs
         {

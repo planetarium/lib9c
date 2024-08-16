@@ -63,7 +63,7 @@ namespace Nekoyume.Model.State
 
             if (serialized.TryGetValue((Text)IndexKey, out var index))
             {
-                Index = index.ToInteger();
+                Index = (Integer)index;
             }
 
             if (serialized.TryGetValue((Text)ResultKey, out var result))
@@ -80,7 +80,7 @@ namespace Nekoyume.Model.State
             {
                 PetId = petId.ToNullableInteger();
             }
-            
+
             if (serialized.TryGetValue((Text)IsUnlockedKey, out var isUnlocked))
             {
                 IsUnlocked = isUnlocked.ToBoolean();
@@ -104,10 +104,9 @@ namespace Nekoyume.Model.State
                    blockIndex >= UnlockBlockIndex;
         }
 
-        public bool ValidateV2(AvatarState avatarState, long blockIndex)
+        public bool ValidateV2(long blockIndex)
         {
-            // TODO: Lock상태인지 확인하는 로직 추가
-            if (avatarState is null)
+            if (!IsUnlocked)
             {
                 return false;
             }
@@ -148,7 +147,7 @@ namespace Nekoyume.Model.State
             };
             Result = result;
         }
-        
+
         public bool Unlock()
         {
             if (IsUnlocked)
@@ -166,7 +165,7 @@ namespace Nekoyume.Model.State
             {
                 [(Text)UnlockBlockIndexKey] = UnlockBlockIndex.Serialize(),
                 [(Text)StartBlockIndexKey] = StartBlockIndex.Serialize(),
-                [(Text)IndexKey] = Index.Serialize(),
+                [(Text)IndexKey] = (Integer)Index,
                 [(Text)IsUnlockedKey] = IsUnlocked.Serialize(),
             };
 

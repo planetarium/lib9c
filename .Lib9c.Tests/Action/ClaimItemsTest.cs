@@ -215,7 +215,7 @@ namespace Lib9c.Tests.Action
                 var wrappedCurrency = _wrappedFavCurrencies[i];
                 Assert.Equal(wrappedCurrency * 4, states.GetBalance(_signerAddress, wrappedCurrency));
                 var currency = Currencies.GetUnwrappedCurrency(wrappedCurrency);
-                var recipientAddress = Currencies.SelectRecipientAddress(
+                var recipientAddress = Currencies.PickAddress(
                     currency,
                     recipientAgentAddress,
                     recipientAvatarAddress

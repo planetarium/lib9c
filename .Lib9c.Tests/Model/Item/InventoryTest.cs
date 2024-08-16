@@ -995,6 +995,61 @@
             Assert.False(inventory.TryGetNonFungibleItem(equipment.NonFungibleId, out Equipment _, 1L));
         }
 
+        [Fact]
+        public void RemoveTradableMaterial()
+        {
+            var item = (TradableMaterial)GetFirstTradableMaterial();
+            item.RequiredBlockIndex = 100L;
+            var item2 = (TradableMaterial)GetFirstTradableMaterial();
+            item2.RequiredBlockIndex = 50L;
+            var inventory = new Inventory();
+            Assert.Empty(inventory.Items);
+
+            for (var i = 0; i < 3; i++)
+            {
+                inventory.AddItem(item);
+            }
+
+            inventory.AddItem(item2);
+            Assert.Equal(2, inventory.Items.Count);
+
+            // RequiredBlockIndex
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 1L));
+            // NotEnoughItemCount
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L, 5));
+            Assert.True(inventory.RemoveTradableMaterial(item.Id, 200L, 4));
+
+            inventory.AddItem(item, 1, new OrderLock(Guid.NewGuid()));
+            // InventorySlot is lock
+            Assert.False(inventory.RemoveTradableMaterial(item.Id, 200L));
+        }
+
+        [Fact]
+        public void RemoveNonTradableMaterial()
+        {
+            var item = GetFirstMaterial();
+            var item2 = (TradableMaterial)GetFirstTradableMaterial();
+            var inventory = new Inventory();
+            Assert.Empty(inventory.Items);
+
+            for (var i = 0; i < 3; i++)
+            {
+                inventory.AddItem(item);
+            }
+
+            inventory.AddItem(item2);
+            Assert.Equal(2, inventory.Items.Count);
+            Assert.Equal(4, inventory.Items.Sum(i => i.count));
+
+            // NotEnoughItemCount tradable 1 + non-tradable 3
+            Assert.False(inventory.RemoveNonTradableMaterial(item.Id, 4));
+            Assert.True(inventory.RemoveNonTradableMaterial(item.Id, 3));
+
+            inventory.AddItem(item, 1, new OrderLock(Guid.NewGuid()));
+            // InventorySlot is lock
+            Assert.False(inventory.RemoveNonTradableMaterial(item.Id));
+        }
+
         private static Consumable GetFirstConsumable()
         {
             var row = TableSheets.ConsumableItemSheet.First;
