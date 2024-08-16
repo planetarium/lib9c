@@ -80,6 +80,11 @@ namespace Nekoyume.Action
                 {
                     states = states.TransferAsset(context, sender, recipient, amount);
                 }
+                else
+                {
+                    throw new InsufficientBalanceException(
+                        $"required {amount} but {sender} balance is {balance}", sender, balance);
+                }
             }
 
             return states;
