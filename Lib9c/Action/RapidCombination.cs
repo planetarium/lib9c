@@ -79,8 +79,7 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the GameConfigState was failed to load.");
             }
 
-            var actionableBlockIndex = slotState.StartBlockIndex +
-                                       states.GetGameConfigState().RequiredAppraiseBlock;
+            var actionableBlockIndex = slotState.StartBlockIndex;
             if (context.BlockIndex < actionableBlockIndex)
             {
                 throw new AppraiseBlockNotReachedException(

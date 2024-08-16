@@ -442,10 +442,9 @@ namespace Nekoyume.Action
             if (petState is not null)
             {
                 var requiredBlockIndex = endBlockIndex - context.BlockIndex;
-                var gameConfigState = states.GetGameConfigState();
                 requiredBlockIndex = PetHelper.CalculateReducedBlockOnCraft(
                     requiredBlockIndex,
-                    gameConfigState.RequiredAppraiseBlock,
+                    0,
                     petState,
                     petOptionSheet);
                 endBlockIndex = context.BlockIndex + requiredBlockIndex;
