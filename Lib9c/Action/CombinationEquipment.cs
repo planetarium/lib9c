@@ -119,7 +119,7 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
             }
 
-            if (!slotState.ValidateV2(avatarState, context.BlockIndex))
+            if (!slotState.ValidateV2(context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
