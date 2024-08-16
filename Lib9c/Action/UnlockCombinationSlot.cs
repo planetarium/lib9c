@@ -33,14 +33,14 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
                 {
                     ["a"] = AvatarAddress.Serialize(),
-                    ["s"] = SlotIndex.Serialize(),
+                    ["s"] = (Integer)SlotIndex,
                 }
                 .ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue["a"].ToAddress();
-            SlotIndex = plainValue["s"].ToInteger();
+            SlotIndex = (Integer)plainValue["s"];
         }
 
         public override IWorld Execute(IActionContext context)
