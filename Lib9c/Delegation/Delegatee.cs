@@ -140,7 +140,7 @@ namespace Nekoyume.Delegation
 
         public BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
-            CannotMutateReleationsWithoutRepository(delegator);
+            CannotMutateRelationsWithoutRepository(delegator);
             Reward(delegator, height);
 
             if (!fav.Currency.Equals(Currency))
@@ -163,7 +163,7 @@ namespace Nekoyume.Delegation
 
         public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
-            CannotMutateReleationsWithoutRepository(delegator);
+            CannotMutateRelationsWithoutRepository(delegator);
             Reward(delegator, height);
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
@@ -189,7 +189,7 @@ namespace Nekoyume.Delegation
 
         public void Reward(T delegator, long height)
         {
-            CannotMutateReleationsWithoutRepository(delegator);
+            CannotMutateRelationsWithoutRepository(delegator);
             BigInteger share = _repository!.GetBond(this, delegator.Address).Share;
             IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
                 GetLumpSumRewardsRecords(delegator.LastRewardHeight);
@@ -348,7 +348,7 @@ namespace Nekoyume.Delegation
             return records;
         }
 
-        private void CannotMutateReleationsWithoutRepository(T delegator)
+        private void CannotMutateRelationsWithoutRepository(T delegator)
         {
             CannotMutateRelationsWithoutRepository();
             if (!_repository!.Equals(delegator.Repository))
