@@ -27,7 +27,7 @@ namespace Nekoyume.Model.State
         /// <summary>
         /// It is a CombinationSlot index. start from 0.
         /// </summary>
-        public int Index { get; private set; }
+        public int Index { get; set; }
         public bool IsUnlocked { get; private set; }
 
         /// <summary>
