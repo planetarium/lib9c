@@ -5,8 +5,11 @@ namespace Lib9c.Tests.Action.Guild
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Mocks;
+    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.Module.Guild;
     using Nekoyume.TypedAddress;
     using Xunit;
@@ -44,6 +47,10 @@ namespace Lib9c.Tests.Action.Guild
         {
             var action = new MakeGuild();
             IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
             if (fail)
             {
