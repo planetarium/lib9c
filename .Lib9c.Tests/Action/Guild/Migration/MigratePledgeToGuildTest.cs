@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Mocks;
+    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Guild;
@@ -42,7 +43,11 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var target = AddressUtil.CreateAgentAddress();
             var caller = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
-            var world = new World(MockUtil.MockModernWorldState)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
                 .SetLegacyState(pledgeAddress, new List(
@@ -84,7 +89,11 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var target = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
             var caller = AddressUtil.CreateAgentAddress();
-            var world = new World(MockUtil.MockModernWorldState)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
                 .SetLegacyState(pledgeAddress, new List(
@@ -117,7 +126,11 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var guildAddress = AddressUtil.CreateGuildAddress();
             var target = AddressUtil.CreateAgentAddress();
             var caller = AddressUtil.CreateAgentAddress();
-            var world = new World(MockUtil.MockModernWorldState)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress);
 

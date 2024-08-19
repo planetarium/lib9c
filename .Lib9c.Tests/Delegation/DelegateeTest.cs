@@ -247,8 +247,8 @@ namespace Lib9c.Tests.Delegation
 
             Assert.Equal(testDelegatee1.Address, dummyDelegatee1.Address);
             Assert.NotEqual(
-                testDelegatee1.RewardPoolAddress,
-                dummyDelegatee1.RewardPoolAddress);
+                testDelegatee1.RewardDistributorAddress,
+                dummyDelegatee1.RewardDistributorAddress);
             Assert.NotEqual(
                 testDelegatee1.BondAddress(testDelegator1.Address),
                 dummyDelegatee1.BondAddress(testDelegator1.Address));
