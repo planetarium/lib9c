@@ -4,7 +4,11 @@ namespace Lib9c.Tests.Action.Guild
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Mocks;
+    using Libplanet.Types.Assets;
+    using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -33,7 +37,11 @@ namespace Lib9c.Tests.Action.Guild
             var guildAddress = AddressUtil.CreateGuildAddress();
             var otherGuildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockWorldState.CreateModern());
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             world = world.MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMemberAddress);
             world = world.MakeGuild(otherGuildAddress, otherGuildMasterAddress)
@@ -124,8 +132,12 @@ namespace Lib9c.Tests.Action.Guild
 
             var action = new BanGuildMember(targetGuildMemberAddress);
 
-            IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMemberAddress)
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
@@ -163,8 +175,12 @@ namespace Lib9c.Tests.Action.Guild
             var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // Other tries to ban GuildMember.
@@ -191,7 +207,11 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .ApplyGuild(agentAddress, guildAddress);
             Assert.True(world.TryGetGuildApplication(agentAddress, out _));

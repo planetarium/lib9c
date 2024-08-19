@@ -5,7 +5,11 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
+    using Libplanet.Types.Assets;
+    using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -33,8 +37,11 @@ namespace Lib9c.Tests.Action.Guild
 
             var action = new UnbanGuildMember(targetGuildMemberAddress);
 
-            IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .JoinGuild(guildAddress, guildMemberAddress)
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
@@ -62,8 +69,12 @@ namespace Lib9c.Tests.Action.Guild
 
             var action = new UnbanGuildMember(targetGuildMemberAddress);
 
-            IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+                .MakeGuild(guildAddress, guildMasterAddress)
                 .Ban(guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
             Assert.True(world.IsBanned(guildAddress, targetGuildMemberAddress));

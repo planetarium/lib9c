@@ -6,6 +6,7 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Mocks;
+    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Guild;
@@ -36,7 +37,11 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
-            var world = new World(MockUtil.MockModernWorldState)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
                 .SetLegacyState(pledgeAddress, new List(
@@ -64,7 +69,11 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
-            var world = new World(MockUtil.MockModernWorldState)
+            IWorld world = new World(MockUtil.MockModernWorldState);
+            var ncg = Currency.Uncapped("NCG", 2, null);
+            var goldCurrencyState = new GoldCurrencyState(ncg);
+            world = world
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress);
 
