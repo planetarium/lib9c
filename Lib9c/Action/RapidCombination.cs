@@ -26,7 +26,7 @@ namespace Nekoyume.Action
     {
         public Address avatarAddress;
         public List<int> slotIndexList;
-        
+
         private int _slotFlag;
 
         public override IWorld Execute(IActionContext context)
@@ -180,10 +180,10 @@ namespace Nekoyume.Action
         private void SetSlotIndexList(List<int> list)
         {
             slotIndexList = list;
-            _slotFlag = list.Aggregate(0, (current, slotIndex) => current | (1 << slotIndex));
+            _slotFlag = list?.Aggregate(0, (current, slotIndex) => current | (1 << slotIndex)) ?? 0;
         }
 #endregion FlagToList
-        
+
 #region Serialize
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
