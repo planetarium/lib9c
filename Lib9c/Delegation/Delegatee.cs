@@ -16,11 +16,12 @@ namespace Nekoyume.Delegation
         where T : Delegator<TSelf, T>
         where TSelf : Delegatee<T, TSelf>
     {
-        protected readonly byte[] BondId = new byte[] { 0x44 };                  // `D`
+        protected readonly byte[] BondId = new byte[] { 0x42 };                  // `B`
         protected readonly byte[] UnbondLockInId = new byte[] { 0x55 };          // `U`
         protected readonly byte[] RebondGraceId = new byte[] { 0x52 };           // `R`
         protected readonly byte[] LumpSumRewardsRecordId = new byte[] { 0x4c };  // `L`
-        protected readonly byte[] RewardPoolId = new byte[] { 0x72 };            // `r`
+        protected readonly byte[] RewardCollectorId = new byte[] { 0x63 };       // `c`
+        protected readonly byte[] RewardDistributorId = new byte[] { 0x64 };     // `d`
         protected readonly byte[] PoolId = new byte[] { 0x70 };                  // `p`
 
         private readonly IDelegationRepository? _repository;
@@ -100,7 +101,9 @@ namespace Nekoyume.Delegation
 
         public abstract int MaxRebondGraceEntries { get; }
 
-        public Address RewardPoolAddress => DeriveAddress(RewardPoolId);
+        public Address RewardCollectorAddress => DeriveAddress(RewardCollectorId);
+
+        public Address RewardDistributorAddress => DeriveAddress(RewardDistributorId);
 
         public ImmutableSortedSet<Address> Delegators { get; private set; }
 
@@ -135,13 +138,13 @@ namespace Nekoyume.Delegation
             IDelegator delegator, BigInteger share, long height)
             => Unbond((T)delegator, share, height);
 
-        void IDelegatee.Reward(IDelegator delegator, long height)
-            => Reward((T)delegator, height);
+        void IDelegatee.DistributeReward(IDelegator delegator, long height)
+            => DistributeReward((T)delegator, height);
 
         public BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
             CannotMutateRelationsWithoutRepository(delegator);
-            Reward(delegator, height);
+            DistributeReward(delegator, height);
 
             if (!fav.Currency.Equals(Currency))
             {
@@ -164,7 +167,7 @@ namespace Nekoyume.Delegation
         public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
             CannotMutateRelationsWithoutRepository(delegator);
-            Reward(delegator, height);
+            DistributeReward(delegator, height);
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
                 throw new InvalidOperationException(
@@ -187,7 +190,7 @@ namespace Nekoyume.Delegation
             return fav;
         }
 
-        public void Reward(T delegator, long height)
+        public void DistributeReward(T delegator, long height)
         {
             CannotMutateRelationsWithoutRepository(delegator);
             BigInteger share = _repository!.GetBond(this, delegator.Address).Share;
@@ -196,10 +199,18 @@ namespace Nekoyume.Delegation
             FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
             if (reward.Sign > 0)
             {
-                _repository.TransferAsset(RewardPoolAddress, delegator.Address, reward);
+                _repository.TransferAsset(RewardDistributorAddress, delegator.Address, reward);
             }
 
             delegator.UpdateLastRewardHeight(height);
+        }
+
+        public void CollectRewards(long height)
+        {
+            CannotMutateRelationsWithoutRepository();
+            FungibleAssetValue rewards = _repository!.GetBalance(RewardCollectorAddress, RewardCurrency);
+            _repository!.AddLumpSumRewards(this, height, rewards);
+            _repository!.TransferAsset(RewardCollectorAddress, RewardDistributorAddress, rewards);
         }
 
         public Address BondAddress(Address delegatorAddress)
@@ -229,7 +240,7 @@ namespace Nekoyume.Delegation
             && Currency.Equals(delegatee.Currency)
             && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
             && UnbondingPeriod == delegatee.UnbondingPeriod
-            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
+            && RewardDistributorAddress.Equals(delegatee.RewardDistributorAddress)
             && Delegators.SequenceEqual(delegatee.Delegators)
             && TotalDelegated.Equals(delegatee.TotalDelegated)
             && TotalShares.Equals(delegatee.TotalShares)

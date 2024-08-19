@@ -24,7 +24,9 @@ namespace Nekoyume.Delegation
 
         int MaxRebondGraceEntries { get; }
 
-        Address RewardPoolAddress { get; }
+        Address RewardCollectorAddress { get; }
+
+        Address RewardDistributorAddress { get; }
 
         ImmutableSortedSet<Address> Delegators { get; }
 
@@ -36,7 +38,9 @@ namespace Nekoyume.Delegation
 
         FungibleAssetValue Unbond(IDelegator delegator, BigInteger share, long height);
 
-        void Reward(IDelegator delegator, long height);
+        void DistributeReward(IDelegator delegator, long height);
+
+        void CollectRewards(long height);
 
         Address BondAddress(Address delegatorAddress);
 

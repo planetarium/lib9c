@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
+using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
@@ -119,5 +120,21 @@ namespace Nekoyume.Module.Guild
             => world.MutateAccount(
                 Addresses.Guild,
                 account => account.SetState(guild.Address, guild.Bencoded));
+
+        public static IWorld CollectRewardGuild(
+            this IWorld world,
+            IActionContext context,
+            GuildAddress guildAddress)
+        {
+            var repo = new DelegationRepository(world, context);
+
+            var guild = world.TryGetGuild(guildAddress, repo, out var g)
+                ? g
+                : throw new InvalidOperationException("The guild does not exist.");
+
+            guild.CollectRewards(context.BlockIndex);
+
+            return repo.World;
+        }
     }
 }

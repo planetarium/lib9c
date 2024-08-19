@@ -94,12 +94,12 @@ namespace Nekoyume.Delegation
                 LumpSumRewards,
                 LastStartHeight);
 
-        public LumpSumRewardsRecord AddLumpSumReward(FungibleAssetValue reward)
+        public LumpSumRewardsRecord AddLumpSumRewards(FungibleAssetValue rewards)
             => new LumpSumRewardsRecord(
                 Address,
                 StartHeight,
                 TotalShares,
-                LumpSumRewards + reward,
+                LumpSumRewards + rewards,
                 LastStartHeight);
 
         public FungibleAssetValue RewardsDuringPeriod(BigInteger share)
