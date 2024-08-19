@@ -268,11 +268,11 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
 
                 // Create mail
-                var mail = new CombinationMail(
-                    attachmentResult,
+                var mail = new CustomCraftMail(
                     context.BlockIndex,
                     mailId,
-                    endBlockIndex);
+                    endBlockIndex,
+                    equipment);
                 avatarState.Update(mail);
 
                 relationship++;
