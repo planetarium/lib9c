@@ -59,9 +59,9 @@ namespace Nekoyume.Action
                 throw new InvalidSlotIndexException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
             
-            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out _);
-            var hasCombinationSlotState = allSlotState.TryGetCombinationSlotState(SlotIndex, out var combinationSlot);
-            if (hasCombinationSlotState && (combinationSlot?.IsUnlocked ?? false))
+            var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
+            var combinationSlot = allSlotState.GetSlot(SlotIndex);
+            if (combinationSlot.IsUnlocked)
             {
                 throw new SlotAlreadyUnlockedException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }

@@ -139,8 +139,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 0L,
                     RandomSeed = randomSeed,
                 });
-                var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out _);
-                var slotState = allSlotState.GetCombinationSlotState(i);
+                var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(equipmentRecipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -224,13 +224,8 @@ namespace Lib9c.Tests.Action.Scenario
                     RandomSeed = randomSeed,
                 });
 
-                var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var migrateRequired);
-                if (migrateRequired)
-                {
-                    stateV2 = stateV2.SetCombinationSlotState(_avatarAddr, allSlotState);
-                }
-
-                var slotState = allSlotState.GetCombinationSlotState(i);
+                var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -310,8 +305,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = eventRow.StartBlockIndex,
                     RandomSeed = randomSeed,
                 });
-                var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var _);
-                var slotState = allSlotState.GetCombinationSlotState(i);
+                var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
@@ -405,7 +400,7 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = eventRow.StartBlockIndex,
                     RandomSeed = randomSeed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = stateV2.GetCombinationSlotStateLegacy(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }

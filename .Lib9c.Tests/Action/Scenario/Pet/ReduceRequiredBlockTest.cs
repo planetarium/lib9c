@@ -115,8 +115,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 RandomSeed = random.Seed,
             });
 
-            var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var migrateRequired);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var slotState = allSlotState.GetSlot(0);
             // TEST: RequiredBlockIndex
             Assert.Equal(expectedBlock, slotState.RequiredBlockIndex);
         }

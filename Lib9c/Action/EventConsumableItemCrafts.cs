@@ -145,19 +145,14 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex);
 
-            var allSlotState = states.GetCombinationSlotState(AvatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
             // Validate SlotIndex
-            if (!allSlotState.TryGetCombinationSlotState(SlotIndex, out var slotState) || slotState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {SlotIndex}");
-            }
-
+            var slotState = allSlotState.GetSlot(SlotIndex);
             if (!slotState.ValidateV2(context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
@@ -268,7 +263,7 @@ namespace Nekoyume.Action
                 recipeId = EventConsumableItemRecipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
             // ~Update Slot
 
             // Create Mail

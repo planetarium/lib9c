@@ -106,23 +106,17 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(avatarAddress);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
             // Validate SlotIndex
-            if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
-            }
-
+            var slotState = allSlotState.GetSlot(slotIndex);
             if (!slotState.ValidateV2(context.BlockIndex))
             {
-                throw new CombinationSlotUnlockException(
-                    $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
+                throw new CombinationSlotUnlockException($"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
             }
             // ~Validate SlotIndex
 
@@ -481,7 +475,7 @@ namespace Nekoyume.Action
                 subRecipeId = subRecipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex, petId);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
             // ~Update Slot
 
             // Update Pet

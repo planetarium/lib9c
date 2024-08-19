@@ -1,10 +1,13 @@
 #nullable enable
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Module;
 using Nekoyume.Module.CombinationSlot;
 
 namespace Nekoyume.Model.State
@@ -35,7 +38,7 @@ namespace Nekoyume.Model.State
 
         public void UnlockSlot(Address avatarAddress, int index)
         {
-            var targetSlot = TryGetCombinationSlotState(index, out var combinationSlotState)
+            var targetSlot = TryGetSlot(index, out var combinationSlotState)
                 ? combinationSlotState
                 : null;
 
@@ -44,27 +47,27 @@ namespace Nekoyume.Model.State
                 var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, index);
                 var newCombinationSlot = new CombinationSlotState(slotAddr, index);
                 newCombinationSlot.Unlock();
-                AddCombinationSlotState(newCombinationSlot);
+                AddSlot(newCombinationSlot);
                 return;
             }
-            
+
             targetSlot.Unlock();
         }
 
-        public bool TryGetCombinationSlotState(int slotStateIndex, out CombinationSlotState? combinationSlotState)
+        public bool TryGetSlot(int slotStateIndex, out CombinationSlotState? combinationSlotState)
         {
             combinationSlotState = CombinationSlots.TryGetValue(slotStateIndex, out var combinationSlot) ? combinationSlot : null;
             return combinationSlotState is not null;
         }
 
-        public CombinationSlotState GetCombinationSlotState(int slotStateIndex)
+        public CombinationSlotState GetSlot(int slotStateIndex)
         {
             return CombinationSlots.TryGetValue(slotStateIndex, out var combinationSlotState)
                 ? combinationSlotState
                 : throw new CombinationSlotNotFoundException($"Rune {slotStateIndex} not found in AllCombinationSlotState");
         }
 
-        public void AddCombinationSlotState(Address address, int index = 0)
+        public void AddSlot(Address address, int index = 0)
         {
             if (CombinationSlots.ContainsKey(index))
             {
@@ -74,7 +77,7 @@ namespace Nekoyume.Model.State
             CombinationSlots[index] = new CombinationSlotState(address, index);
         }
 
-        public void AddCombinationSlotState(CombinationSlotState combinationSlotState)
+        public void AddSlot(CombinationSlotState combinationSlotState)
         {
             if (CombinationSlots.ContainsKey(combinationSlotState.Index))
             {
@@ -84,7 +87,7 @@ namespace Nekoyume.Model.State
             CombinationSlots[combinationSlotState.Index] = combinationSlotState;
         }
 
-        public void SetCombinationSlotState(CombinationSlotState combinationSlotState)
+        public void SetSlot(CombinationSlotState combinationSlotState)
         {
             if (!CombinationSlots.ContainsKey(combinationSlotState.Index))
             {
@@ -115,15 +118,50 @@ namespace Nekoyume.Model.State
         /// <summary>
         /// 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
         /// </summary>
+        /// <param name="stateFactory">CombinationSlotState을 생성할 함수</param>
         /// <param name="avatarAddress">Migration을 진행할 아바타</param>
         /// <returns>Migration된 AllCombinationSlotState</returns>
-        public static AllCombinationSlotState MigrationLegacyCombinationSlotState(Address avatarAddress)
+        public static AllCombinationSlotState MigrationLegacySlotState(Func<int, CombinationSlotState?> stateFactory, Address avatarAddress)
         {
             var allCombinationSlotState = new AllCombinationSlotState();
             for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
-                allCombinationSlotState.AddCombinationSlotState(new CombinationSlotState(combinationAddress, i));
+                var combinationSlotState = stateFactory.Invoke(i);
+
+                if (combinationSlotState == null)
+                {
+                    var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
+                    combinationSlotState = new CombinationSlotState(combinationAddress, i);
+                }
+
+                allCombinationSlotState.AddSlot(combinationSlotState);
+            }
+
+            return allCombinationSlotState;
+        }
+
+        /// <summary>
+        /// 만약 AllCombinationSlotState가 없다면, 슬롯 확장 업데이트 전 4개의 슬롯을 가져와서 채워넣는다.
+        /// </summary>
+        /// <param name="worldState">Slot 상태를 가져올 world state</param>
+        /// <param name="avatarAddress">Migration을 진행할 아바타</param>
+        /// <returns>Migration된 AllCombinationSlotState</returns>
+        public static AllCombinationSlotState MigrationLegacySlotState(IWorldState worldState, Address avatarAddress)
+        {
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                var combinationSlotState = worldState.GetCombinationSlotStateLegacy(avatarAddress, i);
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                if (combinationSlotState == null)
+                {
+                    var combinationAddress = CombinationSlotState.DeriveAddress(avatarAddress, i);
+                    combinationSlotState = new CombinationSlotState(combinationAddress, i);
+                }
+
+                allCombinationSlotState.AddSlot(combinationSlotState);
             }
 
             return allCombinationSlotState;

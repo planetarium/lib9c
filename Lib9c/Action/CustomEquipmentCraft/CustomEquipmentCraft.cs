@@ -113,7 +113,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                     )
                 );
                 // Validate SlotIndex
-                var slotState = states.GetCombinationSlotState(AvatarAddress, craftData.SlotIndex);
+                var slotState = states.GetCombinationSlotStateLegacy(AvatarAddress, craftData.SlotIndex);
                 if (slotState is null)
                 {
                     throw new FailedLoadStateException(

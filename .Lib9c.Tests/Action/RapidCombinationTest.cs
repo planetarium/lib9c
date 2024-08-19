@@ -134,8 +134,8 @@ namespace Lib9c.Tests.Action
                 CombinationSlotState.DeriveFormat,
                 0));
             var allSlotState = new AllCombinationSlotState();
-            allSlotState.AddCombinationSlotState(slotAddress);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            allSlotState.AddSlot(slotAddress);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, requiredBlockIndex);
 
             var tempState = _initialState
@@ -223,8 +223,8 @@ namespace Lib9c.Tests.Action
 
             var allSlotState = new AllCombinationSlotState();
             var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
-            allSlotState.AddCombinationSlotState(addr);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
@@ -298,8 +298,8 @@ namespace Lib9c.Tests.Action
 
             var allSlotState = new AllCombinationSlotState();
             var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
-            allSlotState.AddCombinationSlotState(addr);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
@@ -426,8 +426,8 @@ namespace Lib9c.Tests.Action
 
             var allSlotState = new AllCombinationSlotState();
             var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
-            allSlotState.AddCombinationSlotState(addr);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
@@ -594,8 +594,8 @@ namespace Lib9c.Tests.Action
 
             var allSlotState = new AllCombinationSlotState();
             var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
-            allSlotState.AddCombinationSlotState(addr);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(resultModel, 0, requiredBlockIndex);
 
             var tempState = _initialState

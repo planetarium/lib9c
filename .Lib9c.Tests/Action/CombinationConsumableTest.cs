@@ -51,7 +51,7 @@ namespace Lib9c.Tests.Action
             );
 
             var allSlotState = new AllCombinationSlotState();
-            allSlotState.AddCombinationSlotState(slotAddress);
+            allSlotState.AddSlot(slotAddress);
 
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -111,8 +111,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = _random.Seed,
             });
 
-            var allCombinationSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
-            var slotState = allCombinationSlotState.GetCombinationSlotState(0);
+            var allCombinationSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
+            var slotState = allCombinationSlotState.GetSlot(0);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 

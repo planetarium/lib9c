@@ -249,8 +249,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             ctx.SetRandom(random);
             stateV2 = action.Execute(ctx);
-            var allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var _);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var slotState = allSlotState.GetSlot(0);
             // TEST: No additional option added (1 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +
@@ -291,8 +291,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             ctx.SetRandom(random);
             stateV2 = petAction.Execute(ctx);
-            allSlotState = stateV2.GetCombinationSlotState(_avatarAddr, out var _);
-            var petSlotState = allSlotState.GetCombinationSlotState(1);
+            allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var petSlotState = allSlotState.GetSlot(1);
             // TEST: One additional option added (2 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +

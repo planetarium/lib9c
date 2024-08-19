@@ -15,17 +15,15 @@ namespace Nekoyume.Module
     /// </summary>
     public static class CombinationSlotStateModule
     {
-        public static AllCombinationSlotState GetCombinationSlotState(this IWorldState worldState,
-            Address avatarAddress, out bool migrateRequired)
+        public static AllCombinationSlotState GetAllCombinationSlotState(this IWorldState worldState,
+            Address avatarAddress)
         {
-            migrateRequired = false;
             var account = worldState.GetAccountState(Addresses.CombinationSlot);
             var serialized = account.GetState(avatarAddress);
             AllCombinationSlotState allCombinationSlotState;
             if (serialized is null)
             {
-                allCombinationSlotState = AllCombinationSlotState.MigrationLegacyCombinationSlotState(avatarAddress);
-                migrateRequired = true;
+                allCombinationSlotState = AllCombinationSlotState.MigrationLegacySlotState(worldState, avatarAddress);
             }
             else
             {

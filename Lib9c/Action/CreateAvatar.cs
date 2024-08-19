@@ -140,16 +140,16 @@ namespace Nekoyume.Action
 
             avatarState.Customize(hair, lens, ear, tail);
             
-            // TODO: Apply AllCombinationSlotState
-            for (var i = 0; i < avatarState.combinationSlotAddresses.Count; i++)
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var address = avatarState.combinationSlotAddresses[i];
-                var slotState = new CombinationSlotState(address, i);
-                states = states.SetLegacyState(address, slotState.Serialize());
+                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, i);
+                var slot = new CombinationSlotState(slotAddr, i);
+                allCombinationSlotState.AddSlot(slot);
             }
+            states = states.SetCombinationSlotState(avatarAddress, allCombinationSlotState);
 
             avatarState.UpdateQuestRewards(materialItemSheet);
-
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             // prepare for test when executing on editor mode.

@@ -74,7 +74,7 @@ namespace Lib9c.Tests.Action
 
             var allSlotState = new AllCombinationSlotState();
             var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
-            allSlotState.AddCombinationSlotState(addr);
+            allSlotState.AddSlot(addr);
 
             var context = new ActionContext();
             _initialState = _initialState
@@ -292,8 +292,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
+            var slotState = allSlotState.GetSlot(0);
 
             var resultEquipment = (Equipment)slotState.Result.itemUsable;
             var level = resultEquipment.level;
@@ -476,8 +476,8 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            var allSlotState = nextState.GetCombinationSlotState(_avatarAddress, out var _);
-            var slotState = allSlotState.GetCombinationSlotState(0);
+            var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
+            var slotState = allSlotState.GetSlot(0);
             var slotResult = (ItemEnhancement13.ResultModel)slotState.Result;
             var resultEquipment = (Equipment)slotResult.itemUsable;
             var level = resultEquipment.level;

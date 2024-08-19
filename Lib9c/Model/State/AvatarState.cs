@@ -24,7 +24,7 @@ namespace Nekoyume.Model.State
     public class AvatarState : State, ICloneable
     {
         public const int DefaultCombinationSlotCount = 4;
-        
+
         public const int CombinationSlotCapacity = 8;
         public const int CurrentVersion = 2;
         public string name;
@@ -49,6 +49,7 @@ namespace Nekoyume.Model.State
         public int lens;
         public int ear;
         public int tail;
+        [Obsolete("don't use this field, use AllCombinationSlotState instead.")]
         public List<Address> combinationSlotAddresses;
 
         public string NameWithHash { get; private set; }
@@ -102,25 +103,8 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) createEvent, 1),
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
-            
-            // TODO: Remove this code after the migration.
-            combinationSlotAddresses = new List<Address>(DefaultCombinationSlotCount);
-            for (var i = 0; i < DefaultCombinationSlotCount; i++)
-            {
-                var slotAddress = address.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        i
-                    )
-                );
-                combinationSlotAddresses.Add(slotAddress);
-            }
 
-            combinationSlotAddresses = combinationSlotAddresses
-                .OrderBy(element => element)
-                .ToList();
-
+            combinationSlotAddresses = new List<Address>();
             RankingMapAddress = rankingMapAddress;
             UpdateGeneralQuest(new[] { createEvent, levelEvent });
             UpdateCompletedQuest();

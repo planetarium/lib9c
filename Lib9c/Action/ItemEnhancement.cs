@@ -163,19 +163,14 @@ namespace Nekoyume.Action
                 );
             }
 
-            var allSlotState = states.GetCombinationSlotState(avatarAddress, out _);
+            var allSlotState = states.GetAllCombinationSlotState(avatarAddress);
             if (allSlotState is null)
             {
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
             // Validate SlotIndex
-            if (!allSlotState.TryGetCombinationSlotState(slotIndex, out var slotState) || slotState is null)
-            {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
-            }
-
+            var slotState = allSlotState.GetSlot(slotIndex);
             if (!slotState.ValidateV2(context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
@@ -425,7 +420,7 @@ namespace Nekoyume.Action
 
             // Update slot state
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
-            allSlotState.SetCombinationSlotState(slotState);
+            allSlotState.SetSlot(slotState);
 
             // Set state
             sw.Restart();

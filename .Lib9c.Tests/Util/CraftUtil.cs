@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Util
             {
                 var addr = CombinationSlotState.DeriveAddress(avatarAddress, i);
                 var slotState = new CombinationSlotState(addr, i);
-                allSlotState.AddCombinationSlotState(slotState);
+                allSlotState.AddSlot(slotState);
             }
 
             return state.SetCombinationSlotState(avatarAddress, allSlotState);
