@@ -108,6 +108,9 @@ namespace Nekoyume.Delegation
                 : null;
         }
 
+        public FungibleAssetValue GetBalance(Address address, Currency currency)
+            => _world.GetBalance(address, currency);
+
         public void SetBond(Bond bond)
         {
             _bond = bond.IsEmpty
@@ -142,7 +145,7 @@ namespace Nekoyume.Delegation
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
         }
 
-        public void Reward(IDelegatee delegatee, long height, FungibleAssetValue reward)
+        public void AddLumpSumRewards(IDelegatee delegatee, long height, FungibleAssetValue reward)
         {
             LumpSumRewardsRecord record = GetCurrentLumpSumRewardsRecord(delegatee)
                 ?? new LumpSumRewardsRecord(
@@ -150,7 +153,7 @@ namespace Nekoyume.Delegation
                     height,
                     delegatee.TotalShares,
                     delegatee.RewardCurrency);
-            record = record.AddLumpSumReward(reward);
+            record = record.AddLumpSumRewards(reward);
             SetLumpSumRewardsRecord(record);
         }
 

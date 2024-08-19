@@ -1,4 +1,4 @@
-﻿[
+[
   {
     EncodingLength: 21,
     Kind: Text,
@@ -30,5 +30,11 @@
     248,
     146,
     242
+  ],
+  [
+    [],
+    {
+      EncodingLength: 1
+    }
   ]
 ]
