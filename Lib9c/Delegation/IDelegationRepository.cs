@@ -25,6 +25,8 @@ namespace Nekoyume.Delegation
 
         LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee);
 
+        FungibleAssetValue GetBalance(Address address, Currency currency);
+
         void SetBond(Bond bond);
 
         void SetUnbondLockIn(UnbondLockIn unbondLockIn);
@@ -35,7 +37,7 @@ namespace Nekoyume.Delegation
 
         void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
 
-        void Reward(IDelegatee delegatee, long height, FungibleAssetValue reward);
+        void AddLumpSumRewards(IDelegatee delegatee, long height, FungibleAssetValue rewards);
 
         void TransferAsset(Address sender, Address recipient, FungibleAssetValue value);
     }

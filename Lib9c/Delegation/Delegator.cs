@@ -205,7 +205,7 @@ namespace Nekoyume.Delegation
             T delegatee, long height)
         {
             CannotMutateRelationsWithoutRepository(delegatee);
-            delegatee.Reward((TSelf)this, height);
+            delegatee.DistributeReward((TSelf)this, height);
         }
 
         public void UpdateLastRewardHeight(long height)
