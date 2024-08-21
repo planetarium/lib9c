@@ -258,4 +258,37 @@ public class UnlockCombinationSlotTest
 
         Assert.Throws<SlotAlreadyUnlockedException>(() => action.Execute(ctx));
     }
+
+    /// <summary>
+    /// Unit test for validating the behavior of the UnlockCombinationSlot action when provided with an invalid slot index.
+    /// </summary>
+    /// <param name="slotIndex">The invalid index of the combination slot to be tested.</param>
+    /// <remarks>
+    /// This test initializes the game state, attempts to mint the necessary assets for an invalid slot index, and then tries to execute the UnlockCombinationSlot action.
+    /// It verifies that the action throws an InvalidSlotIndexException, indicating that the specified slot index is out of the valid range.
+    /// </remarks>
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(0x5f5f)]
+    public void Execute_ValidateSlotIndex(int slotIndex)
+    {
+        var context = new ActionContext();
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        state = MintAssetForCost(state, slotIndex, context, agentAddress, avatarAddress);
+        var action = new UnlockCombinationSlot()
+        {
+            AvatarAddress = avatarAddress,
+            SlotIndex = slotIndex,
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        Assert.Throws<InvalidSlotIndexException>(() => action.Execute(ctx));
+    }
 }
