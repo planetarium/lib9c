@@ -28,7 +28,14 @@ namespace Nekoyume.Model.State
         /// It is a CombinationSlot index. start from 0.
         /// </summary>
         public int Index { get; set; }
-        public bool IsUnlocked { get; private set; }
+
+        public bool IsUnlocked
+        {
+            get => Index < AvatarState.DefaultCombinationSlotCount || _isUnlocked;
+            private set => _isUnlocked = value;
+        }
+        
+        private bool _isUnlocked;
 
         /// <summary>
         /// Is only used for migration legacy state.
