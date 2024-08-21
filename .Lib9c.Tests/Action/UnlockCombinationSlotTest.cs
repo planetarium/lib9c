@@ -291,4 +291,64 @@ public class UnlockCombinationSlotTest
 
         Assert.Throws<InvalidSlotIndexException>(() => action.Execute(ctx));
     }
+
+    /// <summary>
+    /// Unit test for validating the behavior of the UnlockCombinationSlot action when there are insufficient assets.
+    /// </summary>
+    /// <param name="slotIndex">The index of the combination slot to be tested.</param>
+    /// <remarks>
+    /// This test initializes the game state and attempts to execute the UnlockCombinationSlot action with different slot indices.
+    /// Depending on the slot index, it expects specific exceptions to be thrown, such as InsufficientBalanceException or NotEnoughMaterialException,
+    /// indicating that the action cannot be completed due to a lack of necessary resources.
+    /// </remarks>
+    [Theory]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    public void Execute_InsufficientAsset(int slotIndex)
+    {
+        var context = new ActionContext();
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        var action = new UnlockCombinationSlot()
+        {
+            AvatarAddress = avatarAddress,
+            SlotIndex = slotIndex,
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        var sheets = state.GetSheets(
+            new[]
+            {
+                typeof(MaterialItemSheet),
+                typeof(UnlockCombinationSlotCostSheet),
+            });
+        var costSheet = sheets.GetSheet<UnlockCombinationSlotCostSheet>();
+
+        if (!costSheet.ContainsKey(slotIndex))
+        {
+            return;
+        }
+
+        var price = costSheet[slotIndex];
+        var useMaterial = price.GoldenDustPrice > 0 || price.RubyDustPrice > 0;
+        var needCheckBalance = price.CrystalPrice > 0 || price.NcgPrice > 0;
+
+        if (useMaterial)
+        {
+            Assert.ThrowsAny<NotEnoughMaterialException>(() => action.Execute(ctx));
+        }
+
+        if (needCheckBalance)
+        {
+            Assert.ThrowsAny<InsufficientBalanceException>(() => action.Execute(ctx));
+        }
+    }
 }
