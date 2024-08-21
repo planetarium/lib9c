@@ -60,7 +60,15 @@ namespace Nekoyume.Action
             }
             
             var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
-            var combinationSlot = allSlotState.GetSlot(SlotIndex);
+            var hasSlot = allSlotState.TryGetSlot(SlotIndex, out var combinationSlot);
+            if (!hasSlot || combinationSlot is null)
+            {
+                combinationSlot = new CombinationSlotState(
+                    CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
+                    SlotIndex
+                );
+            }
+                
             if (combinationSlot.IsUnlocked)
             {
                 throw new SlotAlreadyUnlockedException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");

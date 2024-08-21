@@ -134,6 +134,7 @@ namespace Nekoyume.Model.State
                     combinationSlotState = new CombinationSlotState(combinationAddress, i);
                 }
 
+                combinationSlotState.Index = i;
                 allCombinationSlotState.AddSlot(combinationSlotState);
             }
 
@@ -161,6 +162,7 @@ namespace Nekoyume.Model.State
                     combinationSlotState = new CombinationSlotState(combinationAddress, i);
                 }
 
+                combinationSlotState.Index = i;
                 allCombinationSlotState.AddSlot(combinationSlotState);
             }
 
