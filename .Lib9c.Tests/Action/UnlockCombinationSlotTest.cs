@@ -71,7 +71,7 @@ public class UnlockCombinationSlotTest
 
         if (!costSheet.ContainsKey(slotIndex))
         {
-            throw new InvalidSlotIndexException($"[{nameof(UnlockRuneSlot)}] Index On Sheet : {slotIndex}");
+            return state;
         }
 
         var price = costSheet[slotIndex];
@@ -224,5 +224,38 @@ public class UnlockCombinationSlotTest
         {
             Assert.True(slotState.IsUnlocked);
         }
+    }
+
+    /// <summary>
+    /// Unit test for validating the behavior when attempting to unlock a default combination slot that is already unlocked.
+    /// </summary>
+    /// <param name="slotIndex">The index of the combination slot to be tested.</param>
+    /// <remarks>
+    /// This test initializes the game state, mints the necessary assets for the given slot, and attempts to execute the UnlockCombinationSlot action.
+    /// It verifies that the action throws a SlotAlreadyUnlockedException, indicating that the specified slot is already unlocked by default.
+    /// </remarks>
+    [Theory]
+    [InlineData(1)]
+    [InlineData(3)]
+    public void Execute_DefaultSlot(int slotIndex)
+    {
+        var context = new ActionContext();
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        state = MintAssetForCost(state, slotIndex, context, agentAddress, avatarAddress);
+        var action = new UnlockCombinationSlot()
+        {
+            AvatarAddress = avatarAddress,
+            SlotIndex = slotIndex,
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        Assert.Throws<SlotAlreadyUnlockedException>(() => action.Execute(ctx));
     }
 }
