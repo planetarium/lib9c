@@ -127,6 +127,16 @@ public class UnlockCombinationSlotTest
         return state;
     }
 
+    /// <summary>
+    /// Unit test for validating the behavior of the UnlockCombinationSlot action.<br/>
+    /// check 'IsUnlock', 'Index' property of slot, and used material count
+    /// </summary>
+    /// <param name="slotIndex">The index of the combination slot to be unlocked.</param>
+    /// <remarks>
+    /// This test initializes the game state, mints assets, and then executes the UnlockCombinationSlot action.
+    /// It verifies that the currency balances are correctly updated and ensures that the specified combination slot is unlocked.
+    /// Additionally, it checks that certain items (GoldenDust and RubyDust) are not present in the avatar's inventory after the action.
+    /// </remarks>
     [Theory]
     [InlineData(4)]
     [InlineData(6)]
