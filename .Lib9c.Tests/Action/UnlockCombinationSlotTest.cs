@@ -129,7 +129,7 @@ public class UnlockCombinationSlotTest
 
     /// <summary>
     /// Unit test for validating the behavior of the UnlockCombinationSlot action.<br/>
-    /// check 'IsUnlock', 'Index' property of slot, and used material count
+    /// check 'IsUnlock', 'Index' property of slot, and used material count.
     /// </summary>
     /// <param name="slotIndex">The index of the combination slot to be unlocked.</param>
     /// <remarks>
@@ -176,5 +176,53 @@ public class UnlockCombinationSlotTest
         var slotState = combinationSlotState.GetSlot(slotIndex);
         Assert.True(slotState.IsUnlocked);
         Assert.True(slotState.Index == slotIndex);
+    }
+
+    /// <summary>
+    /// Unit test for validating the unlocking of all combination slots for an avatar.
+    /// </summary>
+    /// <remarks>
+    /// This test initializes the game state, retrieves all combination slots, and iterates through each slot.
+    /// For locked slots, it mints the necessary assets and executes the UnlockCombinationSlot action to unlock them.
+    /// Finally, it verifies that all slots are unlocked successfully.
+    /// </remarks>
+    [Fact]
+    public void Execute_All()
+    {
+        var context = new ActionContext();
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        var allCombinationSlotState = state.GetAllCombinationSlotState(avatarAddress);
+
+        foreach (var slotState in allCombinationSlotState)
+        {
+            if (slotState.IsUnlocked)
+            {
+                continue;
+            }
+
+            state = MintAssetForCost(state, slotState.Index, context, agentAddress, avatarAddress);
+
+            var action = new UnlockCombinationSlot()
+            {
+                AvatarAddress = avatarAddress,
+                SlotIndex = slotState.Index,
+            };
+
+            var ctx = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            state = action.Execute(ctx);
+        }
+
+        allCombinationSlotState = state.GetAllCombinationSlotState(avatarAddress);
+        foreach (var slotState in allCombinationSlotState)
+        {
+            Assert.True(slotState.IsUnlocked);
+        }
     }
 }
