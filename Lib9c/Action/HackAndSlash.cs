@@ -30,6 +30,7 @@ namespace Nekoyume.Action
     [ActionType("hack_and_slash22")]
     public class HackAndSlash : GameAction, IHackAndSlashV10
     {
+        private static readonly ActivitySource ActivitySource = new ActivitySource("Lib9c.Action.HackAndSlash");
         public const int UsableApStoneCount = 10;
 
         public List<Guid> Costumes;
@@ -42,7 +43,6 @@ namespace Nekoyume.Action
         public Address AvatarAddress;
         public int TotalPlayCount = 1;
         public int ApStoneCount = 0;
-        private readonly ActivitySource _activitySource = new ActivitySource("Lib9c.Action.HackAndSlash");
 
         IEnumerable<Guid> IHackAndSlashV10.Costumes => Costumes;
         IEnumerable<Guid> IHackAndSlashV10.Equipments => Equipments;
@@ -118,7 +118,7 @@ namespace Nekoyume.Action
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
-            var activity = _activitySource.StartActivity("HackAndSlash");
+            using var activity = ActivitySource.StartActivity("HackAndSlash");
             Log.Verbose("{AddressesHex} {Source} from #{BlockIndex} exec started",
                 addressesHex, source, blockIndex);
 
@@ -147,7 +147,7 @@ namespace Nekoyume.Action
 
             var sw = new Stopwatch();
             sw.Start();
-            var avatarStateActivity = _activitySource.StartActivity(
+            var avatarStateActivity = ActivitySource.StartActivity(
                 "GetAvatarState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -163,7 +163,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Get AvatarState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            var sheetActivity = _activitySource.StartActivity(
+            var sheetActivity = ActivitySource.StartActivity(
                 "GetSheets",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -210,7 +210,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
 
-            var checkStateActivity = _activitySource.StartActivity(
+            var checkStateActivity = ActivitySource.StartActivity(
                 "CheckState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -245,7 +245,7 @@ namespace Nekoyume.Action
             }
 
             sw.Restart();
-            var stageSheetActivity = _activitySource.StartActivity(
+            var stageSheetActivity = ActivitySource.StartActivity(
                 "GetStageSheet",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -260,7 +260,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Get StageSheet", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            var validateWorldActivity = _activitySource.StartActivity(
+            var validateWorldActivity = ActivitySource.StartActivity(
                 "ValidateWorld",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -306,7 +306,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Validate World", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            var validateItemsActivity = _activitySource.StartActivity(
+            var validateItemsActivity = ActivitySource.StartActivity(
                 "ValidateItems",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -328,7 +328,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Validate Items", blockIndex, sw.Elapsed.TotalMilliseconds);
             sw.Restart();
 
-            var unequipItemsActivity = _activitySource.StartActivity(
+            var unequipItemsActivity = ActivitySource.StartActivity(
                 "UnequipItems",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -414,7 +414,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Unequip items", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             sw.Restart();
-            var questSheetActivity = _activitySource.StartActivity(
+            var questSheetActivity = ActivitySource.StartActivity(
                 "GetQuestSheet",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -433,7 +433,7 @@ namespace Nekoyume.Action
             if (ids.Any())
             {
                 sw.Restart();
-                var questListActivity = _activitySource.StartActivity(
+                var questListActivity = ActivitySource.StartActivity(
                     "UpdateQuestList",
                     ActivityKind.Internal,
                     activity?.Id ?? string.Empty);
@@ -451,7 +451,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
 
-            var skillStateActivity = _activitySource.StartActivity(
+            var skillStateActivity = ActivitySource.StartActivity(
                 "GetSkillState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -499,7 +499,7 @@ namespace Nekoyume.Action
             var crystalStageBuffSheet = sheets.GetSheet<CrystalStageBuffGachaSheet>();
             sw.Restart();
 
-            var slotstateActivity = _activitySource.StartActivity(
+            var slotstateActivity = ActivitySource.StartActivity(
                 "UpdateSlotState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -536,7 +536,7 @@ namespace Nekoyume.Action
             Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                 addressesHex, source, "Update slotState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
-            var simulatorActivity = _activitySource.StartActivity(
+            var simulatorActivity = ActivitySource.StartActivity(
                 "Simulator",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -594,7 +594,7 @@ namespace Nekoyume.Action
                     addressesHex, source, "Simulator.Simulate()", blockIndex, sw.Elapsed.TotalMilliseconds);
 
                 sw.Restart();
-                var clearStageActivity = _activitySource.StartActivity(
+                var clearStageActivity = ActivitySource.StartActivity(
                     "ClearStage",
                     ActivityKind.Internal,
                     activity?.Id ?? string.Empty);
@@ -666,7 +666,7 @@ namespace Nekoyume.Action
             skillState?.Update(starCount, crystalStageBuffSheet);
             sw.Restart();
 
-            var updateAvatarActivity = _activitySource.StartActivity(
+            var updateAvatarActivity = ActivitySource.StartActivity(
                 "UpdateAvatarState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
@@ -681,7 +681,7 @@ namespace Nekoyume.Action
 
             sw.Restart();
 
-            var setStateActivity = _activitySource.StartActivity(
+            var setStateActivity = ActivitySource.StartActivity(
                 "SetState",
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
