@@ -53,7 +53,7 @@ namespace Nekoyume.Model.Guild
             }
         }
 
-        public override Currency Currency => Currencies.GuildGold;
+        public override Currency DelegationCurrency => Currencies.GuildGold;
 
         public override Currency RewardCurrency { get; }
 
@@ -61,7 +61,7 @@ namespace Nekoyume.Model.Guild
 
         public override long UnbondingPeriod => 75600L;
 
-        public override byte[] DelegateeId => new byte[] { 0x047 }; // `G`
+        public override byte[] DelegateeId => new byte[] { 0x47 }; // `G`
 
         public override int MaxUnbondLockInEntries => 10;
 

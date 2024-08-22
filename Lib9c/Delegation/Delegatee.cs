@@ -30,7 +30,7 @@ namespace Nekoyume.Delegation
         {
             Address = address;
             Delegators = ImmutableSortedSet<Address>.Empty;
-            TotalDelegated = Currency * 0;
+            TotalDelegated = DelegationCurrency * 0;
             TotalShares = BigInteger.Zero;
             _repository = repository;
         }
@@ -57,7 +57,7 @@ namespace Nekoyume.Delegation
             BigInteger totalShares,
             IDelegationRepository? repository)
         {
-            if (!totalDelegated.Currency.Equals(Currency))
+            if (!totalDelegated.Currency.Equals(DelegationCurrency))
             {
                 throw new InvalidOperationException("Invalid currency.");
             }
@@ -87,7 +87,7 @@ namespace Nekoyume.Delegation
 
         public Address Address { get; }
 
-        public abstract Currency Currency { get; }
+        public abstract Currency DelegationCurrency { get; }
 
         public abstract Currency RewardCurrency { get; }
 
@@ -146,7 +146,7 @@ namespace Nekoyume.Delegation
             CannotMutateRelationsWithoutRepository(delegator);
             DistributeReward(delegator, height);
 
-            if (!fav.Currency.Equals(Currency))
+            if (!fav.Currency.Equals(DelegationCurrency))
             {
                 throw new InvalidOperationException(
                     "Cannot bond with invalid currency.");
@@ -237,9 +237,11 @@ namespace Nekoyume.Delegation
             || (other is Delegatee<T, TSelf> delegatee
             && (GetType() != delegatee.GetType())
             && Address.Equals(delegatee.Address)
-            && Currency.Equals(delegatee.Currency)
+            && DelegationCurrency.Equals(delegatee.DelegationCurrency)
+            && RewardCurrency.Equals(delegatee.RewardCurrency)
             && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
             && UnbondingPeriod == delegatee.UnbondingPeriod
+            && RewardCollectorAddress.Equals(delegatee.RewardCollectorAddress)
             && RewardDistributorAddress.Equals(delegatee.RewardDistributorAddress)
             && Delegators.SequenceEqual(delegatee.Delegators)
             && TotalDelegated.Equals(delegatee.TotalDelegated)

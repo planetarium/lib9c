@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Delegation
             var address = new Address("0xe8327129891e1A0B2E3F0bfa295777912295942a");
             var delegatee = new TestDelegatee(address, _fixture.Repository);
             Assert.Equal(address, delegatee.Address);
-            Assert.Equal(DelegationFixture.TestCurrency, delegatee.Currency);
+            Assert.Equal(DelegationFixture.TestCurrency, delegatee.DelegationCurrency);
             Assert.Equal(3, delegatee.UnbondingPeriod);
             Assert.Equal(new byte[] { 0x01 }, delegatee.DelegateeId);
         }
@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Delegation
             var address = new Address("0xe8327129891e1A0B2E3F0bfa295777912295942a");
             var delegatee = _fixture.TestDelegatee1;
             var delegator = _fixture.TestDelegator1;
-            delegatee.Bond(delegator, delegatee.Currency * 10, 10L);
+            delegatee.Bond(delegator, delegatee.DelegationCurrency * 10, 10L);
 
             var delegateeRecon = new TestDelegatee(address, delegatee.Bencoded, delegatee.Repository);
             Assert.Equal(address, delegateeRecon.Address);
@@ -59,9 +59,9 @@ namespace Lib9c.Tests.Delegation
             var share1 = BigInteger.Zero;
             var share2 = BigInteger.Zero;
             var totalShare = BigInteger.Zero;
-            var totalBonding = testDelegatee.Currency * 0;
+            var totalBonding = testDelegatee.DelegationCurrency * 0;
 
-            var bonding = testDelegatee.Currency * 10;
+            var bonding = testDelegatee.DelegationCurrency * 10;
             var share = testDelegatee.ShareToBond(bonding);
             share1 += share;
             totalShare += share;
@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(totalShare, testDelegatee.TotalShares);
             Assert.Equal(totalBonding, testDelegatee.TotalDelegated);
 
-            bonding = testDelegatee.Currency * 20;
+            bonding = testDelegatee.DelegationCurrency * 20;
             share = testDelegatee.ShareToBond(bonding);
             share1 += share;
             totalShare += share;
@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(totalShare, testDelegatee.TotalShares);
             Assert.Equal(totalBonding, testDelegatee.TotalDelegated);
 
-            bonding = testDelegatee.Currency * 30;
+            bonding = testDelegatee.DelegationCurrency * 30;
             share = testDelegatee.ShareToBond(bonding);
             share2 += share;
             totalShare += share;
@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Delegation
 
             Assert.Throws<InvalidCastException>(
                 () => testDelegatee.Bond(
-                    dummyDelegator, testDelegatee.Currency * 10, 10L));
+                    dummyDelegator, testDelegatee.DelegationCurrency * 10, 10L));
         }
 
         [Fact]
@@ -139,16 +139,16 @@ namespace Lib9c.Tests.Delegation
             var share1 = BigInteger.Zero;
             var share2 = BigInteger.Zero;
             var totalShares = BigInteger.Zero;
-            var totalDelegated = testDelegatee.Currency * 0;
+            var totalDelegated = testDelegatee.DelegationCurrency * 0;
 
-            var bonding = testDelegatee.Currency * 100;
+            var bonding = testDelegatee.DelegationCurrency * 100;
             var share = testDelegatee.ShareToBond(bonding);
             share1 += share;
             totalShares += share;
             totalDelegated += bonding;
             testDelegatee.Bond(testDelegator1, bonding, 1L);
 
-            bonding = testDelegatee.Currency * 50;
+            bonding = testDelegatee.DelegationCurrency * 50;
             share = testDelegatee.ShareToBond(bonding);
             share2 += share;
             totalShares += share;
