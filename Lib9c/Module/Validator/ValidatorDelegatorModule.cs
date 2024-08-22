@@ -13,7 +13,7 @@ namespace Nekoyume.Module.Validator
 {
     public static class ValidatorDelegatorModule
     {
-        public static IWorld Delegate(
+        public static IWorld DelegateValidator(
             this IWorld world,
             IActionContext context,
             Address address,
@@ -30,7 +30,7 @@ namespace Nekoyume.Module.Validator
                 .SetValidatorDelegator(validatorDelegator);
         }
 
-        public static IWorld Undelegate(
+        public static IWorld UndelegateValidator(
             this IWorld world,
             IActionContext context,
             Address address,
@@ -47,7 +47,7 @@ namespace Nekoyume.Module.Validator
                 .SetValidatorDelegator(validatorDelegator);
         }
 
-        public static IWorld Redelegate(
+        public static IWorld RedelegateValidator(
             this IWorld world,
             IActionContext context,
             Address srcAddress,
@@ -67,7 +67,7 @@ namespace Nekoyume.Module.Validator
                 .SetValidatorDelegator(validatorDelegator);
         }
 
-        public static IWorld ClaimReward(
+        public static IWorld ClaimRewardValidator(
             this IWorld world,
             IActionContext context,
             Address address)
