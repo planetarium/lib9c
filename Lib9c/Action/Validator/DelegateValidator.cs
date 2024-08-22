@@ -1,0 +1,58 @@
+using System;
+using Bencodex.Types;
+using Libplanet.Action.State;
+using Libplanet.Action;
+using Libplanet.Crypto;
+using Libplanet.Types.Assets;
+using Nekoyume.Module.Validator;
+
+namespace Nekoyume.Action.Validator
+{
+    public class DelegateValidator : ActionBase
+    {
+        public const string TypeIdentifier = "delegate_validator";
+
+        private const string TargetKey = "t";
+
+        public DelegateValidator() { }
+
+        public DelegateValidator(Address validatorDelegatee, FungibleAssetValue fav)
+        {
+            ValidatorDelegatee = validatorDelegatee;
+            FAV = fav;
+        }
+
+        public Address ValidatorDelegatee { get; private set; }
+
+        public FungibleAssetValue FAV { get; private set; }
+
+        public override IValue PlainValue => Dictionary.Empty
+            .Add("type_id", TypeIdentifier)
+            .Add("values", List.Empty
+                .Add(ValidatorDelegatee.Bencoded)
+                .Add(FAV.Serialize()));
+
+        public override void LoadPlainValue(IValue plainValue)
+        {
+            var root = (Dictionary)plainValue;
+            if (plainValue is not Dictionary ||
+                !root.TryGetValue((Text)"values", out var rawValues) ||
+                rawValues is not List values)
+            {
+                throw new InvalidCastException();
+            }
+
+            ValidatorDelegatee = new Address(values[0]);
+            FAV = new FungibleAssetValue(values[1]);
+        }
+
+        public override IWorld Execute(IActionContext context)
+        {
+            context.UseGas(1);
+
+            var world = context.PreviousState;
+
+            return world.DelegateValidator(context, ValidatorDelegatee, FAV);
+        }
+    }
+}
