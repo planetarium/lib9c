@@ -12,7 +12,7 @@ namespace Nekoyume.Delegation
     {
         Address Address { get; }
 
-        Currency Currency { get; }
+        Currency DelegationCurrency { get; }
 
         Currency RewardCurrency { get; }
 

@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Nekoyume.Action;
-using Nekoyume.Model.Guild;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
@@ -128,6 +127,28 @@ namespace Nekoyume
         /// </summary>
         public static readonly Address LumpSumRewardsRecord
             = new Address("0000000000000000000000000000000000000304");
+
+        #endregion
+
+        #region Validator
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.ValidatorList"/>.
+        /// </summary>
+        public static readonly Address ValidatorList
+            = new Address("0000000000000000000000000000000000000400");
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.ValidatorDelegatee"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegatee
+            = new Address("0000000000000000000000000000000000000401");
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.ValidatorDelegator"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegator
+            = new Address("0000000000000000000000000000000000000402");
 
         #endregion
 

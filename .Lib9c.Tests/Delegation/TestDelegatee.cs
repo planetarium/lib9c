@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Delegation
         {
         }
 
-        public override Currency Currency => DelegationFixture.TestCurrency;
+        public override Currency DelegationCurrency => DelegationFixture.TestCurrency;
 
         public override Currency RewardCurrency => DelegationFixture.TestCurrency;
 

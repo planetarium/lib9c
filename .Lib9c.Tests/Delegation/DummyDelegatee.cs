@@ -10,7 +10,7 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
     {
     }
 
-    public override Currency Currency => DelegationFixture.TestCurrency;
+    public override Currency DelegationCurrency => DelegationFixture.TestCurrency;
 
     public override Currency RewardCurrency => DelegationFixture.TestCurrency;
 

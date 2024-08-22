@@ -235,7 +235,7 @@ namespace Nekoyume.Module.Guild
             var srcGuild = world.TryGetGuild(srcGuildAddress, repo, out var s)
                 ? s
                 : throw new InvalidOperationException("The guild does not exist.");
-            var dstGuild = world.TryGetGuild(srcGuildAddress, repo, out var d)
+            var dstGuild = world.TryGetGuild(dstGuildAddress, repo, out var d)
                 ? d
                 : throw new InvalidOperationException("The guild does not exist.");
             guildParticipant.Redelegate(srcGuild, dstGuild, share, context.BlockIndex);
