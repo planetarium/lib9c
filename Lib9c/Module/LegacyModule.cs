@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -7,6 +8,8 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
+using BitFaster.Caching;
+using BitFaster.Caching.Lru;
 using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -30,8 +33,8 @@ namespace Nekoyume.Module
     public static class LegacyModule
     {
         private const int SheetsCacheSize = 100;
-        private static readonly LruCache<string, ISheet> SheetsCache =
-            new LruCache<string, ISheet>(SheetsCacheSize);
+        private static readonly ICache<string, ISheet> SheetsCache =
+            new FastConcurrentLru<string, ISheet>(SheetsCacheSize);
 
         public static IValue GetLegacyState(this IWorldState worldState, Address address) =>
             worldState.GetAccountState(ReservedAddresses.LegacyAccount).GetState(address);
@@ -401,7 +404,7 @@ namespace Nekoyume.Module
                 }
 
                 var cacheKey = sheetAddr.ToHex() + ByteUtil.Hex(hash);
-                if (SheetsCache.TryGetValue(cacheKey, out var cached))
+                if (SheetsCache.TryGet(cacheKey, out var cached))
                 {
                     return (T)cached;
                 }
@@ -625,14 +628,21 @@ namespace Nekoyume.Module
                 }
 
                 var csv = csvValue.ToDotnetString();
+                var hashDigest = csv
+                    .ToCharArray()
+                    .Reverse()
+                    .Select(x => (byte)x)
+                    .Take(10000)
+                    .ToArray();
+
                 byte[] hash;
                 using (var sha256 = SHA256.Create())
                 {
-                    hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(csv));
+                    hash = sha256.ComputeHash(hashDigest);
                 }
 
                 var cacheKey = address.ToHex() + ByteUtil.Hex(hash);
-                if (SheetsCache.TryGetValue(cacheKey, out var cached))
+                if (SheetsCache.TryGet(cacheKey, out var cached))
                 {
                     result[sheetType] = (address, cached);
                     continue;

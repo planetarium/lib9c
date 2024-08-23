@@ -30,7 +30,8 @@ namespace Nekoyume.Action
     [ActionType("hack_and_slash22")]
     public class HackAndSlash : GameAction, IHackAndSlashV10
     {
-        private static readonly ActivitySource ActivitySource = new ActivitySource("Lib9c.Action.HackAndSlash");
+        private static readonly ActivitySource ActivitySource
+            = new ActivitySource("Lib9c.Action.HackAndSlash");
         public const int UsableApStoneCount = 10;
 
         public List<Guid> Costumes;
