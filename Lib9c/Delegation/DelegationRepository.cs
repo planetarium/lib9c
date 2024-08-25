@@ -35,14 +35,14 @@ namespace Nekoyume.Delegation
             _lumpSumRewardsRecord = world.GetAccount(lumpSumRewardsRecordAddress);
         }
 
-        public IWorld World => _world
+        public virtual IWorld World => _world
             .SetAccount(bondAddress, _bond)
             .SetAccount(unbondLockInAddress, _unbondLockIn)
             .SetAccount(rebondGraceAddress, _rebondGrace)
             .SetAccount(unbondingSetAddress, _unbondingSet)
             .SetAccount(lumpSumRewardsRecordAddress, _lumpSumRewardsRecord);
 
-        public Bond GetBond(IDelegatee delegatee, Address delegatorAddress)
+        public virtual Bond GetBond(IDelegatee delegatee, Address delegatorAddress)
         {
             Address address = delegatee.BondAddress(delegatorAddress);
             IValue? value = _bond.GetState(address);
@@ -51,7 +51,7 @@ namespace Nekoyume.Delegation
                 : new Bond(address);
         }
 
-        public UnbondLockIn GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress)
+        public virtual UnbondLockIn GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress)
         {
             Address address = delegatee.UnbondLockInAddress(delegatorAddress);
             IValue? value = _unbondLockIn.GetState(address);
@@ -60,7 +60,7 @@ namespace Nekoyume.Delegation
                 : new UnbondLockIn(address, delegatee.MaxUnbondLockInEntries, delegatee.DelegationPoolAddress, delegatorAddress, this);
         }
 
-        public UnbondLockIn GetUnlimitedUnbondLockIn(Address address)
+        public virtual UnbondLockIn GetUnlimitedUnbondLockIn(Address address)
         {
             IValue? value = _unbondLockIn.GetState(address);
             return value is IValue bencoded
@@ -68,7 +68,7 @@ namespace Nekoyume.Delegation
                 : throw new InvalidOperationException("UnbondLockIn not found.");
         }
 
-        public RebondGrace GetRebondGrace(IDelegatee delegatee, Address delegatorAddress)
+        public virtual RebondGrace GetRebondGrace(IDelegatee delegatee, Address delegatorAddress)
         {
             Address address = delegatee.RebondGraceAddress(delegatorAddress);
             IValue? value = _rebondGrace.GetState(address);
@@ -77,7 +77,7 @@ namespace Nekoyume.Delegation
                 : new RebondGrace(address, delegatee.MaxRebondGraceEntries, this);
         }
 
-        public RebondGrace GetUnlimitedRebondGrace(Address address)
+        public virtual RebondGrace GetUnlimitedRebondGrace(Address address)
         {
             IValue? value = _rebondGrace.GetState(address);
             return value is IValue bencoded
@@ -85,12 +85,12 @@ namespace Nekoyume.Delegation
                 : throw new InvalidOperationException("RebondGrace not found.");
         }
 
-        public UnbondingSet GetUnbondingSet()
+        public virtual UnbondingSet GetUnbondingSet()
             => _unbondingSet.GetState(UnbondingSet.Address) is IValue bencoded
                 ? new UnbondingSet(bencoded, this)
                 : new UnbondingSet(this);
 
-        public LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
+        public virtual LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
         {
             Address address = delegatee.LumpSumRewardsRecordAddress(height);
             IValue? value = _lumpSumRewardsRecord.GetState(address);
@@ -99,7 +99,7 @@ namespace Nekoyume.Delegation
                 : null;
         }
 
-        public LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee)
+        public virtual LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee)
         {
             Address address = delegatee.CurrentLumpSumRewardsRecordAddress();
             IValue? value = _lumpSumRewardsRecord.GetState(address);
@@ -108,44 +108,44 @@ namespace Nekoyume.Delegation
                 : null;
         }
 
-        public FungibleAssetValue GetBalance(Address address, Currency currency)
+        public virtual FungibleAssetValue GetBalance(Address address, Currency currency)
             => _world.GetBalance(address, currency);
 
-        public void SetBond(Bond bond)
+        public virtual void SetBond(Bond bond)
         {
             _bond = bond.IsEmpty
                 ? _bond.RemoveState(bond.Address)
                 : _bond.SetState(bond.Address, bond.Bencoded);
         }
 
-        public void SetUnbondLockIn(UnbondLockIn unbondLockIn)
+        public virtual void SetUnbondLockIn(UnbondLockIn unbondLockIn)
         {
             _unbondLockIn = unbondLockIn.IsEmpty
                 ? _unbondLockIn.RemoveState(unbondLockIn.Address)
                 : _unbondLockIn.SetState(unbondLockIn.Address, unbondLockIn.Bencoded);
         }
 
-        public void SetRebondGrace(RebondGrace rebondGrace)
+        public virtual void SetRebondGrace(RebondGrace rebondGrace)
         {
             _rebondGrace = rebondGrace.IsEmpty
                 ? _rebondGrace.RemoveState(rebondGrace.Address)
                 : _rebondGrace.SetState(rebondGrace.Address, rebondGrace.Bencoded);
         }
 
-        public void SetUnbondingSet(UnbondingSet unbondingSet)
+        public virtual void SetUnbondingSet(UnbondingSet unbondingSet)
         {
             _unbondingSet = unbondingSet.IsEmpty
                 ? _unbondingSet.RemoveState(UnbondingSet.Address)
                 : _unbondingSet.SetState(UnbondingSet.Address, unbondingSet.Bencoded);
         }
 
-        public void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord)
+        public virtual void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord)
         {
             _lumpSumRewardsRecord = _lumpSumRewardsRecord.SetState(
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
         }
 
-        public void AddLumpSumRewards(IDelegatee delegatee, long height, FungibleAssetValue rewards)
+        public virtual void AddLumpSumRewards(IDelegatee delegatee, long height, FungibleAssetValue rewards)
         {
             LumpSumRewardsRecord record = GetCurrentLumpSumRewardsRecord(delegatee)
                 ?? new LumpSumRewardsRecord(

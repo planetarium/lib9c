@@ -67,7 +67,7 @@ namespace Nekoyume.Model.Guild
 
         public override int MaxRebondGraceEntries => 10;
 
-        public new List Bencoded => List.Empty
+        public override List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
             .Add(GuildMasterAddress.Bencoded)

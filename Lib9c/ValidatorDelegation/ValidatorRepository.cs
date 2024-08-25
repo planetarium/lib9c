@@ -4,6 +4,7 @@ using Libplanet.Action;
 using Nekoyume.Delegation;
 using Bencodex.Types;
 using Libplanet.Crypto;
+using static Nekoyume.Model.WorldInformation;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -18,6 +19,9 @@ namespace Nekoyume.ValidatorDelegation
         {
             _validatorList = world.GetAccount(validatorListAddress);
         }
+
+        public override IWorld World => base.World
+            .SetAccount(validatorListAddress, _validatorList);
 
         public ValidatorList GetValidatorList()
         {

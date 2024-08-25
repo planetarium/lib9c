@@ -133,22 +133,34 @@ namespace Nekoyume
         #region Validator
 
         /// <summary>
+        /// An address for reward pool of validators.
+        /// </summary>
+        public static readonly Address RewardPool
+            = new Address("0000000000000000000000000000000000000400");
+
+        /// <summary>
         /// An address of an account having <see cref="ValidatorDelegation.ValidatorList"/>.
         /// </summary>
         public static readonly Address ValidatorList
-            = new Address("0000000000000000000000000000000000000400");
+            = new Address("0000000000000000000000000000000000000401");
 
         /// <summary>
         /// An address of an account having <see cref="ValidatorDelegation.ValidatorDelegatee"/>.
         /// </summary>
         public static readonly Address ValidatorDelegatee
-            = new Address("0000000000000000000000000000000000000401");
+            = new Address("0000000000000000000000000000000000000402");
 
         /// <summary>
         /// An address of an account having <see cref="ValidatorDelegation.ValidatorDelegator"/>.
         /// </summary>
         public static readonly Address ValidatorDelegator
-            = new Address("0000000000000000000000000000000000000402");
+            = new Address("0000000000000000000000000000000000000403");
+
+        /// <summary>
+        /// An address for community fund.
+        /// </summary>
+        public static readonly Address CommunityPool
+            = new Address("0000000000000000000000000000000000000499");
 
         #endregion
 

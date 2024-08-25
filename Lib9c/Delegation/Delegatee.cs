@@ -113,7 +113,7 @@ namespace Nekoyume.Delegation
 
         public IDelegationRepository? Repository => _repository;
 
-        public List Bencoded => List.Empty
+        public virtual List Bencoded => List.Empty
             .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
             .Add(TotalDelegated.Serialize())
             .Add(TotalShares);
@@ -141,7 +141,7 @@ namespace Nekoyume.Delegation
         void IDelegatee.DistributeReward(IDelegator delegator, long height)
             => DistributeReward((T)delegator, height);
 
-        public BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
+        public virtual BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
             CannotMutateRelationsWithoutRepository(delegator);
             DistributeReward(delegator, height);
@@ -164,7 +164,7 @@ namespace Nekoyume.Delegation
             return share;
         }
 
-        public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
+        public virtual FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
             CannotMutateRelationsWithoutRepository(delegator);
             DistributeReward(delegator, height);
@@ -190,7 +190,7 @@ namespace Nekoyume.Delegation
             return fav;
         }
 
-        public void DistributeReward(T delegator, long height)
+        public virtual void DistributeReward(T delegator, long height)
         {
             CannotMutateRelationsWithoutRepository(delegator);
             BigInteger share = _repository!.GetBond(this, delegator.Address).Share;
@@ -205,7 +205,7 @@ namespace Nekoyume.Delegation
             delegator.UpdateLastRewardHeight(height);
         }
 
-        public void CollectRewards(long height)
+        public virtual void CollectRewards(long height)
         {
             CannotMutateRelationsWithoutRepository();
             FungibleAssetValue rewards = _repository!.GetBalance(RewardCollectorAddress, RewardCurrency);
@@ -213,26 +213,26 @@ namespace Nekoyume.Delegation
             _repository!.TransferAsset(RewardCollectorAddress, RewardDistributorAddress, rewards);
         }
 
-        public Address BondAddress(Address delegatorAddress)
+        public virtual Address BondAddress(Address delegatorAddress)
             => DeriveAddress(BondId, delegatorAddress);
 
-        public Address UnbondLockInAddress(Address delegatorAddress)
+        public virtual Address UnbondLockInAddress(Address delegatorAddress)
             => DeriveAddress(UnbondLockInId, delegatorAddress);
 
-        public Address RebondGraceAddress(Address delegatorAddress)
+        public virtual Address RebondGraceAddress(Address delegatorAddress)
             => DeriveAddress(RebondGraceId, delegatorAddress);
 
-        public Address CurrentLumpSumRewardsRecordAddress()
+        public virtual Address CurrentLumpSumRewardsRecordAddress()
             => DeriveAddress(LumpSumRewardsRecordId);
 
-        public Address LumpSumRewardsRecordAddress(long height)
+        public virtual Address LumpSumRewardsRecordAddress(long height)
             => DeriveAddress(LumpSumRewardsRecordId, BitConverter.GetBytes(height));
 
 
         public override bool Equals(object? obj)
             => obj is IDelegatee other && Equals(other);
 
-        public bool Equals(IDelegatee? other)
+        public virtual bool Equals(IDelegatee? other)
             => ReferenceEquals(this, other)
             || (other is Delegatee<T, TSelf> delegatee
             && (GetType() != delegatee.GetType())
