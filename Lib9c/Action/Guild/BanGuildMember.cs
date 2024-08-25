@@ -45,7 +45,7 @@ namespace Nekoyume.Action.Guild
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
             var world = context.PreviousState;
             var signer = context.GetAgentAddress();

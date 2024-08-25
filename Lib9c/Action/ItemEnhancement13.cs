@@ -134,7 +134,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var ctx = context;
             var states = ctx.PreviousState;
             var random = context.GetRandom();

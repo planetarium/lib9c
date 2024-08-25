@@ -119,7 +119,7 @@ namespace Lib9c.Tests.Action.Scenario
                 long expectedGasLimit = action is ITransferAsset || action is ITransferAssets
                     ? expectedTransferActionGasLimit
                     : expectedActionGasLimit;
-                long gasUsed = actionContext.GasUsed();
+                long gasUsed = GasTracer.GasUsed;
                 Assert.True(expectedGasLimit == gasUsed, $"{action} invalid used gas. {gasUsed}");
             }
         }

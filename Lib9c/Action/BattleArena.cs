@@ -95,7 +95,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             ValidateTicket();
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(

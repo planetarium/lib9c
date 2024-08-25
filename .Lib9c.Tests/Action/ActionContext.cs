@@ -7,14 +7,13 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
     using Libplanet.Types.Evidence;
     using Libplanet.Types.Tx;
 
     public class ActionContext : IActionContext
     {
-        private long _gasUsed;
-
         private IRandom _random = null;
 
         private IReadOnlyList<ITransaction> _txs = null;
@@ -35,6 +34,8 @@ namespace Lib9c.Tests.Action
 
         public int BlockProtocolVersion { get; set; } = BlockMetadata.CurrentProtocolVersion;
 
+        public BlockCommit LastCommit { get; set; }
+
         public IWorld PreviousState { get; set; }
 
         public int RandomSeed { get; set; }
@@ -42,6 +43,8 @@ namespace Lib9c.Tests.Action
         public HashDigest<SHA256>? PreviousStateRootHash { get; set; }
 
         public bool IsPolicyAction { get; set; }
+
+        public FungibleAssetValue? MaxGasPrice { get; set; }
 
         public IReadOnlyList<ITransaction> Txs
         {
@@ -55,16 +58,7 @@ namespace Lib9c.Tests.Action
             set => _evs = value;
         }
 
-        public void UseGas(long gas)
-        {
-            _gasUsed += gas;
-        }
-
         public IRandom GetRandom() => _random ?? new TestRandom(RandomSeed);
-
-        public long GasUsed() => _gasUsed;
-
-        public long GasLimit() => 0;
 
         // FIXME: Temporary measure to allow inheriting already mutated IRandom.
         public void SetRandom(IRandom random)
