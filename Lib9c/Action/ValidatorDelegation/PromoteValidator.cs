@@ -4,32 +4,32 @@ using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Module.Validator;
+using Nekoyume.Module.ValidatorDelegation;
 
-namespace Nekoyume.Action.Validator
+namespace Nekoyume.Action.ValidatorDelegation
 {
-    public class DelegateValidator : ActionBase
+    public class PromoteValidator : ActionBase
     {
-        public const string TypeIdentifier = "delegate_validator";
+        public const string TypeIdentifier = "promote_validator";
 
         private const string TargetKey = "t";
 
-        public DelegateValidator() { }
+        public PromoteValidator() { }
 
-        public DelegateValidator(Address validatorDelegatee, FungibleAssetValue fav)
+        public PromoteValidator(PublicKey publicKey, FungibleAssetValue fav)
         {
-            ValidatorDelegatee = validatorDelegatee;
+            PublicKey = publicKey;
             FAV = fav;
         }
 
-        public Address ValidatorDelegatee { get; private set; }
+        public PublicKey PublicKey { get; private set; }
 
         public FungibleAssetValue FAV { get; private set; }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", List.Empty
-                .Add(ValidatorDelegatee.Bencoded)
+                .Add(PublicKey.Format(true))
                 .Add(FAV.Serialize()));
 
         public override void LoadPlainValue(IValue plainValue)
@@ -42,17 +42,19 @@ namespace Nekoyume.Action.Validator
                 throw new InvalidCastException();
             }
 
-            ValidatorDelegatee = new Address(values[0]);
+            PublicKey = new PublicKey(((Binary)values[0]).ByteArray);
             FAV = new FungibleAssetValue(values[1]);
         }
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
             var world = context.PreviousState;
 
-            return world.DelegateValidator(context, ValidatorDelegatee, FAV);
+            return world
+                .CreateValidatorDelegatee(context, PublicKey)
+                .DelegateValidator(context, context.Signer, FAV);
         }
     }
 }

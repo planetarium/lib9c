@@ -55,7 +55,7 @@ namespace Nekoyume.Delegation
 
         public IDelegationRepository? Repository => _repository;
 
-        public List Bencoded
+        public virtual List Bencoded
             => List.Empty
                 .Add(new List(Delegatees.Select(a => a.Bencoded)))
                 .Add(Null.Value);
@@ -78,7 +78,7 @@ namespace Nekoyume.Delegation
             IDelegatee delegatee, long height)
             => ClaimReward((T)delegatee, height);
 
-        public void Delegate(
+        public virtual void Delegate(
             T delegatee, FungibleAssetValue fav, long height)
         {
             CannotMutateRelationsWithoutRepository(delegatee);
@@ -93,7 +93,7 @@ namespace Nekoyume.Delegation
             _repository!.TransferAsset(Address, delegatee.DelegationPoolAddress, fav);
         }
 
-        public void Undelegate(
+        public virtual void Undelegate(
             T delegatee, BigInteger share, long height)
         {
             CannotMutateRelationsWithoutRepository(delegatee);
@@ -130,7 +130,7 @@ namespace Nekoyume.Delegation
                 _repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
         }
 
-        public void Redelegate(
+        public virtual void Redelegate(
             T srcDelegatee, T dstDelegatee, BigInteger share, long height)
         {
             CannotMutateRelationsWithoutRepository(srcDelegatee);
@@ -169,7 +169,7 @@ namespace Nekoyume.Delegation
                 _repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
         }
 
-        public void CancelUndelegate(
+        public virtual void CancelUndelegate(
             T delegatee, FungibleAssetValue fav, long height)
         {
             CannotMutateRelationsWithoutRepository(delegatee);
@@ -201,7 +201,7 @@ namespace Nekoyume.Delegation
                 _repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
         }
 
-        public void ClaimReward(
+        public virtual void ClaimReward(
             T delegatee, long height)
         {
             CannotMutateRelationsWithoutRepository(delegatee);
@@ -216,7 +216,7 @@ namespace Nekoyume.Delegation
         public override bool Equals(object? obj)
             => obj is IDelegator other && Equals(other);
 
-        public bool Equals(IDelegator? other)
+        public virtual bool Equals(IDelegator? other)
             => ReferenceEquals(this, other)
             || (other is Delegator<T, TSelf> delegator
             && GetType() != delegator.GetType()

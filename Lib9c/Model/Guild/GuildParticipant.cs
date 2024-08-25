@@ -51,7 +51,7 @@ namespace Nekoyume.Model.Guild
 
         public AgentAddress AgentAddress => new AgentAddress(Address);
 
-        public new List Bencoded => List.Empty
+        public override List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
             .Add(GuildAddress.Bencoded)

@@ -4,9 +4,9 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Crypto;
-using Nekoyume.Module.Validator;
+using Nekoyume.Module.ValidatorDelegation;
 
-namespace Nekoyume.Action.Validator
+namespace Nekoyume.Action.ValidatorDelegation
 {
     public class UndelegateValidator : ActionBase
     {
@@ -48,7 +48,7 @@ namespace Nekoyume.Action.Validator
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
             var world = context.PreviousState;
 

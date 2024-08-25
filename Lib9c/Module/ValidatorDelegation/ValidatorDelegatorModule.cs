@@ -9,7 +9,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Module.Validator
+namespace Nekoyume.Module.ValidatorDelegation
 {
     public static class ValidatorDelegatorModule
     {
