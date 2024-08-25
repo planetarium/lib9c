@@ -82,7 +82,7 @@ namespace Nekoyume.Action.AdventureBoss
         public override IWorld Execute(IActionContext context)
         {
             var addressesHex = $"[{context.Signer.ToHex()}, {AvatarAddress.ToHex()}]";
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
 
             // Validation

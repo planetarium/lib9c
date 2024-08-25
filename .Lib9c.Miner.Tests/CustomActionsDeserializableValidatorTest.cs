@@ -49,7 +49,7 @@ public class CustomActionsDeserializableValidatorTest
 
         public IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             return context.PreviousState;
         }
     }

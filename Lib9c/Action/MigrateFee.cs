@@ -67,7 +67,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
             CheckPermission(context);
             var states = context.PreviousState;

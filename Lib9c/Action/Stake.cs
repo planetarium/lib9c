@@ -49,7 +49,7 @@ namespace Nekoyume.Action
         public override IWorld Execute(IActionContext context)
         {
             var started = DateTimeOffset.UtcNow;
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
             // NOTE: Restrict staking if there is a monster collection until now.

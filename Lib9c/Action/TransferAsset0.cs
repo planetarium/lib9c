@@ -77,7 +77,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(4);
+            GasTracer.UseGas(4);
             var state = context.PreviousState;
 
             CheckObsolete(ActionObsoleteConfig.V100080ObsoleteIndex, context);

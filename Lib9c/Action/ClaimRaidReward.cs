@@ -36,7 +36,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
