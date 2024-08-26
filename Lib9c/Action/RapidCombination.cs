@@ -57,6 +57,13 @@ namespace Nekoyume.Action
 
             void ProcessRapidCombination(int si)
             {
+                var sheets = states.GetSheets(
+                    sheetTypes: new[]
+                    {
+                        typeof(PetOptionSheet),
+                        typeof(MaterialItemSheet),
+                    });
+
                 var slotState = allSlotState.GetSlot(si);
                 if (slotState.Result is null)
                 {
@@ -95,7 +102,7 @@ namespace Nekoyume.Action
                     }
 
                     petState = new PetState(rawState);
-                    var petOptionSheet = states.GetSheet<PetOptionSheet>();
+                    var petOptionSheet = sheets.GetSheet<PetOptionSheet>();
                     costHourglassCount = PetHelper.CalculateDiscountedHourglass(
                         diff,
                         gameConfigState.HourglassPerBlock,
@@ -107,7 +114,7 @@ namespace Nekoyume.Action
                     costHourglassCount = RapidCombination0.CalculateHourglassCount(gameConfigState, diff);
                 }
 
-                var materialItemSheet = states.GetSheet<MaterialItemSheet>();
+                var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
                 var row = materialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Hourglass);
                 var hourGlass = ItemFactory.CreateMaterial(row);
                 if (!avatarState.inventory.RemoveFungibleItem(hourGlass, context.BlockIndex, costHourglassCount))
