@@ -25,7 +25,7 @@ namespace Nekoyume.Action
     public class RapidCombination : GameAction
     {
         public Address avatarAddress;
-        public List<int> slotIndexList;
+        public List<int> slotIndexList = new List<int>();
 
         public override IWorld Execute(IActionContext context)
         {
@@ -173,13 +173,13 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 ["a"] = avatarAddress.Serialize(),
-                ["s"] = new List(slotIndexList.OrderBy(i => i).Select(i => i.Serialize())),
+                ["s"] = new List(slotIndexList.OrderBy(i => i).Select(i => (Integer)i)),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             avatarAddress = plainValue["a"].ToAddress();
-            slotIndexList = plainValue["s"].ToList(StateExtensions.ToInteger);
+            slotIndexList = plainValue["s"].ToList(i => (int)(Integer)i);
         }
 #endregion Serialize
     }
