@@ -27,8 +27,6 @@ namespace Nekoyume.Action
         public Address avatarAddress;
         public List<int> slotIndexList;
 
-        private int _slotFlag;
-
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
@@ -163,46 +161,18 @@ namespace Nekoyume.Action
                 .SetCombinationSlotState(avatarAddress, allSlotState);
         }
 
-#region FlagToList
-        private void SetSlotFlag(int flag)
-        {
-            _slotFlag = flag;
-            slotIndexList = new List<int>();
-            for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
-            {
-                if ((_slotFlag & (1 << i)) != 0)
-                {
-                    slotIndexList.Add(i);
-                }
-            }
-        }
-
-        private void SetSlotIndexList(List<int> list)
-        {
-            slotIndexList = list;
-            _slotFlag = list?.Aggregate(0, (current, slotIndex) => current | (1 << slotIndex)) ?? 0;
-        }
-#endregion FlagToList
-
 #region Serialize
-        protected override IImmutableDictionary<string, IValue> PlainValueInternal
-        {
-            get
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
             {
-                SetSlotIndexList(slotIndexList);
-                return new Dictionary<string, IValue>
-                {
-                    ["a"] = avatarAddress.Serialize(),
-                    ["s"] = (Integer)_slotFlag,
-                }.ToImmutableDictionary();
-            }
-        }
+                ["a"] = avatarAddress.Serialize(),
+                ["s"] = new List(slotIndexList.OrderBy(i => i).Select(i => i.Serialize())),
+            }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             avatarAddress = plainValue["a"].ToAddress();
-            _slotFlag = (Integer)plainValue["s"];
-            SetSlotFlag(_slotFlag);
+            slotIndexList = plainValue["s"].ToList(StateExtensions.ToInteger);
         }
 #endregion Serialize
     }
