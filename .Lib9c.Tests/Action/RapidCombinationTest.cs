@@ -129,12 +129,8 @@ namespace Lib9c.Tests.Action
             result.id = mail.id;
             avatarState.Update2(mail);
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
             var allSlotState = new AllCombinationSlotState();
-            allSlotState.AddSlot(slotAddress);
+            allSlotState.AddSlot(_avatarAddress);
             var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, requiredBlockIndex);
 
