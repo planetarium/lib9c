@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action
             _agentState = new AgentState(_agentAddress);
             _agentState.avatarAddresses[0] = _avatarAddress;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,

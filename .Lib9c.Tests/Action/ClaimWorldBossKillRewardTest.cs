@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
 
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,

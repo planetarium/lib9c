@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Model
         {
             _random = new TestRandom();
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 default,
                 default,
                 0,

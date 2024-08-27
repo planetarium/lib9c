@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Model.Skill
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             var gameConfigState = new GameConfigState();
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 default,
                 default,
                 0,

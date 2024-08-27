@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action
 
             _avatarAddress = _agentAddress.Derive("avatar");
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,

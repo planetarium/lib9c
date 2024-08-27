@@ -116,20 +116,19 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    tableSheets.WorldSheet,
-                    Math.Max(
-                        tableSheets.StageSheet.First?.Id ?? 1,
-                        GameConfig.RequireClearedStageLevel.ActionsInRankingBoard)),
-            };
+                rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                tableSheets.WorldSheet,
+                Math.Max(
+                    tableSheets.StageSheet.First?.Id ?? 1,
+                    GameConfig.RequireClearedStageLevel.ActionsInRankingBoard));
+
             agentState.avatarAddresses.Add(0, avatarAddress);
 
             return (agentState, avatarState);

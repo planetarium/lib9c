@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = _agentAddress.Derive("avatar");
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,

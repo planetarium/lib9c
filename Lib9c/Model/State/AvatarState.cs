@@ -68,10 +68,31 @@ namespace Nekoyume.Model.State
             return key.PublicKey.Address;
         }
 
-        public AvatarState(Address address,
+        public static AvatarState Create(Address address,
             Address agentAddress,
             long blockIndex,
             AvatarSheets avatarSheets,
+            Address rankingMapAddress,
+            string name = null)
+        {
+            var worldInformationVar = new WorldInformation(blockIndex, avatarSheets.WorldSheet,
+                GameConfig.IsEditor, name);
+            var questListVar = new QuestList(
+                avatarSheets.QuestSheet,
+                avatarSheets.QuestRewardSheet,
+                avatarSheets.QuestItemRewardSheet,
+                avatarSheets.EquipmentItemRecipeSheet,
+                avatarSheets.EquipmentItemSubRecipeSheet
+            );
+            return new AvatarState(
+                address, agentAddress, blockIndex, questListVar, worldInformationVar, rankingMapAddress, name);
+        }
+
+        public AvatarState(Address address,
+            Address agentAddress,
+            long blockIndex,
+            QuestList questList,
+            WorldInformation worldInformation,
             Address rankingMapAddress,
             string name = null) : base(address)
         {
@@ -81,16 +102,10 @@ namespace Nekoyume.Model.State
             level = 1;
             exp = 0;
             inventory = new Inventory();
-            worldInformation = new WorldInformation(blockIndex, avatarSheets.WorldSheet, GameConfig.IsEditor, name);
+            this.worldInformation = worldInformation;
             updatedAt = blockIndex;
             this.agentAddress = agentAddress;
-            questList = new QuestList(
-                avatarSheets.QuestSheet,
-                avatarSheets.QuestRewardSheet,
-                avatarSheets.QuestItemRewardSheet,
-                avatarSheets.EquipmentItemRecipeSheet,
-                avatarSheets.EquipmentItemSubRecipeSheet
-            );
+            this.questList = questList;
             mailBox = new MailBox();
             this.blockIndex = blockIndex;
             stageMap = new CollectionMap();
