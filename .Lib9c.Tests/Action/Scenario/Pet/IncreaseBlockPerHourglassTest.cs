@@ -162,7 +162,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var rapidAction = new RapidCombination
             {
                 avatarAddress = _avatarAddr,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
             stateV2 = rapidAction.Execute(new ActionContext
             {

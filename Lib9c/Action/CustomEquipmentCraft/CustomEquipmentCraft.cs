@@ -112,18 +112,19 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                         craftData.SlotIndex
                     )
                 );
-                // Validate SlotIndex
-                var slotState = states.GetCombinationSlotStateLegacy(AvatarAddress, craftData.SlotIndex);
-                if (slotState is null)
+
+                var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
+                if (allSlotState is null)
                 {
-                    throw new FailedLoadStateException(
-                        $"[{addressesHex}] Aborted as the craft slot state is failed to load: # {craftData.SlotIndex}");
+                    throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
                 }
 
+                // Validate SlotIndex
+                var slotState = allSlotState.GetSlot(craftData.SlotIndex);
                 if (!slotState.ValidateV2(context.BlockIndex))
                 {
                     throw new CombinationSlotUnlockException(
-                        $"[{addressesHex}] Aborted as the craft slot state is invalid: {slotState} @ {craftData.SlotIndex}");
+                        $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {craftData.SlotIndex}");
                 }
                 // ~Validate SlotIndex
 
@@ -266,24 +267,24 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                     subRecipeId = 0 // This it not required
                 };
                 slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
+                allSlotState.SetSlot(slotState);
 
                 // Create mail
-                var mail = new CombinationMail(
-                    attachmentResult,
+                var mail = new CustomCraftMail(
                     context.BlockIndex,
                     mailId,
-                    endBlockIndex);
+                    endBlockIndex,
+                    equipment);
                 avatarState.Update(mail);
 
                 relationship++;
-                states = states.SetLegacyState(slotAddress, slotState.Serialize());
+                states = states.SetCombinationSlotState(AvatarAddress, allSlotState);
             }
 
             // Add Relationship
             return states
                     .SetAvatarState(AvatarAddress, avatarState)
-                    .SetRelationship(AvatarAddress, relationship)
-                ;
+                    .SetRelationship(AvatarAddress, relationship);
         }
     }
 }

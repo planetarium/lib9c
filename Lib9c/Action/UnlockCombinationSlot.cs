@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -32,14 +33,14 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
                 {
                     ["a"] = AvatarAddress.Serialize(),
-                    ["s"] = SlotIndex.Serialize(),
+                    ["s"] = (Integer)SlotIndex,
                 }
                 .ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue["a"].ToAddress();
-            SlotIndex = plainValue["s"].ToInteger();
+            SlotIndex = (Integer)plainValue["s"];
         }
 
         public override IWorld Execute(IActionContext context)
@@ -59,7 +60,15 @@ namespace Nekoyume.Action
             }
             
             var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
-            var combinationSlot = allSlotState.GetSlot(SlotIndex);
+            var hasSlot = allSlotState.TryGetSlot(SlotIndex, out var combinationSlot);
+            if (!hasSlot || combinationSlot is null)
+            {
+                combinationSlot = new CombinationSlotState(
+                    CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
+                    SlotIndex
+                );
+            }
+                
             if (combinationSlot.IsUnlocked)
             {
                 throw new SlotAlreadyUnlockedException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
@@ -75,6 +84,9 @@ namespace Nekoyume.Action
             
             var price = costSheet[SlotIndex];
             var agentAddress = states.GetAvatarState(AvatarAddress).agentAddress;
+            var useMaterial = false;
+
+            Inventory inventory = null;
 
             // Use Crystal
             if (price.CrystalPrice > 0)
@@ -98,8 +110,8 @@ namespace Nekoyume.Action
             {
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();
                 var material = materialSheet.OrderedList.First(m => m.Id == GoldenDustId);
-                
-                var inventory = states.GetInventoryV2(AvatarAddress);
+
+                inventory = states.GetInventoryV2(AvatarAddress);
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
                     price.GoldenDustPrice))
                 {
@@ -107,7 +119,7 @@ namespace Nekoyume.Action
                         $"Not enough golden dust to open slot: needs {price.GoldenDustPrice}");
                 }
                 
-                states = states.SetInventory(AvatarAddress, inventory);
+                useMaterial = true;
             }
             
             // Use RubyDust
@@ -116,7 +128,7 @@ namespace Nekoyume.Action
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();
                 var material = materialSheet.OrderedList.First(m => m.Id == RubyDustId);
                 
-                var inventory = states.GetInventoryV2(AvatarAddress);
+                inventory ??= states.GetInventoryV2(AvatarAddress);
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
                     price.RubyDustPrice))
                 {
@@ -124,7 +136,7 @@ namespace Nekoyume.Action
                         $"Not enough ruby dust to open slot: needs {price.RubyDustPrice}");
                 }
                 
-                states = states.SetInventory(AvatarAddress, inventory);
+                useMaterial = true;
             }
             
             // Use NCG
@@ -143,7 +155,13 @@ namespace Nekoyume.Action
 
                 states = states.TransferAsset(context, agentAddress, feeStoreAddress, ncgPrice);
             }
-            
+
+            // useMaterial이 true일 경우에만 inventory를 업데이트한다.
+            if (useMaterial)
+            {
+                states = states.SetInventory(AvatarAddress, inventory);
+            }
+
             allSlotState.UnlockSlot(AvatarAddress, SlotIndex);
             return states.SetCombinationSlotState(AvatarAddress, allSlotState);
         }

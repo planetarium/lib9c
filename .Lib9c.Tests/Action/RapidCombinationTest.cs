@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             var nextState = action.Execute(new ActionContext
@@ -179,7 +179,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<CombinationSlotResultNullException>(() => action.Execute(new ActionContext
@@ -234,7 +234,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
@@ -309,7 +309,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext
@@ -437,7 +437,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<AppraiseBlockNotReachedException>(() => action.Execute(new ActionContext
@@ -605,7 +605,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             action.Execute(new ActionContext
