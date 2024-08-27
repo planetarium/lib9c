@@ -46,7 +46,12 @@ namespace Nekoyume.Blockchain.Policy
                 // Issued for v100098.
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 3_150_001L,
-                    value: 1024L * 500L));          // 500 KiB
+                    value: 1024L * 500L))          // 500 KiB
+                // Note: Limit increase to patch table with big CSV.
+                // Issued for v200220
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 11_637_001L,
+                    value: 1024L * 1024L));          // 1 MiB
 
         public static IVariableSubPolicy<long> Heimdall =>
             Default
@@ -57,7 +62,12 @@ namespace Nekoyume.Blockchain.Policy
                 // Note: Heimdall has been started after v100098
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 1L,
-                    value: 1024L * 500L));          // 500 KiB
+                    value: 1024L * 500L))          // 500 KiB
+                // Note: Limit increase to patch table with big CSV.
+                // Issued for v200220
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 3_031_001L,
+                    value: 1024L * 1024L));          // 1 MiB
 
         // Note: For internal testing.
         public static IVariableSubPolicy<long> OdinInternal =>
@@ -79,6 +89,11 @@ namespace Nekoyume.Blockchain.Policy
                     value: 1024L * 100L))           // 100 KiB
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 3_150_001L,
-                    value: 1024L * 500L));          // 500 KiB
+                    value: 1024L * 500L))          // 500 KiB
+                // Note: Limit increase to patch table with big CSV.
+                // Issued for v200220
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 11_556_001L,
+                    value: 1024L * 1024L));          // 1 MiB
     }
 }
