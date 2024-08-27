@@ -55,13 +55,14 @@ namespace Nekoyume.ValidatorDelegation
         public ValidatorList SetValidator(Validator validator)
             => RemoveValidator(validator.PublicKey).AddValidator(validator);
 
+        public ValidatorList RemoveValidator(PublicKey publicKey)
+            => UpdateValidators(Validators.RemoveAll(v => v.PublicKey.Equals(publicKey)));
+
         private ValidatorList AddValidator(Validator validator)
         {
             int index = Validators.BinarySearch(validator, _reversedComparer);
             return UpdateValidators(Validators.Insert(index < 0 ? ~index : index, validator));
         }
-        private ValidatorList RemoveValidator(PublicKey publicKey)
-            => UpdateValidators(Validators.RemoveAll(v => v.PublicKey.Equals(publicKey)));
 
         private ValidatorList UpdateValidators(ImmutableList<Validator> validators)
             => new ValidatorList(validators);

@@ -90,7 +90,7 @@ namespace Nekoyume.ValidatorDelegation
         public override BigInteger Bond(ValidatorDelegator delegator, FungibleAssetValue fav, long height)
         {
             BigInteger share = base.Bond(delegator, fav, height);
-            var repo = ((ValidatorRepository)Repository!);
+            ValidatorRepository repo = (ValidatorRepository)Repository!;
             repo.SetValidatorList(repo.GetValidatorList().SetValidator(Validator));
             return share;
         }
@@ -98,7 +98,14 @@ namespace Nekoyume.ValidatorDelegation
         public override FungibleAssetValue Unbond(ValidatorDelegator delegator, BigInteger share, long height)
         {
             FungibleAssetValue fav = base.Unbond(delegator, share, height);
-            var repo = ((ValidatorRepository)Repository!);
+            ValidatorRepository repo = (ValidatorRepository)Repository!;
+
+            if (Validator.Power.IsZero)
+            {
+                repo.SetValidatorList(repo.GetValidatorList().RemoveValidator(Validator.PublicKey));
+                return fav;
+            }
+
             repo.SetValidatorList(repo.GetValidatorList().SetValidator(Validator));
             return fav;
         }
