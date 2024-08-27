@@ -126,7 +126,14 @@ namespace Nekoyume.Delegation
         {
             if (unbonding.IsEmpty)
             {
-                return RemoveUnbonding(unbonding.Address);
+                try
+                {
+                    return RemoveUnbonding(unbonding.Address);
+                }
+                catch (ArgumentException)
+                {
+                    return this;
+                }          
             }
 
             if (_lowestExpireHeights.TryGetValue(unbonding.Address, out var lowestExpireHeight))

@@ -159,9 +159,10 @@ namespace Nekoyume.Delegation
             long creationHeight,
             long expireHeight)
         {
-            if (expireHeight == creationHeight)
+            if (expireHeight < creationHeight)
             {
-                return this;
+                throw new ArgumentException(
+                    "The expire height must be greater than the creation height.");
             }
 
             return AddEntry(
@@ -270,7 +271,7 @@ namespace Nekoyume.Delegation
                         "The creation height must be greater than or equal to zero.");
                 }
 
-                if (expireHeight <= creationHeight)
+                if (expireHeight < creationHeight)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(expireHeight),
