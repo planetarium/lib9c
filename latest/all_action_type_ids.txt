@@ -39,6 +39,7 @@ hack_and_slash_sweep10
 hack_and_slash22
 initialize_states
 issue_coupons
+issue_token
 issue_tokens_from_garage
 item_enhancement10
 item_enhancement11
@@ -51,8 +52,11 @@ join_arena
 join_arena3
 join_arena4
 load_into_my_garages
+make_guild
 migrate_agent_avatar
+migrate_fee
 migrate_monster_collection
+migrate_pledge_to_guild
 migration_activated_accounts_state
 mint_assets
 op_validator_set
