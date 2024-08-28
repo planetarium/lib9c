@@ -50,8 +50,8 @@ namespace Nekoyume.Model.Item
         Grimoire = 20,
 
         // Custom Craft
-        DesignScroll = 21,
-        CircleOfFate = 22,
+        Scroll = 21,
+        Circle = 22,
     }
 
     public class ItemTypeComparer : IEqualityComparer<ItemType>

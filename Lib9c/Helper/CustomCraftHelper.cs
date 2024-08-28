@@ -24,9 +24,9 @@ namespace Nekoyume.Helper
             var ncgCost = BigInteger.Zero;
             var itemCosts = new Dictionary<int, int>();
             var scrollItemId = materialItemSheet.OrderedList!
-                .First(row => row.ItemSubType == ItemSubType.DesignScroll).Id;
+                .First(row => row.ItemSubType == ItemSubType.Scroll).Id;
             var circleItemId = materialItemSheet.OrderedList!
-                .First(row => row.ItemSubType == ItemSubType.CircleOfFate).Id;
+                .First(row => row.ItemSubType == ItemSubType.Circle).Id;
 
             itemCosts[scrollItemId] =
                 (int)Math.Floor(recipeRow.ScrollAmount * relationshipRow.CostMultiplier / 10000m);
