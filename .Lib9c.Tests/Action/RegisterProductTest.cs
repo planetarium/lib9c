@@ -421,6 +421,40 @@ namespace Lib9c.Tests.Action
             Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
         }
 
+        [Fact]
+        public void Execute_Throw_DuplicateOrderIdException()
+        {
+            var asset = 3 * RuneHelper.DailyRewardRune;
+            var context = new ActionContext();
+            var random = new TestRandom();
+            var productId = random.GenerateRandomGuid();
+            _initialState = _initialState
+                .SetAvatarState(AvatarAddress, _avatarState)
+                .SetLegacyState(Product.DeriveAddress(productId), List.Empty)
+                .MintAsset(context, AvatarAddress, asset);
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new AssetInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        Asset = asset,
+                        Price = 1 * Gold,
+                        Type = ProductType.FungibleAssetValue,
+                    },
+                },
+            };
+            Assert.Throws<DuplicateOrderIdException>(() => action.Execute(new ActionContext
+            {
+                BlockIndex = 1L,
+                PreviousState = _initialState,
+                RandomSeed = 0,
+                Signer = _agentAddress,
+            }));
+        }
+
         public class ValidateMember
         {
             public IEnumerable<IRegisterInfo> RegisterInfos { get; set; }
