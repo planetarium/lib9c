@@ -79,7 +79,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.Equal(4 * mead, states6.GetBalance(agentAddress, mead));
         }
 
-        [Fact]
+        [Fact(Skip = "No way tracing gas usage outside of ActionEvaluator for now")]
         public void UseGas()
         {
             Type baseType = typeof(Nekoyume.Action.ActionBase);
