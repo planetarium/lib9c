@@ -50,7 +50,7 @@ namespace Nekoyume.Blockchain.Policy
                 // Note: Limit increase to patch table with big CSV.
                 // Issued for v200220
                 .Add(new SpannedSubPolicy<long>(
-                    startIndex: 11_637_001L,
+                    startIndex: 11_620_001L,
                     value: 1024L * 1024L));          // 1 MiB
 
         public static IVariableSubPolicy<long> Heimdall =>
