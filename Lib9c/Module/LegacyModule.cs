@@ -877,7 +877,7 @@ namespace Nekoyume.Module
             return (arenaInfoAddress, arenaInfo, isNew);
         }
 
-        public static bool TryGetStakeState(
+        public static bool TryGetLegacyStakeState(
             this IWorldState worldState,
             Address agentAddress,
             out LegacyStakeState legacyStakeState)
