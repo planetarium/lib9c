@@ -26,8 +26,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
     public class CustomEquipmentCraftTest
     {
-        private const int DrawingItemId = 600401;
-        private const int DrawingToolItemId = 600402;
+        private const int ScrollItemId = 600401;
+        private const int CircleItemId = 600402;
 
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -238,7 +238,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             state = state.SetRelationship(_avatarAddress, initialRelationship);
 
             var gameConfig = state.GetGameConfigState();
-            var materialList = new List<int> { DrawingItemId, DrawingToolItemId };
+            var materialList = new List<int> { ScrollItemId, CircleItemId };
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
@@ -250,27 +250,27 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     var recipeRow =
                         _tableSheets.CustomEquipmentCraftRecipeSheet[craftData.RecipeId];
-                    var drawingRow = materialSheet[DrawingItemId];
-                    var drawing = ItemFactory.CreateMaterial(drawingRow);
-                    var drawingAmount = (int)Math.Floor(
-                        recipeRow.DrawingAmount
+                    var scrollRow = materialSheet[ScrollItemId];
+                    var scroll = ItemFactory.CreateMaterial(scrollRow);
+                    var scrollAmount = (int)Math.Floor(
+                        recipeRow.ScrollAmount
                         * relationshipRow.CostMultiplier
                         / 10000m
                     );
-                    _avatarState.inventory.AddItem(drawing, drawingAmount);
+                    _avatarState.inventory.AddItem(scroll, scrollAmount);
 
-                    var drawingToolRow = materialSheet[DrawingToolItemId];
-                    var drawingTool = ItemFactory.CreateMaterial(drawingToolRow);
-                    var drawingToolAmount = (decimal)recipeRow.DrawingToolAmount
+                    var circleRow = materialSheet[CircleItemId];
+                    var circle = ItemFactory.CreateMaterial(circleRow);
+                    var circleAmount = (decimal)recipeRow.CircleAmount
                                             * relationshipRow.CostMultiplier
                                             / 10000m;
                     if (craftData.IconId != 0)
                     {
-                        drawingToolAmount *=
+                        circleAmount *=
                             gameConfig.CustomEquipmentCraftIconCostMultiplier / 10000m;
                     }
 
-                    _avatarState.inventory.AddItem(drawingTool, (int)Math.Floor(drawingToolAmount));
+                    _avatarState.inventory.AddItem(circle, (int)Math.Floor(circleAmount));
 
                     var costRow = _tableSheets.CustomEquipmentCraftCostSheet.Values
                         .FirstOrDefault(row => row.Relationship == initialRelationship);

@@ -23,18 +23,18 @@ namespace Nekoyume.Helper
         {
             var ncgCost = BigInteger.Zero;
             var itemCosts = new Dictionary<int, int>();
-            var drawingItemId = materialItemSheet.OrderedList!
-                .First(row => row.ItemSubType == ItemSubType.Drawing).Id;
-            var drawingToolItemId = materialItemSheet.OrderedList!
-                .First(row => row.ItemSubType == ItemSubType.DrawingTool).Id;
+            var scrollItemId = materialItemSheet.OrderedList!
+                .First(row => row.ItemSubType == ItemSubType.Scroll).Id;
+            var circleItemId = materialItemSheet.OrderedList!
+                .First(row => row.ItemSubType == ItemSubType.Circle).Id;
 
-            itemCosts[drawingItemId] =
-                (int)Math.Floor(recipeRow.DrawingAmount * relationshipRow.CostMultiplier / 10000m);
-            var drawingToolCost =
-                (decimal)recipeRow.DrawingToolAmount * relationshipRow.CostMultiplier / 10000m;
+            itemCosts[scrollItemId] =
+                (int)Math.Floor(recipeRow.ScrollAmount * relationshipRow.CostMultiplier / 10000m);
+            var circleCost =
+                (decimal)recipeRow.CircleAmount * relationshipRow.CostMultiplier / 10000m;
             if (iconId != 0)
             {
-                drawingToolCost = drawingToolCost * iconCostMultiplier / 10000m;
+                circleCost = circleCost * iconCostMultiplier / 10000m;
             }
 
             if (costRow is not null)
@@ -46,7 +46,7 @@ namespace Nekoyume.Helper
                 }
             }
 
-            itemCosts[drawingToolItemId] = (int)Math.Floor(drawingToolCost);
+            itemCosts[circleItemId] = (int)Math.Floor(circleCost);
 
             return (ncgCost, itemCosts.ToImmutableSortedDictionary());
         }
