@@ -705,5 +705,64 @@ namespace Lib9c.Tests.Action
                 throw new SheetRowNotFoundException(nameof(StageSheet), stageId);
             }
         }
+
+        [Theory]
+        [InlineData(0, -1)]
+        [InlineData(0, int.MinValue + 1)]
+        [InlineData(-1, 0)]
+        [InlineData(int.MinValue + 1, 0)]
+        public void Execute_ArgumentOutOfRangeException(int ap, int apPotion)
+        {
+            var avatarState = new AvatarState(
+                _avatarAddress,
+                _agentAddress,
+                0,
+                _initialState.GetAvatarSheets(),
+                _rankingMapAddress)
+            {
+                worldInformation =
+                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
+                level = 400,
+            };
+
+            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+                .SetActionPoint(_avatarAddress, 0);
+            var actionPoint = _initialState.GetActionPoint(_avatarAddress);
+
+            var stageSheet = _initialState.GetSheet<StageSheet>();
+            var (expectedLevel, expectedExp) = (0, 0L);
+            if (stageSheet.TryGetValue(2, out var stageRow))
+            {
+                var itemPlayCount =
+                    DailyReward.ActionPointMax / stageRow.CostAP * 1;
+                var apPlayCount = actionPoint / stageRow.CostAP;
+                var playCount = apPlayCount + itemPlayCount;
+                (expectedLevel, expectedExp) = avatarState.GetLevelAndExp(
+                    _tableSheets.CharacterLevelSheet,
+                    2,
+                    (int)playCount);
+
+                var (equipments, costumes) = GetDummyItems(avatarState);
+                var action = new HackAndSlashSweep
+                {
+                    runeInfos = new List<RuneSlotInfo>(),
+                    costumes = costumes,
+                    equipments = equipments,
+                    avatarAddress = _avatarAddress,
+                    actionPoint = ap,
+                    apStoneCount = apPotion,
+                    worldId = 1,
+                    stageId = 2,
+                };
+
+                Assert.Throws<ArgumentOutOfRangeException>(() =>
+                    action.Execute(new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
+            }
+        }
     }
 }
