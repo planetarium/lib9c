@@ -372,7 +372,7 @@ namespace Lib9c.Tests.Action
                 sender: _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
-                    (StakeState.DeriveAddress(_recipient), _currency * 100),
+                    (LegacyStakeState.DeriveAddress(_recipient), _currency * 100),
                     (_recipient2, _currency * 100),
                 }
             );
@@ -381,8 +381,8 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
-                        new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
+                        LegacyStakeState.DeriveAddress(_recipient),
+                        new LegacyStakeState(LegacyStakeState.DeriveAddress(_recipient), 0).SerializeV2()),
                 Signer = _sender,
                 BlockIndex = 1,
             }));
@@ -390,7 +390,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
+                        LegacyStakeState.DeriveAddress(_recipient),
                         new StakeStateV2(
                             new Contract(
                                 "StakeRegularFixedRewardSheet_V1",
@@ -405,7 +405,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
+                        LegacyStakeState.DeriveAddress(_recipient),
                         new MonsterCollectionState(
                                 MonsterCollectionState.DeriveAddress(_sender, 0),
                                 1,
@@ -421,7 +421,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
+                        LegacyStakeState.DeriveAddress(_recipient),
                         new MonsterCollectionState0(
                                 MonsterCollectionState.DeriveAddress(_sender, 0),
                                 1,

@@ -860,15 +860,15 @@ namespace Nekoyume.Module
         public static bool TryGetStakeState(
             this IWorldState worldState,
             Address agentAddress,
-            out StakeState stakeState)
+            out LegacyStakeState legacyStakeState)
         {
-            if (TryGetLegacyState(worldState, StakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
+            if (TryGetLegacyState(worldState, LegacyStakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
             {
-                stakeState = new StakeState(dictionary);
+                legacyStakeState = new LegacyStakeState(dictionary);
                 return true;
             }
 
-            stakeState = null;
+            legacyStakeState = null;
             return false;
         }
 
@@ -877,7 +877,7 @@ namespace Nekoyume.Module
             Address agentAddr)
         {
             var goldCurrency = GetGoldCurrency(worldState);
-            return worldState.GetBalance(StakeState.DeriveAddress(agentAddr), goldCurrency);
+            return worldState.GetBalance(LegacyStakeState.DeriveAddress(agentAddr), goldCurrency);
         }
 
         public static bool TryGetStakeStateV2(
