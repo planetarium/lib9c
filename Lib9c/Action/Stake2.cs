@@ -89,7 +89,7 @@ namespace Nekoyume.Action
             // Stake if it doesn't exist yet.
             if (!states.TryGetLegacyStakeState(context.Signer, out LegacyStakeState stakeState))
             {
-                if (states.TryGetStakeStateV2(context.Signer, out _))
+                if (states.TryGetStakeState(context.Signer, out _))
                 {
                     throw new InvalidOperationException(
                         $"{context.Signer} has already staked as versions above 2.");
