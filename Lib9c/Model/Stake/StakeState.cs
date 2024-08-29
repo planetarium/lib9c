@@ -5,7 +5,7 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Stake
 {
-    public readonly struct StakeStateV2 : IState
+    public readonly struct StakeState : IState
     {
         public const string StateTypeName = "stake_state";
         public const int StateTypeVersion = 2;
@@ -31,7 +31,7 @@ namespace Nekoyume.Model.Stake
         public long ClaimableBlockIndex =>
             ClaimedBlockIndex + Contract.RewardInterval;
 
-        public StakeStateV2(
+        public StakeState(
             Contract contract,
             long startedBlockIndex,
             long receivedBlockIndex = 0)
@@ -57,7 +57,7 @@ namespace Nekoyume.Model.Stake
             ReceivedBlockIndex = receivedBlockIndex;
         }
 
-        public StakeStateV2(
+        public StakeState(
             LegacyStakeState legacyStakeState,
             Contract contract
         ) : this(
@@ -68,7 +68,7 @@ namespace Nekoyume.Model.Stake
         {
         }
 
-        public StakeStateV2(IValue serialized)
+        public StakeState(IValue serialized)
         {
             if (serialized is not List list)
             {
@@ -102,7 +102,7 @@ namespace Nekoyume.Model.Stake
             (Integer)ReceivedBlockIndex
         );
 
-        public bool Equals(StakeStateV2 other)
+        public bool Equals(StakeState other)
         {
             return Equals(Contract, other.Contract) &&
                    StartedBlockIndex == other.StartedBlockIndex &&
@@ -111,7 +111,7 @@ namespace Nekoyume.Model.Stake
 
         public override bool Equals(object obj)
         {
-            return obj is StakeStateV2 other && Equals(other);
+            return obj is StakeState other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -125,12 +125,12 @@ namespace Nekoyume.Model.Stake
             }
         }
 
-        public static bool operator ==(StakeStateV2 left, StakeStateV2 right)
+        public static bool operator ==(StakeState left, StakeState right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(StakeStateV2 left, StakeStateV2 right)
+        public static bool operator !=(StakeState left, StakeState right)
         {
             return !(left == right);
         }

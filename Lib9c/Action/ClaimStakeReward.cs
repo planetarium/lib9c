@@ -148,7 +148,7 @@ namespace Nekoyume.Action
             }
 
             // NOTE: update claimed block index.
-            stakeStateV2 = new StakeStateV2(
+            stakeStateV2 = new StakeState(
                 stakeStateV2.Contract,
                 stakeStateV2.StartedBlockIndex,
                 context.BlockIndex);

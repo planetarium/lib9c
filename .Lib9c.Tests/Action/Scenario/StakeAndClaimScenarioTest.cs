@@ -242,7 +242,7 @@ namespace Lib9c.Tests.Action.Scenario
             var stakeAddr = LegacyStakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeStateV2(state.GetLegacyState(stakeAddr));
+            var stakeState = new StakeState(state.GetLegacyState(stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
             Assert.Equal(
                 expectStakeRegularFixedRewardSheetName,
