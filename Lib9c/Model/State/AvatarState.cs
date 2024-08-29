@@ -23,7 +23,9 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class AvatarState : State, ICloneable
     {
-        public const int CombinationSlotCapacity = 4;
+        public const int DefaultCombinationSlotCount = 4;
+
+        public const int CombinationSlotCapacity = 8;
         public const int CurrentVersion = 2;
         public string name;
         public int characterId;
@@ -47,6 +49,7 @@ namespace Nekoyume.Model.State
         public int lens;
         public int ear;
         public int tail;
+        [Obsolete("don't use this field, use AllCombinationSlotState instead.")]
         public List<Address> combinationSlotAddresses;
 
         public string NameWithHash { get; private set; }
@@ -100,23 +103,8 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) createEvent, 1),
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
-            combinationSlotAddresses = new List<Address>(CombinationSlotCapacity);
-            for (var i = 0; i < CombinationSlotCapacity; i++)
-            {
-                var slotAddress = address.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        i
-                    )
-                );
-                combinationSlotAddresses.Add(slotAddress);
-            }
 
-            combinationSlotAddresses = combinationSlotAddresses
-                .OrderBy(element => element)
-                .ToList();
-
+            combinationSlotAddresses = new List<Address>();
             RankingMapAddress = rankingMapAddress;
             UpdateGeneralQuest(new[] { createEvent, levelEvent });
             UpdateCompletedQuest();
@@ -249,8 +237,7 @@ namespace Nekoyume.Model.State
             PostConstructor();
         }
 
-        public AvatarState(List serialized)
-            : base(serialized[0])
+        public AvatarState(List serialized) : base(serialized[0])
         {
             Version = (int)((Integer)serialized[1]).Value;
             name = serialized[2].ToDotnetString();
@@ -1288,7 +1275,8 @@ namespace Nekoyume.Model.State
                     .OrderBy(i => i)
                     .Select(i => i.Serialize())
                     .Serialize(),
-                RankingMapAddress.Serialize());
+                RankingMapAddress.Serialize()
+            );
         }
     }
 }

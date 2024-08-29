@@ -35,7 +35,6 @@ namespace Lib9c.Tests.Model.State
             Assert.Equal(state.DailyRewardInterval, des.DailyRewardInterval);
             Assert.Equal(state.DailyArenaInterval, des.DailyArenaInterval);
             Assert.Equal(state.WeeklyArenaInterval, des.WeeklyArenaInterval);
-            Assert.Equal(state.RequiredAppraiseBlock, des.RequiredAppraiseBlock);
             Assert.Equal(state.BattleArenaInterval, des.BattleArenaInterval);
             Assert.Equal(state.RuneStatSlotUnlockCost, des.RuneStatSlotUnlockCost);
             Assert.Equal(state.RuneSkillSlotUnlockCost, des.RuneSkillSlotUnlockCost);
@@ -87,7 +86,6 @@ namespace Lib9c.Tests.Model.State
             Assert.Equal(1700, state.DailyRewardInterval);
             Assert.Equal(5040, state.DailyArenaInterval);
             Assert.Equal(56000, state.WeeklyArenaInterval);
-            Assert.Equal(10, state.RequiredAppraiseBlock);
             Assert.Equal(4, state.BattleArenaInterval);
             Assert.Equal(100, state.RuneStatSlotUnlockCost);
             Assert.Equal(1000, state.RuneSkillSlotUnlockCost);

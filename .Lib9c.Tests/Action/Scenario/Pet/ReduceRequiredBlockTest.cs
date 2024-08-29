@@ -42,9 +42,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         [InlineData(null)] // No Pet
         [InlineData(1)] // Lv.1 reduces 5.5%
         [InlineData(30)] // Lv.30 reduces 20%
-        public void CombinationEquipmentTest(
-            int? petLevel
-        )
+        public void CombinationEquipmentTest(int? petLevel)
         {
             int targetItemId = 10114000;
             var random = new TestRandom();
@@ -84,7 +82,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             }
 
             // Prepare
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
             stateV2 = CraftUtil.AddMaterialsToInventory(
                 stateV2,
                 _tableSheets,
@@ -117,7 +115,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 RandomSeed = random.Seed,
             });
 
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var slotState = allSlotState.GetSlot(0);
             // TEST: RequiredBlockIndex
             Assert.Equal(expectedBlock, slotState.RequiredBlockIndex);
         }

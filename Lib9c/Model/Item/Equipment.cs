@@ -20,6 +20,7 @@ namespace Nekoyume.Model.Item
         public int level;
         public long Exp;
         public int optionCountFromCombination;
+        public int IconId;
 
         public DecimalStat Stat { get; }
         public int SetId { get; }
@@ -34,7 +35,8 @@ namespace Nekoyume.Model.Item
             return Math.Max(1.0m, stat * 0.1m);
         }
 
-        public Equipment(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex, bool madeWithMimisbrunnrRecipe = false)
+        public Equipment(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex,
+            bool madeWithMimisbrunnrRecipe = false, int iconId = 0)
             : base(data, id, requiredBlockIndex)
         {
             Stat = data.Stat;
@@ -42,6 +44,7 @@ namespace Nekoyume.Model.Item
             SpineResourcePath = data.SpineResourcePath;
             MadeWithMimisbrunnrRecipe = madeWithMimisbrunnrRecipe;
             Exp = data.Exp ?? 0L;
+            IconId = iconId != 0 ? iconId : data.Id;
         }
 
         public Equipment(Dictionary serialized) : base(serialized)
@@ -78,6 +81,8 @@ namespace Nekoyume.Model.Item
             {
                 Exp = 0L;
             }
+
+            IconId = serialized.TryGetValue((Text)EquipmentIconIdKey, out value) ? (Integer)value : Id;
 
             if (serialized.TryGetValue((Text) LegacyStatKey, out value))
             {
@@ -118,7 +123,8 @@ namespace Nekoyume.Model.Item
                 .Add(LegacyLevelKey, level.Serialize())
                 .Add(LegacyStatKey, Stat.SerializeForLegacyEquipmentStat())
                 .Add(LegacySetIdKey, SetId.Serialize())
-                .Add(LegacySpineResourcePathKey, SpineResourcePath.Serialize());
+                .Add(LegacySpineResourcePathKey, SpineResourcePath.Serialize())
+                .Add(EquipmentIconIdKey, IconId);
 
             if (optionCountFromCombination > 0)
             {

@@ -110,13 +110,15 @@ namespace Nekoyume.Helper
             {
                 return originalBlock;
             }
-            else if (optionInfo.OptionType == PetOptionType.ReduceRequiredBlock)
+
+            if (optionInfo.OptionType == PetOptionType.ReduceRequiredBlock)
             {
                 var multiplier = (100 - optionInfo.OptionValue) / 100;
-                var result = (long)Math.Round(originalBlock * multiplier);
+                var result     = (long)Math.Round(originalBlock * multiplier);
                 return Math.Max(minimumBlock, result);
             }
-            else if (optionInfo.OptionType == PetOptionType.ReduceRequiredBlockByFixedValue)
+
+            if (optionInfo.OptionType == PetOptionType.ReduceRequiredBlockByFixedValue)
             {
                 return Math.Max(minimumBlock, originalBlock - (long)optionInfo.OptionValue);
             }

@@ -1,9 +1,16 @@
 using System;
 using System.Globalization;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
+using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
+using Nekoyume.Battle;
+using Nekoyume.Exceptions;
+using Nekoyume.Model.Skill;
+using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 using Nekoyume.Model.State;
+using Nekoyume.TableData.CustomEquipmentCraft;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.Item
@@ -124,6 +131,73 @@ namespace Nekoyume.Model.Item
             }
 
             return equipment;
+        }
+
+        public static int SelectIconId(
+            int iconId, bool isRandom, EquipmentItemSheet.Row equipmentRow, int relationship,
+            CustomEquipmentCraftIconSheet iconSheet, IRandom random
+        )
+        {
+            // Validate and select Icon ID
+            int selectedIconId;
+
+            if (isRandom)
+            {
+                // Random icon
+                var iconSelector = new WeightedSelector<CustomEquipmentCraftIconSheet.Row>(random);
+                var iconRows = iconSheet.Values
+                    .Where(row =>
+                        row.RequiredRelationship <= relationship &&
+                        row.ItemSubType == equipmentRow.ItemSubType
+                    );
+                foreach (var row in iconRows)
+                {
+                    iconSelector.Add(row, row.Ratio);
+                }
+
+                selectedIconId = iconSelector.Select(1).First().IconId;
+            }
+            else
+            {
+                // Selected icon
+                var iconRow = iconSheet.Values.FirstOrDefault(row => row.IconId == iconId);
+                if (iconRow is null)
+                {
+                    throw new InvalidActionFieldException($"Icon ID {iconId} is not valid.");
+                }
+
+                if (iconRow.RequiredRelationship > relationship)
+                {
+                    throw new NotEnoughRelationshipException(
+                        $"Relationship {relationship} is less than required relationship {iconRow.RequiredRelationship} to use icon {iconId}"
+                    );
+                }
+
+                if (iconRow.RandomOnly)
+                {
+                    throw new RandomOnlyIconException(iconRow.IconId);
+                }
+
+                selectedIconId = iconId;
+            }
+
+            return selectedIconId;
+        }
+
+        public static CustomEquipmentCraftOptionSheet.Row SelectOption(
+            ItemSubType itemSubType,
+            CustomEquipmentCraftOptionSheet optionSheet,
+            IRandom random
+        )
+        {
+            var optionSelector = new WeightedSelector<CustomEquipmentCraftOptionSheet.Row>(random);
+            foreach (var opt in optionSheet.Values
+                         .Where(row => row.ItemSubType == itemSubType))
+            {
+                optionSelector.Add(opt, opt.Ratio);
+            }
+
+            return optionSelector.Select(1).First();
         }
 
         public static ItemBase Deserialize(Dictionary serialized)
