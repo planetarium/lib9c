@@ -18,7 +18,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -89,6 +88,13 @@ namespace Nekoyume.Action
                 throw new UsageLimitExceedException(
                     $"Exceeded the amount of ap stones that can be used " +
                     $"apStoneCount : {apStoneCount} > UsableApStoneCount : {UsableApStoneCount}");
+            }
+
+            if (apStoneCount < 0 || actionPoint < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"{addressesHex} Aborted as the player give negative value ({actionPoint} AP & {apStoneCount} potions)"
+                );
             }
 
             states.ValidateWorldId(avatarAddress, worldId);
