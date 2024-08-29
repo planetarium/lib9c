@@ -181,7 +181,7 @@ namespace Nekoyume.Action
             FungibleAssetValue targetStakeBalance,
             Contract latestStakeContract)
         {
-            var newStakeState = new StakeStateV2(latestStakeContract, context.BlockIndex);
+            var newStakeState = new StakeState(latestStakeContract, context.BlockIndex);
             if (stakedBalance.HasValue)
             {
                 state = state.BurnAsset(

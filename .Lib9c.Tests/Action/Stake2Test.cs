@@ -255,7 +255,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = _initialState.SetLegacyState(
                     LegacyStakeState.DeriveAddress(_signerAddress),
-                    new StakeStateV2(
+                    new StakeState(
                         new Contract(
                             "StakeRegularFixedRewardSheet_V1",
                             "StakeRegularRewardSheet_V1",

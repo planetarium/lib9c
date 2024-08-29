@@ -903,13 +903,13 @@ namespace Nekoyume.Module
         public static bool TryGetStakeStateV2(
             this IWorldState worldState,
             Address agentAddr,
-            out StakeStateV2 stakeStateV2)
+            out StakeState stakeState)
         {
-            var stakeStateAddr = StakeStateV2.DeriveAddress(agentAddr);
+            var stakeStateAddr = StakeState.DeriveAddress(agentAddr);
             return StakeStateUtils.TryMigrate(
                 worldState,
                 stakeStateAddr,
-                out stakeStateV2);
+                out stakeState);
         }
 
         public static ArenaParticipants GetArenaParticipants(
