@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -94,7 +95,7 @@ namespace Nekoyume.Action
                     $"The amount must be greater than or equal to {minimumRequiredGold}.");
             }
 
-            var stakeStateAddress = StakeState.DeriveAddress(context.Signer);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
             var currency = states.GetGoldCurrency();
             var currentBalance = states.GetBalance(context.Signer, currency);
             var stakedBalance = states.GetBalance(stakeStateAddress, currency);
@@ -183,16 +184,27 @@ namespace Nekoyume.Action
             var newStakeState = new StakeStateV2(latestStakeContract, context.BlockIndex);
             if (stakedBalance.HasValue)
             {
-                state = state.TransferAsset(
-                    context,
-                    stakeStateAddr,
-                    context.Signer,
-                    stakedBalance.Value);
+                state = state.BurnAsset(
+                        context,
+                        context.Signer,
+                        GetGuildCoinFromNCG(stakedBalance.Value)
+                    ).TransferAsset(
+                        context,
+                        stakeStateAddr,
+                        context.Signer,
+                        stakedBalance.Value);
             }
 
             return state
                 .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
+                .MintAsset(context, context.Signer, GetGuildCoinFromNCG(targetStakeBalance))
                 .SetLegacyState(stakeStateAddr, newStakeState.Serialize());
+        }
+
+        private static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)
+        {
+            return FungibleAssetValue.Parse(Currencies.GuildGold,
+                balance.GetQuantityString(true));
         }
     }
 }

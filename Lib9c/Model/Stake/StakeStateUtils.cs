@@ -86,7 +86,7 @@ namespace Nekoyume.Model.Stake
             //       - StakeStateV2.Contract.LockupInterval is StakeState.LockupInterval.
             //       - StakeStateV2.StartedBlockIndex is StakeState.StartedBlockIndex.
             //       - StakeStateV2.ReceivedBlockIndex is StakeState.ReceivedBlockIndex.
-            var stakeStateV1 = new StakeState(dict);
+            var stakeStateV1 = new LegacyStakeState(dict);
             var stakeRegularFixedRewardSheetTableName =
                 stakeStateV1.StartedBlockIndex <
                 gameConfigState.StakeRegularFixedRewardSheet_V2_StartBlockIndex
@@ -123,8 +123,8 @@ namespace Nekoyume.Model.Stake
                 new Contract(
                     stakeRegularFixedRewardSheetTableName: stakeRegularFixedRewardSheetTableName,
                     stakeRegularRewardSheetTableName: stakeRegularRewardSheetTableName,
-                    rewardInterval: StakeState.RewardInterval,
-                    lockupInterval: StakeState.LockupInterval));
+                    rewardInterval: LegacyStakeState.RewardInterval,
+                    lockupInterval: LegacyStakeState.LockupInterval));
         }
     }
 }

@@ -6,21 +6,21 @@ namespace Lib9c.Tests.Model.State
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Xunit;
-    using static Nekoyume.Model.State.StakeState;
+    using static Nekoyume.Model.State.LegacyStakeState;
 
-    public class StakeStateTest
+    public class LegacyStakeStateTest
     {
         [Fact]
         public void IsClaimable()
         {
-            Assert.False(new StakeState(
+            Assert.False(new LegacyStakeState(
                     default,
                     0,
                     RewardInterval + 1,
                     LockupInterval,
                     new StakeAchievements())
                 .IsClaimable(RewardInterval * 2));
-            Assert.True(new StakeState(
+            Assert.True(new LegacyStakeState(
                     default,
                     ActionObsoleteConfig.V100290ObsoleteIndex - 100,
                     ActionObsoleteConfig.V100290ObsoleteIndex - 100 + RewardInterval + 1,
@@ -32,10 +32,10 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            var state = new StakeState(default, 100);
+            var state = new LegacyStakeState(default, 100);
 
             var serialized = (Dictionary)state.Serialize();
-            var deserialized = new StakeState(serialized);
+            var deserialized = new LegacyStakeState(serialized);
 
             Assert.Equal(state.address, deserialized.address);
             Assert.Equal(state.StartedBlockIndex, deserialized.StartedBlockIndex);
@@ -46,10 +46,10 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void SerializeV2()
         {
-            var state = new StakeState(default, 100);
+            var state = new LegacyStakeState(default, 100);
 
             var serialized = (Dictionary)state.SerializeV2();
-            var deserialized = new StakeState(serialized);
+            var deserialized = new LegacyStakeState(serialized);
 
             Assert.Equal(state.address, deserialized.address);
             Assert.Equal(state.StartedBlockIndex, deserialized.StartedBlockIndex);
@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(long.MinValue)]
         public void Claim(long blockIndex)
         {
-            var stakeState = new StakeState(new PrivateKey().Address, 0L);
+            var stakeState = new LegacyStakeState(new PrivateKey().Address, 0L);
             stakeState.Claim(blockIndex);
             Assert.Equal(blockIndex, stakeState.ReceivedBlockIndex);
         }
@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Model.State
             long blockIndex,
             int expected)
         {
-            var state = new StakeState(default, startedBlockIndex);
+            var state = new LegacyStakeState(default, startedBlockIndex);
             Assert.Equal(expected, state.CalculateAccumulatedRuneRewards(blockIndex));
         }
 
@@ -120,7 +120,7 @@ namespace Lib9c.Tests.Model.State
             long? rewardStartBlockIndex,
             int expectedStep)
         {
-            var stakeState = new StakeState(
+            var stakeState = new LegacyStakeState(
                 new PrivateKey().Address,
                 startedBlockIndex);
             stakeState.Claim(receivedBlockIndex);
@@ -166,7 +166,7 @@ namespace Lib9c.Tests.Model.State
             long? rewardStartBlockIndex,
             int expectedStep)
         {
-            var stakeState = new StakeState(
+            var stakeState = new LegacyStakeState(
                 new PrivateKey().Address,
                 startedBlockIndex);
             stakeState.Claim(receivedBlockIndex);

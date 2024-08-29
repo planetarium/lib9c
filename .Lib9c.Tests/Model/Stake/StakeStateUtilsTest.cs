@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Model.Stake
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
             var stakeAddr = new PrivateKey().Address;
-            var stakeState = new StakeState(stakeAddr, startedBlockIndex);
+            var stakeState = new LegacyStakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
                 stakeState.Claim(receivedBlockIndex.Value);

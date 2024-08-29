@@ -290,7 +290,7 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_sender, _currency * 1000));
             var action = new TransferAsset(
                 sender: _sender,
-                recipient: StakeState.DeriveAddress(_recipient),
+                recipient: LegacyStakeState.DeriveAddress(_recipient),
                 amount: _currency * 100
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
@@ -298,8 +298,8 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
-                        new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
+                        LegacyStakeState.DeriveAddress(_recipient),
+                        new LegacyStakeState(LegacyStakeState.DeriveAddress(_recipient), 0).SerializeV2()),
                 Signer = _sender,
                 BlockIndex = 1,
             }));
@@ -307,7 +307,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
+                        LegacyStakeState.DeriveAddress(_recipient),
                         new StakeStateV2(
                             new Contract(
                                 "StakeRegularFixedRewardSheet_V1",
@@ -322,7 +322,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
+                        LegacyStakeState.DeriveAddress(_recipient),
                         new MonsterCollectionState(
                                 MonsterCollectionState.DeriveAddress(_sender, 0),
                                 1,
@@ -338,7 +338,7 @@ namespace Lib9c.Tests.Action
             {
                 PreviousState = baseState
                     .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
+                        LegacyStakeState.DeriveAddress(_recipient),
                         new MonsterCollectionState0(
                                 MonsterCollectionState.DeriveAddress(_sender, 0),
                                 1,

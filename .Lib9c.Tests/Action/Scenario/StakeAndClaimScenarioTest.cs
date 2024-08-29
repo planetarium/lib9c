@@ -95,7 +95,7 @@ namespace Lib9c.Tests.Action.Scenario
                 state,
                 _agentAddr,
                 _avatarAddr,
-                stake2BlockIndex + StakeState.LockupInterval);
+                stake2BlockIndex + LegacyStakeState.LockupInterval);
 
             // Validate staked.
             ValidateStakedStateV2(
@@ -105,14 +105,14 @@ namespace Lib9c.Tests.Action.Scenario
                 stake2BlockIndex,
                 "StakeRegularFixedRewardSheet_V1",
                 "StakeRegularRewardSheet_V1",
-                StakeState.RewardInterval,
-                StakeState.LockupInterval);
+                LegacyStakeState.RewardInterval,
+                LegacyStakeState.LockupInterval);
 
             // Withdraw stake via stake3.
-            state = Stake3(state, _agentAddr, 0, stake2BlockIndex + StakeState.LockupInterval + 1);
+            state = Stake3(state, _agentAddr, 0, stake2BlockIndex + LegacyStakeState.LockupInterval + 1);
 
             // Stake 50 NCG via stake3 before patching.
-            const long firstStake3BlockIndex = stake2BlockIndex + StakeState.LockupInterval + 1;
+            const long firstStake3BlockIndex = stake2BlockIndex + LegacyStakeState.LockupInterval + 1;
             state = Stake3(
                 state,
                 _agentAddr,
@@ -222,10 +222,10 @@ namespace Lib9c.Tests.Action.Scenario
             FungibleAssetValue expectStakedAmount,
             long expectStartedBlockIndex)
         {
-            var stakeAddr = StakeState.DeriveAddress(agentAddr);
+            var stakeAddr = LegacyStakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
-            var stakeState = new StakeState((Dictionary)state.GetLegacyState(stakeAddr));
+            var stakeState = new LegacyStakeState((Dictionary)state.GetLegacyState(stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
         }
 
@@ -239,7 +239,7 @@ namespace Lib9c.Tests.Action.Scenario
             long expectRewardInterval,
             long expectLockupInterval)
         {
-            var stakeAddr = StakeState.DeriveAddress(agentAddr);
+            var stakeAddr = LegacyStakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
             var stakeState = new StakeStateV2(state.GetLegacyState(stakeAddr));

@@ -127,7 +127,7 @@ namespace Nekoyume.Action
                 {
                     try
                     {
-                        _ = new StakeState(dictionary);
+                        _ = new LegacyStakeState(dictionary);
                         isStakeStateOrMonsterCollectionState = true;
                     }
                     catch (Exception)

@@ -11,7 +11,7 @@ namespace Nekoyume.Model.Stake
         public const int StateTypeVersion = 2;
 
         public static Address DeriveAddress(Address address) =>
-            StakeState.DeriveAddress(address);
+            LegacyStakeState.DeriveAddress(address);
 
         public readonly Contract Contract;
         public readonly long StartedBlockIndex;
@@ -58,12 +58,12 @@ namespace Nekoyume.Model.Stake
         }
 
         public StakeStateV2(
-            StakeState stakeState,
+            LegacyStakeState legacyStakeState,
             Contract contract
         ) : this(
             contract,
-            stakeState?.StartedBlockIndex ?? throw new ArgumentNullException(nameof(stakeState)),
-            stakeState.ReceivedBlockIndex
+            legacyStakeState?.StartedBlockIndex ?? throw new ArgumentNullException(nameof(legacyStakeState)),
+            legacyStakeState.ReceivedBlockIndex
         )
         {
         }
