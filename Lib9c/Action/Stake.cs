@@ -111,7 +111,7 @@ namespace Nekoyume.Action
 
             var latestStakeContract = new Contract(stakePolicySheet);
             // NOTE: When the staking state is not exist.
-            if (!states.TryGetStakeStateV2(context.Signer, out var stakeStateV2))
+            if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
                 // NOTE: Cannot withdraw staking.
                 if (Amount == 0)

@@ -717,7 +717,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(prevBalance, nextBalance);
             var nextStakedBalance = nextState.GetBalance(stakeAddr, ncg);
             Assert.Equal(prevStakedBalance, nextStakedBalance);
-            Assert.True(nextState.TryGetStakeStateV2(agentAddr, out var stakeStateV2));
+            Assert.True(nextState.TryGetStakeState(agentAddr, out var stakeStateV2));
             Assert.Equal(blockIndex, stakeStateV2.ReceivedBlockIndex);
             Assert.True(stakeStateV2.ClaimedBlockIndex <= blockIndex);
             Assert.True(stakeStateV2.ClaimableBlockIndex > blockIndex);

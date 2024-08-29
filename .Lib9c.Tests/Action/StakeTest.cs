@@ -504,11 +504,11 @@ namespace Lib9c.Tests.Action
 
             if (amount == 0)
             {
-                Assert.False(nextState.TryGetStakeStateV2(_agentAddr, out _));
+                Assert.False(nextState.TryGetStakeState(_agentAddr, out _));
             }
             else if (amount > 0)
             {
-                Assert.True(nextState.TryGetStakeStateV2(_agentAddr, out var stakeStateV2));
+                Assert.True(nextState.TryGetStakeState(_agentAddr, out var stakeStateV2));
                 Assert.Equal(
                     _stakePolicySheet.StakeRegularFixedRewardSheetValue,
                     stakeStateV2.Contract.StakeRegularFixedRewardSheetTableName);

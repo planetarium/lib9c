@@ -900,7 +900,7 @@ namespace Nekoyume.Module
             return worldState.GetBalance(LegacyStakeState.DeriveAddress(agentAddr), goldCurrency);
         }
 
-        public static bool TryGetStakeStateV2(
+        public static bool TryGetStakeState(
             this IWorldState worldState,
             Address agentAddr,
             out StakeState stakeState)
