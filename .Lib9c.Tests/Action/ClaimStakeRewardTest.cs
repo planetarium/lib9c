@@ -373,19 +373,19 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         [InlineData(0, null, 0)]
-        [InlineData(0, null, StakeState.RewardInterval - 1)]
-        [InlineData(0, StakeState.RewardInterval - 2, StakeState.RewardInterval - 1)]
-        [InlineData(0, StakeState.RewardInterval, StakeState.RewardInterval + 1)]
-        [InlineData(0, StakeState.RewardInterval, StakeState.RewardInterval * 2 - 1)]
-        [InlineData(0, StakeState.RewardInterval * 2 - 2, StakeState.RewardInterval * 2 - 1)]
-        [InlineData(0, StakeState.RewardInterval * 2, StakeState.RewardInterval * 2 + 1)]
+        [InlineData(0, null, LegacyStakeState.RewardInterval - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval - 2, LegacyStakeState.RewardInterval - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval + 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval * 2 - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval * 2 - 2, LegacyStakeState.RewardInterval * 2 - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval * 2, LegacyStakeState.RewardInterval * 2 + 1)]
         public void Execute_Throw_RequiredBlockIndexException_With_StakeState(
             long startedBlockIndex,
             long? receivedBlockIndex,
             long blockIndex)
         {
-            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
-            var stakeState = new StakeState(stakeAddr, startedBlockIndex);
+            var stakeAddr = LegacyStakeState.DeriveAddress(AgentAddr);
+            var stakeState = new LegacyStakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
                 stakeState.Claim((long)receivedBlockIndex);
@@ -570,8 +570,8 @@ namespace Lib9c.Tests.Action
             (Address balanceAddr, FungibleAssetValue fav)[] expectedBalances,
             (int itemSheetId, int count)[] expectedItems)
         {
-            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
-            var stakeState = new StakeState(stakeAddr, startedBlockIndex);
+            var stakeAddr = LegacyStakeState.DeriveAddress(AgentAddr);
+            var stakeState = new LegacyStakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
                 stakeState.Claim((long)receivedBlockIndex);

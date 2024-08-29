@@ -73,7 +73,7 @@ namespace Nekoyume.Action
                 throw new ArgumentOutOfRangeException(nameof(Amount));
             }
 
-            var stakeStateAddress = StakeState.DeriveAddress(context.Signer);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
             var currency = states.GetGoldCurrency();
             var currentBalance = states.GetBalance(context.Signer, currency);
             var stakedBalance = states.GetBalance(stakeStateAddress, currency);
@@ -87,7 +87,7 @@ namespace Nekoyume.Action
             }
 
             // Stake if it doesn't exist yet.
-            if (!states.TryGetStakeState(context.Signer, out StakeState stakeState))
+            if (!states.TryGetStakeState(context.Signer, out LegacyStakeState stakeState))
             {
                 if (states.TryGetStakeStateV2(context.Signer, out _))
                 {
@@ -95,7 +95,7 @@ namespace Nekoyume.Action
                         $"{context.Signer} has already staked as versions above 2.");
                 }
 
-                stakeState = new StakeState(stakeStateAddress, context.BlockIndex);
+                stakeState = new LegacyStakeState(stakeStateAddress, context.BlockIndex);
                 return states
                     .SetLegacyState(
                         stakeStateAddress,
@@ -136,7 +136,7 @@ namespace Nekoyume.Action
                 .TransferAsset(context, context.Signer, stakeState.address, targetStakeBalance)
                 .SetLegacyState(
                     stakeState.address,
-                    new StakeState(stakeState.address, context.BlockIndex).SerializeV2());
+                    new LegacyStakeState(stakeState.address, context.BlockIndex).SerializeV2());
         }
     }
 }

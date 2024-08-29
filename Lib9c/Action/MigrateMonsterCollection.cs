@@ -17,7 +17,7 @@ namespace Nekoyume.Action
 {
     /// <summary>
     /// An action to claim remained monster collection rewards and to migrate
-    /// <see cref="MonsterCollectionState"/> into <see cref="StakeState"/> without cancellation, to
+    /// <see cref="MonsterCollectionState"/> into <see cref="LegacyStakeState"/> without cancellation, to
     /// keep its staked period.
     /// </summary>
     [ActionType("migrate_monster_collection")]
@@ -53,7 +53,7 @@ namespace Nekoyume.Action
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}MigrateMonsterCollection exec started", addressesHex);
-            if (states.TryGetStakeState(context.Signer, out StakeState _))
+            if (states.TryGetStakeState(context.Signer, out LegacyStakeState _))
             {
                 throw new InvalidOperationException("The user has already staked.");
             }
@@ -80,13 +80,13 @@ namespace Nekoyume.Action
             }
 
             var monsterCollectionState = new MonsterCollectionState(stateDict);
-            var migratedStakeStateAddress = StakeState.DeriveAddress(context.Signer);
-            var migratedStakeState = new StakeState(
+            var migratedStakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
+            var migratedStakeState = new LegacyStakeState(
                 migratedStakeStateAddress,
                 monsterCollectionState.StartedBlockIndex,
                 monsterCollectionState.ReceivedBlockIndex,
                 monsterCollectionState.ExpiredBlockIndex,
-                new StakeState.StakeAchievements());
+                new LegacyStakeState.StakeAchievements());
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}MigrateMonsterCollection Total Executed Time: {Elapsed}", addressesHex, ended - started);

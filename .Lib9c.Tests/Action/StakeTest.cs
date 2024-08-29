@@ -222,9 +222,9 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-        [InlineData(0, 50, StakeState.RewardInterval)]
+        [InlineData(0, 50, LegacyStakeState.RewardInterval)]
         [InlineData(
-            long.MaxValue - StakeState.RewardInterval,
+            long.MaxValue - LegacyStakeState.RewardInterval,
             long.MaxValue,
             long.MaxValue)]
         public void Execute_Throw_StakeExistingClaimableException_With_StakeState(
@@ -232,8 +232,8 @@ namespace Lib9c.Tests.Action
             long previousAmount,
             long blockIndex)
         {
-            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeState = new StakeState(
+            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
+            var stakeState = new LegacyStakeState(
                 address: stakeStateAddr,
                 startedBlockIndex: previousStartedBlockIndex);
             Assert.True(stakeState.IsClaimable(blockIndex));
@@ -300,8 +300,8 @@ namespace Lib9c.Tests.Action
                 long blockIndex,
                 long reducedAmount)
         {
-            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeState = new StakeState(
+            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
+            var stakeState = new LegacyStakeState(
                 address: stakeStateAddr,
                 startedBlockIndex: previousStartedBlockIndex);
             Assert.False(stakeState.IsCancellable(blockIndex));
@@ -380,28 +380,28 @@ namespace Lib9c.Tests.Action
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
         // NOTE: non claimable, locked up, same amount.
         [InlineData(0, 50, 0, 50)]
-        [InlineData(0, 50, StakeState.LockupInterval - 1, 50)]
+        [InlineData(0, 50, LegacyStakeState.LockupInterval - 1, 50)]
         [InlineData(0, long.MaxValue, 0, long.MaxValue)]
-        [InlineData(0, long.MaxValue, StakeState.LockupInterval - 1, long.MaxValue)]
+        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval - 1, long.MaxValue)]
         // NOTE: non claimable, locked up, increased amount.
         [InlineData(0, 50, 0, 500)]
-        [InlineData(0, 50, StakeState.LockupInterval - 1, 500)]
+        [InlineData(0, 50, LegacyStakeState.LockupInterval - 1, 500)]
         // NOTE: non claimable, unlocked, same amount.
-        [InlineData(0, 50, StakeState.LockupInterval, 50)]
-        [InlineData(0, long.MaxValue, StakeState.LockupInterval, long.MaxValue)]
+        [InlineData(0, 50, LegacyStakeState.LockupInterval, 50)]
+        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval, long.MaxValue)]
         // NOTE: non claimable, unlocked, increased amount.
-        [InlineData(0, 50, StakeState.LockupInterval, 500)]
+        [InlineData(0, 50, LegacyStakeState.LockupInterval, 500)]
         // NOTE: non claimable, unlocked, decreased amount.
-        [InlineData(0, 50, StakeState.LockupInterval, 0)]
-        [InlineData(0, long.MaxValue, StakeState.LockupInterval, 50)]
+        [InlineData(0, 50, LegacyStakeState.LockupInterval, 0)]
+        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval, 50)]
         public void Execute_Success_When_Exist_StakeState(
             long previousStartedBlockIndex,
             long previousAmount,
             long blockIndex,
             long amount)
         {
-            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeState = new StakeState(
+            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
+            var stakeState = new LegacyStakeState(
                 address: stakeStateAddr,
                 startedBlockIndex: previousStartedBlockIndex);
             stakeState.Claim(blockIndex);
@@ -442,7 +442,7 @@ namespace Lib9c.Tests.Action
         [InlineData(0, 50, 201_600, 500)]
         // NOTE: non claimable, unlocked, decreased amount.
         [InlineData(0, 50, 201_600, 0)]
-        [InlineData(0, long.MaxValue, StakeState.LockupInterval, 50)]
+        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval, 50)]
         public void Execute_Success_When_Exist_StakeStateV2(
             long previousStartedBlockIndex,
             long previousAmount,
@@ -482,7 +482,7 @@ namespace Lib9c.Tests.Action
         {
             var previousBalance = previousState.GetBalance(signer, _ncg);
             var previousStakeBalance = previousState.GetBalance(
-                StakeState.DeriveAddress(signer),
+                LegacyStakeState.DeriveAddress(signer),
                 _ncg);
             var previousTotalBalance = previousBalance + previousStakeBalance;
             var action = new Stake(amount);
@@ -497,7 +497,7 @@ namespace Lib9c.Tests.Action
             var amountNCG = _ncg * amount;
             var nextBalance = nextState.GetBalance(signer, _ncg);
             var nextStakeBalance = nextState.GetBalance(
-                StakeState.DeriveAddress(signer),
+                LegacyStakeState.DeriveAddress(signer),
                 _ncg);
             Assert.Equal(previousTotalBalance - amountNCG, nextBalance);
             Assert.Equal(amountNCG, nextStakeBalance);
