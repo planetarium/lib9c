@@ -149,8 +149,8 @@ namespace Lib9c.Tests.Model.Stake
             stakePolicySheet.Set(StakePolicySheetFixtures.V2);
             var contract = new Contract(stakePolicySheet);
             var stakeStateV2 = receivedBlockIndex is null
-                ? new StakeStateV2(contract, startedBlockIndex)
-                : new StakeStateV2(contract, receivedBlockIndex.Value);
+                ? new StakeState(contract, startedBlockIndex)
+                : new StakeState(contract, receivedBlockIndex.Value);
 
             state = state.SetLegacyState(stakeAddr, stakeStateV2.Serialize());
             Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var result));

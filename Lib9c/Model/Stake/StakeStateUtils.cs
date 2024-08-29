@@ -11,37 +11,37 @@ namespace Nekoyume.Model.Stake
         public static bool TryMigrate(
             IWorldState state,
             Address stakeStateAddr,
-            out StakeStateV2 stakeStateV2)
+            out StakeState stakeState)
         {
             var nullableStateState =
                 Migrate(state.GetLegacyState(stakeStateAddr), state.GetGameConfigState());
             if (nullableStateState is null)
             {
-                stakeStateV2 = default;
+                stakeState = default;
                 return false;
             }
 
-            stakeStateV2 = nullableStateState.Value;
+            stakeState = nullableStateState.Value;
             return true;
         }
 
         public static bool TryMigrate(
             IValue serialized,
             GameConfigState gameConfigState,
-            out StakeStateV2 stakeStateV2)
+            out StakeState stakeState)
         {
             var nullableStateState = Migrate(serialized, gameConfigState);
             if (nullableStateState is null)
             {
-                stakeStateV2 = default;
+                stakeState = default;
                 return false;
             }
 
-            stakeStateV2 = nullableStateState.Value;
+            stakeState = nullableStateState.Value;
             return true;
         }
 
-        public static StakeStateV2? Migrate(
+        public static StakeState? Migrate(
             IValue serialized,
             GameConfigState gameConfigState)
         {
@@ -53,7 +53,7 @@ namespace Nekoyume.Model.Stake
             // NOTE: StakeStateV2 is serialized as Bencodex List.
             if (serialized is List list)
             {
-                return new StakeStateV2(list);
+                return new StakeState(list);
             }
 
             // NOTE: StakeState is serialized as Bencodex Dictionary.
@@ -118,7 +118,7 @@ namespace Nekoyume.Model.Stake
                 stakeRegularRewardSheetTableName = "StakeRegularRewardSheet_V5";
             }
 
-            return new StakeStateV2(
+            return new StakeState(
                 stakeStateV1,
                 new Contract(
                     stakeRegularFixedRewardSheetTableName: stakeRegularFixedRewardSheetTableName,

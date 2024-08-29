@@ -265,8 +265,8 @@ namespace Lib9c.Tests.Action
             long previousAmount,
             long blockIndex)
         {
-            var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeStateV2(
+            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
+            var stakeStateV2 = new StakeState(
                 contract: new Contract(_stakePolicySheet),
                 startedBlockIndex: previousStartedBlockIndex);
             var previousState = _initialState
@@ -338,8 +338,8 @@ namespace Lib9c.Tests.Action
                 long blockIndex,
                 long reducedAmount)
         {
-            var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeStateV2(
+            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
+            var stakeStateV2 = new StakeState(
                 contract: new Contract(_stakePolicySheet),
                 startedBlockIndex: previousStartedBlockIndex,
                 receivedBlockIndex: blockIndex);
@@ -449,8 +449,8 @@ namespace Lib9c.Tests.Action
             long blockIndex,
             long amount)
         {
-            var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeStateV2(
+            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
+            var stakeStateV2 = new StakeState(
                 contract: new Contract(_stakePolicySheet),
                 startedBlockIndex: previousStartedBlockIndex,
                 receivedBlockIndex: blockIndex);
