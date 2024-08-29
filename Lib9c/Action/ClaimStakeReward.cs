@@ -58,7 +58,7 @@ namespace Nekoyume.Action
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var stakeStateAddr = LegacyStakeState.DeriveAddress(context.Signer);
-            if (!states.TryGetStakeStateV2(context.Signer, out var stakeStateV2))
+            if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
