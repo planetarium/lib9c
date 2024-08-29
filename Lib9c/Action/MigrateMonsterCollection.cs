@@ -53,7 +53,7 @@ namespace Nekoyume.Action
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}MigrateMonsterCollection exec started", addressesHex);
-            if (states.TryGetStakeState(context.Signer, out LegacyStakeState _))
+            if (states.TryGetLegacyStakeState(context.Signer, out LegacyStakeState _))
             {
                 throw new InvalidOperationException("The user has already staked.");
             }
