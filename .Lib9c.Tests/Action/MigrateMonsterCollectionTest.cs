@@ -138,7 +138,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            Assert.True(states.TryGetStakeState(_signer, out LegacyStakeState stakeState));
+            Assert.True(states.TryGetLegacyStakeState(_signer, out LegacyStakeState stakeState));
             Assert.Equal(
                 0 * currency,
                 states.GetBalance(monsterCollectionState.address, currency));

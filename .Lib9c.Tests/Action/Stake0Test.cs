@@ -137,7 +137,7 @@ namespace Lib9c.Tests.Action
             }));
 
             // Same (since 4611070)
-            if (states.TryGetStakeState(_signerAddress, out LegacyStakeState stakeState))
+            if (states.TryGetLegacyStakeState(_signerAddress, out LegacyStakeState stakeState))
             {
                 states = states.SetLegacyState(
                     stakeState.address,
@@ -158,7 +158,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = states,
                 Signer = _signerAddress,
                 BlockIndex = 4611070 - 99,
-            }).TryGetStakeState(_signerAddress, out stakeState));
+            }).TryGetLegacyStakeState(_signerAddress, out stakeState));
             Assert.Equal(4611070 - 99, stakeState.StartedBlockIndex);
         }
 
@@ -178,7 +178,7 @@ namespace Lib9c.Tests.Action
                 _currency * 100,
                 states.GetBalance(LegacyStakeState.DeriveAddress(_signerAddress), _currency));
 
-            states.TryGetStakeState(_signerAddress, out LegacyStakeState stakeState);
+            states.TryGetLegacyStakeState(_signerAddress, out LegacyStakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + LegacyStakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -222,7 +222,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
             });
 
-            states.TryGetStakeState(_signerAddress, out LegacyStakeState stakeState);
+            states.TryGetLegacyStakeState(_signerAddress, out LegacyStakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + LegacyStakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -237,7 +237,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 1,
             });
 
-            states.TryGetStakeState(_signerAddress, out stakeState);
+            states.TryGetLegacyStakeState(_signerAddress, out stakeState);
             Assert.Equal(1, stakeState.StartedBlockIndex);
             Assert.Equal(1 + LegacyStakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);

@@ -86,7 +86,7 @@ namespace Nekoyume.Action
             }
 
             // Stake if it doesn't exist yet.
-            if (!states.TryGetStakeState(context.Signer, out LegacyStakeState stakeState))
+            if (!states.TryGetLegacyStakeState(context.Signer, out LegacyStakeState stakeState))
             {
                 var stakeAchievementRewardSheet = states.GetSheet<StakeAchievementRewardSheet>();
 
