@@ -18,7 +18,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
@@ -42,8 +41,10 @@ namespace Nekoyume.Action
 
         IEnumerable<Guid> IHackAndSlashSweepV3.Costumes => costumes;
         IEnumerable<Guid> IHackAndSlashSweepV3.Equipments => equipments;
+
         IEnumerable<IValue> IHackAndSlashSweepV3.RuneSlotInfos =>
             runeInfos.Select(x => x.Serialize());
+
         Address IHackAndSlashSweepV3.AvatarAddress => avatarAddress;
         int IHackAndSlashSweepV3.ApStoneCount => apStoneCount;
         int IHackAndSlashSweepV3.ActionPoint => actionPoint;
@@ -55,7 +56,8 @@ namespace Nekoyume.Action
             {
                 ["costumes"] = new List(costumes.OrderBy(i => i).Select(e => e.Serialize())),
                 ["equipments"] = new List(equipments.OrderBy(i => i).Select(e => e.Serialize())),
-                ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex).Select(x=> x.Serialize()).Serialize(),
+                ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex)
+                    .Select(x => x.Serialize()).Serialize(),
                 ["avatarAddress"] = avatarAddress.Serialize(),
                 ["apStoneCount"] = apStoneCount.Serialize(),
                 ["actionPoint"] = actionPoint.Serialize(),
@@ -91,6 +93,13 @@ namespace Nekoyume.Action
                     $"apStoneCount : {apStoneCount} > UsableApStoneCount : {UsableApStoneCount}");
             }
 
+            if (apStoneCount < 0 || actionPoint < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"{addressesHex} Aborted as the player give negative value ({actionPoint} AP & {apStoneCount} potions)"
+                );
+            }
+
             states.ValidateWorldId(avatarAddress, worldId);
 
             if (!states.TryGetAvatarState(
@@ -102,7 +111,9 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var collectionExist = states.TryGetCollectionState(avatarAddress, out var collectionState) && collectionState.Ids.Any();
+            var collectionExist =
+                states.TryGetCollectionState(avatarAddress, out var collectionState) &&
+                collectionState.Ids.Any();
             var sheetTypes = new List<Type>
             {
                 typeof(WorldSheet),
@@ -126,6 +137,7 @@ namespace Nekoyume.Action
             {
                 sheetTypes.Add(typeof(CollectionSheet));
             }
+
             var sheets = states.GetSheets(
                 sheetTypes: sheetTypes);
 
@@ -206,19 +218,23 @@ namespace Nekoyume.Action
             }
 
             // update rune slot
-            var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
-                ? new RuneSlotState(rawRuneSlotState)
-                : new RuneSlotState(BattleType.Adventure);
+            var runeSlotStateAddress =
+                RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
+            var runeSlotState =
+                states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
+                    ? new RuneSlotState(rawRuneSlotState)
+                    : new RuneSlotState(BattleType.Adventure);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(runeInfos, runeListSheet);
             states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // update item slot
-            var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
-            var itemSlotState = states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
-                ? new ItemSlotState(rawItemSlotState)
-                : new ItemSlotState(BattleType.Adventure);
+            var itemSlotStateAddress =
+                ItemSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
+            var itemSlotState =
+                states.TryGetLegacyState(itemSlotStateAddress, out List rawItemSlotState)
+                    ? new ItemSlotState(rawItemSlotState)
+                    : new ItemSlotState(BattleType.Adventure);
             itemSlotState.UpdateEquipment(equipments);
             itemSlotState.UpdateCostumes(costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
@@ -238,6 +254,7 @@ namespace Nekoyume.Action
                     equippedRune.Add(runeState);
                 }
             }
+
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
             var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
             foreach (var runeState in equippedRune)
@@ -354,9 +371,11 @@ namespace Nekoyume.Action
             avatarState.UpdateExp(level, exp);
 
             var ended = DateTimeOffset.UtcNow;
-            Log.Debug("{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetAvatarState(avatarAddress, avatarState);
+            Log.Debug(
+                "{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}",
+                addressesHex, ended - started
+            );
+            return states.SetAvatarState(avatarAddress, avatarState);
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,
