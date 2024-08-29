@@ -206,6 +206,13 @@ namespace Nekoyume.Action
                             }
 
                             Guid productId = random.GenerateRandomGuid();
+                            var productAddress = Product.DeriveAddress(productId);
+                            // 중복된 ProductId가 발급되면 상태를 덮어씌우는 현상을 방지하기위해 예외발생
+                            if (states.TryGetLegacyState(productAddress, out IValue v) && v is not Null)
+                            {
+                                // FIXME 클라이언트 배포를 회피하기위해 기존 오류를 사용했으나 정규배포때 별도 예외로 구분ㅐ
+                                throw new DuplicateOrderIdException("already registered id.");
+                            }
                             var product = new ItemProduct
                             {
                                 ProductId = productId,
@@ -218,8 +225,7 @@ namespace Nekoyume.Action
                                 SellerAvatarAddress = registerInfo.AvatarAddress,
                             };
                             productsState.ProductIds.Add(productId);
-                            states = states.SetLegacyState(Product.DeriveAddress(productId),
-                                product.Serialize());
+                            states = states.SetLegacyState(productAddress, product.Serialize());
                             break;
                         }
                     }
@@ -229,6 +235,13 @@ namespace Nekoyume.Action
                 {
                     Guid productId = random.GenerateRandomGuid();
                     Address productAddress = Product.DeriveAddress(productId);
+                    // 중복된 ProductId가 발급되면 상태를 덮어씌우는 현상을 방지하기위해 예외발생
+                    if (states.TryGetLegacyState(productAddress, out IValue v) && v is not Null)
+                    {
+                        // FIXME 클라이언트 배포를 회피하기위해 기존 오류를 사용했으나 정규배포때 별도 예외로 구분ㅐ
+                        throw new DuplicateOrderIdException("already registered id.");
+                    }
+
                     FungibleAssetValue asset = assetInfo.Asset;
                     var product = new FavProduct
                     {
