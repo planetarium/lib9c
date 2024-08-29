@@ -14,7 +14,7 @@ namespace Nekoyume.Model.Stake
             out StakeState stakeState)
         {
             var nullableStateState =
-                Migrate(state.GetLegacyState(stakeStateAddr), state.GetGameConfigState());
+                MigrateV1ToV2(state.GetLegacyState(stakeStateAddr), state.GetGameConfigState());
             if (nullableStateState is null)
             {
                 stakeState = default;
@@ -30,7 +30,7 @@ namespace Nekoyume.Model.Stake
             GameConfigState gameConfigState,
             out StakeState stakeState)
         {
-            var nullableStateState = Migrate(serialized, gameConfigState);
+            var nullableStateState = MigrateV1ToV2(serialized, gameConfigState);
             if (nullableStateState is null)
             {
                 stakeState = default;
@@ -41,7 +41,7 @@ namespace Nekoyume.Model.Stake
             return true;
         }
 
-        public static StakeState? Migrate(
+        public static StakeState? MigrateV1ToV2(
             IValue serialized,
             GameConfigState gameConfigState)
         {
