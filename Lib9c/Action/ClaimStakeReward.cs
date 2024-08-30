@@ -67,6 +67,22 @@ namespace Nekoyume.Action
                     stakeStateAddr);
             }
 
+            if (stakeStateV2.StateVersion == 2)
+            {
+                if (!StakeStateUtils.TryMigrateV2ToV3(
+                        context,
+                        states,
+                        StakeState.DeriveAddress(context.Signer),
+                        stakeStateV2, out var result))
+                {
+                    throw new InvalidOperationException(
+                        "Failed to migrate stake state. Unexpected situation.");
+                }
+
+                states = result.Value.world;
+                stakeStateV2 = result.Value.newStakeState;
+            }
+
             if (stakeStateV2.ClaimableBlockIndex > context.BlockIndex)
             {
                 throw new RequiredBlockIndexException(
