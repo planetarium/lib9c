@@ -24,6 +24,8 @@ namespace Nekoyume.Delegation
 
         int MaxRebondGraceEntries { get; }
 
+        BigInteger SlashFactor { get; }
+
         Address RewardCollectorAddress { get; }
 
         Address RewardDistributorAddress { get; }
@@ -41,6 +43,8 @@ namespace Nekoyume.Delegation
         void DistributeReward(IDelegator delegator, long height);
 
         void CollectRewards(long height);
+
+        void Slash(long infractionHeight);
 
         Address BondAddress(Address delegatorAddress);
 

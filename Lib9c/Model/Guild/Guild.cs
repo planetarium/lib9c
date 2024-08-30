@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Lib9c;
@@ -66,6 +67,8 @@ namespace Nekoyume.Model.Guild
         public override int MaxUnbondLockInEntries => 10;
 
         public override int MaxRebondGraceEntries => 10;
+
+        public override BigInteger SlashFactor => BigInteger.One;
 
         public override List Bencoded => List.Empty
             .Add(StateTypeName)
