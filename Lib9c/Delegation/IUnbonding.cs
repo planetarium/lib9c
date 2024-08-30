@@ -1,3 +1,4 @@
+using System.Numerics;
 using Libplanet.Crypto;
 
 namespace Nekoyume.Delegation
@@ -14,6 +15,6 @@ namespace Nekoyume.Delegation
 
         IUnbonding Release(long height);
 
-        IUnbonding Slash();
+        IUnbonding Slash(BigInteger slashFactor, long infractionHeight);
     }
 }

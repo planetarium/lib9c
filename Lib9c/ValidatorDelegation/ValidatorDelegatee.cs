@@ -56,6 +56,8 @@ namespace Nekoyume.ValidatorDelegation
 
         public override int MaxRebondGraceEntries => 10;
 
+        public override BigInteger SlashFactor => 10;
+
         public override List Bencoded => List.Empty
             .Add(base.Bencoded)
             .Add(Publickey.Format(true))

@@ -25,6 +25,7 @@ namespace Nekoyume.Delegation
         protected readonly byte[] PoolId = new byte[] { 0x70 };                  // `p`
 
         private readonly IDelegationRepository? _repository;
+        private ImmutableSortedSet<UnbondingRef> _unbondingRefs;
 
         public Delegatee(Address address, IDelegationRepository? repository = null)
         {
@@ -32,6 +33,7 @@ namespace Nekoyume.Delegation
             Delegators = ImmutableSortedSet<Address>.Empty;
             TotalDelegated = DelegationCurrency * 0;
             TotalShares = BigInteger.Zero;
+            _unbondingRefs = ImmutableSortedSet<UnbondingRef>.Empty;
             _repository = repository;
         }
 
@@ -46,6 +48,7 @@ namespace Nekoyume.Delegation
                   ((List)bencoded[0]).Select(item => new Address(item)),
                   new FungibleAssetValue(bencoded[1]),
                   (Integer)bencoded[2],
+                  ((List)bencoded[3]).Select(item => new UnbondingRef(item)),
                   repository)
         {
         }
@@ -55,6 +58,7 @@ namespace Nekoyume.Delegation
             IEnumerable<Address> delegators,
             FungibleAssetValue totalDelegated,
             BigInteger totalShares,
+            IEnumerable<UnbondingRef> unbondingRefs,
             IDelegationRepository? repository)
         {
             if (!totalDelegated.Currency.Equals(DelegationCurrency))
@@ -82,6 +86,7 @@ namespace Nekoyume.Delegation
             Delegators = delegators.ToImmutableSortedSet();
             TotalDelegated = totalDelegated;
             TotalShares = totalShares;
+            _unbondingRefs = unbondingRefs.ToImmutableSortedSet();
             _repository = repository;
         }
 
@@ -101,6 +106,8 @@ namespace Nekoyume.Delegation
 
         public abstract int MaxRebondGraceEntries { get; }
 
+        public abstract BigInteger SlashFactor { get; }
+
         public Address RewardCollectorAddress => DeriveAddress(RewardCollectorId);
 
         public Address RewardDistributorAddress => DeriveAddress(RewardDistributorId);
@@ -116,7 +123,8 @@ namespace Nekoyume.Delegation
         public virtual List Bencoded => List.Empty
             .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
             .Add(TotalDelegated.Serialize())
-            .Add(TotalShares);
+            .Add(TotalShares)
+            .Add(new List(_unbondingRefs.Select(unbondingRef => unbondingRef.Bencoded)));
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -128,7 +136,7 @@ namespace Nekoyume.Delegation
         public FungibleAssetValue FAVToUnbond(BigInteger share)
             => TotalShares == share
                 ? TotalDelegated
-                : (TotalDelegated * share).DivRem(TotalShares, out _);
+                : (TotalDelegated * share).DivRem(TotalShares).Quotient;
 
         BigInteger IDelegatee.Bond(
             IDelegator delegator, FungibleAssetValue fav, long height)
@@ -213,6 +221,43 @@ namespace Nekoyume.Delegation
             _repository!.TransferAsset(RewardCollectorAddress, RewardDistributorAddress, rewards);
         }
 
+        public void Slash(long infractionHeight)
+        {
+            CannotMutateRelationsWithoutRepository();
+            foreach (var item in _unbondingRefs)
+            {
+                var unbonding = UnbondingFactory.GetUnbondingFromRef(item, _repository)
+                    .Slash(SlashFactor, infractionHeight);
+
+                if (unbonding.IsEmpty)
+                {
+                    RemoveUnbondingRef(item);
+                }
+
+                switch (unbonding)
+                {
+                    case UnbondLockIn unbondLockIn:
+                        _repository!.SetUnbondLockIn(unbondLockIn);
+                        break;
+                    case RebondGrace rebondGrace:
+                        _repository!.SetRebondGrace(rebondGrace);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Invalid unbonding type.");
+                }
+            }
+        }
+
+        public void AddUnbondingRef(UnbondingRef unbondingRef)
+        {
+            _unbondingRefs = _unbondingRefs.Add(unbondingRef);
+        }
+
+        public void RemoveUnbondingRef(UnbondingRef unbondingRef)
+        {
+            _unbondingRefs = _unbondingRefs.Remove(unbondingRef);
+        }
+
         public virtual Address BondAddress(Address delegatorAddress)
             => DeriveAddress(BondId, delegatorAddress);
 
@@ -246,6 +291,7 @@ namespace Nekoyume.Delegation
             && Delegators.SequenceEqual(delegatee.Delegators)
             && TotalDelegated.Equals(delegatee.TotalDelegated)
             && TotalShares.Equals(delegatee.TotalShares)
+            && _unbondingRefs.SequenceEqual(delegatee._unbondingRefs)
             && DelegateeId.SequenceEqual(delegatee.DelegateeId));
 
         public override int GetHashCode()

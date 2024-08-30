@@ -125,6 +125,8 @@ namespace Nekoyume.Delegation
                 Delegatees = Delegatees.Remove(delegatee.Address);
             }
 
+            delegatee.AddUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
+
             _repository.SetUnbondLockIn(unbondLockIn);
             _repository.SetUnbondingSet(
                 _repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
@@ -164,6 +166,8 @@ namespace Nekoyume.Delegation
 
             Delegatees = Delegatees.Add(dstDelegatee.Address);
 
+            srcDelegatee.AddUnbondingRef(UnbondingFactory.ToReference(srcRebondGrace));
+
             _repository.SetRebondGrace(srcRebondGrace);
             _repository.SetUnbondingSet(
                 _repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
@@ -195,6 +199,11 @@ namespace Nekoyume.Delegation
             delegatee.Bond((TSelf)this, fav, height);
             unbondLockIn = unbondLockIn.Cancel(fav, height);
             Delegatees = Delegatees.Add(delegatee.Address);
+
+            if (unbondLockIn.IsEmpty)
+            {
+                delegatee.RemoveUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
+            }
 
             _repository.SetUnbondLockIn(unbondLockIn);
             _repository.SetUnbondingSet(

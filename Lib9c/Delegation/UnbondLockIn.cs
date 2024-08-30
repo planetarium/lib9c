@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -172,12 +173,16 @@ namespace Nekoyume.Delegation
 
         IUnbonding IUnbonding.Release(long height) => Release(height);
 
-        [Obsolete("This method is not implemented yet.")]
-        public UnbondLockIn Slash()
-            => throw new NotImplementedException();
+        public UnbondLockIn Slash(BigInteger slashFactor, long infractionHeight)
+            => UpdateEntries(Entries.TakeWhile(e => e.Key >= infractionHeight)
+                .Select(kv => KeyValuePair.Create(
+                    kv.Key,
+                    kv.Value.Select(v => v.Slash(slashFactor, infractionHeight)).ToImmutableList()))
+                .Concat(Entries.SkipWhile(e => e.Key >= infractionHeight))
+                .ToImmutableSortedDictionary());
 
-        IUnbonding IUnbonding.Slash() => Slash();
-
+        IUnbonding IUnbonding.Slash(BigInteger slashFactor, long infractionHeight)
+            => Slash(slashFactor, infractionHeight);
 
         public override bool Equals(object? obj)
             => obj is UnbondLockIn other && Equals(other);
@@ -432,9 +437,23 @@ namespace Nekoyume.Delegation
                 return hash;
             }
 
-            [Obsolete("This method is not implemented yet.")]
-            public UnbondLockInEntry Slash()
-                => throw new NotImplementedException();
+            public UnbondLockInEntry Slash(BigInteger slashFactor, long infractionHeight)
+            {
+                if (CreationHeight > infractionHeight ||
+                    ExpireHeight < infractionHeight)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(infractionHeight),
+                        infractionHeight,
+                        "The infraction height must be between in creation height and expire height of entry.");
+                }
+
+                return new UnbondLockInEntry(
+                    InitialLockInFAV,
+                    LockInFAV - LockInFAV.DivRem(slashFactor).Quotient,
+                    CreationHeight,
+                    ExpireHeight);
+            }
 
             internal UnbondLockInEntry Cancel(FungibleAssetValue cancellingFAV)
             {
