@@ -416,12 +416,20 @@ namespace Lib9c.Tests.Action
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            Execute(
+            var nextState = Execute(
                 blockIndex,
                 previousState,
                 new TestRandom(),
                 _agentAddr,
                 amount);
+
+            if (amount == 0)
+            {
+                return;
+            }
+
+            Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState newStakeState));
+            Assert.Equal(3, newStakeState.StateVersion);
         }
 
         [Theory]
@@ -466,12 +474,59 @@ namespace Lib9c.Tests.Action
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            Execute(
+            var nextState = Execute(
                 blockIndex,
                 previousState,
                 new TestRandom(),
                 _agentAddr,
                 amount);
+
+            if (amount == 0)
+            {
+                return;
+            }
+
+            Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState stakeState));
+            Assert.Equal(3, stakeState.StateVersion);
+        }
+
+        [Fact]
+        public void Execute_Success_When_Exist_StakeStateV3()
+        {
+            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
+            var stakeStateV2 = new StakeState(
+                contract: new Contract(_stakePolicySheet),
+                startedBlockIndex: 0,
+                receivedBlockIndex: 0,
+                stateVersion: 3);
+
+            var previousState = _initialState
+                .MintAsset(
+                    new ActionContext(),
+                    _agentAddr,
+                    _ncg * 100)
+                .TransferAsset(
+                    new ActionContext(),
+                    _agentAddr,
+                    stakeStateAddr,
+                    _ncg * 50)
+                .MintAsset(new ActionContext(), stakeStateAddr, Currencies.GuildGold * 50)
+                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
+
+            var action = new Stake(100);
+            var nextState = action.Execute(new ActionContext
+            {
+                BlockIndex = 0,
+                Signer = _agentAddr,
+                PreviousState = previousState,
+            });
+
+            Assert.Equal(
+                Currencies.GuildGold * 100,
+                nextState.GetBalance(stakeStateAddr, Currencies.GuildGold));
+            Assert.Equal(
+                _ncg * 100,
+                nextState.GetBalance(stakeStateAddr, _ncg));
         }
 
         private IWorld Execute(
@@ -495,13 +550,18 @@ namespace Lib9c.Tests.Action
                 Signer = signer,
             });
 
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(signer);
+
             var amountNCG = _ncg * amount;
             var nextBalance = nextState.GetBalance(signer, _ncg);
             var nextStakeBalance = nextState.GetBalance(
-                LegacyStakeState.DeriveAddress(signer),
+                stakeStateAddress,
                 _ncg);
             Assert.Equal(previousTotalBalance - amountNCG, nextBalance);
             Assert.Equal(amountNCG, nextStakeBalance);
+            Assert.Equal(
+                Currencies.GuildGold * amount,
+                nextState.GetBalance(stakeStateAddress, Currencies.GuildGold));
 
             if (amount == 0)
             {
