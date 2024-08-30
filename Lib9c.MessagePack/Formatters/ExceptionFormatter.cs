@@ -26,12 +26,12 @@ namespace Lib9c.Formatters
 
             writer.WriteMapHeader(info.MemberCount + 1);
             writer.Write("ExceptionType");
-            writer.Write(value.GetType().AssemblyQualifiedName);
+            writer.Write("System.Exception");
 
             foreach (SerializationEntry entry in info)
             {
                 writer.Write(entry.Name);
-                writer.Write(entry.ObjectType.AssemblyQualifiedName);
+                writer.Write(entry.ObjectType.FullName);
                 MessagePackSerializer.Serialize(entry.ObjectType, ref writer, entry.Value, options);
             }
         }
