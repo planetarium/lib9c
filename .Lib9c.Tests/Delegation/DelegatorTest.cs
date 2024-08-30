@@ -115,7 +115,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(initialShare - undelegatingShare, delegatee.TotalShares);
             Assert.Equal(delegator.Address, Assert.Single(delegatee.Delegators));
             Assert.Equal(delegatee.Address, Assert.Single(delegator.Delegatees));
-            Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondings));
+            Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             var entriesByExpireHeight = Assert.Single(unbondLockIn.Entries);
             Assert.Equal(10L + delegatee.UnbondingPeriod, entriesByExpireHeight.Key);
             var entry = Assert.Single(entriesByExpireHeight.Value);
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(System.Numerics.BigInteger.Zero, delegatee.TotalShares);
             Assert.Empty(delegator.Delegatees);
             Assert.Empty(delegatee.Delegators);
-            Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondings));
+            Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, unbondLockIn.Entries.Count);
 
             unbondLockIn = unbondLockIn.Release(10L + delegatee.UnbondingPeriod - 1);
@@ -219,7 +219,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegator.Address, Assert.Single(delegatee1.Delegators));
             Assert.Equal(delegator.Address, Assert.Single(delegatee2.Delegators));
             Assert.Equal(2, delegator.Delegatees.Count);
-            Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondings));
+            Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             var entriesByExpireHeight = Assert.Single(rebondGrace.Entries);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             var entry = Assert.Single(entriesByExpireHeight.Value);
@@ -251,7 +251,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Empty(delegatee1.Delegators);
             Assert.Equal(delegator.Address, Assert.Single(delegatee2.Delegators));
             Assert.Equal(delegatee2.Address, Assert.Single(delegator.Delegatees));
-            Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondings));
+            Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, rebondGrace.Entries.Count);
 
             rebondGrace = rebondGrace.Release(10L + delegatee1.UnbondingPeriod - 1);

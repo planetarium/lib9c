@@ -1,3 +1,4 @@
+using System.Numerics;
 using Lib9c.Tests.Delegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -23,4 +24,6 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
     public override int MaxUnbondLockInEntries => 5;
 
     public override int MaxRebondGraceEntries => 5;
+
+    public override BigInteger SlashFactor => 1;
 }

@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Delegation
 {
+    using System.Numerics;
     using Bencodex.Types;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -30,5 +31,7 @@ namespace Lib9c.Tests.Delegation
         public override int MaxUnbondLockInEntries => 5;
 
         public override int MaxRebondGraceEntries => 5;
+
+        public override BigInteger SlashFactor => 1;
     }
 }
