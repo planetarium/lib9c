@@ -1,6 +1,11 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
+using Lib9c;
+using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 
@@ -8,7 +13,7 @@ namespace Nekoyume.Model.Stake
 {
     public static class StakeStateUtils
     {
-        public static bool TryMigrate(
+        public static bool TryMigrateV1ToV2(
             IWorldState state,
             Address stakeStateAddr,
             out StakeState stakeState)
@@ -25,7 +30,7 @@ namespace Nekoyume.Model.Stake
             return true;
         }
 
-        public static bool TryMigrate(
+        public static bool TryMigrateV1ToV2(
             IValue serialized,
             GameConfigState gameConfigState,
             out StakeState stakeState)
@@ -125,6 +130,37 @@ namespace Nekoyume.Model.Stake
                     stakeRegularRewardSheetTableName: stakeRegularRewardSheetTableName,
                     rewardInterval: LegacyStakeState.RewardInterval,
                     lockupInterval: LegacyStakeState.LockupInterval));
+        }
+
+        public static bool TryMigrateV2ToV3(
+            IActionContext context,
+            IWorld world,
+            Address stakeStateAddr,
+            StakeState stakeState,
+            [NotNullWhen(true)]
+            out (IWorld world, StakeState newStakeState)? result
+        )
+        {
+            if (stakeState.StateVersion != 2)
+            {
+                result = null;
+                return false;
+            }
+
+            var goldCurrency = world.GetGoldCurrency();
+            var goldBalance = world.GetBalance(stakeStateAddr, goldCurrency);
+            var newStakeState = new StakeState(
+                stakeState.Contract,
+                stakeState.StartedBlockIndex,
+                stakeState.ReceivedBlockIndex,
+                stateVersion: 3);
+
+            result = (
+                world.MintAsset(context, stakeStateAddr,
+                        FungibleAssetValue.Parse(Currencies.GuildGold,
+                            goldBalance.GetQuantityString(true)))
+                    .SetLegacyState(stakeStateAddr, newStakeState.Serialize()), newStakeState);
+            return true;
         }
     }
 }

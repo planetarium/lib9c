@@ -906,7 +906,7 @@ namespace Nekoyume.Module
             out StakeState stakeState)
         {
             var stakeStateAddr = StakeState.DeriveAddress(agentAddr);
-            return StakeStateUtils.TryMigrate(
+            return StakeStateUtils.TryMigrateV1ToV2(
                 worldState,
                 stakeStateAddr,
                 out stakeState);

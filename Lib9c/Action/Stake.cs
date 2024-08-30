@@ -150,12 +150,21 @@ namespace Nekoyume.Action
                 }
             }
 
+            if (stakeStateV2.StateVersion == 2)
+            {
+                if (!StakeStateUtils.TryMigrateV2ToV3(context, states, stakeStateAddress, stakeStateV2, out var result))
+                {
+                    throw new InvalidOperationException("Failed to migration. Unexpected situation.");
+                }
+
+                states = result.Value.world;
+            }
+
             // NOTE: Withdraw staking.
             if (Amount == 0)
             {
-                return states
-                    .RemoveLegacyState(stakeStateAddress)
-                    .TransferAsset(context, stakeStateAddress, context.Signer, stakedBalance);
+                return Refund(context, states, stakeStateAddress, context.Signer, stakedBalance)
+                    .RemoveLegacyState(stakeStateAddress);
             }
 
             // NOTE: Contract a new staking.
@@ -182,23 +191,31 @@ namespace Nekoyume.Action
             Contract latestStakeContract)
         {
             var newStakeState = new StakeState(latestStakeContract, context.BlockIndex);
+
             if (stakedBalance.HasValue)
             {
-                state = state.BurnAsset(
-                        context,
-                        context.Signer,
-                        GetGuildCoinFromNCG(stakedBalance.Value)
-                    ).TransferAsset(
-                        context,
-                        stakeStateAddr,
-                        context.Signer,
-                        stakedBalance.Value);
+                state = Refund(context, state, stakeStateAddr, context.Signer, stakedBalance.Value);
             }
 
             return state
                 .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
-                .MintAsset(context, context.Signer, GetGuildCoinFromNCG(targetStakeBalance))
+                .MintAsset(context, stakeStateAddr, GetGuildCoinFromNCG(targetStakeBalance))
                 .SetLegacyState(stakeStateAddr, newStakeState.Serialize());
+        }
+
+        private static IWorld Refund(
+            IActionContext context, IWorld world, Address stakeStateAddress, Address signer,
+            FungibleAssetValue stakedBalance)
+        {
+            return world.BurnAsset(
+                context,
+                stakeStateAddress,
+                GetGuildCoinFromNCG(stakedBalance)
+            ).TransferAsset(
+                context,
+                stakeStateAddress,
+                signer,
+                stakedBalance);
         }
 
         private static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)
