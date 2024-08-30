@@ -8,11 +8,12 @@ namespace Nekoyume.Model.Stake
     public readonly struct StakeState : IState
     {
         public const string StateTypeName = "stake_state";
-        public const int StateTypeVersion = 2;
+        public const int LatestStateTypeVersion = 3;
 
         public static Address DeriveAddress(Address address) =>
             LegacyStakeState.DeriveAddress(address);
 
+        public readonly int StateVersion;
         public readonly Contract Contract;
         public readonly long StartedBlockIndex;
         public readonly long ReceivedBlockIndex;
@@ -34,7 +35,8 @@ namespace Nekoyume.Model.Stake
         public StakeState(
             Contract contract,
             long startedBlockIndex,
-            long receivedBlockIndex = 0)
+            long receivedBlockIndex = 0,
+            int stateVersion = LatestStateTypeVersion)
         {
             if (startedBlockIndex < 0)
             {
@@ -55,15 +57,18 @@ namespace Nekoyume.Model.Stake
             Contract = contract ?? throw new ArgumentNullException(nameof(contract));
             StartedBlockIndex = startedBlockIndex;
             ReceivedBlockIndex = receivedBlockIndex;
+            StateVersion = stateVersion;
         }
 
+        // Migration constructor V1 to V2.
         public StakeState(
             LegacyStakeState legacyStakeState,
             Contract contract
         ) : this(
             contract,
             legacyStakeState?.StartedBlockIndex ?? throw new ArgumentNullException(nameof(legacyStakeState)),
-            legacyStakeState.ReceivedBlockIndex
+            legacyStakeState.ReceivedBlockIndex,
+            stateVersion: 2
         )
         {
         }
@@ -80,7 +85,8 @@ namespace Nekoyume.Model.Stake
             if (list[0] is not Text stateTypeNameValue ||
                 stateTypeNameValue != StateTypeName ||
                 list[1] is not Integer stateTypeVersionValue ||
-                stateTypeVersionValue.Value != StateTypeVersion)
+                stateTypeVersionValue.Value == 1 ||
+                stateTypeVersionValue.Value > LatestStateTypeVersion)
             {
                 throw new ArgumentException(
                     nameof(serialized),
@@ -89,6 +95,7 @@ namespace Nekoyume.Model.Stake
 
             const int reservedCount = 2;
 
+            StateVersion = stateTypeVersionValue;
             Contract = new Contract(list[reservedCount]);
             StartedBlockIndex = (Integer)list[reservedCount + 1];
             ReceivedBlockIndex = (Integer)list[reservedCount + 2];
@@ -96,7 +103,7 @@ namespace Nekoyume.Model.Stake
 
         public IValue Serialize() => new List(
             (Text)StateTypeName,
-            (Integer)StateTypeVersion,
+            (Integer)StateVersion,
             Contract.Serialize(),
             (Integer)StartedBlockIndex,
             (Integer)ReceivedBlockIndex
@@ -106,7 +113,8 @@ namespace Nekoyume.Model.Stake
         {
             return Equals(Contract, other.Contract) &&
                    StartedBlockIndex == other.StartedBlockIndex &&
-                   ReceivedBlockIndex == other.ReceivedBlockIndex;
+                   ReceivedBlockIndex == other.ReceivedBlockIndex &&
+                   StateVersion == other.StateVersion;
         }
 
         public override bool Equals(object obj)
@@ -121,6 +129,7 @@ namespace Nekoyume.Model.Stake
                 var hashCode = (Contract != null ? Contract.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ StartedBlockIndex.GetHashCode();
                 hashCode = (hashCode * 397) ^ ReceivedBlockIndex.GetHashCode();
+                hashCode = (hashCode * 397) ^ StateVersion.GetHashCode();
                 return hashCode;
             }
         }

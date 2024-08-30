@@ -453,7 +453,8 @@ namespace Lib9c.Tests.Action
             var stakeStateV2 = new StakeState(
                 contract: new Contract(_stakePolicySheet),
                 startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex);
+                receivedBlockIndex: blockIndex,
+                stateVersion: 2);
             var previousState = _initialState
                 .MintAsset(
                     new ActionContext(),
