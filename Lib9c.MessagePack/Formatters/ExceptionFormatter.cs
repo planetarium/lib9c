@@ -1,9 +1,6 @@
 using System;
-using System.Buffers;
-using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using MessagePack;
 using MessagePack.Formatters;
 
@@ -21,6 +18,7 @@ namespace Lib9c.Formatters
                 writer.WriteNil();
                 return;
             }
+
             var info = new SerializationInfo(typeof(T), new FormatterConverter());
             value.GetObjectData(info, new StreamingContext(StreamingContextStates.All));
 
@@ -32,7 +30,11 @@ namespace Lib9c.Formatters
             {
                 writer.Write(entry.Name);
                 writer.Write(entry.ObjectType.FullName);
-                MessagePackSerializer.Serialize(entry.ObjectType, ref writer, entry.Value, options);
+                MessagePackSerializer.Serialize(
+                    entry.ObjectType,
+                    ref writer,
+                    entry.Name == "Message" ? value.Message : entry.Value,
+                    options);
             }
         }
 
