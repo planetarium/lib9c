@@ -126,10 +126,19 @@ namespace Nekoyume.Action.AdventureBoss
 
                 // Set season info: boss and reward
                 var random = context.GetRandom();
+
+                // latestSeason is last season. Check latest-1 season to get second last season
+                var prevSeason = new SeasonInfo(0, 0, 0, 0) { BossId = 0 };
+                if (latestSeason.Season > 1)
+                {
+                    prevSeason = states.GetSeasonInfo(latestSeason.Season - 1);
+                }
+
                 var adventureBossSheet = states.GetSheet<AdventureBossSheet>();
-                var boss = adventureBossSheet.OrderedList[
-                    random.Next(0, adventureBossSheet.Values.Count)
-                ];
+                var candidate = adventureBossSheet.OrderedList.Where(
+                    row => row.BossId != latestSeason.BossId && row.BossId != prevSeason.BossId
+                ).ToList();
+                var boss = candidate[random.Next(candidate.Count)];
                 seasonInfo.BossId = boss.BossId;
 
                 var wantedReward = states.GetSheet<AdventureBossWantedRewardSheet>()
