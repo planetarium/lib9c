@@ -2,17 +2,18 @@
 using System;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet.Action.State;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Module.Guild
 {
     public static class GuildMemberCounterModule
     {
-        public static BigInteger GetGuildMemberCount(this IWorldState world, GuildAddress guildAddress)
+        public static BigInteger GetGuildMemberCount(
+            this GuildRepository repository, GuildAddress guildAddress)
         {
-            var account = world.GetAccountState(Addresses.GuildMemberCounter);
+            var account = repository.World.GetAccountState(Addresses.GuildMemberCounter);
             return account.GetState(guildAddress) switch
             {
                 Integer i => i.Value,
@@ -21,9 +22,12 @@ namespace Nekoyume.Module.Guild
             };
         }
 
-        public static IWorld IncreaseGuildMemberCount(this IWorld world, GuildAddress guildAddress)
+        public static GuildRepository IncreaseGuildMemberCount(
+            this GuildRepository repository, GuildAddress guildAddress)
         {
-            return world.MutateAccount(Addresses.GuildMemberCounter, account =>
+            repository.UpdateWorld(
+                repository.World.MutateAccount(
+                    Addresses.GuildMemberCounter, account =>
             {
                 BigInteger count = account.GetState(guildAddress) switch
                 {
@@ -33,12 +37,17 @@ namespace Nekoyume.Module.Guild
                 };
 
                 return account.SetState(guildAddress, (Integer)(count + 1));
-            });
+            }));
+
+            return repository;
         }
 
-        public static IWorld DecreaseGuildMemberCount(this IWorld world, GuildAddress guildAddress)
+        public static GuildRepository DecreaseGuildMemberCount(
+            this GuildRepository repository, GuildAddress guildAddress)
         {
-            return world.MutateAccount(Addresses.GuildMemberCounter, account =>
+            repository.UpdateWorld(
+                repository.World.MutateAccount(
+                    Addresses.GuildMemberCounter, account =>
             {
                 BigInteger count = account.GetState(guildAddress) switch
                 {
@@ -54,7 +63,9 @@ namespace Nekoyume.Module.Guild
                 }
 
                 return account.SetState(guildAddress, (Integer)(count - 1));
-            });
+            }));
+
+            return repository;
         }
     }
 }

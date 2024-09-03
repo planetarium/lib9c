@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -37,12 +38,13 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMemberAddress,
             }));
         }
@@ -59,17 +61,19 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             var changedWorld = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
-            Assert.False(changedWorld.TryGetGuild(guildAddress, out _));
-            Assert.Null(changedWorld.GetJoinedGuild(guildMasterAddress));
+            repository.UpdateWorld(changedWorld);
+            Assert.False(repository.TryGetGuild(guildAddress, out _));
+            Assert.Null(repository.GetJoinedGuild(guildMasterAddress));
         }
 
         [Fact]
@@ -85,12 +89,13 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = otherAddress,
             }));
         }
@@ -108,19 +113,21 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .Ban(guildAddress, guildMasterAddress, bannedAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.Ban(guildAddress, guildMasterAddress, bannedAddress);
 
-            Assert.True(world.IsBanned(guildAddress, bannedAddress));
+            Assert.True(repository.IsBanned(guildAddress, bannedAddress));
 
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
-            Assert.False(world.IsBanned(guildAddress, bannedAddress));
+            repository.UpdateWorld(world);
+            Assert.False(repository.IsBanned(guildAddress, bannedAddress));
         }
     }
 }

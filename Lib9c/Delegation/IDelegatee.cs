@@ -8,9 +8,11 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public interface IDelegatee : IBencodable, IEquatable<IDelegatee>
+    public interface IDelegatee
     {
         Address Address { get; }
+
+        Address AccountAddress { get; }
 
         Currency DelegationCurrency { get; }
 
@@ -24,8 +26,6 @@ namespace Nekoyume.Delegation
 
         int MaxRebondGraceEntries { get; }
 
-        BigInteger SlashFactor { get; }
-
         Address RewardCollectorAddress { get; }
 
         Address RewardDistributorAddress { get; }
@@ -36,6 +36,16 @@ namespace Nekoyume.Delegation
 
         BigInteger TotalShares { get; }
 
+        bool Jailed { get; }
+
+        long JailedUntil { get; }
+
+        bool Tombstoned { get; }
+
+        BigInteger ShareFromFAV(FungibleAssetValue fav);
+
+        FungibleAssetValue FAVFromShare(BigInteger share);
+
         BigInteger Bond(IDelegator delegator, FungibleAssetValue fav, long height);
 
         FungibleAssetValue Unbond(IDelegator delegator, BigInteger share, long height);
@@ -44,7 +54,13 @@ namespace Nekoyume.Delegation
 
         void CollectRewards(long height);
 
-        void Slash(long infractionHeight);
+        void Slash(BigInteger slashFactor, long infractionHeight, long height);
+
+        void Jail(long releaseHeight, long height);
+
+        void Unjail(long height);
+
+        void Tombstone();
 
         Address BondAddress(Address delegatorAddress);
 
@@ -55,5 +71,7 @@ namespace Nekoyume.Delegation
         Address CurrentLumpSumRewardsRecordAddress();
 
         Address LumpSumRewardsRecordAddress(long height);
+
+        event EventHandler<long>? DelegationChanged;
     }
 }

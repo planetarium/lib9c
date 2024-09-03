@@ -1,12 +1,10 @@
 using Bencodex.Types;
-using Libplanet.Action.State;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
-using Nekoyume.PolicyAction.Tx.Begin;
 using Nekoyume.TypedAddress;
-using Serilog;
 
 namespace Nekoyume.Action.Guild.Migration.Controls
 {
@@ -20,15 +18,15 @@ namespace Nekoyume.Action.Guild.Migration.Controls
         /// <param name="target"></param>
         /// <returns></returns>
         /// <exception cref="GuildMigrationFailedException">Migration to guild from pledge failed.</exception>
-        public static IWorld MigratePlanetariumPledgeToGuild(IWorld world, AgentAddress target)
+        public static void MigratePlanetariumPledgeToGuild(GuildRepository repository, AgentAddress target)
         {
-            if (world.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is not
+            if (repository.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is not
                 { } planetariumGuildAddress)
             {
                 throw new GuildMigrationFailedException("Planetarium guild is not found.");
             }
 
-            if (!world.TryGetGuild(planetariumGuildAddress, out var planetariumGuild))
+            if (!repository.TryGetGuild(planetariumGuildAddress, out var planetariumGuild))
             {
                 throw new GuildMigrationFailedException("Planetarium guild is not found.");
             }
@@ -38,7 +36,7 @@ namespace Nekoyume.Action.Guild.Migration.Controls
                 throw new GuildMigrationFailedException("Unexpected guild master.");
             }
 
-            if (world.GetJoinedGuild(target) is not null)
+            if (repository.GetJoinedGuild(target) is not null)
             {
                 throw new GuildMigrationFailedException("Already joined to other guild.");
             }
@@ -49,14 +47,14 @@ namespace Nekoyume.Action.Guild.Migration.Controls
             // [0] = PatronAddress
             // [1] = IsApproved
             // [2] = Mead amount to refill.
-            if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 ||
+            if (!repository.World.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 ||
                 list[0] is not Binary || list[0].ToAddress() != MeadConfig.PatronAddress ||
                 list[1] is not Boolean approved || !approved)
             {
                 throw new GuildMigrationFailedException("Unexpected pledge structure.");
             }
 
-            return world.JoinGuild(planetariumGuildAddress, target);
+            repository.JoinGuild(planetariumGuildAddress, target);
         }
     }
 }

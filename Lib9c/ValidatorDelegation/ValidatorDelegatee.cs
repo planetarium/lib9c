@@ -12,66 +12,70 @@ using Nekoyume.Delegation;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public class ValidatorDelegatee : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
+    public sealed class ValidatorDelegatee
+        : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
     {
-        public ValidatorDelegatee(Address address, PublicKey publicKey, Currency rewardCurrency, ValidatorRepository? repository = null)
-            : base(address, repository)
+        public ValidatorDelegatee(
+            Address address,
+            PublicKey publicKey,
+            Currency rewardCurrency,
+            ValidatorRepository repository)
+            : base(
+                  address: address,
+                  accountAddress: repository.DelegateeAccountAddress,
+                  delegationCurrency: ValidatorDelegationCurrency,
+                  rewardCurrency: rewardCurrency,
+                  delegationPoolAddress: UnbondedPoolAddress,
+                  unbondingPeriod: ValidatorUnbondingPeriod,
+                  maxUnbondLockInEntries: ValidatorMaxUnbondLockInEntries,
+                  maxRebondGraceEntries: ValidatorMaxRebondGraceEntries,
+                  repository: repository)
         {
             if (!address.Equals(publicKey.Address))
             {
                 throw new ArgumentException("The address and the public key do not match.");
             }
 
-            Publickey = publicKey;
+            PublicKey = publicKey;
             IsBonded = false;
-            RewardCurrency = rewardCurrency;
+            DelegationChanged += OnDelegationChanged;
+            Enjailed += OnEnjailed;
+            Unjailed += OnUnjailed;
         }
 
-        public ValidatorDelegatee(Address address, IValue bencoded, Currency rewardCurrency, ValidatorRepository? repository = null)
-            : this(address, (List)bencoded, rewardCurrency, repository)
+        public ValidatorDelegatee(
+            Address address,
+            IValue bencoded,
+            ValidatorRepository repository)
+            : this(
+                  address: address,
+                  bencoded: (List)bencoded,
+                  repository: repository)
         {
         }
 
-        public ValidatorDelegatee(Address address, List bencoded, Currency rewardCurrency, ValidatorRepository? repository = null)
-            : base(address, bencoded[0], repository)
+        public ValidatorDelegatee(
+            Address address,
+            List bencoded,
+            ValidatorRepository repository)
+            : base(
+                  address: address,
+                  repository: repository)
         {
-            Publickey = new PublicKey(((Binary)bencoded[1]).ByteArray);
-            IsBonded = (Bencodex.Types.Boolean)bencoded[2];
-            RewardCurrency = rewardCurrency;
+            PublicKey = new PublicKey(((Binary)bencoded[0]).ByteArray);
+            IsBonded = (Bencodex.Types.Boolean)bencoded[1];
+            DelegationChanged += OnDelegationChanged;
         }
 
-        public override byte[] DelegateeId => new byte[] { 0x56 }; // `V`
+        public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        public override Address DelegationPoolAddress => IsBonded
-            ? BondedPoolAddress
-            : UnbondedPoolAddress;
+        public static long ValidatorUnbondingPeriod => 0L;
 
-        public override Currency DelegationCurrency => Currencies.GuildGold;
+        public static int ValidatorMaxUnbondLockInEntries => 10;
 
-        public override Currency RewardCurrency { get; }
+        public static int ValidatorMaxRebondGraceEntries => 10;
 
-        public override long UnbondingPeriod => 0L;
-
-        public override int MaxUnbondLockInEntries => 10;
-
-        public override int MaxRebondGraceEntries => 10;
-
-        public override BigInteger SlashFactor => 10;
-
-        public override List Bencoded => List.Empty
-            .Add(base.Bencoded)
-            .Add(Publickey.Format(true))
-            .Add(IsBonded);
-
-        IValue IBencodable.Bencoded => Bencoded;
-
-        public PublicKey Publickey { get; }
-
-        public bool IsBonded { get; private set; }
-
-        public BigInteger Power => TotalDelegated.RawValue;
-
-        public Validator Validator => new(Publickey, Power);
+        public static FungibleAssetValue MinSelfDelegation => ValidatorDelegationCurrency * 10;
 
         public static BigInteger BaseProposerRewardNumerator => 1;
 
@@ -89,28 +93,19 @@ namespace Nekoyume.ValidatorDelegation
 
         public static double CommissionMaxChangeRate => 0.01;
 
-        public override BigInteger Bond(ValidatorDelegator delegator, FungibleAssetValue fav, long height)
-        {
-            BigInteger share = base.Bond(delegator, fav, height);
-            ValidatorRepository repo = (ValidatorRepository)Repository!;
-            repo.SetValidatorList(repo.GetValidatorList().SetValidator(Validator));
-            return share;
-        }
+        public List Bencoded => List.Empty
+            .Add(PublicKey.Format(true))
+            .Add(IsBonded);
 
-        public override FungibleAssetValue Unbond(ValidatorDelegator delegator, BigInteger share, long height)
-        {
-            FungibleAssetValue fav = base.Unbond(delegator, share, height);
-            ValidatorRepository repo = (ValidatorRepository)Repository!;
+        IValue IBencodable.Bencoded => Bencoded;
 
-            if (Validator.Power.IsZero)
-            {
-                repo.SetValidatorList(repo.GetValidatorList().RemoveValidator(Validator.PublicKey));
-                return fav;
-            }
+        public PublicKey PublicKey { get; }
 
-            repo.SetValidatorList(repo.GetValidatorList().SetValidator(Validator));
-            return fav;
-        }
+        public bool IsBonded { get; private set; }
+
+        public BigInteger Power => TotalDelegated.RawValue;
+
+        public Validator Validator => new(PublicKey, Power);
 
         public void AllocateReward(
             FungibleAssetValue rewardToAllocate,
@@ -119,7 +114,7 @@ namespace Nekoyume.ValidatorDelegation
             Address RewardSource,
             long height)
         {
-            ValidatorRepository repo = (ValidatorRepository)Repository!;
+            ValidatorRepository repository = (ValidatorRepository)Repository;
 
             FungibleAssetValue rewardAllocated
                 = (rewardToAllocate * validatorPower).DivRem(validatorSetPower).Quotient;
@@ -127,24 +122,62 @@ namespace Nekoyume.ValidatorDelegation
                 = (rewardAllocated * CommissionNumerator).DivRem(CommissionDenominator).Quotient;
             FungibleAssetValue delegationRewards = rewardAllocated - commission;
 
-            repo.TransferAsset(RewardSource, Address, commission);
-            repo.TransferAsset(RewardSource, RewardCollectorAddress, delegationRewards);
+            repository.TransferAsset(RewardSource, Address, commission);
+            repository.TransferAsset(RewardSource, RewardCollectorAddress, delegationRewards);
             CollectRewards(height);
         }
 
-        public bool Equals(ValidatorDelegatee? other)
-            => base.Equals(other)
-            && Publickey.Equals(other.Publickey)
-            && IsBonded == other.IsBonded;
+        public void OnDelegationChanged(object? sender, long height)
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
 
-        public override bool Equals(IDelegatee? other)
+            if (Jailed)
+            {
+                return;
+            }
+
+            if (Validator.Power.IsZero)
+            {
+                repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+            }
+            else
+            {
+                repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+            }
+
+            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
+            if (MinSelfDelegation > selfDelegation)
+            {
+                Jail(height, height);
+            }
+        }
+
+        public void OnEnjailed(object? sender, long height)
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+        }
+
+        public void OnUnjailed(object? sender, long height)
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+        }
+
+        public bool Equals(ValidatorDelegatee? other)
+            => other is ValidatorDelegatee validatorDelegatee
+            && Metadata.Equals(validatorDelegatee.Metadata)
+            && PublicKey.Equals(validatorDelegatee.PublicKey)
+            && IsBonded == validatorDelegatee.IsBonded;
+
+        public bool Equals(IDelegatee? other)
             => Equals(other as ValidatorDelegatee);
 
         public override bool Equals(object? obj)
             => Equals(obj as ValidatorDelegatee);
 
         public override int GetHashCode()
-            => base.GetHashCode();
+            => HashCode.Combine(Address, AccountAddress);
 
         public static Address BondedPoolAddress => new Address(
             ImmutableArray.Create<byte>(

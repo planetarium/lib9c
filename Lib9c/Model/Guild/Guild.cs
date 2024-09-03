@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
 using Lib9c;
@@ -19,31 +18,40 @@ namespace Nekoyume.Model.Guild
         public readonly AgentAddress GuildMasterAddress;
 
         public Guild(
-            AgentAddress guildMasterAddress, Currency rewardCurrency)
-            : this(guildMasterAddress, rewardCurrency, null)
+            Address address,
+            AgentAddress guildMasterAddress,
+            Currency rewardCurrency,
+            GuildRepository repository)
+            : base(
+                  address: address,
+                  accountAddress: Addresses.Guild,
+                  delegationCurrency: Currencies.GuildGold,
+                  rewardCurrency: rewardCurrency,
+                  delegationPoolAddress: address,
+                  unbondingPeriod: 75600L,
+                  maxUnbondLockInEntries: 10,
+                  maxRebondGraceEntries: 10,
+                  repository: repository)
         {
+            GuildMasterAddress = guildMasterAddress;
         }
 
-        public Guild(List list, Currency rewardCurrency)
-            : this(list, rewardCurrency, null)
+        public Guild(
+            Address address,
+            IValue bencoded, GuildRepository repository)
+            : this(address: address, bencoded: (List)bencoded, repository: repository)
         {
         }
 
         public Guild(
-            AgentAddress guildMasterAddress, Currency rewardCurrency, IDelegationRepository repository)
-            : base(guildMasterAddress, repository)
+            Address address, List bencoded, GuildRepository repository)
+            : base(
+                  address: address,
+                  repository: repository)
         {
-            GuildMasterAddress = guildMasterAddress;
-            RewardCurrency = rewardCurrency;
-        }
+            GuildMasterAddress = new AgentAddress(bencoded[2]);
 
-        public Guild(List list, Currency rewardCurrency, IDelegationRepository repository)
-            : base(new Address(list[2]), list[3], repository)
-        {
-            GuildMasterAddress = new AgentAddress(list[2]);
-            RewardCurrency = rewardCurrency;
-
-            if (list[0] is not Text text || text != StateTypeName || list[1] is not Integer integer)
+            if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
             {
                 throw new InvalidCastException();
             }
@@ -54,27 +62,10 @@ namespace Nekoyume.Model.Guild
             }
         }
 
-        public override Currency DelegationCurrency => Currencies.GuildGold;
-
-        public override Currency RewardCurrency { get; }
-
-        public override Address DelegationPoolAddress => DeriveAddress(PoolId);
-
-        public override long UnbondingPeriod => 75600L;
-
-        public override byte[] DelegateeId => new byte[] { 0x47 }; // `G`
-
-        public override int MaxUnbondLockInEntries => 10;
-
-        public override int MaxRebondGraceEntries => 10;
-
-        public override BigInteger SlashFactor => BigInteger.One;
-
-        public override List Bencoded => List.Empty
+        public List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
-            .Add(GuildMasterAddress.Bencoded)
-            .Add(base.Bencoded);
+            .Add(GuildMasterAddress.Bencoded);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -83,7 +74,7 @@ namespace Nekoyume.Model.Guild
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return GuildMasterAddress.Equals(other.GuildMasterAddress)
-                && base.Equals(other);
+                && Metadata.Equals(other.Metadata);
         }
 
         public override bool Equals(object obj)

@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
@@ -33,9 +34,11 @@ namespace Nekoyume.Action.Guild
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            return world.CancelGuildApplication(signer);
+            repository.CancelGuildApplication(signer);
+            return repository.World;
         }
     }
 }

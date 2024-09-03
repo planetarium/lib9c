@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -36,35 +37,37 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             // This case should fail because guild master cannot quit the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             }));
 
             // This case should fail because the agent is not a member of the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = agentAddress,
             }));
 
             // Join the guild.
-            world = world.JoinGuild(guildAddress, agentAddress);
-            Assert.NotNull(world.GetJoinedGuild(agentAddress));
+            repository.JoinGuild(guildAddress, agentAddress);
+            Assert.NotNull(repository.GetJoinedGuild(agentAddress));
 
             // This case should fail because the agent is not a member of the guild.
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = agentAddress,
             });
 
-            Assert.Null(world.GetJoinedGuild(agentAddress));
+            repository.UpdateWorld(world);
+            Assert.Null(repository.GetJoinedGuild(agentAddress));
         }
     }
 }

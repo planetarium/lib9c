@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -39,34 +40,37 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
             Assert.Throws<InvalidOperationException>(
                 () => action.Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = signer,
                 }));
 
             var otherAddress = AddressUtil.CreateAgentAddress();
-            world = world.ApplyGuild(otherAddress, guildAddress);
+            repository.ApplyGuild(otherAddress, guildAddress);
 
             // It should fail because other agent applied the guild but the signer didn't apply.
             Assert.Throws<InvalidOperationException>(
                 () => action.Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = signer,
                 }));
 
-            world = world.ApplyGuild(signer, guildAddress);
+            repository.ApplyGuild(signer, guildAddress);
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = signer,
             });
 
-            Assert.False(world.TryGetGuildApplication(signer, out _));
+            repository.UpdateWorld(world);
+
+            Assert.False(repository.TryGetGuildApplication(signer, out _));
         }
     }
 }

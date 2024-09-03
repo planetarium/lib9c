@@ -5,14 +5,13 @@ using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Module.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
     public class PromoteValidator : ActionBase
     {
         public const string TypeIdentifier = "promote_validator";
-
-        private const string TargetKey = "t";
 
         public PromoteValidator() { }
 
@@ -51,10 +50,12 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new ValidatorRepository(world, context);
 
-            return world
-                .CreateValidatorDelegatee(context, PublicKey)
-                .DelegateValidator(context, context.Signer, FAV);
+            repository.CreateValidatorDelegatee(context, PublicKey);
+            repository.DelegateValidator(context, context.Signer, FAV);
+
+            return repository.World;
         }
     }
 }

@@ -6,6 +6,7 @@ using Nekoyume.Action;
 using Nekoyume.Action.Guild.Migration;
 using Nekoyume.Action.Guild.Migration.Controls;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Serilog;
 
 namespace Nekoyume.PolicyAction.Tx.Begin
@@ -31,11 +32,12 @@ namespace Nekoyume.PolicyAction.Tx.Begin
             }
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
             try
             {
-                return GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, signer);
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(repository, signer);
             }
             catch (GuildMigrationFailedException guildMigrationFailedException)
             {
@@ -52,7 +54,7 @@ namespace Nekoyume.PolicyAction.Tx.Begin
                         e.Message);
             }
 
-            return world;
+            return repository.World;
         }
     }
 }

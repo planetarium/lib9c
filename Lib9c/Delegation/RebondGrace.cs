@@ -13,8 +13,8 @@ namespace Nekoyume.Delegation
 {
     public sealed class RebondGrace : IUnbonding, IBencodable, IEquatable<RebondGrace>
     {
-        private static readonly IComparer<RebondGraceEntry> _entryComparer
-            = new RebondGraceEntryComparer();
+        private static readonly IComparer<UnbondingEntry> _entryComparer
+            = new UnbondingEntry.Comparer();
 
         private readonly IDelegationRepository? _repository;
 
@@ -22,7 +22,7 @@ namespace Nekoyume.Delegation
             : this(
                   address,
                   maxEntries,
-                  ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>>.Empty,
+                  ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>>.Empty,
                   repository)
         {
         }
@@ -37,9 +37,9 @@ namespace Nekoyume.Delegation
                   address,
                   maxEntries,
                   bencoded.Select(kv => kv is List list
-                      ? new KeyValuePair<long, ImmutableList<RebondGraceEntry>>(
+                      ? new KeyValuePair<long, ImmutableList<UnbondingEntry>>(
                           (Integer)list[0],
-                          ((List)list[1]).Select(e => new RebondGraceEntry(e)).ToImmutableList())
+                          ((List)list[1]).Select(e => new UnbondingEntry(e)).ToImmutableList())
                       : throw new InvalidCastException(
                           $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
                   .ToImmutableSortedDictionary(),
@@ -50,7 +50,7 @@ namespace Nekoyume.Delegation
         public RebondGrace(
             Address address,
             int maxEntries,
-            IEnumerable<RebondGraceEntry> entries,
+            IEnumerable<UnbondingEntry> entries,
             IDelegationRepository? repository = null)
             : this(address, maxEntries, repository)
         {
@@ -63,7 +63,7 @@ namespace Nekoyume.Delegation
         private RebondGrace(
             Address address,
             int maxEntries,
-            ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries,
+            ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries,
             IDelegationRepository? repository)
         {
             if (maxEntries < 0)
@@ -84,6 +84,10 @@ namespace Nekoyume.Delegation
 
         public int MaxEntries { get; }
 
+        public Address DelegateeAddress { get; }
+
+        public Address DelegatorAddress { get; }
+
         public IDelegationRepository? Repository => _repository;
 
         public long LowestExpireHeight => Entries.First().Key;
@@ -93,9 +97,9 @@ namespace Nekoyume.Delegation
         public bool IsEmpty => Entries.IsEmpty;
 
         // TODO: Use better custom collection type
-        public ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> Entries { get; }
+        public ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> Entries { get; }
 
-        public ImmutableArray<RebondGraceEntry> FlattenedEntries
+        public ImmutableArray<UnbondingEntry> FlattenedEntries
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
 
         public List Bencoded
@@ -135,16 +139,57 @@ namespace Nekoyume.Delegation
 
         IUnbonding IUnbonding.Release(long height) => Release(height);
 
-        public RebondGrace Slash(BigInteger slashFactor, long infractionHeight)
-            => UpdateEntries(Entries.TakeWhile(e => e.Key >= infractionHeight)
-                .Select(kv => KeyValuePair.Create(
-                    kv.Key,
-                    kv.Value.Select(v => v.Slash(slashFactor, infractionHeight)).ToImmutableList()))
-                .Concat(Entries.SkipWhile(e => e.Key >= infractionHeight))
-                .ToImmutableSortedDictionary());
+        public RebondGrace Slash(
+            BigInteger slashFactor,
+            long infractionHeight,
+            long height,
+            out FungibleAssetValue? slashedFAV)
+        {
+            CannotMutateRelationsWithoutRepository();
 
-        IUnbonding IUnbonding.Slash(BigInteger slashFactor, long infractionHeight)
-            => Slash(slashFactor, infractionHeight);
+            var slashed = new SortedDictionary<Address, FungibleAssetValue>();
+            var updatedEntries = Entries;
+            var entriesToSlash = Entries.TakeWhile(e => e.Key >= infractionHeight);
+            foreach (var (expireHeight, entries) in entriesToSlash)
+            {
+                ImmutableList<UnbondingEntry> slashedEntries = ImmutableList<UnbondingEntry>.Empty;
+                foreach (var entry in entries)
+                {
+                    var slashedEntry = entry.Slash(slashFactor, infractionHeight, out var slashedSingle);
+                    int index = slashedEntries.BinarySearch(slashedEntry, _entryComparer);
+                    slashedEntries = slashedEntries.Insert(index < 0 ? ~index : index, slashedEntry);
+                    if (slashed.TryGetValue(entry.UnbondeeAddress, out var value))
+                    {
+                        slashed[entry.UnbondeeAddress] = value + slashedSingle;
+                    }
+                    else
+                    {
+                        slashed[entry.UnbondeeAddress] = slashedSingle;
+                    }
+                }
+
+                updatedEntries = Entries.SetItem(expireHeight, slashedEntries);
+            }
+
+            slashedFAV = null;
+            foreach (var (address, slashedEach) in slashed)
+            {
+                var delegatee = _repository!.GetDelegatee(address);
+                var delegator = _repository!.GetDelegator(DelegatorAddress);
+                delegatee.Unbond(delegator, delegatee.ShareFromFAV(slashedEach), height);
+                slashedFAV = slashedFAV.HasValue ? slashedFAV + slashedEach : slashedEach;
+            }
+
+
+            return UpdateEntries(updatedEntries);
+        }
+
+        IUnbonding IUnbonding.Slash(
+            BigInteger slashFactor,
+            long infractionHeight,
+            long height,
+            out FungibleAssetValue? slashedFAV)
+            => Slash(slashFactor, infractionHeight, height, out slashedFAV);
 
         public override bool Equals(object? obj)
             => obj is RebondGrace other && Equals(other);
@@ -172,11 +217,11 @@ namespace Nekoyume.Delegation
             }
 
             return AddEntry(
-                new RebondGraceEntry(
+                new UnbondingEntry(
                     rebondeeAddress, initialGraceFAV, creationHeight, expireHeight));
         }
 
-        private RebondGrace AddEntry(RebondGraceEntry entry)
+        private RebondGrace AddEntry(UnbondingEntry entry)
         {
             if (IsFull)
             {
@@ -194,11 +239,11 @@ namespace Nekoyume.Delegation
 
             return UpdateEntries(
                 Entries.Add(
-                    entry.ExpireHeight, ImmutableList<RebondGraceEntry>.Empty.Add(entry)));
+                    entry.ExpireHeight, ImmutableList<UnbondingEntry>.Empty.Add(entry)));
         }
 
         private RebondGrace UpdateEntries(
-            ImmutableSortedDictionary<long, ImmutableList<RebondGraceEntry>> entries)
+            ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries)
             => new RebondGrace(Address, MaxEntries, entries, _repository);
 
         private void CannotMutateRelationsWithoutRepository()
@@ -207,203 +252,6 @@ namespace Nekoyume.Delegation
             {
                 throw new InvalidOperationException(
                     "Cannot mutate without repository.");
-            }
-        }
-
-        public class RebondGraceEntry : IUnbondingEntry, IBencodable, IEquatable<RebondGraceEntry>
-        {
-            private int? _cachedHashCode;
-
-            public RebondGraceEntry(
-                Address rebondeeAddress,
-                FungibleAssetValue graceFAV,
-                long creationHeight,
-                long expireHeight)
-                : this(rebondeeAddress, graceFAV, graceFAV, creationHeight, expireHeight)
-            {
-            }
-
-            public RebondGraceEntry(IValue bencoded)
-                : this((List)bencoded)
-            {
-            }
-
-            private RebondGraceEntry(List bencoded)
-                : this(
-                      new Address(bencoded[0]),
-                      new FungibleAssetValue(bencoded[1]),
-                      new FungibleAssetValue(bencoded[2]),
-                      (Integer)bencoded[3],
-                      (Integer)bencoded[4])
-            {
-            }
-
-            private RebondGraceEntry(
-                Address rebondeeAddress,
-                FungibleAssetValue initialGraceFAV,
-                FungibleAssetValue graceFAV,
-                long creationHeight,
-                long expireHeight)
-            {
-                if (initialGraceFAV.Sign <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(initialGraceFAV),
-                        initialGraceFAV,
-                        "The initial grace FAV must be greater than zero.");
-                }
-
-                if (graceFAV.Sign <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(graceFAV),
-                        graceFAV,
-                        "The grace FAV must be greater than zero.");
-                }
-
-                if (graceFAV > initialGraceFAV)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(graceFAV),
-                        graceFAV,
-                        "The grace FAV must be less than or equal to the initial grace FAV.");
-                }
-
-                if (creationHeight < 0)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(creationHeight),
-                        creationHeight,
-                        "The creation height must be greater than or equal to zero.");
-                }
-
-                if (expireHeight < creationHeight)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(expireHeight),
-                        expireHeight,
-                        "The expire height must be greater than the creation height.");
-                }
-
-                RebondeeAddress = rebondeeAddress;
-                InitialGraceFAV = initialGraceFAV;
-                GraceFAV = graceFAV;
-                CreationHeight = creationHeight;
-                ExpireHeight = expireHeight;
-            }
-
-            public Address RebondeeAddress { get; }
-
-            public FungibleAssetValue InitialGraceFAV { get; }
-
-            public FungibleAssetValue GraceFAV { get; }
-
-            public long CreationHeight { get; }
-
-            public long ExpireHeight { get; }
-
-            public List Bencoded => List.Empty
-                .Add(RebondeeAddress.Bencoded)
-                .Add(InitialGraceFAV.Serialize())
-                .Add(GraceFAV.Serialize())
-                .Add(CreationHeight)
-                .Add(ExpireHeight);
-
-            IValue IBencodable.Bencoded => Bencoded;
-
-            public override bool Equals(object? obj)
-                => obj is RebondGraceEntry other && Equals(other);
-
-            public bool Equals(RebondGraceEntry? other)
-                => ReferenceEquals(this, other)
-                || (other is RebondGraceEntry rebondGraceEntry
-                && RebondeeAddress.Equals(rebondGraceEntry.RebondeeAddress)
-                && InitialGraceFAV.Equals(rebondGraceEntry.InitialGraceFAV)
-                && GraceFAV.Equals(rebondGraceEntry.GraceFAV)
-                && CreationHeight == rebondGraceEntry.CreationHeight
-                && ExpireHeight == rebondGraceEntry.ExpireHeight);
-
-            public override int GetHashCode()
-            {
-                if (_cachedHashCode is int cached)
-                {
-                    return cached;
-                }
-
-                int hash = HashCode.Combine(
-                    RebondeeAddress,
-                    InitialGraceFAV,
-                    GraceFAV,
-                    CreationHeight,
-                    ExpireHeight);
-
-                _cachedHashCode = hash;
-                return hash;
-            }
-
-            public RebondGraceEntry Slash(BigInteger slashFactor, long infractionHeight)
-            {
-                if (CreationHeight > infractionHeight ||
-                    ExpireHeight < infractionHeight)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(infractionHeight),
-                        infractionHeight,
-                        "The infraction height must be between in creation height and expire height of entry.");
-                }
-
-                return new RebondGraceEntry(
-                    RebondeeAddress,
-                    GraceFAV - GraceFAV.DivRem(slashFactor).Quotient,
-                    CreationHeight,
-                    ExpireHeight);
-            }
-        }
-
-        public class RebondGraceEntryComparer : IComparer<RebondGraceEntry>
-        {
-            public int Compare(RebondGraceEntry? x, RebondGraceEntry? y)
-            {
-                if (ReferenceEquals(x, y))
-                {
-                    return 0;
-                }
-
-                if (x is null)
-                {
-                    return -1;
-                }
-
-                if (y is null)
-                {
-                    return 1;
-                }
-
-                int comparison = x.ExpireHeight.CompareTo(y.ExpireHeight);
-                if (comparison != 0)
-                {
-                    return comparison;
-                }
-
-                comparison = x.CreationHeight.CompareTo(y.CreationHeight);
-                if (comparison != 0)
-                {
-                    return comparison;
-                }
-
-                comparison = -x.InitialGraceFAV.CompareTo(y.InitialGraceFAV);
-                if (comparison != 0)
-                {
-                    return comparison;
-                }
-
-                comparison = -x.GraceFAV.CompareTo(y.GraceFAV);
-                if (comparison != 0)
-                {
-                    return comparison;
-                }
-
-                return x.RebondeeAddress.CompareTo(y.RebondeeAddress);
             }
         }
     }

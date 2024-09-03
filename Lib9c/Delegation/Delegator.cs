@@ -1,9 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Numerics;
-using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -14,89 +12,71 @@ namespace Nekoyume.Delegation
         where T : Delegatee<TSelf, T>
         where TSelf : Delegator<T, TSelf>
     {
-        private readonly IDelegationRepository? _repository;
-
-        public Delegator(Address address, IDelegationRepository? repository = null)
-            : this(address, ImmutableSortedSet<Address>.Empty, null, repository)
-        {
-        }
-
-        public Delegator(Address address, IValue bencoded, IDelegationRepository? repository = null)
-            : this(address, (List)bencoded, repository)
-        {
-        }
-
-        public Delegator(Address address, List bencoded, IDelegationRepository? repository = null)
-            : this(
-                address,
-                ((List)bencoded[0]).Select(item => new Address(item)).ToImmutableSortedSet(),
-                bencoded[1] is Integer lastRewardHeight ? lastRewardHeight : null,
-                repository)
-        {
-        }
-
-        private Delegator(
+        public Delegator(
             Address address,
-            ImmutableSortedSet<Address> delegatees,
-            long? lastRewardHeight,
-            IDelegationRepository? repository)
+            Address accountAddress,
+            Address delegationPoolAddress,
+            IDelegationRepository repository)
+            : this(
+                  new DelegatorMetadata(
+                      address,
+                      accountAddress,
+                      delegationPoolAddress),
+                  repository)
         {
-            Address = address;
-            Delegatees = delegatees;
-            LastRewardHeight = lastRewardHeight;
-            _repository = repository;
         }
 
-        public Address Address { get; }
+        public Delegator(
+            Address address,
+            IDelegationRepository repository)
+            : this(repository.GetDelegatorMetadata(address), repository)
+        {
+        }
 
-        public ImmutableSortedSet<Address> Delegatees { get; private set; }
+        private Delegator(DelegatorMetadata metadata, IDelegationRepository repository)
+        {
+            Metadata = metadata;
+            Repository = repository;
+        }
 
-        public long? LastRewardHeight { get; private set; }
+        public DelegatorMetadata Metadata { get; }
 
-        public IDelegationRepository? Repository => _repository;
+        public IDelegationRepository Repository { get; }
 
-        public virtual List Bencoded
-            => List.Empty
-                .Add(new List(Delegatees.Select(a => a.Bencoded)))
-                .Add(Null.Value);
+        public Address Address => Metadata.DelegatorAddress;
 
-        IValue IBencodable.Bencoded => Bencoded;
+        public Address AccountAddress => Metadata.DelegatorAccountAddress;
 
-        void IDelegator.Delegate(
-            IDelegatee delegatee, FungibleAssetValue fav, long height)
-            => Delegate((T)delegatee, fav, height);
+        public Address MetadataAddress => Metadata.Address;
 
-        void IDelegator.Undelegate(
-            IDelegatee delegatee, BigInteger share, long height)
-            => Undelegate((T)delegatee, share, height);
+        public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
-        void IDelegator.Redelegate(
-            IDelegatee srcDelegatee, IDelegatee dstDelegatee, BigInteger share, long height)
-            => Redelegate((T)srcDelegatee, (T)dstDelegatee, share, height);
+        public ImmutableSortedSet<Address> Delegatees => Metadata.Delegatees;
 
-        void IDelegator.ClaimReward(
-            IDelegatee delegatee, long height)
-            => ClaimReward((T)delegatee, height);
+        public List MetadataBencoded => Metadata.Bencoded;
 
         public virtual void Delegate(
             T delegatee, FungibleAssetValue fav, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegatee);
             if (fav.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            delegatee.Bond((TSelf)this, fav, height);
-            Delegatees = Delegatees.Add(delegatee.Address);
-            _repository!.TransferAsset(Address, delegatee.DelegationPoolAddress, fav);
+            delegatee.Bond(this, fav, height);
+            Metadata.AddDelegatee(delegatee.Address);
+            Repository.TransferAsset(DelegationPoolAddress, delegatee.DelegationPoolAddress, fav);
+            Repository.SetDelegator(this);
         }
 
-        public virtual void Undelegate(
+        void IDelegator.Delegate(
+            IDelegatee delegatee, FungibleAssetValue fav, long height)
+            => Delegate((T)delegatee, fav, height);
+
+        public void Undelegate(
             T delegatee, BigInteger share, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegatee);
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -109,34 +89,38 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
-            UnbondLockIn unbondLockIn = _repository!.GetUnbondLockIn(delegatee, Address);
+            UnbondLockIn unbondLockIn = Repository.GetUnbondLockIn(delegatee, Address);
 
             if (unbondLockIn.IsFull)
             {
                 throw new InvalidOperationException("Undelegation is full.");
             }
 
-            FungibleAssetValue fav = delegatee.Unbond((TSelf)this, share, height);
+            FungibleAssetValue fav = delegatee.Unbond(this, share, height);
             unbondLockIn = unbondLockIn.LockIn(
                 fav, height, height + delegatee.UnbondingPeriod);
 
             if (!delegatee.Delegators.Contains(Address))
             {
-                Delegatees = Delegatees.Remove(delegatee.Address);
+                Metadata.RemoveDelegatee(delegatee.Address);
             }
 
             delegatee.AddUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
 
-            _repository.SetUnbondLockIn(unbondLockIn);
-            _repository.SetUnbondingSet(
-                _repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+            Repository.SetUnbondLockIn(unbondLockIn);
+            Repository.SetUnbondingSet(
+                Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+            Repository.SetDelegator(this);
         }
 
-        public virtual void Redelegate(
+        void IDelegator.Undelegate(
+            IDelegatee delegatee, BigInteger share, long height)
+            => Undelegate((T)delegatee, share, height);
+
+
+        public void Redelegate(
             T srcDelegatee, T dstDelegatee, BigInteger share, long height)
         {
-            CannotMutateRelationsWithoutRepository(srcDelegatee);
-            CannotMutateRelationsWithoutRepository(dstDelegatee);
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -150,10 +134,10 @@ namespace Nekoyume.Delegation
             }
 
             FungibleAssetValue fav = srcDelegatee.Unbond(
-                (TSelf)this, share, height);
+                this, share, height);
             dstDelegatee.Bond(
-                (TSelf)this, fav, height);
-            RebondGrace srcRebondGrace = _repository!.GetRebondGrace(srcDelegatee, Address).Grace(
+                this, fav, height);
+            RebondGrace srcRebondGrace = Repository.GetRebondGrace(srcDelegatee, Address).Grace(
                 dstDelegatee.Address,
                 fav,
                 height,
@@ -161,22 +145,26 @@ namespace Nekoyume.Delegation
 
             if (!srcDelegatee.Delegators.Contains(Address))
             {
-                Delegatees = Delegatees.Remove(srcDelegatee.Address);
+                Metadata.RemoveDelegatee(srcDelegatee.Address);
             }
 
-            Delegatees = Delegatees.Add(dstDelegatee.Address);
+            Metadata.AddDelegatee(dstDelegatee.Address);
 
             srcDelegatee.AddUnbondingRef(UnbondingFactory.ToReference(srcRebondGrace));
 
-            _repository.SetRebondGrace(srcRebondGrace);
-            _repository.SetUnbondingSet(
-                _repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
+            Repository.SetRebondGrace(srcRebondGrace);
+            Repository.SetUnbondingSet(
+                Repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
+            Repository.SetDelegator(this);
         }
 
-        public virtual void CancelUndelegate(
+        void IDelegator.Redelegate(
+            IDelegatee srcDelegatee, IDelegatee dstDelegatee, BigInteger share, long height)
+            => Redelegate((T)srcDelegatee, (T)dstDelegatee, share, height);
+
+        public void CancelUndelegate(
             T delegatee, FungibleAssetValue fav, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegatee);
             if (fav.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -189,70 +177,40 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
-            UnbondLockIn unbondLockIn = _repository!.GetUnbondLockIn(delegatee, Address);
+            UnbondLockIn unbondLockIn = Repository.GetUnbondLockIn(delegatee, Address);
 
             if (unbondLockIn.IsFull)
             {
                 throw new InvalidOperationException("Undelegation is full.");
             }
 
-            delegatee.Bond((TSelf)this, fav, height);
+            delegatee.Bond(this, fav, height);
             unbondLockIn = unbondLockIn.Cancel(fav, height);
-            Delegatees = Delegatees.Add(delegatee.Address);
+            Metadata.AddDelegatee(delegatee.Address);
 
             if (unbondLockIn.IsEmpty)
             {
                 delegatee.RemoveUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
             }
 
-            _repository.SetUnbondLockIn(unbondLockIn);
-            _repository.SetUnbondingSet(
-                _repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+            Repository.SetUnbondLockIn(unbondLockIn);
+            Repository.SetUnbondingSet(
+                Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+            Repository.SetDelegator(this);
         }
 
-        public virtual void ClaimReward(
+        void IDelegator.CancelUndelegate(
+            IDelegatee delegatee, FungibleAssetValue fav, long height)
+            => CancelUndelegate((T)delegatee, fav, height);
+
+        public void ClaimReward(
             T delegatee, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegatee);
-            delegatee.DistributeReward((TSelf)this, height);
+            delegatee.DistributeReward(this, height);
+            Repository.SetDelegator(this);
         }
 
-        public void UpdateLastRewardHeight(long height)
-        {
-            LastRewardHeight = height;
-        }
-
-        public override bool Equals(object? obj)
-            => obj is IDelegator other && Equals(other);
-
-        public virtual bool Equals(IDelegator? other)
-            => ReferenceEquals(this, other)
-            || (other is Delegator<T, TSelf> delegator
-            && GetType() != delegator.GetType()
-            && Address.Equals(delegator.Address)
-            && Delegatees.SequenceEqual(delegator.Delegatees)
-            && LastRewardHeight == delegator.LastRewardHeight);
-
-        public override int GetHashCode()
-            => Address.GetHashCode();
-
-        private void CannotMutateRelationsWithoutRepository(T delegatee)
-        {
-            CannotMutateRelationsWithoutRepository();
-            if (!_repository!.Equals(delegatee.Repository))
-            {
-                throw new InvalidOperationException(
-                    "Cannot mutate with different repository.");
-            }
-        }
-
-        private void CannotMutateRelationsWithoutRepository()
-        {
-            if (_repository is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot mutate without repository.");
-            }
-        }
+        void IDelegator.ClaimReward(IDelegatee delegatee, long height)
+            => ClaimReward((T)delegatee, height);
     }
 }

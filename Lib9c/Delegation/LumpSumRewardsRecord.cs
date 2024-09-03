@@ -103,7 +103,7 @@ namespace Nekoyume.Delegation
                 LastStartHeight);
 
         public FungibleAssetValue RewardsDuringPeriod(BigInteger share)
-            => (LumpSumRewards * share).DivRem(TotalShares, out _);
+            => (LumpSumRewards * share).DivRem(TotalShares).Quotient;
 
         public override bool Equals(object? obj)
             => obj is LumpSumRewardsRecord other && Equals(other);

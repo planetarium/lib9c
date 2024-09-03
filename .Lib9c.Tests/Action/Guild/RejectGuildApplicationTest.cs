@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -38,28 +39,29 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .ApplyGuild(appliedMemberAddress, guildAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.ApplyGuild(appliedMemberAddress, guildAddress);
 
             // These cases should fail because the member didn't apply the guild and
             // non-guild-master-addresses cannot reject the guild application.
             Assert.Throws<InvalidOperationException>(
                 () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = guildMasterAddress,
                 }));
             Assert.Throws<InvalidOperationException>(
                 () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = appliedMemberAddress,
                 }));
             Assert.Throws<InvalidOperationException>(
                 () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = nonAppliedMemberAddress,
                 }));
 
@@ -67,24 +69,25 @@ namespace Lib9c.Tests.Action.Guild
             Assert.Throws<InvalidOperationException>(
                 () => new RejectGuildApplication(appliedMemberAddress).Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = appliedMemberAddress,
                 }));
             Assert.Throws<InvalidOperationException>(
                 () => new RejectGuildApplication(appliedMemberAddress).Execute(new ActionContext
                 {
-                    PreviousState = world,
+                    PreviousState = repository.World,
                     Signer = nonAppliedMemberAddress,
                 }));
 
             world = new RejectGuildApplication(appliedMemberAddress).Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
-            Assert.False(world.TryGetGuildApplication(appliedMemberAddress, out _));
-            Assert.Null(world.GetJoinedGuild(appliedMemberAddress));
+            repository.UpdateWorld(world);
+            Assert.False(repository.TryGetGuildApplication(appliedMemberAddress, out _));
+            Assert.Null(repository.GetJoinedGuild(appliedMemberAddress));
         }
     }
 }

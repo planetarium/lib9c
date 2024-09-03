@@ -16,8 +16,6 @@ namespace Nekoyume.Action.ValidatorDelegation
     {
         public const string TypeIdentifier = "distribute_validators";
 
-        private const string TargetKey = "t";
-
         public AllocateReward()
         {
         }
@@ -31,55 +29,54 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+            var repository = new ValidatorRepository(world, context);
             var rewardCurrency = world.GetGoldCurrency();
+            var proposerInfo = repository.GetProposerInfo();
 
-            var proposerInfo = world.GetProposerInfo();
-
-            world = DistributeProposerReward(
-                world,
+            DistributeProposerReward(
+                repository,
                 context,
                 rewardCurrency,
                 proposerInfo,
                 context.LastCommit.Votes);
 
-            world = DistributeValidatorReward(
-                world,
+            DistributeValidatorReward(
+                repository,
                 context,
                 rewardCurrency,
                 context.LastCommit.Votes);
 
-            var communityFund = world.GetBalance(Addresses.RewardPool, rewardCurrency);
+            var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
             if (communityFund.Sign > 0)
             {
-                world = world.TransferAsset(
-                    context,
+                repository.TransferAsset(
                     Addresses.RewardPool,
                     Addresses.CommunityPool,
                     communityFund);
             }
 
-            return world;
+            return repository.World;
         }
 
-        internal static IWorld DistributeProposerReward(
-            IWorld states,
+        internal static void DistributeProposerReward(
+            ValidatorRepository repository,
             IActionContext ctx,
             Currency rewardCurrency,
             ProposerInfo proposerInfo,
             IEnumerable<Vote> lastVotes)
         {
-            FungibleAssetValue blockReward = states.GetBalance(
+            FungibleAssetValue blockReward = repository.GetBalance(
                 Addresses.RewardPool, rewardCurrency);
 
             if (proposerInfo.BlockIndex != ctx.BlockIndex - 1)
             {
-                return states;
+                return;
             }
 
             if (blockReward.Sign <= 0)
             {
-                return states;
+                return;
             }
 
             BigInteger votePowerNumerator
@@ -99,7 +96,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             if (votePowerDenominator == BigInteger.Zero)
             {
-                return states;
+                return;
             }
 
             var baseProposerReward
@@ -110,30 +107,26 @@ namespace Nekoyume.Action.ValidatorDelegation
                 .DivRem(votePowerDenominator * ValidatorDelegatee.BonusProposerRewardDenominator).Quotient;
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
 
-            states = states.TransferAsset(
-                ctx,
+            repository.TransferAsset(
                 Addresses.RewardPool,
                 proposerInfo.Proposer,
                 proposerReward);
-
-            return states;
         }
 
-        internal static IWorld DistributeValidatorReward(
-            IWorld states,
+        internal static void DistributeValidatorReward(
+            ValidatorRepository repository,
             IActionContext ctx,
             Currency rewardCurrency,
             IEnumerable<Vote> lastVotes)
         {
             long blockHeight = ctx.BlockIndex;
-            var repo = new ValidatorRepository(states, ctx);
 
             FungibleAssetValue rewardToAllocate
-                = states.GetBalance(Addresses.RewardPool, rewardCurrency);
+                = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
             if (rewardToAllocate.Sign <= 0)
             {
-                return states;
+                return;
             }
 
             BigInteger validatorSetPower
@@ -143,7 +136,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             if (validatorSetPower == BigInteger.Zero)
             {
-                return states;
+                return;
             }
 
             foreach (Vote vote in lastVotes)
@@ -153,8 +146,8 @@ namespace Nekoyume.Action.ValidatorDelegation
                     continue;
                 }
 
-                if (!states.TryGetValidatorDelegatee(
-                    vote.ValidatorPublicKey.Address, repo, out var validatorDelegatee))
+                if (!repository.TryGetValidatorDelegatee(
+                    vote.ValidatorPublicKey.Address, out var validatorDelegatee))
                 {
                     continue;
                 }
@@ -172,11 +165,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                     validatorSetPower,
                     Addresses.RewardPool,
                     blockHeight);
-
-                states = validatorDelegatee.Repository.World;
             }
-
-            return states;
         }
     }
 }
