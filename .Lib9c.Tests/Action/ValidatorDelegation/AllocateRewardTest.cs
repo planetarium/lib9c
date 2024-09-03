@@ -59,17 +59,18 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             var blockHash = new BlockHash(Enumerable.Repeat((byte)0x01, BlockHash.Size).ToArray());
             var timestamp = DateTimeOffset.UtcNow;
             var voteFlags = Enumerable.Range(0, 100).Select(i => i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null).ToArray();
-            var bondedSet = world.GetValidatorList().GetBonded();
+            var repository = new ValidatorRepository(world, context);
+            var bondedSet = repository.GetValidatorList().GetBonded();
 
             var proposer = bondedSet.First();
-            world = world.SetProposerInfo(new ProposerInfo(9L, proposer.OperatorAddress));
+            repository.SetProposerInfo(new ProposerInfo(9L, proposer.OperatorAddress));
             var votes = bondedSet.Select(
                 (v, i) => new VoteMetadata(
                     9L, 0, blockHash, timestamp, v.PublicKey, v.Power, i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null)
                 .Sign(i % 2 == 0 ? privateKeys.First(k => k.PublicKey.Equals(v.PublicKey)) : null)).ToImmutableArray();
 
             var totalReward = ncg * 1000;
-            world = world.MintAsset(context, Addresses.RewardPool, totalReward);
+            world = repository.World.MintAsset(context, Addresses.RewardPool, totalReward);
 
             context = new ActionContext
             {
@@ -99,10 +100,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             var proposerReward = baseProposerReward + bonusProposerReward;
             var remains = totalReward - proposerReward;
+            repository.UpdateWorld(world);
 
             foreach (var vote in votes)
             {
-                var validator = world.GetValidatorDelegatee(vote.ValidatorPublicKey.Address);
+                var validator = repository.GetValidatorDelegatee(vote.ValidatorPublicKey.Address);
 
                 FungibleAssetValue rewardAllocated
                     = (remains * vote.ValidatorPower!.Value).DivRem(totalPower).Quotient;

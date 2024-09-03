@@ -10,7 +10,7 @@ namespace Nekoyume.Delegation
     public sealed class Bond : IBencodable, IEquatable<Bond>
     {
         public Bond(Address address)
-            : this(address, BigInteger.Zero, 0)
+            : this(address, BigInteger.Zero, null)
         {
         }
 
@@ -20,11 +20,14 @@ namespace Nekoyume.Delegation
         }
 
         public Bond(Address address, List bencoded)
-            : this(address, (Integer)bencoded[0], (Integer)bencoded[1])
+            : this(
+                  address,
+                  (Integer)bencoded[0],
+                  bencoded[1] is Integer share ? share : null)
         {
         }
 
-        private Bond(Address address, BigInteger share, long lastDistributeHeight)
+        private Bond(Address address, BigInteger share, long? lastDistributeHeight)
         {
             if (share.Sign < 0)
             {
@@ -51,13 +54,15 @@ namespace Nekoyume.Delegation
 
         public BigInteger Share { get; }
 
-        public long LastDistributeHeight { get; }
+        public long? LastDistributeHeight { get; }
 
-        public bool IsEmpty => Share.IsZero;
+        public bool IsEmpty => Share.IsZero && LastDistributeHeight is null;
 
         public List Bencoded => List.Empty
             .Add(Share)
-            .Add(LastDistributeHeight);
+            .Add(LastDistributeHeight.HasValue
+                ? new Integer(LastDistributeHeight.Value)
+                : Null.Value);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -102,7 +107,7 @@ namespace Nekoyume.Delegation
 
         internal Bond UpdateLastDistributeHeight(long height)
         {
-            if (height <= LastDistributeHeight)
+            if (LastDistributeHeight.HasValue && LastDistributeHeight >= height)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(height),
@@ -111,6 +116,11 @@ namespace Nekoyume.Delegation
             }
 
             return new Bond(Address, Share, height);
+        }
+
+        internal Bond ClearLastDistributeHeight()
+        {
+            return new Bond(Address, Share, null);
         }
     }
 }

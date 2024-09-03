@@ -9,8 +9,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
-    using Nekoyume.Module.Delegation;
-    using Nekoyume.Module.ValidatorDelegation;
+    using Nekoyume.ValidatorDelegation;
     using Xunit;
 
     public class RedelegateValidatorTest
@@ -59,8 +58,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 Signer = dstPublicKey.Address,
             });
 
-            var srcValidator = world.GetValidatorDelegatee(srcPublicKey.Address);
-            var bond = world.GetBond(srcValidator, srcPublicKey.Address);
+            var repository = new ValidatorRepository(world, context);
+            var srcValidator = repository.GetValidatorDelegatee(srcPublicKey.Address);
+            var bond = repository.GetBond(srcValidator, srcPublicKey.Address);
             var action = new RedelegateValidator(srcPublicKey.Address, dstPublicKey.Address, bond.Share);
             context = new ActionContext
             {
@@ -71,10 +71,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             world = action.Execute(context);
 
-            srcValidator = world.GetValidatorDelegatee(srcPublicKey.Address);
-            var dstValidator = world.GetValidatorDelegatee(dstPublicKey.Address);
-            var validatorList = world.GetValidatorList();
-            var dstBond = world.GetBond(dstValidator, srcPublicKey.Address);
+            repository.UpdateWorld(world);
+            srcValidator = repository.GetValidatorDelegatee(srcPublicKey.Address);
+            var dstValidator = repository.GetValidatorDelegatee(dstPublicKey.Address);
+            var validatorList = repository.GetValidatorList();
+            var dstBond = repository.GetBond(dstValidator, srcPublicKey.Address);
 
             Assert.Contains(srcPublicKey.Address, dstValidator.Delegators);
             Assert.Equal(dstValidator.Validator, Assert.Single(validatorList.Validators));

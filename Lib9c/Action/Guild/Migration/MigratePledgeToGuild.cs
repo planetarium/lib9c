@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action.Guild.Migration.Controls;
+using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Action.Guild.Migration
@@ -54,8 +55,10 @@ namespace Nekoyume.Action.Guild.Migration
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
 
-            return GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, Target);
+            GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(repository, Target);
+            return repository.World;
         }
     }
 }

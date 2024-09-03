@@ -2,15 +2,18 @@
 using System;
 using System.Collections.Immutable;
 using System.Numerics;
-using Bencodex;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public interface IDelegator : IBencodable, IEquatable<IDelegator>
+    public interface IDelegator
     {
         Address Address { get; }
+
+        Address AccountAddress { get; }
+
+        Address DelegationPoolAddress { get; }
 
         ImmutableSortedSet<Address> Delegatees { get; }
 
@@ -28,6 +31,11 @@ namespace Nekoyume.Delegation
             IDelegatee srcDelegatee,
             IDelegatee dstDelegatee,
             BigInteger share,
+            long height);
+
+        void CancelUndelegate(
+            IDelegatee delegatee,
+            FungibleAssetValue fav,
             long height);
 
         void ClaimReward(

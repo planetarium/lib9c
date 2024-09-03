@@ -1,65 +1,24 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
-using Libplanet.Action.State;
-using Nekoyume.Action;
-using Nekoyume.Delegation;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Module.Guild
 {
     public static class GuildModule
     {
-        public static Model.Guild.Guild GetGuild(this IWorldState worldState, GuildAddress guildAddress)
-        {
-            var value = worldState.GetAccountState(Addresses.Guild).GetState(guildAddress);
-            if (value is List list)
-            {
-                return new Model.Guild.Guild(list, worldState.GetGoldCurrency());
-            }
-
-            throw new FailedLoadStateException("There is no such guild.");
-        }
-
-        public static Model.Guild.Guild GetGuild(
-            this IWorldState worldState, GuildAddress guildAddress, IDelegationRepository repository)
-        {
-            var value = worldState.GetAccountState(Addresses.Guild).GetState(guildAddress);
-            if (value is List list)
-            {
-                return new Model.Guild.Guild(list, worldState.GetGoldCurrency(), repository);
-            }
-
-            throw new FailedLoadStateException("There is no such guild.");
-        }
-
-        public static bool TryGetGuild(this IWorldState worldState,
-            GuildAddress guildAddress, [NotNullWhen(true)] out Model.Guild.Guild? guild)
-        {
-            try
-            {
-                guild = GetGuild(worldState, guildAddress);
-                return true;
-            }
-            catch
-            {
-                guild = null;
-                return false;
-            }
-        }
-
         public static bool TryGetGuild(
-            this IWorldState worldState,
+            this GuildRepository repository,
             GuildAddress guildAddress,
-            IDelegationRepository repository,
             [NotNullWhen(true)] out Model.Guild.Guild? guild)
         {
             try
             {
-                guild = GetGuild(worldState, guildAddress, repository);
+                guild = repository.GetGuild(guildAddress);
                 return true;
             }
             catch
@@ -69,33 +28,39 @@ namespace Nekoyume.Module.Guild
             }
         }
 
-        public static IWorld MakeGuild(this IWorld world, GuildAddress guildAddress, AgentAddress signer)
+        public static GuildRepository MakeGuild(
+            this GuildRepository repository,
+            GuildAddress guildAddress,
+            AgentAddress signer)
         {
-            if (world.GetJoinedGuild(signer) is not null)
+            if (repository.GetJoinedGuild(signer) is not null)
             {
                 throw new InvalidOperationException("The signer already has a guild.");
             }
 
-            if (world.TryGetGuild(guildAddress, out _))
+            if (repository.TryGetGuild(guildAddress, out _))
             {
                 throw new InvalidOperationException("Duplicated guild address. Please retry.");
             }
 
-            return world.MutateAccount(Addresses.Guild,
-                account =>
-                    account.SetState(guildAddress,
-                        new Model.Guild.Guild(signer, world.GetGoldCurrency()).Bencoded))
-                .JoinGuild(guildAddress, signer);
+            var guild = new Model.Guild.Guild(
+                guildAddress, signer, Currencies.GuildGold, repository);
+            repository.SetGuild(guild);
+            repository.JoinGuild(guildAddress, signer);
+
+            return repository;
         }
 
-        public static IWorld RemoveGuild(this IWorld world, AgentAddress signer)
+        public static GuildRepository RemoveGuild(
+            this GuildRepository repository,
+            AgentAddress signer)
         {
-            if (world.GetJoinedGuild(signer) is not { } guildAddress)
+            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
             {
                 throw new InvalidOperationException("The signer does not join any guild.");
             }
 
-            if (!world.TryGetGuild(guildAddress, out var guild))
+            if (!repository.TryGetGuild(guildAddress, out var guild))
             {
                 throw new InvalidOperationException("There is no such guild.");
             }
@@ -105,36 +70,30 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("The signer is not a guild master.");
             }
 
-            if (world.GetGuildMemberCount(guildAddress) > 1)
+            if (repository.GetGuildMemberCount(guildAddress) > 1)
             {
                 throw new InvalidOperationException("There are remained participants in the guild.");
             }
 
-            return world
-                .RawLeaveGuild(signer)
-                .MutateAccount(Addresses.Guild, account => account.RemoveState(guildAddress))
-                .RemoveBanList(guildAddress);
+            repository.RawLeaveGuild(signer);
+            repository.UpdateWorld(
+                repository.World.MutateAccount(
+                    Addresses.Guild, account => account.RemoveState(guildAddress)));
+            repository.RemoveBanList(guildAddress);
+
+            return repository;
         }
 
-        public static IWorld SetGuild(this IWorld world, Model.Guild.Guild guild)
-            => world.MutateAccount(
-                Addresses.Guild,
-                account => account.SetState(guild.Address, guild.Bencoded));
-
-        public static IWorld CollectRewardGuild(
-            this IWorld world,
+        public static GuildRepository CollectRewardGuild(
+            this GuildRepository repository,
             IActionContext context,
             GuildAddress guildAddress)
         {
-            var repo = new DelegationRepository(world, context);
-
-            var guild = world.TryGetGuild(guildAddress, repo, out var g)
-                ? g
-                : throw new InvalidOperationException("The guild does not exist.");
-
+            var guild = repository.GetGuild(guildAddress);
             guild.CollectRewards(context.BlockIndex);
+            repository.SetGuild(guild);
 
-            return repo.World;
+            return repository;
         }
     }
 }

@@ -1,9 +1,7 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
-using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Consensus;
 using Nekoyume.Action;
 using Nekoyume.Extensions;
 using Nekoyume.ValidatorDelegation;
@@ -12,19 +10,19 @@ namespace Nekoyume.Module.ValidatorDelegation
 {
     public static class ValidatorListModule
     {
-        public static ProposerInfo GetProposerInfo(this IWorldState worldState)
-            => worldState.TryGetProposerInfo(ProposerInfo.Address, out var proposerInfo)
+        public static ProposerInfo GetProposerInfo(this ValidatorRepository repository)
+            => repository.TryGetProposerInfo(ProposerInfo.Address, out var proposerInfo)
                 ? proposerInfo
                 : throw new FailedLoadStateException("There is no such proposer info");
 
         public static bool TryGetProposerInfo(
-            this IWorldState worldState,
+            this ValidatorRepository repository,
             Address address,
             [NotNullWhen(true)] out ProposerInfo? proposerInfo)
         {
             try
             {
-                var value = worldState.GetAccountState(Addresses.ValidatorList).GetState(address);
+                var value = repository.World.GetAccountState(Addresses.ValidatorList).GetState(address);
                 if (!(value is List list))
                 {
                     proposerInfo = null;
@@ -41,25 +39,28 @@ namespace Nekoyume.Module.ValidatorDelegation
             }
         }
 
-        public static IWorld SetProposerInfo(
-            this IWorld world,
+        public static ValidatorRepository SetProposerInfo(
+            this ValidatorRepository repository,
             ProposerInfo proposerInfo)
-            => world.MutateAccount(
+        {
+            repository.UpdateWorld(repository.World.MutateAccount(
                 Addresses.ValidatorList,
-                state => state.SetState(ProposerInfo.Address, proposerInfo.Bencoded));
+                state => state.SetState(ProposerInfo.Address, proposerInfo.Bencoded)));
+            return repository;
+        }
 
-        public static ValidatorList GetValidatorList(this IWorldState worldState)
-            => worldState.TryGetValidatorList(out var validatorList)
+        public static ValidatorList GetValidatorList(this ValidatorRepository repository)
+            => repository.TryGetValidatorList(out var validatorList)
                 ? validatorList
                 : throw new FailedLoadStateException("There is no such validator list");
 
         public static bool TryGetValidatorList(
-            this IWorldState worldState,
+            this ValidatorRepository repository,
             [NotNullWhen(true)] out ValidatorList? validatorList)
         {
             try
             {
-                var value = worldState.GetAccountState(Addresses.ValidatorList).GetState(ValidatorList.Address);
+                var value = repository.World.GetAccountState(Addresses.ValidatorList).GetState(ValidatorList.Address);
                 if (!(value is List list))
                 {
                     validatorList = null;

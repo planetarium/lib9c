@@ -1,16 +1,15 @@
-#nullable enable
 using System;
 using Libplanet.Action;
-using Libplanet.Action.State;
 using Nekoyume.Delegation;
+using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Module.Delegation
+namespace Nekoyume.Module.ValidatorDelegation
 {
-    public static class UnbondingSetModule
+    public static class ValidatorUnbondingModule
     {
-        public static IWorld ReleaseUnbondings(this IWorld world, IActionContext context)
+        public static ValidatorRepository ReleaseUnbondings(
+            this ValidatorRepository repository, IActionContext context)
         {
-            var repository = new DelegationRepository(world, context);
             var unbondingSet = repository.GetUnbondingSet();
             var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
 
@@ -36,7 +35,7 @@ namespace Nekoyume.Module.Delegation
 
             repository.SetUnbondingSet(unbondingSet);
 
-            return repository.World;
+            return repository;
         }
     }
 }

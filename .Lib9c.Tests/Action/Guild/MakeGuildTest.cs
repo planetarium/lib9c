@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -68,9 +69,10 @@ namespace Lib9c.Tests.Action.Guild
                     Signer = guildMasterAddress,
                 });
 
-                var guildAddress = world.GetJoinedGuild(guildMasterAddress);
+                var repository = new GuildRepository(world, new ActionContext());
+                var guildAddress = repository.GetJoinedGuild(guildMasterAddress);
                 Assert.NotNull(guildAddress);
-                Assert.True(world.TryGetGuild(guildAddress.Value, out var guild));
+                Assert.True(repository.TryGetGuild(guildAddress.Value, out var guild));
                 Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
             }
         }

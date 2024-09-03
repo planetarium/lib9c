@@ -9,7 +9,7 @@ using Libplanet.Types.Consensus;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public class ValidatorList : IBencodable
+    public sealed class ValidatorList : IBencodable
     {
         private static readonly IComparer<Validator> _reversedComparer
             = Comparer<Validator>.Create((y, x) => new ValidatorComparer().Compare(x, y));

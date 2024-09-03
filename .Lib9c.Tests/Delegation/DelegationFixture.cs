@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Delegation
                 BlockProtocolVersion = BlockMetadata.CurrentProtocolVersion,
             };
 
-            Repository = new TestDelegationRepo(world, context);
+            Repository = new TestRepository(world, context);
             TestDelegator1 = new TestDelegator(new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), Repository);
             TestDelegator2 = new TestDelegator(new Address("0x327CCff388255E9399207C3d5a09357D0BBc73dF"), Repository);
             TestDelegatee1 = new TestDelegatee(new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), Repository);
@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Delegation
             DummyDelegator1 = new DummyDelegator(new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), Repository);
         }
 
-        public TestDelegationRepo Repository { get; }
+        public TestRepository Repository { get; }
 
         public TestDelegator TestDelegator1 { get; }
 

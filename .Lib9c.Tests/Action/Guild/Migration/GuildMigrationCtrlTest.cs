@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Nekoyume.Action.Guild.Migration;
     using Nekoyume.Action.Guild.Migration.Controls;
     using Nekoyume.Extensions;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -30,17 +31,18 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    false.Serialize(),  // Unapproved
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.JoinGuild(guildAddress, guildMasterAddress);
+            repository.UpdateWorld(repository.World.SetLegacyState(pledgeAddress, new List(
+                MeadConfig.PatronAddress.Serialize(),
+                false.Serialize(),  // Unapproved
+                RequestPledge.DefaultRefillMead.Serialize())));
 
-            Assert.Null(world.GetJoinedGuild(target));
+            Assert.Null(repository.GetJoinedGuild(target));
             Assert.Throws<GuildMigrationFailedException>(() =>
-                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(repository, target));
         }
 
         [Fact]
@@ -54,19 +56,20 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.JoinGuild(guildAddress, guildMasterAddress);
+            repository.UpdateWorld(repository.World.SetLegacyState(pledgeAddress, new List(
+                MeadConfig.PatronAddress.Serialize(),
+                true.Serialize(),
+                RequestPledge.DefaultRefillMead.Serialize())));
 
-            Assert.Null(world.GetJoinedGuild(target));
-            world = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
+            Assert.Null(repository.GetJoinedGuild(target));
+            GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(repository, target);
 
-            var joinedGuildAddress = Assert.IsType<GuildAddress>(world.GetJoinedGuild(target));
-            Assert.True(world.TryGetGuild(joinedGuildAddress, out var guild));
+            var joinedGuildAddress = Assert.IsType<GuildAddress>(repository.GetJoinedGuild(target));
+            Assert.True(repository.TryGetGuild(joinedGuildAddress, out var guild));
             Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
         }
 
@@ -80,13 +83,14 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.JoinGuild(guildAddress, guildMasterAddress);
 
-            Assert.Null(world.GetJoinedGuild(target));
+            Assert.Null(repository.GetJoinedGuild(target));
             Assert.Throws<GuildMigrationFailedException>(() =>
-                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(repository, target));
         }
 
         [Fact]
@@ -103,10 +107,10 @@ namespace Lib9c.Tests.Action.Guild.Migration
                     MeadConfig.PatronAddress.Serialize(),
                     true.Serialize(),
                     RequestPledge.DefaultRefillMead.Serialize()));
-
-            Assert.Null(world.GetJoinedGuild(target));
+            var repository = new GuildRepository(world, new ActionContext());
+            Assert.Null(repository.GetJoinedGuild(target));
             Assert.Throws<GuildMigrationFailedException>(() =>
-                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(repository, target));
         }
     }
 }

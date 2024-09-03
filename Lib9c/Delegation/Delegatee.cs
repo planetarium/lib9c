@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography;
-using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -16,142 +13,141 @@ namespace Nekoyume.Delegation
         where T : Delegator<TSelf, T>
         where TSelf : Delegatee<T, TSelf>
     {
-        protected readonly byte[] BondId = new byte[] { 0x42 };                  // `B`
-        protected readonly byte[] UnbondLockInId = new byte[] { 0x55 };          // `U`
-        protected readonly byte[] RebondGraceId = new byte[] { 0x52 };           // `R`
-        protected readonly byte[] LumpSumRewardsRecordId = new byte[] { 0x4c };  // `L`
-        protected readonly byte[] RewardCollectorId = new byte[] { 0x63 };       // `c`
-        protected readonly byte[] RewardDistributorId = new byte[] { 0x64 };     // `d`
-        protected readonly byte[] PoolId = new byte[] { 0x70 };                  // `p`
-
-        private readonly IDelegationRepository? _repository;
-        private ImmutableSortedSet<UnbondingRef> _unbondingRefs;
-
-        public Delegatee(Address address, IDelegationRepository? repository = null)
-        {
-            Address = address;
-            Delegators = ImmutableSortedSet<Address>.Empty;
-            TotalDelegated = DelegationCurrency * 0;
-            TotalShares = BigInteger.Zero;
-            _unbondingRefs = ImmutableSortedSet<UnbondingRef>.Empty;
-            _repository = repository;
-        }
-
-        public Delegatee(Address address, IValue bencoded, IDelegationRepository? repository = null)
-            : this(address, (List)bencoded, repository)
-        {
-        }
-
-        public Delegatee(Address address, List bencoded, IDelegationRepository? repository = null)
+        public Delegatee(
+            Address address,
+            Address accountAddress,
+            Currency delegationCurrency,
+            Currency rewardCurrency,
+            Address delegationPoolAddress,
+            long unbondingPeriod,
+            int maxUnbondLockInEntries,
+            int maxRebondGraceEntries,
+            IDelegationRepository repository)
             : this(
-                  address,
-                  ((List)bencoded[0]).Select(item => new Address(item)),
-                  new FungibleAssetValue(bencoded[1]),
-                  (Integer)bencoded[2],
-                  ((List)bencoded[3]).Select(item => new UnbondingRef(item)),
+                  new DelegateeMetadata(
+                      address,
+                      accountAddress,
+                      delegationCurrency,
+                      rewardCurrency,
+                      delegationPoolAddress,
+                      unbondingPeriod,
+                      maxUnbondLockInEntries,
+                      maxRebondGraceEntries),
                   repository)
         {
         }
 
-        private Delegatee(
+        public Delegatee(
             Address address,
-            IEnumerable<Address> delegators,
-            FungibleAssetValue totalDelegated,
-            BigInteger totalShares,
-            IEnumerable<UnbondingRef> unbondingRefs,
-            IDelegationRepository? repository)
+            IDelegationRepository repository)
+            : this(repository.GetDelegateeMetadata(address), repository)
         {
-            if (!totalDelegated.Currency.Equals(DelegationCurrency))
-            {
-                throw new InvalidOperationException("Invalid currency.");
-            }
-
-            if (totalDelegated.Sign < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(totalDelegated),
-                    totalDelegated,
-                    "Total delegated must be non-negative.");
-            }
-
-            if (totalShares.Sign < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(totalShares),
-                    totalShares,
-                    "Total shares must be non-negative.");
-            }
-
-            Address = address;
-            Delegators = delegators.ToImmutableSortedSet();
-            TotalDelegated = totalDelegated;
-            TotalShares = totalShares;
-            _unbondingRefs = unbondingRefs.ToImmutableSortedSet();
-            _repository = repository;
         }
 
-        public Address Address { get; }
+        private Delegatee(DelegateeMetadata metadata, IDelegationRepository repository)
+        {
+            Metadata = metadata;
+            Repository = repository;
+        }
 
-        public abstract Currency DelegationCurrency { get; }
+        public event EventHandler<long>? DelegationChanged;
 
-        public abstract Currency RewardCurrency { get; }
+        public event EventHandler<long>? Enjailed;
 
-        public abstract Address DelegationPoolAddress { get; }
+        public event EventHandler<long>? Unjailed;
 
-        public abstract long UnbondingPeriod { get; }
+        public DelegateeMetadata Metadata { get; }
 
-        public abstract byte[] DelegateeId { get; }
+        public IDelegationRepository Repository { get; }
 
-        public abstract int MaxUnbondLockInEntries { get; }
+        public Address Address => Metadata.DelegateeAddress;
 
-        public abstract int MaxRebondGraceEntries { get; }
+        public Address AccountAddress => Metadata.DelegateeAccountAddress;
 
-        public abstract BigInteger SlashFactor { get; }
+        public Address MetadataAddress => Metadata.Address;
 
-        public Address RewardCollectorAddress => DeriveAddress(RewardCollectorId);
+        public Currency DelegationCurrency => Metadata.DelegationCurrency;
 
-        public Address RewardDistributorAddress => DeriveAddress(RewardDistributorId);
+        public Currency RewardCurrency => Metadata.RewardCurrency;
 
-        public ImmutableSortedSet<Address> Delegators { get; private set; }
+        public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
-        public FungibleAssetValue TotalDelegated { get; private set; }
+        public long UnbondingPeriod => Metadata.UnbondingPeriod;
 
-        public BigInteger TotalShares { get; private set; }
+        public int MaxUnbondLockInEntries => Metadata.MaxUnbondLockInEntries;
 
-        public IDelegationRepository? Repository => _repository;
+        public int MaxRebondGraceEntries => Metadata.MaxRebondGraceEntries;
 
-        public virtual List Bencoded => List.Empty
-            .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
-            .Add(TotalDelegated.Serialize())
-            .Add(TotalShares)
-            .Add(new List(_unbondingRefs.Select(unbondingRef => unbondingRef.Bencoded)));
+        public Address RewardCollectorAddress => Metadata.RewardCollectorAddress;
 
-        IValue IBencodable.Bencoded => Bencoded;
+        public Address RewardDistributorAddress => Metadata.RewardDistributorAddress;
 
-        public BigInteger ShareToBond(FungibleAssetValue fav)
-            => TotalShares.IsZero
-                ? fav.RawValue
-                : TotalShares * fav.RawValue / TotalDelegated.RawValue;
+        public ImmutableSortedSet<Address> Delegators => Metadata.Delegators;
 
-        public FungibleAssetValue FAVToUnbond(BigInteger share)
-            => TotalShares == share
-                ? TotalDelegated
-                : (TotalDelegated * share).DivRem(TotalShares).Quotient;
+        public FungibleAssetValue TotalDelegated => Metadata.TotalDelegatedFAV;
 
-        BigInteger IDelegatee.Bond(
-            IDelegator delegator, FungibleAssetValue fav, long height)
+        public BigInteger TotalShares => Metadata.TotalShares;
+
+        public bool Jailed => Metadata.Jailed;
+
+        public long JailedUntil => Metadata.JailedUntil;
+
+        public bool Tombstoned => Metadata.Tombstoned;
+
+        public List MetadataBencoded => Metadata.Bencoded;
+
+        public BigInteger ShareFromFAV(FungibleAssetValue fav)
+            => Metadata.ShareFromFAV(fav);
+
+        public FungibleAssetValue FAVFromShare(BigInteger share)
+            => Metadata.FAVFromShare(share);
+
+        public BigInteger Bond(IDelegator delegator, FungibleAssetValue fav, long height)
             => Bond((T)delegator, fav, height);
 
-        FungibleAssetValue IDelegatee.Unbond(
-            IDelegator delegator, BigInteger share, long height)
+        public FungibleAssetValue Unbond(IDelegator delegator, BigInteger share, long height)
             => Unbond((T)delegator, share, height);
 
-        void IDelegatee.DistributeReward(IDelegator delegator, long height)
+        public void DistributeReward(IDelegator delegator, long height)
             => DistributeReward((T)delegator, height);
+
+        public void Jail(long releaseHeight, long height)
+        {
+            Metadata.JailUntil(releaseHeight);
+            Repository.SetDelegateeMetadata(Metadata);
+            Enjailed?.Invoke(this, height);
+        }
+
+        public void Unjail(long height)
+        {
+            Metadata.Unjail(height);
+            Repository.SetDelegateeMetadata(Metadata);
+            Unjailed?.Invoke(this, height);
+        }
+
+        public void Tombstone()
+        {
+            Metadata.Tombstone();
+            Repository.SetDelegateeMetadata(Metadata);
+        }
+
+        public Address BondAddress(Address delegatorAddress)
+            => Metadata.BondAddress(delegatorAddress);
+
+        public Address UnbondLockInAddress(Address delegatorAddress)
+            => Metadata.UnbondLockInAddress(delegatorAddress);
+
+        public Address RebondGraceAddress(Address delegatorAddress)
+            => Metadata.RebondGraceAddress(delegatorAddress);
+
+        public Address CurrentLumpSumRewardsRecordAddress()
+            => Metadata.CurrentLumpSumRewardsRecordAddress();
+
+        public Address LumpSumRewardsRecordAddress(long height)
+            => Metadata.LumpSumRewardsRecordAddress(height);
 
         public virtual BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegator);
             DistributeReward(delegator, height);
 
             if (!fav.Currency.Equals(DelegationCurrency))
@@ -160,21 +156,25 @@ namespace Nekoyume.Delegation
                     "Cannot bond with invalid currency.");
             }
 
-            Bond bond = _repository!.GetBond(this, delegator.Address);
-            BigInteger share = ShareToBond(fav);
+            Bond bond = Repository.GetBond(this, delegator.Address);
+            BigInteger share = ShareFromFAV(fav);
             bond = bond.AddShare(share);
-            Delegators = Delegators.Add(delegator.Address);
-            TotalShares += share;
-            TotalDelegated += fav;
-            _repository.SetBond(bond);
+            Metadata.AddDelegator(delegator.Address);
+            Metadata.AddShare(share);
+            Metadata.AddDelegatedFAV(fav);
+            Repository.SetBond(bond);
             StartNewRewardPeriod(height);
+            Repository.SetDelegateeMetadata(Metadata);
+            DelegationChanged?.Invoke(this, height);
 
             return share;
         }
 
-        public virtual FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
+        BigInteger IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, long height)
+            => Bond((T)delegator, fav, height);
+
+        public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegator);
             DistributeReward(delegator, height);
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
@@ -182,140 +182,113 @@ namespace Nekoyume.Delegation
                     "Cannot unbond without bonding.");
             }
 
-            Bond bond = _repository!.GetBond(this, delegator.Address);
-            FungibleAssetValue fav = FAVToUnbond(share);
+            Bond bond = Repository!.GetBond(this, delegator.Address);
+            FungibleAssetValue fav = FAVFromShare(share);
             bond = bond.SubtractShare(share);
             if (bond.Share.IsZero)
             {
-                Delegators = Delegators.Remove(delegator.Address);
+                bond = bond.ClearLastDistributeHeight();
+                Metadata.RemoveDelegator(delegator.Address);
             }
 
-            TotalShares -= share;
-            TotalDelegated -= fav;
-            _repository.SetBond(bond);
+            Metadata.RemoveShare(share);
+            Metadata.RemoveDelegatedFAV(fav);
+            Repository.SetBond(bond);
             StartNewRewardPeriod(height);
+            Repository.SetDelegateeMetadata(Metadata);
+            DelegationChanged?.Invoke(this, height);
 
             return fav;
         }
 
-        public virtual void DistributeReward(T delegator, long height)
+        FungibleAssetValue IDelegatee.Unbond(IDelegator delegator, BigInteger share, long height)
+            => Unbond((T)delegator, share, height);
+
+        public void DistributeReward(T delegator, long height)
         {
-            CannotMutateRelationsWithoutRepository(delegator);
-            BigInteger share = _repository!.GetBond(this, delegator.Address).Share;
-            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
-                GetLumpSumRewardsRecords(delegator.LastRewardHeight);
-            FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
-            if (reward.Sign > 0)
+            Bond bond = Repository.GetBond(this, delegator.Address);
+            BigInteger share = bond.Share;
+
+            if (!share.IsZero && bond.LastDistributeHeight.HasValue)
             {
-                _repository.TransferAsset(RewardDistributorAddress, delegator.Address, reward);
+                IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
+                    GetLumpSumRewardsRecords(bond.LastDistributeHeight);
+                FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
+                if (reward.Sign > 0)
+                {
+                    Repository.TransferAsset(RewardDistributorAddress, delegator.Address, reward);
+                }
             }
 
-            delegator.UpdateLastRewardHeight(height);
+            bond = bond.UpdateLastDistributeHeight(height);
+            Repository.SetBond(bond);
         }
 
-        public virtual void CollectRewards(long height)
+        void IDelegatee.DistributeReward(IDelegator delegator, long height)
+            => DistributeReward((T)delegator, height);
+
+        public void CollectRewards(long height)
         {
-            CannotMutateRelationsWithoutRepository();
-            FungibleAssetValue rewards = _repository!.GetBalance(RewardCollectorAddress, RewardCurrency);
-            _repository!.AddLumpSumRewards(this, height, rewards);
-            _repository!.TransferAsset(RewardCollectorAddress, RewardDistributorAddress, rewards);
+            FungibleAssetValue rewards = Repository.GetBalance(RewardCollectorAddress, RewardCurrency);
+            Repository.AddLumpSumRewards(this, height, rewards);
+            Repository.TransferAsset(RewardCollectorAddress, RewardDistributorAddress, rewards);
         }
 
-        public void Slash(long infractionHeight)
+        public void Slash(BigInteger slashFactor, long infractionHeight, long height)
         {
-            CannotMutateRelationsWithoutRepository();
-            foreach (var item in _unbondingRefs)
+            FungibleAssetValue? fav = null;
+            foreach (var item in Metadata.UnbondingRefs)
             {
-                var unbonding = UnbondingFactory.GetUnbondingFromRef(item, _repository)
-                    .Slash(SlashFactor, infractionHeight);
+                var unbonding = UnbondingFactory.GetUnbondingFromRef(item, Repository);
+
+                unbonding = unbonding.Slash(slashFactor, infractionHeight, height, out var slashedFAV);
+
+                if (slashedFAV.HasValue)
+                {
+                    fav = fav.HasValue
+                        ? fav.Value + slashedFAV.Value
+                        : slashedFAV.Value;
+                }
 
                 if (unbonding.IsEmpty)
                 {
-                    RemoveUnbondingRef(item);
+                    Metadata.RemoveUnbondingRef(item);
                 }
 
                 switch (unbonding)
                 {
                     case UnbondLockIn unbondLockIn:
-                        _repository!.SetUnbondLockIn(unbondLockIn);
+                        Repository.SetUnbondLockIn(unbondLockIn);
                         break;
                     case RebondGrace rebondGrace:
-                        _repository!.SetRebondGrace(rebondGrace);
+                        Repository.SetRebondGrace(rebondGrace);
                         break;
                     default:
                         throw new InvalidOperationException("Invalid unbonding type.");
                 }
             }
-        }
 
-        public void AddUnbondingRef(UnbondingRef unbondingRef)
-        {
-            _unbondingRefs = _unbondingRefs.Add(unbondingRef);
-        }
-
-        public void RemoveUnbondingRef(UnbondingRef unbondingRef)
-        {
-            _unbondingRefs = _unbondingRefs.Remove(unbondingRef);
-        }
-
-        public virtual Address BondAddress(Address delegatorAddress)
-            => DeriveAddress(BondId, delegatorAddress);
-
-        public virtual Address UnbondLockInAddress(Address delegatorAddress)
-            => DeriveAddress(UnbondLockInId, delegatorAddress);
-
-        public virtual Address RebondGraceAddress(Address delegatorAddress)
-            => DeriveAddress(RebondGraceId, delegatorAddress);
-
-        public virtual Address CurrentLumpSumRewardsRecordAddress()
-            => DeriveAddress(LumpSumRewardsRecordId);
-
-        public virtual Address LumpSumRewardsRecordAddress(long height)
-            => DeriveAddress(LumpSumRewardsRecordId, BitConverter.GetBytes(height));
-
-
-        public override bool Equals(object? obj)
-            => obj is IDelegatee other && Equals(other);
-
-        public virtual bool Equals(IDelegatee? other)
-            => ReferenceEquals(this, other)
-            || (other is Delegatee<T, TSelf> delegatee
-            && (GetType() != delegatee.GetType())
-            && Address.Equals(delegatee.Address)
-            && DelegationCurrency.Equals(delegatee.DelegationCurrency)
-            && RewardCurrency.Equals(delegatee.RewardCurrency)
-            && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
-            && UnbondingPeriod == delegatee.UnbondingPeriod
-            && RewardCollectorAddress.Equals(delegatee.RewardCollectorAddress)
-            && RewardDistributorAddress.Equals(delegatee.RewardDistributorAddress)
-            && Delegators.SequenceEqual(delegatee.Delegators)
-            && TotalDelegated.Equals(delegatee.TotalDelegated)
-            && TotalShares.Equals(delegatee.TotalShares)
-            && _unbondingRefs.SequenceEqual(delegatee._unbondingRefs)
-            && DelegateeId.SequenceEqual(delegatee.DelegateeId));
-
-        public override int GetHashCode()
-            => Address.GetHashCode();
-
-        protected Address DeriveAddress(byte[] typeId, Address address)
-            => DeriveAddress(typeId, address.ByteArray);
-
-        protected Address DeriveAddress(byte[] typeId, IEnumerable<byte>? bytes = null)
-        {
-            byte[] hashed;
-            using (HMACSHA1 hmac = new(DelegateeId.Concat(typeId).ToArray()))
+            if (fav.HasValue)
             {
-                hashed = hmac.ComputeHash(
-                    Address.ByteArray.Concat(bytes ?? Array.Empty<byte>()).ToArray());
+                Metadata.RemoveDelegatedFAV(fav.Value);
             }
 
-            return new Address(hashed);
+            Repository.SetDelegateeMetadata(Metadata);
+            DelegationChanged?.Invoke(this, height);
         }
+
+        void IDelegatee.Slash(BigInteger slashFactor, long infractionHeight, long height)
+            => Slash(slashFactor, infractionHeight, height);
+
+        public void AddUnbondingRef(UnbondingRef reference)
+            => Metadata.AddUnbondingRef(reference);
+
+        public void RemoveUnbondingRef(UnbondingRef reference)
+            => Metadata.RemoveUnbondingRef(reference);
 
         private void StartNewRewardPeriod(long height)
         {
-            CannotMutateRelationsWithoutRepository();
-            LumpSumRewardsRecord? currentRecord = _repository!.GetCurrentLumpSumRewardsRecord(this);
+            LumpSumRewardsRecord? currentRecord = Repository.GetCurrentLumpSumRewardsRecord(this);
             long? lastStartHeight = null;
             if (currentRecord is LumpSumRewardsRecord lastRecord)
             {
@@ -329,11 +302,11 @@ namespace Nekoyume.Delegation
                         RewardCurrency,
                         currentRecord.LastStartHeight);
 
-                    _repository.SetLumpSumRewardsRecord(currentRecord);
+                    Repository.SetLumpSumRewardsRecord(currentRecord);
                     return;
                 }
 
-                _repository.SetLumpSumRewardsRecord(
+                Repository.SetLumpSumRewardsRecord(
                     lastRecord.MoveAddress(
                         LumpSumRewardsRecordAddress(lastRecord.StartHeight)));
             }
@@ -345,7 +318,7 @@ namespace Nekoyume.Delegation
                 RewardCurrency,
                 lastStartHeight);
 
-            _repository.SetLumpSumRewardsRecord(newRecord);
+            Repository.SetLumpSumRewardsRecord(newRecord);
         }
 
         private FungibleAssetValue CalculateReward(
@@ -382,10 +355,9 @@ namespace Nekoyume.Delegation
 
         private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
         {
-            CannotMutateRelationsWithoutRepository();
             List<LumpSumRewardsRecord> records = new();
             if (lastRewardHeight is null
-                || !(_repository!.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
+                || !(Repository.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
             {
                 return records;
             }
@@ -399,31 +371,12 @@ namespace Nekoyume.Delegation
                     break;
                 }
 
-                record = _repository.GetLumpSumRewardsRecord(this, lastStartHeight)
+                record = Repository.GetLumpSumRewardsRecord(this, lastStartHeight)
                     ?? throw new InvalidOperationException(
                         $"Lump sum rewards record for #{lastStartHeight} is missing");
             }
 
             return records;
-        }
-
-        private void CannotMutateRelationsWithoutRepository(T delegator)
-        {
-            CannotMutateRelationsWithoutRepository();
-            if (!_repository!.Equals(delegator.Repository))
-            {
-                throw new InvalidOperationException(
-                    "Cannot mutate with different repository.");
-            }
-        }
-
-        private void CannotMutateRelationsWithoutRepository()
-        {
-            if (_repository is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot mutate without repository.");
-            }
         }
     }
 }

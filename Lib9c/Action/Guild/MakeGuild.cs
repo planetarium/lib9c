@@ -4,6 +4,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 
@@ -33,6 +34,7 @@ namespace Nekoyume.Action.Guild
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
             var random = context.GetRandom();
 
             // TODO: Remove this check when to deliver features to users.
@@ -45,7 +47,8 @@ namespace Nekoyume.Action.Guild
             var guildAddress = new GuildAddress(random.GenerateAddress());
             var signer = context.GetAgentAddress();
 
-            return world.MakeGuild(guildAddress, signer);
+            repository.MakeGuild(guildAddress, signer);
+            return repository.World;
         }
     }
 }

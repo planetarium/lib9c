@@ -9,8 +9,8 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
-    using Nekoyume.Module.Delegation;
     using Nekoyume.Module.ValidatorDelegation;
+    using Nekoyume.ValidatorDelegation;
     using Xunit;
 
     public class PromoteValidatorTest
@@ -52,9 +52,10 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 Signer = publicKey.Address,
             });
 
-            var validator = world.GetValidatorDelegatee(publicKey.Address);
-            var bond = world.GetBond(validator, publicKey.Address);
-            var validatorList = world.GetValidatorList();
+            var repository = new ValidatorRepository(world, context);
+            var validator = repository.GetValidatorDelegatee(publicKey.Address);
+            var bond = repository.GetBond(validator, publicKey.Address);
+            var validatorList = repository.GetValidatorList();
 
             Assert.Equal(publicKey.Address, Assert.Single(validator.Delegators));
             Assert.Equal(fav.RawValue, bond.Share);

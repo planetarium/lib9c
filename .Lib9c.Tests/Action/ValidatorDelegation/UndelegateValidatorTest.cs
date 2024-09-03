@@ -9,8 +9,8 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
-    using Nekoyume.Module.Delegation;
     using Nekoyume.Module.ValidatorDelegation;
+    using Nekoyume.ValidatorDelegation;
     using Xunit;
 
     public class UndelegateValidatorTest
@@ -49,8 +49,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 Signer = publicKey.Address,
             });
 
-            var validator = world.GetValidatorDelegatee(publicKey.Address);
-            var bond = world.GetBond(validator, publicKey.Address);
+            var repository = new ValidatorRepository(world, context);
+            var validator = repository.GetValidatorDelegatee(publicKey.Address);
+            var bond = repository.GetBond(validator, publicKey.Address);
             var action = new UndelegateValidator(publicKey.Address, bond.Share);
             context = new ActionContext
             {
@@ -61,21 +62,21 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             world = action.Execute(context);
 
-            validator = world.GetValidatorDelegatee(publicKey.Address);
-            var validatorList = world.GetValidatorList();
+            repository.UpdateWorld(world);
+            validator = repository.GetValidatorDelegatee(publicKey.Address);
+            var validatorList = repository.GetValidatorList();
 
             Assert.Empty(validator.Delegators);
             Assert.Equal(BigInteger.Zero, validator.Validator.Power);
             Assert.Empty(validatorList.Validators);
 
-            context = new ActionContext
+            world = new ReleaseValidatorUnbondings().Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = publicKey.Address,
                 BlockIndex = 1,
-            };
+            });
 
-            world = world.ReleaseUnbondings(context);
             Assert.Equal(gg * 100, world.GetBalance(publicKey.Address, gg));
         }
     }

@@ -4,14 +4,13 @@ using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.Module.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
     public class ClaimRewardValidator : ActionBase
     {
         public const string TypeIdentifier = "claim_reward_validator";
-
-        private const string TargetKey = "t";
 
         public ClaimRewardValidator() { }
 
@@ -45,8 +44,10 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new ValidatorRepository(world, context);
+            repository.ClaimRewardValidator(context, ValidatorDelegatee);
 
-            return world.ClaimRewardValidator(context, ValidatorDelegatee);
+            return repository.World;
         }
     }
 }

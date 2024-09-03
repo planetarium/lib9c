@@ -7,7 +7,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -39,15 +39,16 @@ namespace Lib9c.Tests.Action.Guild
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-                .MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMasterAddress);
-            IWorld bannedWorld = world.Ban(guildAddress, guildMasterAddress, agentAddress);
+                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            var repository = new GuildRepository(world, new ActionContext());
+            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.JoinGuild(guildAddress, guildMasterAddress);
+            repository.Ban(guildAddress, guildMasterAddress, agentAddress);
 
             // This case should fail because the agent is banned by the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = bannedWorld,
+                PreviousState = repository.World,
                 Signer = agentAddress,
             }));
 
@@ -57,7 +58,8 @@ namespace Lib9c.Tests.Action.Guild
                 Signer = agentAddress,
             });
 
-            Assert.True(world.TryGetGuildApplication(agentAddress, out var application));
+            repository.UpdateWorld(world);
+            Assert.True(repository.TryGetGuildApplication(agentAddress, out var application));
             Assert.Equal(guildAddress, application.GuildAddress);
         }
     }

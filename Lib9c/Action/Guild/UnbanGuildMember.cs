@@ -5,6 +5,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
@@ -49,14 +50,16 @@ namespace Nekoyume.Action.Guild
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            if (world.GetJoinedGuild(signer) is not { } guildAddress)
+            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
             {
                 throw new InvalidOperationException("The signer does not join any guild.");
             }
 
-            return world.Unban(guildAddress, signer, Target);
+            repository.Unban(guildAddress, signer, Target);
+            return repository.World;
         }
     }
 }

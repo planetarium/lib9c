@@ -24,15 +24,14 @@ namespace Lib9c.Tests.Delegation
         }
 
         [Fact]
-        public void CtorWithBencoded()
+        public void GetSet()
         {
             var repo = _fixture.Repository;
             var delegator = _fixture.TestDelegator1;
             var delegatee = _fixture.TestDelegatee1;
             repo.MintAsset(delegator.Address, delegatee.DelegationCurrency * 100);
             delegator.Delegate(delegatee, delegatee.DelegationCurrency * 10, 10L);
-
-            var delegatorRecon = new TestDelegator(delegator.Address, delegator.Bencoded, delegator.Repository);
+            var delegatorRecon = repo.GetDelegator(delegator.Address);
             Assert.Equal(delegator.Address, delegatorRecon.Address);
             Assert.Equal(delegatee.Address, Assert.Single(delegatorRecon.Delegatees));
         }
@@ -48,7 +47,7 @@ namespace Lib9c.Tests.Delegation
             repo.MintAsset(delegator.Address, delegatorInitialBalance);
 
             var delegateFAV = delegatee1.DelegationCurrency * 10;
-            var delegateShare = delegatee1.ShareToBond(delegateFAV);
+            var delegateShare = delegatee1.ShareFromFAV(delegateFAV);
             delegator.Delegate(delegatee1, delegateFAV, 1L);
             var delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee1.DelegationCurrency);
             var delegateeBalance = repo.World.GetBalance(delegatee1.DelegationPoolAddress, delegatee1.DelegationCurrency);
@@ -62,7 +61,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatee1.Address, Assert.Single(delegator.Delegatees));
 
             var delegateFAV2 = delegatee1.DelegationCurrency * 20;
-            var delegateShare2 = delegatee1.ShareToBond(delegateFAV2);
+            var delegateShare2 = delegatee1.ShareFromFAV(delegateFAV2);
             delegator.Delegate(delegatee1, delegateFAV2, 2L);
             delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee1.DelegationCurrency);
             delegateeBalance = repo.World.GetBalance(delegatee1.DelegationPoolAddress, delegatee1.DelegationCurrency);
@@ -101,7 +100,7 @@ namespace Lib9c.Tests.Delegation
             delegator.Delegate(delegatee, delegatingFAV, 10L);
             var initialShare = repo.GetBond(delegatee, delegator.Address).Share;
             var undelegatingShare = initialShare / 3;
-            var undelegatingFAV = delegatee.FAVToUnbond(undelegatingShare);
+            var undelegatingFAV = delegatee.FAVFromShare(undelegatingShare);
             delegator.Undelegate(delegatee, undelegatingShare, 10L);
             var delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee.DelegationCurrency);
             var delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
@@ -119,13 +118,13 @@ namespace Lib9c.Tests.Delegation
             var entriesByExpireHeight = Assert.Single(unbondLockIn.Entries);
             Assert.Equal(10L + delegatee.UnbondingPeriod, entriesByExpireHeight.Key);
             var entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(undelegatingFAV, entry.InitialLockInFAV);
-            Assert.Equal(undelegatingFAV, entry.LockInFAV);
+            Assert.Equal(undelegatingFAV, entry.InitialUnbondingFAV);
+            Assert.Equal(undelegatingFAV, entry.UnbondingFAV);
             Assert.Equal(10L, entry.CreationHeight);
             Assert.Equal(10L + delegatee.UnbondingPeriod, entry.ExpireHeight);
 
             undelegatingShare = repo.GetBond(delegatee, delegator.Address).Share;
-            var undelegatingFAV2 = delegatee.FAVToUnbond(undelegatingShare);
+            var undelegatingFAV2 = delegatee.FAVFromShare(undelegatingShare);
             delegator.Undelegate(delegatee, undelegatingShare, 12L);
             delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee.DelegationCurrency);
             delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
@@ -149,15 +148,15 @@ namespace Lib9c.Tests.Delegation
             entriesByExpireHeight = unbondLockIn.Entries.ElementAt(0);
             Assert.Equal(10L + delegatee.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(undelegatingFAV, entry.InitialLockInFAV);
-            Assert.Equal(undelegatingFAV, entry.LockInFAV);
+            Assert.Equal(undelegatingFAV, entry.InitialUnbondingFAV);
+            Assert.Equal(undelegatingFAV, entry.UnbondingFAV);
             Assert.Equal(10L, entry.CreationHeight);
             Assert.Equal(10L + delegatee.UnbondingPeriod, entry.ExpireHeight);
             entriesByExpireHeight = unbondLockIn.Entries.ElementAt(1);
             Assert.Equal(12L + delegatee.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(undelegatingFAV2, entry.InitialLockInFAV);
-            Assert.Equal(undelegatingFAV2, entry.LockInFAV);
+            Assert.Equal(undelegatingFAV2, entry.InitialUnbondingFAV);
+            Assert.Equal(undelegatingFAV2, entry.UnbondingFAV);
             Assert.Equal(12L, entry.CreationHeight);
             Assert.Equal(12L + delegatee.UnbondingPeriod, entry.ExpireHeight);
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
@@ -169,8 +168,8 @@ namespace Lib9c.Tests.Delegation
             entriesByExpireHeight = Assert.Single(unbondLockIn.Entries);
             Assert.Equal(12L + delegatee.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(undelegatingFAV2, entry.InitialLockInFAV);
-            Assert.Equal(undelegatingFAV2, entry.LockInFAV);
+            Assert.Equal(undelegatingFAV2, entry.InitialUnbondingFAV);
+            Assert.Equal(undelegatingFAV2, entry.UnbondingFAV);
             Assert.Equal(12L, entry.CreationHeight);
             Assert.Equal(12L + delegatee.UnbondingPeriod, entry.ExpireHeight);
             Assert.Equal(delegatorInitialBalance - delegatingFAV + undelegatingFAV, delegatorBalance);
@@ -198,8 +197,8 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatee1.Address, Assert.Single(delegator.Delegatees));
             var initialShare = repo.GetBond(delegatee1, delegator.Address).Share;
             var redelegatingShare = initialShare / 3;
-            var redelegatingFAV = delegatee1.FAVToUnbond(redelegatingShare);
-            var redelegatedDstShare = delegatee2.ShareToBond(redelegatingFAV);
+            var redelegatingFAV = delegatee1.FAVFromShare(redelegatingShare);
+            var redelegatedDstShare = delegatee2.ShareFromFAV(redelegatingFAV);
             delegator.Redelegate(delegatee1, delegatee2, redelegatingShare, 10L);
             var delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee1.DelegationCurrency);
             var delegatee1Balance = repo.World.GetBalance(delegatee1.DelegationPoolAddress, delegatee1.DelegationCurrency);
@@ -223,15 +222,15 @@ namespace Lib9c.Tests.Delegation
             var entriesByExpireHeight = Assert.Single(rebondGrace.Entries);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             var entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(delegatee2.Address, entry.RebondeeAddress);
-            Assert.Equal(redelegatingFAV, entry.InitialGraceFAV);
-            Assert.Equal(redelegatingFAV, entry.GraceFAV);
+            Assert.Equal(delegatee2.Address, entry.UnbondeeAddress);
+            Assert.Equal(redelegatingFAV, entry.InitialUnbondingFAV);
+            Assert.Equal(redelegatingFAV, entry.UnbondingFAV);
             Assert.Equal(10L, entry.CreationHeight);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entry.ExpireHeight);
 
             var redelegatingShare2 = repo.GetBond(delegatee1, delegator.Address).Share;
-            var redelegatingFAV2 = delegatee1.FAVToUnbond(redelegatingShare2);
-            var redelegatedDstShare2 = delegatee2.ShareToBond(redelegatingFAV2);
+            var redelegatingFAV2 = delegatee1.FAVFromShare(redelegatingShare2);
+            var redelegatedDstShare2 = delegatee2.ShareFromFAV(redelegatingFAV2);
             delegator.Redelegate(delegatee1, delegatee2, redelegatingShare2, 12L);
             delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee1.DelegationCurrency);
             delegatee1Balance = repo.World.GetBalance(delegatee1.DelegationPoolAddress, delegatee1.DelegationCurrency);
@@ -259,17 +258,17 @@ namespace Lib9c.Tests.Delegation
             entriesByExpireHeight = rebondGrace.Entries.ElementAt(0);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(delegatee2.Address, entry.RebondeeAddress);
-            Assert.Equal(redelegatingFAV, entry.InitialGraceFAV);
-            Assert.Equal(redelegatingFAV, entry.GraceFAV);
+            Assert.Equal(delegatee2.Address, entry.UnbondeeAddress);
+            Assert.Equal(redelegatingFAV, entry.InitialUnbondingFAV);
+            Assert.Equal(redelegatingFAV, entry.UnbondingFAV);
             Assert.Equal(10L, entry.CreationHeight);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entry.ExpireHeight);
             entriesByExpireHeight = rebondGrace.Entries.ElementAt(1);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(delegatee2.Address, entry.RebondeeAddress);
-            Assert.Equal(redelegatingFAV2, entry.InitialGraceFAV);
-            Assert.Equal(redelegatingFAV2, entry.GraceFAV);
+            Assert.Equal(delegatee2.Address, entry.UnbondeeAddress);
+            Assert.Equal(redelegatingFAV2, entry.InitialUnbondingFAV);
+            Assert.Equal(redelegatingFAV2, entry.UnbondingFAV);
             Assert.Equal(12L, entry.CreationHeight);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entry.ExpireHeight);
 
@@ -277,9 +276,9 @@ namespace Lib9c.Tests.Delegation
             entriesByExpireHeight = Assert.Single(rebondGrace.Entries);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
-            Assert.Equal(delegatee2.Address, entry.RebondeeAddress);
-            Assert.Equal(redelegatingFAV2, entry.InitialGraceFAV);
-            Assert.Equal(redelegatingFAV2, entry.GraceFAV);
+            Assert.Equal(delegatee2.Address, entry.UnbondeeAddress);
+            Assert.Equal(redelegatingFAV2, entry.InitialUnbondingFAV);
+            Assert.Equal(redelegatingFAV2, entry.UnbondingFAV);
             Assert.Equal(12L, entry.CreationHeight);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entry.ExpireHeight);
 

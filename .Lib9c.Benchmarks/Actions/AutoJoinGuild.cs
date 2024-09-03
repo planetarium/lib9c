@@ -7,6 +7,7 @@ using Libplanet.Mocks;
 using Nekoyume;
 using Nekoyume.Action.Guild;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
@@ -32,10 +33,11 @@ public class AutoJoinGuild
 
         var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
         var guildAddress = AddressUtil.CreateGuildAddress();
-        worldWithPledgeAndGuild = worldWithPledge
-            .MakeGuild(guildAddress, guildMasterAddress);
-        worldAfterMigration = worldWithPledgeAndGuild
-            .JoinGuild(guildAddress, signer);
+        var repository = new GuildRepository(worldWithPledge, new ActionContext());
+        repository.MakeGuild(guildAddress, guildMasterAddress);
+        worldWithPledgeAndGuild = repository.World;
+        repository.JoinGuild(guildAddress, signer);
+        worldAfterMigration = repository.World;
     }
 
     [Benchmark]

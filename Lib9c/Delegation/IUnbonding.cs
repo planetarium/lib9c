@@ -1,5 +1,6 @@
 using System.Numerics;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
@@ -15,6 +16,10 @@ namespace Nekoyume.Delegation
 
         IUnbonding Release(long height);
 
-        IUnbonding Slash(BigInteger slashFactor, long infractionHeight);
+        IUnbonding Slash(
+            BigInteger slashFactor,
+            long infractionHeight,
+            long height,
+            out FungibleAssetValue? slashedFAV);
     }
 }

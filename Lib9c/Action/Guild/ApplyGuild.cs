@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 
@@ -49,11 +50,13 @@ namespace Nekoyume.Action.Guild
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
             // TODO: Do something related with ConsensusPower delegation.
 
-            return world.ApplyGuild(signer, GuildAddress);
+            repository.ApplyGuild(signer, GuildAddress);
+            return repository.World;
         }
     }
 }

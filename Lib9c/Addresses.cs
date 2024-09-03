@@ -94,39 +94,47 @@ namespace Nekoyume
 
         public static readonly Address EmptyAccountAddress = new("ffffffffffffffffffffffffffffffffffffffff");
 
-        #endregion
-
-        #region Delegation
-
         /// <summary>
         /// An address of an account having <see cref="Delegation.UnbondingSet"/>.
         /// </summary>
-        public static readonly Address UnbondingSet
+        public static readonly Address GuildUnbondingSet
             = new Address("0000000000000000000000000000000000000300");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
+        /// </summary>
+        public static readonly Address GuildMetadata
+            = new Address("0000000000000000000000000000000000000301");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegatorMetadata"/>.
+        /// </summary>
+        public static readonly Address GuildParticipantMetadata
+            = new Address("0000000000000000000000000000000000000302");
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.Bond"/>.
         /// </summary>
-        public static readonly Address Bond
-            = new Address("0000000000000000000000000000000000000301");
+        public static readonly Address GuildBond
+            = new Address("0000000000000000000000000000000000000303");
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.UnbondLockIn"/>.
         /// </summary>
-        public static readonly Address UnbondLockIn
-            = new Address("0000000000000000000000000000000000000302");
+        public static readonly Address GuildUnbondLockIn
+            = new Address("0000000000000000000000000000000000000304");
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.RebondGrace"/>.
         /// </summary>
-        public static readonly Address RebondGrace
-            = new Address("0000000000000000000000000000000000000303");
+        public static readonly Address GuildRebondGrace
+            = new Address("0000000000000000000000000000000000000305");
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.LumpSumRewardsRecord"/>.
         /// </summary>
-        public static readonly Address LumpSumRewardsRecord
-            = new Address("0000000000000000000000000000000000000304");
+        public static readonly Address GuildLumpSumRewardsRecord
+            = new Address("0000000000000000000000000000000000000306");
 
         #endregion
 
@@ -161,6 +169,54 @@ namespace Nekoyume
         /// </summary>
         public static readonly Address CommunityPool
             = new Address("0000000000000000000000000000000000000499");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondingSet"/>.
+        /// </summary>
+        public static readonly Address ValidatorUnbondingSet
+            = new Address("0000000000000000000000000000000000000300");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegateeMetadata
+            = new Address("0000000000000000000000000000000000000301");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegatorMetadata"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegatorMetadata
+            = new Address("0000000000000000000000000000000000000302");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.Bond"/>.
+        /// </summary>
+        public static readonly Address ValidatorBond
+            = new Address("0000000000000000000000000000000000000303");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondLockIn"/>.
+        /// </summary>
+        public static readonly Address ValidatorUnbondLockIn
+            = new Address("0000000000000000000000000000000000000304");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.RebondGrace"/>.
+        /// </summary>
+        public static readonly Address ValidatorRebondGrace
+            = new Address("0000000000000000000000000000000000000305");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.LumpSumRewardsRecord"/>.
+        /// </summary>
+        public static readonly Address ValidatorLumpSumRewardsRecord
+            = new Address("0000000000000000000000000000000000000306");
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.AbstainHistory"/>.
+        /// </summary>
+        public static readonly Address AbstainHistory
+            = new Address("0000000000000000000000000000000000000307");
 
         #endregion
 

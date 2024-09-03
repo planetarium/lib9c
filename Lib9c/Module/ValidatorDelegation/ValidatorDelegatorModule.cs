@@ -1,115 +1,77 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Bencodex.Types;
 using Libplanet.Action;
-using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Extensions;
 using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.ValidatorDelegation
 {
     public static class ValidatorDelegatorModule
     {
-        public static IWorld DelegateValidator(
-            this IWorld world,
+        public static ValidatorRepository DelegateValidator(
+            this ValidatorRepository repository,
             IActionContext context,
             Address address,
             FungibleAssetValue fav)
         {
-            var repo = new ValidatorRepository(world, context);
-
-            var validatorDelegator = world.GetValidatorDelegator(context.Signer, repo);
-            var validatorDelegatee = world.GetValidatorDelegatee(address, repo);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            var validatorDelegatee = repository.GetValidatorDelegatee(address);
             validatorDelegator.Delegate(validatorDelegatee, fav, context.BlockIndex);
 
-            return repo.World
-                .SetValidatorDelegatee(validatorDelegatee)
-                .SetValidatorDelegator(validatorDelegator);
+            return repository;
         }
 
-        public static IWorld UndelegateValidator(
-            this IWorld world,
+        public static ValidatorRepository UndelegateValidator(
+            this ValidatorRepository repository,
             IActionContext context,
             Address address,
             BigInteger share)
         {
-            var repo = new ValidatorRepository(world, context);
-
-            var validatorDelegator = world.GetValidatorDelegator(context.Signer, repo);
-            var validatorDelegatee = world.GetValidatorDelegatee(address, repo);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            var validatorDelegatee = repository.GetValidatorDelegatee(address);
             validatorDelegator.Undelegate(validatorDelegatee, share, context.BlockIndex);
 
-            return repo.World
-                .SetValidatorDelegatee(validatorDelegatee)
-                .SetValidatorDelegator(validatorDelegator);
+            return repository;
         }
 
-        public static IWorld RedelegateValidator(
-            this IWorld world,
+        public static ValidatorRepository RedelegateValidator(
+            this ValidatorRepository repository,
             IActionContext context,
             Address srcAddress,
             Address dstAddress,
             BigInteger share)
         {
-            var repo = new ValidatorRepository(world, context);
-
-            var validatorDelegator = world.GetValidatorDelegator(context.Signer, repo);
-            var srcValidatorDelegatee = world.GetValidatorDelegatee(srcAddress, repo);
-            var dstValidatorDelegatee = world.GetValidatorDelegatee(dstAddress, repo);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            var srcValidatorDelegatee = repository.GetValidatorDelegatee(srcAddress);
+            var dstValidatorDelegatee = repository.GetValidatorDelegatee(dstAddress);
             validatorDelegator.Redelegate(srcValidatorDelegatee, dstValidatorDelegatee, share, context.BlockIndex);
 
-            return repo.World
-                .SetValidatorDelegatee(srcValidatorDelegatee)
-                .SetValidatorDelegatee(dstValidatorDelegatee)
-                .SetValidatorDelegator(validatorDelegator);
+            return repository;
         }
 
-        public static IWorld ClaimRewardValidator(
-            this IWorld world,
+        public static ValidatorRepository ClaimRewardValidator(
+            this ValidatorRepository repository,
             IActionContext context,
             Address address)
         {
-            var repo = new ValidatorRepository(world, context);
-
-            var validatorDelegator = world.GetValidatorDelegator(context.Signer, repo);
-            var validatorDelegatee = world.GetValidatorDelegatee(address, repo);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            var validatorDelegatee = repository.GetValidatorDelegatee(address);
 
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);
 
-            return repo.World
-                .SetValidatorDelegatee(validatorDelegatee)
-                .SetValidatorDelegator(validatorDelegator);
+            return repository;
         }
 
-        public static ValidatorDelegator GetValidatorDelegator(this IWorldState worldState, Address address)
-            => worldState.TryGetValidatorDelegator(address, out var validatorDelegator)
-                ? validatorDelegator
-                : new ValidatorDelegator(address);
-
-        public static ValidatorDelegator GetValidatorDelegator(
-            this IWorldState worldState, Address address, ValidatorRepository repository)
-            => worldState.TryGetValidatorDelegator(address, repository, out var validatorDelegator)
-                ? validatorDelegator
-                : new ValidatorDelegator(address, repository);
-
         public static bool TryGetValidatorDelegator(
-            this IWorldState worldState,
+            this ValidatorRepository repository,
             Address address,
             [NotNullWhen(true)] out ValidatorDelegator? validatorDelegator)
         {
             try
             {
-                var value = worldState.GetAccountState(Addresses.ValidatorDelegator).GetState(address);
-                if (!(value is List list))
-                {
-                    validatorDelegator = null;
-                    return false;
-                }
-
-                validatorDelegator = new ValidatorDelegator(address, list);
+                validatorDelegator = repository.GetValidatorDelegator(address);
                 return true;
             }
             catch
@@ -118,35 +80,5 @@ namespace Nekoyume.Module.ValidatorDelegation
                 return false;
             }
         }
-
-        public static bool TryGetValidatorDelegator(
-            this IWorldState worldState,
-            Address address,
-            ValidatorRepository repository,
-            [NotNullWhen(true)] out ValidatorDelegator? validatorDelegator)
-        {
-            try
-            {
-                var value = worldState.GetAccountState(Addresses.ValidatorDelegator).GetState(address);
-                if (!(value is List list))
-                {
-                    validatorDelegator = null;
-                    return false;
-                }
-
-                validatorDelegator = new ValidatorDelegator(address, list, repository);
-                return true;
-            }
-            catch
-            {
-                validatorDelegator = null;
-                return false;
-            }
-        }
-
-        private static IWorld SetValidatorDelegator(this IWorld world, ValidatorDelegator validatorDelegator)
-            => world.MutateAccount(
-                Addresses.ValidatorDelegator,
-                account => account.SetState(validatorDelegator.Address, validatorDelegator.Bencoded));
     }
 }

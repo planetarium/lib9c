@@ -1,25 +1,34 @@
 #nullable enable
-using Bencodex.Types;
+using System;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public class ValidatorDelegator : Delegator<ValidatorDelegatee, ValidatorDelegator>
+    public sealed class ValidatorDelegator : Delegator<ValidatorDelegatee, ValidatorDelegator>, IEquatable<ValidatorDelegator>
     {
-        public ValidatorDelegator(Address address, ValidatorRepository? repository = null)
-            : base(address, repository)
+        public ValidatorDelegator(
+            Address address,
+            Address delegationPoolAddress,
+            ValidatorRepository repository)
+            : base(
+                  address: address,
+                  accountAddress: repository.DelegatorAccountAddress,
+                  delegationPoolAddress: delegationPoolAddress,
+                  repository: repository)
         {
         }
 
-        public ValidatorDelegator(Address address, IValue bencoded, ValidatorRepository? repository = null)
-            : base(address, bencoded, repository)
+        public ValidatorDelegator(
+            Address address,
+            ValidatorRepository repository)
+            : base(
+                  address: address,
+                  repository: repository)
         {
         }
 
-        public ValidatorDelegator(Address address, List bencoded, ValidatorRepository? repository = null)
-            : base(address, bencoded, repository)
-        {
-        }
+        public bool Equals(ValidatorDelegator? other)
+            => Metadata.Equals(other?.Metadata);
     }
 }

@@ -4,6 +4,7 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
+using Nekoyume.Model.State;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild
@@ -16,29 +17,37 @@ namespace Nekoyume.Model.Guild
         public readonly GuildAddress GuildAddress;
 
         public GuildParticipant(
-            AgentAddress agentAddress, GuildAddress guildAddress)
-            : this(agentAddress, guildAddress, null)
-        {
-        }
-
-        public GuildParticipant(AgentAddress agentAddress, List list)
-            : this(agentAddress, list, null)
-        {
-        }
-
-        public GuildParticipant(
-            AgentAddress agentAddress, GuildAddress guildAddress, IDelegationRepository repository)
-            : base(agentAddress, repository)
+            Address address,
+            GuildAddress guildAddress,
+            GuildRepository repository)
+            : base(
+                  address: address,
+                  accountAddress: Addresses.GuildParticipant,
+                  delegationPoolAddress: StakeState.DeriveAddress(address),
+                  repository: repository)
         {
             GuildAddress = guildAddress;
         }
 
-        public GuildParticipant(AgentAddress agentAddress, List list, IDelegationRepository repository)
-            : base(agentAddress, list[3], repository)
+        public GuildParticipant(
+            Address address,
+            IValue bencoded,
+            GuildRepository repository)
+            : this(address, (List)bencoded, repository)
         {
-            GuildAddress = new GuildAddress(list[2]);
+        }
 
-            if (list[0] is not Text text || text != StateTypeName || list[1] is not Integer integer)
+        public GuildParticipant(
+            Address address,
+            List bencoded,
+            GuildRepository repository)
+            : base(
+                  address: address,
+                  repository: repository)
+        {
+            GuildAddress = new GuildAddress(bencoded[2]);
+
+            if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
             {
                 throw new InvalidCastException();
             }
@@ -49,13 +58,10 @@ namespace Nekoyume.Model.Guild
             }
         }
 
-        public AgentAddress AgentAddress => new AgentAddress(Address);
-
-        public override List Bencoded => List.Empty
+        public List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
-            .Add(GuildAddress.Bencoded)
-            .Add(base.Bencoded);
+            .Add(GuildAddress.Bencoded);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -64,7 +70,7 @@ namespace Nekoyume.Model.Guild
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return GuildAddress.Equals(other.GuildAddress)
-                && base.Equals(other);
+                && Metadata.Equals(other.Metadata);
         }
 
         public override bool Equals(object obj)
@@ -77,7 +83,7 @@ namespace Nekoyume.Model.Guild
 
         public override int GetHashCode()
         {
-            return Address.GetHashCode();
+            return GuildAddress.GetHashCode();
         }
     }
 }

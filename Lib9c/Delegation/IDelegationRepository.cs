@@ -7,7 +7,19 @@ namespace Nekoyume.Delegation
 {
     public interface IDelegationRepository
     {
+        Address DelegateeAccountAddress { get; }
+
+        Address DelegatorAccountAddress { get; }
+
         IWorld World { get; }
+
+        IDelegatee GetDelegatee(Address address);
+
+        IDelegator GetDelegator(Address address);
+
+        DelegateeMetadata GetDelegateeMetadata(Address delegateeAddress);
+
+        DelegatorMetadata GetDelegatorMetadata(Address delegatorAddress);
 
         Bond GetBond(IDelegatee delegatee, Address delegatorAddress);
 
@@ -26,6 +38,14 @@ namespace Nekoyume.Delegation
         LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee);
 
         FungibleAssetValue GetBalance(Address address, Currency currency);
+
+        void SetDelegatee(IDelegatee delegatee);
+
+        void SetDelegator(IDelegator delegator);
+
+        void SetDelegateeMetadata(DelegateeMetadata delegateeMetadata);
+
+        void SetDelegatorMetadata(DelegatorMetadata delegatorMetadata);
 
         void SetBond(Bond bond);
 

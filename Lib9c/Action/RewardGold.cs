@@ -297,7 +297,7 @@ namespace Nekoyume.Action
                 states = states.TransferAsset(
                     ctx,
                     GoldCurrencyState.Address,
-                    ctx.Miner,
+                    Addresses.RewardPool,
                     miningReward
                 );
             }
