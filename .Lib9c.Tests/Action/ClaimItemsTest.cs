@@ -330,18 +330,17 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(agentAddress);
             avatarAddress = agentAddress.Derive("avatar");
             var rankingMapAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             agentState.avatarAddresses[0] = avatarAddress;
 
             state = state

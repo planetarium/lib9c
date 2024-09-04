@@ -38,9 +38,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address WantedAvatarAddress =
             Addresses.GetAvatarAddress(WantedAddress, 0);
 
-        private static readonly AvatarState WantedAvatarState = new (
-            WantedAvatarAddress, WantedAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "wanted"
+        private static readonly AvatarState WantedAvatarState = AvatarState.Create(
+            WantedAvatarAddress,
+            WantedAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -55,10 +59,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address TesterAvatarAddress =
             Addresses.GetAvatarAddress(TesterAddress, 0);
 
-        private static readonly AvatarState TesterAvatarState = new (
-            TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "Tester"
-        ) { level = 500 };
+        private static readonly AvatarState TesterAvatarState = AvatarState.Create(
+            TesterAvatarAddress,
+            TesterAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "Tester"
+        );
 
         private static readonly AgentState TesterState = new (TesterAddress)
         {
@@ -79,6 +87,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAvatarState(TesterAvatarAddress, TesterAvatarState)
             .SetAgentState(TesterAddress, TesterState)
             .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
+
+        static ExploreAdventureBossTest()
+        {
+            TesterAvatarState.level = 500;
+        }
 
         public ExploreAdventureBossTest()
         {

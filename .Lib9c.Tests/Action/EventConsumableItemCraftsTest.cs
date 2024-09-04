@@ -42,16 +42,14 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 new PrivateKey().Address
-            )
-            {
-                level = 100,
-            };
+            );
+            avatarState.level = 100;
 
             var allSlotState = new AllCombinationSlotState();
             for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)

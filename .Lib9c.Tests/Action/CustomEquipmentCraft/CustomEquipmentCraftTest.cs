@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 },
             };
 
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress, _agentAddress, 0, _tableSheets.GetAvatarSheets(), default
             );
 #pragma warning disable CS0618

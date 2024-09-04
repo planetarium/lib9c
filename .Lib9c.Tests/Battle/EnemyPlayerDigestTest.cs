@@ -19,7 +19,7 @@ namespace Lib9c.Tests
         public EnemyPlayerDigestTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 1234,

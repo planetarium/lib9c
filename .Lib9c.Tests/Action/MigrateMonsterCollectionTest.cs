@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
             var tableSheets = new TableSheets(sheets);
             var rankingMapAddress = new PrivateKey().Address;
             var agentState = new AgentState(_signer);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _signer,
                 0,

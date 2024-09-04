@@ -58,18 +58,17 @@ namespace Lib9c.Tests.Action
             var buyerAgentState = new AgentState(_buyerAgentAddress);
             _buyerAvatarAddress = new PrivateKey().Address;
             var rankingMapAddress = new PrivateKey().Address;
-            _buyerAvatarState = new AvatarState(
+            _buyerAvatarState = AvatarState.Create(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            _buyerAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             buyerAgentState.avatarAddresses[0] = _buyerAvatarAddress;
 
             var shopState = new ShopState();
@@ -613,18 +612,17 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(agentAddress);
             var rankingMapAddress = new PrivateKey().Address;
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             agentState.avatarAddresses[0] = avatarAddress;
             _sellerAgentStateMap[avatarState] = agentState;
 

@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Model
         public void IsClearBeforeSimulate()
         {
             var agentState = new AgentState(default(Address));
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 default,
                 agentState.address,
                 0,
