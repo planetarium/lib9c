@@ -133,13 +133,14 @@ namespace Nekoyume.Model.Item
             return equipment;
         }
 
-        public static int SelectIconId(
+        public static (int, bool) SelectIconId(
             int iconId, bool isRandom, EquipmentItemSheet.Row equipmentRow, int relationship,
             CustomEquipmentCraftIconSheet iconSheet, IRandom random
         )
         {
             // Validate and select Icon ID
             int selectedIconId;
+            var isRandomOnlyIcon = false;
 
             if (isRandom)
             {
@@ -155,7 +156,9 @@ namespace Nekoyume.Model.Item
                     iconSelector.Add(row, row.Ratio);
                 }
 
-                selectedIconId = iconSelector.Select(1).First().IconId;
+                var selectedIcon = iconSelector.Select(1).First();
+                selectedIconId = selectedIcon.IconId;
+                isRandomOnlyIcon = selectedIcon.RandomOnly;
             }
             else
             {
@@ -181,7 +184,7 @@ namespace Nekoyume.Model.Item
                 selectedIconId = iconId;
             }
 
-            return selectedIconId;
+            return (selectedIconId, isRandomOnlyIcon);
         }
 
         public static CustomEquipmentCraftOptionSheet.Row SelectOption(
