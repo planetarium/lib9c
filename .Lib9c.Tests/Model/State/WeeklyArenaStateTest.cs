@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Model.State
 
             for (var i = 0; i < infoCount; i++)
             {
-                var avatarState = new AvatarState(
+                var avatarState = AvatarState.Create(
                     new PrivateKey().Address,
                     new PrivateKey().Address,
                     0L,
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Model.State
 
             for (var i = 0; i < infoCount; i++)
             {
-                var avatarState = new AvatarState(
+                var avatarState = AvatarState.Create(
                     new PrivateKey().Address,
                     new PrivateKey().Address,
                     0L,
@@ -170,7 +170,7 @@ namespace Lib9c.Tests.Model.State
                     targetAddress = avatarAddress;
                 }
 
-                var avatarState = new AvatarState(
+                var avatarState = AvatarState.Create(
                     avatarAddress,
                     new PrivateKey().Address,
                     0L,

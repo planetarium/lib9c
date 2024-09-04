@@ -53,55 +53,52 @@ namespace Lib9c.Tests.Action.Scenario
             var rankingMapAddress = new PrivateKey().Address;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _gameConfigState = new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
-            _sellerAvatarState = new AvatarState(
+            _sellerAvatarState = AvatarState.Create(
                 _sellerAvatarAddress,
                 _sellerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-                actionPoint = DailyReward.ActionPointMax,
-            };
+                rankingMapAddress);
+            _sellerAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+            _sellerAvatarState.actionPoint = DailyReward.ActionPointMax;
+
             agentState.avatarAddresses[0] = _sellerAvatarAddress;
 
             _sellerAgentAddress2 = new PrivateKey().Address;
             var agentState2 = new AgentState(_sellerAgentAddress2);
             _sellerAvatarAddress2 = new PrivateKey().Address;
-            _sellerAvatarState2 = new AvatarState(
+            _sellerAvatarState2 = AvatarState.Create(
                 _sellerAvatarAddress2,
                 _sellerAgentAddress2,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-                actionPoint = DailyReward.ActionPointMax,
-            };
+                rankingMapAddress);
+            _sellerAvatarState2.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+            _sellerAvatarState2.actionPoint = DailyReward.ActionPointMax;
+
             agentState2.avatarAddresses[0] = _sellerAvatarAddress2;
 
             _buyerAgentAddress = new PrivateKey().Address;
             var agentState3 = new AgentState(_buyerAgentAddress);
             _buyerAvatarAddress = new PrivateKey().Address;
-            var buyerAvatarState = new AvatarState(
+            var buyerAvatarState = AvatarState.Create(
                 _buyerAvatarAddress,
                 _buyerAgentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-                actionPoint = DailyReward.ActionPointMax,
-            };
+                rankingMapAddress);
+            buyerAvatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+            buyerAvatarState.actionPoint = DailyReward.ActionPointMax;
+
             agentState3.avatarAddresses[0] = _buyerAvatarAddress;
 
             _currency = Currency.Legacy("NCG", 2, minters: null);

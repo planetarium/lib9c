@@ -62,7 +62,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -184,7 +184,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -279,7 +279,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -333,7 +333,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -402,7 +402,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -517,7 +517,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -579,7 +579,7 @@ namespace Lib9c.Tests.Action
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -645,7 +645,7 @@ namespace Lib9c.Tests.Action
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
             var agentState = new AgentState(agentAddress);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,

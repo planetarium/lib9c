@@ -159,7 +159,7 @@ namespace Lib9c.Tests.Model.State
         public void Remove()
         {
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 default,
                 default,
                 0,

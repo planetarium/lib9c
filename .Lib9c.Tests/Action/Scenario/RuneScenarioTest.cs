@@ -31,7 +31,7 @@ namespace Lib9c.Tests.Action.Scenario
             var tableSheets = new TableSheets(sheets);
             agentState.avatarAddresses.Add(0, avatarAddress);
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -154,7 +154,7 @@ namespace Lib9c.Tests.Action.Scenario
             var tableSheets = new TableSheets(sheets);
             agentState.avatarAddresses.Add(0, avatarAddress);
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,

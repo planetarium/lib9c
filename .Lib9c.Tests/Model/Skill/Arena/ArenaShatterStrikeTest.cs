@@ -25,14 +25,14 @@ namespace Lib9c.Tests.Model.Skill.Arena
         public ArenaShatterStrikeTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _avatar1 = new AvatarState(
+            _avatar1 = AvatarState.Create(
                 default,
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 default
             );
-            _avatar2 = new AvatarState(
+            _avatar2 = AvatarState.Create(
                 default,
                 default,
                 0,

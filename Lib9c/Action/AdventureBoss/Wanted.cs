@@ -55,6 +55,7 @@ namespace Nekoyume.Action.AdventureBoss
             var latestSeason = states.GetLatestAdventureBossSeason();
 
             // Validation
+            // Only NCG allowed
             if (!Bounty.Currency.Equals(currency))
             {
                 throw new InvalidCurrencyException("");
@@ -72,6 +73,7 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InsufficientBalanceException($"{Bounty}", context.Signer, balance);
             }
 
+            // Ignore invalid seasons including duplication and too future
             if (Season <= 0 ||
                 Season > latestSeason.Season + 1 || Season < latestSeason.Season ||
                 (Season == latestSeason.Season &&
@@ -90,6 +92,7 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new InvalidAddressException();
             }
 
+            // Min. required staking level exists to add bounty
             var requiredStakingLevel =
                 states.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
             var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
@@ -114,8 +117,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             BountyBoard bountyBoard;
             // Create new season if required
-            if (latestSeason.Season == 0 ||
-                latestSeason.NextStartBlockIndex <= context.BlockIndex)
+            if (latestSeason.Season == 0 || latestSeason.NextStartBlockIndex <= context.BlockIndex)
             {
                 var seasonInfo = new SeasonInfo(Season, context.BlockIndex,
                     gameConfig.AdventureBossActiveInterval,
@@ -126,10 +128,19 @@ namespace Nekoyume.Action.AdventureBoss
 
                 // Set season info: boss and reward
                 var random = context.GetRandom();
+
+                // latestSeason is last season. Check latest-1 season to get second last season
+                var prevSeason = new SeasonInfo(0, 0, 0, 0) { BossId = 0 };
+                if (latestSeason.Season > 1)
+                {
+                    prevSeason = states.GetSeasonInfo(latestSeason.Season - 1);
+                }
+
                 var adventureBossSheet = states.GetSheet<AdventureBossSheet>();
-                var boss = adventureBossSheet.OrderedList[
-                    random.Next(0, adventureBossSheet.Values.Count)
-                ];
+                var candidate = adventureBossSheet.OrderedList.Where(
+                    row => row.BossId != latestSeason.BossId && row.BossId != prevSeason.BossId
+                ).ToList();
+                var boss = candidate[random.Next(candidate.Count)];
                 seasonInfo.BossId = boss.BossId;
 
                 var wantedReward = states.GetSheet<AdventureBossWantedRewardSheet>()

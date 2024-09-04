@@ -143,7 +143,7 @@ namespace Lib9c.Tests.Action
                 )
             );
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 _agentAddress,
                 0,
@@ -244,7 +244,7 @@ namespace Lib9c.Tests.Action
 10512000,2
 600201,2
 ");
-            var avatarState = new AvatarState(default, default, 0L, _tableSheets.GetAvatarSheets(), default, "test");
+            var avatarState = AvatarState.Create(default, default, 0L, _tableSheets.GetAvatarSheets(), default, "test");
             CreateAvatar.AddItem(itemSheet, createAvatarItemSheet, avatarState, new TestRandom());
             foreach (var row in createAvatarItemSheet.Values)
             {
@@ -269,7 +269,7 @@ RUNE_GOLDENLEAF,200000,Avatar
 ");
             var avatarAddress = new PrivateKey().Address;
             var agentAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(avatarAddress, agentAddress, 0L, _tableSheets.GetAvatarSheets(), default, "test");
+            var avatarState = AvatarState.Create(avatarAddress, agentAddress, 0L, _tableSheets.GetAvatarSheets(), default, "test");
             var nextState = CreateAvatar.MintAsset(createAvatarFavSheet, avatarState, new World(MockUtil.MockModernWorldState), new ActionContext());
             foreach (var row in createAvatarFavSheet.Values)
             {

@@ -57,18 +57,17 @@ namespace Lib9c.Tests.Action
             var rankingMapAddress = new PrivateKey().Address;
             var agentState = new AgentState(_signer);
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _signer,
                 0,
                 tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInRankingBoard),
-            };
+                rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
+
             agentState.avatarAddresses[0] = _avatarAddress;
             avatarState.level = GameConfig.RequireClearedStageLevel.ActionsInRankingBoard;
 
@@ -76,18 +75,17 @@ namespace Lib9c.Tests.Action
             _avatar2Address = _signer2.Derive("avatar");
             var agent2State = new AgentState(_signer2);
 
-            var avatar2State = new AvatarState(
+            var avatar2State = AvatarState.Create(
                 _avatar2Address,
                 _signer2,
                 0,
                 tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    tableSheets.WorldSheet,
-                    1),
-            };
+                rankingMapAddress);
+            avatar2State.worldInformation = new WorldInformation(
+                0,
+                tableSheets.WorldSheet,
+                1);
+
             agent2State.avatarAddresses[0] = _avatar2Address;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319

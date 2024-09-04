@@ -26,8 +26,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
     public class CustomEquipmentCraftTest
     {
-        private const int DrawingItemId = 600401;
-        private const int DrawingToolItemId = 600402;
+        private const int ScrollItemId = 600401;
+        private const int CircleItemId = 600402;
 
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 },
             };
 
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress, _agentAddress, 0, _tableSheets.GetAvatarSheets(), default
             );
 #pragma warning disable CS0618
@@ -115,7 +115,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 0, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false, ElementalType.Wind, 10, null, 8,
             };
 
             // Move to next relationship
@@ -172,7 +172,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     new () { RecipeId = 1, SlotIndex = 2, IconId = 10113000, },
                     new () { RecipeId = 1, SlotIndex = 3, IconId = 0, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false, ElementalType.Fire, 10, null, 1,
             };
         }
 
@@ -228,7 +228,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             bool slotOccupied,
             ElementalType expectedElementalType,
             long additionalBlock,
-            Type exc
+            Type exc,
+            int seed = 0
         )
         {
             const long currentBlockIndex = 2L;
@@ -238,7 +239,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             state = state.SetRelationship(_avatarAddress, initialRelationship);
 
             var gameConfig = state.GetGameConfigState();
-            var materialList = new List<int> { DrawingItemId, DrawingToolItemId };
+            var materialList = new List<int> { ScrollItemId, CircleItemId };
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
@@ -250,27 +251,27 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     var recipeRow =
                         _tableSheets.CustomEquipmentCraftRecipeSheet[craftData.RecipeId];
-                    var drawingRow = materialSheet[DrawingItemId];
-                    var drawing = ItemFactory.CreateMaterial(drawingRow);
-                    var drawingAmount = (int)Math.Floor(
-                        recipeRow.DrawingAmount
+                    var scrollRow = materialSheet[ScrollItemId];
+                    var scroll = ItemFactory.CreateMaterial(scrollRow);
+                    var scrollAmount = (int)Math.Floor(
+                        recipeRow.ScrollAmount
                         * relationshipRow.CostMultiplier
                         / 10000m
                     );
-                    _avatarState.inventory.AddItem(drawing, drawingAmount);
+                    _avatarState.inventory.AddItem(scroll, scrollAmount);
 
-                    var drawingToolRow = materialSheet[DrawingToolItemId];
-                    var drawingTool = ItemFactory.CreateMaterial(drawingToolRow);
-                    var drawingToolAmount = (decimal)recipeRow.DrawingToolAmount
-                                            * relationshipRow.CostMultiplier
-                                            / 10000m;
+                    var circleRow = materialSheet[CircleItemId];
+                    var circle = ItemFactory.CreateMaterial(circleRow);
+                    var circleAmount = (decimal)recipeRow.CircleAmount
+                                       * relationshipRow.CostMultiplier
+                                       / 10000m;
                     if (craftData.IconId != 0)
                     {
-                        drawingToolAmount *=
+                        circleAmount *=
                             gameConfig.CustomEquipmentCraftIconCostMultiplier / 10000m;
                     }
 
-                    _avatarState.inventory.AddItem(drawingTool, (int)Math.Floor(drawingToolAmount));
+                    _avatarState.inventory.AddItem(circle, (int)Math.Floor(circleAmount));
 
                     var costRow = _tableSheets.CustomEquipmentCraftCostSheet.Values
                         .FirstOrDefault(row => row.Relationship == initialRelationship);
@@ -330,7 +331,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     PreviousState = state,
                     BlockIndex = currentBlockIndex,
                     Signer = _agentAddress,
-                    RandomSeed = _random.Seed,
+                    RandomSeed = seed,
                 }));
             }
             else
@@ -340,7 +341,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     PreviousState = state,
                     BlockIndex = currentBlockIndex,
                     Signer = _agentAddress,
-                    RandomSeed = _random.Seed,
+                    RandomSeed = seed,
                 });
 
                 // Test
@@ -363,7 +364,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 var iconIdList = inventory.Equipments.Select(e => e.IconId).ToList();
                 foreach (var craftData in craftList)
                 {
-                    var slotState = resultState.GetAllCombinationSlotState(_avatarAddress).GetSlot(0);
+                    var slotState = resultState.GetAllCombinationSlotState(_avatarAddress)
+                        .GetSlot(craftData.SlotIndex);
                     Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
 
                     var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values
@@ -372,9 +374,17 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList!
                             .First(row => row.Relationship >= initialRelationship)
                             .GetItemId(itemSubType);
-                    var equipment = inventory.Equipments.First(e => e.Id == expectedEquipmentId);
+                    var equipment = inventory.Equipments.First(e => e.ItemId == slotState.Result.itemUsable.ItemId);
+                    Assert.Equal(expectedEquipmentId, equipment.Id);
+                    Assert.True(equipment.ByCustomCraft);
 
-                    if (craftData.IconId != 0)
+                    if (craftData.IconId == 0)
+                    {
+                        // Craft with random
+                        Assert.True(equipment.CraftWithRandom);
+                        Assert.True(equipment.HasRandomOnlyIcon);
+                    }
+                    else
                     {
                         Assert.Contains(craftData.IconId, iconIdList);
                     }

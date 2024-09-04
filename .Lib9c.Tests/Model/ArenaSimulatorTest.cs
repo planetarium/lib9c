@@ -37,7 +37,7 @@ namespace Lib9c.Tests
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _random = new TestRandom();
 
-            _avatarState1 = new AvatarState(
+            _avatarState1 = AvatarState.Create(
                 default,
                 default,
                 0,
@@ -45,7 +45,7 @@ namespace Lib9c.Tests
                 default
             );
 
-            _avatarState2 = new AvatarState(
+            _avatarState2 = AvatarState.Create(
                 default,
                 default,
                 0,

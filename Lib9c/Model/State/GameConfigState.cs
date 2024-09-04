@@ -19,7 +19,6 @@ namespace Nekoyume.Model.State
         public int DailyRewardInterval { get; private set; }
         public int DailyArenaInterval { get; private set; }
         public int WeeklyArenaInterval { get; private set; }
-        public int RequiredAppraiseBlock { get; private set; }
         public int BattleArenaInterval { get; private set; }
         public int RuneStatSlotUnlockCost { get; private set; }
         public int RuneSkillSlotUnlockCost { get; private set; }
@@ -97,10 +96,6 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text) "weekly_arena_interval", out var value5))
             {
                 WeeklyArenaInterval = value5.ToInteger();
-            }
-            if (serialized.TryGetValue((Text)"required_appraise_block", out var value6))
-            {
-                RequiredAppraiseBlock = value6.ToInteger();
             }
             if (serialized.TryGetValue((Text)"battle_arena_interval", out var value7))
             {
@@ -344,7 +339,6 @@ namespace Nekoyume.Model.State
                 [(Text) "daily_reward_interval"] = DailyRewardInterval.Serialize(),
                 [(Text) "daily_arena_interval"] = DailyArenaInterval.Serialize(),
                 [(Text) "weekly_arena_interval"] = WeeklyArenaInterval.Serialize(),
-                [(Text) "required_appraise_block"] = RequiredAppraiseBlock.Serialize(),
             };
             if (BattleArenaInterval > 0)
             {
@@ -653,9 +647,6 @@ namespace Nekoyume.Model.State
                     break;
                 case "weekly_arena_interval":
                     WeeklyArenaInterval = TableExtensions.ParseInt(row.Value);
-                    break;
-                case "required_appraise_block":
-                    RequiredAppraiseBlock = TableExtensions.ParseInt(row.Value);
                     break;
                 case "battle_arena_interval":
                     BattleArenaInterval = TableExtensions.ParseInt(row.Value);

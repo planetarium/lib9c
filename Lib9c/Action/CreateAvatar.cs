@@ -297,7 +297,7 @@ namespace Nekoyume.Action
         {
             var state = ctx.PreviousState;
             var random = ctx.GetRandom();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 ctx.Signer,
                 ctx.BlockIndex,

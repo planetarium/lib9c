@@ -35,8 +35,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address AgentAddress = new PrivateKey().Address;
         private static readonly Address AvatarAddress = Addresses.GetAvatarAddress(AgentAddress, 0);
 
-        private static readonly AvatarState AvatarState = new (
-            AvatarAddress, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
+        private static readonly AvatarState AvatarState = AvatarState.Create(
+            AvatarAddress,
+            AgentAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
             name: "avatar1"
         );
@@ -44,8 +47,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address
             AvatarAddress2 = Addresses.GetAvatarAddress(AgentAddress, 1);
 
-        private static readonly AvatarState AvatarState2 = new (
-            AvatarAddress2, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
+        private static readonly AvatarState AvatarState2 = AvatarState.Create(
+            AvatarAddress2,
+            AgentAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
             name: "avatar2"
         );
@@ -505,6 +511,41 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 (InitialBalance - stakeAmount - 2 * gameConfig.AdventureBossMinBounty) * NCG,
                 state.GetBalance(AgentAddress, NCG)
             );
+        }
+
+        [Theory]
+        [InlineData(new int[] { 211000, 211001 }, new[] { 211002, 211003 })]
+        [InlineData(new int[] { 211002, 211003 }, new[] { 211000, 211001 })]
+        [InlineData(new int[] { 211000, 211002 }, new[] { 211001, 211003 })]
+        [InlineData(new int[] { 211001, 211003 }, new[] { 211000, 211002 })]
+        public void PrevSeason(int[] prevBossId, int[] candidate)
+        {
+            var state = Stake(_initialState);
+            var gameConfig = state.GetGameConfigState();
+
+            for (var i = 0; i < prevBossId.Length; i++)
+            {
+                var season = new SeasonInfo(i + 1, 10 * i, 10 * i + 10, 10 * i + 10)
+                    { BossId = prevBossId[i] };
+                state = state.SetSeasonInfo(season);
+                state = state.SetLatestAdventureBossSeason(season);
+            }
+
+            var prevSeason = state.GetSeasonInfo(2);
+            state = new Wanted
+            {
+                Season = 3,
+                AvatarAddress = AvatarAddress,
+                Bounty = gameConfig.AdventureBossMinBounty * NCG,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = AgentAddress,
+                BlockIndex = prevSeason.NextStartBlockIndex,
+            });
+            var latestSeason = state.GetLatestAdventureBossSeason();
+
+            Assert.Contains(latestSeason.BossId, candidate);
         }
 
         private IWorld Stake(IWorld world, long amount = 0)

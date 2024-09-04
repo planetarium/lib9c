@@ -55,7 +55,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = agentAddress.Derive("avatar");
             _tableSheets = new TableSheets(sheets);
 
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Action
                 default
             );
 
-            _avatarState2 = new AvatarState(
+            _avatarState2 = AvatarState.Create(
                 new PrivateKey().Address,
                 agentAddress,
                 0,

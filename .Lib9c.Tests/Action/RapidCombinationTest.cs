@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
@@ -508,7 +508,7 @@ namespace Lib9c.Tests.Action
             var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
             allSlotState.AddSlot(addr);
             var slotState = allSlotState.GetSlot(0);
-            slotState.Update(result, 0, 0);
+            slotState.Update(result, 10, 50);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
