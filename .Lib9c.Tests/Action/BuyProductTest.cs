@@ -62,50 +62,47 @@ namespace Lib9c.Tests.Action
 
             var sellerAgentState = new AgentState(SellerAgentAddress);
             var rankingMapAddress = new PrivateKey().Address;
-            var sellerAvatarState = new AvatarState(
+            var sellerAvatarState = AvatarState.Create(
                 SellerAvatarAddress,
                 SellerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    TableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            sellerAvatarState.worldInformation = new WorldInformation(
+                0,
+                TableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             sellerAgentState.avatarAddresses[0] = SellerAvatarAddress;
 
             _sellerAgentAddress2 = new PrivateKey().Address;
             var agentState2 = new AgentState(_sellerAgentAddress2);
             _sellerAvatarAddress2 = new PrivateKey().Address;
-            var sellerAvatarState2 = new AvatarState(
+            var sellerAvatarState2 = AvatarState.Create(
                 _sellerAvatarAddress2,
                 _sellerAgentAddress2,
                 0,
                 TableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    TableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            sellerAvatarState2.worldInformation = new WorldInformation(
+                0,
+                TableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             agentState2.avatarAddresses[0] = _sellerAvatarAddress2;
 
             var buyerAgentState = new AgentState(BuyerAgentAddress);
-            _buyerAvatarState = new AvatarState(
+            _buyerAvatarState = AvatarState.Create(
                 BuyerAvatarAddress,
                 BuyerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    TableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            _buyerAvatarState.worldInformation = new WorldInformation(
+                0,
+                TableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             buyerAgentState.avatarAddresses[0] = BuyerAvatarAddress;
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");

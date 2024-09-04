@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,

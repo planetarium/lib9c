@@ -50,16 +50,15 @@ namespace Lib9c.Tests.Action
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             _rankingMapAddress = _avatarAddress.Derive("ranking_map");
             _currency = CrystalCalculator.CRYSTAL;
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 _rankingMapAddress
-            )
-            {
-                level = 100,
-            };
+            );
+            _avatarState.level = 100;
+
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _weeklyArenaState = new WeeklyArenaState(0);
@@ -95,17 +94,16 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var states = _initialState.MintAsset(context, _agentAddress, balance * _currency);
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), stageId),
-                level = 400,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), stageId);
+            avatarState.level = 400;
+
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, stageId);
             states = states.SetAvatarState(_avatarAddress, avatarState);
@@ -156,17 +154,16 @@ namespace Lib9c.Tests.Action
             var context = new ActionContext();
             var states = _initialState.MintAsset(context, _agentAddress, 100_000_000 * _currency);
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 1),
-                level = 400,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 1);
+            avatarState.level = 400;
+
             var gachaStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(_avatarAddress);
             var gachaState = new CrystalRandomSkillState(gachaStateAddress, 1);
             states = states.SetAvatarState(_avatarAddress, avatarState);

@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
 
             var agentState = new AgentState(_agentAddress);
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,

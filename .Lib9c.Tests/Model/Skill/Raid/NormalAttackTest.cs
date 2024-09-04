@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
             const int seed = 10; // This seed fails to attack enemy with NormalAttack
 
             // With Focus buff
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,

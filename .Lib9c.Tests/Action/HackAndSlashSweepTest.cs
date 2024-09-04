@@ -50,16 +50,15 @@ namespace Lib9c.Tests.Action
             _avatarAddress = _agentAddress.Derive("avatar");
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             _rankingMapAddress = _avatarAddress.Derive("ranking_map");
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 _rankingMapAddress
-            )
-            {
-                level = 100,
-            };
+            );
+            _avatarState.level = 100;
+
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
 #pragma warning disable CS0618
@@ -230,16 +229,14 @@ namespace Lib9c.Tests.Action
         public void Execute_InvalidWorldException(int worldId, int stageId, bool unlockedIdsExist)
         {
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 10000001),
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 10000001);
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
@@ -272,16 +269,14 @@ namespace Lib9c.Tests.Action
         public void Execute_UsageLimitExceedException()
         {
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
@@ -308,17 +303,15 @@ namespace Lib9c.Tests.Action
         public void Execute_NotEnoughMaterialException(int useApStoneCount, int holdingApStoneCount)
         {
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 400,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 400;
 
             var row = _tableSheets.MaterialItemSheet.Values.First(r =>
                 r.ItemSubType == ItemSubType.ApStone);
@@ -368,17 +361,15 @@ namespace Lib9c.Tests.Action
         public void Execute_NotEnoughActionPointException()
         {
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 400,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 400;
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
@@ -424,17 +415,15 @@ namespace Lib9c.Tests.Action
         public void Execute_PlayCountIsZeroException()
         {
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 400,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 400;
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
@@ -480,17 +469,15 @@ namespace Lib9c.Tests.Action
         public void Execute_NotEnoughCombatPointException()
         {
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 1,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 1;
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
@@ -543,17 +530,16 @@ namespace Lib9c.Tests.Action
             const int worldId = 1;
             const int stageId = 1;
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 3,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 3;
+
             var itemRow = _tableSheets.MaterialItemSheet.Values.First(r =>
                 r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(itemRow);
@@ -620,17 +606,16 @@ namespace Lib9c.Tests.Action
             const int worldId = 1;
             const int stageId = 1;
             var gameConfigState = _initialState.GetGameConfigState();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 3,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 3;
+
             var itemRow = _tableSheets.MaterialItemSheet.Values.First(r =>
                 r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(itemRow);
@@ -713,17 +698,15 @@ namespace Lib9c.Tests.Action
         [InlineData(int.MinValue + 1, 0)]
         public void Execute_ArgumentOutOfRangeException(int ap, int apPotion)
         {
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _initialState.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation =
-                    new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25),
-                level = 400,
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
+            avatarState.level = 400;
 
             IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);

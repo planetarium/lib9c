@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             Assert.True(_tableSheets.SkillSheet.TryGetValue(100000, out var skillRow));
             var normalAttack = new NormalAttack(skillRow, 100, 100, default, StatType.NONE);
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             // Set chance to 0 to minimize attack success probability
             var normalAttack = new NormalAttack(skillRow, 100, 0, default, StatType.NONE);
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,
@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             Assert.Equal(0, player.AttackCount);
 
             // With Focus buff
-            avatarState = new AvatarState(
+            avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,

@@ -35,8 +35,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address AgentAddress = new PrivateKey().Address;
         private static readonly Address AvatarAddress = Addresses.GetAvatarAddress(AgentAddress, 0);
 
-        private static readonly AvatarState AvatarState = new (
-            AvatarAddress, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
+        private static readonly AvatarState AvatarState = AvatarState.Create(
+            AvatarAddress,
+            AgentAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
             name: "avatar1"
         );
@@ -44,8 +47,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address
             AvatarAddress2 = Addresses.GetAvatarAddress(AgentAddress, 1);
 
-        private static readonly AvatarState AvatarState2 = new (
-            AvatarAddress2, AgentAddress, 0L, TableSheets.GetAvatarSheets(),
+        private static readonly AvatarState AvatarState2 = AvatarState.Create(
+            AvatarAddress2,
+            AgentAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
             name: "avatar2"
         );

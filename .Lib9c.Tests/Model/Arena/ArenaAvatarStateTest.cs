@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Model.Arena
         private AvatarState GetNewAvatarState(Address avatarAddress, Address agentAddress)
         {
             var rankingState = new RankingState1();
-            return new AvatarState(
+            return AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,

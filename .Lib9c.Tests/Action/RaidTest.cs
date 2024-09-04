@@ -149,7 +149,7 @@ namespace Lib9c.Tests.Action
             }
 
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
@@ -452,7 +452,7 @@ namespace Lib9c.Tests.Action
             }
 
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
@@ -606,7 +606,7 @@ namespace Lib9c.Tests.Action
             }
 
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,

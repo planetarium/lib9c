@@ -55,7 +55,7 @@ namespace Lib9c.Tests.Action
             var gameConfigState = new GameConfigState();
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 1,
