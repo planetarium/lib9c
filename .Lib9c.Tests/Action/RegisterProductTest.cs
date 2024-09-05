@@ -41,18 +41,17 @@ namespace Lib9c.Tests.Action
             var rankingMapAddress = new PrivateKey().Address;
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _gameConfigState = new GameConfigState((Text)_tableSheets.GameConfigSheet.Serialize());
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 AvatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            _avatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             agentState.avatarAddresses[0] = AvatarAddress;
 
             _initialState = new World(MockUtil.MockModernWorldState)

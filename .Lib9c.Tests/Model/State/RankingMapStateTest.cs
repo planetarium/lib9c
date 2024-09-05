@@ -27,17 +27,16 @@ namespace Lib9c.Tests.Model.State
 
             for (var i = 0; i < 10; i++)
             {
-                var avatarState = new AvatarState(
+                var avatarState = AvatarState.Create(
                     _agentAddress.Derive(i.ToString()),
                     _agentAddress,
                     0,
                     _tableSheets.GetAvatarSheets(),
                     _rankingMapAddress,
                     "test"
-                )
-                {
-                    exp = 10 - i,
-                };
+                );
+                avatarState.exp = 10 - i;
+
                 state.Update(avatarState);
             }
 
@@ -54,7 +53,7 @@ namespace Lib9c.Tests.Model.State
         public void Serialize()
         {
             var avatarAddress = _agentAddress.Derive("avatar");
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 _agentAddress,
                 0,
@@ -75,7 +74,7 @@ namespace Lib9c.Tests.Model.State
         public void SerializeEquals()
         {
             var avatarAddress = _agentAddress.Derive("avatar");
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 _agentAddress,
                 0,
@@ -85,7 +84,7 @@ namespace Lib9c.Tests.Model.State
             );
 
             var avatarAddress2 = _agentAddress.Derive("avatar2");
-            var avatarState2 = new AvatarState(
+            var avatarState2 = AvatarState.Create(
                 avatarAddress2,
                 _agentAddress,
                 0,
@@ -110,7 +109,7 @@ namespace Lib9c.Tests.Model.State
         {
             var avatarAddress = _agentAddress.Derive("avatar");
             var rankingMapAddress = avatarAddress.Derive("ranking_map");
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 _agentAddress,
                 0,

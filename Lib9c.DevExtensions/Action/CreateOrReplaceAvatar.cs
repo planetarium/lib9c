@@ -414,20 +414,18 @@ namespace Lib9c.DevExtensions.Action
                 });
 
             // Set AvatarState.
-            var avatar = new AvatarState(
+            var avatar = AvatarState.Create(
                 avatarAddr,
                 agentAddr,
                 blockIndex,
                 sheets.GetAvatarSheets(),
                 default,
-                Name)
-            {
-                level = Level,
-                hair = Hair,
-                lens = Lens,
-                ear = Ear,
-                tail = Tail,
-            };
+                Name);
+            avatar.level = Level;
+            avatar.hair = Hair;
+            avatar.lens = Lens;
+            avatar.ear = Ear;
+            avatar.tail = Tail;
             // ~Set AvatarState.
 
             // Set WorldInformation.

@@ -39,20 +39,18 @@ namespace Lib9c.DevExtensions
             GameConfigState gameConfigState,
             Address rankingMapAddress)
         {
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 blockIndex,
                 avatarSheets,
                 rankingMapAddress,
                 name != string.Empty ? name : "testId"
-            )
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    worldSheet,
-                    0),
-            };
+            );
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                worldSheet,
+                0);
 
             return avatarState;
         }

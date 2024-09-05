@@ -38,16 +38,15 @@ namespace Lib9c.Tests.Action
 
             _avatarAddress = _agentAddress.Derive("avatar");
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 default
-            )
-            {
-                level = 100,
-            };
+            );
+            avatarState.level = 100;
+
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = new World(MockUtil.MockModernWorldState)

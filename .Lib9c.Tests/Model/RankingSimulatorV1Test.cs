@@ -36,16 +36,15 @@ namespace Lib9c.Tests.Model
             var rewardSheet = new WeeklyArenaRewardSheet();
             rewardSheet.Set($"id,item_id,ratio,min,max,required_level\n1,302000,0.1,1,1,{requiredLevel}");
             _tableSheets.WeeklyArenaRewardSheet = rewardSheet;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 default,
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 default
-            )
-            {
-                level = level,
-            };
+            );
+            avatarState.level = level;
+
             avatarState.worldInformation.ClearStage(
                 1,
                 GameConfig.RequireClearedStageLevel.ActionsInRankingBoard,
@@ -78,7 +77,7 @@ namespace Lib9c.Tests.Model
         [InlineData(1900, 6)]
         public void SimulateRankingScore(int score, int expected)
         {
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 default,
                 default,
                 0,
@@ -115,7 +114,7 @@ namespace Lib9c.Tests.Model
         [Fact]
         public void ConstructorWithCostume()
         {
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 default,
                 default,
                 0,
@@ -175,15 +174,14 @@ namespace Lib9c.Tests.Model
         public void CheckToReceiveAllRewardItems(int level, int simulationCount)
         {
             _tableSheets.WeeklyArenaRewardSheet = _tableSheets.WeeklyArenaRewardSheet;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 default,
                 default,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                default)
-            {
-                level = level,
-            };
+                default);
+            avatarState.level = level;
+
             avatarState.worldInformation = new WorldInformation(
                 0,
                 _tableSheets.WorldSheet,

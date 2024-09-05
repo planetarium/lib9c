@@ -65,16 +65,15 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         {
             Assert.True(_tableSheets.SkillSheet.TryGetValue(skillId, out var skillRow));
             var twinAttack = new DoubleAttack(skillRow, 100, 100, default, StatType.NONE);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 new PrivateKey().Address
-            )
-            {
-                level = level,
-            };
+            );
+            avatarState.level = level;
+
             var worldRow = _tableSheets.WorldSheet.First;
             Assert.NotNull(worldRow);
 

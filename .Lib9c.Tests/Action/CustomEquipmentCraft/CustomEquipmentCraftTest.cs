@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 },
             };
 
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress, _agentAddress, 0, _tableSheets.GetAvatarSheets(), default
             );
 #pragma warning disable CS0618
@@ -115,7 +115,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 0, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false, ElementalType.Wind, 10, null, 8,
             };
 
             // Move to next relationship
@@ -172,7 +172,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     new () { RecipeId = 1, SlotIndex = 2, IconId = 10113000, },
                     new () { RecipeId = 1, SlotIndex = 3, IconId = 0, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false, ElementalType.Fire, 10, null, 1,
             };
         }
 
@@ -228,7 +228,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             bool slotOccupied,
             ElementalType expectedElementalType,
             long additionalBlock,
-            Type exc
+            Type exc,
+            int seed = 0
         )
         {
             const long currentBlockIndex = 2L;
@@ -262,8 +263,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     var circleRow = materialSheet[CircleItemId];
                     var circle = ItemFactory.CreateMaterial(circleRow);
                     var circleAmount = (decimal)recipeRow.CircleAmount
-                                            * relationshipRow.CostMultiplier
-                                            / 10000m;
+                                       * relationshipRow.CostMultiplier
+                                       / 10000m;
                     if (craftData.IconId != 0)
                     {
                         circleAmount *=
@@ -330,7 +331,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     PreviousState = state,
                     BlockIndex = currentBlockIndex,
                     Signer = _agentAddress,
-                    RandomSeed = _random.Seed,
+                    RandomSeed = seed,
                 }));
             }
             else
@@ -340,7 +341,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     PreviousState = state,
                     BlockIndex = currentBlockIndex,
                     Signer = _agentAddress,
-                    RandomSeed = _random.Seed,
+                    RandomSeed = seed,
                 });
 
                 // Test
@@ -363,7 +364,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 var iconIdList = inventory.Equipments.Select(e => e.IconId).ToList();
                 foreach (var craftData in craftList)
                 {
-                    var slotState = resultState.GetAllCombinationSlotState(_avatarAddress).GetSlot(0);
+                    var slotState = resultState.GetAllCombinationSlotState(_avatarAddress)
+                        .GetSlot(craftData.SlotIndex);
                     Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
 
                     var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values
@@ -372,9 +374,17 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList!
                             .First(row => row.Relationship >= initialRelationship)
                             .GetItemId(itemSubType);
-                    var equipment = inventory.Equipments.First(e => e.Id == expectedEquipmentId);
+                    var equipment = inventory.Equipments.First(e => e.ItemId == slotState.Result.itemUsable.ItemId);
+                    Assert.Equal(expectedEquipmentId, equipment.Id);
+                    Assert.True(equipment.ByCustomCraft);
 
-                    if (craftData.IconId != 0)
+                    if (craftData.IconId == 0)
+                    {
+                        // Craft with random
+                        Assert.True(equipment.CraftWithRandom);
+                        Assert.True(equipment.HasRandomOnlyIcon);
+                    }
+                    else
                     {
                         Assert.Contains(craftData.IconId, iconIdList);
                     }

@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Model.Order
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             _currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 Addresses.Blacksmith,
                 Addresses.Admin,
                 0,
@@ -636,7 +636,7 @@ namespace Lib9c.Tests.Model.Order
                 order.Sell2(_avatarState);
             }
 
-            var buyer = new AvatarState(
+            var buyer = AvatarState.Create(
                 Addresses.Blacksmith,
                 Addresses.Admin,
                 0,
@@ -684,7 +684,7 @@ namespace Lib9c.Tests.Model.Order
                 order.Sell(_avatarState);
             }
 
-            var buyer = new AvatarState(
+            var buyer = AvatarState.Create(
                 Addresses.Blacksmith,
                 Addresses.Admin,
                 0,

@@ -116,7 +116,8 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
                 if (allSlotState is null)
                 {
-                    throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
+                    throw new FailedLoadStateException(
+                        $"Aborted as the allSlotState was failed to load.");
                 }
 
                 // Validate SlotIndex
@@ -206,12 +207,17 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 var guid = random.GenerateRandomGuid();
                 var equipment =
                     (Equipment)ItemFactory.CreateItemUsable(equipmentRow, guid, endBlockIndex);
+                equipment.ByCustomCraft = true;
 
                 // Set Icon
-                equipment.IconId = ItemFactory.SelectIconId(
+                equipment.CraftWithRandom = craftData.IconId == RandomIconId;
+
+                var (iconId, isRandomOnlyIcon) = ItemFactory.SelectIconId(
                     craftData.IconId, craftData.IconId == RandomIconId, equipmentRow, relationship,
                     sheets.GetSheet<CustomEquipmentCraftIconSheet>(), random
                 );
+                equipment.IconId = iconId;
+                equipment.HasRandomOnlyIcon = isRandomOnlyIcon;
 
                 // Set Elemental Type
                 var elementalList = (ElementalType[])Enum.GetValues(typeof(ElementalType));
@@ -283,8 +289,8 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
             // Add Relationship
             return states
-                    .SetAvatarState(AvatarAddress, avatarState)
-                    .SetRelationship(AvatarAddress, relationship);
+                .SetAvatarState(AvatarAddress, avatarState)
+                .SetRelationship(AvatarAddress, relationship);
         }
     }
 }

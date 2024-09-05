@@ -161,18 +161,17 @@ namespace Lib9c.Tests.Action.Scenario
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    _tableSheets.WorldSheet,
-                    clearStageId),
-            };
+                _rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                _tableSheets.WorldSheet,
+                clearStageId);
+
             agentState.avatarAddresses.Add(0, avatarAddress);
             _state = _state
                 .SetAgentState(agentAddress, agentState)

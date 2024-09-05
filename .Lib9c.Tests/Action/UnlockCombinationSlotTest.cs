@@ -48,7 +48,7 @@ public class UnlockCombinationSlotTest
             state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
 
         var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
-        var avatarState = new AvatarState(
+        var avatarState = AvatarState.Create(
             avatarAddress,
             agentAddress,
             0,
