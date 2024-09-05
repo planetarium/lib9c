@@ -1,4 +1,8 @@
-id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,level3,skill3,item_id4,count4,level4,skill4,item_id5,count5,level5,skill5,item_id6,count6,level6,skill6,stat_type1,modify_type1,modify_value1,stat_type2,modify_type2,modify_value2,stat_type3,modify_type3,modify_value3
+namespace Lib9c.Tests.Fixtures.TableCSV;
+
+public static class CollectionSheetFixture
+{
+    public const string Default = @"id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,level3,skill3,item_id4,count4,level4,skill4,item_id5,count5,level5,skill5,item_id6,count6,level6,skill6,stat_type1,modify_type1,modify_value1,stat_type2,modify_type2,modify_value2,stat_type3,modify_type3,modify_value3
 1,10110000,1,0,TRUE,10211000,1,0,TRUE,10510000,1,0,TRUE,10120000,1,0,TRUE,10222000,1,0,TRUE,,,,,HP,Add,310,ATK,Add,110,DEF,Add,22
 2,10110000,1,0,TRUE,10114000,1,0,TRUE,,,,,,,,,,,,,,,,,ATK,Add,177,,,,,,
 3,10120000,1,0,TRUE,10124000,1,0,TRUE,,,,,,,,,,,,,,,,,ATK,Add,125,,,,,,
@@ -236,11 +240,11 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 235,10452001,1,7,TRUE,,,,,,,,,,,,,,,,,,,,,HIT,Percentage,3,,,,,,
 236,10453001,1,7,TRUE,,,,,,,,,,,,,,,,,,,,,HIT,Percentage,3,,,,,,
 237,10454001,1,7,TRUE,,,,,,,,,,,,,,,,,,,,,HIT,Percentage,3,,,,,,
-238,10150001,1,0,TRUE,10151001,1,0,TRUE,10152001,1,0,TRUE,10153001,1,0,TRUE,10154001,1,0,TRUE,,,,,ATK,Add,34260,,,,,,
-239,10250000,1,0,TRUE,10251000,1,0,TRUE,10252000,1,0,TRUE,10253000,1,0,TRUE,10254000,1,0,TRUE,,,,,HP,Add,381535,,,,,,
-240,10350002,1,0,TRUE,10351002,1,0,TRUE,10352002,1,0,TRUE,10353002,1,0,TRUE,10354002,1,0,TRUE,,,,,SPD,Add,121837,,,,,,
-241,10450002,1,0,TRUE,10451002,1,0,TRUE,10452002,1,0,TRUE,10453002,1,0,TRUE,10454002,1,0,TRUE,,,,,HIT,Add,86817,,,,,,
-242,10550001,1,0,TRUE,10551001,1,0,TRUE,10552001,1,0,TRUE,10553001,1,0,TRUE,10554001,1,0,TRUE,,,,,DEF,Add,21585,,,,,,
+238,10150001,1,0,TRUE,10151001,1,0,TRUE,10152001,1,0,TRUE,10153001,1,0,TRUE,10154001,1,0,TRUE,,,,,ATK,Add,1982,,,,,,
+239,10250000,1,0,TRUE,10251000,1,0,TRUE,10252000,1,0,TRUE,10253000,1,0,TRUE,10254000,1,0,TRUE,,,,,HP,Add,22076,,,,,,
+240,10350002,1,0,TRUE,10351002,1,0,TRUE,10352002,1,0,TRUE,10353002,1,0,TRUE,10354002,1,0,TRUE,,,,,SPD,Add,7049,,,,,,
+241,10450002,1,0,TRUE,10451002,1,0,TRUE,10452002,1,0,TRUE,10453002,1,0,TRUE,10454002,1,0,TRUE,,,,,HIT,Add,5023,,,,,,
+242,10550001,1,0,TRUE,10551001,1,0,TRUE,10552001,1,0,TRUE,10553001,1,0,TRUE,10554001,1,0,TRUE,,,,,DEF,Add,636,,,,,,
 243,10150001,1,2,TRUE,10151001,1,2,TRUE,10152001,1,2,TRUE,10153001,1,2,TRUE,10154001,1,2,TRUE,,,,,ATK,Percentage,1,,,,,,
 244,10250000,1,2,TRUE,10251000,1,2,TRUE,10252000,1,2,TRUE,10253000,1,2,TRUE,10254000,1,2,TRUE,,,,,HP,Percentage,1,,,,,,
 245,10350002,1,2,TRUE,10351002,1,2,TRUE,10352002,1,2,TRUE,10353002,1,2,TRUE,10354002,1,2,TRUE,,,,,SPD,Percentage,1,,,,,,
@@ -419,9 +423,6 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 10150,201038,100,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Add,1134,,,,,,
 10151,201039,100,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Add,1587,,,,,,
 10152,201040,100,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Add,6994,,,,,,
-10153,900110,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,909,DEF,Add,181,,,
-10154,900111,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,2248,DEF,Add,449,,,
-10155,900112,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,5514,DEF,Add,1102,,,
 100001,10620001,1,0,TRUE,,,,,,,,,,,,,,,,,,,,,HP,Add,70,ATK,Add,7,DEF,Add,4
 100002,10630001,1,0,TRUE,,,,,,,,,,,,,,,,,,,,,HP,Add,140,ATK,Add,42,DEF,Add,21
 100003,10640001,1,0,TRUE,,,,,,,,,,,,,,,,,,,,,HP,Add,2660,ATK,Add,490,DEF,Add,140
@@ -488,11 +489,6 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 200022,40100026,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,1067,HP,Add,26040,,,
 200023,40100028,1,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Add,578,DEF,Add,180,,,
 200024,40100029,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,575,DEF,Add,638,,,
-200025,40100022,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,8000,HIT,Add,4000,,,
-200026,40100027,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,1000,DEF,Add,1000,,,
-200027,40100030,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,20000,SPD,Add,5000,,,
-200028,40100012,1,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Add,9038,HP,Add,16946,,,
-200029,40100036,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,21453,DEF,Add,946,,,
 300001,49900011,1,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,381,,,,,,
 300002,49900013,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,9933,,,,,,
 300003,49900014,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,900,,,,,,
@@ -500,8 +496,6 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 300005,49900016,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,13968,,,,,,
 300006,49900017,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,404,DEF,Add,2086,,,
 300007,49900018,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Add,13111,SPD,Add,5969,,,
-300008,49900019,1,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Add,6998,ATK,Add,1173,,,
-300009,49900020,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,3130,HP,Add,10726,,,
 1000101,500000,10,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,309,,,,,,
 1000102,500000,100,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,588,,,,,,
 1000103,500000,300,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,1185,,,,,,
@@ -581,3 +575,5 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 1000177,600203,20,,FALSE,,,,,,,,,,,,,,,,,,,,,SPD,Percentage,4,,,,,,
 1000178,600203,20,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Percentage,4,,,,,,
 1000179,600203,20,,FALSE,,,,,,,,,,,,,,,,,,,,,HIT,Percentage,4,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,CDMG,Percentage,10,,,,,,";
+}

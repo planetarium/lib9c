@@ -4,6 +4,7 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Linq;
     using Lib9c.Tests.Action;
+    using Lib9c.Tests.Fixtures.TableCSV;
     using Libplanet.Action;
     using Libplanet.Crypto;
     using Nekoyume;
@@ -295,7 +296,8 @@ namespace Lib9c.Tests
             var stats = characterRow.ToStats(avatarState1.level);
             const int totalAtk = 141138;
             var baseAtk = stats.ATK;
-            var runeOptionSheet = _tableSheets.RuneOptionSheet;
+            var runeOptionSheet = new RuneOptionSheet();
+            runeOptionSheet.Set(RuneOptionSheetFixture.Default);
             var runeRow = runeOptionSheet[10003];
             var runes = new AllRuneState(10003, 89);
 
@@ -332,7 +334,7 @@ namespace Lib9c.Tests
             var simulator = new ArenaSimulator(random);
             var myDigest = new ArenaPlayerDigest(avatarState1, runes, runeSlotState);
             var enemyDigest = new ArenaPlayerDigest(avatarState2, runes, runeSlotState);
-            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets(runeOptionSheet);
             var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, modifiers, modifiers, _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet, true);
             var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
             Assert.All(spawns, spawn => Assert.Equal(finalAtk, spawn.Character.ATK));
