@@ -1254,6 +1254,12 @@ namespace Nekoyume.Model.State
             return items;
         }
 
+        /// <inheritdoc cref="IState.Serialize" />
+        public override IValue Serialize()
+        {
+            return SerializeList();
+        }
+
         public IValue SerializeList()
         {
             // Migrated when serialized
