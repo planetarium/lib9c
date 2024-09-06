@@ -27,7 +27,7 @@ namespace Nekoyume.Model.State
         public object Clone() =>
             MemberwiseClone();
 
-        public new IValue Serialize()
+        public override IValue Serialize()
         {
             // Add("gold", (Bencodex.Types.Integer) gold)처럼 호출하면 Bencodex.Types.Integer에 int/long으로의
             // implicit 연산자가 구현되어 있어서 아래 오버로드 중에 어느 쪽을 호출하는 것인지 모호하다고 컴파일 오류가 나버림.

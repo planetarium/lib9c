@@ -30,7 +30,7 @@ namespace Nekoyume.Model.State
                 kv => new ShopItem((Dictionary) kv.Value));
         }
 
-        public new IValue Serialize() =>
+        public override IValue Serialize() =>
 #pragma warning disable LAA1002
             new Dictionary(new Dictionary<IKey, IValue>
             {

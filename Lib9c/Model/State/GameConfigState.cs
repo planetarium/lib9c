@@ -330,7 +330,7 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public new IValue Serialize()
+        public override IValue Serialize()
         {
             var values = new Dictionary<IKey, IValue>
             {

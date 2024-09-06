@@ -28,6 +28,8 @@ namespace Nekoyume.Model.State
         {
         }
 
+        public abstract IValue Serialize();
+
         protected IValue SerializeBase() =>
             new Dictionary(new Dictionary<IKey, IValue>
             {

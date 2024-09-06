@@ -27,7 +27,7 @@ namespace Nekoyume.Model.State
             ValidUntil = serialized["valid_until"].ToLong();
         }
 
-        public new IValue Serialize()
+        public override IValue Serialize()
         {
             var values = new Dictionary<IKey, IValue>
             {

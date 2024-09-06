@@ -49,7 +49,7 @@ namespace Nekoyume.Model.State
             Accounts = Accounts.Remove(account);
         }
 
-        public new IValue Serialize() =>
+        public override IValue Serialize() =>
             ((Dictionary)base.SerializeBase()).SetItem(
                 "accounts",
                 Accounts.Select(a => a.Serialize()).Serialize()

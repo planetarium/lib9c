@@ -100,7 +100,7 @@ namespace Nekoyume.Model.State
             Products[shopItem.ProductId] = shopItem;
         }
 
-        public new IValue Serialize() =>
+        public override IValue Serialize() =>
 #pragma warning disable LAA1002
             new Dictionary(new Dictionary<IKey, IValue>
             {

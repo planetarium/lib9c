@@ -105,7 +105,7 @@ namespace Nekoyume.Model.State
                 .Add(AchievementsKey, Achievements.Serialize());
         }
 
-        public new IValue Serialize() =>
+        public override IValue Serialize() =>
             new Dictionary(SerializeImpl().Union((Dictionary)base.SerializeBase()));
 
         public IValue SerializeV2() =>

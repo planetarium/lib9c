@@ -26,7 +26,7 @@ namespace Nekoyume.Model.State
 
         public IImmutableList<string> Names { get; }
 
-        public new IValue Serialize()
+        public override IValue Serialize()
         {
             var values = new Dictionary<IKey, IValue>
             {
