@@ -39,7 +39,7 @@ namespace Nekoyume.Model.State
                         new KeyValuePair<IKey, IValue>(
                             (Binary) kv.Key.Serialize(),
                             kv.Value.Serialize()))),
-            }.Union((Dictionary) base.Serialize()));
+            }.Union((Dictionary) base.SerializeBase()));
 #pragma warning restore LAA1002
 
         #region Register

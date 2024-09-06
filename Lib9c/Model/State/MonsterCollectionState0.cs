@@ -183,11 +183,11 @@ namespace Nekoyume.Model.State
                         )
                     )
                 ),
-            }.Union((Dictionary) base.Serialize()));
+            }.Union((Dictionary) base.SerializeBase()));
 #pragma warning restore LAA1002
         }
 
-        public new IValue SerializeV2()
+        public IValue SerializeV2()
         {
 #pragma warning disable LAA1002
             return new Dictionary(new Dictionary<IKey, IValue>
@@ -195,7 +195,7 @@ namespace Nekoyume.Model.State
                 [(Text) LevelKey] = Level.Serialize(),
                 [(Text) StartedBlockIndexKey] = StartedBlockIndex.Serialize(),
                 [(Text) ReceivedBlockIndexKey] = ReceivedBlockIndex.Serialize(),
-            }.Union((Dictionary) base.SerializeV2()));
+            }.Union((Dictionary) base.SerializeV2Base()));
 #pragma warning restore LAA1002
         }
 

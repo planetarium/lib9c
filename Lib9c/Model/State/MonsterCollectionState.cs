@@ -126,7 +126,7 @@ namespace Nekoyume.Model.State
                 [(Text) LevelKey] = Level.Serialize(),
                 [(Text) StartedBlockIndexKey] = StartedBlockIndex.Serialize(),
                 [(Text) ReceivedBlockIndexKey] = ReceivedBlockIndex.Serialize(),
-            }.Union((Dictionary) base.SerializeV2()));
+            }.Union((Dictionary) base.SerializeV2Base()));
 #pragma warning restore LAA1002
         }
 

@@ -70,10 +70,10 @@ namespace Nekoyume.Model.State
             MonsterCollectionRound++;
         }
 
-        public new IValue SerializeList()
+        public IValue SerializeList()
         {
             return new List(
-                base.SerializeList(),
+                base.SerializeListBase(),
                 (Integer)CurrentVersion,
 #pragma warning disable LAA1002
                 new Dictionary(

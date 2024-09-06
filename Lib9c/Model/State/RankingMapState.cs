@@ -64,7 +64,7 @@ namespace Nekoyume.Model.State
                         kv.Value.Serialize()
                     )
                 ))
-            }.Union((Dictionary) base.Serialize()));
+            }.Union((Dictionary) base.SerializeBase()));
 #pragma warning restore LAA1002
         }
     }

@@ -33,7 +33,7 @@ namespace Nekoyume.Model.State
                 [(Text)nameof(Names)] = new List(Names.Select(n => (Text) n).Cast<IValue>()),
             };
 #pragma warning disable LAA1002
-            return new Dictionary(values.Union((Dictionary)base.Serialize()));
+            return new Dictionary(values.Union((Dictionary)base.SerializeBase()));
 #pragma warning restore LAA1002
         }
     }

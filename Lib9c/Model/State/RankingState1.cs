@@ -79,7 +79,7 @@ namespace Nekoyume.Model.State
         }
 
         public new IValue Serialize() => _serialized ??
-            ((Dictionary)base.Serialize()).Add(
+            ((Dictionary)base.SerializeBase()).Add(
                 "ranking_map",
 #pragma warning disable LAA1002
                 new Dictionary(RankingMap.Select(kv =>

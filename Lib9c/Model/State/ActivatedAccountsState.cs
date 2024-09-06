@@ -50,7 +50,7 @@ namespace Nekoyume.Model.State
         }
 
         public new IValue Serialize() =>
-            ((Dictionary)base.Serialize()).SetItem(
+            ((Dictionary)base.SerializeBase()).SetItem(
                 "accounts",
                 Accounts.Select(a => a.Serialize()).Serialize()
             );

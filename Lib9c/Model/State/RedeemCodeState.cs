@@ -79,7 +79,7 @@ namespace Nekoyume.Model.State
         }
 
         public new IValue Serialize() =>
-            ((Dictionary) base.Serialize())
+            ((Dictionary) base.SerializeBase())
 #pragma warning disable LAA1002
             .Add("map", new Dictionary(_map.Select(kv => new KeyValuePair<IKey, IValue>(
                 kv.Key,

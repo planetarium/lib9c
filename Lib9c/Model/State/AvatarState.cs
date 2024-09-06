@@ -1254,12 +1254,12 @@ namespace Nekoyume.Model.State
             return items;
         }
 
-        public new IValue SerializeList()
+        public IValue SerializeList()
         {
             // Migrated when serialized
             Version = CurrentVersion;
             return new List(
-                base.SerializeList(),
+                base.SerializeListBase(),
                 (Integer)Version,
                 (Text)name,
                 (Integer)characterId,

@@ -45,7 +45,7 @@ namespace Nekoyume.Model.State
                 [(Text)nameof(Interval)] = Interval.Serialize(),
                 [(Text)nameof(ValidUntil)] = ValidUntil.Serialize(),
             };
-            return new Dictionary(values.Union((Dictionary)base.Serialize()));
+            return new Dictionary(values.Union((Dictionary)base.SerializeBase()));
 #pragma warning restore LAA1002
         }
     }
