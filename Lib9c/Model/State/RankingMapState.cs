@@ -53,7 +53,7 @@ namespace Nekoyume.Model.State
                 : list;
         }
 
-        public override IValue Serialize()
+        public new IValue Serialize()
         {
 #pragma warning disable LAA1002
             return new Dictionary(new Dictionary<IKey, IValue>

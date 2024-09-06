@@ -70,7 +70,7 @@ namespace Nekoyume.Model.State
         {
         }
 
-        public override IValue Serialize() => ((Dictionary)base.Serialize())
+        public new IValue Serialize() => ((Dictionary)base.Serialize())
             .Add("resetIndex", ResetIndex.Serialize())
             .Add("ended", Ended.Serialize())
 #pragma warning disable LAA1002

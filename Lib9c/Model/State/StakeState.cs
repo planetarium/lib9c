@@ -105,10 +105,10 @@ namespace Nekoyume.Model.State
                 .Add(AchievementsKey, Achievements.Serialize());
         }
 
-        public override IValue Serialize() =>
+        public new IValue Serialize() =>
             new Dictionary(SerializeImpl().Union((Dictionary)base.Serialize()));
 
-        public override IValue SerializeV2() =>
+        public new IValue SerializeV2() =>
             new Dictionary(SerializeImpl().Union((Dictionary)base.SerializeV2()));
 
         public bool IsCancellable(long blockIndex) => blockIndex >= CancellableBlockIndex;

@@ -36,7 +36,7 @@ namespace Nekoyume.Model.State
             ValidUntil = serialized[nameof(ValidUntil)].ToLong();
         }
 
-        public override IValue Serialize()
+        public new IValue Serialize()
         {
 #pragma warning disable LAA1002
             var values = new Dictionary<IKey, IValue>

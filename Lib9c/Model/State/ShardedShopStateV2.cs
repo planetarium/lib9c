@@ -90,7 +90,7 @@ namespace Nekoyume.Model.State
                 .OrderBy(o => o.StartedBlockIndex).ToList();
         }
 
-        public override IValue Serialize() =>
+        public new IValue Serialize() =>
 #pragma warning disable LAA1002
             new Dictionary(new Dictionary<IKey, IValue>
             {

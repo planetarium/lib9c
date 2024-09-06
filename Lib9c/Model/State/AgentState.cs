@@ -70,17 +70,7 @@ namespace Nekoyume.Model.State
             MonsterCollectionRound++;
         }
 
-        public override IValue Serialize()
-        {
-            throw new NotSupportedException();
-        }
-
-        public override IValue SerializeV2()
-        {
-            throw new NotSupportedException();
-        }
-
-        public override IValue SerializeList()
+        public new IValue SerializeList()
         {
             return new List(
                 base.SerializeList(),

@@ -78,7 +78,7 @@ namespace Nekoyume.Model.State
             _map = rewardMap.ToDictionary(kv => (Binary)kv.Key.Format(true), kv => kv.Value);
         }
 
-        public override IValue Serialize() =>
+        public new IValue Serialize() =>
             ((Dictionary) base.Serialize())
 #pragma warning disable LAA1002
             .Add("map", new Dictionary(_map.Select(kv => new KeyValuePair<IKey, IValue>(

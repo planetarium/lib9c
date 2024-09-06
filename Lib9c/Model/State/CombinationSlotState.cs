@@ -34,7 +34,7 @@ namespace Nekoyume.Model.State
             get => Index < AvatarState.DefaultCombinationSlotCount || _isUnlocked;
             private set => _isUnlocked = value;
         }
-        
+
         private bool _isUnlocked;
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Nekoyume.Model.State
             return true;
         }
 
-        public override IValue Serialize()
+        public new IValue Serialize()
         {
             var values = new Dictionary<IKey, IValue>
             {

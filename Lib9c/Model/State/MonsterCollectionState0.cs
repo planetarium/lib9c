@@ -156,7 +156,7 @@ namespace Nekoyume.Model.State
             ReceivedBlockIndex = blockIndex;
         }
 
-        public override IValue Serialize()
+        public new IValue Serialize()
         {
 #pragma warning disable LAA1002
             return new Dictionary(new Dictionary<IKey, IValue>
@@ -187,7 +187,7 @@ namespace Nekoyume.Model.State
 #pragma warning restore LAA1002
         }
 
-        public override IValue SerializeV2()
+        public new IValue SerializeV2()
         {
 #pragma warning disable LAA1002
             return new Dictionary(new Dictionary<IKey, IValue>

@@ -11,7 +11,7 @@ namespace Nekoyume.Model.State
     public class CreditsState : State
     {
         public static readonly Address Address = Addresses.Credits;
-        
+
         public CreditsState(IEnumerable<string> names)
             : base(Addresses.Credits)
         {
@@ -26,7 +26,7 @@ namespace Nekoyume.Model.State
 
         public IImmutableList<string> Names { get; }
 
-        public override IValue Serialize()
+        public new IValue Serialize()
         {
             var values = new Dictionary<IKey, IValue>
             {

@@ -83,7 +83,7 @@ namespace Nekoyume.Model.State
             throw new RankingExceededException();
         }
 
-        public override IValue Serialize() => _serialized ??
+        public new IValue Serialize() => _serialized ??
             ((Dictionary)base.Serialize()).Add(
                 "ranking_map",
 #pragma warning disable LAA1002
