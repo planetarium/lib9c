@@ -122,7 +122,7 @@ namespace Lib9c.Tests.Action
                 1,
                 0);
             previousState = previousState
-                .SetLegacyState(monsterCollectionAddr, monsterCollectionState.SerializeV2());
+                .SetLegacyState(monsterCollectionAddr, monsterCollectionState.Serialize());
             Assert.Throws<MonsterCollectionExistingException>(() =>
                 Execute(
                     0,
