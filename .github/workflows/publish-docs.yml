@@ -31,18 +31,14 @@ jobs:
       - name: Dotnet Setup
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 6.x
+          dotnet-version: 6.0.400
 
       - run: dotnet restore
       - run: dotnet tool update -g docfx
       - run: docfx docs/docfx.json
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
-          path: 'docs/_site'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_site/
+          destination_dir: docs
