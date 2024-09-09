@@ -1,0 +1,66 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../",
+          "files": [
+            "Lib9c/Lib9c.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "api/index.md",
+          "api/**.yml"
+        ]
+      },
+      {
+        "files": [
+          "toc.yml",
+          "*.md",
+          "articles/**.md",
+          "articles/**/toc.yml"
+        ],
+        "exclude": [
+          "README.md"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "overwrite": [
+      {
+        "files": [
+          "apidoc/**.md"
+        ],
+        "exclude": [
+          "obj/**",
+          "_site/**"
+        ]
+      }
+    ],
+    "dest": "_site",
+    
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "Lib9c",
+      "_appTitle": "Lib9c",
+      "_enableSearch": true,
+      "pdf": true
+    }
+  }
+}
