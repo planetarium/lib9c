@@ -6,20 +6,13 @@ on:
       - main
       - add-docs # This branch is temporary.
 
-permissions:
-  actions: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   publish-docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,7 +27,8 @@ jobs:
       - run: dotnet tool update -g docfx
       - run: docfx docs/docfx.json
 
-      - uses: peaceiris/actions-gh-pages@v4
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_site/
