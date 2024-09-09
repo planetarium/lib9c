@@ -1,0 +1,35 @@
+name: publish docs
+
+on:
+  push:
+    branches:
+      - main
+      - add-docs # This branch is temporary.
+
+jobs:
+  publish-docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Dotnet Setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.0.400
+
+      - run: dotnet restore
+      - run: dotnet tool update -g docfx
+      - run: docfx docs/docfx.json
+
+      - name: deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_site/
+          destination_dir: docs
