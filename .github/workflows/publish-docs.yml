@@ -1,12 +1,11 @@
-# Your GitHub workflow file under .github/workflows/
-# Trigger the action on push to main
+name: publish docs
+
 on:
   push:
     branches:
       - main
       - add-docs # This branch is temporary.
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   actions: read
   pages: write
@@ -32,6 +31,7 @@ jobs:
         with:
           dotnet-version: 6.x
 
+      - run: dotnet restore
       - run: dotnet tool update -g docfx
       - run: docfx docs/docfx.json
 
