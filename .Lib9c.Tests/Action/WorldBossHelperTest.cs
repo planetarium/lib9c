@@ -1,5 +1,7 @@
 namespace Lib9c.Tests.Action
 {
+    using System;
+    using System.Linq;
     using Libplanet.Types.Assets;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
@@ -8,6 +10,11 @@ namespace Lib9c.Tests.Action
 
     public class WorldBossHelperTest
     {
+        private readonly Currency _crystalCurrency = CrystalCalculator.CRYSTAL;
+
+        private readonly TableSheets _tableSheets =
+            new TableSheets(TableSheetsImporter.ImportSheets());
+
         [Theory]
         [InlineData(10, 10, 0, 10)]
         [InlineData(10, 10, 1, 20)]
@@ -55,6 +62,46 @@ namespace Lib9c.Tests.Action
         public void CanRefillTicket(long blockIndex, long refilledBlockIndex, long startedBlockIndex, int refillInterval, bool expected)
         {
             Assert.Equal(expected, WorldBossHelper.CanRefillTicket(blockIndex, refilledBlockIndex, startedBlockIndex, refillInterval));
+        }
+
+        [Theory]
+        [InlineData(typeof(WorldBossRankRewardSheet))]
+        [InlineData(typeof(WorldBossKillRewardSheet))]
+        public void CalculateReward(Type sheetType)
+        {
+            var random = new TestRandom();
+            IWorldBossRewardSheet sheet;
+            if (sheetType == typeof(WorldBossRankRewardSheet))
+            {
+                sheet = _tableSheets.WorldBossRankRewardSheet;
+            }
+            else
+            {
+                sheet = _tableSheets.WorldBossKillRewardSheet;
+            }
+
+            foreach (var rewardRow in sheet.OrderedRows)
+            {
+                var bossId = rewardRow.BossId;
+                var rank = rewardRow.Rank;
+                var fungibleAssetValues = WorldBossHelper.CalculateReward(
+                    rank,
+                    bossId,
+                    _tableSheets.RuneWeightSheet,
+                    sheet,
+                    _tableSheets.RuneSheet,
+                    random
+                );
+                var expectedRune = rewardRow.Rune;
+                var expectedCrystal = rewardRow.Crystal * _crystalCurrency;
+                var crystal = fungibleAssetValues.First(f => f.Currency.Equals(_crystalCurrency));
+                var rune = fungibleAssetValues
+                    .Where(f => !f.Currency.Equals(_crystalCurrency))
+                    .Sum(r => (int)r.MajorUnit);
+
+                Assert.Equal(expectedCrystal, crystal);
+                Assert.Equal(expectedRune, rune);
+            }
         }
     }
 }

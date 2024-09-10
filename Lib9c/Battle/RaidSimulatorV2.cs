@@ -179,7 +179,7 @@ namespace Nekoyume.Battle
             }
 
             var rank =  WorldBossHelper.CalculateRank(_currentBossRow, DamageDealt);
-            AssetReward = RuneHelper.CalculateReward(
+            AssetReward = WorldBossHelper.CalculateReward(
                 rank,
                 BossId,
                 _runeWeightSheet,

@@ -283,7 +283,7 @@ namespace Lib9c.Tests.Action
                     Assert.True(state.TryGetLegacyState(bossAddress, out List prevRawBoss));
                     var prevBossState = new WorldBossState(prevRawBoss);
                     int rank = WorldBossHelper.CalculateRank(bossRow, raiderStateExist ? 1_000 : 0);
-                    var rewards = RuneHelper.CalculateReward(
+                    var rewards = WorldBossHelper.CalculateReward(
                         rank,
                         prevBossState.Id,
                         _tableSheets.RuneWeightSheet,
@@ -520,7 +520,7 @@ namespace Lib9c.Tests.Action
                 rewardMap[reward.Currency] = reward;
             }
 
-            List<FungibleAssetValue> killRewards = RuneHelper.CalculateReward(
+            List<FungibleAssetValue> killRewards = WorldBossHelper.CalculateReward(
                 0,
                 bossState.Id,
                 _tableSheets.RuneWeightSheet,

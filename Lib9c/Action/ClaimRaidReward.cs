@@ -70,7 +70,7 @@ namespace Nekoyume.Action
             {
                 for (int i = raiderState.LatestRewardRank; i < rank; i++)
                 {
-                    List<FungibleAssetValue> rewards = RuneHelper.CalculateReward(
+                    List<FungibleAssetValue> rewards = WorldBossHelper.CalculateReward(
                         i + 1,
                         row.BossId,
                         sheets.GetSheet<RuneWeightSheet>(),

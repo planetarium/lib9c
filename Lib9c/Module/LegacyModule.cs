@@ -101,7 +101,7 @@ namespace Nekoyume.Module
 #pragma warning restore LAA1002
             foreach (var level in filtered)
             {
-                List<FungibleAssetValue> rewards = RuneHelper.CalculateReward(
+                List<FungibleAssetValue> rewards = WorldBossHelper.CalculateReward(
                     rank,
                     bossState.Id,
                     runeWeightSheet,

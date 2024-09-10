@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Action
                 var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetLegacyState(worldBossKillRewardRecordAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
 
-                List<FungibleAssetValue> rewards = RuneHelper.CalculateReward(
+                List<FungibleAssetValue> rewards = WorldBossHelper.CalculateReward(
                     0,
                     worldBossState.Id,
                     runeWeightSheet,
