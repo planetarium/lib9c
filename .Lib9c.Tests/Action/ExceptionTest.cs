@@ -84,6 +84,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(PreviousBountyException))]
         [InlineData(typeof(SeasonInProgressException))]
         [InlineData(typeof(EmptyRewardException))]
+        [InlineData(typeof(UnsupportedStateException))]
         public void Exception_Serializable(Type excType)
         {
             if (Activator.CreateInstance(excType, "for testing") is Exception exc)
