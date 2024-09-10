@@ -20,12 +20,14 @@ namespace Nekoyume.Battle
         public int BossId { get; private set; }
         public long DamageDealt { get; private set; }
         public List<FungibleAssetValue> AssetReward { get; private set; } = new List<FungibleAssetValue>();
-        public override IEnumerable<ItemBase> Reward => new List<ItemBase>();
+        public override IEnumerable<ItemBase> Reward => _reward;
         private readonly List<RaidBoss> _waves;
+        private List<ItemBase> _reward;
 
         private WorldBossBattleRewardSheet _worldBossBattleRewardSheet;
         private RuneWeightSheet _runeWeightSheet;
         private RuneSheet _runeSheet;
+        private MaterialItemSheet _materialItemSheet;
         private WorldBossCharacterSheet.Row _currentBossRow;
 
         public RaidSimulator(int bossId,
@@ -78,6 +80,7 @@ namespace Nekoyume.Battle
             _worldBossBattleRewardSheet = simulatorSheets.WorldBossBattleRewardSheet;
             _runeWeightSheet = simulatorSheets.RuneWeightSheet;
             _runeSheet = simulatorSheets.RuneSheet;
+            _materialItemSheet = simulatorSheets.MaterialItemSheet;
 
             SetEnemies(_currentBossRow, patternRow);
         }
@@ -210,13 +213,28 @@ namespace Nekoyume.Battle
             }
 
             var rank =  WorldBossHelper.CalculateRank(_currentBossRow, DamageDealt);
-            AssetReward = WorldBossHelper.CalculateReward(
+            var rewards = WorldBossHelper.CalculateReward(
                 rank,
                 BossId,
                 _runeWeightSheet,
                 _worldBossBattleRewardSheet,
                 _runeSheet,
+                _materialItemSheet,
                 Random);
+            AssetReward = rewards.assets;
+
+            var materialReward = new List<ItemBase>();
+#pragma warning disable LAA1002
+            foreach (var reward in rewards.materials)
+#pragma warning restore LAA1002
+            {
+                for (var i = 0; i < reward.Value; i++)
+                {
+                    materialReward.Add(reward.Key);
+                }
+            }
+
+            _reward = materialReward;
 
             Log.result = Result;
             return Log;

@@ -18,6 +18,7 @@ using Nekoyume.Action;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.Coupons;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -85,7 +86,9 @@ namespace Nekoyume.Module
             RuneWeightSheet runeWeightSheet,
             WorldBossKillRewardSheet worldBossKillRewardSheet,
             RuneSheet runeSheet,
+            MaterialItemSheet materialItemSheet,
             IRandom random,
+            Inventory inventory,
             Address avatarAddress,
             Address agentAddress)
         {
@@ -101,16 +104,17 @@ namespace Nekoyume.Module
 #pragma warning restore LAA1002
             foreach (var level in filtered)
             {
-                List<FungibleAssetValue> rewards = WorldBossHelper.CalculateReward(
+                var rewards = WorldBossHelper.CalculateReward(
                     rank,
                     bossState.Id,
                     runeWeightSheet,
                     worldBossKillRewardSheet,
                     runeSheet,
+                    materialItemSheet,
                     random
                 );
                 rewardRecord[level] = true;
-                foreach (var reward in rewards)
+                foreach (var reward in rewards.assets)
                 {
                     if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                     {
@@ -121,9 +125,18 @@ namespace Nekoyume.Module
                         world = world.MintAsset(context, avatarAddress, reward);
                     }
                 }
+
+#pragma warning disable LAA1002
+                foreach (var reward in rewards.materials)
+#pragma warning restore LAA1002
+                {
+                    inventory.AddItem(reward.Key, reward.Value);
+                }
             }
 
-            return SetLegacyState(world, rewardInfoAddress, rewardRecord.Serialize());
+            return world
+                .SetLegacyState(rewardInfoAddress, rewardRecord.Serialize())
+                .SetInventory(avatarAddress, inventory);
         }
 
 #nullable enable

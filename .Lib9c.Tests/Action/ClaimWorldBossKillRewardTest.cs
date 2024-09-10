@@ -1,12 +1,11 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.Collections.Generic;
+    using System.Linq;
     using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
@@ -70,6 +69,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(Addresses.GetSheetAddress<WorldBossKillRewardSheet>(), killRewardSheet.Serialize())
                 .SetLegacyState(Addresses.GetSheetAddress<RuneSheet>(), tableSheets.RuneSheet.Serialize())
                 .SetLegacyState(Addresses.GetSheetAddress<WorldBossCharacterSheet>(), tableSheets.WorldBossCharacterSheet.Serialize())
+                .SetLegacyState(Addresses.GetSheetAddress<MaterialItemSheet>(), tableSheets.MaterialItemSheet.Serialize())
                 .SetLegacyState(Addresses.GameConfig, gameConfigState.Serialize())
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(worldBossKillRewardRecordAddress, worldBossKillRewardRecord.Serialize())
@@ -98,16 +98,17 @@ namespace Lib9c.Tests.Action
                 var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetLegacyState(worldBossKillRewardRecordAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
 
-                List<FungibleAssetValue> rewards = WorldBossHelper.CalculateReward(
+                var rewards = WorldBossHelper.CalculateReward(
                     0,
                     worldBossState.Id,
                     runeWeightSheet,
                     killRewardSheet,
                     tableSheets.RuneSheet,
+                    tableSheets.MaterialItemSheet,
                     new TestRandom(randomSeed)
                 );
 
-                foreach (var reward in rewards)
+                foreach (var reward in rewards.assets)
                 {
                     if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                     {
@@ -117,6 +118,15 @@ namespace Lib9c.Tests.Action
                     {
                         Assert.Equal(reward, nextState.GetBalance(avatarAddress, reward.Currency));
                     }
+                }
+
+                var inventory = nextState.GetAvatarState(avatarAddress).inventory;
+                foreach (var reward in rewards.materials)
+                {
+                    var itemCount = inventory.TryGetTradableFungibleItems(reward.Key.FungibleId, null, blockIndex, out var items)
+                        ? items.Sum(item => item.count)
+                        : 0;
+                    Assert.Equal(reward.Value, itemCount);
                 }
             }
             else

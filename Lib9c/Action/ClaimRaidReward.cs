@@ -7,7 +7,6 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.State;
@@ -48,6 +47,7 @@ namespace Nekoyume.Action
                 typeof(WorldBossCharacterSheet),
                 typeof(WorldBossListSheet),
                 typeof(RuneSheet),
+                typeof(MaterialItemSheet),
             });
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
             int raidId;
@@ -66,20 +66,22 @@ namespace Nekoyume.Action
             RaiderState raiderState = states.GetRaiderState(raiderAddress);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
             var random = context.GetRandom();
+            var inventory = states.GetInventoryV2(AvatarAddress);
             if (raiderState.LatestRewardRank < rank)
             {
                 for (int i = raiderState.LatestRewardRank; i < rank; i++)
                 {
-                    List<FungibleAssetValue> rewards = WorldBossHelper.CalculateReward(
+                    var rewards = WorldBossHelper.CalculateReward(
                         i + 1,
                         row.BossId,
                         sheets.GetSheet<RuneWeightSheet>(),
                         sheets.GetSheet<WorldBossRankRewardSheet>(),
                         sheets.GetSheet<RuneSheet>(),
+                        sheets.GetSheet<MaterialItemSheet>(),
                         random
                     );
 
-                    foreach (var reward in rewards)
+                    foreach (var reward in rewards.assets)
                     {
                         if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                         {
@@ -90,11 +92,20 @@ namespace Nekoyume.Action
                             states = states.MintAsset(context, AvatarAddress, reward);
                         }
                     }
+
+#pragma warning disable LAA1002
+                    foreach (var reward in rewards.materials)
+#pragma warning restore LAA1002
+                    {
+                        inventory.AddItem(reward.Key, reward.Value);
+                    }
                 }
 
                 raiderState.LatestRewardRank = rank;
                 raiderState.ClaimedBlockIndex = context.BlockIndex;
-                states = states.SetLegacyState(raiderAddress, raiderState.Serialize());
+                states = states
+                    .SetLegacyState(raiderAddress, raiderState.Serialize())
+                    .SetInventory(AvatarAddress, inventory);
                 var ended = DateTimeOffset.UtcNow;
                 Log.Debug("{AddressesHex}ClaimRaidReward Total Executed Time: {Elapsed}", addressesHex, ended - started);
                 return states;

@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using Libplanet.Types.Assets;
     using Nekoyume.Helper;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -84,23 +85,29 @@ namespace Lib9c.Tests.Action
             {
                 var bossId = rewardRow.BossId;
                 var rank = rewardRow.Rank;
-                var fungibleAssetValues = WorldBossHelper.CalculateReward(
+                var rewards = WorldBossHelper.CalculateReward(
                     rank,
                     bossId,
                     _tableSheets.RuneWeightSheet,
                     sheet,
                     _tableSheets.RuneSheet,
+                    _tableSheets.MaterialItemSheet,
                     random
                 );
                 var expectedRune = rewardRow.Rune;
                 var expectedCrystal = rewardRow.Crystal * _crystalCurrency;
-                var crystal = fungibleAssetValues.First(f => f.Currency.Equals(_crystalCurrency));
-                var rune = fungibleAssetValues
+                var expectedCircle = rewardRow.Circle;
+                var crystal = rewards.assets.First(f => f.Currency.Equals(_crystalCurrency));
+                var rune = rewards.assets
                     .Where(f => !f.Currency.Equals(_crystalCurrency))
                     .Sum(r => (int)r.MajorUnit);
+                var circle = rewards.materials
+                    .Where(kv => kv.Key.ItemSubType == ItemSubType.Circle)
+                    .Sum(kv => kv.Value);
 
                 Assert.Equal(expectedCrystal, crystal);
                 Assert.Equal(expectedRune, rune);
+                Assert.Equal(expectedCircle, circle);
             }
         }
     }

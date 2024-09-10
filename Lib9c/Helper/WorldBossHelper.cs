@@ -4,6 +4,7 @@ using System.Linq;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
 using Nekoyume.Battle;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
@@ -49,12 +50,13 @@ namespace Nekoyume.Helper
                    (refilledIndex - startedIndex) / refillInterval;
         }
 
-        public static List<FungibleAssetValue> CalculateReward(
+        public static (List<FungibleAssetValue> assets, Dictionary<TradableMaterial, int> materials) CalculateReward(
             int rank,
             int bossId,
             RuneWeightSheet sheet,
             IWorldBossRewardSheet rewardSheet,
             RuneSheet runeSheet,
+            MaterialItemSheet materialSheet,
             IRandom random
         )
         {
@@ -72,42 +74,43 @@ namespace Nekoyume.Helper
 
             var total = 0;
             var dictionary = new Dictionary<int, int>();
+            var selector = new WeightedSelector<int>(random);
             while (total < rewardRow.Rune)
             {
-                var selector = new WeightedSelector<int>(random);
                 foreach (var info in row.RuneInfos)
                 {
                     selector.Add(info.RuneId, info.Weight);
                 }
 
-                var ids = selector.Select(1);
-                foreach (var id in ids)
-                {
-                    if (dictionary.ContainsKey(id))
-                    {
-                        dictionary[id] += 1;
-                    }
-                    else
-                    {
-                        dictionary[id] = 1;
-                    }
-                }
+                var id = selector.Select(1).First();
+                dictionary.TryAdd(id, 0);
+                dictionary[id] += 1;
 
                 total++;
             }
 
 #pragma warning disable LAA1002
-            var result = dictionary
+            var assets = dictionary
 #pragma warning restore LAA1002
                 .Select(kv => RuneHelper.ToFungibleAssetValue(runeSheet[kv.Key], kv.Value))
                 .ToList();
 
             if (rewardRow.Crystal > 0)
             {
-                result.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
+                assets.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
             }
 
-            return result;
+            var materials = new Dictionary<TradableMaterial, int>();
+            if (rewardRow.Circle > 0)
+            {
+                var materialRow =
+                    materialSheet.Values.First(r => r.ItemSubType == ItemSubType.Circle);
+                var material = ItemFactory.CreateTradableMaterial(materialRow);
+                materials.TryAdd(material, 0);
+                materials[material] += rewardRow.Circle;
+            }
+
+            return (assets, materials);
         }
     }
 }

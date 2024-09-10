@@ -34,6 +34,7 @@ namespace Nekoyume.Action
                 typeof(RuneWeightSheet),
                 typeof(WorldBossListSheet),
                 typeof(WorldBossKillRewardSheet),
+                typeof(MaterialItemSheet),
             });
 
             var worldBossListSheet = sheets.GetSheet<WorldBossListSheet>();
@@ -57,6 +58,7 @@ namespace Nekoyume.Action
             Address worldBossAddress = Addresses.GetWorldBossAddress(raidId);
             var worldBossState = new WorldBossState((List) states.GetLegacyState(worldBossAddress));
             var random = context.GetRandom();
+            var inventory = states.GetInventoryV2(AvatarAddress);
             return states.SetWorldBossKillReward(
                 context,
                 worldBossKillRewardRecordAddress,
@@ -66,7 +68,9 @@ namespace Nekoyume.Action
                 sheets.GetSheet<RuneWeightSheet>(),
                 sheets.GetSheet<WorldBossKillRewardSheet>(),
                 sheets.GetSheet<RuneSheet>(),
+                sheets.GetSheet<MaterialItemSheet>(),
                 random,
+                inventory,
                 AvatarAddress,
                 context.Signer
             );

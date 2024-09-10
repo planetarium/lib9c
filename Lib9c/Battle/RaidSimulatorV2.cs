@@ -24,6 +24,7 @@ namespace Nekoyume.Battle
         private WorldBossBattleRewardSheet _worldBossBattleRewardSheet;
         private RuneWeightSheet _runeWeightSheet;
         private RuneSheet _runeSheet;
+        private MaterialItemSheet _materialItemSheet;
         private WorldBossCharacterSheet.Row _currentBossRow;
 
         public RaidSimulatorV2(
@@ -53,6 +54,7 @@ namespace Nekoyume.Battle
             _worldBossBattleRewardSheet = simulatorSheets.WorldBossBattleRewardSheet;
             _runeWeightSheet = simulatorSheets.RuneWeightSheet;
             _runeSheet = simulatorSheets.RuneSheet;
+            _materialItemSheet = simulatorSheets.MaterialItemSheet;
 
             SetEnemies(_currentBossRow, patternRow);
         }
@@ -179,13 +181,15 @@ namespace Nekoyume.Battle
             }
 
             var rank =  WorldBossHelper.CalculateRank(_currentBossRow, DamageDealt);
-            AssetReward = WorldBossHelper.CalculateReward(
+            var rewards = WorldBossHelper.CalculateReward(
                 rank,
                 BossId,
                 _runeWeightSheet,
                 _worldBossBattleRewardSheet,
                 _runeSheet,
+                _materialItemSheet,
                 Random);
+            AssetReward = rewards.assets;
 
             Log.result = Result;
             return Log;
