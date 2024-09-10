@@ -2,13 +2,17 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using Bencodex.Types;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
+    using Nekoyume.TypedAddress;
     using Xunit;
 
     public class ApprovePledgeTest
@@ -41,6 +45,42 @@ namespace Lib9c.Tests.Action
             Assert.Equal(patron, contract[0].ToAddress());
             Assert.True(contract[1].ToBoolean());
             Assert.Equal(mead, contract[2].ToInteger());
+            Assert.Null(nextState.GetJoinedGuild(new AgentAddress(address)));
+        }
+
+        [Theory]
+        [InlineData(RequestPledge.DefaultRefillMead)]
+        [InlineData(100)]
+        public void Execute_JoinGuild(int mead)
+        {
+            var address = new PrivateKey().Address;
+            var patron = MeadConfig.PatronAddress;
+            var contractAddress = address.Derive(nameof(RequestPledge));
+            var guildAddress = AddressUtil.CreateGuildAddress();
+            IWorld states = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    contractAddress,
+                    List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
+                )
+                .MakeGuild(guildAddress, GuildConfig.PlanetariumGuildOwner);
+
+            var action = new ApprovePledge
+            {
+                PatronAddress = patron,
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                Signer = address,
+                PreviousState = states,
+            });
+
+            var contract = Assert.IsType<List>(nextState.GetLegacyState(contractAddress));
+            Assert.Equal(patron, contract[0].ToAddress());
+            Assert.True(contract[1].ToBoolean());
+            Assert.Equal(mead, contract[2].ToInteger());
+            var joinedGuildAddress = nextState.GetJoinedGuild(new AgentAddress(address));
+            Assert.NotNull(joinedGuildAddress);
+            Assert.Equal(guildAddress, joinedGuildAddress);
         }
 
         [Theory]
