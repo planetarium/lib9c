@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - add-docs # This branch is temporary.
 
 jobs:
   publish-docs:
@@ -24,7 +23,7 @@ jobs:
           dotnet-version: 6.0.400
 
       - run: dotnet restore
-      - run: dotnet tool update -g docfx
+      - run: dotnet tool restore
       - run: docfx docs/docfx.json
 
       - name: deploy
