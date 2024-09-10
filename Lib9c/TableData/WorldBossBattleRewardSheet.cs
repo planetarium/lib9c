@@ -17,6 +17,8 @@ namespace Nekoyume.TableData
             public int RuneMin;
             public int RuneMax;
             public int Crystal { get; private set; }
+            public int Circle { get; private set; }
+
             public int Rune {
                 get
                 {
@@ -38,6 +40,10 @@ namespace Nekoyume.TableData
                 RuneMin = ParseInt(fields[3]);
                 RuneMax = ParseInt(fields[4]);
                 Crystal = ParseInt(fields[5]);
+                if (fields.Count > 6)
+                {
+                    Circle = ParseInt(fields[6]);
+                }
             }
 
             public void SetRune(IRandom random)

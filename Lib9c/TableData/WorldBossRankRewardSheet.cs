@@ -13,6 +13,8 @@ namespace Nekoyume.TableData
             public int Rank { get; private set; }
             public int Rune { get; private set; }
             public int Crystal { get; private set; }
+            public int Circle { get; private set; }
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -20,6 +22,10 @@ namespace Nekoyume.TableData
                 Rank = ParseInt(fields[2]);
                 Rune = ParseInt(fields[3]);
                 Crystal = ParseInt(fields[4]);
+                if (fields.Count > 5)
+                {
+                    Circle = ParseInt(fields[5]);
+                }
             }
         }
 
