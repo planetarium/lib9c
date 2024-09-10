@@ -118,8 +118,9 @@ namespace Nekoyume.Action
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
             const string source = "HackAndSlash";
-            using var activity = ActivitySource.StartActivity("HackAndSlash")
-                .SetTag("service.name", "Libplanet.Action");
+            using var activity = ActivitySource.StartActivity("HackAndSlash");
+            activity?.SetTag("service.name", "Libplanet.Action");
+
             Log.Verbose("{AddressesHex} {Source} from #{BlockIndex} exec started",
                 addressesHex, source, blockIndex);
 
