@@ -110,6 +110,7 @@ namespace Nekoyume.Action
                 typeof(ItemRequirementSheet),
                 typeof(RuneLevelBonusSheet),
                 typeof(RuneListSheet),
+                typeof(RuneOptionSheet),
             };
             if (collectionExist)
             {
