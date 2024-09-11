@@ -880,7 +880,10 @@ namespace Nekoyume.Model.State
             return list;
         }
 
-        public List<int> ValidateConsumableV2(List<Guid> consumableIds, long currentBlockIndex, GameConfigState gameConfigState)
+        public List<int> ValidateConsumableV2(
+            List<Guid> consumableIds,
+            long currentBlockIndex,
+            GameConfigState gameConfigState)
         {
             var list = new List<int>();
             for (var slotIndex = 0; slotIndex < consumableIds.Count; slotIndex++)
@@ -987,10 +990,10 @@ namespace Nekoyume.Model.State
             return list;
         }
 
-        public List<int> ValidateCostumeV2(IEnumerable<Guid> costumeIds, GameConfigState gameConfigState)
+        public List<Costume> ValidateCostumeV2(IEnumerable<Guid> costumeIds, GameConfigState gameConfigState)
         {
             var subTypes = new List<ItemSubType>();
-            var list = new List<int>();
+            var list = new List<Costume>();
             foreach (var costumeId in costumeIds)
             {
                 if (!inventory.TryGetNonFungibleItem<Costume>(costumeId, out var costume))
@@ -1036,7 +1039,7 @@ namespace Nekoyume.Model.State
                     throw new CostumeSlotUnlockException($"not enough level. required: {requiredLevel}");
                 }
 
-                list.Add(costume.Id);
+                list.Add(costume);
             }
 
             return list;
