@@ -15,7 +15,6 @@ namespace Nekoyume.Model.Arena
     /// </summary>
     public class ArenaParticipant : IBencodable, IState
     {
-        private const string StateTypeName = "arena_participant";
         private const int StateVersion = 1;
 
         public const int DefaultScore = 1000;
@@ -53,7 +52,6 @@ namespace Nekoyume.Model.Arena
         public long LastBattleBlockIndex;
 
         public IValue Bencoded => List.Empty
-            .Add(StateTypeName)
             .Add(StateVersion)
             .Add(AvatarAddr.Serialize())
             .Add(Name)
@@ -84,11 +82,10 @@ namespace Nekoyume.Model.Arena
 
             try
             {
-                var stateTypeName = (Text)l[0];
-                var stateVersion = (Integer)l[1];
-                if (stateTypeName != StateTypeName || stateVersion != StateVersion)
+                var stateVersion = (Integer)l[0];
+                if (stateVersion != StateVersion)
                 {
-                    throw new UnsupportedStateException(StateTypeName, StateVersion, stateTypeName, stateVersion);
+                    throw new UnsupportedStateException(StateVersion, stateVersion);
                 }
             }
             catch (Exception e)
@@ -96,18 +93,18 @@ namespace Nekoyume.Model.Arena
                 throw new ArgumentException("Invalid state type name or version", e);
             }
 
-            AvatarAddr = l[2].ToAddress();
-            Name = (Text)l[3];
-            PortraitId = (Integer)l[4];
-            Level = (Integer)l[5];
-            Cp = (Integer)l[6];
-            Score = (Integer)l[7];
-            Ticket = (Integer)l[8];
-            TicketResetCount = (Integer)l[9];
-            PurchasedTicketCount = (Integer)l[10];
-            Win = (Integer)l[11];
-            Lose = (Integer)l[12];
-            LastBattleBlockIndex = (Integer)l[13];
+            AvatarAddr = l[1].ToAddress();
+            Name = (Text)l[2];
+            PortraitId = (Integer)l[3];
+            Level = (Integer)l[4];
+            Cp = (Integer)l[5];
+            Score = (Integer)l[6];
+            Ticket = (Integer)l[7];
+            TicketResetCount = (Integer)l[8];
+            PurchasedTicketCount = (Integer)l[9];
+            Win = (Integer)l[10];
+            Lose = (Integer)l[11];
+            LastBattleBlockIndex = (Integer)l[12];
         }
 
         public IValue Serialize() => Bencoded;

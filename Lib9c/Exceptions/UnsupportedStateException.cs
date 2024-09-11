@@ -18,6 +18,17 @@ namespace Nekoyume.Exceptions
                 innerException)
         {
         }
+        
+        public UnsupportedStateException(
+            int expectedVersion,
+            int actualVersion,
+            Exception innerException = null) :
+            base(
+                "Unsupported state version." +
+                $" Expected: {expectedVersion}, Actual: {actualVersion}.",
+                innerException)
+        {
+        }
 
         public UnsupportedStateException(string msg) : base(msg)
         {
