@@ -880,7 +880,10 @@ namespace Nekoyume.Model.State
             return list;
         }
 
-        public List<int> ValidateConsumableV2(List<Guid> consumableIds, long currentBlockIndex, GameConfigState gameConfigState)
+        public List<int> ValidateConsumableV2(
+            List<Guid> consumableIds,
+            long currentBlockIndex,
+            GameConfigState gameConfigState)
         {
             var list = new List<int>();
             for (var slotIndex = 0; slotIndex < consumableIds.Count; slotIndex++)

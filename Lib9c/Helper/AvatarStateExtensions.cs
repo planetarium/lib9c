@@ -151,7 +151,7 @@ namespace Nekoyume.Helper
             string addressesHex,
             GameConfigState gameConfigState)
         {
-            var equipments = avatarState.ValidateEquipmentsV3(equipmentIds, blockIndex,gameConfigState);
+            var equipments = avatarState.ValidateEquipmentsV3(equipmentIds, blockIndex, gameConfigState);
             var costumes = avatarState.ValidateCostumeV2(costumeIds, gameConfigState);
             avatarState.ValidateItemRequirement(
                 costumes.Select(e => e.Id).ToList(),
