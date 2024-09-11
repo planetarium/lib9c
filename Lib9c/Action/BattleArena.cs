@@ -451,11 +451,11 @@ namespace Nekoyume.Action
             }
 
             // update record
-            var (myWinScore, myDefeatScore, enemyWinScore) =
+            var (myWinScore, myDefeatScore, enemyDefeatScore) =
                 ArenaHelper.GetScores(previousMyScore, enemyArenaScore.Score);
             var myScore = (myWinScore * winCount) + (myDefeatScore * defeatCount);
             myArenaScore.AddScore(myScore);
-            enemyArenaScore.AddScore(enemyWinScore * winCount);
+            enemyArenaScore.AddScore(enemyDefeatScore * winCount);
             arenaInformation.UpdateRecord(winCount, defeatCount);
 
             var ended = DateTimeOffset.UtcNow;

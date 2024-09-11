@@ -1208,11 +1208,11 @@ namespace Lib9c.Tests.Action
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
-            var (myWinScore, myDefeatScore, enemyWinScore) =
-                ArenaHelper.GetScoresV1(beforeMyScore.Score, beforeEnemyScore.Score);
+            var (myWinScore, myDefeatScore, enemyDefeatScore) =
+                ArenaHelper.GetScores(beforeMyScore.Score, beforeEnemyScore.Score);
 
             var addMyScore = afterInfo.Win * myWinScore + afterInfo.Lose * myDefeatScore;
-            var addEnemyScore = afterInfo.Win * enemyWinScore;
+            var addEnemyScore = afterInfo.Win * enemyDefeatScore;
             var expectedMyScore = Math.Max(
                 beforeMyScore.Score + addMyScore,
                 ArenaScore.ArenaScoreDefault);
