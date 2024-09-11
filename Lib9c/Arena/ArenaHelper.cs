@@ -168,6 +168,7 @@ namespace Nekoyume.Arena
             return (myWinScore, myDefeatScore, enemyDefeatScore);
         }
 
+        [Obsolete("Use `GetScores()` instead.")]
         public static (int myWinScore, int myDefeatScore, int enemyDefeatScore) GetScoresV1(int myScore, int enemyScore)
         {
             var (myWinScore, enemyDefeatScore) = ArenaScoreHelper.GetScoreV4(
