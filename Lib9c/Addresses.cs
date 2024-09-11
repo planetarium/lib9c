@@ -54,15 +54,6 @@ namespace Nekoyume
 
         public static readonly Address CombinationSlot       = new("0000000000000000000000000000000000000024");
 
-        /// <summary>
-        /// This address is used to get an account in IWorld. The account obtained at this address stores the status of
-        /// individual participants in a particular ChampionshipID-round.
-        /// Derive the state address like this:
-        ///     Addresses.ArenaParticipant.Derive($"{championshipId}_{round}_{avatarAddress}");
-        /// And it returns the <see cref="Nekoyume.Model.Arena.ArenaParticipant"/> type value.
-        /// </summary>
-        public static readonly Address ArenaParticipant      = new("0000000000000000000000000000000000000025");
-
         // Adventure Boss
         public static readonly Address AdventureBoss         = new("0000000000000000000000000000000000000100");
         public static readonly Address BountyBoard           = new("0000000000000000000000000000000000000101");
@@ -204,5 +195,21 @@ namespace Nekoyume
 
         public static Address AdventureSeasonAddress(long season) =>
             AdventureBoss.Derive(season.ToString(CultureInfo.InvariantCulture));
+
+        public static Address GetArenaParticipantAccountAddress(int championshipId, int round)
+        {
+            var hex = $"01{championshipId:D36}{round:D2}";
+            return new Address(hex);
+        }
+
+        public static bool IsArenaParticipantAccountAddress(Address address)
+        {
+            const string lowerBound = "0100000000000000000000000000000000000000";
+            const string upperBound = "0199999999999999999999999999999999999999";
+            var hex = address.ToHex();
+
+            return string.CompareOrdinal(hex, lowerBound) >= 0 &&
+                   string.CompareOrdinal(hex, upperBound) <= 0;
+        }
     }
 }

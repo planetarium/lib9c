@@ -21,9 +21,6 @@ namespace Nekoyume.Model.Arena
         public const int DefaultScore = 1000;
         public const int MaxTicketCount = 8;
 
-        public static Address DeriveAddress(int championshipId, int round, Address avatarAddress) =>
-            Addresses.ArenaParticipant.Derive($"{championshipId}_{round}_{avatarAddress.ToHex()}");
-
         public readonly Address AvatarAddr;
 
         /// <summary>

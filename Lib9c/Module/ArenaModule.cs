@@ -14,19 +14,20 @@ namespace Nekoyume.Module
             Address avatarAddress,
             ArenaParticipant arenaParticipant)
         {
-            var stateAddress = ArenaParticipant.DeriveAddress(championshipId, round, avatarAddress);
-            return world.SetArenaParticipant(stateAddress, arenaParticipant.Bencoded);
+            var accountAddress = Addresses.GetArenaParticipantAccountAddress(championshipId, round);
+            return world.SetArenaParticipant(accountAddress, avatarAddress, arenaParticipant.Bencoded);
         }
 
         public static IWorld SetArenaParticipant(
             this IWorld world,
+            Address accountAddress,
             Address stateAddress,
             IValue arenaParticipant)
         {
             var account = world
-                .GetAccount(Addresses.ArenaParticipant)
+                .GetAccount(accountAddress)
                 .SetState(stateAddress, arenaParticipant);
-            return world.SetAccount(Addresses.ArenaParticipant, account);
+            return world.SetAccount(accountAddress, account);
         }
 
         public static ArenaParticipant GetArenaParticipant(
@@ -35,8 +36,8 @@ namespace Nekoyume.Module
             int round,
             Address avatarAddress)
         {
-            var stateAddress = ArenaParticipant.DeriveAddress(championshipId, round, avatarAddress);
-            var state = worldState.GetArenaParticipant(stateAddress);
+            var accountAddress = Addresses.GetArenaParticipantAccountAddress(championshipId, round);
+            var state = worldState.GetArenaParticipant(accountAddress, avatarAddress);
             return state is null
                 ? null
                 : new ArenaParticipant(state);
@@ -44,10 +45,11 @@ namespace Nekoyume.Module
 
         public static IValue GetArenaParticipant(
             this IWorldState worldState,
+            Address accountAddress,
             Address stateAddress)
         {
             return worldState
-                .GetAccountState(Addresses.ArenaParticipant)
+                .GetAccountState(accountAddress)
                 .GetState(stateAddress);
         }
     }
