@@ -19,10 +19,11 @@ namespace Nekoyume.Exceptions
         {
         }
 
-        protected UnsupportedStateException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
+        public UnsupportedStateException(string msg) : base(msg)
+        {
+        }
+
+        protected UnsupportedStateException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

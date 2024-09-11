@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using Libplanet.Crypto;
 
 namespace Nekoyume.Action.Exceptions.Arena
@@ -12,6 +13,14 @@ namespace Nekoyume.Action.Exceptions.Arena
             Address avatarAddress) :
             base(
                 $"Avatar {avatarAddress} has already joined the arena for championship {championshipId}, round {round}.")
+        {
+        }
+
+        public AlreadyJoinedArenaException(string msg) : base(msg)
+        {
+        }
+
+        protected AlreadyJoinedArenaException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
