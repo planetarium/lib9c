@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Action.Exceptions.AdventureBoss;
+    using Nekoyume.Action.Exceptions.Arena;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -85,6 +86,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(SeasonInProgressException))]
         [InlineData(typeof(EmptyRewardException))]
         [InlineData(typeof(UnsupportedStateException))]
+        [InlineData(typeof(AlreadyJoinedArenaException))]
         public void Exception_Serializable(Type excType)
         {
             if (Activator.CreateInstance(excType, "for testing") is Exception exc)
