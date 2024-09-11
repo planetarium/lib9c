@@ -196,12 +196,23 @@ namespace Nekoyume
         public static Address AdventureSeasonAddress(long season) =>
             AdventureBoss.Derive(season.ToString(CultureInfo.InvariantCulture));
 
+        /// <summary>
+        /// Get the account address of an arena participant.
+        /// </summary>
+        /// <returns>
+        /// The account address of an arena participant.
+        /// "0100000000000000000000000000000000000000" ~ "0199999999999999999999999999999999999999".
+        /// </returns>
         public static Address GetArenaParticipantAccountAddress(int championshipId, int round)
         {
             var hex = $"01{championshipId:D36}{round:D2}";
             return new Address(hex);
         }
 
+        /// <summary>
+        /// Check if the given address is within the range of arena participant account addresses.
+        /// "0100000000000000000000000000000000000000" ~ "0199999999999999999999999999999999999999".
+        /// </summary>
         public static bool IsArenaParticipantAccountAddress(Address address)
         {
             const string lowerBound = "0100000000000000000000000000000000000000";
