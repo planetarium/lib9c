@@ -53,4 +53,23 @@ public class AddressesTest
         var address = Addresses.GetArenaParticipantAccountAddress(championshipId, round);
         Assert.Equal(expectedHex, address.ToHex());
     }
+
+    [Theory]
+    [InlineData("0000000000000000000000000000000000000000", false)]
+    [InlineData("0099999999999999999999999999999999999999", false)]
+    [InlineData("0100000000000000000000000000000000000000", true)]
+    [InlineData("0199999999999999999999999999999999999999", true)]
+    [InlineData("0200000000000000000000000000000000000000", false)]
+    public void IsArenaParticipantAccountAddressTest(string addressHex, bool expected)
+    {
+        var address = new Address(addressHex);
+        if (expected)
+        {
+            Assert.True(Addresses.IsArenaParticipantAccountAddress(address));
+        }
+        else
+        {
+            Assert.False(Addresses.IsArenaParticipantAccountAddress(address));
+        }
+    }
 }
