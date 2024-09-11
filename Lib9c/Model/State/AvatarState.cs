@@ -1254,22 +1254,18 @@ namespace Nekoyume.Model.State
             return items;
         }
 
+        /// <inheritdoc cref="IState.Serialize" />
         public override IValue Serialize()
         {
-            throw new NotSupportedException();
+            return SerializeList();
         }
 
-        public override IValue SerializeV2()
-        {
-            throw new NotSupportedException();
-        }
-
-        public override IValue SerializeList()
+        public IValue SerializeList()
         {
             // Migrated when serialized
             Version = CurrentVersion;
             return new List(
-                base.SerializeList(),
+                base.SerializeListBase(),
                 (Integer)Version,
                 (Text)name,
                 (Integer)characterId,

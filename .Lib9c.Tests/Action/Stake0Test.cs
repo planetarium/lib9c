@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_signerAddress, agentState)
                 .SetLegacyState(
                     monsterCollectionAddress,
-                    new MonsterCollectionState(monsterCollectionAddress, 1, 0).SerializeV2());
+                    new MonsterCollectionState(monsterCollectionAddress, 1, 0).Serialize());
             var action = new Stake0(200);
             Assert.Throws<MonsterCollectionExistingException>(() =>
                 action.Execute(new ActionContext

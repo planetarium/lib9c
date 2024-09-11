@@ -28,18 +28,20 @@ namespace Nekoyume.Model.State
         {
         }
 
-        public virtual IValue Serialize() =>
+        public abstract IValue Serialize();
+
+        protected IValue SerializeBase() =>
             new Dictionary(new Dictionary<IKey, IValue>
             {
                 [(Text)LegacyAddressKey] = address.Serialize(),
             });
-        public virtual IValue SerializeV2() =>
+        protected IValue SerializeV2Base() =>
             new Dictionary(new Dictionary<IKey, IValue>
             {
                 [(Text)AddressKey] = address.Serialize(),
             });
 
-        public virtual IValue SerializeList() =>
+        protected IValue SerializeListBase() =>
             new List(address.Serialize());
     }
 }

@@ -120,7 +120,7 @@ namespace Lib9c.Tests.Model.State
 
             public string Bar { get; set; }
 
-            public override IValue Serialize() => ((Dictionary)base.Serialize())
+            public override IValue Serialize() => ((Dictionary)SerializeBase())
                 .Add("foo", Foo)
                 .Add("bar", Bar);
         }
