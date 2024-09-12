@@ -11,7 +11,7 @@ using Xunit;
 public class AddressesTest
 {
     [Fact]
-    public void There_Are_No_Conflicts_In_Addresses()
+    public void There_Are_No_Address_Conflicts()
     {
         var addressesInTypes = new List<Address>();
         InsertStaticAddressFieldValues(typeof(ReservedAddresses));
