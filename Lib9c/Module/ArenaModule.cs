@@ -20,13 +20,24 @@ namespace Nekoyume.Module
 
         public static IWorld SetArenaParticipant(
             this IWorld world,
+            int championshipId,
+            int round,
+            Address avatarAddress,
+            IValue arenaParticipantState)
+        {
+            var accountAddress = Addresses.GetArenaParticipantAccountAddress(championshipId, round);
+            return world.SetArenaParticipant(accountAddress, avatarAddress, arenaParticipantState);
+        }
+
+        public static IWorld SetArenaParticipant(
+            this IWorld world,
             Address accountAddress,
             Address stateAddress,
-            IValue arenaParticipant)
+            IValue arenaParticipantState)
         {
             var account = world
                 .GetAccount(accountAddress)
-                .SetState(stateAddress, arenaParticipant);
+                .SetState(stateAddress, arenaParticipantState);
             return world.SetAccount(accountAddress, account);
         }
 
@@ -37,13 +48,23 @@ namespace Nekoyume.Module
             Address avatarAddress)
         {
             var accountAddress = Addresses.GetArenaParticipantAccountAddress(championshipId, round);
-            var state = worldState.GetArenaParticipant(accountAddress, avatarAddress);
+            var state = worldState.GetArenaParticipantState(accountAddress, avatarAddress);
             return state is null
                 ? null
                 : new ArenaParticipant(state);
         }
 
-        public static IValue GetArenaParticipant(
+        public static IValue GetArenaParticipantState(
+            this IWorldState worldState,
+            int championshipId,
+            int round,
+            Address avatarAddress)
+        {
+            var accountAddress = Addresses.GetArenaParticipantAccountAddress(championshipId, round);
+            return worldState.GetArenaParticipantState(accountAddress, avatarAddress);
+        }
+
+        public static IValue GetArenaParticipantState(
             this IWorldState worldState,
             Address accountAddress,
             Address stateAddress)

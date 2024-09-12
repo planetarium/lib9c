@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
@@ -496,7 +497,7 @@ namespace Nekoyume.Action
                 collectionModifiers[myAvatarAddress],
                 myRuneLevelBonus);
 
-            // create ArenaParticipant: This is currently redundant, but we plan to replace all the ArenaScore and
+            // update myArenaParticipant: This is currently redundant, but we plan to replace all the ArenaScore and
             // ArenaInformation states and some of the ArenaAvatarState states in the future.
             // The reason we are creating a new ArenaParticipant instead of getting it and updating its state is to
             // save resources on getting it since we already have most of the values.
@@ -514,11 +515,18 @@ namespace Nekoyume.Action
                 Lose = myArenaInformation.Lose,
                 LastBattleBlockIndex = myArenaAvatarState.LastBattleBlockIndex,
             };
+            states = states.SetArenaParticipant(championshipId, round, myAvatarAddress, myArenaParticipant);
 
-            var enemyArenaParticipant = states.GetArenaParticipant(championshipId, round, enemyAvatarAddress);
-            if (enemyArenaParticipant is not null)
+            // update enemyArenaParticipantState.Score
+            var enemyArenaParticipantState = states.GetArenaParticipantState(championshipId, round, enemyAvatarAddress);
+            if (enemyArenaParticipantState is List enemyArenaParticipantList)
             {
-                enemyArenaParticipant.Score = enemyArenaScore.Score;
+                enemyArenaParticipantList = enemyArenaParticipantList.InsertTo(6, (Integer)enemyArenaScore.Score);
+                states = states.SetArenaParticipant(
+                    championshipId,
+                    round,
+                    enemyAvatarAddress,
+                    enemyArenaParticipantList);
             }
 
             var ended = DateTimeOffset.UtcNow;
@@ -528,9 +536,7 @@ namespace Nekoyume.Action
                 .SetLegacyState(myArenaScoreAddr, myArenaScore.Serialize())
                 .SetLegacyState(enemyArenaScoreAddr, enemyArenaScore.Serialize())
                 .SetLegacyState(myArenaInformationAddr, myArenaInformation.Serialize())
-                .SetAvatarState(myAvatarAddress, myAvatarState)
-                .SetArenaParticipant(championshipId, round, myAvatarAddress, myArenaParticipant)
-                .SetArenaParticipant(championshipId, round, enemyAvatarAddress, enemyArenaParticipant);
+                .SetAvatarState(myAvatarAddress, myAvatarState);
         }
 
         private void ValidateTicket()
