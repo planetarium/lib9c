@@ -26,8 +26,6 @@ public class JoinArenaTest
     private readonly TableSheets _tableSheets;
     private readonly AgentState _myAgentState;
     private readonly AvatarState _myAvatarState;
-    private readonly AgentState _enemyAgentState;
-    private readonly AvatarState _enemyAvatarState;
 
     public JoinArenaTest(ITestOutputHelper outputHelper)
     {
@@ -41,11 +39,6 @@ public class JoinArenaTest
             _world,
             _tableSheets.GetAvatarSheets(),
             _myAgentState.address);
-        (_world, _enemyAgentState) = InitializeUtil.AddAgent(_world);
-        (_world, _enemyAvatarState, _) = InitializeUtil.AddAvatar(
-            _world,
-            _tableSheets.GetAvatarSheets(),
-            _enemyAgentState.address);
     }
 
     [Fact]
