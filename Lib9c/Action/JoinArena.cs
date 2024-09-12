@@ -7,11 +7,14 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Exceptions.Arena;
 using Nekoyume.Arena;
+using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -39,6 +42,7 @@ namespace Nekoyume.Action
         int IJoinArenaV1.Round => round;
         IEnumerable<Guid> IJoinArenaV1.Costumes => costumes;
         IEnumerable<Guid> IJoinArenaV1.Equipments => equipments;
+
         IEnumerable<IValue> IJoinArenaV1.RuneSlotInfos => runeInfos
             .Select(x => x.Serialize());
 
@@ -52,7 +56,7 @@ namespace Nekoyume.Action
                     .OrderBy(element => element).Select(e => e.Serialize())),
                 ["equipments"] = new List(equipments
                     .OrderBy(element => element).Select(e => e.Serialize())),
-                ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex).Select(x=> x.Serialize()).Serialize(),
+                ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex).Select(x => x.Serialize()).Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
@@ -77,32 +81,55 @@ namespace Nekoyume.Action
             var agentState = states.GetAgentState(context.Signer);
             if (agentState is null)
             {
-                throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the agent state of the signer was failed to load.");
+                throw new FailedLoadStateException(
+                    $"[{nameof(JoinArena)}] Aborted as the agent state of the signer was failed to load.");
             }
 
             if (!states.TryGetAvatarState(context.Signer, avatarAddress, out var avatarState))
             {
-                throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
+                throw new FailedLoadStateException(
+                    $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
             }
 
-            var sheets = states.GetSheets(
-                sheetTypes: new[]
-                {
-                    typeof(ItemRequirementSheet),
-                    typeof(EquipmentItemRecipeSheet),
-                    typeof(EquipmentItemSubRecipeSheetV2),
-                    typeof(EquipmentItemOptionSheet),
-                    typeof(ArenaSheet),
-                    typeof(RuneListSheet),
-                });
+            // check the avatar already joined the arena. 
+            if (states.GetArenaParticipant(championshipId, round, avatarAddress) is not null)
+            {
+                throw new AlreadyJoinedArenaException(championshipId, round, avatarAddress);
+            }
 
+            var collectionExist =
+                states.TryGetCollectionState(avatarAddress, out var collectionState) &&
+                collectionState.Ids.Any();
+            var sheetTypes = new List<Type>
+            {
+                typeof(ArenaSheet),
+                typeof(CharacterSheet),
+                typeof(CostumeStatSheet),
+                typeof(EquipmentItemOptionSheet),
+                typeof(EquipmentItemRecipeSheet),
+                typeof(EquipmentItemSubRecipeSheetV2),
+                typeof(ItemRequirementSheet),
+                typeof(RuneLevelBonusSheet),
+                typeof(RuneListSheet),
+                typeof(RuneOptionSheet),
+            };
+            if (collectionExist)
+            {
+                sheetTypes.Add(typeof(CollectionSheet));
+            }
+
+            var sheets = states.GetSheets(sheetTypes: sheetTypes);
             var gameConfigState = states.GetGameConfigState();
-            avatarState.ValidEquipmentAndCostumeV2(costumes, equipments,
+            var (equipmentItems, costumeItems) = avatarState.ValidEquipmentAndCostumeV2(
+                costumes,
+                equipments,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
                 sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
-                context.BlockIndex, addressesHex, gameConfigState);
+                context.BlockIndex,
+                addressesHex,
+                gameConfigState);
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
@@ -136,7 +163,6 @@ namespace Nekoyume.Action
             }
 
             // check fee
-
             var fee = ArenaHelper.GetEntranceFee(roundData, context.BlockIndex, avatarState.level);
             if (fee > 0 * CrystalCalculator.CRYSTAL)
             {
@@ -147,8 +173,8 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context, context.Signer, arenaAdr, fee);
+                var arenaAddr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
+                states = states.TransferAsset(context, context.Signer, arenaAddr, fee);
             }
 
             // check medal
@@ -158,14 +184,15 @@ namespace Nekoyume.Action
                 if (medalCount < roundData.RequiredMedalCount)
                 {
                     throw new NotEnoughMedalException(
-                        $"[{nameof(JoinArena)}] have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
+                        $"[{nameof(JoinArena)}] Not enough medals to join the arena." +
+                        $" Required: {roundData.RequiredMedalCount}, but has: {medalCount}");
                 }
             }
 
             // create ArenaScore
-            var arenaScoreAdr =
+            var arenaScoreAddr =
                 ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetLegacyState(arenaScoreAdr, out List _))
+            if (states.TryGetLegacyState(arenaScoreAddr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -174,9 +201,9 @@ namespace Nekoyume.Action
             var arenaScore = new ArenaScore(avatarAddress, roundData.ChampionshipId, roundData.Round);
 
             // create ArenaInformation
-            var arenaInformationAdr =
+            var arenaInformationAddr =
                 ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetLegacyState(arenaInformationAdr, out List _))
+            if (states.TryGetLegacyState(arenaInformationAddr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -186,24 +213,103 @@ namespace Nekoyume.Action
                 new ArenaInformation(avatarAddress, roundData.ChampionshipId, roundData.Round);
 
             // update ArenaParticipants
-            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
-            var arenaParticipants = states.GetArenaParticipants(arenaParticipantsAdr, roundData.ChampionshipId, roundData.Round);
+            var arenaParticipantsAddr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
+            var arenaParticipants =
+                states.GetArenaParticipants(arenaParticipantsAddr, roundData.ChampionshipId, roundData.Round);
             arenaParticipants.Add(avatarAddress);
 
-            // update ArenaAvatarState
-            var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-            var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
+            // update ArenaAvatarState: It seems like a good idea to consolidate this into ItemSlotState.
+            var arenaAvatarStateAddr = ArenaAvatarState.DeriveAddress(avatarAddress);
+            var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAddr, avatarState);
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
+
+            // start getting the total CP from here.
+            var runeStates = states.GetRuneState(avatarAddress, out var migrateRequired);
+            if (migrateRequired)
+            {
+                states = states.SetRuneState(avatarAddress, runeStates);
+            }
+
+            var equippedRune = new List<RuneState>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
+            {
+                if (runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    equippedRune.Add(runeState);
+                }
+            }
+
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeState in equippedRune)
+            {
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var characterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                collectionModifiers = collectionState.GetModifiers(collectionSheet);
+            }
+
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            var runeLevelBonus =
+                RuneHelper.CalculateRuneLevelBonus(runeStates, runeListSheet, runeLevelBonusSheet);
+            var cp = CPHelper.TotalCP(
+                equipmentItems,
+                costumeItems,
+                runeOptions,
+                avatarState.level,
+                characterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus);
+
+            // create ArenaParticipant: This is currently redundant, but we plan to replace all the ArenaScore and
+            // ArenaInformation states and some of the ArenaAvatarState states in the future.
+            var arenaParticipant = new ArenaParticipant(avatarAddress)
+            {
+                Name = avatarState.name,
+                PortraitId = avatarState.GetPortraitId(),
+                Level = avatarState.level,
+                Cp = cp,
+                Score = arenaScore.Score,
+                Ticket = arenaInformation.Ticket,
+                TicketResetCount = arenaInformation.TicketResetCount,
+                PurchasedTicketCount = arenaInformation.PurchasedTicketCount,
+                Win = arenaInformation.Win,
+                Lose = arenaInformation.Lose,
+                LastBattleBlockIndex = arenaAvatarState.LastBattleBlockIndex,
+            };
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetLegacyState(arenaScoreAdr, arenaScore.Serialize())
-                .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
-                .SetAgentState(context.Signer, agentState);
+                .SetLegacyState(arenaScoreAddr, arenaScore.Serialize())
+                .SetLegacyState(arenaInformationAddr, arenaInformation.Serialize())
+                .SetLegacyState(arenaParticipantsAddr, arenaParticipants.Serialize())
+                .SetLegacyState(arenaAvatarStateAddr, arenaAvatarState.Serialize())
+                .SetAgentState(context.Signer, agentState)
+                .SetArenaParticipant(championshipId, round, avatarAddress, arenaParticipant);
         }
     }
 }
