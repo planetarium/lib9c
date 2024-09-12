@@ -7,10 +7,10 @@ namespace Nekoyume.Exceptions
     public static class BencodexTypesExtensions
     {
         /// <summary>
-        /// Returns a new list with the value inserted at the specified index.
+        /// Returns a new list with the value replaced at the specified index.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static List InsertTo(this List list, int index, IValue value)
+        public static List Replace(this List list, int index, IValue value)
         {
             if (list.Count <= index)
             {

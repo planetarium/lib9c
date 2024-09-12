@@ -12,17 +12,17 @@ public class BencodexTypesExtensionsTest
     [InlineData(1, 0, false)]
     [InlineData(2, 1, false)]
     [InlineData(2, 2, true)]
-    public void InsertTo_List(int count, int index, bool throwException)
+    public void Replace_List(int count, int index, bool throwException)
     {
         var list = new List(new int[count]);
         if (throwException)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                list.InsertTo(index, (Integer)1));
+                list.Replace(index, (Integer)1));
         }
         else
         {
-            list = list.InsertTo(index, (Integer)1);
+            list = list.Replace(index, (Integer)1);
             Assert.Equal(1, (int)(Integer)list[index]);
         }
     }
