@@ -173,8 +173,8 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context, context.Signer, arenaAdr, fee);
+                var arenaAddr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
+                states = states.TransferAsset(context, context.Signer, arenaAddr, fee);
             }
 
             // check medal
@@ -189,9 +189,9 @@ namespace Nekoyume.Action
             }
 
             // create ArenaScore
-            var arenaScoreAdr =
+            var arenaScoreAddr =
                 ArenaScore.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetLegacyState(arenaScoreAdr, out List _))
+            if (states.TryGetLegacyState(arenaScoreAddr, out List _))
             {
                 throw new ArenaScoreAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -200,9 +200,9 @@ namespace Nekoyume.Action
             var arenaScore = new ArenaScore(avatarAddress, roundData.ChampionshipId, roundData.Round);
 
             // create ArenaInformation
-            var arenaInformationAdr =
+            var arenaInformationAddr =
                 ArenaInformation.DeriveAddress(avatarAddress, roundData.ChampionshipId, roundData.Round);
-            if (states.TryGetLegacyState(arenaInformationAdr, out List _))
+            if (states.TryGetLegacyState(arenaInformationAddr, out List _))
             {
                 throw new ArenaInformationAlreadyContainsException(
                     $"[{nameof(JoinArena)}] id({roundData.ChampionshipId}) / round({roundData.Round})");
@@ -212,14 +212,14 @@ namespace Nekoyume.Action
                 new ArenaInformation(avatarAddress, roundData.ChampionshipId, roundData.Round);
 
             // update ArenaParticipants
-            var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
+            var arenaParticipantsAddr = ArenaParticipants.DeriveAddress(roundData.ChampionshipId, roundData.Round);
             var arenaParticipants =
-                states.GetArenaParticipants(arenaParticipantsAdr, roundData.ChampionshipId, roundData.Round);
+                states.GetArenaParticipants(arenaParticipantsAddr, roundData.ChampionshipId, roundData.Round);
             arenaParticipants.Add(avatarAddress);
 
             // update ArenaAvatarState: It seems like a good idea to consolidate this into ItemSlotState.
-            var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
-            var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAdr, avatarState);
+            var arenaAvatarStateAddr = ArenaAvatarState.DeriveAddress(avatarAddress);
+            var arenaAvatarState = states.GetArenaAvatarState(arenaAvatarStateAddr, avatarState);
             arenaAvatarState.UpdateCostumes(costumes);
             arenaAvatarState.UpdateEquipment(equipments);
 
@@ -303,10 +303,10 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}JoinArena Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
-                .SetLegacyState(arenaScoreAdr, arenaScore.Serialize())
-                .SetLegacyState(arenaInformationAdr, arenaInformation.Serialize())
-                .SetLegacyState(arenaParticipantsAdr, arenaParticipants.Serialize())
-                .SetLegacyState(arenaAvatarStateAdr, arenaAvatarState.Serialize())
+                .SetLegacyState(arenaScoreAddr, arenaScore.Serialize())
+                .SetLegacyState(arenaInformationAddr, arenaInformation.Serialize())
+                .SetLegacyState(arenaParticipantsAddr, arenaParticipants.Serialize())
+                .SetLegacyState(arenaAvatarStateAddr, arenaAvatarState.Serialize())
                 .SetAgentState(context.Signer, agentState)
                 .SetArenaParticipant(championshipId, round, avatarAddress, arenaParticipant);
         }
