@@ -46,6 +46,11 @@ namespace Nekoyume.Action
                 throw new InvalidItemCountException();
             }
 
+            if (EquipmentIds.Count != EquipmentIds.Distinct().Count())
+            {
+                throw new InvalidItemCountException();
+            }
+
             var agentState = states.GetAgentState(context.Signer);
             if (agentState is null)
             {
