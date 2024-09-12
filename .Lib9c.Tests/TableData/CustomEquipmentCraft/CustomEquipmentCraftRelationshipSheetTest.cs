@@ -11,8 +11,8 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
         public void Set()
         {
             var sheetData =
-                @"relationship,cost_multiplier,required_block_multiplier,min_cp,max_cp,weapon_item_id,armor_item_id,belt_item_id,necklace_item_id,ring_item_id
-100,1,1,100,1000,90000001,91000001,92000001,93000001,94000001";
+                @"relationship,cost_multiplier,required_block_multiplier,min_cp,max_cp,weapon_item_id,armor_item_id,belt_item_id,necklace_item_id,ring_item_id,gold_amount,material_1_id,material_1_amount,material_2_id,material_2_amount
+100,1,1,100,1000,90000001,91000001,92000001,93000001,94000001,1,600201,2,600203,4";
             var sheet = new CustomEquipmentCraftRelationshipSheet();
             sheet.Set(sheetData);
 
@@ -30,6 +30,13 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
             Assert.Equal(92000001, row.BeltItemId);
             Assert.Equal(93000001, row.NecklaceItemId);
             Assert.Equal(94000001, row.RingItemId);
+
+            Assert.Equal(1, row.GoldAmount);
+            Assert.Equal(2, row.MaterialCosts.Count);
+            Assert.Equal(600201, row.MaterialCosts[0].ItemId);
+            Assert.Equal(2, row.MaterialCosts[0].Amount);
+            Assert.Equal(600203, row.MaterialCosts[1].ItemId);
+            Assert.Equal(4, row.MaterialCosts[1].Amount);
 
             Assert.Equal(90000001, row.GetItemId(ItemSubType.Weapon));
             Assert.Equal(91000001, row.GetItemId(ItemSubType.Armor));
