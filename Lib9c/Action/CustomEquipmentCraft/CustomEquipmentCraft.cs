@@ -105,14 +105,6 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             // Create equipment iterating craft data
             foreach (var craftData in CraftList)
             {
-                var slotAddress = AvatarAddress.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        craftData.SlotIndex
-                    )
-                );
-
                 var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
                 if (allSlotState is null)
                 {
@@ -135,7 +127,6 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                     typeof(EquipmentItemOptionSheet),
                     typeof(MaterialItemSheet),
                     typeof(CustomEquipmentCraftRecipeSheet),
-                    typeof(CustomEquipmentCraftCostSheet),
                     typeof(CustomEquipmentCraftRelationshipSheet),
                     typeof(CustomEquipmentCraftIconSheet),
                     typeof(CustomEquipmentCraftOptionSheet),
@@ -157,7 +148,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
                 // Validate Recipe ResultEquipmentId
                 var relationshipRow = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>()
-                    .OrderedList.First(row => row.Relationship >= relationship);
+                    .OrderedList.Last(row => row.Relationship <= relationship);
                 var equipmentItemId = relationshipRow.GetItemId(recipeRow.ItemSubType);
                 var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
                 if (!equipmentItemSheet.TryGetValue(equipmentItemId, out var equipmentRow))
@@ -173,11 +164,10 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 // Calculate and remove total cost
                 var (ncgCost, materialCosts) = CustomCraftHelper.CalculateCraftCost(
                     craftData.IconId,
+                    relationship,
                     sheets.GetSheet<MaterialItemSheet>(),
                     recipeRow,
                     relationshipRow,
-                    sheets.GetSheet<CustomEquipmentCraftCostSheet>().Values
-                        .FirstOrDefault(r => r.Relationship == relationship),
                     states.GetGameConfigState().CustomEquipmentCraftIconCostMultiplier
                 );
                 if (ncgCost > 0)

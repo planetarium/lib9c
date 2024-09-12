@@ -118,14 +118,14 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 true, 0, false, ElementalType.Wind, 10, null, 8,
             };
 
-            // Move to next relationship
+            // First craft in relationship group
             yield return new object?[]
             {
                 new List<CustomCraftData>
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 10, false, ElementalType.Wind, 10, null,
+                true, 11, false, ElementalType.Wind, 12, null,
             };
             yield return new object?[]
             {
@@ -133,7 +133,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 100, false, ElementalType.Wind, 12, null,
+                true, 101, false, ElementalType.Wind, 15, null,
             };
             yield return new object?[]
             {
@@ -141,7 +141,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 1000, false, ElementalType.Wind, 15, null,
+                true, 1001, false, ElementalType.Wind, 20, null,
             };
 
             // Multiple slots
@@ -243,12 +243,12 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
-                var relationshipRow = relationshipSheet.OrderedList!
-                    .First(row => row.Relationship >= initialRelationship);
                 var materialSheet = _tableSheets.MaterialItemSheet;
 
                 foreach (var craftData in craftList)
                 {
+                    var relationshipRow = relationshipSheet.OrderedList!
+                        .Last(row => row.Relationship <= initialRelationship);
                     var recipeRow =
                         _tableSheets.CustomEquipmentCraftRecipeSheet[craftData.RecipeId];
                     var scrollRow = materialSheet[ScrollItemId];
@@ -273,18 +273,18 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                     _avatarState.inventory.AddItem(circle, (int)Math.Floor(circleAmount));
 
-                    var costRow = _tableSheets.CustomEquipmentCraftCostSheet.Values
-                        .FirstOrDefault(row => row.Relationship == initialRelationship);
-                    if (costRow is not null)
+                    if (relationshipRow.Relationship == initialRelationship)
                     {
-                        if (costRow.GoldAmount > 0)
+                        if (relationshipRow.GoldAmount > 0)
                         {
                             state = state.MintAsset(
-                                context, _agentAddress, state.GetGoldCurrency() * costRow.GoldAmount
+                                context,
+                                _agentAddress,
+                                state.GetGoldCurrency() * relationshipRow.GoldAmount
                             );
                         }
 
-                        foreach (var cost in costRow.MaterialCosts)
+                        foreach (var cost in relationshipRow.MaterialCosts)
                         {
                             var row = materialSheet[cost.ItemId];
                             _avatarState.inventory.AddItem(
@@ -374,7 +374,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList!
                             .First(row => row.Relationship >= initialRelationship)
                             .GetItemId(itemSubType);
-                    var equipment = inventory.Equipments.First(e => e.ItemId == slotState.Result.itemUsable.ItemId);
+                    var equipment = inventory.Equipments.First(e =>
+                        e.ItemId == slotState.Result.itemUsable.ItemId);
                     Assert.Equal(expectedEquipmentId, equipment.Id);
                     Assert.True(equipment.ByCustomCraft);
 
