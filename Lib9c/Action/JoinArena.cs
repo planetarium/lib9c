@@ -91,6 +91,7 @@ namespace Nekoyume.Action
                     $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
             }
 
+            // check the avatar already joined the arena. 
             if (states.GetArenaParticipant(championshipId, round, avatarAddress) is not null)
             {
                 throw new AlreadyJoinedArenaException(championshipId, round, avatarAddress);
