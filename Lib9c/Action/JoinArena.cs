@@ -184,7 +184,8 @@ namespace Nekoyume.Action
                 if (medalCount < roundData.RequiredMedalCount)
                 {
                     throw new NotEnoughMedalException(
-                        $"[{nameof(JoinArena)}] have({medalCount}) < Required Medal Count({roundData.RequiredMedalCount}) ");
+                        $"[{nameof(JoinArena)}] Not enough medals to join the arena." +
+                        $" Required: {roundData.RequiredMedalCount}, but has: {medalCount}");
                 }
             }
 

@@ -190,4 +190,9 @@ public static class InitializeUtil
         agentState.avatarAddresses.Add(index.Value, avatarAddr);
         return (world.SetAvatarState(avatarAddr, avatarState), avatarState, index.Value);
     }
+
+    public static IWorld MainAsset(IWorld world, Address recipient, FungibleAssetValue asset)
+    {
+        return world.MintAsset(new ActionContext(), recipient, asset);
+    }
 }
