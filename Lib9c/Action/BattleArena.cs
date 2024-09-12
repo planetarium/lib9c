@@ -452,19 +452,15 @@ namespace Nekoyume.Action
             myArenaInformation.UpdateRecord(winCount, defeatCount);
 
             // start getting the total my CP from here.
-            var myEquippedRune = new List<RuneState>();
-            foreach (var runeInfo in myRuneSlotState.GetEquippedRuneSlotInfos())
-            {
-                if (myRuneStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
-                {
-                    myEquippedRune.Add(runeState);
-                }
-            }
-
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
             var myRuneOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeState in myEquippedRune)
+            foreach (var runeInfo in myRuneSlotState.GetEquippedRuneSlotInfos())
             {
+                if (!myRuneStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
                 if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
                 {
                     throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
