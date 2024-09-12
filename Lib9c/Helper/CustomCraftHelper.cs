@@ -14,10 +14,10 @@ namespace Nekoyume.Helper
     {
         public static (BigInteger, IDictionary<int, int>) CalculateCraftCost(
             int iconId,
+            int relationship,
             MaterialItemSheet materialItemSheet,
             CustomEquipmentCraftRecipeSheet.Row recipeRow,
             CustomEquipmentCraftRelationshipSheet.Row relationshipRow,
-            CustomEquipmentCraftCostSheet.Row? costRow,
             decimal iconCostMultiplier
         )
         {
@@ -28,8 +28,11 @@ namespace Nekoyume.Helper
             var circleItemId = materialItemSheet.OrderedList!
                 .First(row => row.ItemSubType == ItemSubType.Circle).Id;
 
+            // Scroll cost : {recipe.scroll} * {relationship multiplier}
             itemCosts[scrollItemId] =
                 (int)Math.Floor(recipeRow.ScrollAmount * relationshipRow.CostMultiplier / 10000m);
+
+            // Circle cost : {recipe.circle} * {relationship multiplier} * {Random multiplier}
             var circleCost =
                 (decimal)recipeRow.CircleAmount * relationshipRow.CostMultiplier / 10000m;
             if (iconId != 0)
@@ -37,10 +40,10 @@ namespace Nekoyume.Helper
                 circleCost = circleCost * iconCostMultiplier / 10000m;
             }
 
-            if (costRow is not null)
+            if (relationshipRow.Relationship == relationship)
             {
-                ncgCost = costRow.GoldAmount;
-                foreach (var itemCost in costRow.MaterialCosts)
+                ncgCost = relationshipRow.GoldAmount;
+                foreach (var itemCost in relationshipRow.MaterialCosts)
                 {
                     itemCosts[itemCost.ItemId] = itemCost.Amount;
                 }
