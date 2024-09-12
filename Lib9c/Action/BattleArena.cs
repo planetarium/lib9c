@@ -498,7 +498,8 @@ namespace Nekoyume.Action
 
             // create ArenaParticipant: This is currently redundant, but we plan to replace all the ArenaScore and
             // ArenaInformation states and some of the ArenaAvatarState states in the future.
-            // Why don't get ArenaParticipant here? Because it is not necessary yet.
+            // The reason we are creating a new ArenaParticipant instead of getting it and updating its state is to
+            // save resources on getting it since we already have most of the values.
             var myArenaParticipant = new ArenaParticipant(myAvatarAddress)
             {
                 Name = myAvatarState.name,
@@ -515,89 +516,7 @@ namespace Nekoyume.Action
             };
 
             var enemyArenaParticipant = states.GetArenaParticipant(championshipId, round, enemyAvatarAddress);
-            if (enemyArenaParticipant is null)
-            {
-                // start getting the total enemy's CP from here.
-                var enemyEquippedRune = new List<RuneState>();
-                foreach (var runeInfo in enemyRuneSlotState.GetEquippedRuneSlotInfos())
-                {
-                    if (enemyRuneStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
-                    {
-                        enemyEquippedRune.Add(runeState);
-                    }
-                }
-
-                var enemyRuneOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-                foreach (var runeState in enemyEquippedRune)
-                {
-                    if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
-                    {
-                        throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
-                    }
-
-                    if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
-                    {
-                        throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
-                    }
-
-                    enemyRuneOptions.Add(option);
-                }
-
-                if (!characterSheet.TryGetValue(enemyAvatarState.characterId, out var enemyCharacterRow))
-                {
-                    throw new SheetRowNotFoundException("CharacterSheet", enemyAvatarState.characterId);
-                }
-
-                var enemyRuneLevelBonus = RuneHelper.CalculateRuneLevelBonus(
-                    enemyRuneStates,
-                    runeListSheet,
-                    runeLevelBonusSheet);
-                var enemyCp = CPHelper.TotalCP(
-                    equipmentItems,
-                    costumeItems,
-                    enemyRuneOptions,
-                    enemyAvatarState.level,
-                    enemyCharacterRow,
-                    costumeStatSheet,
-                    collectionModifiers[enemyAvatarAddress],
-                    enemyRuneLevelBonus);
-
-                var enemyArenaInformationAddr = ArenaInformation.DeriveAddress(
-                    enemyAvatarAddress,
-                    roundData.ChampionshipId,
-                    roundData.Round);
-                if (!states.TryGetArenaInformation(enemyArenaInformationAddr, out var enemyArenaInformation))
-                {
-                    throw new ArenaInformationNotFoundException(
-                        $"[{nameof(BattleArena)}] enemy avatar address : {enemyAvatarAddress}" +
-                        $" - ChampionshipId({roundData.ChampionshipId}) - round({roundData.Round})");
-                }
-
-                var enemyArenaAvatarStateAddr = ArenaAvatarState.DeriveAddress(enemyAvatarAddress);
-                if (!states.TryGetArenaAvatarState(
-                        enemyArenaAvatarStateAddr,
-                        out var enemyArenaAvatarState))
-                {
-                    throw new ArenaAvatarStateNotFoundException(
-                        $"[{nameof(BattleArena)}] enemy avatar address : {enemyAvatarAddress}");
-                }
-
-                enemyArenaParticipant = new ArenaParticipant(enemyAvatarAddress)
-                {
-                    Name = enemyAvatarState.name,
-                    PortraitId = enemyAvatarState.GetPortraitId(),
-                    Level = enemyAvatarState.level,
-                    Cp = enemyCp,
-                    Score = enemyArenaScore.Score,
-                    Ticket = enemyArenaInformation.Ticket,
-                    TicketResetCount = enemyArenaInformation.TicketResetCount,
-                    PurchasedTicketCount = enemyArenaInformation.PurchasedTicketCount,
-                    Win = enemyArenaInformation.Win,
-                    Lose = enemyArenaInformation.Lose,
-                    LastBattleBlockIndex = enemyArenaAvatarState.LastBattleBlockIndex,
-                };
-            }
-            else
+            if (enemyArenaParticipant is not null)
             {
                 enemyArenaParticipant.Score = enemyArenaScore.Score;
             }
