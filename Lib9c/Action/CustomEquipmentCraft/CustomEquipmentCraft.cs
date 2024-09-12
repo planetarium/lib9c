@@ -148,7 +148,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
                 // Validate Recipe ResultEquipmentId
                 var relationshipRow = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>()
-                    .OrderedList.Reverse().First(row => row.Relationship <= relationship);
+                    .OrderedList.Last(row => row.Relationship <= relationship);
                 var equipmentItemId = relationshipRow.GetItemId(recipeRow.ItemSubType);
                 var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
                 if (!equipmentItemSheet.TryGetValue(equipmentItemId, out var equipmentRow))

@@ -247,8 +247,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                 foreach (var craftData in craftList)
                 {
-                    var relationshipRow = relationshipSheet.OrderedList!.Reverse()
-                        .First(row => row.Relationship <= initialRelationship);
+                    var relationshipRow = relationshipSheet.OrderedList!
+                        .Last(row => row.Relationship <= initialRelationship);
                     var recipeRow =
                         _tableSheets.CustomEquipmentCraftRecipeSheet[craftData.RecipeId];
                     var scrollRow = materialSheet[ScrollItemId];
