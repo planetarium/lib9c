@@ -514,15 +514,11 @@ namespace Nekoyume.Action
             states = states.SetArenaParticipant(championshipId, round, myAvatarAddress, myArenaParticipant);
 
             // update enemyArenaParticipantState.Score
-            var enemyArenaParticipantState = states.GetArenaParticipantState(championshipId, round, enemyAvatarAddress);
-            if (enemyArenaParticipantState is List enemyArenaParticipantList)
+            var enemyArenaParticipant = states.GetArenaParticipant(championshipId, round, enemyAvatarAddress);
+            if (enemyArenaParticipant is not null)
             {
-                enemyArenaParticipantList = enemyArenaParticipantList.InsertTo(6, (Integer)enemyArenaScore.Score);
-                states = states.SetArenaParticipant(
-                    championshipId,
-                    round,
-                    enemyAvatarAddress,
-                    enemyArenaParticipantList);
+                enemyArenaParticipant.Score = enemyArenaScore.Score;
+                states = states.SetArenaParticipant(championshipId, round, enemyAvatarAddress, enemyArenaParticipant);
             }
 
             var ended = DateTimeOffset.UtcNow;
