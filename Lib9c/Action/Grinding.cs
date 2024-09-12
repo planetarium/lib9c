@@ -196,7 +196,9 @@ namespace Nekoyume.Action
                 foreach (var (materialId, count) in grindingRow.RewardMaterials)
                 {
                     var materialRow = materialItemSheet[materialId];
-                    var material = ItemFactory.CreateMaterial(materialRow);
+                    var material = materialRow.ItemSubType is ItemSubType.Circle or ItemSubType.Scroll
+                        ? ItemFactory.CreateTradableMaterial(materialRow)
+                        : ItemFactory.CreateMaterial(materialRow);
                     reward.TryAdd(material, 0);
                     reward[material] += count;
                 }
