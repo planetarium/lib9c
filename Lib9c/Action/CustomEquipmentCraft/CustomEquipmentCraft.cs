@@ -105,14 +105,6 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             // Create equipment iterating craft data
             foreach (var craftData in CraftList)
             {
-                var slotAddress = AvatarAddress.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        craftData.SlotIndex
-                    )
-                );
-
                 var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
                 if (allSlotState is null)
                 {
