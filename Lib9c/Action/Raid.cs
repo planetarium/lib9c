@@ -88,6 +88,7 @@ namespace Nekoyume.Action
                 typeof(RuneLevelBonusSheet),
                 typeof(DeBuffLimitSheet),
                 typeof(BuffLinkSheet),
+                typeof(MaterialItemSheet),
             };
             if (collectionExist)
             {
@@ -321,6 +322,11 @@ namespace Nekoyume.Action
                 }
             }
 
+            foreach (var battleReward in simulator.Reward)
+            {
+                avatarState.inventory.AddItem(battleReward);
+            }
+
             if (raiderState.LatestBossLevel < bossState.Level)
             {
                 // kill reward
@@ -341,7 +347,9 @@ namespace Nekoyume.Action
                         sheets.GetSheet<RuneWeightSheet>(),
                         sheets.GetSheet<WorldBossKillRewardSheet>(),
                         sheets.GetSheet<RuneSheet>(),
+                        sheets.GetSheet<MaterialItemSheet>(),
                         random,
+                        avatarState.inventory,
                         AvatarAddress,
                         context.Signer
                     );
@@ -363,7 +371,7 @@ namespace Nekoyume.Action
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
-                .SetAvatarState(AvatarAddress, avatarState)
+                .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
                 .SetLegacyState(worldBossAddress, bossState.Serialize())
                 .SetLegacyState(raiderAddress, raiderState.Serialize());
         }

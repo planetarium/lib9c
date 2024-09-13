@@ -16,13 +16,13 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static SerializeKeys;
 
     public class RaidTest
     {
@@ -270,11 +270,21 @@ namespace Lib9c.Tests.Action
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
 
-                Dictionary<Currency, FungibleAssetValue> rewardMap
-                    = new Dictionary<Currency, FungibleAssetValue>();
+                var assetRewardMap = new Dictionary<Currency, FungibleAssetValue>();
                 foreach (var reward in simulator.AssetReward)
                 {
-                    rewardMap[reward.Currency] = reward;
+                    assetRewardMap[reward.Currency] = reward;
+                }
+
+                var materialRewardMap = new Dictionary<TradableMaterial, int>();
+                foreach (var reward in simulator.Reward)
+                {
+                    Assert.True(reward is TradableMaterial);
+                    if (reward is TradableMaterial tradableMaterial)
+                    {
+                        materialRewardMap.TryAdd(tradableMaterial, 0);
+                        materialRewardMap[tradableMaterial]++;
+                    }
                 }
 
                 if (rewardRecordExist)
@@ -283,28 +293,35 @@ namespace Lib9c.Tests.Action
                     Assert.True(state.TryGetLegacyState(bossAddress, out List prevRawBoss));
                     var prevBossState = new WorldBossState(prevRawBoss);
                     int rank = WorldBossHelper.CalculateRank(bossRow, raiderStateExist ? 1_000 : 0);
-                    var rewards = RuneHelper.CalculateReward(
+                    var rewards = WorldBossHelper.CalculateReward(
                         rank,
                         prevBossState.Id,
                         _tableSheets.RuneWeightSheet,
                         _tableSheets.WorldBossKillRewardSheet,
                         _tableSheets.RuneSheet,
+                        _tableSheets.MaterialItemSheet,
                         random
                     );
 
-                    foreach (var reward in rewards)
+                    foreach (var reward in rewards.assets)
                     {
-                        if (!rewardMap.ContainsKey(reward.Currency))
+                        if (!assetRewardMap.ContainsKey(reward.Currency))
                         {
-                            rewardMap[reward.Currency] = reward;
+                            assetRewardMap[reward.Currency] = reward;
                         }
                         else
                         {
-                            rewardMap[reward.Currency] += reward;
+                            assetRewardMap[reward.Currency] += reward;
                         }
                     }
 
-                    foreach (var reward in rewardMap)
+                    foreach (var reward in rewards.materials)
+                    {
+                        materialRewardMap.TryAdd(reward.Key, 0);
+                        materialRewardMap[reward.Key] += reward.Value;
+                    }
+
+                    foreach (var reward in assetRewardMap)
                     {
                         if (reward.Key.Equals(CrystalCalculator.CRYSTAL))
                         {
@@ -315,11 +332,20 @@ namespace Lib9c.Tests.Action
                             Assert.Equal(reward.Value, nextState.GetBalance(_avatarAddress, reward.Key));
                         }
                     }
+
+                    var inventory = nextState.GetInventoryV2(_avatarAddress);
+                    foreach (var reward in materialRewardMap)
+                    {
+                        var itemCount = inventory.TryGetTradableFungibleItems(reward.Key.FungibleId, null, context.BlockIndex, out var items)
+                            ? items.Sum(item => item.count)
+                            : 0;
+                        Assert.Equal(reward.Value, itemCount);
+                    }
                 }
 
-                if (rewardMap.ContainsKey(crystal))
+                if (assetRewardMap.ContainsKey(crystal))
                 {
-                    Assert.Equal(rewardMap[crystal], nextState.GetBalance(_agentAddress, crystal));
+                    Assert.Equal(assetRewardMap[crystal], nextState.GetBalance(_agentAddress, crystal));
                 }
 
                 if (crystalExist)
@@ -513,25 +539,37 @@ namespace Lib9c.Tests.Action
                 );
             simulator.Simulate();
 
-            Dictionary<Currency, FungibleAssetValue> rewardMap
-                    = new Dictionary<Currency, FungibleAssetValue>();
+            var rewardMap = new Dictionary<Currency, FungibleAssetValue>();
             foreach (var reward in simulator.AssetReward)
             {
                 rewardMap[reward.Currency] = reward;
             }
 
-            List<FungibleAssetValue> killRewards = RuneHelper.CalculateReward(
+            var materialRewardMap = new Dictionary<TradableMaterial, int>();
+            foreach (var reward in simulator.Reward)
+            {
+                Assert.True(reward is TradableMaterial);
+                if (reward is TradableMaterial tradableMaterial)
+                {
+                    materialRewardMap.TryAdd(tradableMaterial, 0);
+                    materialRewardMap[tradableMaterial]++;
+                }
+            }
+
+            var killRewards = WorldBossHelper.CalculateReward(
                 0,
                 bossState.Id,
                 _tableSheets.RuneWeightSheet,
                 _tableSheets.WorldBossKillRewardSheet,
                 _tableSheets.RuneSheet,
+                _tableSheets.MaterialItemSheet,
                 random
             );
 
+            var blockIndex = worldBossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval;
             var nextState = action.Execute(new ActionContext
             {
-                BlockIndex = worldBossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval,
+                BlockIndex = blockIndex,
                 PreviousState = state,
                 RandomSeed = randomSeed,
                 Signer = _agentAddress,
@@ -541,7 +579,7 @@ namespace Lib9c.Tests.Action
             var nextRaiderState = new RaiderState(rawRaider);
             Assert.Equal(simulator.DamageDealt, nextRaiderState.HighScore);
 
-            foreach (var reward in killRewards)
+            foreach (var reward in killRewards.assets)
             {
                 if (!rewardMap.ContainsKey(reward.Currency))
                 {
@@ -551,6 +589,12 @@ namespace Lib9c.Tests.Action
                 {
                     rewardMap[reward.Currency] += reward;
                 }
+            }
+
+            foreach (var reward in killRewards.materials)
+            {
+                materialRewardMap.TryAdd(reward.Key, 0);
+                materialRewardMap[reward.Key] += reward.Value;
             }
 
             foreach (var reward in rewardMap)
@@ -563,6 +607,15 @@ namespace Lib9c.Tests.Action
                 {
                     Assert.Equal(reward.Value, nextState.GetBalance(_avatarAddress, reward.Key));
                 }
+            }
+
+            var inventory = nextState.GetInventoryV2(_avatarAddress);
+            foreach (var reward in materialRewardMap)
+            {
+                var itemCount = inventory.TryGetTradableFungibleItems(reward.Key.FungibleId, null, blockIndex, out var items)
+                    ? items.Sum(item => item.count)
+                    : 0;
+                Assert.Equal(reward.Value, itemCount);
             }
 
             Assert.Equal(1, nextRaiderState.Level);

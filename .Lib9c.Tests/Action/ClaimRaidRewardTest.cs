@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
@@ -64,13 +65,24 @@ namespace Lib9c.Tests.Action
                 HighScore = highScore,
                 LatestRewardRank = latestRank,
             };
-            IWorld state = _state.SetLegacyState(raiderAddress, raiderState.Serialize());
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+
+            var state = _state
+                .SetLegacyState(raiderAddress, raiderState.Serialize())
+                .SetAvatarState(avatarAddress, avatarState);
             var randomSeed = 0;
 
             var rows = _tableSheets.WorldBossRankRewardSheet.Values
                 .Where(x => x.BossId == bossRow.BossId);
             var expectedCrystal = 0;
             var expectedRune = 0;
+            var expectedCircle = 0;
             foreach (var row in rows)
             {
                 if (row.Rank <= latestRank ||
@@ -81,15 +93,17 @@ namespace Lib9c.Tests.Action
 
                 expectedCrystal += row.Crystal;
                 expectedRune += row.Rune;
+                expectedCircle += row.Circle;
             }
 
+            const long blockIndex = 5055201L;
             var action = new ClaimRaidReward(avatarAddress);
             if (exc is null)
             {
                 var nextState = action.Execute(new ActionContext
                 {
                     Signer = agentAddress,
-                    BlockIndex = 5055201L,
+                    BlockIndex = blockIndex,
                     RandomSeed = randomSeed,
                     PreviousState = state,
                 });
@@ -110,6 +124,13 @@ namespace Lib9c.Tests.Action
                 }
 
                 Assert.Equal(expectedRune, rune);
+
+                var circleRow = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Circle);
+                var inventory = nextState.GetAvatarState(avatarAddress).inventory;
+                var itemCount = inventory.TryGetTradableFungibleItems(circleRow.ItemId, null, blockIndex, out var items)
+                    ? items.Sum(item => item.count)
+                    : 0;
+                Assert.Equal(expectedCircle, itemCount);
             }
             else
             {

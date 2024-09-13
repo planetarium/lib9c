@@ -6,5 +6,6 @@ namespace Nekoyume.TableData
         int Rank { get; }
         int Rune { get; }
         int Crystal { get; }
+        int Circle { get; }
     }
 }

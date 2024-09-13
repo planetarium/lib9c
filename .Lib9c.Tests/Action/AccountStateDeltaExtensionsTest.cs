@@ -59,8 +59,8 @@ namespace Lib9c.Tests.Action
             var random = new TestRandom();
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             var runeSheet = tableSheets.RuneSheet;
+            var materialItemSheet = tableSheets.MaterialItemSheet;
             var runeCurrency = RuneHelper.ToCurrency(runeSheet[10001]);
-            var avatarAddress = new PrivateKey().Address;
             var bossState = new WorldBossState(
                 tableSheets.WorldBossListSheet[1],
                 tableSheets.WorldBossGlobalHpSheet[1]
@@ -71,14 +71,27 @@ namespace Lib9c.Tests.Action
 1,{bossId},0,10001,100
 ");
             var killRewardSheet = new WorldBossKillRewardSheet();
-            killRewardSheet.Set($@"id,boss_id,rank,rune_min,rune_max,crystal
-1,{bossId},0,1,1,100
+            killRewardSheet.Set($@"id,boss_id,rank,rune_min,rune_max,crystal,circle
+1,{bossId},0,1,1,100,0
 ");
 
             if (exc is null)
             {
-                var nextState = states.SetWorldBossKillReward(context, rewardInfoAddress, rewardRecord, 0, bossState, runeWeightSheet, killRewardSheet, runeSheet, random, avatarAddress, _agentAddress);
-                Assert.Equal(expectedRune * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
+                var nextState = states.SetWorldBossKillReward(
+                    context,
+                    rewardInfoAddress,
+                    rewardRecord,
+                    0,
+                    bossState,
+                    runeWeightSheet,
+                    killRewardSheet,
+                    runeSheet,
+                    materialItemSheet,
+                    random,
+                    _avatarState.inventory,
+                    _avatarAddress,
+                    _agentAddress);
+                Assert.Equal(expectedRune * runeCurrency, nextState.GetBalance(_avatarState.address, runeCurrency));
                 Assert.Equal(expectedCrystal * CrystalCalculator.CRYSTAL, nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
                 var nextRewardInfo = new WorldBossKillRewardRecord((List)nextState.GetLegacyState(rewardInfoAddress));
                 Assert.All(nextRewardInfo, kv => Assert.True(kv.Value));
@@ -96,8 +109,10 @@ namespace Lib9c.Tests.Action
                         runeWeightSheet,
                         killRewardSheet,
                         runeSheet,
+                        materialItemSheet,
                         random,
-                        avatarAddress,
+                        _avatarState.inventory,
+                        _avatarAddress,
                         _agentAddress)
                 );
             }
