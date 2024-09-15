@@ -43,18 +43,19 @@ namespace Lib9c.Tests.Action.Guild
             var repository = new GuildRepository(world, new ActionContext());
             repository.MakeGuild(guildAddress, guildMasterAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
-            repository.Ban(guildAddress, guildMasterAddress, agentAddress);
+            var bannedRepository = new GuildRepository(repository.World, new ActionContext());
+            bannedRepository.Ban(guildAddress, guildMasterAddress, agentAddress);
 
             // This case should fail because the agent is banned by the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = repository.World,
+                PreviousState = bannedRepository.World,
                 Signer = agentAddress,
             }));
 
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = agentAddress,
             });
 

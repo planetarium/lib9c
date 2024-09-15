@@ -44,6 +44,7 @@ namespace Lib9c.Tests.Action.Guild
             var repository = new GuildRepository(world, new ActionContext());
             repository.MakeGuild(guildAddress, guildMasterAddress);
             repository.ApplyGuild(appliedMemberAddress, guildAddress);
+            world = repository.World;
 
             // These cases should fail because the member didn't apply the guild and
             // non-guild-master-addresses cannot accept the guild application.
@@ -86,7 +87,7 @@ namespace Lib9c.Tests.Action.Guild
                 Signer = guildMasterAddress,
             });
 
-            repository = new GuildRepository(world, new ActionContext());
+            repository.UpdateWorld(world);
 
             Assert.False(repository.TryGetGuildApplication(appliedMemberAddress, out _));
             Assert.Equal(guildAddress, repository.GetJoinedGuild(appliedMemberAddress));

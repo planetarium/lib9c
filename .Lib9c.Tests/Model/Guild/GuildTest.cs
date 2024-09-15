@@ -44,6 +44,7 @@ namespace Lib9c.Tests.Model.Guild
                 AddressUtil.CreateAgentAddress(),
                 Currency.Legacy("NCG", 2, null),
                 repository);
+            repository.SetGuild(guild);
             var newGuild = new Nekoyume.Model.Guild.Guild(
                 guildAddress,
                 guild.Bencoded,

@@ -28,16 +28,26 @@ namespace Lib9c.Tests.Delegation
                 BlockProtocolVersion = BlockMetadata.CurrentProtocolVersion,
             };
 
-            Repository = new TestRepository(world, context);
-            TestDelegator1 = new TestDelegator(new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), Repository);
-            TestDelegator2 = new TestDelegator(new Address("0x327CCff388255E9399207C3d5a09357D0BBc73dF"), Repository);
-            TestDelegatee1 = new TestDelegatee(new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), Repository);
-            TestDelegatee2 = new TestDelegatee(new Address("0xea1C4eedEfC99691DEfc6eF2753FAfa8C17F4584"), Repository);
-            DummyDelegatee1 = new DummyDelegatee(new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), Repository);
-            DummyDelegator1 = new DummyDelegator(new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), Repository);
+            TestRepository = new TestRepository(world, context);
+            TestDelegator1 = new TestDelegator(
+                new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), TestRepository.DelegatorAccountAddress, TestRepository);
+            TestDelegator2 = new TestDelegator(
+                new Address("0x327CCff388255E9399207C3d5a09357D0BBc73dF"), TestRepository.DelegatorAccountAddress, TestRepository);
+            TestDelegatee1 = new TestDelegatee(
+                new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), TestRepository.DelegateeAccountAddress, TestRepository);
+            TestDelegatee2 = new TestDelegatee(
+                new Address("0xea1C4eedEfC99691DEfc6eF2753FAfa8C17F4584"), TestRepository.DelegateeAccountAddress, TestRepository);
+
+            DummyRepository = new DummyRepository(world, context);
+            DummyDelegatee1 = new DummyDelegatee(
+                new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), DummyRepository.DelegateeAccountAddress, DummyRepository);
+            DummyDelegator1 = new DummyDelegator(
+                new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), DummyRepository.DelegateeAccountAddress, DummyRepository);
         }
 
-        public TestRepository Repository { get; }
+        public TestRepository TestRepository { get; }
+
+        public DummyRepository DummyRepository { get; }
 
         public TestDelegator TestDelegator1 { get; }
 

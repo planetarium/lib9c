@@ -52,7 +52,9 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var repository = new GuildRepository(world, new ActionContext());
             repository.MakeGuild(guildAddress, guildMasterAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
-            repository.UpdateWorld(repository.World.SetLegacyState(pledgeAddress, new List(
+            repository.UpdateWorld(repository.World.SetLegacyState(
+                pledgeAddress,
+                new List(
                     MeadConfig.PatronAddress.Serialize(),
                     true.Serialize(),
                     RequestPledge.DefaultRefillMead.Serialize())));
@@ -67,9 +69,9 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 Signer = caller,
             });
 
-            repository.UpdateWorld(newWorld);
-            var joinedGuildAddress = Assert.IsType<GuildAddress>(repository.GetJoinedGuild(target));
-            Assert.True(repository.TryGetGuild(joinedGuildAddress, out var guild));
+            var newRepository = new GuildRepository(newWorld, new ActionContext());
+            var joinedGuildAddress = Assert.IsType<GuildAddress>(newRepository.GetJoinedGuild(target));
+            Assert.True(newRepository.TryGetGuild(joinedGuildAddress, out var guild));
             Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
 
             // Migrate by itself.
@@ -79,9 +81,9 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 Signer = target,
             });
 
-            repository.UpdateWorld(newWorld);
-            joinedGuildAddress = Assert.IsType<GuildAddress>(repository.GetJoinedGuild(target));
-            Assert.True(repository.TryGetGuild(joinedGuildAddress, out guild));
+            newRepository.UpdateWorld(newWorld);
+            joinedGuildAddress = Assert.IsType<GuildAddress>(newRepository.GetJoinedGuild(target));
+            Assert.True(newRepository.TryGetGuild(joinedGuildAddress, out guild));
             Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
         }
 

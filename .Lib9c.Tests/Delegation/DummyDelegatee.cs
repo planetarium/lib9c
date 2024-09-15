@@ -10,16 +10,16 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
     }
 
     public DummyDelegatee(Address address, Address accountAddress, DummyRepository repository)
-            : base(
-                  address,
-                  accountAddress,
-                  DelegationFixture.TestCurrency,
-                  DelegationFixture.TestCurrency,
-                  address,
-                  3,
-                  5,
-                  5,
-                  repository)
+        : base(
+                address,
+                accountAddress,
+                DelegationFixture.TestCurrency,
+                DelegationFixture.TestCurrency,
+                address,
+                3,
+                5,
+                5,
+                repository)
     {
     }
 }
