@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Delegation
         public void Ctor()
         {
             var address = new Address("0x070e5719767CfB86712C31F5AB0072c48959d862");
-            var delegator = new TestDelegator(address, _fixture.Repository);
+            var delegator = new TestDelegator(address, _fixture.TestRepository.DelegatorAccountAddress, _fixture.TestRepository);
             Assert.Equal(address, delegator.Address);
             Assert.Empty(delegator.Delegatees);
         }
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void GetSet()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator = _fixture.TestDelegator1;
             var delegatee = _fixture.TestDelegatee1;
             repo.MintAsset(delegator.Address, delegatee.DelegationCurrency * 100);
@@ -39,7 +39,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void Delegate()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator = _fixture.TestDelegator1;
             var delegatee1 = _fixture.TestDelegatee1;
             var delegatee2 = _fixture.TestDelegatee2;
@@ -91,13 +91,13 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void Undelegate()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator = _fixture.TestDelegator1;
             var delegatee = _fixture.TestDelegatee1;
             var delegatorInitialBalance = delegatee.DelegationCurrency * 100;
             repo.MintAsset(delegator.Address, delegatorInitialBalance);
             var delegatingFAV = delegatee.DelegationCurrency * 10;
-            delegator.Delegate(delegatee, delegatingFAV, 10L);
+            delegator.Delegate(delegatee, delegatingFAV, 9L);
             var initialShare = repo.GetBond(delegatee, delegator.Address).Share;
             var undelegatingShare = initialShare / 3;
             var undelegatingFAV = delegatee.FAVFromShare(undelegatingShare);
@@ -186,7 +186,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void Redelegate()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator = _fixture.TestDelegator1;
             var delegatee1 = _fixture.TestDelegatee1;
             var delegatee2 = _fixture.TestDelegatee2;
@@ -289,7 +289,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void RewardOnDelegate()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator1 = _fixture.TestDelegator1;
             var delegator2 = _fixture.TestDelegator2;
             var delegatee = _fixture.TestDelegatee1;
@@ -345,7 +345,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void RewardOnUndelegate()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator1 = _fixture.TestDelegator1;
             var delegator2 = _fixture.TestDelegator2;
             var delegatee = _fixture.TestDelegatee1;
@@ -354,9 +354,9 @@ namespace Lib9c.Tests.Delegation
             repo.MintAsset(delegator2.Address, delegatorInitialBalance);
 
             var reward = delegatee.DelegationCurrency * 100;
-            repo.MintAsset(delegatee.RewardDistributorAddress, reward);
+            repo.MintAsset(delegatee.RewardCollectorAddress, reward);
             // EndBlock after delegatee's reward
-            repo.AddLumpSumRewards(delegatee, 10L, reward);
+            delegatee.CollectRewards(10L);
 
             var delegatingFAV1 = delegatee.DelegationCurrency * 10;
             delegator1.Delegate(delegatee, delegatingFAV1, 10L);
@@ -402,7 +402,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void RewardOnRedelegate()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator1 = _fixture.TestDelegator1;
             var delegator2 = _fixture.TestDelegator2;
             var delegatee = _fixture.TestDelegatee1;
@@ -460,7 +460,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void RewardOnClaim()
         {
-            var repo = _fixture.Repository;
+            var repo = _fixture.TestRepository;
             var delegator1 = _fixture.TestDelegator1;
             var delegator2 = _fixture.TestDelegator2;
             var delegatee = _fixture.TestDelegatee1;

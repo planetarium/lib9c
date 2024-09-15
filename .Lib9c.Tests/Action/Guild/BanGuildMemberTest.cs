@@ -63,11 +63,12 @@ namespace Lib9c.Tests.Action.Guild
             var action = new BanGuildMember(guildMemberAddress);
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
             // Guild
+            repository.UpdateWorld(world);
             Assert.False(repository.IsBanned(guildAddress, guildMasterAddress));
             Assert.Equal(guildAddress, repository.GetJoinedGuild(guildMasterAddress));
             Assert.True(repository.IsBanned(guildAddress, guildMemberAddress));
@@ -81,11 +82,12 @@ namespace Lib9c.Tests.Action.Guild
             action = new BanGuildMember(otherGuildMasterAddress);
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
             // Guild
+            repository.UpdateWorld(world);
             Assert.False(repository.IsBanned(guildAddress, guildMasterAddress));
             Assert.Equal(guildAddress, repository.GetJoinedGuild(guildMasterAddress));
             Assert.True(repository.IsBanned(guildAddress, guildMemberAddress));
@@ -99,11 +101,12 @@ namespace Lib9c.Tests.Action.Guild
             action = new BanGuildMember(otherGuildMemberAddress);
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
             // Guild
+            repository.UpdateWorld(world);
             Assert.False(repository.IsBanned(guildAddress, guildMasterAddress));
             Assert.Equal(guildAddress, repository.GetJoinedGuild(guildMasterAddress));
             Assert.True(repository.IsBanned(guildAddress, guildMemberAddress));
@@ -118,7 +121,7 @@ namespace Lib9c.Tests.Action.Guild
             // GuildMaster cannot ban itself.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             }));
         }

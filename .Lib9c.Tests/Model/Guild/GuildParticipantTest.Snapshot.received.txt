@@ -1,0 +1,34 @@
+﻿[
+  {
+    EncodingLength: 21,
+    Kind: Text,
+    Value: guild_participant
+  },
+  {
+    EncodingLength: 3,
+    Kind: Integer,
+    Value: 1
+  },
+  [
+    217,
+    40,
+    174,
+    135,
+    49,
+    29,
+    234,
+    212,
+    144,
+    201,
+    134,
+    194,
+    76,
+    194,
+    60,
+    55,
+    239,
+    248,
+    146,
+    242
+  ]
+]

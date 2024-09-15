@@ -66,11 +66,6 @@ namespace Nekoyume.Model.Guild
         public override void SetDelegator(IDelegator delegator)
             => SetGuildParticipant(delegator as GuildParticipant);
 
-        public void RemoveGuild(Address guildAddress)
-        {
-            delegatorAccount = delegatorAccount.RemoveState(guildAddress);
-        }
-
         public void RemoveGuildParticipant(Address guildParticipantAddress)
         {
             delegatorAccount = delegatorAccount.RemoveState(guildParticipantAddress);

@@ -40,6 +40,7 @@ namespace Lib9c.Tests.Model.Guild
                 AddressUtil.CreateAgentAddress(),
                 AddressUtil.CreateGuildAddress(),
                 repository);
+            repository.SetGuildParticipant(guildParticipant);
             var newGuildParticipant =
                 new Nekoyume.Model.Guild.GuildParticipant(
                     guildParticipant.Address, guildParticipant.Bencoded, repository);

@@ -13,7 +13,7 @@ namespace Nekoyume.Delegation
             : base(
                   world: world,
                   context: context,
-                  delegateeAccountAddress: new Address("1000000000000000000000000000000000000000/"),
+                  delegateeAccountAddress: new Address("1000000000000000000000000000000000000000"),
                   delegatorAccountAddress: new Address("1000000000000000000000000000000000000001"),
                   delegateeMetadataAccountAddress: new Address("0000000000000000000000000000000000000002"),
                   delegatorMetadataAccountAddress: new Address("0000000000000000000000000000000000000003"),

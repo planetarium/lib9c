@@ -467,7 +467,7 @@ namespace Lib9c.Tests.Action
             {
                 ctx.BlockIndex = blockIndex;
                 IWorld delta = action.MinerReward(ctx, _baseState);
-                Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
+                Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(Addresses.RewardPool, currency));
             }
 
             // Before halving (10 / 2^0 = 10)
