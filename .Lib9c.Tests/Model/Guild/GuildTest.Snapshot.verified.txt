@@ -30,36 +30,5 @@
     248,
     146,
     242
-  ],
-  [
-    [],
-    [
-      {
-        Bencodex.Types.Text "decimalPlaces": [
-          18
-        ],
-        Bencodex.Types.Text "minters": {
-          EncodingLength: 1
-        },
-        Bencodex.Types.Text "ticker": {
-          EncodingLength: 14,
-          Kind: Text,
-          Value: GUILD_GOLD
-        },
-        Bencodex.Types.Text "totalSupplyTrackable": {
-          EncodingLength: 1,
-          Kind: Boolean,
-          Value: true
-        }
-      },
-      {
-        EncodingLength: 3,
-        Kind: Integer
-      }
-    ],
-    {
-      EncodingLength: 3,
-      Kind: Integer
-    }
   ]
 ]
