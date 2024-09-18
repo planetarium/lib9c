@@ -1,4 +1,11 @@
+# See https://dotnet.github.io/docfx/docs/table-of-contents.html
 - name: Introduction
   href: introduction.md
 - name: Getting Started
   href: getting-started.md
+- name: Currencies
+  href: currencies/toc.yml
+  expanded: true
+- name: System
+  href: system/toc.yml
+  expanded: true
