@@ -14,11 +14,27 @@ dotnet tool restore
 ## Preview
 
 ```
-dotnet docfx build --serve
+dotnet docfx docfx.json -m pdf=false --serve
+```
+
+If you want to build PDF, just run without `-m pdf=false` option:
+
+```
+dotnet docfx docfx.json --serve
 ```
 
 ## Publish
 
 ```
-dotnet docfx build
+dotnet docfx docfx.json
 ```
+
+## Q&A
+
+### About multilingual (translation)
+
+Since DocFX doesn't support multilingual (translation) feature like vitepress, I recommend to write in English, in one language.
+
+### About `toc.yml` files
+
+`toc.yml` file is an yaml file to describe *Table of Contents*. To see its spec, look around https://dotnet.github.io/docfx/docs/table-of-contents.html docs.
