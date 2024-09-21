@@ -24,10 +24,10 @@ namespace Lib9c.Tests
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Loader;
+    using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class BlockPolicyTest
@@ -70,10 +70,9 @@ namespace Lib9c.Tests
                  },
             };
             Block genesis = MakeGenesisBlock(
+                new ValidatorSet(new List<Validator> { new (adminPrivateKey.PublicKey, 1000) }),
                 adminAddress,
                 ImmutableHashSet<Address>.Empty,
-                initialValidators: new Dictionary<PublicKey, BigInteger>
-                    { { adminPrivateKey.PublicKey, BigInteger.One } },
                 actionBases: new[] { mint, mint2 },
                 privateKey: adminPrivateKey
             );
@@ -163,10 +162,9 @@ namespace Lib9c.Tests
             IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
+                new ValidatorSet(new List<Validator> { new (adminPrivateKey.PublicKey, 1000) }),
                 adminAddress,
-                ImmutableHashSet.Create(adminAddress),
-                initialValidators: new Dictionary<PublicKey, BigInteger>
-                { { adminPrivateKey.PublicKey, BigInteger.One } }
+                ImmutableHashSet.Create(adminAddress)
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
@@ -208,6 +206,7 @@ namespace Lib9c.Tests
                 maxTransactionsPerSignerPerBlockPolicy: null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
+                new ValidatorSet(new List<Validator> { new (adminPrivateKey.PublicKey, 1000) }),
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
@@ -260,6 +259,7 @@ namespace Lib9c.Tests
                 maxTransactionsPerSignerPerBlockPolicy: null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
+                new ValidatorSet(new List<Validator> { new (adminPrivateKey.PublicKey, 1000) }),
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
@@ -267,7 +267,6 @@ namespace Lib9c.Tests
                     5,
                     10
                 ),
-                new Dictionary<PublicKey, BigInteger> { { adminPrivateKey.PublicKey, BigInteger.One } },
                 pendingActivations: new[] { ps }
             );
 
@@ -293,12 +292,53 @@ namespace Lib9c.Tests
             );
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
-            FungibleAssetValue actualBalance = blockChain
+            BigInteger power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            BlockCommit commit = GenerateBlockCommit(block, adminPrivateKey, power);
+            // Since it's a block right after the Genesis, the reward is 0.
+            blockChain.Append(block, commit);
+
+            var mint = new PrepareRewardAssets
+            {
+                RewardPoolAddress = adminAddress,
+                Assets = new List<FungibleAssetValue>
+                 {
+                     10 * Currencies.Mead,
+                 },
+            };
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { mint, }
+            );
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(block, adminPrivateKey, power);
+            // First Reward : Proposer base reward 10 * 0.01, proposer bonus reward 10 * 0.04, Commission 9.5 * 0.1
+            // Total 0.5 + 0.95 = 1.45
+            blockChain.Append(block, commit);
+
+            var actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, _currency);
-            FungibleAssetValue expectedBalance = new FungibleAssetValue(_currency, 10, 0);
-            Assert.True(expectedBalance.Equals(actualBalance));
+            var expectedBalance = new FungibleAssetValue(_currency, 1, 45);
+            Assert.Equal(expectedBalance, actualBalance);
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { new ClaimRewardValidator(adminAddress), }
+            );
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(block, adminPrivateKey, power);
+            // First + Second Reward : Total reward of two blocks : 10 * 2 = 20
+            blockChain.Append(block, commit);
+
+            actualBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(adminAddress, _currency);
+            expectedBalance = new FungibleAssetValue(_currency, 20, 0);
+            Assert.Equal(expectedBalance, actualBalance);
         }
 
         [Fact]
@@ -317,10 +357,9 @@ namespace Lib9c.Tests
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis =
                 MakeGenesisBlock(
+                    validators: new ValidatorSet(new List<Validator> { new (adminPublicKey, 1000) }),
                     adminPublicKey.Address,
-                    ImmutableHashSet<Address>.Empty,
-                    initialValidators: new Dictionary<PublicKey, BigInteger>
-                    { { adminPrivateKey.PublicKey, BigInteger.One } });
+                    ImmutableHashSet<Address>.Empty);
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -429,12 +468,12 @@ namespace Lib9c.Tests
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)));
             IStagePolicy stagePolicy = new VolatileStagePolicy();
+            var validatorSet = new ValidatorSet(new List<Validator> { new (adminPrivateKey.PublicKey, 1000) });
             Block genesis =
                 MakeGenesisBlock(
+                    validatorSet,
                     adminPublicKey.Address,
-                    ImmutableHashSet<Address>.Empty,
-                    initialValidators: new Dictionary<PublicKey, BigInteger>
-                    { { adminPrivateKey.PublicKey, BigInteger.One } });
+                    ImmutableHashSet<Address>.Empty);
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -535,7 +574,7 @@ namespace Lib9c.Tests
             Assert.True(blockChain.ContainsBlock(block3.Hash));
         }
 
-        private BlockCommit GenerateBlockCommit(Block block, PrivateKey key)
+        private BlockCommit GenerateBlockCommit(Block block, PrivateKey key, BigInteger? power = null)
         {
             PrivateKey privateKey = key;
             return block.Index != 0
@@ -549,16 +588,16 @@ namespace Lib9c.Tests
                         block.Hash,
                         DateTimeOffset.UtcNow,
                         privateKey.PublicKey,
-                        null,
+                        power,
                         VoteFlag.PreCommit).Sign(privateKey)))
                 : null;
         }
 
         private Block MakeGenesisBlock(
+            ValidatorSet validators,
             Address adminAddress,
             IImmutableSet<Address> activatedAddresses,
             AuthorizedMinersState authorizedMinersState = null,
-            Dictionary<PublicKey, BigInteger> initialValidators = null,
             DateTimeOffset? timestamp = null,
             PendingActivationState[] pendingActivations = null,
             IEnumerable<ActionBase> actionBases = null,
@@ -574,13 +613,13 @@ namespace Lib9c.Tests
 
             var sheets = TableSheetsImporter.ImportSheets();
             return BlockHelper.ProposeGenesisBlock(
+                validators,
                 sheets,
                 new GoldDistribution[0],
                 pendingActivations,
                 new AdminState(adminAddress, 1500000),
                 authorizedMinersState: authorizedMinersState,
                 activatedAccounts: activatedAddresses,
-                initialValidators: initialValidators,
                 isActivateAdminAddress: false,
                 credits: null,
                 privateKey: privateKey ?? _privateKey,
