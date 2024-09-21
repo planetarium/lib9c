@@ -9,18 +9,17 @@ using Libplanet.Types.Consensus;
 using Nekoyume.ValidatorDelegation;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.Module;
+using Libplanet.Types.Blocks;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
     public class AllocateReward : ActionBase
     {
-        public const string TypeIdentifier = "distribute_validators";
-
         public AllocateReward()
         {
         }
 
-        public override IValue PlainValue => Dictionary.Empty;
+        public override IValue PlainValue => Null.Value;
 
         public override void LoadPlainValue(IValue plainValue)
         {
@@ -33,19 +32,22 @@ namespace Nekoyume.Action.ValidatorDelegation
             var rewardCurrency = world.GetGoldCurrency();
             var proposerInfo = repository.GetProposerInfo();
 
-            DistributeProposerReward(
-                repository,
-                context,
-                rewardCurrency,
-                proposerInfo,
-                context.LastCommit.Votes);
+            if (context.LastCommit is BlockCommit lastCommit)
+            {
+                DistributeProposerReward(
+                    repository,
+                    context,
+                    rewardCurrency,
+                    proposerInfo,
+                    lastCommit.Votes);
 
-            DistributeValidatorReward(
-                repository,
-                context,
-                rewardCurrency,
-                context.LastCommit.Votes);
-
+                DistributeValidatorReward(
+                    repository,
+                    context,
+                    rewardCurrency,
+                    lastCommit.Votes);
+            }
+           
             var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
             if (communityFund.Sign > 0)
