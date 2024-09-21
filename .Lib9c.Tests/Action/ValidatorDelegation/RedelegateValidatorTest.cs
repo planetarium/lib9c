@@ -36,7 +36,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             IWorld world = new World(MockUtil.MockModernWorldState);
             var context = new ActionContext { };
             var ncg = Currency.Uncapped("NCG", 2, null);
-            var gg = Currencies.GuildGold;
+            // TODO: Use Currencies.GuildGold when it's available.
+            // var gg = Currencies.GuildGold;
+            var gg = ncg;
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());

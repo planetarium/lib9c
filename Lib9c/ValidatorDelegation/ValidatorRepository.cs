@@ -53,6 +53,7 @@ namespace Nekoyume.ValidatorDelegation
             }
             catch (FailedLoadStateException)
             {
+                // TODO: delegationPoolAddress have to be changed after guild system is implemented.
                 return new ValidatorDelegator(address, address, this);
             }
         }
