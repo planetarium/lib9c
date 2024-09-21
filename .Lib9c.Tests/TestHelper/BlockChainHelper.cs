@@ -4,6 +4,7 @@ namespace Lib9c.Tests.TestHelper
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Numerics;
     using Lib9c.DevExtensions.Action;
     using Lib9c.Renderers;
     using Lib9c.Tests.Action;
@@ -17,6 +18,7 @@ namespace Lib9c.Tests.TestHelper
     using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
+    using Libplanet.Types.Consensus;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Loader;
@@ -74,6 +76,7 @@ namespace Lib9c.Tests.TestHelper
 
             var sheets = TableSheetsImporter.ImportSheets();
             return BlockHelper.ProposeGenesisBlock(
+                new ValidatorSet(new List<Validator> { new (privateKey.PublicKey, BigInteger.One) }),
                 sheets,
                 new GoldDistribution[0],
                 pendingActivations,
