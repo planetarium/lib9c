@@ -6,7 +6,8 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
-    public class UnjailValidator : ActionBase
+    [ActionType(TypeIdentifier)]
+    public sealed class UnjailValidator : ActionBase
     {
         public const string TypeIdentifier = "unjail_validator";
 

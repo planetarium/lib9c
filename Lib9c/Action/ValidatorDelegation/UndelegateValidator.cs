@@ -9,7 +9,8 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
-    public class UndelegateValidator : ActionBase
+    [ActionType(TypeIdentifier)]
+    public sealed class UndelegateValidator : ActionBase
     {
         public const string TypeIdentifier = "undelegate_validator";
 

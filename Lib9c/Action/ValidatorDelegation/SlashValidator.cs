@@ -3,7 +3,6 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Crypto;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
 using Nekoyume.ValidatorDelegation;
@@ -12,13 +11,9 @@ using Nekoyume.Module.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
-    public class SlashValidator : ActionBase
+    public sealed class SlashValidator : ActionBase
     {
-        public const string TypeIdentifier = "slash_validator";
-
-        public SlashValidator() { }
-
-        public SlashValidator(Address validatorDelegatee)
+        public SlashValidator()
         {
         }
 
@@ -28,18 +23,10 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public static long AbstainJailTime => 10L;
 
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values", Null.Value);
+        public override IValue PlainValue => Null.Value;
 
         public override void LoadPlainValue(IValue plainValue)
         {
-            if (plainValue is not Dictionary root ||
-                !root.TryGetValue((Text)"values", out var rawValues) ||
-                rawValues is not Null)
-            {
-                throw new InvalidCastException();
-            }
         }
 
         public override IWorld Execute(IActionContext context)
@@ -54,6 +41,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 context.LastCommit.Votes.Where(vote => vote.Flag == VoteFlag.Null)
                     .Select(vote => vote.ValidatorPublicKey),
                 context.BlockIndex);
+            repository.SetAbstainHistory(abstainHistory);
 
             foreach (var abstain in abstainsToSlash)
             {
