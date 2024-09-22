@@ -15,6 +15,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using LruCacheNet;
 using Nekoyume.Action;
+using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.Coupons;
@@ -45,6 +46,11 @@ namespace Nekoyume.Module
             world.SetAccount(
                 ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, state));
+
+        public static IWorld RemoveLegacyState(this IWorld world, Address address) =>
+            world.MutateAccount(
+                ReservedAddresses.LegacyAccount,
+                account => account.RemoveState(address));
 
         // Methods from AccountExtensions
         public static IWorld MarkBalanceChanged(
