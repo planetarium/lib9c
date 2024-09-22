@@ -153,7 +153,7 @@ namespace Nekoyume.Action
             if (Amount == 0)
             {
                 return states
-                    .SetLegacyState(stakeStateAddress, Null.Value)
+                    .RemoveLegacyState(stakeStateAddress)
                     .TransferAsset(context, stakeStateAddress, context.Signer, stakedBalance);
             }
 
