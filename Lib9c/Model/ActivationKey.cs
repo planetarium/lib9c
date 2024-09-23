@@ -59,10 +59,5 @@ namespace Nekoyume.Model
         {
             return $"{ByteUtil.Hex(PrivateKey.ByteArray)}/{ByteUtil.Hex(PendingAddress.ByteArray)}";
         }
-
-        public ActivateAccount CreateActivateAccount(byte[] nonce)
-        {
-            return new ActivateAccount(PendingAddress, PrivateKey.Sign(nonce));
-        }
     }
 }
