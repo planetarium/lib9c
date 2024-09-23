@@ -102,11 +102,11 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             var baseProposerReward
-                = (blockReward * ValidatorDelegatee.BaseProposerRewardNumerator)
-                .DivRem(ValidatorDelegatee.BaseProposerRewardDenominator).Quotient;
+                = (blockReward * ValidatorDelegatee.BaseProposerRewardPercentage)
+                .DivRem(100).Quotient;
             var bonusProposerReward
-                = (blockReward * votePowerNumerator * ValidatorDelegatee.BonusProposerRewardNumerator)
-                .DivRem(votePowerDenominator * ValidatorDelegatee.BonusProposerRewardDenominator).Quotient;
+                = (blockReward * votePowerNumerator * ValidatorDelegatee.BonusProposerRewardPercentage)
+                .DivRem(votePowerDenominator * 100).Quotient;
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
 
             repository.TransferAsset(
