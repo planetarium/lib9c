@@ -25,7 +25,7 @@ namespace Nekoyume.Action
     public class RapidCombination : GameAction
     {
         public Address avatarAddress;
-        public List<int> slotIndexList = new List<int>();
+        public List<int> slotIndexList = new();
 
         public override IWorld Execute(IActionContext context)
         {
@@ -41,10 +41,8 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            if (!states.TryGetAvatarState(
-                context.Signer,
-                avatarAddress,
-                out var avatarState))
+            var avatarState = states.GetAvatarState(avatarAddress, true, false, false);
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
@@ -55,15 +53,21 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
+            var sheets = states.GetSheets(
+                sheetTypes: new[]
+                {
+                    typeof(PetOptionSheet),
+                    typeof(MaterialItemSheet),
+                });
+
+            var gameConfigState = states.GetGameConfigState();
+            if (gameConfigState is null)
+            {
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the GameConfigState was failed to load.");
+            }
+
             void ProcessRapidCombination(int si)
             {
-                var sheets = states.GetSheets(
-                    sheetTypes: new[]
-                    {
-                        typeof(PetOptionSheet),
-                        typeof(MaterialItemSheet),
-                    });
-
                 var slotState = allSlotState.GetSlot(si);
                 if (slotState.Result is null)
                 {
@@ -74,12 +78,6 @@ namespace Nekoyume.Action
                 if (diff <= 0)
                 {
                     throw new RequiredBlockIndexException($"{addressesHex}Already met the required block index. context block index: {context.BlockIndex}, required block index: {slotState.Result.itemUsable.RequiredBlockIndex}");
-                }
-
-                var gameConfigState = states.GetGameConfigState();
-                if (gameConfigState is null)
-                {
-                    throw new FailedLoadStateException($"{addressesHex}Aborted as the GameConfigState was failed to load.");
                 }
 
                 var actionableBlockIndex = slotState.StartBlockIndex;
@@ -155,7 +153,7 @@ namespace Nekoyume.Action
                 }
             }
 
-            foreach (var slotIndex in slotIndexList)
+            foreach (var slotIndex in slotIndexList.Distinct())
             {
                 ProcessRapidCombination(slotIndex);
             }
