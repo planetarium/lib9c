@@ -39,6 +39,7 @@ namespace Nekoyume.ValidatorDelegation
 
             PublicKey = publicKey;
             IsBonded = false;
+            CommissionPercentage = DefaultCommissionPercentage;
             DelegationChanged += OnDelegationChanged;
             Enjailed += OnEnjailed;
             Unjailed += OnUnjailed;
@@ -65,6 +66,7 @@ namespace Nekoyume.ValidatorDelegation
         {
             PublicKey = new PublicKey(((Binary)bencoded[0]).ByteArray);
             IsBonded = (Bencodex.Types.Boolean)bencoded[1];
+            CommissionPercentage = (Integer)bencoded[2];
             DelegationChanged += OnDelegationChanged;
         }
 
@@ -76,25 +78,22 @@ namespace Nekoyume.ValidatorDelegation
 
         public static int ValidatorMaxRebondGraceEntries => 10;
 
-        public static BigInteger BaseProposerRewardNumerator => 1;
+        public static BigInteger BaseProposerRewardPercentage => 1;
 
-        public static BigInteger BaseProposerRewardDenominator => 100;
+        public static BigInteger BonusProposerRewardPercentage => 4;
 
-        public static BigInteger BonusProposerRewardNumerator => 4;
+        public static BigInteger DefaultCommissionPercentage => 10;
 
-        public static BigInteger BonusProposerRewardDenominator => 100;
+        public static BigInteger MaxCommissionPercentage => 20;
 
-        public static BigInteger CommissionNumerator => 1;
+        public static BigInteger CommissionPercentageMaxChange => 1;
 
-        public static BigInteger CommissionDenominator => 10;
-
-        public static double CommissionMaxRate => 0.2;
-
-        public static double CommissionMaxChangeRate => 0.01;
+        public BigInteger CommissionPercentage { get; private set; }
 
         public List Bencoded => List.Empty
             .Add(PublicKey.Format(true))
-            .Add(IsBonded);
+            .Add(IsBonded)
+            .Add(CommissionPercentage);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -120,12 +119,31 @@ namespace Nekoyume.ValidatorDelegation
             FungibleAssetValue rewardAllocated
                 = (rewardToAllocate * validatorPower).DivRem(validatorSetPower).Quotient;
             FungibleAssetValue commission
-                = (rewardAllocated * CommissionNumerator).DivRem(CommissionDenominator).Quotient;
+                = (rewardAllocated * CommissionPercentage).DivRem(100).Quotient;
             FungibleAssetValue delegationRewards = rewardAllocated - commission;
 
             repository.TransferAsset(RewardSource, Address, commission);
             repository.TransferAsset(RewardSource, RewardCollectorAddress, delegationRewards);
             CollectRewards(height);
+        }
+
+        public void SetCommissionPercentage(BigInteger percentage)
+        {
+            if (percentage < 0 || percentage > MaxCommissionPercentage)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(percentage),
+                    $"The commission percentage must be between 0 and {MaxCommissionPercentage}.");
+            }
+
+            if (BigInteger.Abs(CommissionPercentage - percentage) > CommissionPercentageMaxChange)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(percentage),
+                    $"The commission percentage can be changed by at most {CommissionPercentageMaxChange}.");
+            }
+
+            CommissionPercentage = percentage;
         }
 
         public void OnDelegationChanged(object? sender, long height)
@@ -169,7 +187,8 @@ namespace Nekoyume.ValidatorDelegation
             => other is ValidatorDelegatee validatorDelegatee
             && Metadata.Equals(validatorDelegatee.Metadata)
             && PublicKey.Equals(validatorDelegatee.PublicKey)
-            && IsBonded == validatorDelegatee.IsBonded;
+            && IsBonded == validatorDelegatee.IsBonded
+            && CommissionPercentage == validatorDelegatee.CommissionPercentage;
 
         public bool Equals(IDelegatee? other)
             => Equals(other as ValidatorDelegatee);

@@ -97,11 +97,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 (accum, next) => accum + (BigInteger)next.ValidatorPower! * (next.Flag == VoteFlag.PreCommit ? 1 : 0));
 
             var baseProposerReward
-                = (totalReward * ValidatorDelegatee.BaseProposerRewardNumerator)
-                .DivRem(ValidatorDelegatee.BaseProposerRewardDenominator).Quotient;
+                = (totalReward * ValidatorDelegatee.BaseProposerRewardPercentage)
+                .DivRem(100).Quotient;
             var bonusProposerReward
-                = (totalReward * preCommitPower * ValidatorDelegatee.BonusProposerRewardNumerator)
-                .DivRem(totalPower * ValidatorDelegatee.BonusProposerRewardDenominator).Quotient;
+                = (totalReward * preCommitPower * ValidatorDelegatee.BonusProposerRewardPercentage)
+                .DivRem(totalPower * 100).Quotient;
 
             var proposerReward = baseProposerReward + bonusProposerReward;
             var remains = totalReward - proposerReward;
@@ -115,8 +115,8 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 FungibleAssetValue rewardAllocated
                     = (remains * vote.ValidatorPower!.Value).DivRem(totalPower).Quotient;
                 FungibleAssetValue commission
-                    = (rewardAllocated * ValidatorDelegatee.CommissionNumerator)
-                    .DivRem(ValidatorDelegatee.CommissionDenominator).Quotient;
+                    = (rewardAllocated * validator.CommissionPercentage)
+                    .DivRem(100).Quotient;
 
                 if (vote.Flag == VoteFlag.Null)
                 {

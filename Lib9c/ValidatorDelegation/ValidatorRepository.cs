@@ -5,6 +5,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
+using System.Numerics;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -91,6 +92,13 @@ namespace Nekoyume.ValidatorDelegation
         {
             _validatorList = _validatorList.SetState(
                 ValidatorList.Address, validatorList.Bencoded);
+        }
+
+        public void SetCommissionPercentage(Address address, BigInteger commissionPercentage)
+        {
+            ValidatorDelegatee validatorDelegatee = GetValidatorDelegatee(address);
+            validatorDelegatee.SetCommissionPercentage(commissionPercentage);
+            SetValidatorDelegatee(validatorDelegatee);
         }
 
         public override void UpdateWorld(IWorld world)
