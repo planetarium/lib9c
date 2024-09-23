@@ -13,7 +13,7 @@ using Libplanet.Types.Blocks;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
-    public class AllocateReward : ActionBase
+    public sealed class AllocateReward : ActionBase
     {
         public AllocateReward()
         {
