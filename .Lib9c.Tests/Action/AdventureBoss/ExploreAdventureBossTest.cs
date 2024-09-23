@@ -164,8 +164,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             // override sheet
-            state = state.SetLegacyState(Addresses.GetSheetAddress<CollectionSheet>(),
-                CollectionSheetFixture.Default.Serialize());
+            state = state.SetLegacyState(
+                Addresses.GetSheetAddress<CollectionSheet>(),
+                CollectionSheetFixture.Default.Serialize()
+            );
 
             state = Stake(state, WantedAddress);
             var sheets = state.GetSheets(sheetTypes: new[]
@@ -302,8 +304,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     else if (id == circleRow.Id)
                     {
                         var itemCount =
-                            inventory.TryGetTradableFungibleItems(circleRow.ItemId, null, 1L,
-                                out var items)
+                            inventory.TryGetTradableFungibleItems(
+                                circleRow.ItemId, null, 1L, out var items
+                            )
                                 ? items.Sum(item => item.count)
                                 : 0;
                         Assert.Equal(amount, itemCount);
