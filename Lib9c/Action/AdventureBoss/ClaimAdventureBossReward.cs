@@ -196,9 +196,10 @@ namespace Nekoyume.Action.AdventureBoss
                 var inventory = states.GetInventoryV2(AvatarAddress);
                 foreach (var reward in myReward.ItemReward.ToImmutableSortedDictionary())
                 {
-                    var material =
-                        ItemFactory.CreateMaterial(
-                            materialSheet.Values.First(row => row.Id == reward.Key));
+                    var materialRow = materialSheet[reward.Key];
+                    var material = materialRow.ItemSubType is ItemSubType.Circle
+                        ? ItemFactory.CreateTradableMaterial(materialRow)
+                        : ItemFactory.CreateMaterial(materialRow);
                     inventory.AddItem(material, reward.Value);
                 }
 
