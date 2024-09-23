@@ -120,9 +120,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 new[]
                 {
                     (600301, 10), // 10 floor reward
-                    (600302, 30), // 10+5+5+5+5 first reward
+                    (600302, 25), // 10+5+5+5 first reward
                     (600303, 4), // 2+2 first reward
                     (600304, 0),
+                    (600402, 10), // 10 floor reward
                 },
                 new[]
                 {
@@ -136,9 +137,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 0, 5, 3, 6, 0, null, new[]
                 {
                     (600301, 7), // 7 floor reward
-                    (600302, 20), // 10+5+5 first reward
+                    (600302, 15), // 10+5 first reward
                     (600303, 4), // 2+2 first reward
                     (600304, 0),
+                    (600402, 10), // 10 floor reward
                 },
                 new[]
                 {
@@ -311,11 +313,19 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(expectedFloor, explorer.Floor);
 
                 var inventory = state.GetInventoryV2(TesterAvatarAddress);
+                var circleRow = materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.Circle);
                 foreach (var (id, amount) in expectedItemRewards)
                 {
                     if (amount == 0)
                     {
                         Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == id));
+                    }
+                    else if (id == circleRow.Id)
+                    {
+                        var itemCount = inventory.TryGetTradableFungibleItems(circleRow.ItemId, null, 1L, out var items)
+                            ? items.Sum(item => item.count)
+                            : 0;
+                        Assert.Equal(amount, itemCount);
                     }
                     else
                     {

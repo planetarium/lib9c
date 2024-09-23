@@ -217,11 +217,19 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(explorer.UsedApPotion, exploreBoard.UsedApPotion);
 
                 inventory = state.GetInventoryV2(TesterAvatarAddress);
+                var circleRow = materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.Circle);
                 foreach (var (id, amount) in expectedRewards)
                 {
                     if (amount == 0)
                     {
                         Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == id));
+                    }
+                    else if (id == circleRow.Id)
+                    {
+                        var itemCount = inventory.TryGetTradableFungibleItems(circleRow.ItemId, null, 1L, out var items)
+                            ? items.Sum(item => item.count)
+                            : 0;
+                        Assert.Equal(amount, itemCount);
                     }
                     else
                     {
