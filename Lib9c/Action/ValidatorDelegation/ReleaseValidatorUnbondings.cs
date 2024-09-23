@@ -1,4 +1,3 @@
-using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
@@ -9,26 +8,16 @@ namespace Nekoyume.Action.ValidatorDelegation
 {
     public sealed class ReleaseValidatorUnbondings : ActionBase
     {
-        public const string TypeIdentifier = "release_validator_unbondings";
-
         public ReleaseValidatorUnbondings() { }
 
         public ReleaseValidatorUnbondings(Address validatorDelegatee)
         {
         }
 
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values", Null.Value);
+        public override IValue PlainValue => Null.Value;
 
         public override void LoadPlainValue(IValue plainValue)
         {
-            if (plainValue is not Dictionary root ||
-                !root.TryGetValue((Text)"values", out var rawValues) ||
-                rawValues is not Null)
-            {
-                throw new InvalidCastException();
-            }
         }
 
         public override IWorld Execute(IActionContext context)

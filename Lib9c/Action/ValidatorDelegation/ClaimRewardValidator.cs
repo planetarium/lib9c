@@ -8,7 +8,8 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
-    public class ClaimRewardValidator : ActionBase
+    [ActionType(TypeIdentifier)]
+    public sealed class ClaimRewardValidator : ActionBase
     {
         public const string TypeIdentifier = "claim_reward_validator";
 

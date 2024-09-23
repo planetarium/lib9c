@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Numerics;
-using Bencodex.Types;
 using Libplanet.Action;
-using Libplanet.Action.Sys;
 using Libplanet.Blockchain;
 using Libplanet.Crypto;
 using Libplanet.Store;
@@ -25,13 +22,13 @@ namespace Nekoyume
     public static class BlockHelper
     {
         public static Block ProposeGenesisBlock(
+            ValidatorSet validatorSet,
             IDictionary<string, string> tableSheets,
             GoldDistribution[] goldDistributions,
             PendingActivationState[] pendingActivationStates,
             AdminState? adminState = null,
             AuthorizedMinersState? authorizedMinersState = null,
             IImmutableSet<Address>? activatedAccounts = null,
-            Dictionary<PublicKey, BigInteger>? initialValidators = null,
             bool isActivateAdminAddress = false,
             IEnumerable<string>? credits = null,
             PrivateKey? privateKey = null,
@@ -50,7 +47,6 @@ namespace Nekoyume
             redeemCodeListSheet.Set(tableSheets[nameof(RedeemCodeListSheet)]);
 
             privateKey ??= new PrivateKey();
-            initialValidators ??= new Dictionary<PublicKey, BigInteger>();
             activatedAccounts ??= ImmutableHashSet<Address>.Empty;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -59,6 +55,7 @@ namespace Nekoyume
 
             var initialStatesAction = new InitializeStates
             (
+                validatorSet: validatorSet,
                 rankingState: new RankingState0(),
                 shopState: new ShopState(),
                 tableSheets: (Dictionary<string, string>) tableSheets,
@@ -80,16 +77,7 @@ namespace Nekoyume
             {
                 initialStatesAction,
             };
-            IEnumerable<IAction> systemActions = new IAction[]
-            {
-                new Initialize(
-                    states: ImmutableDictionary.Create<Address, IValue>(),
-                    validatorSet: new ValidatorSet(
-                        initialValidators.Select(validator =>
-                            new Validator(validator.Key, validator.Value)).ToList()
-                    )
-                ),
-            };
+            IEnumerable<IAction> systemActions = new IAction[] { };
             if (!(actionBases is null))
             {
                 actions.AddRange(actionBases);

@@ -37,7 +37,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             IWorld world = new World(MockUtil.MockModernWorldState);
             var context = new ActionContext { };
             var ncg = Currency.Uncapped("NCG", 2, null);
-            var gg = Currencies.GuildGold;
+            // TODO: Use Currencies.GuildGold when it's available.
+            // var gg = Currencies.GuildGold;
+            var gg = ncg;
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
@@ -72,6 +74,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             var totalReward = ncg * 1000;
             world = repository.World.MintAsset(context, Addresses.RewardPool, totalReward);
 
+            // TODO: Remove this after delegation currency has been changed into GuildGold.
+            var initialFAVs = votes.Select(vote => world.GetBalance(vote.ValidatorPublicKey.Address, ncg)).ToArray();
+
             context = new ActionContext
             {
                 BlockIndex = 10L,
@@ -102,8 +107,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             var remains = totalReward - proposerReward;
             repository.UpdateWorld(world);
 
-            foreach (var vote in votes)
+            foreach (var (vote, index) in votes.Select((v, i) => (v, i)))
             {
+                var initialFAV = initialFAVs[index];
                 var validator = repository.GetValidatorDelegatee(vote.ValidatorPublicKey.Address);
 
                 FungibleAssetValue rewardAllocated
@@ -114,7 +120,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
                 if (vote.Flag == VoteFlag.Null)
                 {
-                    Assert.Equal(ncg * 0, world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
+                    Assert.Equal(initialFAV, world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
                     Assert.Equal(ncg * 0, world.GetBalance(validator.RewardDistributorAddress, ncg));
                     continue;
                 }
@@ -122,12 +128,12 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 if (vote.ValidatorPublicKey.Equals(proposer.PublicKey))
                 {
                     Assert.Equal(
-                        proposerReward + commission,
+                        proposerReward + commission + initialFAV,
                         world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
                 }
                 else
                 {
-                    Assert.Equal(commission, world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
+                    Assert.Equal(commission + initialFAV, world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
                 }
 
                 Assert.Equal(rewardAllocated - commission, world.GetBalance(validator.RewardDistributorAddress, ncg));

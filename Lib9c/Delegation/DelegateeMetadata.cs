@@ -235,12 +235,17 @@ namespace Nekoyume.Delegation
 
         public void Unjail(long height)
         {
+            if (!Jailed)
+            {
+                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
+            }
+
             if (Tombstoned)
             {
                 throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
             }
 
-            if (JailedUntil > height)
+            if (JailedUntil >= height)
             {
                 throw new InvalidOperationException("Cannot unjail before jailed until.");
             }

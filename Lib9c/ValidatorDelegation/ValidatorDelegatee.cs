@@ -15,6 +15,7 @@ namespace Nekoyume.ValidatorDelegation
     public sealed class ValidatorDelegatee
         : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
     {
+        // TODO: After guild-PoS implemented, delegation currency have to be changed into guild gold.
         public ValidatorDelegatee(
             Address address,
             PublicKey publicKey,
@@ -23,7 +24,7 @@ namespace Nekoyume.ValidatorDelegation
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
-                  delegationCurrency: ValidatorDelegationCurrency,
+                  delegationCurrency: rewardCurrency,
                   rewardCurrency: rewardCurrency,
                   delegationPoolAddress: UnbondedPoolAddress,
                   unbondingPeriod: ValidatorUnbondingPeriod,
@@ -75,8 +76,6 @@ namespace Nekoyume.ValidatorDelegation
 
         public static int ValidatorMaxRebondGraceEntries => 10;
 
-        public static FungibleAssetValue MinSelfDelegation => ValidatorDelegationCurrency * 10;
-
         public static BigInteger BaseProposerRewardNumerator => 1;
 
         public static BigInteger BaseProposerRewardDenominator => 100;
@@ -106,6 +105,8 @@ namespace Nekoyume.ValidatorDelegation
         public BigInteger Power => TotalDelegated.RawValue;
 
         public Validator Validator => new(PublicKey, Power);
+
+        public FungibleAssetValue MinSelfDelegation => DelegationCurrency * 10;
 
         public void AllocateReward(
             FungibleAssetValue rewardToAllocate,

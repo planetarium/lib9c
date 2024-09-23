@@ -9,7 +9,6 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
-    using Nekoyume.Module.ValidatorDelegation;
     using Nekoyume.ValidatorDelegation;
     using Xunit;
 
@@ -36,7 +35,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             IWorld world = new World(MockUtil.MockModernWorldState);
             var context = new ActionContext { };
             var ncg = Currency.Uncapped("NCG", 2, null);
-            var gg = Currencies.GuildGold;
+            // TODO: Use Currencies.GuildGold when it's available.
+            // var gg = Currencies.GuildGold;
+            var gg = ncg;
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
@@ -117,7 +118,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             IWorld world = new World(MockUtil.MockModernWorldState);
             var context = new ActionContext { };
             var ncg = Currency.Uncapped("NCG", 2, null);
-            var gg = Currencies.GuildGold;
+            // TODO: Use Currencies.GuildGold when it's available.
+            // var gg = Currencies.GuildGold;
+            var gg = ncg;
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
