@@ -10,7 +10,7 @@ using Nekoyume.ValidatorDelegation;
 namespace Nekoyume.Action.ValidatorDelegation
 {
     [ActionType(TypeIdentifier)]
-    public class PromoteValidator : ActionBase
+    public sealed class PromoteValidator : ActionBase
     {
         public const string TypeIdentifier = "promote_validator";
 
