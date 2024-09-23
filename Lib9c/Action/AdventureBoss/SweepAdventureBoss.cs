@@ -146,11 +146,11 @@ namespace Nekoyume.Action.AdventureBoss
 
             var equipmentList =
                 avatarState.ValidateEquipmentsV3(Equipments, context.BlockIndex, gameConfigState);
-            var costumeIds = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
+            var costumeList = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
             var items = Equipments.Concat(Costumes);
             avatarState.EquipItems(items);
             avatarState.ValidateItemRequirement(
-                costumeIds,
+                costumeList.Select(e => e.Id).ToList(),
                 equipmentList,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),

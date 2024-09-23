@@ -64,7 +64,7 @@ namespace Nekoyume.Model.State
         {
             return CombinationSlots.TryGetValue(slotStateIndex, out var combinationSlotState)
                 ? combinationSlotState
-                : throw new CombinationSlotNotFoundException($"Rune {slotStateIndex} not found in AllCombinationSlotState");
+                : throw new CombinationSlotNotFoundException($"CombinationSlot {slotStateIndex} not found in AllCombinationSlotState");
         }
 
         public void AddSlot(Address address, int index = 0)

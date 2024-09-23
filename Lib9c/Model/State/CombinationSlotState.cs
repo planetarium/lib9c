@@ -34,7 +34,7 @@ namespace Nekoyume.Model.State
             get => Index < AvatarState.DefaultCombinationSlotCount || _isUnlocked;
             private set => _isUnlocked = value;
         }
-        
+
         private bool _isUnlocked;
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Nekoyume.Model.State
             }
 
 #pragma warning disable LAA1002
-            return new Dictionary(values.Union((Dictionary) base.Serialize()));
+            return new Dictionary(values.Union((Dictionary) base.SerializeBase()));
 #pragma warning restore LAA1002
         }
     }

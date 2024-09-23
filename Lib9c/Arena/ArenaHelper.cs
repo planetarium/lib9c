@@ -157,26 +157,27 @@ namespace Nekoyume.Arena
             return interval > 0 ? (int)(blockDiff / interval) : 0;
         }
 
-        public static (int, int, int) GetScores(int myScore, int enemyScore)
+        public static (int myWinScore, int myDefeatScore, int enemyDefeatScore) GetScores(int myScore, int enemyScore)
         {
-            var (myWinScore, enemyWinScore) = ArenaScoreHelper.GetScore(
+            var (myWinScore, enemyDefeatScore) = ArenaScoreHelper.GetScore(
                 myScore, enemyScore, BattleLog.Result.Win);
 
             var (myDefeatScore, _) = ArenaScoreHelper.GetScore(
                 myScore, enemyScore, BattleLog.Result.Lose);
 
-            return (myWinScore, myDefeatScore, enemyWinScore);
+            return (myWinScore, myDefeatScore, enemyDefeatScore);
         }
 
-        public static (int, int, int) GetScoresV1(int myScore, int enemyScore)
+        [Obsolete("Use `GetScores()` instead.")]
+        public static (int myWinScore, int myDefeatScore, int enemyDefeatScore) GetScoresV1(int myScore, int enemyScore)
         {
-            var (myWinScore, enemyWinScore) = ArenaScoreHelper.GetScoreV4(
+            var (myWinScore, enemyDefeatScore) = ArenaScoreHelper.GetScoreV4(
                 myScore, enemyScore, BattleLog.Result.Win);
 
             var (myDefeatScore, _) = ArenaScoreHelper.GetScoreV4(
                 myScore, enemyScore, BattleLog.Result.Lose);
 
-            return (myWinScore, myDefeatScore, enemyWinScore);
+            return (myWinScore, myDefeatScore, enemyDefeatScore);
         }
 
         public static int GetRewardCount(int score)

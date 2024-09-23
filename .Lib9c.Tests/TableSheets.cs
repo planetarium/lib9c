@@ -270,6 +270,12 @@ namespace Lib9c.Tests
             private set;
         }
 
+        public AdventureBossFloorFirstRewardSheet AdventureBossFloorFirstRewardSheet
+        {
+            get;
+            private set;
+        }
+
         /* Adventure Boss */
 
         // Custom Craft
@@ -442,7 +448,7 @@ namespace Lib9c.Tests
             );
         }
 
-        public ArenaSimulatorSheets GetArenaSimulatorSheets()
+        public ArenaSimulatorSheets GetArenaSimulatorSheets(RuneOptionSheet runeOptionSheet = null)
         {
             return new ArenaSimulatorSheets(
                 MaterialItemSheet,
@@ -456,7 +462,7 @@ namespace Lib9c.Tests
                 EquipmentItemSetEffectSheet,
                 CostumeStatSheet,
                 WeeklyArenaRewardSheet,
-                RuneOptionSheet,
+                runeOptionSheet ?? RuneOptionSheet,
                 RuneListSheet,
                 RuneLevelBonusSheet
             );

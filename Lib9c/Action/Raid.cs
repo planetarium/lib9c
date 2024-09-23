@@ -168,7 +168,7 @@ namespace Nekoyume.Action
                 EquipmentIds, context.BlockIndex, gameConfigState);
             var foodIds = avatarState.ValidateConsumableV2(
                 FoodIds, context.BlockIndex, gameConfigState);
-            var costumeIds = avatarState.ValidateCostumeV2(CostumeIds, gameConfigState);
+            var costumeList = avatarState.ValidateCostumeV2(CostumeIds, gameConfigState);
 
             // Update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Raid);
@@ -204,7 +204,7 @@ namespace Nekoyume.Action
             var items = EquipmentIds.Concat(CostumeIds);
             avatarState.EquipItems(items);
             avatarState.ValidateItemRequirement(
-                costumeIds.Concat(foodIds).ToList(),
+                costumeList.Select(e => e.Id).Concat(foodIds).ToList(),
                 equipmentList,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
@@ -243,16 +243,6 @@ namespace Nekoyume.Action
             );
             simulator.Simulate();
             avatarState.inventory = simulator.Player.Inventory;
-
-            var costumeList = new List<Costume>();
-            foreach (var guid in CostumeIds)
-            {
-                var costume = avatarState.inventory.Costumes.FirstOrDefault(x => x.ItemId == guid);
-                if (costume != null)
-                {
-                    costumeList.Add(costume);
-                }
-            }
 
             var equippedRune = new List<RuneState>();
             foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())

@@ -39,8 +39,8 @@ namespace Lib9c.Tests.Action.Garages
                 agentAddr: AgentAddress,
                 avatarIndex: AvatarIndex);
             _tableSheets = initializeStates.tableSheets;
-            _previousStates = initializeStates.initialStatesWithAvatarState;
-            _ncg = initializeStates.initialStatesWithAvatarState.GetGoldCurrency();
+            _previousStates = initializeStates.world;
+            _ncg = initializeStates.world.GetGoldCurrency();
         }
 
         public static IEnumerable<object[]> Get_Sample_PlainValue()

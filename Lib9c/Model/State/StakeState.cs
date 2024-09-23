@@ -106,10 +106,10 @@ namespace Nekoyume.Model.State
         }
 
         public override IValue Serialize() =>
-            new Dictionary(SerializeImpl().Union((Dictionary)base.Serialize()));
+            new Dictionary(SerializeImpl().Union((Dictionary)base.SerializeBase()));
 
-        public override IValue SerializeV2() =>
-            new Dictionary(SerializeImpl().Union((Dictionary)base.SerializeV2()));
+        public IValue SerializeV2() =>
+            new Dictionary(SerializeImpl().Union((Dictionary)base.SerializeV2Base()));
 
         public bool IsCancellable(long blockIndex) => blockIndex >= CancellableBlockIndex;
 
