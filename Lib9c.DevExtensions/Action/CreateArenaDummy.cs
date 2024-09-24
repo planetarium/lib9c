@@ -71,7 +71,7 @@ namespace Lib9c.DevExtensions.Action
                 var existingAgentState = states.GetAgentState(agentAddress);
                 var agentState = existingAgentState ?? new AgentState(agentAddress);
                 var avatarState = states.GetAvatarState(avatarAddress);
-                if (avatarState is not null)
+                if (!(avatarState is null))
                 {
                     throw new InvalidAddressException(
                         $"Aborted as there is already an avatar at {avatarAddress}.");
