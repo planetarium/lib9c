@@ -12,7 +12,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Nekoyume.ValidatorDelegation;
     using Xunit;
 
-    public class PromoteValidatorTest
+    public class PromoteValidatorTest : ValidatorDelegationTestBase
     {
         [Fact]
         public void Serialization()
@@ -134,6 +134,31 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 PreviousState = world,
                 Signer = publicKey.Address,
             }));
+        }
+
+        [Fact]
+        public void Promote_PromotedValidator_Throw()
+        {
+            // Given
+            var world = World;
+            var validatorPrivateKey = new PrivateKey();
+            var blockHeight = 1L;
+            world = EnsureValidatorToBePromoted(
+                world, validatorPrivateKey, NCG * 10, blockHeight++);
+
+            // When
+            var promoteValidator = new PromoteValidator(
+                validatorPrivateKey.PublicKey, NCG * 10);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight++,
+                Signer = validatorPrivateKey.Address,
+            };
+
+            // Then
+            Assert.Throws<InvalidOperationException>(
+                () => promoteValidator.Execute(actionContext));
         }
     }
 }
