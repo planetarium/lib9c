@@ -1,18 +1,20 @@
 namespace Lib9c.Tests.Action.ValidatorDelegation
 {
+    using System;
     using System.Numerics;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.ValidatorDelegation;
     using Xunit;
 
-    public class UndelegateValidatorTest
+    public class UndelegateValidatorTest : ValidatorDelegationTestBase
     {
         [Fact]
         public void Serialization()
@@ -79,6 +81,131 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             });
 
             Assert.Equal(gg * 100, world.GetBalance(publicKey.Address, gg));
+        }
+
+        [Fact]
+        public void Undelegate_FromInvalidValidtor_Throw()
+        {
+            // Given
+            var world = World;
+            var delegatorPrivateKey = new PrivateKey();
+            var validatorPrivateKey = new PrivateKey();
+            var blockHeight = 1L;
+            world = EnsureValidatorToBePromoted(
+                world, validatorPrivateKey, NCG * 10, blockHeight++);
+            world = EnsureDelegatorToBeBond(
+                world, delegatorPrivateKey, validatorPrivateKey, NCG * 10, blockHeight++);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = delegatorPrivateKey.Address,
+                BlockIndex = blockHeight++,
+            };
+            var undelegateValidator = new UndelegateValidator(
+                new PrivateKey().Address, 10);
+
+            // Then
+            Assert.Throws<FailedLoadStateException>(
+                () => undelegateValidator.Execute(actionContext));
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void Undelegate_NotPositiveShare_Throw(long share)
+        {
+            // Given
+            var world = World;
+            var delegatorPrivateKey = new PrivateKey();
+            var validatorPrivateKey = new PrivateKey();
+            var blockHeight = 1L;
+            world = EnsureValidatorToBePromoted(
+                world, validatorPrivateKey, NCG * 10, blockHeight++);
+            world = EnsureDelegatorToBeBond(
+                world, delegatorPrivateKey, validatorPrivateKey, NCG * 10, blockHeight++);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = delegatorPrivateKey.Address,
+                BlockIndex = blockHeight++,
+            };
+            var undelegateValidator = new UndelegateValidator(
+                validatorPrivateKey.Address, share);
+
+            // Then
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => undelegateValidator.Execute(actionContext));
+        }
+
+        [Fact]
+        public void Undelegate_NotDelegated_Throw()
+        {
+            // Given
+            var world = World;
+            var delegatorPrivateKey = new PrivateKey();
+            var validatorPrivateKey = new PrivateKey();
+            var blockHeight = 1L;
+            world = EnsureValidatorToBePromoted(
+                world, validatorPrivateKey, NCG * 10, blockHeight++);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = delegatorPrivateKey.Address,
+                BlockIndex = blockHeight++,
+            };
+            var undelegateValidator = new UndelegateValidator(
+                validatorPrivateKey.Address, 10);
+
+            // Then
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => undelegateValidator.Execute(actionContext));
+        }
+
+        [Fact]
+        public void Undelegate_FromJailedValidator()
+        {
+            // Given
+            var world = World;
+            var delegatorPrivateKey = new PrivateKey();
+            var validatorPrivateKey = new PrivateKey();
+            var blockHeight = 1L;
+            world = EnsureValidatorToBePromoted(
+                world, validatorPrivateKey, NCG * 10, blockHeight++);
+            world = EnsureDelegatorToBeBond(
+                world, delegatorPrivateKey, validatorPrivateKey, NCG * 10, blockHeight++);
+            world = EnsureValidatorToBeJailed(
+                world, validatorPrivateKey, ref blockHeight);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = delegatorPrivateKey.Address,
+                BlockIndex = blockHeight,
+            };
+            var expectedRepository = new ValidatorRepository(world, actionContext);
+            var expectedDelegatee = expectedRepository.GetValidatorDelegatee(
+                validatorPrivateKey.PublicKey.Address);
+            var expectedBond = expectedRepository.GetBond(
+                expectedDelegatee, delegatorPrivateKey.Address);
+
+            var undelegateValidator = new UndelegateValidator(
+                validatorPrivateKey.Address, 10);
+            world = undelegateValidator.Execute(actionContext);
+
+            // Then
+            var actualRepository = new ValidatorRepository(world, actionContext);
+            var actualDelegatee = actualRepository.GetValidatorDelegatee(
+                validatorPrivateKey.PublicKey.Address);
+            var actualBond = actualRepository.GetBond(actualDelegatee, delegatorPrivateKey.Address);
+
+            Assert.Equal(expectedBond.Share - 10, actualBond.Share);
         }
     }
 }
