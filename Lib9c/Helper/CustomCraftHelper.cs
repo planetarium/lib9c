@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using BTAI;
+using Libplanet.Action;
+using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 using Nekoyume.TableData.CustomEquipmentCraft;
@@ -12,6 +15,21 @@ namespace Nekoyume.Helper
 {
     public static class CustomCraftHelper
     {
+        public static int SelectCp(
+            CustomEquipmentCraftRelationshipSheet.Row relationshipRow,
+            IRandom random
+        )
+        {
+            var selector =
+                new WeightedSelector<CustomEquipmentCraftRelationshipSheet.CpGroup>(random);
+            foreach (var group in relationshipRow.CpGroups)
+            {
+                selector.Add(group, group.Ratio);
+            }
+
+            return selector.Select(1).First().SelectCp(random);
+        }
+
         public static (BigInteger, IDictionary<int, int>) CalculateCraftCost(
             int iconId,
             int relationship,

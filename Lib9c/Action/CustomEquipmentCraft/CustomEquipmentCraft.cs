@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -214,13 +213,10 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 equipment.ElementalType = elementalList[random.Next(elementalList.Length)];
 
                 // Set Substats
+                var totalCp = (decimal)CustomCraftHelper.SelectCp(relationshipRow, random);
                 var optionRow = ItemFactory.SelectOption(
                     recipeRow.ItemSubType, sheets.GetSheet<CustomEquipmentCraftOptionSheet>(),
                     random
-                );
-                var totalCp = (decimal)random.Next(
-                    relationshipRow.MinCp,
-                    relationshipRow.MaxCp + 1
                 );
 
                 foreach (var option in optionRow.SubStatData)

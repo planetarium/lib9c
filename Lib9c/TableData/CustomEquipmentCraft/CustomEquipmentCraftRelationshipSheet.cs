@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
+using Libplanet.Action;
 using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
@@ -18,6 +19,19 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public int Amount;
         }
 
+        // Total CP range is divided to several groups with group ratio. (Max 10 groups)
+        public struct CpGroup
+        {
+            public int Ratio;
+            public int MinCp;
+            public int MaxCp;
+
+            public int SelectCp(IRandom random)
+            {
+                return random.Next(MinCp, MaxCp + 1);
+            }
+        }
+
         [Serializable]
         public class Row : SheetRow<int>
         {
@@ -28,8 +42,8 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
             public long RequiredBlockMultiplier { get; private set; }
             public BigInteger GoldAmount { get; private set; }
             public List<MaterialCost> MaterialCosts { get; private set; }
-            public int MinCp { get; private set; }
-            public int MaxCp { get; private set; }
+
+            public List<CpGroup> CpGroups { get; private set; }
             public int WeaponItemId { get; private set; }
             public int ArmorItemId { get; private set; }
             public int BeltItemId { get; private set; }
@@ -41,26 +55,42 @@ namespace Nekoyume.TableData.CustomEquipmentCraft
                 Relationship = ParseInt(fields[0]);
                 CostMultiplier = ParseLong(fields[1]);
                 RequiredBlockMultiplier = ParseLong(fields[2]);
-                MinCp = ParseInt(fields[3]);
-                MaxCp = ParseInt(fields[4]);
-                WeaponItemId = ParseInt(fields[5]);
-                ArmorItemId = ParseInt(fields[6]);
-                BeltItemId = ParseInt(fields[7]);
-                NecklaceItemId = ParseInt(fields[8]);
-                RingItemId = ParseInt(fields[9]);
-
-                GoldAmount = BigInteger.TryParse(fields[10], out var ga) ? ga : 0;
-                MaterialCosts = new List<MaterialCost>();
-                var increment = 2;
-                for (var i = 0; i < 2; i++)
+                CpGroups = new List<CpGroup>();
+                const int groupCount = 10;
+                var increment = 3;
+                for (var i = 0; i < groupCount; i++)
                 {
-                    if (TryParseInt(fields[11 + i * increment], out var val))
+                    var col = 3 + i * increment;
+                    if (TryParseInt(fields[col], out var min))
+                    {
+                        CpGroups.Add(new CpGroup
+                        {
+                            MinCp = min,
+                            MaxCp = ParseInt(fields[col + 1]),
+                            Ratio = ParseInt(fields[col + 2]),
+                        });
+                    }
+                }
+
+                WeaponItemId = ParseInt(fields[33]);
+                ArmorItemId = ParseInt(fields[34]);
+                BeltItemId = ParseInt(fields[35]);
+                NecklaceItemId = ParseInt(fields[36]);
+                RingItemId = ParseInt(fields[37]);
+
+                GoldAmount = BigInteger.TryParse(fields[38], out var ga) ? ga : 0;
+                MaterialCosts = new List<MaterialCost>();
+                const int materialCount = 2;
+                increment = 2;
+                for (var i = 0; i < materialCount; i++)
+                {
+                    if (TryParseInt(fields[39 + i * increment], out var val))
                     {
                         MaterialCosts.Add(
                             new MaterialCost
                             {
-                                ItemId = ParseInt(fields[11 + i * increment]),
-                                Amount = ParseInt(fields[12 + i * increment])
+                                ItemId = ParseInt(fields[39 + i * increment]),
+                                Amount = ParseInt(fields[40 + i * increment])
                             }
                         );
                     }
