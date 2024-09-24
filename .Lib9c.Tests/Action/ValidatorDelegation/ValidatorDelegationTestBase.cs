@@ -203,6 +203,51 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             return slashValidator.Execute(actionContext);
         }
 
+        protected static IWorld EnsureValidatorToBeAllocatedReward(
+            IWorld world,
+            PrivateKey validatorPrivateKey,
+            FungibleAssetValue reward,
+            ref long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var actionContext1 = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight++,
+                Signer = validatorPrivateKey.Address,
+                Miner = validatorPrivateKey.Address,
+            };
+            world = new RecordProposer().Execute(actionContext1);
+
+            var lastCommit2 = CreateLastCommit(validatorPrivateKey, blockHeight - 1);
+            var actionContext2 = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight++,
+                Signer = validatorPrivateKey.Address,
+                LastCommit = lastCommit2,
+            };
+            world = world.MintAsset(actionContext2, GoldCurrencyState.Address, reward);
+            world = world.TransferAsset(
+                actionContext2, GoldCurrencyState.Address, Addresses.RewardPool, reward);
+
+            var lastCommit3 = CreateLastCommit(validatorPrivateKey, blockHeight - 1);
+            var actionContext3 = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight++,
+                Signer = validatorPrivateKey.Address,
+                LastCommit = lastCommit3,
+            };
+            world = new AllocateReward().Execute(actionContext3);
+
+            return world;
+        }
+
         protected static Vote CreateNullVote(
             PrivateKey privateKey, long blockHeight)
         {
@@ -300,6 +345,20 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 vote1.Timestamp);
 
             return evidence;
+        }
+
+        protected static FungibleAssetValue GetCommission(
+            FungibleAssetValue fav, BigInteger percentage)
+            => (fav * percentage).DivRem(100).Quotient;
+
+        protected static FungibleAssetValue GetWithoutCommission(
+            FungibleAssetValue fav, BigInteger percentage)
+            => fav - (fav * percentage).DivRem(100).Quotient;
+
+        protected static FungibleAssetValue GetRandomNCG()
+        {
+            var value = Math.Round(Random.Shared.Next(1, 100000) / 100.0, 2);
+            return FungibleAssetValue.Parse(NCG, $"{value:R}");
         }
     }
 }
