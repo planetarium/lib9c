@@ -6,13 +6,14 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.ValidatorDelegation;
     using Xunit;
 
-    public class DelegateValidatorTest
+    public class DelegateValidatorTest : ValidatorDelegationTestBase
     {
         [Fact]
         public void Serialization()
@@ -137,6 +138,29 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 PreviousState = world,
                 Signer = publicKey.Address,
             }));
+        }
+
+        [Fact]
+        public void CannotDelegateToInvalidValidator()
+        {
+            // Given
+            var world = World;
+            var validatorPrivateKey = new PrivateKey();
+            var delegatorPrivateKey = new PrivateKey();
+            var blockHeight = 1L;
+            world = MintAsset(world, delegatorPrivateKey, NCG * 100, blockHeight++);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = delegatorPrivateKey.Address,
+            };
+            var delegateValidator = new DelegateValidator(validatorPrivateKey.Address, NCG * 10);
+
+            // Then
+            Assert.Throws<FailedLoadStateException>(
+                () => delegateValidator.Execute(actionContext));
         }
     }
 }
