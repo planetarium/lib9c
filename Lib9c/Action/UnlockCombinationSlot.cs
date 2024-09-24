@@ -47,7 +47,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var sheets = states.GetSheets(
                 sheetTypes: new[]
                 {
@@ -87,6 +86,7 @@ namespace Nekoyume.Action
             var avatarState = states.GetAvatarState(AvatarAddress, true, false, false);
             if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
+                var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
             

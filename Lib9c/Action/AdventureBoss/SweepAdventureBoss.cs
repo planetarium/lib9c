@@ -93,9 +93,9 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var avatarState = states.GetAvatarState(AvatarAddress);
-            if (avatarState.agentAddress != context.Signer)
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
-                throw new InvalidAddressException();
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
             var exploreBoard = states.GetExploreBoard(Season);

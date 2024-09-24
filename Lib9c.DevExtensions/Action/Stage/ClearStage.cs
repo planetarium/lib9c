@@ -25,6 +25,11 @@ namespace Lib9c.DevExtensions.Action.Stage
             context.UseGas(1);
             var states = context.PreviousState;
             var avatarState = states.GetAvatarState(AvatarAddress);
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
+            {
+                var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
             avatarState.worldInformation = new WorldInformation(
                 context.BlockIndex,
                 states.GetSheet<WorldSheet>(),

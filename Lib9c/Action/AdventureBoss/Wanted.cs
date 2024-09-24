@@ -106,8 +106,15 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var requiredStakingAmount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
-            var stakedAmount =
-                states.GetStakedAmount(states.GetAvatarState(AvatarAddress).agentAddress);
+            
+            var avatarState = states.GetAvatarState(AvatarAddress);
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
+            {
+                var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
+            
+            var stakedAmount = states.GetStakedAmount(avatarState.agentAddress);
             if (stakedAmount < requiredStakingAmount * currency)
             {
                 throw new InsufficientStakingException(
@@ -168,7 +175,7 @@ namespace Nekoyume.Action.AdventureBoss
             states = states.TransferAsset(context, context.Signer,
                 Addresses.BountyBoard.Derive(AdventureBossHelper.GetSeasonAsAddressForm(Season)),
                 Bounty);
-            bountyBoard.AddOrUpdate(AvatarAddress, states.GetAvatarState(AvatarAddress).name,
+            bountyBoard.AddOrUpdate(AvatarAddress, avatarState.name,
                 Bounty);
             return states.SetBountyBoard(Season, bountyBoard);
         }
