@@ -21,6 +21,7 @@ namespace Nekoyume.Delegation
             Currency delegationCurrency,
             Currency rewardCurrency,
             Address delegationPoolAddress,
+            Address rewardRemainderPoolAddress,
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries)
@@ -30,6 +31,7 @@ namespace Nekoyume.Delegation
                   delegationCurrency,
                   rewardCurrency,
                   delegationPoolAddress,
+                  rewardRemainderPoolAddress,
                   unbondingPeriod,
                   maxUnbondLockInEntries,
                   maxRebondGraceEntries,
@@ -61,16 +63,17 @@ namespace Nekoyume.Delegation
                   new Currency(bencoded[0]),
                   new Currency(bencoded[1]),
                   new Address(bencoded[2]),
-                  (Integer)bencoded[3],
+                  new Address(bencoded[3]),
                   (Integer)bencoded[4],
                   (Integer)bencoded[5],
-                  ((List)bencoded[6]).Select(item => new Address(item)),
-                  new FungibleAssetValue(bencoded[7]),
-                  (Integer)bencoded[8],
-                  (Bencodex.Types.Boolean)bencoded[9],
-                  (Integer)bencoded[10],
-                  (Bencodex.Types.Boolean)bencoded[11],
-                  ((List)bencoded[12]).Select(item => new UnbondingRef(item)))
+                  (Integer)bencoded[6],
+                  ((List)bencoded[7]).Select(item => new Address(item)),
+                  new FungibleAssetValue(bencoded[8]),
+                  (Integer)bencoded[9],
+                  (Bencodex.Types.Boolean)bencoded[10],
+                  (Integer)bencoded[11],
+                  (Bencodex.Types.Boolean)bencoded[12],
+                  ((List)bencoded[13]).Select(item => new UnbondingRef(item)))
         {
         }
 
@@ -80,6 +83,7 @@ namespace Nekoyume.Delegation
             Currency delegationCurrency,
             Currency rewardCurrency,
             Address delegationPoolAddress,
+            Address rewardRemainderPoolAddress,
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries,
@@ -117,6 +121,7 @@ namespace Nekoyume.Delegation
             DelegationCurrency = delegationCurrency;
             RewardCurrency = rewardCurrency;
             DelegationPoolAddress = delegationPoolAddress;
+            RewardRemainderPoolAddress = rewardRemainderPoolAddress;
             UnbondingPeriod = unbondingPeriod;
             MaxUnbondLockInEntries = maxUnbondLockInEntries;
             MaxRebondGraceEntries = maxRebondGraceEntries;
@@ -144,17 +149,16 @@ namespace Nekoyume.Delegation
 
         public Address DelegationPoolAddress { get; }
 
+        public Address RewardRemainderPoolAddress { get; }
+
         public long UnbondingPeriod { get; }
 
         public int MaxUnbondLockInEntries { get; }
 
         public int MaxRebondGraceEntries { get; }
 
-        public Address RewardCollectorAddress
-            => DelegationAddress.RewardCollectorAddress(Address);
-
-        public Address RewardDistributorAddress
-            => DelegationAddress.RewardDistributorAddress(Address);
+        public Address RewardPoolAddress
+            => DelegationAddress.RewardPoolAddress(Address);
 
         public ImmutableSortedSet<Address> Delegators { get; private set; }
 
@@ -174,6 +178,7 @@ namespace Nekoyume.Delegation
             .Add(DelegationCurrency.Serialize())
             .Add(RewardCurrency.Serialize())
             .Add(DelegationPoolAddress.Bencoded)
+            .Add(RewardRemainderPoolAddress.Bencoded)
             .Add(UnbondingPeriod)
             .Add(MaxUnbondLockInEntries)
             .Add(MaxRebondGraceEntries)
@@ -297,9 +302,9 @@ namespace Nekoyume.Delegation
             && DelegationCurrency.Equals(delegatee.DelegationCurrency)
             && RewardCurrency.Equals(delegatee.RewardCurrency)
             && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
+            && RewardRemainderPoolAddress.Equals(delegatee.RewardRemainderPoolAddress)
             && UnbondingPeriod == delegatee.UnbondingPeriod
-            && RewardCollectorAddress.Equals(delegatee.RewardCollectorAddress)
-            && RewardDistributorAddress.Equals(delegatee.RewardDistributorAddress)
+            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
             && Delegators.SequenceEqual(delegatee.Delegators)
             && TotalDelegatedFAV.Equals(delegatee.TotalDelegatedFAV)
             && TotalShares.Equals(delegatee.TotalShares)

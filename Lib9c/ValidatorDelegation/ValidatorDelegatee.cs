@@ -27,6 +27,7 @@ namespace Nekoyume.ValidatorDelegation
                   delegationCurrency: rewardCurrency,
                   rewardCurrency: rewardCurrency,
                   delegationPoolAddress: UnbondedPoolAddress,
+                  rewardRemainderPoolAddress: Addresses.CommunityPool,
                   unbondingPeriod: ValidatorUnbondingPeriod,
                   maxUnbondLockInEntries: ValidatorMaxUnbondLockInEntries,
                   maxRebondGraceEntries: ValidatorMaxRebondGraceEntries,
@@ -123,7 +124,7 @@ namespace Nekoyume.ValidatorDelegation
             FungibleAssetValue delegationRewards = rewardAllocated - commission;
 
             repository.TransferAsset(RewardSource, Address, commission);
-            repository.TransferAsset(RewardSource, RewardCollectorAddress, delegationRewards);
+            repository.TransferAsset(RewardSource, RewardPoolAddress, delegationRewards);
             CollectRewards(height);
         }
 

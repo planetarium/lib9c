@@ -205,6 +205,32 @@ namespace Lib9c.Tests.Delegation
         }
 
         [Fact]
+        public void ClearRemainderRewards()
+        {
+            var repo = _fixture.TestRepository;
+            var testDelegatee = _fixture.TestDelegatee1;
+            var testDelegator1 = _fixture.TestDelegator1;
+            var testDelegator2 = _fixture.TestDelegator2;
+
+            var bonding1 = testDelegatee.DelegationCurrency * 3;
+            var bonding2 = testDelegatee.DelegationCurrency * 8;
+
+            var bondedShare1 = testDelegatee.Bond(testDelegator1, bonding1, 10L);
+            var bondedShare2 = testDelegatee.Bond(testDelegator2, bonding2, 10L);
+
+            repo.MintAsset(testDelegatee.RewardPoolAddress, testDelegatee.RewardCurrency * 10);
+            testDelegatee.CollectRewards(11L);
+
+            testDelegatee.DistributeReward(testDelegator1, 11L);
+            var remainder = repo.GetBalance(DelegationFixture.FixedPoolAddress, testDelegatee.RewardCurrency);
+            Assert.Equal(testDelegatee.RewardCurrency * 0, remainder);
+
+            testDelegatee.DistributeReward(testDelegator2, 11L);
+            remainder = repo.GetBalance(DelegationFixture.FixedPoolAddress, testDelegatee.RewardCurrency);
+            Assert.Equal(new FungibleAssetValue(testDelegatee.RewardCurrency, 0, 1), remainder);
+        }
+
+        [Fact]
         public void AddressConsistency()
         {
             var testDelegatee1 = _fixture.TestDelegatee1;
@@ -245,8 +271,11 @@ namespace Lib9c.Tests.Delegation
 
             Assert.Equal(testDelegatee1.Address, dummyDelegatee1.Address);
             Assert.NotEqual(
-                testDelegatee1.RewardDistributorAddress,
-                dummyDelegatee1.RewardDistributorAddress);
+                testDelegatee1.CurrentLumpSumRewardsRecordAddress(),
+                dummyDelegatee1.CurrentLumpSumRewardsRecordAddress());
+            Assert.NotEqual(
+                testDelegatee1.LumpSumRewardsRecordAddress(1L),
+                dummyDelegatee1.LumpSumRewardsRecordAddress(1L));
             Assert.NotEqual(
                 testDelegatee1.BondAddress(testDelegator1.Address),
                 dummyDelegatee1.BondAddress(testDelegator1.Address));

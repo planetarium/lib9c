@@ -19,6 +19,7 @@ namespace Nekoyume.Delegation
             Currency delegationCurrency,
             Currency rewardCurrency,
             Address delegationPoolAddress,
+            Address rewardRemainderPoolAddress,
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries,
@@ -30,6 +31,7 @@ namespace Nekoyume.Delegation
                       delegationCurrency,
                       rewardCurrency,
                       delegationPoolAddress,
+                      rewardRemainderPoolAddress,
                       unbondingPeriod,
                       maxUnbondLockInEntries,
                       maxRebondGraceEntries),
@@ -72,15 +74,15 @@ namespace Nekoyume.Delegation
 
         public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
+        public Address RewardRemainderPoolAddress => Metadata.RewardRemainderPoolAddress;
+
         public long UnbondingPeriod => Metadata.UnbondingPeriod;
 
         public int MaxUnbondLockInEntries => Metadata.MaxUnbondLockInEntries;
 
         public int MaxRebondGraceEntries => Metadata.MaxRebondGraceEntries;
 
-        public Address RewardCollectorAddress => Metadata.RewardCollectorAddress;
-
-        public Address RewardDistributorAddress => Metadata.RewardDistributorAddress;
+        public Address RewardPoolAddress => Metadata.RewardPoolAddress;
 
         public ImmutableSortedSet<Address> Delegators => Metadata.Delegators;
 
@@ -213,10 +215,47 @@ namespace Nekoyume.Delegation
             {
                 IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
                     GetLumpSumRewardsRecords(bond.LastDistributeHeight);
-                FungibleAssetValue reward = CalculateReward(share, lumpSumRewardsRecords);
-                if (reward.Sign > 0)
+
+                long? linkedStartHeight = null;
+                foreach (LumpSumRewardsRecord record in lumpSumRewardsRecords)
                 {
-                    Repository.TransferAsset(RewardDistributorAddress, delegator.Address, reward);
+                    if (!(record.StartHeight is long startHeight))
+                    {
+                        throw new ArgumentException("lump sum reward record wasn't started.");
+                    }
+
+                    if (linkedStartHeight is long startHeightFromHigher
+                        && startHeightFromHigher != startHeight)
+                    {
+                        throw new ArgumentException("lump sum reward record was started.");
+                    }
+
+                    FungibleAssetValue reward = record.RewardsDuringPeriod(share);
+                    if (reward.Sign > 0)
+                    {
+                        Repository.TransferAsset(record.Address, delegator.Address, reward);
+                    }
+
+                    LumpSumRewardsRecord newRecord = record.RemoveDelegator(delegator.Address);
+
+                    if (newRecord.Delegators.IsEmpty)
+                    {
+                        FungibleAssetValue remainder = Repository.GetBalance(newRecord.Address, RewardCurrency);
+
+                        if (remainder.Sign > 0)
+                        {
+                            Repository.TransferAsset(newRecord.Address, RewardRemainderPoolAddress, remainder);
+                        }
+                    }
+
+                    Repository.SetLumpSumRewardsRecord(newRecord);
+
+                    linkedStartHeight = newRecord.LastStartHeight;
+
+                    if (linkedStartHeight == -1)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -229,9 +268,17 @@ namespace Nekoyume.Delegation
 
         public void CollectRewards(long height)
         {
-            FungibleAssetValue rewards = Repository.GetBalance(RewardCollectorAddress, RewardCurrency);
-            Repository.AddLumpSumRewards(this, height, rewards);
-            Repository.TransferAsset(RewardCollectorAddress, RewardDistributorAddress, rewards);
+            FungibleAssetValue rewards = Repository.GetBalance(RewardPoolAddress, RewardCurrency);
+            LumpSumRewardsRecord record = Repository.GetCurrentLumpSumRewardsRecord(this)
+                ?? new LumpSumRewardsRecord(
+                    CurrentLumpSumRewardsRecordAddress(),
+                    height,
+                    TotalShares,
+                    Delegators,
+                    RewardCurrency);
+            record = record.AddLumpSumRewards(rewards);
+            Repository.TransferAsset(RewardPoolAddress, record.Address, rewards);
+            Repository.SetLumpSumRewardsRecord(record);            
         }
 
         public void Slash(BigInteger slashFactor, long infractionHeight, long height)
@@ -299,6 +346,7 @@ namespace Nekoyume.Delegation
                         currentRecord.Address,
                         currentRecord.StartHeight,
                         TotalShares,
+                        Delegators,
                         RewardCurrency,
                         currentRecord.LastStartHeight);
 
@@ -306,15 +354,22 @@ namespace Nekoyume.Delegation
                     return;
                 }
 
-                Repository.SetLumpSumRewardsRecord(
-                    lastRecord.MoveAddress(
-                        LumpSumRewardsRecordAddress(lastRecord.StartHeight)));
+                Address archiveAddress = LumpSumRewardsRecordAddress(lastRecord.StartHeight);
+                FungibleAssetValue reward = Repository.GetBalance(lastRecord.Address, RewardCurrency);
+                if (reward.Sign > 0)
+                {
+                    Repository.TransferAsset(lastRecord.Address, archiveAddress, reward);
+                }
+
+                lastRecord = lastRecord.MoveAddress(archiveAddress);
+                Repository.SetLumpSumRewardsRecord(lastRecord);
             }
 
             LumpSumRewardsRecord newRecord = new(
                 CurrentLumpSumRewardsRecordAddress(),
                 height,
                 TotalShares,
+                Delegators,
                 RewardCurrency,
                 lastStartHeight);
 
