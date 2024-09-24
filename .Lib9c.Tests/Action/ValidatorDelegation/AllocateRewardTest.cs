@@ -121,7 +121,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 if (vote.Flag == VoteFlag.Null)
                 {
                     Assert.Equal(initialFAV, world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
-                    Assert.Equal(ncg * 0, world.GetBalance(validator.RewardDistributorAddress, ncg));
+                    Assert.Equal(ncg * 0, world.GetBalance(validator.CurrentLumpSumRewardsRecordAddress(), ncg));
                     continue;
                 }
 
@@ -136,7 +136,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                     Assert.Equal(commission + initialFAV, world.GetBalance(vote.ValidatorPublicKey.Address, ncg));
                 }
 
-                Assert.Equal(rewardAllocated - commission, world.GetBalance(validator.RewardDistributorAddress, ncg));
+                Assert.Equal(rewardAllocated - commission, world.GetBalance(validator.CurrentLumpSumRewardsRecordAddress(), ncg));
             }
         }
     }

@@ -22,15 +22,15 @@ namespace Nekoyume.Delegation
 
         Address DelegationPoolAddress { get; }
 
+        Address RewardRemainderPoolAddress { get; }
+
         long UnbondingPeriod { get; }
 
         int MaxUnbondLockInEntries { get; }
 
         int MaxRebondGraceEntries { get; }
 
-        Address RewardCollectorAddress { get; }
-
-        Address RewardDistributorAddress { get; }
+        Address RewardPoolAddress { get; }
 
         ImmutableSortedSet<Address> Delegators { get; }
 

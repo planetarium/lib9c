@@ -91,28 +91,16 @@ namespace Nekoyume.Delegation
                 delegateeMetadataAddress,
                 BitConverter.GetBytes(height));
 
-        public static Address RewardCollectorAddress(
+        public static Address RewardPoolAddress(
             Address delegateeAddress, Address delegateeAccountAddress)
             => DeriveAddress(
-                DelegationElementType.RewardCollector,
+                DelegationElementType.RewardPool,
                 DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress));
 
-        public static Address RewardCollectorAddress(
+        public static Address RewardPoolAddress(
             Address delegateeMetadataAddress)
             => DeriveAddress(
-                DelegationElementType.RewardCollector,
-                delegateeMetadataAddress);
-
-        public static Address RewardDistributorAddress(
-            Address delegateeAddress, Address delegateeAccountAddress)
-            => DeriveAddress(
-                DelegationElementType.RewardDistributor,
-                DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress));
-
-        public static Address RewardDistributorAddress(
-            Address delegateeMetadataAddress)
-            => DeriveAddress(
-                DelegationElementType.RewardDistributor,
+                DelegationElementType.RewardPool,
                 delegateeMetadataAddress);
 
         private static Address DeriveAddress(
@@ -139,8 +127,7 @@ namespace Nekoyume.Delegation
             UnbondLockIn,
             RebondGrace,
             LumpSumRewardsRecord,
-            RewardCollector,
-            RewardDistributor,
+            RewardPool,
             DelegationPool,
         }
     }

@@ -230,18 +230,6 @@ namespace Nekoyume.Delegation
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
         }
 
-        public void AddLumpSumRewards(IDelegatee delegatee, long height, FungibleAssetValue rewards)
-        {
-            LumpSumRewardsRecord record = GetCurrentLumpSumRewardsRecord(delegatee)
-                ?? new LumpSumRewardsRecord(
-                    delegatee.CurrentLumpSumRewardsRecordAddress(),
-                    height,
-                    delegatee.TotalShares,
-                    delegatee.RewardCurrency);
-            record = record.AddLumpSumRewards(rewards);
-            SetLumpSumRewardsRecord(record);
-        }
-
         public void TransferAsset(Address sender, Address recipient, FungibleAssetValue value)
             => previousWorld = previousWorld.TransferAsset(actionContext, sender, recipient, value);
 

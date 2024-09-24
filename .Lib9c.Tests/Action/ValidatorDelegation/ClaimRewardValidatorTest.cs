@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Nekoyume;
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.ValidatorDelegation;
     using Xunit;
@@ -113,7 +114,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Then
             var repository = new ValidatorRepository(world, actionContext);
             var delegatee = repository.GetValidatorDelegatee(validatorPrivateKey.Address);
-            var actualRemainReward = world.GetBalance(delegatee.RewardDistributorAddress, NCG);
+            var actualRemainReward = world.GetBalance(delegatee.CurrentLumpSumRewardsRecordAddress(), NCG);
             var actualValidatorBalance = world.GetBalance(validatorPrivateKey.Address, NCG);
             var actualDelegatorBalance = world.GetBalance(delegatorPrivateKey.Address, NCG);
 
@@ -153,10 +154,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             var expectedValidatorBalance = expectedCommission + expectedReward.DivRem(3).Quotient;
             var expectedDelegator1Balance = expectedReward.DivRem(3).Quotient;
             var expectedDelegator2Balance = expectedReward.DivRem(3).Quotient;
-            var expectedRemainReward = allocatedReward;
-            expectedRemainReward -= expectedValidatorBalance;
-            expectedRemainReward -= expectedDelegator1Balance;
-            expectedRemainReward -= expectedDelegator2Balance;
+            var expectedRemainReward = expectedDelegatee.RewardCurrency * 0;
+            var expectedCommunityBalance = allocatedReward;
+            expectedCommunityBalance -= expectedValidatorBalance;
+            expectedCommunityBalance -= expectedDelegator1Balance;
+            expectedCommunityBalance -= expectedDelegator2Balance;
 
             var lastCommit = CreateLastCommit(validatorPrivateKey, blockHeight - 1);
             actionContext = new ActionContext
@@ -187,12 +189,14 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Then
             var repository = new ValidatorRepository(world, actionContext);
             var delegatee = repository.GetValidatorDelegatee(validatorPrivateKey.Address);
-            var actualRemainReward = world.GetBalance(delegatee.RewardDistributorAddress, NCG);
+            var actualRemainReward = world.GetBalance(delegatee.CurrentLumpSumRewardsRecordAddress(), NCG);
             var actualValidatorBalance = world.GetBalance(validatorPrivateKey.Address, NCG);
             var actualDelegator1Balance = world.GetBalance(delegatorPrivateKey1.Address, NCG);
             var actualDelegator2Balance = world.GetBalance(delegatorPrivateKey2.Address, NCG);
+            var actualCommunityBalance = world.GetBalance(Addresses.CommunityPool, NCG);
 
             Assert.Equal(expectedRemainReward, actualRemainReward);
+            Assert.Equal(expectedCommunityBalance, actualCommunityBalance);
             Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
             Assert.Equal(expectedDelegator1Balance, actualDelegator1Balance);
             Assert.Equal(expectedDelegator2Balance, actualDelegator2Balance);
@@ -229,12 +233,14 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 expectedRepository, validatorPrivateKey, validatorPrivateKey, expectedReward);
             var expectedDelegatorBalances = CalculateRewards(
                 expectedRepository, validatorPrivateKey, delegatorPrivateKeys, expectedReward);
-            var expectedRemainReward = allocatedReward;
-            expectedRemainReward -= expectedValidatorBalance;
+            var expectedCommunityBalance = allocatedReward;
+            expectedCommunityBalance -= expectedValidatorBalance;
             for (var i = 0; i < length; i++)
             {
-                expectedRemainReward -= expectedDelegatorBalances[i];
+                expectedCommunityBalance -= expectedDelegatorBalances[i];
             }
+
+            var expectedRemainReward = expectedDelegatee.RewardCurrency * 0;
 
             var lastCommit = CreateLastCommit(validatorPrivateKey, blockHeight - 1);
             actionContext = new ActionContext
@@ -260,10 +266,12 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Then
             var repository = new ValidatorRepository(world, actionContext);
             var delegatee = repository.GetValidatorDelegatee(validatorPrivateKey.Address);
-            var actualRemainReward = world.GetBalance(delegatee.RewardDistributorAddress, NCG);
+            var actualRemainReward = world.GetBalance(delegatee.CurrentLumpSumRewardsRecordAddress(), NCG);
             var actualValidatorBalance = world.GetBalance(validatorPrivateKey.Address, NCG);
+            var actualCommunityBalance = world.GetBalance(Addresses.CommunityPool, NCG);
             Assert.Equal(expectedRemainReward, actualRemainReward);
             Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
+            Assert.Equal(expectedCommunityBalance, actualCommunityBalance);
 
             for (var i = 0; i < length; i++)
             {
