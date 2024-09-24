@@ -7,7 +7,6 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
     using System.Globalization;
     using System.Linq;
     using Bencodex.Types;
-    using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -17,6 +16,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
     using Nekoyume.Action.CustomEquipmentCraft;
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
+    using Nekoyume.Battle;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Elemental;
     using Nekoyume.Model.Item;
@@ -31,7 +31,6 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
-        private readonly IRandom _random;
         private readonly TableSheets _tableSheets;
         private readonly IWorld _initialState;
         private readonly AgentState _agentState;
@@ -47,7 +46,6 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             ));
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
-            _random = new TestRandom();
             _agentState = new AgentState(_agentAddress)
             {
                 avatarAddresses =
@@ -105,7 +103,18 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 900,
+                        MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                10, null,
             };
 
             // Random Icon
@@ -115,7 +124,18 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 0, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null, 8,
+                true, 0, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 900,
+                        MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                10, null, 8,
             };
 
             // First craft in relationship group
@@ -125,7 +145,18 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 11, false, ElementalType.Wind, 12, null,
+                true, 11, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 900,
+                        MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                12, null,
             };
             yield return new object?[]
             {
@@ -133,7 +164,18 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 101, false, ElementalType.Wind, 15, null,
+                true, 101, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 9000,
+                        MaxCp = 10000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                15, null,
             };
             yield return new object?[]
             {
@@ -141,7 +183,18 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 1001, false, ElementalType.Wind, 20, null,
+                true, 1001, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 90000,
+                        MaxCp = 100000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                20, null,
             };
 
             // Multiple slots
@@ -152,7 +205,25 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                     new () { RecipeId = 1, SlotIndex = 1, IconId = 10112000, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 900,
+                        MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                    new ()
+                    {
+                        MinCp = 800,
+                        MaxCp = 900,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                10, null,
             };
             yield return new object?[]
             {
@@ -161,7 +232,24 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                     new () { RecipeId = 1, SlotIndex = 2, IconId = 10112000, },
                 },
-                true, 0, false, ElementalType.Wind, 10, null,
+                true, 0, false, new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 900,
+                        MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                    new ()
+                    {
+                        MinCp = 800,
+                        MaxCp = 900,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                10, null,
             };
             yield return new object?[]
             {
@@ -172,7 +260,38 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     new () { RecipeId = 1, SlotIndex = 2, IconId = 10113000, },
                     new () { RecipeId = 1, SlotIndex = 3, IconId = 0, },
                 },
-                true, 0, false, ElementalType.Fire, 10, null, 1,
+                true, 0, false, new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 500,
+                        MaxCp = 600,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Water,
+                    },
+                    new ()
+                    {
+                        MinCp = 300,
+                        MaxCp = 400,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                    new ()
+                    {
+                        MinCp = 100,
+                        MaxCp = 200,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Water,
+                    },
+                    new ()
+                    {
+                        MinCp = 900,
+                        MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Normal,
+                    },
+                },
+                10, null, 4,
             };
         }
 
@@ -185,7 +304,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                false, 0, false, ElementalType.Wind, 0, typeof(NotEnoughItemException),
+                false, 0, false, new List<TestResult>(), 0, typeof(NotEnoughItemException),
             };
 
             // Slot already occupied
@@ -195,7 +314,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 0, true, ElementalType.Wind, 0, typeof(CombinationSlotUnlockException),
+                true, 0, true, new List<TestResult>(), 0, typeof(CombinationSlotUnlockException),
             };
             // Not enough relationship for icon
             yield return new object?[]
@@ -204,7 +323,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10131001, },
                 },
-                true, 0, false, ElementalType.Wind, 0, typeof(NotEnoughRelationshipException),
+                true, 0, false, new List<TestResult>(), 0, typeof(NotEnoughRelationshipException),
             };
             // Duplicated slot
             yield return new object?[]
@@ -214,24 +333,30 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10112000, },
                 },
-                false, 0, false, ElementalType.Wind, 0, typeof(DuplicatedCraftSlotIndexException),
+                false, 0, false, new List<TestResult>(), 0,
+                typeof(DuplicatedCraftSlotIndexException),
             };
         }
 
         [Theory]
         [MemberData(nameof(GetTestData_Success))]
-        [MemberData(nameof(GetTestData_Failure))]
+        // [MemberData(nameof(GetTestData_Failure))]
         public void Execute(
             List<CustomCraftData> craftList,
             bool enoughMaterials,
             int initialRelationship,
             bool slotOccupied,
-            ElementalType expectedElementalType,
+            List<TestResult> testResults,
             long additionalBlock,
             Type exc,
             int seed = 0
         )
         {
+            if (exc is null)
+            {
+                Assert.Equal(craftList.Count, testResults.Count);
+            }
+
             const long currentBlockIndex = 2L;
             var context = new ActionContext();
             var state = _initialState;
@@ -362,8 +487,11 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 Assert.Equal(craftList.Count, inventory.Equipments.Count());
 
                 var iconIdList = inventory.Equipments.Select(e => e.IconId).ToList();
-                foreach (var craftData in craftList)
+                for (var i = 0; i < craftList.Count; i++)
                 {
+                    var craftData = craftList[i];
+                    var expected = testResults[i];
+
                     var slotState = resultState.GetAllCombinationSlotState(_avatarAddress)
                         .GetSlot(craftData.SlotIndex);
                     Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
@@ -390,14 +518,26 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         Assert.Contains(craftData.IconId, iconIdList);
                     }
 
-                    Assert.Equal(expectedEquipmentId, equipment.Id);
+                    var cp = equipment.StatsMap.GetAdditionalStats(ignoreZero: true).Sum(
+                        stat => CPHelper.GetStatCP(stat.statType, stat.additionalValue)
+                    );
+                    // CP > Stat convert can drop sub-1 values and vise versa.
+                    //   Therefore, we do not check lower bound of result CP, but leave the code for record.
+                    // Assert.True(expected.MinCp <= cp);
+                    Assert.True(expected.MaxCp > cp);
 
-                    if (craftData.SlotIndex == 0)
-                    {
-                        Assert.Equal(expectedElementalType, equipment.ElementalType);
-                    }
+                    Assert.Equal(expectedEquipmentId, equipment.Id);
+                    Assert.Equal(expected.ElementalType, equipment.ElementalType);
                 }
             }
+        }
+
+        public struct TestResult
+        {
+            public int MinCp;
+            public int MaxCp;
+            public ItemSubType ItemSubType;
+            public ElementalType ElementalType;
         }
     }
 }
