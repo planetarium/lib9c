@@ -72,5 +72,234 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             };
             return promoteValidator.Execute(actionContext);
         }
+
+        protected static IWorld ExecuteSlashValidator(
+            IWorld world,
+            PublicKey validatorPublicKey,
+            BlockCommit lastCommit,
+            long blockHeight)
+        {
+            var slashValidator = new SlashValidator();
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorPublicKey.Address,
+                BlockIndex = blockHeight,
+                LastCommit = lastCommit,
+            };
+            return slashValidator.Execute(actionContext);
+        }
+
+        protected static IWorld EnsureDelegatorToBeBond(
+            IWorld world,
+            PrivateKey delegatorPrivateKey,
+            PrivateKey validatorPrivateKey,
+            FungibleAssetValue amount,
+            long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var delegatorAddress = delegatorPrivateKey.Address;
+            var validatorAddress = validatorPrivateKey.Address;
+            var actionContext = new ActionContext
+            {
+                PreviousState = MintAsset(
+                    world, delegatorPrivateKey, amount, blockHeight),
+                BlockIndex = blockHeight,
+                Signer = delegatorAddress,
+            };
+            var delegatorValidator = new DelegateValidator(
+                validatorAddress, amount);
+            return delegatorValidator.Execute(actionContext);
+        }
+
+        protected static IWorld EnsureDelegatorsToBeBond(
+            IWorld world,
+            PrivateKey[] delegatorPrivateKeys,
+            PrivateKey validatorPrivateKey,
+            FungibleAssetValue[] amounts,
+            long blockHeight)
+        {
+            if (delegatorPrivateKeys.Length != amounts.Length)
+            {
+                throw new ArgumentException(
+                    "The length of delegatorPrivateKeys and amounts must be the same.");
+            }
+
+            for (var i = 0; i < delegatorPrivateKeys.Length; i++)
+            {
+                world = EnsureDelegatorToBeBond(
+                    world, delegatorPrivateKeys[i], validatorPrivateKey, amounts[i], blockHeight);
+            }
+
+            return world;
+        }
+
+        protected static IWorld EnsureValidatorToBeJailed(
+            IWorld world, PrivateKey validatorPrivateKey, ref long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var repository = new ValidatorRepository(world, new ActionContext());
+            var delegatee = repository.GetValidatorDelegatee(validatorPrivateKey.Address);
+            if (delegatee.Jailed)
+            {
+                throw new ArgumentException(
+                    "The validator is already jailed.", nameof(validatorPrivateKey));
+            }
+
+            for (var i = 0L; i <= AbstainHistory.MaxAbstainAllowance; i++)
+            {
+                var vote = CreateNullVote(validatorPrivateKey, blockHeight - 1);
+                var lastCommit = new BlockCommit(
+                    height: blockHeight - 1,
+                    round: 0,
+                    blockHash: vote.BlockHash,
+                    ImmutableArray.Create(vote));
+                world = ExecuteSlashValidator(
+                    world, validatorPrivateKey.PublicKey, lastCommit, blockHeight);
+                blockHeight++;
+                repository = new ValidatorRepository(world, new ActionContext());
+                delegatee = repository.GetValidatorDelegatee(validatorPrivateKey.Address);
+                if (delegatee.Jailed)
+                {
+                    break;
+                }
+            }
+
+            return world;
+        }
+
+        protected static IWorld EnsureValidatorToBeTombstoned(
+            IWorld world, PrivateKey validatorPrivateKey, long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var evidence = CreateDuplicateVoteEvidence(validatorPrivateKey, blockHeight - 1);
+            var lastCommit = new BlockCommit(
+                height: blockHeight - 1,
+                round: 0,
+                blockHash: EmptyBlockHash,
+                ImmutableArray.Create(evidence.VoteRef));
+
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight,
+                Evidence = new List<EvidenceBase> { evidence },
+                LastCommit = lastCommit,
+            };
+            var slashValidator = new SlashValidator();
+
+            return slashValidator.Execute(actionContext);
+        }
+
+        protected static Vote CreateNullVote(
+            PrivateKey privateKey, long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var power = new BigInteger(100);
+            var validator = new Validator(privateKey.PublicKey, power);
+            var blockHash = EmptyBlockHash;
+            var timestamp = DateTimeOffset.UtcNow;
+            var voteMetadata = new VoteMetadata(
+                height: blockHeight,
+                round: 0,
+                blockHash: blockHash,
+                timestamp: timestamp,
+                validatorPublicKey: validator.PublicKey,
+                validatorPower: power,
+                flag: VoteFlag.Null);
+            return voteMetadata.Sign(null);
+        }
+
+        protected static Vote CreateVote(
+            PrivateKey privateKey, long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var power = new BigInteger(100);
+            var validator = new Validator(privateKey.PublicKey, power);
+            var blockHash = EmptyBlockHash;
+            var timestamp = DateTimeOffset.UtcNow;
+            var voteMetadata = new VoteMetadata(
+                height: blockHeight,
+                round: 0,
+                blockHash: blockHash,
+                timestamp: timestamp,
+                validatorPublicKey: validator.PublicKey,
+                validatorPower: power,
+                flag: VoteFlag.PreCommit);
+            return voteMetadata.Sign(privateKey);
+        }
+
+        protected static BlockCommit CreateLastCommit(
+            PrivateKey privateKey, long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var vote = CreateVote(privateKey, blockHeight);
+            return new BlockCommit(
+                height: blockHeight,
+                round: 0,
+                blockHash: vote.BlockHash,
+                ImmutableArray.Create(vote));
+        }
+
+        protected static DuplicateVoteEvidence CreateDuplicateVoteEvidence(
+            PrivateKey validatorPrivateKey, long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var validatorSet = new ValidatorSet(new List<Validator>
+            {
+                new (validatorPrivateKey.PublicKey, new BigInteger(1000)),
+            });
+            var vote1 = new VoteMetadata(
+                height: blockHeight,
+                round: 0,
+                blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x01)),
+                timestamp: DateTimeOffset.UtcNow,
+                validatorPublicKey: validatorPrivateKey.PublicKey,
+                validatorPower: BigInteger.One,
+                flag: VoteFlag.PreCommit).Sign(validatorPrivateKey);
+            var vote2 = new VoteMetadata(
+                height: blockHeight,
+                round: 0,
+                blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x02)),
+                timestamp: DateTimeOffset.UtcNow,
+                validatorPublicKey: validatorPrivateKey.PublicKey,
+                validatorPower: BigInteger.One,
+                flag: VoteFlag.PreCommit).Sign(validatorPrivateKey);
+            var evidence = new DuplicateVoteEvidence(
+                vote1,
+                vote2,
+                validatorSet,
+                vote1.Timestamp);
+
+            return evidence;
+        }
     }
 }
