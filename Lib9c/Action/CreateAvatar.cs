@@ -105,8 +105,7 @@ namespace Nekoyume.Action
             var avatarState = states.GetAvatarState(avatarAddress);
             if (avatarState is not null)
             {
-                throw new InvalidAddressException(
-                    $"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
+                throw new InvalidAddressException($"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
             }
 
             if (!(0 <= index && index < GameConfig.SlotCount))
