@@ -21,14 +21,14 @@ namespace Nekoyume.Action
     public class UnlockCombinationSlot : GameAction
     {
         private const string TypeIdentifier = "unlock_combination_slot";
-        
+
         // TODO: 별도 파일로 분리
         public const int GoldenDustId = 600201;
         public const int RubyDustId = 600202;
-        
+
         public Address AvatarAddress;
         public int SlotIndex;
-        
+
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
                 {
@@ -58,7 +58,7 @@ namespace Nekoyume.Action
             {
                 throw new InvalidSlotIndexException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
-            
+
             var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
             var hasSlot = allSlotState.TryGetSlot(SlotIndex, out var combinationSlot);
             if (!hasSlot || combinationSlot is null)
@@ -68,7 +68,7 @@ namespace Nekoyume.Action
                     SlotIndex
                 );
             }
-                
+
             if (combinationSlot.IsUnlocked)
             {
                 throw new SlotAlreadyUnlockedException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
@@ -81,11 +81,20 @@ namespace Nekoyume.Action
             {
                 throw new InvalidSlotIndexException($"[{nameof(UnlockRuneSlot)}] Index On Sheet : {SlotIndex}");
             }
-            
+
             var price = costSheet[SlotIndex];
-            var agentAddress = states.GetAvatarState(AvatarAddress).agentAddress;
+            var avatarState = states.GetAvatarState(AvatarAddress, true, false, false);
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
+            {
+                var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
+            
+            var agentAddress = avatarState.agentAddress;
+            
             var useMaterial = false;
 
+            MaterialItemSheet materialSheet = null;
             Inventory inventory = null;
 
             // Use Crystal
@@ -104,11 +113,11 @@ namespace Nekoyume.Action
 
                 states = states.TransferAsset(context, agentAddress, feeStoreAddress, crystalPrice);
             }
-            
+
             // Use GoldenDust
             if (price.GoldenDustPrice > 0)
             {
-                var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+                materialSheet = sheets.GetSheet<MaterialItemSheet>();
                 var material = materialSheet.OrderedList.First(m => m.Id == GoldenDustId);
 
                 inventory = states.GetInventoryV2(AvatarAddress);
@@ -118,16 +127,16 @@ namespace Nekoyume.Action
                     throw new NotEnoughMaterialException(
                         $"Not enough golden dust to open slot: needs {price.GoldenDustPrice}");
                 }
-                
+
                 useMaterial = true;
             }
-            
+
             // Use RubyDust
             if (price.RubyDustPrice > 0)
             {
-                var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+                materialSheet ??= sheets.GetSheet<MaterialItemSheet>();
                 var material = materialSheet.OrderedList.First(m => m.Id == RubyDustId);
-                
+
                 inventory ??= states.GetInventoryV2(AvatarAddress);
                 if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
                     price.RubyDustPrice))
@@ -135,10 +144,10 @@ namespace Nekoyume.Action
                     throw new NotEnoughMaterialException(
                         $"Not enough ruby dust to open slot: needs {price.RubyDustPrice}");
                 }
-                
+
                 useMaterial = true;
             }
-            
+
             // Use NCG
             if (price.NcgPrice > 0)
             {
@@ -173,7 +182,7 @@ namespace Nekoyume.Action
                 {
                     typeof(ArenaSheet),
                 });
-            
+
             var arenaSheet = sheets.GetSheet<ArenaSheet>();
             var arenaData = arenaSheet.GetRoundByBlockIndex(blockIndex);
             return ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
