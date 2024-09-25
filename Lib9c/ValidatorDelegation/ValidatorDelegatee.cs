@@ -123,8 +123,16 @@ namespace Nekoyume.ValidatorDelegation
                 = (rewardAllocated * CommissionPercentage).DivRem(100).Quotient;
             FungibleAssetValue delegationRewards = rewardAllocated - commission;
 
-            repository.TransferAsset(RewardSource, Address, commission);
-            repository.TransferAsset(RewardSource, RewardPoolAddress, delegationRewards);
+            if (commission.Sign > 0)
+            {
+                repository.TransferAsset(RewardSource, Address, commission);
+            }
+
+            if (delegationRewards.Sign > 0)
+            {
+                repository.TransferAsset(RewardSource, RewardPoolAddress, delegationRewards);
+            }
+
             CollectRewards(height);
         }
 

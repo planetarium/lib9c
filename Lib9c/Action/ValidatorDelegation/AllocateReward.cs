@@ -109,10 +109,13 @@ namespace Nekoyume.Action.ValidatorDelegation
                 .DivRem(votePowerDenominator * 100).Quotient;
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
 
-            repository.TransferAsset(
-                Addresses.RewardPool,
-                proposerInfo.Proposer,
-                proposerReward);
+            if (proposerReward.Sign > 0)
+            {
+                repository.TransferAsset(
+                    Addresses.RewardPool,
+                    proposerInfo.Proposer,
+                    proposerReward);
+            }
         }
 
         internal static void DistributeValidatorReward(
