@@ -16,6 +16,7 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
                 DelegationFixture.TestCurrency,
                 DelegationFixture.TestCurrency,
                 address,
+                DelegationFixture.FixedPoolAddress,
                 3,
                 5,
                 5,
