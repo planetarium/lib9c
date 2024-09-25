@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nekoyume.Action;
 using static Nekoyume.TableData.TableExtensions;
 using RewardData = Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData;
 
@@ -23,11 +24,18 @@ namespace Nekoyume.TableData.AdventureBoss
                 for (var i = 0; i < 2; i++)
                 {
                     var offset = 3 * i;
-                    Rewards.Add(new RewardData(
-                        fields[1 + offset],
-                        TryParseInt(fields[2 + offset], out var itemId) ? itemId : 0,
-                        TryParseInt(fields[3 + offset], out var amount) ? amount : 0
-                    ));
+                    if (fields[1 + offset] != "")
+                    {
+                        Rewards.Add(new RewardData(
+                            fields[1 + offset],
+                            TryParseInt(fields[2 + offset], out var itemId)
+                                ? itemId
+                                : throw new FailedLoadSheetException("Missing Item Id"),
+                            TryParseInt(fields[3 + offset], out var amount)
+                                ? amount
+                                : throw new FailedLoadSheetException("Missing Item amount")
+                        ));
+                    }
                 }
             }
         }
