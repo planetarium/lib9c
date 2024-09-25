@@ -24,7 +24,7 @@ namespace Nekoyume.TableData.AdventureBoss
                 for (var i = 0; i < 2; i++)
                 {
                     var offset = 3 * i;
-                    if (fields[1 + offset] != "")
+                    if (!string.IsNullOrWhiteSpace(fields[1 + offset]))
                     {
                         Rewards.Add(new RewardData(
                             fields[1 + offset],
