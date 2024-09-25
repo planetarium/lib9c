@@ -37,8 +37,17 @@ namespace Nekoyume.Model.Mail
 
         protected override string TypeId => nameof(ProductBuyerMail);
 
-        public override IValue Serialize() => ((Dictionary)base.Serialize())
-            .Add(ProductIdKey, ProductId.Serialize())
-            .Add(ProductKey, Product.Serialize());
+        public override IValue Serialize()
+        {
+            var dict = ((Dictionary) base.Serialize())
+                .Add(ProductIdKey, ProductId.Serialize());
+            if (Product is not null)
+            {
+                dict = dict.Add(ProductKey, Product.Serialize());
+            }
+
+            return dict;
+
+        }
     }
 }
