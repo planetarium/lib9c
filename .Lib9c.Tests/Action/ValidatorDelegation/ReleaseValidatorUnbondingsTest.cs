@@ -1,7 +1,6 @@
 #nullable enable
 namespace Lib9c.Tests.Action.ValidatorDelegation
 {
-    using System;
     using Nekoyume.Action.ValidatorDelegation;
     using Xunit;
 

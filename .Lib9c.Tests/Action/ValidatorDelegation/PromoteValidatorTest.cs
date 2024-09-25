@@ -1,164 +1,154 @@
-namespace Lib9c.Tests.Action.ValidatorDelegation
+namespace Lib9c.Tests.Action.ValidatorDelegation;
+
+using System;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
+using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
+using Xunit;
+
+public class PromoteValidatorTest : ValidatorDelegationTestBase
 {
-    using System;
-    using Libplanet.Action.State;
-    using Libplanet.Crypto;
-    using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.ValidatorDelegation;
-    using Xunit;
-
-    public class PromoteValidatorTest : ValidatorDelegationTestBase
+    [Fact]
+    public void Serialization()
     {
-        [Fact]
-        public void Serialization()
+        var publicKey = new PrivateKey().PublicKey;
+        var gold = NCG * 10;
+        var action = new PromoteValidator(publicKey, gold);
+        var plainValue = action.PlainValue;
+
+        var deserialized = new PromoteValidator();
+        deserialized.LoadPlainValue(plainValue);
+        Assert.Equal(publicKey, deserialized.PublicKey);
+        Assert.Equal(gold, deserialized.FAV);
+    }
+
+    [Fact]
+    public void Execute()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        var gold = NCG * 10;
+        world = MintAsset(world, validatorKey, NCG * 100, height++);
+
+        // When
+        var actionContext = new ActionContext
         {
-            var publicKey = new PrivateKey().PublicKey;
-            var gg = Currencies.GuildGold;
-            var fav = gg * 10;
-            var action = new PromoteValidator(publicKey, fav);
-            var plainValue = action.PlainValue;
+            PreviousState = world,
+            Signer = validatorKey.Address,
+            BlockIndex = height++,
+        };
+        var promoteValidator = new PromoteValidator(validatorKey.PublicKey, gold);
+        world = promoteValidator.Execute(actionContext);
 
-            var deserialized = new PromoteValidator();
-            deserialized.LoadPlainValue(plainValue);
-            Assert.Equal(publicKey, deserialized.PublicKey);
-            Assert.Equal(fav, deserialized.FAV);
-        }
+        // Then
+        var repository = new ValidatorRepository(world, actionContext);
+        var validator = repository.GetValidatorDelegatee(validatorKey.Address);
+        var bond = repository.GetBond(validator, validatorKey.Address);
+        var validatorList = repository.GetValidatorList();
 
-        [Fact]
-        public void Execute()
+        Assert.Equal(validatorKey.Address, Assert.Single(validator.Delegators));
+        Assert.Equal(gold.RawValue, bond.Share);
+        Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
+        Assert.Equal(validator.Validator, Assert.Single(validatorList.GetBonded()));
+        Assert.Equal(NCG * 90, world.GetBalance(validatorKey.Address, NCG));
+        Assert.Empty(validatorList.GetUnbonded());
+    }
+
+    [Fact]
+    public void Execute_ToInvalidValidator_Throw()
+    {
+        // Given
+        var world = World;
+        var context = new ActionContext { };
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        var gold = NCG * 10;
+        world = MintAsset(world, validatorKey, NCG * 100, height++);
+
+        // When
+        var actionContext = new ActionContext
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            // TODO: Use Currencies.GuildGold when it's available.
-            // var gg = Currencies.GuildGold;
-            var gg = ncg;
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            PreviousState = world,
+            Signer = validatorKey.Address,
+            BlockIndex = height++,
+        };
+        var promoteValidator = new PromoteValidator(new PrivateKey().PublicKey, gold);
 
-            var publicKey = new PrivateKey().PublicKey;
-            world = world.MintAsset(context, publicKey.Address, gg * 100);
-            var fav = gg * 10;
-            var action = new PromoteValidator(publicKey, fav);
+        // Then
+        Assert.Throws<ArgumentException>(
+            () => promoteValidator.Execute(actionContext));
+    }
 
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = publicKey.Address,
-            });
+    [Fact]
+    public void Execute_WithInvalidCurrency_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        var gold = Dollar * 10;
+        world = MintAsset(world, validatorKey, Dollar * 100, height++);
 
-            var repository = new ValidatorRepository(world, context);
-            var validator = repository.GetValidatorDelegatee(publicKey.Address);
-            var bond = repository.GetBond(validator, publicKey.Address);
-            var validatorList = repository.GetValidatorList();
-
-            Assert.Equal(publicKey.Address, Assert.Single(validator.Delegators));
-            Assert.Equal(fav.RawValue, bond.Share);
-            Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
-            Assert.Equal(validator.Validator, Assert.Single(validatorList.GetBonded()));
-            Assert.Equal(gg * 90, world.GetBalance(publicKey.Address, gg));
-            Assert.Empty(validatorList.GetUnbonded());
-        }
-
-        [Fact]
-        public void CannotPromoteWithInvalidPublicKey()
+        // When
+        var actionContext = new ActionContext
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var gg = Currencies.GuildGold;
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            PreviousState = world,
+            Signer = validatorKey.Address,
+            BlockIndex = height++,
+        };
+        var promoteValidator = new PromoteValidator(validatorKey.PublicKey, gold);
 
-            var publicKey = new PrivateKey().PublicKey;
-            world = world.MintAsset(context, publicKey.Address, gg * 100);
-            var fav = gg * 10;
-            var action = new PromoteValidator(new PrivateKey().PublicKey, fav);
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => promoteValidator.Execute(actionContext));
+    }
 
-            Assert.Throws<ArgumentException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = publicKey.Address,
-            }));
-        }
+    [Fact]
+    public void Execute_With_InsufficientBalance_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey().PublicKey;
+        var height = 1L;
+        var gold = NCG * 10;
 
-        [Fact]
-        public void CannotPromoteWithInvalidCurrency()
+        // When
+        var actionContext = new ActionContext
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var gg = Currency.Uncapped("invalid", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            PreviousState = world,
+            Signer = validatorKey.Address,
+            BlockIndex = height++,
+        };
+        var promoteValidator = new PromoteValidator(validatorKey, gold);
 
-            var publicKey = new PrivateKey().PublicKey;
-            world = world.MintAsset(context, publicKey.Address, gg * 100);
-            var fav = gg * 10;
-            var action = new PromoteValidator(publicKey, fav);
+        // Then
+        Assert.Throws<InsufficientBalanceException>(
+            () => promoteValidator.Execute(actionContext));
+    }
 
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = publicKey.Address,
-            }));
-        }
+    [Fact]
+    public void Execute_PromotedValidator_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
 
-        [Fact]
-        public void CannotPromoteWithInsufficientBalance()
+        // When
+        var promoteValidator = new PromoteValidator(validatorKey.PublicKey, NCG * 10);
+        var actionContext = new ActionContext
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            // TODO: Use Currencies.GuildGold when it's available.
-            // var gg = Currencies.GuildGold;
-            var gg = ncg;
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            PreviousState = world,
+            BlockIndex = height++,
+            Signer = validatorKey.Address,
+        };
 
-            var publicKey = new PrivateKey().PublicKey;
-            var fav = gg * 10;
-            var action = new PromoteValidator(publicKey, fav);
-
-            Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = publicKey.Address,
-            }));
-        }
-
-        [Fact]
-        public void Promote_PromotedValidator_Throw()
-        {
-            // Given
-            var world = World;
-            var validatorPrivateKey = new PrivateKey();
-            var blockHeight = 1L;
-            world = EnsureValidatorToBePromoted(
-                world, validatorPrivateKey, NCG * 10, blockHeight++);
-
-            // When
-            var promoteValidator = new PromoteValidator(
-                validatorPrivateKey.PublicKey, NCG * 10);
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight++,
-                Signer = validatorPrivateKey.Address,
-            };
-
-            // Then
-            Assert.Throws<InvalidOperationException>(
-                () => promoteValidator.Execute(actionContext));
-        }
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => promoteValidator.Execute(actionContext));
     }
 }
