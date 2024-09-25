@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -13,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -323,6 +325,52 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
+        }
+
+        [Fact]
+        public void Mail_BackwardComaptibility()
+        {
+            var favProduct = new FavProduct
+            {
+                SellerAgentAddress = SellerAgentAddress,
+                SellerAvatarAddress = SellerAvatarAddress,
+                Asset = 1 * RuneHelper.StakeRune,
+                RegisteredBlockIndex = 1L,
+                ProductId = ProductId,
+                Price = 1 * Gold,
+                Type = ProductType.FungibleAssetValue,
+            };
+            var itemProduct = new ItemProduct
+            {
+                SellerAgentAddress = SellerAgentAddress,
+                SellerAvatarAddress = SellerAvatarAddress,
+                RegisteredBlockIndex = 1L,
+                ProductId = ProductId,
+                Price = 1 * Gold,
+                Type = ProductType.NonFungible,
+                ItemCount = 1,
+                TradableItem = TradableItem,
+            };
+
+            var buyerMail = new ProductBuyerMail(1L, ProductId, 1L, ProductId, favProduct);
+            var buyerSerialized = (Dictionary)buyerMail.Serialize();
+            var buyerDeserialized = new ProductBuyerMail(buyerSerialized);
+            Assert.Equal(buyerSerialized, buyerDeserialized.Serialize());
+            // serialized mail on v200220 buyerMail
+            buyerSerialized = (Dictionary)buyerSerialized.Remove((Text)ProductBuyerMail.ProductKey);
+            buyerDeserialized = new ProductBuyerMail(buyerSerialized);
+            Assert.Equal(buyerDeserialized.ProductId, ProductId);
+            Assert.Null(buyerDeserialized.Product);
+
+            var sellerMail = new ProductSellerMail(1L, ProductId, 1L, ProductId, itemProduct);
+            var sellerSerialized = (Dictionary)sellerMail.Serialize();
+            var sellerDeserialized = new ProductSellerMail(sellerSerialized);
+            Assert.Equal(sellerSerialized, sellerDeserialized.Serialize());
+            // serialized mail on v200220 sellerMail
+            sellerSerialized = (Dictionary)buyerSerialized.Remove((Text)ProductBuyerMail.ProductKey);
+            sellerDeserialized = new ProductSellerMail(sellerSerialized);
+            Assert.Equal(sellerDeserialized.ProductId, ProductId);
+            Assert.Null(sellerDeserialized.Product);
         }
 
         public class ExecuteMember
