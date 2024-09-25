@@ -1,148 +1,143 @@
 #nullable enable
-namespace Lib9c.Tests.Action.ValidatorDelegation
+namespace Lib9c.Tests.Action.ValidatorDelegation;
+
+using System;
+using Libplanet.Crypto;
+using Nekoyume.Action;
+using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
+using Xunit;
+
+public class UnjailValidatorTest : ValidatorDelegationTestBase
 {
-    using System;
-    using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.ValidatorDelegation;
-    using Xunit;
-
-    public class UnjailValidatorTest : ValidatorDelegationTestBase
+    [Fact]
+    public void Serialization()
     {
-        [Fact]
-        public void Serialization()
+        var action = new UnjailValidator();
+        var plainValue = action.PlainValue;
+
+        var deserialized = new UnjailValidator();
+        deserialized.LoadPlainValue(plainValue);
+    }
+
+    [Fact]
+    public void Execute()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsureJailedValidator(world, validatorKey, ref height);
+
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
         {
-            var action = new UnjailValidator();
-            var plainValue = action.PlainValue;
+            PreviousState = world,
+            BlockIndex = height + SlashValidator.AbstainJailTime,
+            Signer = validatorKey.Address,
+        };
+        world = unjailValidator.Execute(actionContext);
 
-            var deserialized = new UnjailValidator();
-            deserialized.LoadPlainValue(plainValue);
-        }
+        // Then
+        var repository = new ValidatorRepository(world, actionContext);
+        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        Assert.False(delegatee.Jailed);
+        Assert.Equal(-1, delegatee.JailedUntil);
+        Assert.False(delegatee.Tombstoned);
+    }
 
-        [Fact]
-        public void Execute()
+    [Fact]
+    public void Execute_NotExistedDelegatee_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
         {
-            // Given
-            var world = World;
-            var validatorPrivateKey = new PrivateKey();
-            var blockHeight = 1L;
-            world = EnsureValidatorToBePromoted(
-                world, validatorPrivateKey, NCG * 10, blockHeight++);
-            world = EnsureValidatorToBeJailed(world, validatorPrivateKey, ref blockHeight);
+            PreviousState = world,
+            BlockIndex = height + SlashValidator.AbstainJailTime,
+            Signer = validatorKey.Address,
+        };
 
-            // When
-            var unjailValidator = new UnjailValidator();
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight + SlashValidator.AbstainJailTime,
-                Signer = validatorPrivateKey.PublicKey.Address,
-            };
-            world = unjailValidator.Execute(actionContext);
+        // Then
+        Assert.Throws<FailedLoadStateException>(
+            () => unjailValidator.Execute(actionContext));
+    }
 
-            // Then
-            var repository = new ValidatorRepository(world, actionContext);
-            var delegatee = repository.GetValidatorDelegatee(validatorPrivateKey.Address);
-            Assert.False(delegatee.Jailed);
-            Assert.Equal(-1, delegatee.JailedUntil);
-            Assert.False(delegatee.Tombstoned);
-        }
+    [Fact]
+    public void Execute_JaliedValidator_NotJailed_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
 
-        [Fact]
-        public void Unjail_NotExistedDelegatee_Throw()
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
         {
-            // Given
-            var world = World;
-            var validatorPrivateKey = new PrivateKey();
-            var blockHeight = 1L;
+            PreviousState = world,
+            BlockIndex = height + SlashValidator.AbstainJailTime,
+            Signer = validatorKey.Address,
+        };
 
-            // When
-            var unjailValidator = new UnjailValidator();
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight + SlashValidator.AbstainJailTime,
-                Signer = validatorPrivateKey.Address,
-            };
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => unjailValidator.Execute(actionContext));
+    }
 
-            // Then
-            Assert.Throws<FailedLoadStateException>(
-                () => unjailValidator.Execute(actionContext));
-        }
+    [Fact]
+    public void Execute_JaliedValidator_Early_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsureJailedValidator(world, validatorKey, ref height);
 
-        [Fact]
-        public void Unjail_JaliedValidator_NotJailed_Throw()
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
         {
-            // Given
-            var world = World;
-            var validatorPrivateKey = new PrivateKey();
-            var blockHeight = 1L;
-            world = EnsureValidatorToBePromoted(
-                world, validatorPrivateKey, NCG * 10, blockHeight++);
+            PreviousState = world,
+            BlockIndex = height + SlashValidator.AbstainJailTime - 1,
+            Signer = validatorKey.Address,
+        };
 
-            // When
-            var unjailValidator = new UnjailValidator();
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight + SlashValidator.AbstainJailTime,
-                Signer = validatorPrivateKey.PublicKey.Address,
-            };
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => unjailValidator.Execute(actionContext));
+    }
 
-            // Then
-            Assert.Throws<InvalidOperationException>(
-                () => unjailValidator.Execute(actionContext));
-        }
+    [Fact]
+    public void Execute_JaliedValidator_Tombstoned_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsureTombstonedValidator(world, validatorKey, height++);
 
-        [Fact]
-        public void Unjail_JaliedValidator_Early_Throw()
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
         {
-            // Given
-            var world = World;
-            var validatorPrivateKey = new PrivateKey();
-            var blockHeight = 1L;
-            world = EnsureValidatorToBePromoted(
-                world, validatorPrivateKey, NCG * 10, blockHeight++);
-            world = EnsureValidatorToBeJailed(world, validatorPrivateKey, ref blockHeight);
+            PreviousState = world,
+            BlockIndex = height + SlashValidator.AbstainJailTime,
+            Signer = validatorKey.Address,
+        };
 
-            // When
-            var unjailValidator = new UnjailValidator();
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight + SlashValidator.AbstainJailTime - 1,
-                Signer = validatorPrivateKey.PublicKey.Address,
-            };
-
-            // Then
-            Assert.Throws<InvalidOperationException>(
-                () => unjailValidator.Execute(actionContext));
-        }
-
-        [Fact]
-        public void Unjail_JaliedValidator_Tombstoned_Throw()
-        {
-            // Given
-            var world = World;
-            var validatorPrivateKey = new PrivateKey();
-            var blockHeight = 1L;
-            world = EnsureValidatorToBePromoted(
-                world, validatorPrivateKey, NCG * 10, blockHeight++);
-            world = EnsureValidatorToBeTombstoned(world, validatorPrivateKey, blockHeight++);
-
-            // When
-            var unjailValidator = new UnjailValidator();
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight + SlashValidator.AbstainJailTime,
-                Signer = validatorPrivateKey.PublicKey.Address,
-            };
-
-            // Then
-            Assert.Throws<InvalidOperationException>(
-                () => unjailValidator.Execute(actionContext));
-        }
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => unjailValidator.Execute(actionContext));
     }
 }
