@@ -328,7 +328,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Mail_BackwardComaptibility()
+        public void Mail_Serialize_BackwardCompatibility()
         {
             var favProduct = new FavProduct
             {
@@ -361,6 +361,8 @@ namespace Lib9c.Tests.Action
             buyerDeserialized = new ProductBuyerMail(buyerSerialized);
             Assert.Equal(buyerDeserialized.ProductId, ProductId);
             Assert.Null(buyerDeserialized.Product);
+            // check serialize not throw exception
+            buyerDeserialized.Serialize();
 
             var sellerMail = new ProductSellerMail(1L, ProductId, 1L, ProductId, itemProduct);
             var sellerSerialized = (Dictionary)sellerMail.Serialize();
@@ -371,6 +373,8 @@ namespace Lib9c.Tests.Action
             sellerDeserialized = new ProductSellerMail(sellerSerialized);
             Assert.Equal(sellerDeserialized.ProductId, ProductId);
             Assert.Null(sellerDeserialized.Product);
+            // check serialize not throw exception
+            sellerDeserialized.Serialize();
         }
 
         public class ExecuteMember
