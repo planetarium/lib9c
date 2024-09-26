@@ -34,7 +34,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorGold = NCG * 10;
         var delegatorGold = NCG * 20;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
         world = MintAsset(world, delegatorKey, NCG * 100, height++);
 
         // When
@@ -68,9 +68,9 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var delegatorKey = new PrivateKey();
         var height = 1L;
         var validatorGold = NCG * 10;
-        var delegatorGold = Dollar * 20;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++, mint: true);
-        world = MintAsset(world, delegatorKey, delegatorGold, height++);
+        var delegatorDollar = Dollar * 20;
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
+        world = MintAsset(world, delegatorKey, delegatorDollar, height++);
 
         // When
         var actionContext = new ActionContext
@@ -79,11 +79,10 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             Signer = delegatorKey.Address,
             BlockIndex = height++,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorGold);
+        var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorDollar);
 
         // Then
-        Assert.Throws<InvalidOperationException>(
-            () => delegateValidator.Execute(actionContext));
+        Assert.Throws<InvalidOperationException>(() => delegateValidator.Execute(actionContext));
     }
 
     [Fact]
@@ -96,7 +95,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorGold = NCG * 10;
         var delegatorGold = NCG * 10;
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
         world = MintAsset(world, delegatorKey, delegatorGold, height++);
 
         // When
@@ -109,8 +108,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var delegateValidator = new DelegateValidator(validatorKey.Address, NCG * 11);
 
         // Then
-        Assert.Throws<InsufficientBalanceException>(
-            () => delegateValidator.Execute(actionContext));
+        Assert.Throws<InsufficientBalanceException>(() => delegateValidator.Execute(actionContext));
     }
 
     [Fact]
@@ -132,7 +130,32 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var delegateValidator = new DelegateValidator(validatorKey.Address, NCG * 10);
 
         // Then
-        Assert.Throws<FailedLoadStateException>(
-            () => delegateValidator.Execute(actionContext));
+        Assert.Throws<FailedLoadStateException>(() => delegateValidator.Execute(actionContext));
+    }
+
+    [Fact]
+    public void Execute_ToTombstonedValidator_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var delegatorKey = new PrivateKey();
+        var height = 1L;
+        var validatorGold = NCG * 10;
+        var delegatorGold = NCG * 10;
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
+        world = EnsureTombstonedValidator(world, validatorKey, height++);
+        world = MintAsset(world, delegatorKey, delegatorGold, height++);
+
+        // When
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = delegatorKey.Address,
+        };
+        var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorGold);
+
+        // Then
+        Assert.Throws<InvalidOperationException>(() => delegateValidator.Execute(actionContext));
     }
 }

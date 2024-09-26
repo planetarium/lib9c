@@ -33,7 +33,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorGold = NCG * 10;
         var allocatedReward = NCG * 100;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
 
         // When
@@ -70,7 +70,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var actionContext = new ActionContext { };
         var promotedGold = NCG * 10;
         var allocatedReward = FungibleAssetValue.Parse(NCG, $"{reward:R}");
-        world = EnsurePromotedValidator(world, validatorKey, promotedGold, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, promotedGold, mint: true, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
 
@@ -129,7 +129,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var actionContext = new ActionContext { };
         var promotedGold = NCG * 10;
         var allocatedReward = FungibleAssetValue.Parse(NCG, $"{34.27:R}");
-        world = EnsurePromotedValidator(world, validatorKey, promotedGold, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, promotedGold, mint: true, height++);
         world = EnsureBondedDelegator(world, delegatorKey1, validatorKey, NCG * 10, height++);
         world = EnsureBondedDelegator(world, delegatorKey2, validatorKey, NCG * 10, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
@@ -197,13 +197,13 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var length = Random.Shared.Next(3, 100);
         var world = World;
         var validatorKey = new PrivateKey();
-        var delegatorKeys = GetRandomArray(length, _ => new PrivateKey());
-        var delegatorNCGs = GetRandomArray(length, _ => GetRandomNCG());
+        var delegatorKeys = CreateArray(length, _ => new PrivateKey());
+        var delegatorNCGs = CreateArray(length, _ => GetRandomNCG());
         var height = 1L;
         var actionContext = new ActionContext();
         var promotedGold = GetRandomNCG();
         var allocatedReward = GetRandomNCG();
-        world = EnsurePromotedValidator(world, validatorKey, promotedGold, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, promotedGold, mint: true, height++);
         world = EnsureBondedDelegators(world, delegatorKeys, validatorKey, delegatorNCGs, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
 

@@ -107,7 +107,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_With_InsufficientBalance_Throw()
+    public void Execute_WithInsufficientBalance_Throw()
     {
         // Given
         var world = World;
@@ -136,7 +136,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
 
         // When
         var promoteValidator = new PromoteValidator(validatorKey.PublicKey, NCG * 10);

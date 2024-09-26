@@ -27,7 +27,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -49,7 +49,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_NotExistedDelegatee_Throw()
+    public void Execute_OnNotPromotedValidator_Throw()
     {
         // Given
         var world = World;
@@ -66,18 +66,17 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         };
 
         // Then
-        Assert.Throws<FailedLoadStateException>(
-            () => unjailValidator.Execute(actionContext));
+        Assert.Throws<FailedLoadStateException>(() => unjailValidator.Execute(actionContext));
     }
 
     [Fact]
-    public void Execute_JaliedValidator_NotJailed_Throw()
+    public void Execute_OnNotJailedValidator_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
 
         // When
         var unjailValidator = new UnjailValidator();
@@ -89,18 +88,17 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         };
 
         // Then
-        Assert.Throws<InvalidOperationException>(
-            () => unjailValidator.Execute(actionContext));
+        Assert.Throws<InvalidOperationException>(() => unjailValidator.Execute(actionContext));
     }
 
     [Fact]
-    public void Execute_JaliedValidator_Early_Throw()
+    public void Execute_TooEarly_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -118,13 +116,13 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_JaliedValidator_Tombstoned_Throw()
+    public void Execute_OnTombstonedValidator_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When

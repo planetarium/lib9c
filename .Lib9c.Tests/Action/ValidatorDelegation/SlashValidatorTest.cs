@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
+using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
@@ -34,15 +35,20 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var validatorGold = NCG * 10;
-        var deletatorKeys = GetRandomArray(length, _ => new PrivateKey());
-        var delegatorGolds = GetRandomArray(length, i => NCG * Random.Shared.Next(10, 100));
+        var deletatorKeys = CreateArray(length, _ => new PrivateKey());
+        var delegatorGolds = CreateArray(length, i => NCG * Random.Shared.Next(10, 100));
         var height = 1L;
         var actionContext = new ActionContext { };
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureBondedDelegators(
             world, deletatorKeys, validatorKey, delegatorGolds, height++);
 
         // When
+        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedValidatorShare = expectedRepository.GetBond(
+            expectedDelegatee, validatorKey.Address).Share;
+
         var validatorSet = new ValidatorSet(new List<Validator>
         {
             new (validatorKey.PublicKey, new BigInteger(1000)),
@@ -50,7 +56,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var vote1 = new VoteMetadata(
             height: height - 1,
             round: 0,
-            blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x01)),
+            blockHash: new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x01)),
             timestamp: DateTimeOffset.UtcNow,
             validatorPublicKey: validatorKey.PublicKey,
             validatorPower: BigInteger.One,
@@ -58,7 +64,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var vote2 = new VoteMetadata(
             height: height - 1,
             round: 0,
-            blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x02)),
+            blockHash: new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x02)),
             timestamp: DateTimeOffset.UtcNow,
             validatorPublicKey: validatorKey.PublicKey,
             validatorPower: BigInteger.One,
@@ -85,23 +91,52 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var balance = world.GetBalance(validatorKey.Address, NCG);
-        var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var actualRepository = new ValidatorRepository(world, actionContext);
+        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualValidatorShare = actualRepository.GetBond(actualDelegatee, validatorKey.Address).Share;
 
-        Assert.True(delegatee.Jailed);
-        Assert.Equal(long.MaxValue, delegatee.JailedUntil);
-        Assert.True(delegatee.Tombstoned);
+        Assert.True(actualDelegatee.Jailed);
+        Assert.Equal(long.MaxValue, actualDelegatee.JailedUntil);
+        Assert.True(actualDelegatee.Tombstoned);
     }
 
     [Fact]
-    public void Execute_By_Abstain()
+    public void Execute_ToNotPromotedValidator_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+
+        // When
+        var evidence = CreateDuplicateVoteEvidence(validatorKey, height - 1);
+        var lastCommit = new BlockCommit(
+            height: height - 1,
+            round: 0,
+            blockHash: EmptyBlockHash,
+            ImmutableArray.Create(evidence.VoteRef));
+        var slashValidator = new SlashValidator();
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = height++,
+            Evidence = new List<EvidenceBase> { evidence },
+            LastCommit = lastCommit,
+        };
+
+        // Then
+        Assert.Throws<FailedLoadStateException>(() => slashValidator.Execute(actionContext));
+    }
+
+    [Fact]
+    public void Execute_ByAbstain()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var actionContext = new ActionContext { };
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
 
         // When
         for (var i = 0L; i <= AbstainHistory.MaxAbstainAllowance; i++)
@@ -131,14 +166,14 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_JailedDelegatee_Nothing_Happens()
+    public void Execute_ToJailedValidator_ThenNothingHappens()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
         var actionContext = new ActionContext();
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When
