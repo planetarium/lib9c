@@ -47,7 +47,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                     rewardCurrency,
                     lastCommit.Votes);
             }
-           
+
             var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
             if (communityFund.Sign > 0)
@@ -109,6 +109,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 .DivRem(votePowerDenominator * 100).Quotient;
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
 
+            var b1 = repository.GetBalance(proposerInfo.Proposer, proposerReward.Currency);
             if (proposerReward.Sign > 0)
             {
                 repository.TransferAsset(
@@ -116,6 +117,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                     proposerInfo.Proposer,
                     proposerReward);
             }
+            var b2 = repository.GetBalance(proposerInfo.Proposer, proposerReward.Currency);
         }
 
         internal static void DistributeValidatorReward(
