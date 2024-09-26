@@ -33,13 +33,13 @@ public class ValidatorDelegationTestBase
     }
 
     protected static BlockHash EmptyBlockHash { get; }
-        = new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x01));
+        = new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x01));
 
     protected PrivateKey AdminKey { get; } = new PrivateKey();
 
     protected IWorld World { get; }
 
-    protected static T[] GetRandomArray<T>(int length, Func<int, T> creator)
+    protected static T[] CreateArray<T>(int length, Func<int, T> creator)
         => Enumerable.Range(0, length).Select(creator).ToArray();
 
     protected static IWorld MintAsset(
@@ -53,25 +53,66 @@ public class ValidatorDelegationTestBase
         return world.MintAsset(actionContext, privateKey.Address, amount);
     }
 
+    protected static IWorld EnsureProposer(
+        IWorld world, PrivateKey validatorKey, long blockHeight)
+    {
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+            Miner = validatorKey.Address,
+        };
+        return new RecordProposer().Execute(actionContext);
+    }
+
+    protected static IWorld EnsurePromotedValidators(
+        IWorld world,
+        PrivateKey[] validatorKeys,
+        FungibleAssetValue[] amounts,
+        FungibleAssetValue[] mintAmounts,
+        long blockHeight)
+    {
+        if (validatorKeys.Length != amounts.Length)
+        {
+            throw new ArgumentException(
+                "The length of validatorPrivateKeys and amounts must be the same.");
+        }
+
+        if (validatorKeys.Length != mintAmounts.Length)
+        {
+            throw new ArgumentException(
+                "The length of validatorPrivateKeys and mintAmounts must be the same.");
+        }
+
+        for (var i = 0; i < validatorKeys.Length; i++)
+        {
+            world = EnsurePromotedValidator(
+                world, validatorKeys[i], amounts[i], mintAmounts[i], blockHeight);
+        }
+
+        return world;
+    }
+
     protected static IWorld EnsurePromotedValidator(
         IWorld world, PrivateKey validatorKey, FungibleAssetValue amount, long blockHeight)
-        => EnsurePromotedValidator(world, validatorKey, amount, blockHeight, mint: false);
+        => EnsurePromotedValidator(world, validatorKey, amount, mint: false, blockHeight);
 
     protected static IWorld EnsurePromotedValidator(
         IWorld world,
         PrivateKey validatorKey,
         FungibleAssetValue amount,
-        long blockHeight,
-        bool mint)
+        bool mint,
+        long blockHeight)
         => EnsurePromotedValidator(
-            world, validatorKey, amount, blockHeight, mint ? amount : amount * 0);
+            world, validatorKey, amount, mint ? amount : amount * 0, blockHeight);
 
     protected static IWorld EnsurePromotedValidator(
         IWorld world,
         PrivateKey validatorKey,
         FungibleAssetValue amount,
-        long blockHeight,
-        FungibleAssetValue mintAmount)
+        FungibleAssetValue mintAmount,
+        long blockHeight)
     {
         var validatorPublicKey = validatorKey.PublicKey;
         var promoteValidator = new PromoteValidator(validatorPublicKey, amount);
@@ -335,7 +376,7 @@ public class ValidatorDelegationTestBase
         var vote1 = new VoteMetadata(
             height: blockHeight,
             round: 0,
-            blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x01)),
+            blockHash: new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x01)),
             timestamp: DateTimeOffset.UtcNow,
             validatorPublicKey: validatorKey.PublicKey,
             validatorPower: BigInteger.One,
@@ -343,7 +384,7 @@ public class ValidatorDelegationTestBase
         var vote2 = new VoteMetadata(
             height: blockHeight,
             round: 0,
-            blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x02)),
+            blockHash: new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x02)),
             timestamp: DateTimeOffset.UtcNow,
             validatorPublicKey: validatorKey.PublicKey,
             validatorPower: BigInteger.One,
@@ -357,6 +398,10 @@ public class ValidatorDelegationTestBase
         return evidence;
     }
 
+    protected static FungibleAssetValue CalculateCommission(
+        FungibleAssetValue gold, ValidatorDelegatee delegatee)
+        => GetCommission(gold, delegatee.CommissionPercentage);
+
     protected static FungibleAssetValue GetCommission(
         FungibleAssetValue gold, BigInteger percentage)
         => (gold * percentage).DivRem(100).Quotient;
@@ -365,9 +410,16 @@ public class ValidatorDelegationTestBase
         FungibleAssetValue gold, BigInteger percentage)
         => gold - (gold * percentage).DivRem(100).Quotient;
 
-    protected static FungibleAssetValue GetRandomNCG()
+    protected static FungibleAssetValue GetRandomNCG() => GetRandomNCG(Random.Shared, 1, 100000);
+
+    protected static FungibleAssetValue GetRandomNCG(Random random)
+        => GetRandomNCG(random, 0.01m, 1000.0m);
+
+    protected static FungibleAssetValue GetRandomNCG(Random random, decimal min, decimal max)
     {
-        var value = Math.Round(Random.Shared.Next(1, 100000) / 100.0, 2);
+        var minLong = (int)(min * 100);
+        var maxLong = (int)(max * 100);
+        var value = Math.Round(random.Next(minLong, maxLong) / 100.0, 2);
         return FungibleAssetValue.Parse(NCG, $"{value:R}");
     }
 }

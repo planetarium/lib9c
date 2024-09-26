@@ -311,7 +311,7 @@ namespace Nekoyume.Delegation
                 Repository.TransferAsset(RewardPoolAddress, record.Address, rewards);
             }
 
-            Repository.SetLumpSumRewardsRecord(record);            
+            Repository.SetLumpSumRewardsRecord(record);
         }
 
         public void Slash(BigInteger slashFactor, long infractionHeight, long height)

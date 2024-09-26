@@ -71,7 +71,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
 
         // When
@@ -91,14 +91,14 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void Execute_NotPositiveShare_Throw(long share)
+    public void Execute_WithNotPositiveShare_Throw(long share)
     {
         // Given
         var world = World;
         var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
 
         // When
@@ -116,14 +116,14 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_NotDelegated_Throw()
+    public void Execute_WithoutDelegating_Throw()
     {
         // Given
         var world = World;
         var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
 
         // When
         var actionContext = new ActionContext
@@ -148,9 +148,43 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
+
+        // When
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = delegatorKey.Address,
+            BlockIndex = height,
+        };
+        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedBond = expectedRepository.GetBond(expectedDelegatee, delegatorKey.Address);
+
+        var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
+        world = undelegateValidator.Execute(actionContext);
+
+        // Then
+        var actualRepository = new ValidatorRepository(world, actionContext);
+        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualBond = actualRepository.GetBond(actualDelegatee, delegatorKey.Address);
+
+        Assert.Equal(expectedBond.Share - 10, actualBond.Share);
+    }
+
+    [Fact]
+    public void Execute_FromTombstonedValidator()
+    {
+        // Given
+        var world = World;
+        var delegatorKey = new PrivateKey();
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
+        world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When
         var actionContext = new ActionContext

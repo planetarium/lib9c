@@ -27,8 +27,8 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
     {
         const int length = 10;
         var world = World;
-        var privateKeys = GetRandomArray(length, _ => new PrivateKey());
-        var golds = GetRandomArray(length, i => NCG * Random.Shared.Next(1, length + 1));
+        var privateKeys = CreateArray(length, _ => new PrivateKey());
+        var golds = CreateArray(length, i => NCG * Random.Shared.Next(1, length + 1));
 
         for (int i = 0; i < length; i++)
         {
