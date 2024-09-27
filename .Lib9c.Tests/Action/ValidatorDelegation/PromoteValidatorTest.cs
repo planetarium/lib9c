@@ -31,7 +31,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var height = 1L;
         var gold = NCG * 10;
-        world = MintAsset(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -66,7 +66,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var height = 1L;
         var gold = NCG * 10;
-        world = MintAsset(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -90,7 +90,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var height = 1L;
         var gold = Dollar * 10;
-        world = MintAsset(world, validatorKey, Dollar * 100, height++);
+        world = EnsureToMintAsset(world, validatorKey, Dollar * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -136,10 +136,12 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        var validatorGold = NCG * 10;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold * 2, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
 
         // When
-        var promoteValidator = new PromoteValidator(validatorKey.PublicKey, NCG * 10);
+        var promoteValidator = new PromoteValidator(validatorKey.PublicKey, validatorGold);
         var actionContext = new ActionContext
         {
             PreviousState = world,

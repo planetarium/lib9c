@@ -39,7 +39,9 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var delegatorGolds = CreateArray(length, i => NCG * Random.Shared.Next(10, 100));
         var height = 1L;
         var actionContext = new ActionContext { };
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAssets(world, deletatorKeys, delegatorGolds, height++);
         world = EnsureBondedDelegators(
             world, deletatorKeys, validatorKey, delegatorGolds, height++);
 
@@ -136,7 +138,8 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var actionContext = new ActionContext { };
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
 
         // When
         for (var i = 0L; i <= AbstainHistory.MaxAbstainAllowance; i++)
@@ -173,7 +176,8 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var height = 1L;
         var actionContext = new ActionContext();
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When

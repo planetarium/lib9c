@@ -27,7 +27,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -76,7 +77,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
 
         // When
         var unjailValidator = new UnjailValidator();
@@ -98,7 +100,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -122,7 +125,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When

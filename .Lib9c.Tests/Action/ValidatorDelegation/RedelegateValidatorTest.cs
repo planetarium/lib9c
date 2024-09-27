@@ -35,8 +35,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var srcPrivateKey = new PrivateKey();
         var dstPrivateKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, srcPrivateKey, NCG * 10, mint: true, height++);
-        world = EnsurePromotedValidator(world, dstPrivateKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, srcPrivateKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, srcPrivateKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, dstPrivateKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, dstPrivateKey, NCG * 10, height++);
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
@@ -76,7 +78,9 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
 
         // When
@@ -105,8 +109,11 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey2 = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, mint: true, height++);
-        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey1, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey2, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, NCG * 10, height++);
 
         // When
@@ -133,8 +140,11 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey2 = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, mint: true, height++);
-        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey1, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey2, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, NCG * 10, height++);
 
         // When
@@ -164,8 +174,11 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey1 = new PrivateKey();
         var validatorKey2 = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, mint: true, height++);
-        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey1, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey2, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, NCG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey1, ref height);
 
@@ -206,8 +219,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var srcPrivateKey = new PrivateKey();
         var dstPrivateKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, srcPrivateKey, NCG * 10, mint: true, height++);
-        world = EnsurePromotedValidator(world, dstPrivateKey, NCG * 10, mint: true, height++);
+        world = EnsureToMintAsset(world, srcPrivateKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, srcPrivateKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, dstPrivateKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, dstPrivateKey, NCG * 10, height++);
         world = EnsureTombstonedValidator(world, dstPrivateKey, height++);
 
         // When
