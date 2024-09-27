@@ -138,20 +138,39 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 10, null, 8,
             };
 
-            // First craft in relationship group
+            // Move to next group with additional cost
             yield return new object?[]
             {
                 new List<CustomCraftData>
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 11, false,
+                true, 10, false,
                 new List<TestResult>
                 {
                     new ()
                     {
                         MinCp = 900,
                         MaxCp = 1000,
+                        ItemSubType = ItemSubType.Weapon,
+                        ElementalType = ElementalType.Wind,
+                    },
+                },
+                10, null,
+            };
+            yield return new object?[]
+            {
+                new List<CustomCraftData>
+                {
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
+                },
+                true, 100, false,
+                new List<TestResult>
+                {
+                    new ()
+                    {
+                        MinCp = 9000,
+                        MaxCp = 10000,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
@@ -164,26 +183,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
                 },
-                true, 101, false,
-                new List<TestResult>
-                {
-                    new ()
-                    {
-                        MinCp = 9000,
-                        MaxCp = 10000,
-                        ItemSubType = ItemSubType.Weapon,
-                        ElementalType = ElementalType.Wind,
-                    },
-                },
-                15, null,
-            };
-            yield return new object?[]
-            {
-                new List<CustomCraftData>
-                {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10111000, },
-                },
-                true, 1001, false,
+                true, 1000, false,
                 new List<TestResult>
                 {
                     new ()
@@ -194,7 +194,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                20, null,
+                15, null,
             };
 
             // Multiple slots
@@ -340,7 +340,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
         [Theory]
         [MemberData(nameof(GetTestData_Success))]
-        // [MemberData(nameof(GetTestData_Failure))]
+        [MemberData(nameof(GetTestData_Failure))]
         public void Execute(
             List<CustomCraftData> craftList,
             bool enoughMaterials,
@@ -398,18 +398,20 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                     _avatarState.inventory.AddItem(circle, (int)Math.Floor(circleAmount));
 
-                    if (relationshipRow.Relationship == initialRelationship)
+                    var nextRow = relationshipSheet.Values.FirstOrDefault(row =>
+                        row.Relationship == initialRelationship + 1);
+                    if (nextRow is not null)
                     {
-                        if (relationshipRow.GoldAmount > 0)
+                        if (nextRow.GoldAmount > 0)
                         {
                             state = state.MintAsset(
                                 context,
                                 _agentAddress,
-                                state.GetGoldCurrency() * relationshipRow.GoldAmount
+                                state.GetGoldCurrency() * nextRow.GoldAmount
                             );
                         }
 
-                        foreach (var cost in relationshipRow.MaterialCosts)
+                        foreach (var cost in nextRow.MaterialCosts)
                         {
                             var row = materialSheet[cost.ItemId];
                             _avatarState.inventory.AddItem(
@@ -443,7 +445,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 );
             }
 
-            var action = new Nekoyume.Action.CustomEquipmentCraft.CustomEquipmentCraft
+            var action = new CustomEquipmentCraft
             {
                 AvatarAddress = _avatarAddress,
                 CraftList = craftList,
@@ -500,7 +502,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         .First(row => row.Id == craftData.RecipeId).ItemSubType;
                     var expectedEquipmentId =
                         _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList!
-                            .First(row => row.Relationship >= initialRelationship)
+                            .Last(row => row.Relationship <= initialRelationship)
                             .GetItemId(itemSubType);
                     var equipment = inventory.Equipments.First(e =>
                         e.ItemId == slotState.Result.itemUsable.ItemId);
