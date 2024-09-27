@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             _tableSheets = new TableSheets(csv);
 
             var gameConfigState = new GameConfigState(csv[nameof(GameConfigSheet)]);
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 default,
                 default,
                 0,

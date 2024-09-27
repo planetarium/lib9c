@@ -15,9 +15,11 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using LruCacheNet;
 using Nekoyume.Action;
+using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.Coupons;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -45,6 +47,11 @@ namespace Nekoyume.Module
             world.SetAccount(
                 ReservedAddresses.LegacyAccount,
                 world.GetAccount(ReservedAddresses.LegacyAccount).SetState(address, state));
+
+        public static IWorld RemoveLegacyState(this IWorld world, Address address) =>
+            world.MutateAccount(
+                ReservedAddresses.LegacyAccount,
+                account => account.RemoveState(address));
 
         // Methods from AccountExtensions
         public static IWorld MarkBalanceChanged(
@@ -85,7 +92,9 @@ namespace Nekoyume.Module
             RuneWeightSheet runeWeightSheet,
             WorldBossKillRewardSheet worldBossKillRewardSheet,
             RuneSheet runeSheet,
+            MaterialItemSheet materialItemSheet,
             IRandom random,
+            Inventory inventory,
             Address avatarAddress,
             Address agentAddress)
         {
@@ -101,16 +110,17 @@ namespace Nekoyume.Module
 #pragma warning restore LAA1002
             foreach (var level in filtered)
             {
-                List<FungibleAssetValue> rewards = RuneHelper.CalculateReward(
+                var rewards = WorldBossHelper.CalculateReward(
                     rank,
                     bossState.Id,
                     runeWeightSheet,
                     worldBossKillRewardSheet,
                     runeSheet,
+                    materialItemSheet,
                     random
                 );
                 rewardRecord[level] = true;
-                foreach (var reward in rewards)
+                foreach (var reward in rewards.assets)
                 {
                     if (reward.Currency.Equals(CrystalCalculator.CRYSTAL))
                     {
@@ -121,9 +131,18 @@ namespace Nekoyume.Module
                         world = world.MintAsset(context, avatarAddress, reward);
                     }
                 }
+
+#pragma warning disable LAA1002
+                foreach (var reward in rewards.materials)
+#pragma warning restore LAA1002
+                {
+                    inventory.AddItem(reward.Key, reward.Value);
+                }
             }
 
-            return SetLegacyState(world, rewardInfoAddress, rewardRecord.Serialize());
+            return world
+                .SetLegacyState(rewardInfoAddress, rewardRecord.Serialize())
+                .SetInventory(avatarAddress, inventory);
         }
 
 #nullable enable
@@ -272,7 +291,8 @@ namespace Nekoyume.Module
             return GetWeeklyArenaState(worldState, address);
         }
 
-        public static CombinationSlotState GetCombinationSlotState(
+        [Obsolete("Use AllCombinationSlotState.GetRuneState() instead.")]
+        public static CombinationSlotState GetCombinationSlotStateLegacy(
             this IWorldState worldState,
             Address avatarAddress,
             int index)
@@ -297,7 +317,7 @@ namespace Nekoyume.Module
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotStateLegacy)}()");
                 throw;
             }
         }
@@ -317,7 +337,7 @@ namespace Nekoyume.Module
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetGameConfigState)}()");
                 throw;
             }
         }
@@ -337,7 +357,7 @@ namespace Nekoyume.Module
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Unexpected error occurred during {nameof(GetCombinationSlotState)}()");
+                Log.Error(e, $"Unexpected error occurred during {nameof(GetRedeemCodeState)}()");
                 throw;
             }
         }

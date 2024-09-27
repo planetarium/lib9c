@@ -6,6 +6,7 @@ namespace Lib9c.Tests
     using Nekoyume.TableData;
     using Nekoyume.TableData.AdventureBoss;
     using Nekoyume.TableData.Crystal;
+    using Nekoyume.TableData.CustomEquipmentCraft;
     using Nekoyume.TableData.Event;
     using Nekoyume.TableData.Garages;
     using Nekoyume.TableData.GrandFinale;
@@ -269,7 +270,34 @@ namespace Lib9c.Tests
             private set;
         }
 
+        public AdventureBossFloorFirstRewardSheet AdventureBossFloorFirstRewardSheet
+        {
+            get;
+            private set;
+        }
+
         /* Adventure Boss */
+
+        // Custom Craft
+        public CustomEquipmentCraftRecipeSheet CustomEquipmentCraftRecipeSheet { get; private set; }
+
+        public CustomEquipmentCraftRelationshipSheet CustomEquipmentCraftRelationshipSheet
+        {
+            get;
+            private set;
+        }
+
+        public CustomEquipmentCraftIconSheet CustomEquipmentCraftIconSheet { get; private set; }
+
+        public CustomEquipmentCraftOptionSheet CustomEquipmentCraftOptionSheet { get; private set; }
+
+        public CustomEquipmentCraftRecipeSkillSheet CustomEquipmentCraftRecipeSkillSheet
+        {
+            get;
+            private set;
+        }
+
+        /* Custom Craft */
 
         public void ItemSheetInitialize()
         {
@@ -420,7 +448,7 @@ namespace Lib9c.Tests
             );
         }
 
-        public ArenaSimulatorSheets GetArenaSimulatorSheets()
+        public ArenaSimulatorSheets GetArenaSimulatorSheets(RuneOptionSheet runeOptionSheet = null)
         {
             return new ArenaSimulatorSheets(
                 MaterialItemSheet,
@@ -434,7 +462,7 @@ namespace Lib9c.Tests
                 EquipmentItemSetEffectSheet,
                 CostumeStatSheet,
                 WeeklyArenaRewardSheet,
-                RuneOptionSheet,
+                runeOptionSheet ?? RuneOptionSheet,
                 RuneListSheet,
                 RuneLevelBonusSheet
             );

@@ -1,0 +1,9 @@
+items:
+- name: Avatar
+  href: avatar.md
+- name: Inventory
+  href: inventory.md
+- name: QuestList
+  href: quest-list.md
+- name: WorldInformation
+  href: world-information.md

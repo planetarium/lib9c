@@ -145,18 +145,20 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex);
 
-            var slotState = states.GetCombinationSlotState(AvatarAddress, SlotIndex);
-            if (slotState is null)
+            var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
+            if (allSlotState is null)
             {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {SlotIndex}");
+                throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
-            if (!slotState.ValidateV2(avatarState, context.BlockIndex))
+            // Validate SlotIndex
+            var slotState = allSlotState.GetSlot(SlotIndex);
+            if (!slotState.ValidateV2(context.BlockIndex))
             {
                 throw new CombinationSlotUnlockException(
                     $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {SlotIndex}");
             }
+            // ~Validate SlotIndex
 
             sw.Stop();
             Log.Verbose(
@@ -261,6 +263,7 @@ namespace Nekoyume.Action
                 recipeId = EventConsumableItemRecipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex);
+            allSlotState.SetSlot(slotState);
             // ~Update Slot
 
             // Create Mail
@@ -274,9 +277,7 @@ namespace Nekoyume.Action
 
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
-                .SetLegacyState(
-                    CombinationSlotState.DeriveAddress(AvatarAddress, SlotIndex),
-                    slotState.Serialize());
+                .SetCombinationSlotState(AvatarAddress, allSlotState);
 
             sw.Stop();
             Log.Verbose(

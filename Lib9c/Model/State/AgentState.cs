@@ -70,20 +70,16 @@ namespace Nekoyume.Model.State
             MonsterCollectionRound++;
         }
 
+        /// <inheritdoc cref="IState.Serialize" />
         public override IValue Serialize()
         {
-            throw new NotSupportedException();
+            return SerializeList();
         }
 
-        public override IValue SerializeV2()
-        {
-            throw new NotSupportedException();
-        }
-
-        public override IValue SerializeList()
+        public IValue SerializeList()
         {
             return new List(
-                base.SerializeList(),
+                base.SerializeListBase(),
                 (Integer)CurrentVersion,
 #pragma warning disable LAA1002
                 new Dictionary(

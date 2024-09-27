@@ -219,8 +219,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // Prepare
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 1);
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
 
             // Find specific random seed to meet test condition
             var random = new TestRandom(randomSeed);
@@ -250,7 +249,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             ctx.SetRandom(random);
             stateV2 = action.Execute(ctx);
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var slotState = allSlotState.GetSlot(0);
             // TEST: No additional option added (1 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +
@@ -291,7 +291,8 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             };
             ctx.SetRandom(random);
             stateV2 = petAction.Execute(ctx);
-            var petSlotState = stateV2.GetCombinationSlotState(_avatarAddr, 1);
+            allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var petSlotState = allSlotState.GetSlot(1);
             // TEST: One additional option added (2 star)
             Assert.Equal(
                 recipe.RequiredBlockIndex + subRecipe.RequiredBlockIndex +

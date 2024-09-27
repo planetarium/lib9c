@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action.Scenario
             {
                 var avatarAddress = addresses[i];
                 agentState.avatarAddresses.Add(i, avatarAddress);
-                var avatarState = new AvatarState(
+                var avatarState = AvatarState.Create(
                     _avatarAddress,
                     _agentAddress,
                     0,

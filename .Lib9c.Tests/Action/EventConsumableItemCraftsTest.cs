@@ -42,30 +42,27 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 new PrivateKey().Address
-            )
+            );
+            avatarState.level = 100;
+
+            var allSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                level = 100,
-            };
+                var addr = CombinationSlotState.DeriveAddress(_avatarAddress, i);
+                allSlotState.AddSlot(addr, i);
+            }
 
             _initialStates = _initialStates
                 .SetAgentState(_agentAddress, agentState)
                 .SetAvatarState(_avatarAddress, avatarState)
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
-
-            for (var i = 0; i < GameConfig.SlotCount; i++)
-            {
-                var addr = CombinationSlotState.DeriveAddress(_avatarAddress, i);
-                const int unlock = GameConfig.RequireClearedStageLevel.CombinationEquipmentAction;
-                _initialStates = _initialStates.SetLegacyState(
-                    addr,
-                    new CombinationSlotState(addr, unlock).Serialize());
-            }
         }
 
         [Theory]
@@ -75,8 +72,7 @@ namespace Lib9c.Tests.Action
             int eventConsumableItemRecipeId,
             int slotIndex)
         {
-            Assert.True(_tableSheets.EventScheduleSheet
-                .TryGetValue(eventScheduleId, out var scheduleRow));
+            Assert.True(_tableSheets.EventScheduleSheet.TryGetValue(eventScheduleId, out var scheduleRow));
             var contextBlockIndex = scheduleRow.StartBlockIndex;
             Execute(
                 _initialStates,
@@ -148,7 +144,8 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            var slotState = nextStates.GetCombinationSlotState(_avatarAddress, slotIndex);
+            var allCombinationSlotState = nextStates.GetAllCombinationSlotState(_avatarAddress);
+            var slotState = allCombinationSlotState.GetSlot(slotIndex);
             Assert.NotNull(slotState.Result);
             Assert.NotNull(slotState.Result.itemUsable);
 

@@ -59,16 +59,15 @@ namespace Lib9c.Tests.Action
             _avatarAddress = _agentAddress.Derive("avatar");
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             _rankingMapAddress = _avatarAddress.Derive("ranking_map");
-            _avatarState = new AvatarState(
+            _avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 _rankingMapAddress
-            )
-            {
-                level = 100,
-            };
+            );
+            _avatarState.level = 100;
+
             _inventoryAddress = _avatarAddress.Derive(LegacyInventoryKey);
             _worldInformationAddress = _avatarAddress.Derive(LegacyWorldInformationKey);
             _questListAddress = _avatarAddress.Derive(LegacyQuestListKey);
@@ -212,17 +211,16 @@ namespace Lib9c.Tests.Action
             var targetRow = worldQuestSheet.OrderedList.FirstOrDefault(e => e.Goal == stageId);
             Assert.NotNull(targetRow);
             // Update new AvatarState
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 state.GetAvatarSheets(),
-                _rankingMapAddress)
-            {
-                level = 400,
-                exp = state.GetSheet<CharacterLevelSheet>().OrderedList.First(e => e.Level == 400).Exp,
-                worldInformation = new WorldInformation(0, state.GetSheet<WorldSheet>(), stageId),
-            };
+                _rankingMapAddress);
+            avatarState.level = 400;
+            avatarState.exp = state.GetSheet<CharacterLevelSheet>().OrderedList.First(e => e.Level == 400).Exp;
+            avatarState.worldInformation = new WorldInformation(0, state.GetSheet<WorldSheet>(), stageId);
+
             var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level);
             foreach (var equipment in equipments)
             {

@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -13,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -62,50 +64,47 @@ namespace Lib9c.Tests.Action
 
             var sellerAgentState = new AgentState(SellerAgentAddress);
             var rankingMapAddress = new PrivateKey().Address;
-            var sellerAvatarState = new AvatarState(
+            var sellerAvatarState = AvatarState.Create(
                 SellerAvatarAddress,
                 SellerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    TableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            sellerAvatarState.worldInformation = new WorldInformation(
+                0,
+                TableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             sellerAgentState.avatarAddresses[0] = SellerAvatarAddress;
 
             _sellerAgentAddress2 = new PrivateKey().Address;
             var agentState2 = new AgentState(_sellerAgentAddress2);
             _sellerAvatarAddress2 = new PrivateKey().Address;
-            var sellerAvatarState2 = new AvatarState(
+            var sellerAvatarState2 = AvatarState.Create(
                 _sellerAvatarAddress2,
                 _sellerAgentAddress2,
                 0,
                 TableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    TableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            sellerAvatarState2.worldInformation = new WorldInformation(
+                0,
+                TableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             agentState2.avatarAddresses[0] = _sellerAvatarAddress2;
 
             var buyerAgentState = new AgentState(BuyerAgentAddress);
-            _buyerAvatarState = new AvatarState(
+            _buyerAvatarState = AvatarState.Create(
                 BuyerAvatarAddress,
                 BuyerAgentAddress,
                 0,
                 TableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    TableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            _buyerAvatarState.worldInformation = new WorldInformation(
+                0,
+                TableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             buyerAgentState.avatarAddresses[0] = BuyerAvatarAddress;
 
             _orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
@@ -326,6 +325,56 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
+        }
+
+        [Fact]
+        public void Mail_Serialize_BackwardCompatibility()
+        {
+            var favProduct = new FavProduct
+            {
+                SellerAgentAddress = SellerAgentAddress,
+                SellerAvatarAddress = SellerAvatarAddress,
+                Asset = 1 * RuneHelper.StakeRune,
+                RegisteredBlockIndex = 1L,
+                ProductId = ProductId,
+                Price = 1 * Gold,
+                Type = ProductType.FungibleAssetValue,
+            };
+            var itemProduct = new ItemProduct
+            {
+                SellerAgentAddress = SellerAgentAddress,
+                SellerAvatarAddress = SellerAvatarAddress,
+                RegisteredBlockIndex = 1L,
+                ProductId = ProductId,
+                Price = 1 * Gold,
+                Type = ProductType.NonFungible,
+                ItemCount = 1,
+                TradableItem = TradableItem,
+            };
+
+            var buyerMail = new ProductBuyerMail(1L, ProductId, 1L, ProductId, favProduct);
+            var buyerSerialized = (Dictionary)buyerMail.Serialize();
+            var buyerDeserialized = new ProductBuyerMail(buyerSerialized);
+            Assert.Equal(buyerSerialized, buyerDeserialized.Serialize());
+            // serialized mail on v200220 buyerMail
+            buyerSerialized = (Dictionary)buyerSerialized.Remove((Text)ProductBuyerMail.ProductKey);
+            buyerDeserialized = new ProductBuyerMail(buyerSerialized);
+            Assert.Equal(buyerDeserialized.ProductId, ProductId);
+            Assert.Null(buyerDeserialized.Product);
+            // check serialize not throw exception
+            buyerDeserialized.Serialize();
+
+            var sellerMail = new ProductSellerMail(1L, ProductId, 1L, ProductId, itemProduct);
+            var sellerSerialized = (Dictionary)sellerMail.Serialize();
+            var sellerDeserialized = new ProductSellerMail(sellerSerialized);
+            Assert.Equal(sellerSerialized, sellerDeserialized.Serialize());
+            // serialized mail on v200220 sellerMail
+            sellerSerialized = (Dictionary)buyerSerialized.Remove((Text)ProductBuyerMail.ProductKey);
+            sellerDeserialized = new ProductSellerMail(sellerSerialized);
+            Assert.Equal(sellerDeserialized.ProductId, ProductId);
+            Assert.Null(sellerDeserialized.Product);
+            // check serialize not throw exception
+            sellerDeserialized.Serialize();
         }
 
         public class ExecuteMember

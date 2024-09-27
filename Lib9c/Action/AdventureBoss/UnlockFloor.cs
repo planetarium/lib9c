@@ -123,7 +123,14 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Check balance and unlock
             var price = costSheet[floorId];
-            var agentAddress = states.GetAvatarState(AvatarAddress).agentAddress;
+            var avatarState = states.GetAvatarState(AvatarAddress);
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
+            {
+                var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
+            }
+            
+            var agentAddress = avatarState.agentAddress;
             var balance = states.GetBalance(agentAddress, currency);
             var exploreBoard = states.GetExploreBoard(Season);
             if (UseNcg)

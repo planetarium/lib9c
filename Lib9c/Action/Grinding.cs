@@ -46,6 +46,11 @@ namespace Nekoyume.Action
                 throw new InvalidItemCountException();
             }
 
+            if (EquipmentIds.Count != EquipmentIds.Distinct().Count())
+            {
+                throw new InvalidItemCountException();
+            }
+
             var agentState = states.GetAgentState(context.Signer);
             if (agentState is null)
             {
@@ -139,12 +144,26 @@ namespace Nekoyume.Action
                 sheets.GetSheet<StakeRegularRewardSheet>()
             );
 
+            var materials = CalculateMaterialReward(
+                equipmentList,
+                sheets.GetSheet<CrystalEquipmentGrindingSheet>(),
+                sheets.GetSheet<MaterialItemSheet>()
+            );
+
+#pragma warning disable LAA1002
+            foreach (var pair in materials)
+#pragma warning restore LAA1002
+            {
+                avatarState.inventory.AddItem(pair.Key, pair.Value);
+            }
+
             var mail = new GrindingMail(
                 ctx.BlockIndex,
                 Id,
                 ctx.BlockIndex,
                 EquipmentIds.Count,
-                crystal
+                crystal,
+                materials.Values.Sum()
             );
             avatarState.Update(mail);
 
@@ -168,6 +187,29 @@ namespace Nekoyume.Action
             AvatarAddress = plainValue["a"].ToAddress();
             EquipmentIds = plainValue["e"].ToList(StateExtensions.ToGuid);
             ChargeAp = plainValue["c"].ToBoolean();
+        }
+
+        public static Dictionary<Material, int> CalculateMaterialReward(
+            IEnumerable<Equipment> equipmentList,
+            CrystalEquipmentGrindingSheet crystalEquipmentGrindingSheet,
+            MaterialItemSheet materialItemSheet)
+        {
+            var reward = new Dictionary<Material, int>();
+            foreach (var equipment in equipmentList)
+            {
+                var grindingRow = crystalEquipmentGrindingSheet[equipment.Id];
+                foreach (var (materialId, count) in grindingRow.RewardMaterials)
+                {
+                    var materialRow = materialItemSheet[materialId];
+                    var material = materialRow.ItemSubType is ItemSubType.Circle or ItemSubType.Scroll
+                        ? ItemFactory.CreateTradableMaterial(materialRow)
+                        : ItemFactory.CreateMaterial(materialRow);
+                    reward.TryAdd(material, 0);
+                    reward[material] += count;
+                }
+            }
+
+            return reward;
         }
     }
 }

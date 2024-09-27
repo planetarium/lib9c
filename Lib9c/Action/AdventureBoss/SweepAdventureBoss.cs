@@ -93,9 +93,9 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var avatarState = states.GetAvatarState(AvatarAddress);
-            if (avatarState.agentAddress != context.Signer)
+            if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
-                throw new InvalidAddressException();
+                throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
             var exploreBoard = states.GetExploreBoard(Season);
@@ -146,11 +146,11 @@ namespace Nekoyume.Action.AdventureBoss
 
             var equipmentList =
                 avatarState.ValidateEquipmentsV3(Equipments, context.BlockIndex, gameConfigState);
-            var costumeIds = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
+            var costumeList = avatarState.ValidateCostumeV2(Costumes, gameConfigState);
             var items = Equipments.Concat(Costumes);
             avatarState.EquipItems(items);
             avatarState.ValidateItemRequirement(
-                costumeIds,
+                costumeList.Select(e => e.Id).ToList(),
                 equipmentList,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),

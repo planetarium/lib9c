@@ -86,8 +86,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             stateV2 = stateV2.SetLegacyState(_recipeIdsAddr, recipeIds);
 
             var expectedHourglass = (int)Math.Ceiling(
-                ((double)recipe.RequiredBlockIndex
-                 - stateV2.GetGameConfigState().RequiredAppraiseBlock)
+                (double)recipe.RequiredBlockIndex
                 /
                 stateV2.GetGameConfigState().HourglassPerBlock);
 
@@ -103,8 +102,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     new List(_petId!.Serialize(), petLevel.Serialize(), 0L.Serialize())
                 );
                 expectedHourglass = (int)Math.Ceiling(
-                    (recipe.RequiredBlockIndex
-                     - stateV2.GetGameConfigState().RequiredAppraiseBlock)
+                    recipe.RequiredBlockIndex
                     /
                     (stateV2.GetGameConfigState().HourglassPerBlock
                      + petRow.LevelOptionMap[(int)petLevel].OptionValue)
@@ -127,7 +125,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             );
 
             // Prepare to combination
-            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, 0);
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
             stateV2 = CraftUtil.AddMaterialsToInventory(
                 stateV2,
                 _tableSheets,
@@ -164,20 +162,21 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var rapidAction = new RapidCombination
             {
                 avatarAddress = _avatarAddr,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
             stateV2 = rapidAction.Execute(new ActionContext
             {
                 PreviousState = stateV2,
                 Signer = _agentAddr,
-                BlockIndex = stateV2.GetGameConfigState().RequiredAppraiseBlock,
+                BlockIndex = 0,
                 RandomSeed = random.Seed,
             });
 
-            var slotState = stateV2.GetCombinationSlotState(_avatarAddr, 0);
+            var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+            var slotState = allSlotState.GetSlot(0);
             // TEST: Combination should be done
             Assert.Equal(
-                stateV2.GetGameConfigState().RequiredAppraiseBlock,
+                0,
                 slotState.RequiredBlockIndex
             );
 

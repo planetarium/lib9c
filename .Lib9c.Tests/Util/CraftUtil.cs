@@ -19,22 +19,18 @@ namespace Lib9c.Tests.Util
     {
         public static IWorld PrepareCombinationSlot(
             IWorld state,
-            Address avatarAddress,
-            int slotIndex
+            Address avatarAddress
         )
         {
-            var slotAddress = avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                slotIndex));
-            var slotState = new CombinationSlotState(
-                slotAddress,
-                // CombinationEquipment: 3
-                // CombinationConsumable: 6
-                // ItemEnhancement: 9
-                GameConfig.RequireClearedStageLevel.ItemEnhancementAction
-            );
-            return state.SetLegacyState(slotAddress, slotState.Serialize());
+            var allSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.CombinationSlotCapacity; i++)
+            {
+                var addr = CombinationSlotState.DeriveAddress(avatarAddress, i);
+                var slotState = new CombinationSlotState(addr, i);
+                allSlotState.AddSlot(slotState);
+            }
+
+            return state.SetCombinationSlotState(avatarAddress, allSlotState);
         }
 
         public static IWorld AddMaterialsToInventory(

@@ -139,7 +139,8 @@ namespace Nekoyume.Helper
                 addressesHex);
         }
 
-        public static void ValidEquipmentAndCostumeV2(this AvatarState avatarState,
+        public static (List<Equipment> equipments, List<Costume> costumes) ValidEquipmentAndCostumeV2(
+            this AvatarState avatarState,
             IEnumerable<Guid> costumeIds,
             List<Guid> equipmentIds,
             ItemRequirementSheet itemRequirementSheet,
@@ -150,16 +151,17 @@ namespace Nekoyume.Helper
             string addressesHex,
             GameConfigState gameConfigState)
         {
-            var equipments = avatarState.ValidateEquipmentsV3(equipmentIds, blockIndex,gameConfigState);
-            var costumeItemIds = avatarState.ValidateCostumeV2(costumeIds, gameConfigState);
+            var equipments = avatarState.ValidateEquipmentsV3(equipmentIds, blockIndex, gameConfigState);
+            var costumes = avatarState.ValidateCostumeV2(costumeIds, gameConfigState);
             avatarState.ValidateItemRequirement(
-                costumeItemIds.ToList(),
+                costumes.Select(e => e.Id).ToList(),
                 equipments,
                 itemRequirementSheet,
                 equipmentItemRecipeSheet,
                 equipmentItemSubRecipeSheetV2,
                 equipmentItemOptionSheet,
                 addressesHex);
+            return (equipments, costumes);
         }
     }
 }

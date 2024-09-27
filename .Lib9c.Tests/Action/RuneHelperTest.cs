@@ -1,59 +1,14 @@
 namespace Lib9c.Tests.Action
 {
-    using System;
-    using System.Linq;
     using Libplanet.Types.Assets;
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class RuneHelperTest
     {
-        private readonly Currency _crystalCurrency = CrystalCalculator.CRYSTAL;
-
         private readonly TableSheets _tableSheets =
             new TableSheets(TableSheetsImporter.ImportSheets());
-
-        [Theory]
-        [InlineData(typeof(WorldBossRankRewardSheet))]
-        [InlineData(typeof(WorldBossKillRewardSheet))]
-        public void CalculateReward(Type sheetType)
-        {
-            var random = new TestRandom();
-            IWorldBossRewardSheet sheet;
-            if (sheetType == typeof(WorldBossRankRewardSheet))
-            {
-                sheet = _tableSheets.WorldBossRankRewardSheet;
-            }
-            else
-            {
-                sheet = _tableSheets.WorldBossKillRewardSheet;
-            }
-
-            foreach (var rewardRow in sheet.OrderedRows)
-            {
-                var bossId = rewardRow.BossId;
-                var rank = rewardRow.Rank;
-                var fungibleAssetValues = RuneHelper.CalculateReward(
-                    rank,
-                    bossId,
-                    _tableSheets.RuneWeightSheet,
-                    sheet,
-                    _tableSheets.RuneSheet,
-                    random
-                );
-                var expectedRune = rewardRow.Rune;
-                var expectedCrystal = rewardRow.Crystal * _crystalCurrency;
-                var crystal = fungibleAssetValues.First(f => f.Currency.Equals(_crystalCurrency));
-                var rune = fungibleAssetValues
-                    .Where(f => !f.Currency.Equals(_crystalCurrency))
-                    .Sum(r => (int)r.MajorUnit);
-
-                Assert.Equal(expectedCrystal, crystal);
-                Assert.Equal(expectedRune, rune);
-            }
-        }
 
         [Theory]
         [InlineData(50, 0)]

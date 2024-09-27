@@ -41,9 +41,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address WantedAvatarAddress =
             Addresses.GetAvatarAddress(WantedAddress, 0);
 
-        private static readonly AvatarState WantedAvatarState = new (
-            WantedAvatarAddress, WantedAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "wanted"
+        private static readonly AvatarState WantedAvatarState = AvatarState.Create(
+            WantedAvatarAddress,
+            WantedAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -58,9 +62,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address ExplorerAvatarAddress =
             Addresses.GetAvatarAddress(ExplorerAddress, 0);
 
-        private static readonly AvatarState ExplorerAvatarState = new (
-            ExplorerAvatarAddress, ExplorerAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "explorer"
+        private static readonly AvatarState ExplorerAvatarState = AvatarState.Create(
+            ExplorerAvatarAddress,
+            ExplorerAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "explorer"
         );
 
         private static readonly AgentState ExplorerState = new (ExplorerAddress)
@@ -78,9 +86,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address TesterAvatarAddress =
             Addresses.GetAvatarAddress(TesterAddress, 0);
 
-        private static readonly AvatarState TesterAvatarState = new (
-            TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "Tester"
+        private static readonly AvatarState TesterAvatarState = AvatarState.Create(
+            TesterAvatarAddress,
+            TesterAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "Tester"
         );
 
         private static readonly AgentState TesterState = new (TesterAddress)
@@ -169,7 +181,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         {
                             600201, 140
                         }, // (300*1.2) * 0.7 / 0.5 * (100/360)
-                        { 600202, 15 },  // (300*1.2) * 0.3 / 2 * (100/360)
+                        { 600202, 15 }, // (300*1.2) * 0.3 / 2 * (100/360)
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -442,12 +454,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 0 },
-                    { 30001, 0 },
+                    { 10035, 84 },  // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 336 },
+                    { 600201, 168 }, // 100NCG * 1.2 * 0.7 Fixed / 0.5 Ratio for season 1
+                    // 100NCG * 1.2 * 0.3 Random / 2 Ratio for season 1
+                    // 100NCG * 1.3 * 0.3 Random / 2 Ratio for season 3
                     { 600202, 36 },
                     { 600203, 0 },
                 },
@@ -707,14 +720,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 40 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 20001, 0 },
-                    { 30001, 0 },
+                    { 10035, 40 }, // (100 AP * 0.4 Exchange / 1 Ratio * 100% contribution) for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
                     {
-                        600201, 160
-                    }, // (100 AP * 0.4 Exchange / 0.5 Ratio * 100% contribution) for season 1 and 3
+                        600201, 80
+                    }, // (100 AP * 0.4 Exchange / 0.5 Ratio * 100% contribution) for season 1
                     { 600202, 0 },
                     { 600203, 0 },
                 },
@@ -1043,16 +1055,25 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             var inventory = world.GetInventoryV2(TesterAvatarAddress);
-            foreach (var item in expectedReward.ItemReward)
+            var materialSheet = world.GetSheet<MaterialItemSheet>();
+            var circleRow = materialSheet.OrderedList.First(i => i.ItemSubType == ItemSubType.Circle);
+            foreach (var (id, amount) in expectedReward.ItemReward)
             {
-                var itemState = inventory.Items.FirstOrDefault(i => i.item.Id == item.Key);
-                if (item.Value == 0)
+                var itemState = inventory.Items.FirstOrDefault(i => i.item.Id == id);
+                if (amount == 0)
                 {
                     Assert.Null(itemState);
                 }
+                else if (id == circleRow.Id)
+                {
+                    var itemCount = inventory.TryGetTradableFungibleItems(circleRow.ItemId, null, 1L, out var items)
+                        ? items.Sum(item => item.count)
+                        : 0;
+                    Assert.Equal(amount, itemCount);
+                }
                 else
                 {
-                    Assert.Equal(item.Value, itemState!.count);
+                    Assert.Equal(amount, itemState!.count);
                 }
             }
         }

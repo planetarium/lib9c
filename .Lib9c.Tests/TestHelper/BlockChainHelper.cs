@@ -123,18 +123,17 @@ namespace Lib9c.Tests.TestHelper
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    tableSheets.WorldSheet,
-                    GameConfig.RequireClearedStageLevel.ActionsInShop),
-            };
+                rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                tableSheets.WorldSheet,
+                GameConfig.RequireClearedStageLevel.ActionsInShop);
+
             agentState.avatarAddresses[0] = avatarAddress;
 
             var initCurrencyGold = goldCurrencyState.Currency * 100000000000;

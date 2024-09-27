@@ -23,7 +23,9 @@ namespace Nekoyume.Model.State
     [Serializable]
     public class AvatarState : State, ICloneable
     {
-        public const int CombinationSlotCapacity = 4;
+        public const int DefaultCombinationSlotCount = 4;
+
+        public const int CombinationSlotCapacity = 8;
         public const int CurrentVersion = 2;
         public string name;
         public int characterId;
@@ -47,6 +49,7 @@ namespace Nekoyume.Model.State
         public int lens;
         public int ear;
         public int tail;
+        [Obsolete("don't use this field, use AllCombinationSlotState instead.")]
         public List<Address> combinationSlotAddresses;
 
         public string NameWithHash { get; private set; }
@@ -65,10 +68,31 @@ namespace Nekoyume.Model.State
             return key.PublicKey.Address;
         }
 
-        public AvatarState(Address address,
+        public static AvatarState Create(Address address,
             Address agentAddress,
             long blockIndex,
             AvatarSheets avatarSheets,
+            Address rankingMapAddress,
+            string name = null)
+        {
+            var worldInformationVar = new WorldInformation(blockIndex, avatarSheets.WorldSheet,
+                GameConfig.IsEditor, name);
+            var questListVar = new QuestList(
+                avatarSheets.QuestSheet,
+                avatarSheets.QuestRewardSheet,
+                avatarSheets.QuestItemRewardSheet,
+                avatarSheets.EquipmentItemRecipeSheet,
+                avatarSheets.EquipmentItemSubRecipeSheet
+            );
+            return new AvatarState(
+                address, agentAddress, blockIndex, questListVar, worldInformationVar, rankingMapAddress, name);
+        }
+
+        public AvatarState(Address address,
+            Address agentAddress,
+            long blockIndex,
+            QuestList questList,
+            WorldInformation worldInformation,
             Address rankingMapAddress,
             string name = null) : base(address)
         {
@@ -78,16 +102,10 @@ namespace Nekoyume.Model.State
             level = 1;
             exp = 0;
             inventory = new Inventory();
-            worldInformation = new WorldInformation(blockIndex, avatarSheets.WorldSheet, GameConfig.IsEditor, name);
+            this.worldInformation = worldInformation;
             updatedAt = blockIndex;
             this.agentAddress = agentAddress;
-            questList = new QuestList(
-                avatarSheets.QuestSheet,
-                avatarSheets.QuestRewardSheet,
-                avatarSheets.QuestItemRewardSheet,
-                avatarSheets.EquipmentItemRecipeSheet,
-                avatarSheets.EquipmentItemSubRecipeSheet
-            );
+            this.questList = questList;
             mailBox = new MailBox();
             this.blockIndex = blockIndex;
             stageMap = new CollectionMap();
@@ -100,23 +118,8 @@ namespace Nekoyume.Model.State
                 new KeyValuePair<int, int>((int) createEvent, 1),
                 new KeyValuePair<int, int>((int) levelEvent, level),
             };
-            combinationSlotAddresses = new List<Address>(CombinationSlotCapacity);
-            for (var i = 0; i < CombinationSlotCapacity; i++)
-            {
-                var slotAddress = address.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        i
-                    )
-                );
-                combinationSlotAddresses.Add(slotAddress);
-            }
 
-            combinationSlotAddresses = combinationSlotAddresses
-                .OrderBy(element => element)
-                .ToList();
-
+            combinationSlotAddresses = new List<Address>();
             RankingMapAddress = rankingMapAddress;
             UpdateGeneralQuest(new[] { createEvent, levelEvent });
             UpdateCompletedQuest();
@@ -249,8 +252,7 @@ namespace Nekoyume.Model.State
             PostConstructor();
         }
 
-        public AvatarState(List serialized)
-            : base(serialized[0])
+        public AvatarState(List serialized) : base(serialized[0])
         {
             Version = (int)((Integer)serialized[1]).Value;
             name = serialized[2].ToDotnetString();
@@ -607,6 +609,12 @@ namespace Nekoyume.Model.State
             return armor?.Id ?? GameConfig.DefaultAvatarArmorId;
         }
 
+        public int GetPortraitId()
+        {
+            var fc = inventory.Costumes.FirstOrDefault(e => e.ItemSubType == ItemSubType.FullCostume);
+            return fc?.Id ?? GetArmorId();
+        }
+
         public void ValidateEquipments(List<Guid> equipmentIds, long blockIndex)
         {
             var ringCount = 0;
@@ -878,7 +886,10 @@ namespace Nekoyume.Model.State
             return list;
         }
 
-        public List<int> ValidateConsumableV2(List<Guid> consumableIds, long currentBlockIndex, GameConfigState gameConfigState)
+        public List<int> ValidateConsumableV2(
+            List<Guid> consumableIds,
+            long currentBlockIndex,
+            GameConfigState gameConfigState)
         {
             var list = new List<int>();
             for (var slotIndex = 0; slotIndex < consumableIds.Count; slotIndex++)
@@ -985,10 +996,10 @@ namespace Nekoyume.Model.State
             return list;
         }
 
-        public List<int> ValidateCostumeV2(IEnumerable<Guid> costumeIds, GameConfigState gameConfigState)
+        public List<Costume> ValidateCostumeV2(IEnumerable<Guid> costumeIds, GameConfigState gameConfigState)
         {
             var subTypes = new List<ItemSubType>();
-            var list = new List<int>();
+            var list = new List<Costume>();
             foreach (var costumeId in costumeIds)
             {
                 if (!inventory.TryGetNonFungibleItem<Costume>(costumeId, out var costume))
@@ -1034,7 +1045,7 @@ namespace Nekoyume.Model.State
                     throw new CostumeSlotUnlockException($"not enough level. required: {requiredLevel}");
                 }
 
-                list.Add(costume.Id);
+                list.Add(costume);
             }
 
             return list;
@@ -1249,22 +1260,18 @@ namespace Nekoyume.Model.State
             return items;
         }
 
+        /// <inheritdoc cref="IState.Serialize" />
         public override IValue Serialize()
         {
-            throw new NotSupportedException();
+            return SerializeList();
         }
 
-        public override IValue SerializeV2()
-        {
-            throw new NotSupportedException();
-        }
-
-        public override IValue SerializeList()
+        public IValue SerializeList()
         {
             // Migrated when serialized
             Version = CurrentVersion;
             return new List(
-                base.SerializeList(),
+                base.SerializeListBase(),
                 (Integer)Version,
                 (Text)name,
                 (Integer)characterId,
@@ -1288,7 +1295,8 @@ namespace Nekoyume.Model.State
                     .OrderBy(i => i)
                     .Select(i => i.Serialize())
                     .Serialize(),
-                RankingMapAddress.Serialize());
+                RankingMapAddress.Serialize()
+            );
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Nekoyume.Model.Mail
         System,
         Grinding,
         Summon,
+        CustomCraft,
     }
 
     [Serializable]
@@ -43,6 +44,7 @@ namespace Nekoyume.Model.Mail
                     new UnloadFromMyGaragesRecipientMail(d),
                 [nameof(ClaimItemsMail)] = d => new ClaimItemsMail(d),
                 [nameof(AdventureBossRaffleWinnerMail)] = d => new AdventureBossRaffleWinnerMail(d),
+                [nameof(CustomCraftMail)] = d => new CustomCraftMail(d),
             };
 
         public Guid id;

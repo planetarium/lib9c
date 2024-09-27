@@ -70,7 +70,7 @@ namespace Lib9c.Tests.Model.State
             var rankingState = new RankingState1();
             Address avatarAddress = new PrivateKey().Address;
             Address agentAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
@@ -480,7 +480,7 @@ namespace Lib9c.Tests.Model.State
         private AvatarState GetNewAvatarState(Address avatarAddress, Address agentAddress)
         {
             var rankingState = new RankingState1();
-            return new AvatarState(
+            return AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,

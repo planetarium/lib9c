@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(_agentAddress);
 
             _avatarAddress = new PrivateKey().Address;
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
@@ -129,26 +129,108 @@ namespace Lib9c.Tests.Action
             result.id = mail.id;
             avatarState.Update2(mail);
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            allSlotState.AddSlot(_avatarAddress);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, requiredBlockIndex);
 
             var tempState = _initialState
-                .SetLegacyState(slotAddress, slotState.Serialize())
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetAvatarState(_avatarAddress, avatarState);
 
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             var nextState = action.Execute(new ActionContext
             {
                 PreviousState = tempState,
+                Signer = _agentAddress,
+                BlockIndex = 51,
+            });
+
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var item = nextAvatarState.inventory.Equipments.First();
+
+            Assert.Empty(nextAvatarState.inventory.Materials.Select(r => r.ItemSubType == ItemSubType.Hourglass));
+            Assert.Equal(equipment.ItemId, item.ItemId);
+            Assert.Equal(51, item.RequiredBlockIndex);
+        }
+
+        [Fact]
+        public void Execute_Many()
+        {
+            const int slotStateUnlockStage = 1;
+
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                _initialState.GetSheet<WorldSheet>(),
+                slotStateUnlockStage);
+
+            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
+                r.ItemSubType == ItemSubType.Hourglass);
+
+            var numOfHourglass = 83 * AvatarState.DefaultCombinationSlotCount;
+            avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), numOfHourglass);
+
+            var numOfTradableHourglass = 100 * AvatarState.DefaultCombinationSlotCount;
+            avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), numOfTradableHourglass);
+
+            Assert.True(avatarState.inventory.HasFungibleItem(row.ItemId, 0, numOfHourglass + numOfTradableHourglass));
+
+            var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
+            Assert.NotNull(firstEquipmentRow);
+
+            var gameConfigState = _initialState.GetGameConfigState();
+            var requiredBlockIndex = gameConfigState.HourglassPerBlock * 200;
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                firstEquipmentRow,
+                Guid.NewGuid(),
+                requiredBlockIndex);
+            avatarState.inventory.AddItem(equipment);
+
+            var targetState = _initialState;
+            var allSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; ++i)
+            {
+                var result = new CombinationConsumable5.ResultModel
+                {
+                    actionPoint = 0,
+                    gold = 0,
+                    materials = new Dictionary<Material, int>(),
+                    itemUsable = equipment,
+                    recipeId = 0,
+                    itemType = ItemType.Equipment,
+                };
+
+                var mail = new CombinationMail(result, 0, default, requiredBlockIndex);
+                result.id = mail.id;
+                avatarState.Update2(mail);
+
+                targetState = targetState
+                    .SetAvatarState(_avatarAddress, avatarState);
+
+                allSlotState.AddSlot(_avatarAddress, i);
+                var slotState = allSlotState.GetSlot(i);
+                slotState.Update(result, 0, requiredBlockIndex);
+            }
+
+            targetState = targetState
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
+
+            var slotIndexList = Enumerable.Range(0, AvatarState.DefaultCombinationSlotCount).ToList();
+            var action = new RapidCombination
+            {
+                avatarAddress = _avatarAddress,
+                slotIndexList = slotIndexList,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousState = targetState,
                 Signer = _agentAddress,
                 BlockIndex = 51,
             });
@@ -177,7 +259,7 @@ namespace Lib9c.Tests.Action
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<CombinationSlotResultNullException>(() => action.Execute(new ActionContext
@@ -219,21 +301,20 @@ namespace Lib9c.Tests.Action
                 itemType = ItemType.Equipment,
             };
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, avatarClearedStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
 
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
@@ -295,21 +376,20 @@ namespace Lib9c.Tests.Action
             result.id = mail.id;
             avatarState.Update2(mail);
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(result, 0, 0);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
 
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext
@@ -424,21 +504,20 @@ namespace Lib9c.Tests.Action
             result.id = mail.id;
             avatarState.Update(mail);
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
-            slotState.Update(result, 0, 0);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
+            slotState.Update(result, 10, 50);
 
             var tempState = _initialState
                 .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize());
+                .SetCombinationSlotState(_avatarAddress, allSlotState);
 
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             Assert.Throws<AppraiseBlockNotReachedException>(() => action.Execute(new ActionContext
@@ -593,20 +672,20 @@ namespace Lib9c.Tests.Action
                 // avatarState.Update(mail);
             }
 
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
-            var slotState = new CombinationSlotState(slotAddress, slotStateUnlockStage);
+            var allSlotState = new AllCombinationSlotState();
+            var addr = CombinationSlotState.DeriveAddress(_avatarAddress, 0);
+            allSlotState.AddSlot(addr);
+            var slotState = allSlotState.GetSlot(0);
             slotState.Update(resultModel, 0, requiredBlockIndex);
 
-            var tempState = _initialState.SetLegacyState(slotAddress, slotState.Serialize())
+            var tempState = _initialState
+                .SetCombinationSlotState(_avatarAddress, allSlotState)
                 .SetAvatarState(_avatarAddress, avatarState);
 
             var action = new RapidCombination
             {
                 avatarAddress = _avatarAddress,
-                slotIndex = 0,
+                slotIndexList = new List<int> { 0 },
             };
 
             action.Execute(new ActionContext

@@ -19,7 +19,6 @@ namespace Nekoyume.Model.State
         public int DailyRewardInterval { get; private set; }
         public int DailyArenaInterval { get; private set; }
         public int WeeklyArenaInterval { get; private set; }
-        public int RequiredAppraiseBlock { get; private set; }
         public int BattleArenaInterval { get; private set; }
         public int RuneStatSlotUnlockCost { get; private set; }
         public int RuneSkillSlotUnlockCost { get; private set; }
@@ -68,6 +67,10 @@ namespace Nekoyume.Model.State
 
         #endregion
 
+        #region CustomCraft
+        public long CustomEquipmentCraftIconCostMultiplier { get; private set; }
+        #endregion
+
         public GameConfigState() : base(Address)
         {
         }
@@ -93,10 +96,6 @@ namespace Nekoyume.Model.State
             if (serialized.TryGetValue((Text) "weekly_arena_interval", out var value5))
             {
                 WeeklyArenaInterval = value5.ToInteger();
-            }
-            if (serialized.TryGetValue((Text)"required_appraise_block", out var value6))
-            {
-                RequiredAppraiseBlock = value6.ToInteger();
             }
             if (serialized.TryGetValue((Text)"battle_arena_interval", out var value7))
             {
@@ -310,6 +309,15 @@ namespace Nekoyume.Model.State
             }
 
             #endregion
+
+            #region CustomCraft
+
+            if (serialized.TryGetValue((Text)"custom_equipment_craft_icon_cost_multiplier",
+                    out var cecIconCostMul))
+            {
+                CustomEquipmentCraftIconCostMultiplier = cecIconCostMul.ToLong();
+            }
+            #endregion
         }
 
         public GameConfigState(string csv) : base(Address)
@@ -331,7 +339,6 @@ namespace Nekoyume.Model.State
                 [(Text) "daily_reward_interval"] = DailyRewardInterval.Serialize(),
                 [(Text) "daily_arena_interval"] = DailyArenaInterval.Serialize(),
                 [(Text) "weekly_arena_interval"] = WeeklyArenaInterval.Serialize(),
-                [(Text) "required_appraise_block"] = RequiredAppraiseBlock.Serialize(),
             };
             if (BattleArenaInterval > 0)
             {
@@ -596,10 +603,16 @@ namespace Nekoyume.Model.State
                     AdventureBossClaimInterval.Serialize());
             }
 
+            if (CustomEquipmentCraftIconCostMultiplier > 0)
+            {
+                values.Add((Text)"custom_equipment_craft_icon_cost_multiplier",
+                    CustomEquipmentCraftIconCostMultiplier.Serialize());
+            }
+
             #endregion
 
 #pragma warning disable LAA1002
-            return new Dictionary(values.Union((Dictionary) base.Serialize()));
+            return new Dictionary(values.Union((Dictionary) base.SerializeBase()));
 #pragma warning restore LAA1002
         }
 
@@ -634,9 +647,6 @@ namespace Nekoyume.Model.State
                     break;
                 case "weekly_arena_interval":
                     WeeklyArenaInterval = TableExtensions.ParseInt(row.Value);
-                    break;
-                case "required_appraise_block":
-                    RequiredAppraiseBlock = TableExtensions.ParseInt(row.Value);
                     break;
                 case "battle_arena_interval":
                     BattleArenaInterval = TableExtensions.ParseInt(row.Value);
@@ -786,6 +796,10 @@ namespace Nekoyume.Model.State
                     break;
                 case "adventure_boss_claim_interval":
                     AdventureBossClaimInterval = TableExtensions.ParseLong(row.Value);
+                    break;
+                case "custom_equipment_craft_icon_cost_multiplier":
+                    CustomEquipmentCraftIconCostMultiplier =
+                        TableExtensions.ParseLong(row.Value);
                     break;
 
                 #endregion

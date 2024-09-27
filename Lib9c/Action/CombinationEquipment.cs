@@ -89,14 +89,6 @@ namespace Nekoyume.Action
         {
             context.UseGas(1);
             var states = context.PreviousState;
-            var slotAddress = avatarAddress.Derive(
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    slotIndex
-                )
-            );
-
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment exec started", addressesHex);
@@ -114,18 +106,17 @@ namespace Nekoyume.Action
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            // Validate SlotIndex
-            var slotState = states.GetCombinationSlotState(avatarAddress, slotIndex);
-            if (slotState is null)
+            var allSlotState = states.GetAllCombinationSlotState(avatarAddress);
+            if (allSlotState is null)
             {
-                throw new FailedLoadStateException(
-                    $"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");
+                throw new FailedLoadStateException($"Aborted as the allSlotState was failed to load.");
             }
 
-            if (!slotState.ValidateV2(avatarState, context.BlockIndex))
+            // Validate SlotIndex
+            var slotState = allSlotState.GetSlot(slotIndex);
+            if (!slotState.ValidateV2(context.BlockIndex))
             {
-                throw new CombinationSlotUnlockException(
-                    $"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
+                throw new CombinationSlotUnlockException($"{addressesHex}Aborted as the slot state is invalid: {slotState} @ {slotIndex}");
             }
             // ~Validate SlotIndex
 
@@ -405,7 +396,7 @@ namespace Nekoyume.Action
                 madeWithMimisbrunnrRecipe: isMimisbrunnrSubRecipe
             );
 
-            if (!(subRecipeRow is null))
+            if (subRecipeRow is not null)
             {
                 AddAndUnlockOption(
                     agentState,
@@ -448,13 +439,12 @@ namespace Nekoyume.Action
             // ~Create Equipment
 
             // Apply block time discount
-            if (!(petState is null))
+            if (petState is not null)
             {
                 var requiredBlockIndex = endBlockIndex - context.BlockIndex;
-                var gameConfigState = states.GetGameConfigState();
                 requiredBlockIndex = PetHelper.CalculateReducedBlockOnCraft(
                     requiredBlockIndex,
-                    gameConfigState.RequiredAppraiseBlock,
+                    0,
                     petState,
                     petOptionSheet);
                 endBlockIndex = context.BlockIndex + requiredBlockIndex;
@@ -484,10 +474,11 @@ namespace Nekoyume.Action
                 subRecipeId = subRecipeId,
             };
             slotState.Update(attachmentResult, context.BlockIndex, endBlockIndex, petId);
+            allSlotState.SetSlot(slotState);
             // ~Update Slot
 
             // Update Pet
-            if (!(petState is null))
+            if (petState is not null)
             {
                 petState.Update(endBlockIndex);
                 var petStateAddress = PetState.DeriveAddress(avatarAddress, petState.PetId);
@@ -508,7 +499,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
             return states
                 .SetAvatarState(avatarAddress, avatarState)
-                .SetLegacyState(slotAddress, slotState.Serialize())
+                .SetCombinationSlotState(avatarAddress, allSlotState)
                 .SetLegacyState(hammerPointAddress,hammerPointState.Serialize())
                 .SetAgentState(context.Signer, agentState);
         }

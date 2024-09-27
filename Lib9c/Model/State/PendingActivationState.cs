@@ -51,18 +51,13 @@ namespace Nekoyume.Model.State
             };
 
 #pragma warning disable LAA1002
-            return new Dictionary(values.Union((Dictionary)base.Serialize()));
+            return new Dictionary(values.Union((Dictionary)base.SerializeBase()));
 #pragma warning restore LAA1002
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("serialized", new Codec().Encode(Serialize()));
-        }
-
-        public bool Verify(ActivateAccount action)
-        {
-            return Verify(action.Signature);
         }
 
         public bool Verify(byte[] signature)

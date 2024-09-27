@@ -37,16 +37,15 @@ namespace Lib9c.Tests.Action.Scenario
             _avatarAddress = _agentAddress.Derive("avatar");
             _rankingMapAddress = _avatarAddress.Derive("ranking_map");
             var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 _avatarAddress,
                 _agentAddress,
                 0,
                 _tableSheets.GetAvatarSheets(),
                 _rankingMapAddress
-            )
-            {
-                level = 100,
-            };
+            );
+            avatarState.level = 100;
+
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _weeklyArenaState = new WeeklyArenaState(0);

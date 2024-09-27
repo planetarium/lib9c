@@ -20,6 +20,10 @@ namespace Nekoyume.Model.Item
         public int level;
         public long Exp;
         public int optionCountFromCombination;
+        public int IconId;
+        public bool ByCustomCraft;
+        public bool CraftWithRandom;
+        public bool HasRandomOnlyIcon;
 
         public DecimalStat Stat { get; }
         public int SetId { get; }
@@ -34,7 +38,8 @@ namespace Nekoyume.Model.Item
             return Math.Max(1.0m, stat * 0.1m);
         }
 
-        public Equipment(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex, bool madeWithMimisbrunnrRecipe = false)
+        public Equipment(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex,
+            bool madeWithMimisbrunnrRecipe = false, int iconId = 0)
             : base(data, id, requiredBlockIndex)
         {
             Stat = data.Stat;
@@ -42,6 +47,10 @@ namespace Nekoyume.Model.Item
             SpineResourcePath = data.SpineResourcePath;
             MadeWithMimisbrunnrRecipe = madeWithMimisbrunnrRecipe;
             Exp = data.Exp ?? 0L;
+            IconId = iconId != 0 ? iconId : data.Id;
+            ByCustomCraft = false;
+            CraftWithRandom = false;
+            HasRandomOnlyIcon = false;
         }
 
         public Equipment(Dictionary serialized) : base(serialized)
@@ -79,6 +88,11 @@ namespace Nekoyume.Model.Item
                 Exp = 0L;
             }
 
+            IconId = serialized.TryGetValue((Text)EquipmentIconIdKey, out value) ? (Integer)value : Id;
+            ByCustomCraft = serialized.TryGetValue((Text)ByCustomCraftKey, out value) && value.ToBoolean();
+            CraftWithRandom = serialized.TryGetValue((Text)CraftWithRandomKey, out value) && value.ToBoolean();
+            HasRandomOnlyIcon = serialized.TryGetValue((Text)HasRandomOnlyIconKey, out value) && value.ToBoolean();
+
             if (serialized.TryGetValue((Text) LegacyStatKey, out value))
             {
                 Stat = value.ToDecimalStat();
@@ -114,11 +128,16 @@ namespace Nekoyume.Model.Item
         {
 #pragma warning disable LAA1002
             var dict = ((Dictionary)base.Serialize())
-                .Add(LegacyEquippedKey, equipped.Serialize())
-                .Add(LegacyLevelKey, level.Serialize())
-                .Add(LegacyStatKey, Stat.SerializeForLegacyEquipmentStat())
-                .Add(LegacySetIdKey, SetId.Serialize())
-                .Add(LegacySpineResourcePathKey, SpineResourcePath.Serialize());
+                    .Add(LegacyEquippedKey, equipped.Serialize())
+                    .Add(LegacyLevelKey, level.Serialize())
+                    .Add(LegacyStatKey, Stat.SerializeForLegacyEquipmentStat())
+                    .Add(LegacySetIdKey, SetId.Serialize())
+                    .Add(LegacySpineResourcePathKey, SpineResourcePath.Serialize())
+                    .Add(EquipmentIconIdKey, IconId)
+                    .Add(ByCustomCraftKey, ByCustomCraft)
+                    .Add(CraftWithRandomKey, CraftWithRandom)
+                    .Add(HasRandomOnlyIconKey, HasRandomOnlyIcon)
+                ;
 
             if (optionCountFromCombination > 0)
             {

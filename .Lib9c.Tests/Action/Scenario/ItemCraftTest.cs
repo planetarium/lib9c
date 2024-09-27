@@ -97,10 +97,7 @@ namespace Lib9c.Tests.Action.Scenario
             stateV2 = stateV2.SetLegacyState(unlockRecipeIdsAddress, recipeIds);
 
             // Prepare combination slot
-            for (var i = 0; i < targetItemIdList.Length; i++)
-            {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
-            }
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
 
             // Initial inventory must be empty
             var avatarState = stateV2.GetAvatarState(_avatarAddr);
@@ -142,7 +139,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 0L,
                     RandomSeed = randomSeed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlock
                 // TODO: Check reduced required block when pet comes in
                 Assert.Equal(equipmentRecipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -184,10 +182,7 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             // Prepare combination slot
-            for (var i = 0; i < targetItemIdList.Length; i++)
-            {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
-            }
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
 
             // Initial inventory must be empty
             var avatarState = stateV2.GetAvatarState(_avatarAddr);
@@ -228,7 +223,9 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = 0L,
                     RandomSeed = randomSeed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+
+                var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
                 // TODO: Check reduced required block when pet comens in
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
@@ -273,10 +270,7 @@ namespace Lib9c.Tests.Action.Scenario
             stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _avatarAddr, 6);
 
             // Prepare combination slot
-            for (var i = 0; i < targetItemIdList.Length; i++)
-            {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
-            }
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
 
             // Initial inventory must be empty
             var avatarState = stateV2.GetAvatarState(_avatarAddr);
@@ -311,7 +305,8 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = eventRow.StartBlockIndex,
                     RandomSeed = randomSeed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
+                var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }
@@ -355,10 +350,7 @@ namespace Lib9c.Tests.Action.Scenario
             stateV2 = CraftUtil.UnlockStage(stateV2, _tableSheets, _avatarAddr, 6);
 
             // Prepare combination slot
-            for (var i = 0; i < targetItemIdList.Length; i++)
-            {
-                stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr, i);
-            }
+            stateV2 = CraftUtil.PrepareCombinationSlot(stateV2, _avatarAddr);
 
             // Initial inventory must be empty
             var avatarState = stateV2.GetAvatarState(_avatarAddr);
@@ -408,7 +400,7 @@ namespace Lib9c.Tests.Action.Scenario
                     BlockIndex = eventRow.StartBlockIndex,
                     RandomSeed = randomSeed,
                 });
-                var slotState = stateV2.GetCombinationSlotState(_avatarAddr, i);
+                var slotState = stateV2.GetCombinationSlotStateLegacy(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);
             }

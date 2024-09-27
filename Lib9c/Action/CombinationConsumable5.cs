@@ -145,7 +145,7 @@ namespace Nekoyume.Action
                     current);
             }
 
-            var slotState = states.GetCombinationSlotState(AvatarAddress, slotIndex);
+            var slotState = states.GetCombinationSlotStateLegacy(AvatarAddress, slotIndex);
             if (slotState is null)
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the slot state is failed to load: # {slotIndex}");

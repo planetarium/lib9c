@@ -103,10 +103,9 @@ namespace Nekoyume.Action
             AgentState existingAgentState = states.GetAgentState(signer);
             var agentState = existingAgentState ?? new AgentState(signer);
             var avatarState = states.GetAvatarState(avatarAddress);
-            if (!(avatarState is null))
+            if (avatarState is not null)
             {
-                throw new InvalidAddressException(
-                    $"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
+                throw new InvalidAddressException($"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
             }
 
             if (!(0 <= index && index < GameConfig.SlotCount))
@@ -139,15 +138,17 @@ namespace Nekoyume.Action
             if (tail < 0) tail = 0;
 
             avatarState.Customize(hair, lens, ear, tail);
-
-            foreach (var address in avatarState.combinationSlotAddresses)
+            
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
             {
-                var slotState = new CombinationSlotState(address, 0);
-                states = states.SetLegacyState(address, slotState.Serialize());
+                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, i);
+                var slot = new CombinationSlotState(slotAddr, i);
+                allCombinationSlotState.AddSlot(slot);
             }
+            states = states.SetCombinationSlotState(avatarAddress, allCombinationSlotState);
 
             avatarState.UpdateQuestRewards(materialItemSheet);
-
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
             // prepare for test when executing on editor mode.
@@ -295,7 +296,7 @@ namespace Nekoyume.Action
         {
             var state = ctx.PreviousState;
             var random = ctx.GetRandom();
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 ctx.Signer,
                 ctx.BlockIndex,

@@ -954,7 +954,8 @@ namespace Lib9c.Tests.Action
 
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
-                throw new InvalidSeasonException($"[{nameof(BattleArena)}] This test is only for OffSeason. ArenaType : {roundData.ArenaType}");
+                throw new InvalidSeasonException(
+                    $"[{nameof(BattleArena)}] This test is only for OffSeason. ArenaType : {roundData.ArenaType}");
             }
 
             var random = new TestRandom();
@@ -1061,18 +1062,17 @@ namespace Lib9c.Tests.Action
             var agentState = new AgentState(agentAddress);
 
             var avatarAddress = agentAddress.Derive("avatar");
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 avatarAddress,
                 agentAddress,
                 0,
                 tableSheets.GetAvatarSheets(),
-                rankingMapAddress)
-            {
-                worldInformation = new WorldInformation(
-                    0,
-                    tableSheets.WorldSheet,
-                    clearStageId),
-            };
+                rankingMapAddress);
+            avatarState.worldInformation = new WorldInformation(
+                0,
+                tableSheets.WorldSheet,
+                clearStageId);
+
             agentState.avatarAddresses.Add(0, avatarAddress);
 
             return (agentState, avatarState);
@@ -1194,26 +1194,26 @@ namespace Lib9c.Tests.Action
                 BlockIndex = blockIndex,
             });
 
-            if (!nextStates.TryGetArenaScore(myScoreAdr, out var myAfterScore))
+            if (!nextStates.TryGetArenaScore(myScoreAdr, out var myScoreNext))
             {
                 throw new ArenaScoreNotFoundException($"myScoreAdr : {myScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaScore(enemyScoreAdr, out var enemyAfterScore))
+            if (!nextStates.TryGetArenaScore(enemyScoreAdr, out var enemyScoreNext))
             {
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            if (!nextStates.TryGetArenaInformation(arenaInfoAdr, out var afterInfo))
+            if (!nextStates.TryGetArenaInformation(arenaInfoAdr, out var myAfterInfoNext))
             {
                 throw new ArenaInformationNotFoundException($"arenaInfoAdr : {arenaInfoAdr}");
             }
 
-            var (myWinScore, myDefeatScore, enemyWinScore) =
-                ArenaHelper.GetScoresV1(beforeMyScore.Score, beforeEnemyScore.Score);
+            var (myWinScore, myDefeatScore, enemyDefeatScore) =
+                ArenaHelper.GetScores(beforeMyScore.Score, beforeEnemyScore.Score);
 
-            var addMyScore = afterInfo.Win * myWinScore + afterInfo.Lose * myDefeatScore;
-            var addEnemyScore = afterInfo.Win * enemyWinScore;
+            var addMyScore = myAfterInfoNext.Win * myWinScore + myAfterInfoNext.Lose * myDefeatScore;
+            var addEnemyScore = myAfterInfoNext.Win * enemyDefeatScore;
             var expectedMyScore = Math.Max(
                 beforeMyScore.Score + addMyScore,
                 ArenaScore.ArenaScoreDefault);
@@ -1221,8 +1221,8 @@ namespace Lib9c.Tests.Action
                 beforeEnemyScore.Score + addEnemyScore,
                 ArenaScore.ArenaScoreDefault);
 
-            Assert.Equal(expectedMyScore, myAfterScore.Score);
-            Assert.Equal(expectedEnemyScore, enemyAfterScore.Score);
+            Assert.Equal(expectedMyScore, myScoreNext.Score);
+            Assert.Equal(expectedEnemyScore, enemyScoreNext.Score);
             Assert.Equal(
                 isPurchased
                     ? 0
@@ -1232,28 +1232,28 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0, beforeInfo.Lose);
 
             var useTicket = Math.Min(ticket, beforeInfo.Ticket);
-            Assert.Equal(beforeInfo.Ticket - useTicket, afterInfo.Ticket);
-            Assert.Equal(ticket, afterInfo.Win + afterInfo.Lose);
+            Assert.Equal(beforeInfo.Ticket - useTicket, myAfterInfoNext.Ticket);
+            Assert.Equal(ticket, myAfterInfoNext.Win + myAfterInfoNext.Lose);
 
             var balance = nextStates.GetBalance(
                 myAgentAddress,
                 nextStates.GetGoldCurrency());
             if (isPurchased)
             {
-                Assert.Equal(ticket, afterInfo.PurchasedTicketCount);
+                Assert.Equal(ticket, myAfterInfoNext.PurchasedTicketCount);
             }
 
             Assert.Equal(0, balance.RawValue);
 
-            var avatarState = nextStates.GetAvatarState(myAvatarAddress);
+            var myAvatarStateNext = nextStates.GetAvatarState(myAvatarAddress);
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
                 var medalId = ArenaHelper.GetMedalItemId(championshipId, round);
-                avatarState.inventory.TryGetItem(medalId, out var medal);
-                if (afterInfo.Win > 0)
+                myAvatarStateNext.inventory.TryGetItem(medalId, out var medal);
+                if (myAfterInfoNext.Win > 0)
                 {
-                    Assert.Equal(afterInfo.Win, medal.count);
+                    Assert.Equal(myAfterInfoNext.Win, medal.count);
                 }
                 else
                 {
@@ -1263,9 +1263,33 @@ namespace Lib9c.Tests.Action
                 medalCount = medal?.count ?? 0;
             }
 
-            var materialCount = avatarState.inventory.Materials.Count();
+            var materialCount = myAvatarStateNext.inventory.Materials.Count();
             var high = (ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket) + medalCount;
             Assert.InRange(materialCount, 0, high);
+
+            var myArenaAvatarStateAddr = ArenaAvatarState.DeriveAddress(myAvatarAddress);
+            Assert.True(nextStates.TryGetArenaAvatarState(myArenaAvatarStateAddr, out var myArenaAvatarStateNext));
+
+            // check my ArenaParticipant
+            var arenaParticipantNext = nextStates.GetArenaParticipant(championshipId, round, myAvatarAddress);
+            Assert.NotNull(arenaParticipantNext);
+            Assert.Equal(myAvatarAddress, arenaParticipantNext.AvatarAddr);
+            Assert.Equal(myAvatarStateNext.name, arenaParticipantNext.Name);
+            Assert.Equal(myAvatarStateNext.GetPortraitId(), arenaParticipantNext.PortraitId);
+            Assert.Equal(myAvatarStateNext.level, arenaParticipantNext.Level);
+            // Assert.Equal(cp, arenaParticipantNext.Cp);
+            Assert.Equal(myScoreNext.Score, arenaParticipantNext.Score);
+            Assert.Equal(myAfterInfoNext.Ticket, arenaParticipantNext.Ticket);
+            Assert.Equal(myAfterInfoNext.TicketResetCount, arenaParticipantNext.TicketResetCount);
+            Assert.Equal(myAfterInfoNext.PurchasedTicketCount, arenaParticipantNext.PurchasedTicketCount);
+            Assert.Equal(myAfterInfoNext.Win, arenaParticipantNext.Win);
+            Assert.Equal(myAfterInfoNext.Lose, arenaParticipantNext.Lose);
+            Assert.Equal(myArenaAvatarStateNext.LastBattleBlockIndex, arenaParticipantNext.LastBattleBlockIndex);
+
+            // check enemy's ArenaParticipant
+            var enemyArenaParticipantNext = nextStates.GetArenaParticipant(championshipId, round, enemyAvatarAddress);
+            Assert.NotNull(enemyArenaParticipantNext);
+            Assert.Equal(enemyScoreNext.Score, enemyArenaParticipantNext.Score);
         }
 
         private IWorld JoinArena(
@@ -1281,13 +1305,14 @@ namespace Lib9c.Tests.Action
             var preCurrency = 1000 * _crystal;
             states = states.MintAsset(context, signer, preCurrency);
 
-            var action = new JoinArena1
+            var action = new JoinArena
             {
+                avatarAddress = avatarAddress,
                 championshipId = championshipId,
                 round = round,
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
-                avatarAddress = avatarAddress,
+                runeInfos = new List<RuneSlotInfo>(),
             };
 
             states = action.Execute(new ActionContext

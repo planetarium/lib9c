@@ -95,7 +95,7 @@ namespace Nekoyume.Model.State
             new Dictionary(new Dictionary<IKey, IValue>
             {
                 [(Text) OrderDigestListKey] = new List(OrderDigestList.Select(o => o.Serialize()))
-            }.Union((Dictionary) base.Serialize()));
+            }.Union((Dictionary) base.SerializeBase()));
 #pragma warning restore LAA1002
     }
 }

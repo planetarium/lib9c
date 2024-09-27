@@ -188,11 +188,11 @@ namespace Nekoyume.Action
 
             var equipmentList = avatarState.ValidateEquipmentsV3(
                 equipments, context.BlockIndex, gameConfigState);
-            var costumeIds = avatarState.ValidateCostumeV2(costumes, gameConfigState);
+            var costumeList = avatarState.ValidateCostumeV2(costumes, gameConfigState);
             var items = equipments.Concat(costumes);
             avatarState.EquipItems(items);
             avatarState.ValidateItemRequirement(
-                costumeIds,
+                costumeList.Select(e => e.Id).ToList(),
                 equipmentList,
                 sheets.GetSheet<ItemRequirementSheet>(),
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
@@ -205,16 +205,6 @@ namespace Nekoyume.Action
             {
                 throw new SheetRowColumnException(
                     $"{addressesHex}There is no row in SweepRequiredCPSheet: {stageId}");
-            }
-
-            var costumeList = new List<Costume>();
-            foreach (var guid in costumes)
-            {
-                var costume = avatarState.inventory.Costumes.FirstOrDefault(x => x.ItemId == guid);
-                if (costume != null)
-                {
-                    costumeList.Add(costume);
-                }
             }
 
             // update rune slot

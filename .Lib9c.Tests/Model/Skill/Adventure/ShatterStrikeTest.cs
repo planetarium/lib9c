@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
             ); // 700010 is ShatterStrike
             var shatterStrike = new ShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,
@@ -118,7 +118,7 @@ shatter_strike_max_damage,1";
             ); // 700010 is ShatterStrike
             var shatterStrike = new ShatterStrike(skillRow, 0, 0, ratioBp, StatType.NONE);
 
-            var avatarState = new AvatarState(
+            var avatarState = AvatarState.Create(
                 new PrivateKey().Address,
                 new PrivateKey().Address,
                 0,

@@ -183,10 +183,6 @@ namespace Lib9c.Tests
                 ),
                 renderers: new[] { new BlockRenderer() }
             );
-            blockChain.MakeTransaction(
-                adminPrivateKey,
-                new ActionBase[] { new AddActivatedAccount(adminPrivateKey.Address) }
-            );
             Block block1 = blockChain.ProposeBlock(adminPrivateKey);
             Assert.Throws<InvalidBlockCommitException>(
                 () => blockChain.Append(block1, GenerateBlockCommit(block1, nonValidator)));

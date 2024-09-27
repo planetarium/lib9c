@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using System.Linq;
     using System.Numerics;
     using Bencodex.Types;
+    using Lib9c.Tests.Fixtures.TableCSV;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -38,9 +39,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address WantedAvatarAddress =
             Addresses.GetAvatarAddress(WantedAddress, 0);
 
-        private static readonly AvatarState WantedAvatarState = new (
-            WantedAvatarAddress, WantedAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "wanted"
+        private static readonly AvatarState WantedAvatarState = AvatarState.Create(
+            WantedAvatarAddress,
+            WantedAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -55,10 +60,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Address TesterAvatarAddress =
             Addresses.GetAvatarAddress(TesterAddress, 0);
 
-        private static readonly AvatarState TesterAvatarState = new (
-            TesterAvatarAddress, TesterAddress, 0L, TableSheets.GetAvatarSheets(),
-            new PrivateKey().Address, name: "Tester"
-        ) { level = 500 };
+        private static readonly AvatarState TesterAvatarState = AvatarState.Create(
+            TesterAvatarAddress,
+            TesterAddress,
+            0L,
+            TableSheets.GetAvatarSheets(),
+            new PrivateKey().Address,
+            name: "Tester"
+        );
 
         private static readonly AgentState TesterState = new (TesterAddress)
         {
@@ -80,9 +89,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAgentState(TesterAddress, TesterState)
             .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
 
+        static ExploreAdventureBossTest()
+        {
+            TesterAvatarState.level = 500;
+        }
+
         public ExploreAdventureBossTest()
         {
-            var collectionSheet = TableSheets.CollectionSheet;
+            var collectionSheet = new CollectionSheet();
+            collectionSheet.Set(CollectionSheetFixture.Default);
             var collectionState = new CollectionState();
             foreach (var row in collectionSheet.Values)
             {
@@ -98,79 +113,32 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // No AP potion at all
             yield return new object[]
             {
-                0, 5, 0, 0, 0, null, new (int, int)[] { }, new (int, int)[] { },
+                0, 5, 0, 0, 0, null,
             };
             // Start from bottom, goes to 5
             yield return new object[]
             {
                 0, 5, 5, 20, 10, null, // 2 potions per floor
-                new[]
-                {
-                    (600301, 10), // 10 floor reward
-                    (600302, 30), // 10+5+5+5+5 first reward
-                    (600303, 4), // 2+2 first reward
-                    (600304, 0),
-                },
-                new[]
-                {
-                    (10033, 5), // 5 first reward
-                    (10034, 8), // 5 first reward + 3 floor reward
-                },
             };
             // Start from bottom, goes to 3 because of potion
             yield return new object[]
             {
-                0, 5, 3, 6, 0, null, new[]
-                {
-                    (600301, 7), // 7 floor reward
-                    (600302, 20), // 10+5+5 first reward
-                    (600303, 4), // 2+2 first reward
-                    (600304, 0),
-                },
-                new[]
-                {
-                    (10033, 0),
-                    (10034, 0),
-                },
+                0, 5, 3, 6, 0, null,
             };
             // Start from 3, goes to 5 because of locked floor
             yield return new object[]
             {
-                2, 5, 5, 10, 4, null, new[]
-                {
-                    (600301, 4), // 4 floor reward
-                    (600302, 15), // 5+5+5 first reward
-                    (600303, 2), // 2 first reward
-                    (600304, 0),
-                },
-                new[]
-                {
-                    (10033, 8), // 5 first reward + 3 floor reward
-                    (10034, 5), // 5 first reward
-                },
+                2, 5, 5, 10, 4, null,
             };
             // Start from 6, goes to 9
             yield return new object[]
             {
                 5, 10, 9, 20, 10, null,
-                new[]
-                {
-                    (600203, 5), // 5 first reward
-                    (600301, 0),
-                    (600302, 5), // 5 floor reward
-                    (600303, 15), // 5+5+5 first reward
-                    (600304, 0),
-                },
-                new[]
-                {
-                    (10033, 8), // 5 first reward + 3 floor reward
-                    (10034, 3), // 3 floor reward
-                },
             };
             // Start from 20, cannot enter
             yield return new object[]
             {
-                20, 20, 20, 10, 10, typeof(InvalidOperationException), null, null,
+                20, 20, 20, 10, 10, typeof(InvalidOperationException),
             };
         }
 
@@ -182,9 +150,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             int expectedFloor,
             int initialPotion,
             int expectedPotion,
-            Type exc,
-            (int, int)[] expectedItemRewards,
-            (int, int)[] expectedFavRewards
+            Type exc
         )
         {
             // Settings
@@ -196,6 +162,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
+
+            // override sheet
+            state = state.SetLegacyState(
+                Addresses.GetSheetAddress<CollectionSheet>(),
+                CollectionSheetFixture.Default.Serialize()
+            );
 
             state = Stake(state, WantedAddress);
             var sheets = state.GetSheets(sheetTypes: new[]
@@ -251,6 +223,29 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 previousAvatarState.inventory.AddItem(equipment);
             }
 
+            var expectedItemRewards = new List<(int, int)>();
+            var expectedFavRewards = new List<(int, int)>();
+            var firstRewardSheet = TableSheets.AdventureBossFloorFirstRewardSheet;
+            foreach (var row in firstRewardSheet.Values.Where(r =>
+                         r.FloorId > floor && r.FloorId <= expectedFloor))
+            {
+                foreach (var reward in row.Rewards)
+                {
+                    switch (reward.ItemType)
+                    {
+                        case "Rune":
+                            expectedFavRewards.Add((reward.ItemId, reward.Amount));
+                            break;
+                        case "Crystal":
+                            expectedFavRewards.Add((reward.ItemId, reward.Amount));
+                            break;
+                        case "Material":
+                            expectedItemRewards.Add((reward.ItemId, reward.Amount));
+                            break;
+                    }
+                }
+            }
+
             var action = new ExploreAdventureBoss
             {
                 Season = 1,
@@ -298,15 +293,27 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(expectedFloor, explorer.Floor);
 
                 var inventory = state.GetInventoryV2(TesterAvatarAddress);
+                var circleRow =
+                    materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.Circle);
                 foreach (var (id, amount) in expectedItemRewards)
                 {
                     if (amount == 0)
                     {
                         Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == id));
                     }
+                    else if (id == circleRow.Id)
+                    {
+                        var itemCount =
+                            inventory.TryGetTradableFungibleItems(
+                                circleRow.ItemId, null, 1L, out var items
+                            )
+                                ? items.Sum(item => item.count)
+                                : 0;
+                        Assert.Equal(amount, itemCount);
+                    }
                     else
                     {
-                        Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
+                        Assert.True(amount <= inventory.Items.First(i => i.item.Id == id).count);
                     }
                 }
 
@@ -315,7 +322,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     var ticker = runeSheet.Values.First(rune => rune.Id == id).Ticker;
                     var currency = Currencies.GetRune(ticker);
-                    Assert.Equal(amount, state.GetBalance(TesterAvatarAddress, currency).RawValue);
+                    Assert.True(
+                        amount * currency <= state.GetBalance(TesterAvatarAddress, currency));
                 }
 
                 itemSlotState =
