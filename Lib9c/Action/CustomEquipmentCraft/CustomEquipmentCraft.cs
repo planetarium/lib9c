@@ -146,8 +146,9 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 // ~Validate RecipeId
 
                 // Validate Recipe ResultEquipmentId
-                var relationshipRow = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>()
-                    .OrderedList.Last(row => row.Relationship <= relationship);
+                var relationshipSheet = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>();
+                var relationshipRow =
+                    relationshipSheet.OrderedList.Last(row => row.Relationship <= relationship);
                 var equipmentItemId = relationshipRow.GetItemId(recipeRow.ItemSubType);
                 var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
                 if (!equipmentItemSheet.TryGetValue(equipmentItemId, out var equipmentRow))
@@ -169,6 +170,26 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                     relationshipRow,
                     states.GetGameConfigState().CustomEquipmentCraftIconCostMultiplier
                 );
+
+                // Calculate additional costs to move to next group
+                var additionalCost =
+                    CustomCraftHelper.CalculateAdditionalCost(relationship, relationshipSheet);
+                if (additionalCost is not null)
+                {
+                    ncgCost += additionalCost.Value.Item1;
+                    foreach (var cost in additionalCost.Value.Item2)
+                    {
+                        if (materialCosts.ContainsKey(cost.Key))
+                        {
+                            materialCosts[cost.Key] += cost.Value;
+                        }
+                        else
+                        {
+                            materialCosts[cost.Key] = cost.Value;
+                        }
+                    }
+                }
+
                 if (ncgCost > 0)
                 {
                     var arenaData = sheets.GetSheet<ArenaSheet>()
