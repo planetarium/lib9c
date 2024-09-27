@@ -34,8 +34,9 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorGold = NCG * 10;
         var delegatorGold = NCG * 20;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
-        world = MintAsset(world, delegatorKey, NCG * 100, height++);
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 100, height++);
 
         // When
         var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorGold);
@@ -69,8 +70,9 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorGold = NCG * 10;
         var delegatorDollar = Dollar * 20;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
-        world = MintAsset(world, delegatorKey, delegatorDollar, height++);
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, delegatorDollar, height++);
 
         // When
         var actionContext = new ActionContext
@@ -95,8 +97,9 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorGold = NCG * 10;
         var delegatorGold = NCG * 10;
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
-        world = MintAsset(world, delegatorKey, delegatorGold, height++);
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, delegatorGold, height++);
 
         // When
         var actionContext = new ActionContext
@@ -119,7 +122,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = MintAsset(world, delegatorKey, NCG * 100, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -143,9 +146,10 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorGold = NCG * 10;
         var delegatorGold = NCG * 10;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
-        world = MintAsset(world, delegatorKey, delegatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, delegatorGold, height++);
 
         // When
         var actionContext = new ActionContext
