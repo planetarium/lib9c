@@ -2,18 +2,46 @@
 namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume;
-    using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.ValidatorDelegation;
+using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
 using Xunit;
 
 public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
 {
+    private interface IClaimRewardFixture
+    {
+        FungibleAssetValue TotalReward { get; }
+
+        PrivateKey ValidatorKey { get; }
+
+        FungibleAssetValue ValidatorBalance { get; }
+
+        FungibleAssetValue ValidatorCash { get; }
+
+        DelegatorInfo[] Delegatorinfos { get; }
+
+        PrivateKey[] DelegatorKeys => Delegatorinfos.Select(i => i.Key).ToArray();
+
+        FungibleAssetValue[] DelegatorBalances => Delegatorinfos.Select(i => i.Balance).ToArray();
+
+        FungibleAssetValue[] DelegatorCashes => Delegatorinfos.Select(i => i.Cash).ToArray();
+    }
+
+    public static IEnumerable<object[]> RandomSeeds => new List<object[]>
+    {
+        new object[] { Random.Shared.Next() },
+        new object[] { Random.Shared.Next() },
+        new object[] { Random.Shared.Next() },
+        new object[] { Random.Shared.Next() },
+        new object[] { Random.Shared.Next() },
+        new object[] { Random.Shared.Next() },
+    };
+
     [Fact]
     public void Serialization()
     {
@@ -33,7 +61,8 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorGold = NCG * 10;
         var allocatedReward = NCG * 100;
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, mint: true, height++);
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
 
         // When
@@ -60,172 +89,147 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
     [InlineData(11.11)]
     [InlineData(10)]
     [InlineData(1)]
-    public void Execute_OneDelegator(double reward)
+    public void Execute_Theory_OneDelegator(decimal totalReward)
     {
-        // Given
-        var world = World;
-        var validatorKey = new PrivateKey();
-        var delegatorKey = new PrivateKey();
-        var height = 1L;
-        var actionContext = new ActionContext { };
-        var promotedGold = NCG * 10;
-        var allocatedReward = FungibleAssetValue.Parse(NCG, $"{reward:R}");
-        world = EnsurePromotedValidator(world, validatorKey, promotedGold, mint: true, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
-        world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
-
-        // When
-        var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(
-            validatorKey.Address);
-        var expectedCommission = GetCommission(
-            allocatedReward, expectedDelegatee.CommissionPercentage);
-        var expectedReward = allocatedReward - expectedCommission;
-        var expectedValidatorBalance = expectedCommission + expectedReward.DivRem(2).Quotient;
-        var expectedDelegatorBalance = expectedReward.DivRem(2).Quotient;
-        var expectedRemainReward = allocatedReward;
-        expectedRemainReward -= expectedValidatorBalance;
-        expectedRemainReward -= expectedDelegatorBalance;
-
-        var lastCommit = CreateLastCommit(validatorKey, height - 1);
-        actionContext = new ActionContext
+        var fixture = new StaticFixture
         {
-            PreviousState = world,
-            BlockIndex = height++,
-            Signer = validatorKey.Address,
-            LastCommit = lastCommit,
+            DelegatorLength = 1,
+            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward}"),
+            ValidatorKey = new PrivateKey(),
+            ValidatorBalance = NCG * 100,
+            ValidatorCash = NCG * 10,
+            Delegatorinfos = new[]
+            {
+                new DelegatorInfo
+                {
+                    Key = new PrivateKey(),
+                    Balance = NCG * 100,
+                    Cash = NCG * 10,
+                },
+            },
         };
-        world = new ClaimRewardValidator(validatorKey.Address).Execute(actionContext);
-        actionContext = new ActionContext
-        {
-            PreviousState = world,
-            BlockIndex = height++,
-            Signer = delegatorKey.Address,
-            LastCommit = lastCommit,
-        };
-        world = new ClaimRewardValidator(validatorKey.Address).Execute(actionContext);
-
-        // Then
-        var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
-        var actualRemainReward = world.GetBalance(delegatee.CurrentLumpSumRewardsRecordAddress(), NCG);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, NCG);
-        var actualDelegatorBalance = world.GetBalance(delegatorKey.Address, NCG);
-
-        Assert.Equal(expectedRemainReward, actualRemainReward);
-        Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
-        Assert.Equal(expectedDelegatorBalance, actualDelegatorBalance);
+        ExecuteWithFixture(fixture);
     }
 
-    [Fact]
-    public void Execute_TwoDelegators()
+    [Theory]
+    [InlineData(0.1)]
+    [InlineData(1)]
+    [InlineData(3)]
+    [InlineData(5)]
+    [InlineData(7)]
+    [InlineData(9)]
+    [InlineData(11.11)]
+    [InlineData(11.12)]
+    [InlineData(33.33)]
+    [InlineData(33.34)]
+    [InlineData(34.27)]
+    [InlineData(34.28)]
+    [InlineData(34.29)]
+    public void Execute_Theory_TwoDelegators(decimal totalReward)
     {
-        // Given
-        var world = World;
-        var validatorKey = new PrivateKey();
-        var delegatorKey1 = new PrivateKey();
-        var delegatorKey2 = new PrivateKey();
-        var height = 1L;
-        var actionContext = new ActionContext { };
-        var promotedGold = NCG * 10;
-        var allocatedReward = FungibleAssetValue.Parse(NCG, $"{34.27:R}");
-        world = EnsurePromotedValidator(world, validatorKey, promotedGold, mint: true, height++);
-        world = EnsureBondedDelegator(world, delegatorKey1, validatorKey, NCG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey2, validatorKey, NCG * 10, height++);
-        world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
-
-        // When
-        var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
-        var expectedCommission = GetCommission(
-            allocatedReward, expectedDelegatee.CommissionPercentage);
-        var expectedReward = allocatedReward - expectedCommission;
-        var expectedValidatorBalance = expectedCommission + expectedReward.DivRem(3).Quotient;
-        var expectedDelegator1Balance = expectedReward.DivRem(3).Quotient;
-        var expectedDelegator2Balance = expectedReward.DivRem(3).Quotient;
-        var expectedRemainReward = expectedDelegatee.RewardCurrency * 0;
-        var expectedCommunityBalance = allocatedReward;
-        expectedCommunityBalance -= expectedValidatorBalance;
-        expectedCommunityBalance -= expectedDelegator1Balance;
-        expectedCommunityBalance -= expectedDelegator2Balance;
-
-        var lastCommit = CreateLastCommit(validatorKey, height - 1);
-        actionContext = new ActionContext
+        var fixture = new StaticFixture
         {
-            PreviousState = world,
-            BlockIndex = height++,
-            Signer = validatorKey.Address,
-            LastCommit = lastCommit,
+            DelegatorLength = 2,
+            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward}"),
+            ValidatorKey = new PrivateKey(),
+            ValidatorBalance = NCG * 100,
+            ValidatorCash = NCG * 10,
+            Delegatorinfos = new[]
+            {
+                new DelegatorInfo
+                {
+                    Key = new PrivateKey(),
+                    Balance = NCG * 100,
+                    Cash = NCG * 10,
+                },
+                new DelegatorInfo
+                {
+                    Key = new PrivateKey(),
+                    Balance = NCG * 100,
+                    Cash = NCG * 10,
+                },
+            },
         };
-        world = new ClaimRewardValidator(validatorKey.Address).Execute(actionContext);
-        actionContext = new ActionContext
-        {
-            PreviousState = world,
-            BlockIndex = height++,
-            Signer = delegatorKey1.Address,
-            LastCommit = lastCommit,
-        };
-        world = new ClaimRewardValidator(validatorKey.Address).Execute(actionContext);
-        actionContext = new ActionContext
-        {
-            PreviousState = world,
-            BlockIndex = height++,
-            Signer = delegatorKey2.Address,
-            LastCommit = lastCommit,
-        };
-        world = new ClaimRewardValidator(validatorKey.Address).Execute(actionContext);
-
-        // Then
-        var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
-        var actualRemainReward = world.GetBalance(
-            delegatee.CurrentLumpSumRewardsRecordAddress(), NCG);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, NCG);
-        var actualDelegator1Balance = world.GetBalance(delegatorKey1.Address, NCG);
-        var actualDelegator2Balance = world.GetBalance(delegatorKey2.Address, NCG);
-
-        Assert.Equal(expectedRemainReward, actualRemainReward);
-        Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
-        Assert.Equal(expectedDelegator1Balance, actualDelegator1Balance);
-        Assert.Equal(expectedDelegator2Balance, actualDelegator2Balance);
+        ExecuteWithFixture(fixture);
     }
 
-    [Fact]
-    public void Execute_MultipleDelegators()
+    [Theory]
+    [InlineData(0)]
+    [InlineData(123)]
+    [InlineData(34352535)]
+    public void Execute_Theory_WithStaticSeed(int randomSeed)
+    {
+        var fixture = new RandomFixture(randomSeed);
+        ExecuteWithFixture(fixture);
+    }
+
+    [Theory]
+    [MemberData(nameof(RandomSeeds))]
+    public void Execute_Theory_WithRandomSeed(int randomSeed)
+    {
+        var fixture = new RandomFixture(randomSeed);
+        ExecuteWithFixture(fixture);
+    }
+
+    private void ExecuteWithFixture(IClaimRewardFixture fixture)
     {
         // Given
-        var length = Random.Shared.Next(3, 100);
+        var length = fixture.Delegatorinfos.Length;
         var world = World;
-        var validatorKey = new PrivateKey();
-        var delegatorKeys = CreateArray(length, _ => new PrivateKey());
-        var delegatorNCGs = CreateArray(length, _ => GetRandomNCG());
+        var validatorKey = fixture.ValidatorKey;
+        var delegatorKeys = fixture.DelegatorKeys;
+        var delegatorBalances = fixture.DelegatorBalances;
+        var delegatorCashes = fixture.DelegatorCashes;
         var height = 1L;
         var actionContext = new ActionContext();
-        var promotedGold = GetRandomNCG();
-        var allocatedReward = GetRandomNCG();
-        world = EnsurePromotedValidator(world, validatorKey, promotedGold, mint: true, height++);
-        world = EnsureBondedDelegators(world, delegatorKeys, validatorKey, delegatorNCGs, height++);
-        world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
+        var validatorBalance = fixture.ValidatorBalance;
+        var validatorCash = fixture.ValidatorCash;
+        var totalReward = fixture.TotalReward;
+        world = EnsureToMintAsset(world, validatorKey, validatorBalance, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorCash, height++);
+        world = EnsureToMintAssets(world, delegatorKeys, delegatorBalances, height++);
+        world = EnsureBondedDelegators(
+            world, delegatorKeys, validatorKey, delegatorCashes, height++);
+        world = EnsureRewardAllocatedValidator(world, validatorKey, totalReward, ref height);
 
-        // When
+        // Calculate expected values for comparison with actual values.
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
-        var expectedCommission = GetCommission(
-            allocatedReward, expectedDelegatee.CommissionPercentage);
-        var expectedReward = allocatedReward - expectedCommission;
-        var expectedValidatorBalance = expectedCommission + CalculateReward(
-            expectedRepository, validatorKey, validatorKey, expectedReward);
-        var expectedDelegatorBalances = CalculateRewards(
-            expectedRepository, validatorKey, delegatorKeys, expectedReward);
-        var expectedCommunityBalance = allocatedReward;
-        expectedCommunityBalance -= expectedValidatorBalance;
+        var expectedTotalShares = expectedDelegatee.TotalShares;
+        var expectedValidatorShare
+            = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address).Share;
+        var expectedDelegatorShares = delegatorKeys
+            .Select(item => expectedRepository.GetBond(expectedDelegatee, item.Address).Share)
+            .ToArray();
+        var expectedProposerReward
+            = CalculatePropserReward(totalReward) + CalculateBonusPropserReward(1, 1, totalReward);
+        var expectedReward = totalReward - expectedProposerReward;
+        var expectedCommission = CalculateCommission(
+            expectedReward, expectedDelegatee.CommissionPercentage);
+        var expectedClaim = expectedReward - expectedCommission;
+        var expectedValidatorClaim = CalculateClaim(
+            expectedValidatorShare, expectedTotalShares, expectedClaim);
+        var expectedDelegatorClaims = CreateArray(
+            length,
+            i => CalculateClaim(expectedDelegatorShares[i], expectedTotalShares, expectedClaim));
+        var expectedValidatorBalance = validatorBalance;
+        expectedValidatorBalance -= validatorCash;
+        expectedValidatorBalance += expectedProposerReward;
+        expectedValidatorBalance += expectedCommission;
+        expectedValidatorBalance += expectedValidatorClaim;
+        var expectedDelegatorBalances = CreateArray(
+            length,
+            i => delegatorBalances[i] - delegatorCashes[i] + expectedDelegatorClaims[i]);
+        var expectedRemainReward = totalReward;
+        expectedRemainReward -= expectedProposerReward;
+        expectedRemainReward -= expectedCommission;
+        expectedRemainReward -= expectedValidatorClaim;
         for (var i = 0; i < length; i++)
         {
-            expectedCommunityBalance -= expectedDelegatorBalances[i];
+            expectedRemainReward -= expectedDelegatorClaims[i];
         }
 
-        var expectedRemainReward = expectedDelegatee.RewardCurrency * 0;
-
+        // When
         var lastCommit = CreateLastCommit(validatorKey, height - 1);
         actionContext = new ActionContext
         {
@@ -250,46 +254,74 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         // Then
         var repository = new ValidatorRepository(world, actionContext);
         var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
-        var actualRemainReward = world.GetBalance(
-            delegatee.CurrentLumpSumRewardsRecordAddress(), NCG);
+        var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, NCG);
         var actualValidatorBalance = world.GetBalance(validatorKey.Address, NCG);
-        var actualCommunityBalance = world.GetBalance(Addresses.CommunityPool, NCG);
+        var actualDelegatorBalances = delegatorKeys
+            .Select(item => world.GetBalance(item.Address, NCG))
+            .ToArray();
         Assert.Equal(expectedRemainReward, actualRemainReward);
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
-        Assert.Equal(expectedCommunityBalance, actualCommunityBalance);
+        Assert.Equal(expectedDelegatorBalances, actualDelegatorBalances);
+    }
 
-        for (var i = 0; i < length; i++)
+    private struct DelegatorInfo
+    {
+        public PrivateKey Key { get; set; }
+
+        public FungibleAssetValue Cash { get; set; }
+
+        public FungibleAssetValue Balance { get; set; }
+    }
+
+    private struct StaticFixture : IClaimRewardFixture
+    {
+        public int DelegatorLength { get; set; }
+
+        public FungibleAssetValue TotalReward { get; set; }
+
+        public PrivateKey ValidatorKey { get; set; }
+
+        public FungibleAssetValue ValidatorBalance { get; set; }
+
+        public FungibleAssetValue ValidatorCash { get; set; }
+
+        public DelegatorInfo[] Delegatorinfos { get; set; }
+    }
+
+    private class RandomFixture : IClaimRewardFixture
+    {
+        private readonly Random _random;
+
+        public RandomFixture(int randomSeed)
         {
-            var actualDelegatorBalance = world.GetBalance(delegatorKeys[i].Address, NCG);
-            Assert.Equal(expectedDelegatorBalances[i], actualDelegatorBalance);
+            _random = new Random(randomSeed);
+            DelegatorLength = _random.Next(3, 100);
+            ValidatorKey = new PrivateKey();
+            TotalReward = GetRandomNCG(_random);
+            ValidatorBalance = GetRandomNCG(_random);
+            ValidatorCash = GetRandomCash(_random, ValidatorBalance);
+            Delegatorinfos = CreateArray(DelegatorLength, _ =>
+            {
+                var balance = GetRandomNCG(_random);
+                return new DelegatorInfo
+                {
+                    Key = new PrivateKey(),
+                    Balance = balance,
+                    Cash = GetRandomCash(_random, balance),
+                };
+            });
         }
-    }
 
-    private static FungibleAssetValue CalculateReward(
-        ValidatorRepository repository,
-        PrivateKey validatorKey,
-        PrivateKey delegatorKey,
-        FungibleAssetValue reward)
-    {
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
-        var bond = repository.GetBond(delegatee, delegatorKey.Address);
-        return CalculateReward(reward, bond.Share, delegatee.TotalShares);
-    }
+        public int DelegatorLength { get; }
 
-    private static FungibleAssetValue[] CalculateRewards(
-        ValidatorRepository repository,
-        PrivateKey validatorKey,
-        PrivateKey[] delegatorKeys,
-        FungibleAssetValue reward)
-    {
-        return delegatorKeys
-            .Select(item => CalculateReward(repository, validatorKey, item, reward))
-            .ToArray();
-    }
+        public FungibleAssetValue TotalReward { get; }
 
-    private static FungibleAssetValue CalculateReward(
-        FungibleAssetValue reward, BigInteger share, BigInteger totalShares)
-    {
-        return (reward * share).DivRem(totalShares).Quotient;
+        public PrivateKey ValidatorKey { get; }
+
+        public FungibleAssetValue ValidatorBalance { get; }
+
+        public FungibleAssetValue ValidatorCash { get; }
+
+        public DelegatorInfo[] Delegatorinfos { get; }
     }
 }
