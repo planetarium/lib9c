@@ -1249,7 +1249,9 @@ namespace Lib9c.Tests.Action
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
-                var medalId = ArenaHelper.GetMedalItemId(championshipId, round);
+                var medalId = roundData.MedalId == 0
+                    ? ArenaHelper.GetMedalItemId(championshipId, round)
+                    : roundData.MedalId;
                 myAvatarStateNext.inventory.TryGetItem(medalId, out var medal);
                 if (myAfterInfoNext.Win > 0)
                 {
