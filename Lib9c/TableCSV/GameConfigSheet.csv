@@ -45,4 +45,4 @@ adventure_boss_ncg_ap_ratio,0.4
 adventure_boss_active_interval,1800
 adventure_boss_inactive_interval,10800
 adventure_boss_claim_interval,75600
-custom_equipment_craft_icon_cost_multiplier,15000
+custom_equipment_craft_icon_cost_multiplier,10000
