@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>This is the HOMEPAGE. | Lib9c </title>
+      <title>Lib9c - A library for Nine Chronicles | Lib9c </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="This is the HOMEPAGE. | Lib9c ">
+      <meta name="title" content="Lib9c - A library for Nine Chronicles | Lib9c ">
       
       
       <link rel="icon" href="favicon.ico">
@@ -39,7 +39,7 @@
 
   </head>
 
-  <body class="tex2jax_ignore" data-layout="landing" data-yaml-mime="">
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
@@ -71,13 +71,48 @@
         </div>
 
         <article data-uid="">
-<h1 id="this-is-the-homepage">This is the <strong>HOMEPAGE</strong>.</h1>
+<h1 id="lib9c---a-library-for-nine-chronicles">Lib9c - A library for Nine Chronicles</h1>
 
-<p>Refer to <a href="http://daringfireball.net/projects/markdown/">Markdown</a> for how to write markdown files.</p>
-<h2 id="quick-start-notes">Quick Start Notes:</h2>
-<ol>
-<li>Add images to the <em>images</em> folder if the file is referencing an image.</li>
-</ol>
+<p><a href="https://bit.ly/3ZxysHz"><img src="https://img.shields.io/discord/539405872346955788?color=6278DA&amp;label=Planetarium&amp;logo=discord&amp;logoColor=white" alt="Planetarium Discord Invite"></a>
+<a href="https://bit.ly/4dhTLAa"><img src="https://img.shields.io/discord/928926944937013338?color=6278DA&amp;label=Planetarium-dev&amp;logo=discord&amp;logoColor=white" alt="Planetarium-Dev Discord Invite"></a></p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>If you're new to Nine Chronicles, try to visit our <strong>Developer Portal</strong>!</p>
+<p><a href="https://nine-chronicles.dev/">https://nine-chronicles.dev/</a></p>
+</div>
+<p>Lib9c is a library that contains key implementations
+of <a href="https://nine-chronicles.com">Nine Chronicles</a>, a decentralized RPG developed
+on <a href="https://libplanet.io">Libplanet</a>.
+Lib9c includes Nine Chronicle's key features like in-game decisions and data models, which can be
+used to implement game core capabilities.</p>
+<h2 id="key-features">Key Features</h2>
+<h3 id="model-data-storing-structure-aka-state">Model (Data storing structure, a.k.a. state)</h3>
+<p>Lib9c runs based on libplanet, blockchain, hence all the data are saved into chain as a <code>state</code>.
+You can find all models in <a href="../Lib9c/Model">Lib9c/Model</a>.
+Each model has its own structure and read/write with blockchain store through de/serialization.</p>
+<h3 id="action-core-game-logic-changes-state">Action (Core game logic changes state)</h3>
+<p>State can be created/updated by <code>action</code>s.
+In <a href="../Lib9c/Action">Lib9c/Action</a>, you can find all actions can be executed in the game Nine
+Chronicles.
+When someone do the action in game, action data is loaded on Libplanet transaction and be propagated
+through blockchain network.
+Then after the transaction is accepted by validators, this action is executed and related states are
+updated with action result.</p>
+<h3 id="data">Data</h3>
+<p>All game has its own game data such as item table, exp-level table, etc.
+Thus Nine Chronicles is a blockchain game, all the gme data also should be stored into blockchain.
+To achieve this, special models to handle data are present in <a href="../Lib9c/TableData">Lib9c/TableData</a>
+and <a href="../Lib9c/TableCSV">Lib9c/TableCSV</a>.
+<code>TableCSV</code> is actual CSV formed data and this can be handled in Lib9c using <code>TableData</code> state model.</p>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>.Net &gt;= 6.0</li>
+<li><a href="https://github.com/planetarium/libplanet.git">Libplanet</a> as a submodule</li>
+</ul>
+<h2 id="contribution">Contribution</h2>
+<p>Any contributions are welcome. Please check <a href="../CONTRIBUTING.md">here</a>.</p>
+<h2 id="license">License</h2>
+<p>Lib9c is under GNU GPL3 license. For details, Please check our <a href="../LICENSE">LICENSE</a>.</p>
 
 </article>
 
