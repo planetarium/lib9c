@@ -11,9 +11,12 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model;
+    using Nekoyume.Model.Item;
+    using Nekoyume.Model.Mail;
     using Nekoyume.Model.Market;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Newtonsoft.Json.Serialization;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -209,6 +212,65 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext()));
+        }
+
+        [Theory]
+        [InlineData(ProductType.FungibleAssetValue)]
+        [InlineData(ProductType.NonFungible)]
+        [InlineData(ProductType.Fungible)]
+        public void Mail_Serialize_BackwardCompatibility(ProductType productType)
+        {
+            Product product;
+            var gold = _goldCurrencyState.Currency;
+            switch (productType)
+            {
+                case ProductType.FungibleAssetValue:
+                    product = new FavProduct
+                    {
+                        SellerAgentAddress = new PrivateKey().Address,
+                        SellerAvatarAddress = new PrivateKey().Address,
+                        Asset = 1 * RuneHelper.StakeRune,
+                        RegisteredBlockIndex = 1L,
+                        ProductId = Guid.NewGuid(),
+                        Price = 1 * gold,
+                        Type = ProductType.FungibleAssetValue,
+                    };
+                    break;
+                case ProductType.Fungible:
+                case ProductType.NonFungible:
+                {
+                    ITradableItem tradableItem = productType == ProductType.Fungible
+                        ? ItemFactory.CreateTradableMaterial(_tableSheets.MaterialItemSheet.First)
+                        : (ITradableItem)ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet.First, Guid.NewGuid(), 0L);
+                    product = new ItemProduct
+                    {
+                        SellerAgentAddress = new PrivateKey().Address,
+                        SellerAvatarAddress = new PrivateKey().Address,
+                        RegisteredBlockIndex = 1L,
+                        ProductId = Guid.NewGuid(),
+                        Price = 1 * gold,
+                        Type = ProductType.NonFungible,
+                        ItemCount = 1,
+                        TradableItem = tradableItem,
+                    };
+                    break;
+                }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(productType), productType, null);
+            }
+
+            var mail = new ProductCancelMail(2L, Guid.NewGuid(), 2L, product!.ProductId, product!);
+            var serialized = (Dictionary)mail.Serialize();
+            var deserialized = new ProductCancelMail(serialized);
+            Assert.Equal(serialized, deserialized.Serialize());
+            // serialized mail on v200220;
+            serialized = (Dictionary)serialized.Remove((Text)ProductCancelMail.ProductKey);
+            deserialized = new ProductCancelMail(serialized);
+            Assert.Equal(deserialized.ProductId, product.ProductId);
+            Assert.Null(deserialized.Product);
+            // check serialize not throw exception
+            deserialized.Serialize();
         }
     }
 }
