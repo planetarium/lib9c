@@ -242,4 +242,32 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<InvalidOperationException>(
             () => redelegateValidator.Execute(actionContext));
     }
+
+    [Fact]
+    public void Execute_SrcAndDstAddressAreSame_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var delegatorKey = new PrivateKey();
+        var height = 1L;
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
+
+        // When
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = height++,
+            Signer = delegatorKey.Address,
+        };
+        var redelegateValidator = new RedelegateValidator(
+            validatorKey.Address, validatorKey.Address, 10);
+
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => redelegateValidator.Execute(actionContext));
+    }
 }
