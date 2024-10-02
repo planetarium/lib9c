@@ -437,8 +437,6 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
     private struct StaticFixture : IUndelegateValidatorFixture
     {
-        public DelegateValidator DelegateValidator { get; set; }
-
         public ValidatorInfo ValidatorInfo { get; set; }
 
         public DelegatorInfo[] DelegatorInfos { get; set; }
