@@ -270,4 +270,54 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<InvalidOperationException>(
             () => redelegateValidator.Execute(actionContext));
     }
+
+    [Fact]
+    public void Execute_CannotBeJailedDueToDelegatorRedelegating()
+    {
+        // Given
+        var world = World;
+        var validatorKey1 = new PrivateKey();
+        var validatorKey2 = new PrivateKey();
+        var delegatorKey = new PrivateKey();
+        var validatorGold = NCG * 10;
+        var delegatorGold = NCG * 10;
+        var delegatorBalance = NCG * 100;
+        var actionContext = new ActionContext { };
+
+        var height = 1L;
+        world = EnsureToMintAsset(world, validatorKey1, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, validatorGold, height++);
+        world = EnsureToMintAsset(world, validatorKey2, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, validatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, delegatorBalance, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, delegatorGold, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey1, validatorKey1, 10, height++);
+        world = EnsureUnjailedValidator(world, validatorKey1, ref height);
+        height++;
+
+        // When
+        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey1.Address);
+        var expectedJailed = expectedDelegatee.Jailed;
+
+        var redelegateValidator = new RedelegateValidator(
+            srcValidatorDelegatee: validatorKey1.Address,
+            dstValidatorDelegatee: validatorKey2.Address,
+            share: 10);
+        actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = delegatorKey.Address,
+            BlockIndex = height,
+        };
+        world = redelegateValidator.Execute(actionContext);
+
+        // Then
+        var actualRepository = new ValidatorRepository(world, actionContext);
+        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey1.Address);
+        var actualJailed = actualDelegatee.Jailed;
+
+        Assert.False(actualJailed);
+        Assert.Equal(expectedJailed, actualJailed);
+    }
 }

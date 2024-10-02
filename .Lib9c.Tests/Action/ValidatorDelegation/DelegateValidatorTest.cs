@@ -162,4 +162,47 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         // Then
         Assert.Throws<InvalidOperationException>(() => delegateValidator.Execute(actionContext));
     }
+
+    [Fact]
+    public void Execute_CannotBeJailedDueToDelegatorDelegating()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var delegatorKey = new PrivateKey();
+        var validatorGold = NCG * 10;
+        var delegatorGold = NCG * 10;
+        var delegatorBalance = NCG * 100;
+        var actionContext = new ActionContext { };
+
+        var height = 1L;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, delegatorBalance, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, delegatorGold, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
+        world = EnsureUnjailedValidator(world, validatorKey, ref height);
+
+        // When
+        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedJailed = expectedDelegatee.Jailed;
+
+        var delegateValidator = new DelegateValidator(validatorKey.Address, 1 * NCG);
+        actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = delegatorKey.Address,
+            BlockIndex = height,
+        };
+        world = delegateValidator.Execute(actionContext);
+
+        // Then
+        var actualRepository = new ValidatorRepository(world, actionContext);
+        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualJailed = actualDelegatee.Jailed;
+
+        Assert.False(actualJailed);
+        Assert.Equal(expectedJailed, actualJailed);
+    }
 }
