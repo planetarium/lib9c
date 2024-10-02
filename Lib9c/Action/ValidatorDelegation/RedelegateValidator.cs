@@ -56,6 +56,11 @@ namespace Nekoyume.Action.ValidatorDelegation
         {
             GasTracer.UseGas(1);
 
+            if (SrcValidatorDelegatee.Equals(DstValidatorDelegatee))
+            {
+                throw new InvalidOperationException("Src and Dst cannot be the same.");
+            }
+
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
             repository.RedelegateValidator(context, SrcValidatorDelegatee, DstValidatorDelegatee, Share);
