@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Helper_CustomCraftHelper" data-uid="Nekoyume.Helper.CustomCraftHelper" class="text-break">
-Class CustomCraftHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class CustomCraftHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -152,31 +152,69 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 </h2>
 
 
-  <a id="Nekoyume_Helper_CustomCraftHelper_CalculateCraftCost_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateCraftCost*"></a>
+  <a id="Nekoyume_Helper_CustomCraftHelper_CalculateAdditionalCost_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateAdditionalCost*"></a>
 
-  <h3 id="Nekoyume_Helper_CustomCraftHelper_CalculateCraftCost_System_Int32_Nekoyume_TableData_MaterialItemSheet_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRecipeSheet_Row_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_Row_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftCostSheet_Row_System_Decimal_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateCraftCost(System.Int32,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSheet.Row,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.Row,System.Decimal)">
-  CalculateCraftCost(int, MaterialItemSheet, Row, Row, Row?, decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Helper_CustomCraftHelper_CalculateAdditionalCost_System_Int32_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateAdditionalCost(System.Int32,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet)">
+  CalculateAdditionalCost(int, CustomEquipmentCraftRelationshipSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static (BigInteger, IDictionary&lt;int, int&gt;) CalculateCraftCost(int iconId, MaterialItemSheet materialItemSheet, CustomEquipmentCraftRecipeSheet.Row recipeRow, CustomEquipmentCraftRelationshipSheet.Row relationshipRow, CustomEquipmentCraftCostSheet.Row? costRow, decimal iconCostMultiplier)</code></pre>
+    <pre><code class="lang-csharp hljs">public static (BigInteger, IDictionary&lt;int, int&gt;)? CalculateAdditionalCost(int relationship, CustomEquipmentCraftRelationshipSheet relationshipSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>relationship</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>relationshipSheet</code> <a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.html">CustomEquipmentCraftRelationshipSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;)?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_CustomCraftHelper_CalculateCraftCost_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateCraftCost*"></a>
+
+  <h3 id="Nekoyume_Helper_CustomCraftHelper_CalculateCraftCost_System_Int32_System_Int32_Nekoyume_TableData_MaterialItemSheet_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRecipeSheet_Row_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_Row_System_Decimal_" data-uid="Nekoyume.Helper.CustomCraftHelper.CalculateCraftCost(System.Int32,System.Int32,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSheet.Row,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row,System.Decimal)">
+  CalculateCraftCost(int, int, MaterialItemSheet, Row, Row, decimal)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (BigInteger, IDictionary&lt;int, int&gt;) CalculateCraftCost(int iconId, int relationship, MaterialItemSheet materialItemSheet, CustomEquipmentCraftRecipeSheet.Row recipeRow, CustomEquipmentCraftRelationshipSheet.Row relationshipRow, decimal iconCostMultiplier)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>iconId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd></dd>
+    <dt><code>relationship</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
     <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
     <dd></dd>
     <dt><code>recipeRow</code> <a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSheet.html">CustomEquipmentCraftRecipeSheet</a>.<a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSheet.Row.html">Row</a></dt>
     <dd></dd>
     <dt><code>relationshipRow</code> <a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.html">CustomEquipmentCraftRelationshipSheet</a>.<a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row.html">Row</a></dt>
-    <dd></dd>
-    <dt><code>costRow</code> <a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.html">CustomEquipmentCraftCostSheet</a>.<a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.Row.html">Row</a></dt>
     <dd></dd>
     <dt><code>iconCostMultiplier</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
     <dd></dd>
@@ -198,11 +236,49 @@ Class CustomCraftHelper  <a class="header-action link-secondary" title="View sou
 
 
 
+  <a id="Nekoyume_Helper_CustomCraftHelper_SelectCp_" data-uid="Nekoyume.Helper.CustomCraftHelper.SelectCp*"></a>
+
+  <h3 id="Nekoyume_Helper_CustomCraftHelper_SelectCp_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRelationshipSheet_Row_Libplanet_Action_IRandom_" data-uid="Nekoyume.Helper.CustomCraftHelper.SelectCp(Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row,Libplanet.Action.IRandom)">
+  SelectCp(Row, IRandom)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int SelectCp(CustomEquipmentCraftRelationshipSheet.Row relationshipRow, IRandom random)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>relationshipRow</code> <a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.html">CustomEquipmentCraftRelationshipSheet</a>.<a class="xref" href="Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/CustomCraftHelper.cs/#L17" class="edit-link">Edit this page</a>
         </div>
 
 

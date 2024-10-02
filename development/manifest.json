@@ -8632,36 +8632,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.MaterialCost.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.MaterialCost.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.Row.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.Row.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftCostSheet.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftIconSheet.Row.yml",
       "output": {
         ".html": {
@@ -8746,6 +8716,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSkillSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.CpGroup.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.CpGroup.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.MaterialCost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRelationshipSheet.MaterialCost.html"
         }
       },
       "version": ""

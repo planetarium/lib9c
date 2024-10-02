@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Helper_WorldBossHelper" data-uid="Nekoyume.Helper.WorldBossHelper" class="text-break">
-Class WorldBossHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class WorldBossHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -155,7 +155,7 @@ Class WorldBossHelper  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_MaxChallengeCount" data-uid="Nekoyume.Helper.WorldBossHelper.MaxChallengeCount">
   MaxChallengeCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -185,7 +185,7 @@ Class WorldBossHelper  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_RefillInterval" data-uid="Nekoyume.Helper.WorldBossHelper.RefillInterval">
   RefillInterval
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -221,7 +221,7 @@ public const long RefillInterval = 7200</code></pre>
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_CalculateRank_Nekoyume_TableData_WorldBossCharacterSheet_Row_System_Int64_" data-uid="Nekoyume.Helper.WorldBossHelper.CalculateRank(Nekoyume.TableData.WorldBossCharacterSheet.Row,System.Int64)">
   CalculateRank(Row, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -255,11 +255,59 @@ public const long RefillInterval = 7200</code></pre>
 
 
 
+  <a id="Nekoyume_Helper_WorldBossHelper_CalculateReward_" data-uid="Nekoyume.Helper.WorldBossHelper.CalculateReward*"></a>
+
+  <h3 id="Nekoyume_Helper_WorldBossHelper_CalculateReward_System_Int32_System_Int32_Nekoyume_TableData_RuneWeightSheet_Nekoyume_TableData_IWorldBossRewardSheet_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_MaterialItemSheet_Libplanet_Action_IRandom_" data-uid="Nekoyume.Helper.WorldBossHelper.CalculateReward(System.Int32,System.Int32,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.IWorldBossRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom)">
+  CalculateReward(int, int, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (List&lt;FungibleAssetValue&gt; assets, Dictionary&lt;TradableMaterial, int&gt; materials) CalculateReward(int rank, int bossId, RuneWeightSheet sheet, IWorldBossRewardSheet rewardSheet, RuneSheet runeSheet, MaterialItemSheet materialSheet, IRandom random)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rank</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>bossId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.RuneWeightSheet.html">RuneWeightSheet</a></dt>
+    <dd></dd>
+    <dt><code>rewardSheet</code> <a class="xref" href="Nekoyume.TableData.IWorldBossRewardSheet.html">IWorldBossRewardSheet</a></dt>
+    <dd></dd>
+    <dt><code>runeSheet</code> <a class="xref" href="Nekoyume.TableData.RuneSheet.html">RuneSheet</a></dt>
+    <dd></dd>
+    <dt><code>materialSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">FungibleAssetValue</span>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.collections.generic.list-libplanet.types.assets.fungibleassetvalue-,system.collections.generic.dictionary-nekoyume.model.item.tradablematerial,system.int32--.assets">assets</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="Nekoyume.Model.Item.TradableMaterial.html">TradableMaterial</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.collections.generic.list-libplanet.types.assets.fungibleassetvalue-,system.collections.generic.dictionary-nekoyume.model.item.tradablematerial,system.int32--.materials">materials</a>)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Helper_WorldBossHelper_CalculateTicketPrice_" data-uid="Nekoyume.Helper.WorldBossHelper.CalculateTicketPrice*"></a>
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_CalculateTicketPrice_Nekoyume_TableData_WorldBossListSheet_Row_Nekoyume_Model_State_RaiderState_Libplanet_Types_Assets_Currency_" data-uid="Nekoyume.Helper.WorldBossHelper.CalculateTicketPrice(Nekoyume.TableData.WorldBossListSheet.Row,Nekoyume.Model.State.RaiderState,Libplanet.Types.Assets.Currency)">
   CalculateTicketPrice(Row, RaiderState, Currency)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -299,7 +347,7 @@ public const long RefillInterval = 7200</code></pre>
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_CanRefillTicket_System_Int64_System_Int64_System_Int64_System_Int32_" data-uid="Nekoyume.Helper.WorldBossHelper.CanRefillTicket(System.Int64,System.Int64,System.Int64,System.Int32)">
   CanRefillTicket(long, long, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -341,7 +389,7 @@ public const long RefillInterval = 7200</code></pre>
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_CanRefillTicketV1_System_Int64_System_Int64_System_Int64_" data-uid="Nekoyume.Helper.WorldBossHelper.CanRefillTicketV1(System.Int64,System.Int64,System.Int64)">
   CanRefillTicketV1(long, long, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -381,7 +429,7 @@ public const long RefillInterval = 7200</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/WorldBossHelper.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

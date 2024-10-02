@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Mail_ProductBuyerMail" data-uid="Nekoyume.Model.Mail.ProductBuyerMail" class="text-break">
-Class ProductBuyerMail  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Class ProductBuyerMail  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L10"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -179,7 +179,7 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductBuyerMail__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.#ctor(Bencodex.Types.Dictionary)">
   ProductBuyerMail(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -208,16 +208,16 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
   <a id="Nekoyume_Model_Mail_ProductBuyerMail__ctor_" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Mail_ProductBuyerMail__ctor_System_Int64_System_Guid_System_Int64_System_Guid_" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.#ctor(System.Int64,System.Guid,System.Int64,System.Guid)">
-  ProductBuyerMail(long, Guid, long, Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Mail_ProductBuyerMail__ctor_System_Int64_System_Guid_System_Int64_System_Guid_Nekoyume_Model_Market_Product_" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.#ctor(System.Int64,System.Guid,System.Int64,System.Guid,Nekoyume.Model.Market.Product)">
+  ProductBuyerMail(long, Guid, long, Guid, Product)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ProductBuyerMail(long blockIndex, Guid id, long requiredBlockIndex, Guid productId)</code></pre>
+    <pre><code class="lang-csharp hljs">public ProductBuyerMail(long blockIndex, Guid id, long requiredBlockIndex, Guid productId, Product product)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -229,6 +229,8 @@ public class ProductBuyerMail : Mail, IState</code></pre>
     <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
     <dt><code>productId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>product</code> <a class="xref" href="Nekoyume.Model.Market.Product.html">Product</a></dt>
     <dd></dd>
   </dl>
 
@@ -248,9 +250,39 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
 
 
+  <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_Product" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.Product">
+  Product
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Product Product</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Market.Product.html">Product</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_ProductId" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.ProductId">
   ProductId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -277,6 +309,36 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
 
 
+
+  <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_ProductKey" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.ProductKey">
+  ProductKey
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string ProductKey = &quot;p&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -285,7 +347,7 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_MailType" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.MailType">
   MailType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -316,7 +378,7 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_TypeId" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.TypeId">
   TypeId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -351,7 +413,7 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_Read_Nekoyume_Model_Mail_IMail_" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.Read(Nekoyume.Model.Mail.IMail)">
   Read(IMail)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -382,7 +444,7 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductBuyerMail_Serialize" data-uid="Nekoyume.Model.Mail.ProductBuyerMail.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -413,7 +475,7 @@ public class ProductBuyerMail : Mail, IState</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductBuyerMail.cs/#L10" class="edit-link">Edit this page</a>
         </div>
 
 
