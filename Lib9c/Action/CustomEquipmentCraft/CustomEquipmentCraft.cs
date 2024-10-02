@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
@@ -105,14 +104,6 @@ namespace Nekoyume.Action.CustomEquipmentCraft
             // Create equipment iterating craft data
             foreach (var craftData in CraftList)
             {
-                var slotAddress = AvatarAddress.Derive(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        CombinationSlotState.DeriveFormat,
-                        craftData.SlotIndex
-                    )
-                );
-
                 var allSlotState = states.GetAllCombinationSlotState(AvatarAddress);
                 if (allSlotState is null)
                 {
@@ -135,7 +126,6 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                     typeof(EquipmentItemOptionSheet),
                     typeof(MaterialItemSheet),
                     typeof(CustomEquipmentCraftRecipeSheet),
-                    typeof(CustomEquipmentCraftCostSheet),
                     typeof(CustomEquipmentCraftRelationshipSheet),
                     typeof(CustomEquipmentCraftIconSheet),
                     typeof(CustomEquipmentCraftOptionSheet),
@@ -156,8 +146,9 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 // ~Validate RecipeId
 
                 // Validate Recipe ResultEquipmentId
-                var relationshipRow = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>()
-                    .OrderedList.First(row => row.Relationship >= relationship);
+                var relationshipSheet = sheets.GetSheet<CustomEquipmentCraftRelationshipSheet>();
+                var relationshipRow =
+                    relationshipSheet.OrderedList.Last(row => row.Relationship <= relationship);
                 var equipmentItemId = relationshipRow.GetItemId(recipeRow.ItemSubType);
                 var equipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>();
                 if (!equipmentItemSheet.TryGetValue(equipmentItemId, out var equipmentRow))
@@ -173,13 +164,32 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 // Calculate and remove total cost
                 var (ncgCost, materialCosts) = CustomCraftHelper.CalculateCraftCost(
                     craftData.IconId,
+                    relationship,
                     sheets.GetSheet<MaterialItemSheet>(),
                     recipeRow,
                     relationshipRow,
-                    sheets.GetSheet<CustomEquipmentCraftCostSheet>().Values
-                        .FirstOrDefault(r => r.Relationship == relationship),
                     states.GetGameConfigState().CustomEquipmentCraftIconCostMultiplier
                 );
+
+                // Calculate additional costs to move to next group
+                var additionalCost =
+                    CustomCraftHelper.CalculateAdditionalCost(relationship, relationshipSheet);
+                if (additionalCost is not null)
+                {
+                    ncgCost += additionalCost.Value.Item1;
+                    foreach (var cost in additionalCost.Value.Item2)
+                    {
+                        if (materialCosts.ContainsKey(cost.Key))
+                        {
+                            materialCosts[cost.Key] += cost.Value;
+                        }
+                        else
+                        {
+                            materialCosts[cost.Key] = cost.Value;
+                        }
+                    }
+                }
+
                 if (ncgCost > 0)
                 {
                     var arenaData = sheets.GetSheet<ArenaSheet>()
@@ -224,13 +234,10 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                 equipment.ElementalType = elementalList[random.Next(elementalList.Length)];
 
                 // Set Substats
+                var totalCp = (decimal)CustomCraftHelper.SelectCp(relationshipRow, random);
                 var optionRow = ItemFactory.SelectOption(
                     recipeRow.ItemSubType, sheets.GetSheet<CustomEquipmentCraftOptionSheet>(),
                     random
-                );
-                var totalCp = (decimal)random.Next(
-                    relationshipRow.MinCp,
-                    relationshipRow.MaxCp + 1
                 );
 
                 foreach (var option in optionRow.SubStatData)

@@ -287,8 +287,6 @@ namespace Lib9c.Tests
             private set;
         }
 
-        public CustomEquipmentCraftCostSheet CustomEquipmentCraftCostSheet { get; private set; }
-
         public CustomEquipmentCraftIconSheet CustomEquipmentCraftIconSheet { get; private set; }
 
         public CustomEquipmentCraftOptionSheet CustomEquipmentCraftOptionSheet { get; private set; }

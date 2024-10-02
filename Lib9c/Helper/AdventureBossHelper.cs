@@ -383,9 +383,10 @@ namespace Nekoyume.Helper
                         break;
                     case "Material":
                         var materialSheet = states.GetSheet<MaterialItemSheet>();
-                        var material = ItemFactory.CreateMaterial(
-                            materialSheet.Values.First(row => row.Id == reward.ItemId)
-                        );
+                        var materialRow = materialSheet[reward.ItemId];
+                        var material = materialRow.ItemSubType is ItemSubType.Circle
+                            ? ItemFactory.CreateTradableMaterial(materialRow)
+                            : ItemFactory.CreateMaterial(materialRow);
                         inventory.AddItem(material, reward.Amount);
                         break;
                     case "":

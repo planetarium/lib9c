@@ -164,7 +164,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             // override sheet
-            state = state.SetLegacyState(Addresses.GetSheetAddress<CollectionSheet>(), CollectionSheetFixture.Default.Serialize());
+            state = state.SetLegacyState(
+                Addresses.GetSheetAddress<CollectionSheet>(),
+                CollectionSheetFixture.Default.Serialize()
+            );
 
             state = Stake(state, WantedAddress);
             var sheets = state.GetSheets(sheetTypes: new[]
@@ -223,7 +226,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var expectedItemRewards = new List<(int, int)>();
             var expectedFavRewards = new List<(int, int)>();
             var firstRewardSheet = TableSheets.AdventureBossFloorFirstRewardSheet;
-            foreach (var row in firstRewardSheet.Values.Where(r => r.FloorId > floor && r.FloorId <= expectedFloor))
+            foreach (var row in firstRewardSheet.Values.Where(r =>
+                         r.FloorId > floor && r.FloorId <= expectedFloor))
             {
                 foreach (var reward in row.Rewards)
                 {
@@ -289,11 +293,23 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Assert.Equal(expectedFloor, explorer.Floor);
 
                 var inventory = state.GetInventoryV2(TesterAvatarAddress);
+                var circleRow =
+                    materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.Circle);
                 foreach (var (id, amount) in expectedItemRewards)
                 {
                     if (amount == 0)
                     {
                         Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == id));
+                    }
+                    else if (id == circleRow.Id)
+                    {
+                        var itemCount =
+                            inventory.TryGetTradableFungibleItems(
+                                circleRow.ItemId, null, 1L, out var items
+                            )
+                                ? items.Sum(item => item.count)
+                                : 0;
+                        Assert.Equal(amount, itemCount);
                     }
                     else
                     {
@@ -306,7 +322,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     var ticker = runeSheet.Values.First(rune => rune.Id == id).Ticker;
                     var currency = Currencies.GetRune(ticker);
-                    Assert.True(amount * currency <= state.GetBalance(TesterAvatarAddress, currency));
+                    Assert.True(
+                        amount * currency <= state.GetBalance(TesterAvatarAddress, currency));
                 }
 
                 itemSlotState =
