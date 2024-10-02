@@ -183,6 +183,31 @@ public class ValidatorDelegationTestBase
         return world;
     }
 
+    protected static IWorld EnsureUnbondingDelegator(
+        IWorld world,
+        PrivateKey delegatorKey,
+        PrivateKey validatorKey,
+        BigInteger share,
+        long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var delegatorAddress = delegatorKey.Address;
+        var validatorAddress = validatorKey.Address;
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = delegatorAddress,
+        };
+        var undelegateValidator = new UndelegateValidator(
+            validatorAddress, share);
+        return undelegateValidator.Execute(actionContext);
+    }
+
     protected static IWorld EnsureJailedValidator(
         IWorld world, PrivateKey validatorKey, ref long blockHeight)
     {
@@ -246,6 +271,40 @@ public class ValidatorDelegationTestBase
         var slashValidator = new SlashValidator();
 
         return slashValidator.Execute(actionContext);
+    }
+
+    protected static IWorld EnsureUnjailedValidator(
+        IWorld world, PrivateKey validatorKey, ref long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var repository = new ValidatorRepository(world, new ActionContext());
+        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        if (!delegatee.Jailed)
+        {
+            throw new ArgumentException(
+                "The validator is not jailed.", nameof(validatorKey));
+        }
+
+        if (delegatee.Tombstoned)
+        {
+            throw new ArgumentException(
+                "The validator is tombstoned.", nameof(validatorKey));
+        }
+
+        blockHeight = Math.Max(blockHeight, delegatee.JailedUntil + 1);
+
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+        };
+        var unjailedValidator = new UnjailValidator();
+        return unjailedValidator.Execute(actionContext);
     }
 
     protected static IWorld EnsureRewardAllocatedValidator(

@@ -216,4 +216,46 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
     }
+
+    [Fact]
+    public void Execute_CannotBeJailedDueToDelegatorUndelegating()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var delegatorKey = new PrivateKey();
+        var validatorGold = NCG * 10;
+        var delegatorGold = NCG * 10;
+        var actionContext = new ActionContext { };
+
+        var height = 1L;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureToMintAsset(world, delegatorKey, delegatorGold, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, delegatorGold, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
+        world = EnsureUnjailedValidator(world, validatorKey, ref height);
+
+        // When
+        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedJailed = expectedDelegatee.Jailed;
+
+        var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
+        actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = delegatorKey.Address,
+            BlockIndex = height,
+        };
+        world = undelegateValidator.Execute(actionContext);
+
+        // Then
+        var actualRepository = new ValidatorRepository(world, actionContext);
+        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualJailed = actualDelegatee.Jailed;
+
+        Assert.False(actualJailed);
+        Assert.Equal(expectedJailed, actualJailed);
+    }
 }
