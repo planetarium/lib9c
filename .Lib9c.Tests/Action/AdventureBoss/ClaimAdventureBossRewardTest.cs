@@ -1055,16 +1055,25 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             var inventory = world.GetInventoryV2(TesterAvatarAddress);
-            foreach (var item in expectedReward.ItemReward)
+            var materialSheet = world.GetSheet<MaterialItemSheet>();
+            var circleRow = materialSheet.OrderedList.First(i => i.ItemSubType == ItemSubType.Circle);
+            foreach (var (id, amount) in expectedReward.ItemReward)
             {
-                var itemState = inventory.Items.FirstOrDefault(i => i.item.Id == item.Key);
-                if (item.Value == 0)
+                var itemState = inventory.Items.FirstOrDefault(i => i.item.Id == id);
+                if (amount == 0)
                 {
                     Assert.Null(itemState);
                 }
+                else if (id == circleRow.Id)
+                {
+                    var itemCount = inventory.TryGetTradableFungibleItems(circleRow.ItemId, null, 1L, out var items)
+                        ? items.Sum(item => item.count)
+                        : 0;
+                    Assert.Equal(amount, itemCount);
+                }
                 else
                 {
-                    Assert.Equal(item.Value, itemState!.count);
+                    Assert.Equal(amount, itemState!.count);
                 }
             }
         }

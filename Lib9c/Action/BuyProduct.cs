@@ -156,14 +156,13 @@ namespace Nekoyume.Action
             }
 
             var sellerMail = new ProductSellerMail(context.BlockIndex, productId,
-                context.BlockIndex, productId);
+                context.BlockIndex, productId, product);
             sellerAvatarState.Update(sellerMail);
             sellerAvatarState.questList.UpdateTradeQuest(TradeType.Sell, product.Price);
             sellerAvatarState.UpdateQuestRewards(materialSheet);
 
             var buyerMail = new ProductBuyerMail(context.BlockIndex, productId,
-                context.BlockIndex, productId
-            );
+                context.BlockIndex, productId, product);
             buyerAvatarState.Update(buyerMail);
             buyerAvatarState.questList.UpdateTradeQuest(TradeType.Buy, product.Price);
             buyerAvatarState.UpdateQuestRewards(materialSheet);
