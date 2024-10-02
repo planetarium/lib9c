@@ -39,6 +39,8 @@ public class ValidatorDelegationTestBase
 
     protected IWorld World { get; }
 
+    protected FungibleAssetValue MinimumDelegation { get; } = NCG * 10;
+
     protected static T[] CreateArray<T>(int length, Func<int, T> creator)
         => Enumerable.Range(0, length).Select(creator).ToArray();
 

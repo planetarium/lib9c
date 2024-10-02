@@ -23,13 +23,13 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
 
         FungibleAssetValue ValidatorCash { get; }
 
-        DelegatorInfo[] Delegatorinfos { get; }
+        DelegatorInfo[] DelegatorInfos { get; }
 
-        PrivateKey[] DelegatorKeys => Delegatorinfos.Select(i => i.Key).ToArray();
+        PrivateKey[] DelegatorKeys => DelegatorInfos.Select(i => i.Key).ToArray();
 
-        FungibleAssetValue[] DelegatorBalances => Delegatorinfos.Select(i => i.Balance).ToArray();
+        FungibleAssetValue[] DelegatorBalances => DelegatorInfos.Select(i => i.Balance).ToArray();
 
-        FungibleAssetValue[] DelegatorCashes => Delegatorinfos.Select(i => i.Cash).ToArray();
+        FungibleAssetValue[] DelegatorCashes => DelegatorInfos.Select(i => i.Cash).ToArray();
     }
 
     public static IEnumerable<object[]> RandomSeeds => new List<object[]>
@@ -98,7 +98,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             ValidatorKey = new PrivateKey(),
             ValidatorBalance = NCG * 100,
             ValidatorCash = NCG * 10,
-            Delegatorinfos = new[]
+            DelegatorInfos = new[]
             {
                 new DelegatorInfo
                 {
@@ -134,7 +134,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             ValidatorKey = new PrivateKey(),
             ValidatorBalance = NCG * 100,
             ValidatorCash = NCG * 10,
-            Delegatorinfos = new[]
+            DelegatorInfos = new[]
             {
                 new DelegatorInfo
                 {
@@ -174,7 +174,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
     private void ExecuteWithFixture(IClaimRewardFixture fixture)
     {
         // Given
-        var length = fixture.Delegatorinfos.Length;
+        var length = fixture.DelegatorInfos.Length;
         var world = World;
         var validatorKey = fixture.ValidatorKey;
         var delegatorKeys = fixture.DelegatorKeys;
@@ -285,7 +285,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
 
         public FungibleAssetValue ValidatorCash { get; set; }
 
-        public DelegatorInfo[] Delegatorinfos { get; set; }
+        public DelegatorInfo[] DelegatorInfos { get; set; }
     }
 
     private class RandomFixture : IClaimRewardFixture
@@ -300,7 +300,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             TotalReward = GetRandomNCG(_random);
             ValidatorBalance = GetRandomNCG(_random);
             ValidatorCash = GetRandomCash(_random, ValidatorBalance);
-            Delegatorinfos = CreateArray(DelegatorLength, _ =>
+            DelegatorInfos = CreateArray(DelegatorLength, _ =>
             {
                 var balance = GetRandomNCG(_random);
                 return new DelegatorInfo
@@ -322,6 +322,6 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
 
         public FungibleAssetValue ValidatorCash { get; }
 
-        public DelegatorInfo[] Delegatorinfos { get; }
+        public DelegatorInfo[] DelegatorInfos { get; }
     }
 }
