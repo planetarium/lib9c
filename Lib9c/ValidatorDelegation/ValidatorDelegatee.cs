@@ -87,7 +87,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        public static long ValidatorUnbondingPeriod => 0L;
+        public static long ValidatorUnbondingPeriod => 10L;
 
         public static int ValidatorMaxUnbondLockInEntries => 10;
 
