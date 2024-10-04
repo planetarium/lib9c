@@ -28,6 +28,7 @@ namespace Nekoyume.ValidatorDelegation
                   rewardCurrency: rewardCurrency,
                   delegationPoolAddress: UnbondedPoolAddress,
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
+                  slashedPoolAddress: Addresses.CommunityPool,
                   unbondingPeriod: ValidatorUnbondingPeriod,
                   maxUnbondLockInEntries: ValidatorMaxUnbondLockInEntries,
                   maxRebondGraceEntries: ValidatorMaxRebondGraceEntries,
@@ -154,6 +155,17 @@ namespace Nekoyume.ValidatorDelegation
 
             CommissionPercentage = percentage;
         }
+        public new void Unjail(long height)
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
+            if (MinSelfDelegation > selfDelegation)
+            {
+                throw new InvalidOperationException("The self-delegation is still below the minimum.");
+            }
+
+            base.Unjail(height);
+        }
 
         public void OnDelegationChanged(object? sender, long height)
         {
@@ -174,19 +186,19 @@ namespace Nekoyume.ValidatorDelegation
             }
 
             var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
-            if (MinSelfDelegation > selfDelegation)
+            if (MinSelfDelegation > selfDelegation && !Jailed)
             {
-                Jail(height, height);
+                Jail(height);
             }
         }
 
-        public void OnEnjailed(object? sender, long height)
+        public void OnEnjailed(object? sender, EventArgs e)
         {
             ValidatorRepository repository = (ValidatorRepository)Repository;
             repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
         }
 
-        public void OnUnjailed(object? sender, long height)
+        public void OnUnjailed(object? sender, EventArgs e)
         {
             ValidatorRepository repository = (ValidatorRepository)Repository;
             repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));

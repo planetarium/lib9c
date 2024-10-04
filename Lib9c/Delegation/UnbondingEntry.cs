@@ -152,7 +152,12 @@ namespace Nekoyume.Delegation
                     "The infraction height must be between in creation height and expire height of entry.");
             }
 
-            var favToSlash = InitialUnbondingFAV.DivRem(slashFactor).Quotient;
+            var favToSlash = InitialUnbondingFAV.DivRem(slashFactor, out var rem);
+            if (rem.Sign > 0)
+            {
+                favToSlash += FungibleAssetValue.FromRawValue(rem.Currency, 1);
+            }
+
             slashedFAV = favToSlash < UnbondingFAV
                 ? favToSlash
                 : UnbondingFAV;

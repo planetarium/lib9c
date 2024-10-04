@@ -29,6 +29,7 @@ namespace Nekoyume.Model.Guild
                   rewardCurrency: rewardCurrency,
                   delegationPoolAddress: address,
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
+                  slashedPoolAddress: Addresses.CommunityPool,
                   unbondingPeriod: 75600L,
                   maxUnbondLockInEntries: 10,
                   maxRebondGraceEntries: 10,

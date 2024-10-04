@@ -3,6 +3,10 @@ using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Delegation;
+using System;
+using System.Linq;
+using System.Collections.Immutable;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -26,12 +30,27 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            var unbondings = repository.GetUnbondingSet().UnbondingsToRelease(context.BlockIndex);
+            var unbondingSet = repository.GetUnbondingSet();
+            var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
+
+            unbondings = unbondings.Select(unbonding => unbonding.Release(context.BlockIndex)).ToImmutableArray();
 
             foreach (var unbonding in unbondings)
             {
-                unbonding.Release(context.BlockIndex);
+                switch (unbonding)
+                {
+                    case UnbondLockIn unbondLockIn:
+                        repository.SetUnbondLockIn(unbondLockIn);
+                        break;
+                    case RebondGrace rebondGrace:
+                        repository.SetRebondGrace(rebondGrace);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Invalid unbonding type.");
+                }
             }
+
+            repository.SetUnbondingSet(unbondingSet.SetUnbondings(unbondings));
 
             return repository.World;
         }

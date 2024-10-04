@@ -47,7 +47,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             {
                 var validatorDelegatee = repository.GetValidatorDelegatee(abstain.Address);
                 validatorDelegatee.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
-                validatorDelegatee.Jail(context.BlockIndex + AbstainJailTime, context.BlockIndex);
+                validatorDelegatee.Jail(context.BlockIndex + AbstainJailTime);
             }
 
             foreach (var evidence in context.Evidence)
