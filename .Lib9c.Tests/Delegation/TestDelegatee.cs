@@ -18,6 +18,7 @@ namespace Lib9c.Tests.Delegation
                   DelegationFixture.TestCurrency,
                   address,
                   DelegationFixture.FixedPoolAddress,
+                  DelegationFixture.FixedPoolAddress,
                   3,
                   5,
                   5,

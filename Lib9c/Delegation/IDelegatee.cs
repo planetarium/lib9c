@@ -56,7 +56,7 @@ namespace Nekoyume.Delegation
 
         void Slash(BigInteger slashFactor, long infractionHeight, long height);
 
-        void Jail(long releaseHeight, long height);
+        void Jail(long releaseHeight);
 
         void Unjail(long height);
 

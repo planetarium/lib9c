@@ -22,6 +22,7 @@ namespace Nekoyume.Delegation
             Currency rewardCurrency,
             Address delegationPoolAddress,
             Address rewardRemainderPoolAddress,
+            Address slashedPoolAddress,
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries)
@@ -32,6 +33,7 @@ namespace Nekoyume.Delegation
                   rewardCurrency,
                   delegationPoolAddress,
                   rewardRemainderPoolAddress,
+                  slashedPoolAddress,
                   unbondingPeriod,
                   maxUnbondLockInEntries,
                   maxRebondGraceEntries,
@@ -64,16 +66,17 @@ namespace Nekoyume.Delegation
                   new Currency(bencoded[1]),
                   new Address(bencoded[2]),
                   new Address(bencoded[3]),
-                  (Integer)bencoded[4],
+                  new Address(bencoded[4]),
                   (Integer)bencoded[5],
                   (Integer)bencoded[6],
-                  ((List)bencoded[7]).Select(item => new Address(item)),
-                  new FungibleAssetValue(bencoded[8]),
-                  (Integer)bencoded[9],
-                  (Bencodex.Types.Boolean)bencoded[10],
-                  (Integer)bencoded[11],
-                  (Bencodex.Types.Boolean)bencoded[12],
-                  ((List)bencoded[13]).Select(item => new UnbondingRef(item)))
+                  (Integer)bencoded[7],
+                  ((List)bencoded[8]).Select(item => new Address(item)),
+                  new FungibleAssetValue(bencoded[9]),
+                  (Integer)bencoded[10],
+                  (Bencodex.Types.Boolean)bencoded[11],
+                  (Integer)bencoded[12],
+                  (Bencodex.Types.Boolean)bencoded[13],
+                  ((List)bencoded[14]).Select(item => new UnbondingRef(item)))
         {
         }
 
@@ -84,6 +87,7 @@ namespace Nekoyume.Delegation
             Currency rewardCurrency,
             Address delegationPoolAddress,
             Address rewardRemainderPoolAddress,
+            Address slashedPoolAddress,
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries,
@@ -122,6 +126,7 @@ namespace Nekoyume.Delegation
             RewardCurrency = rewardCurrency;
             DelegationPoolAddress = delegationPoolAddress;
             RewardRemainderPoolAddress = rewardRemainderPoolAddress;
+            SlashedPoolAddress = slashedPoolAddress;
             UnbondingPeriod = unbondingPeriod;
             MaxUnbondLockInEntries = maxUnbondLockInEntries;
             MaxRebondGraceEntries = maxRebondGraceEntries;
@@ -151,6 +156,8 @@ namespace Nekoyume.Delegation
 
         public Address RewardRemainderPoolAddress { get; }
 
+        public Address SlashedPoolAddress { get; }
+
         public long UnbondingPeriod { get; }
 
         public int MaxUnbondLockInEntries { get; }
@@ -166,11 +173,11 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; private set; }
 
-        public bool Jailed { get; private set; }
+        public bool Jailed { get; internal set; }
 
-        public long JailedUntil { get; private set; }
+        public long JailedUntil { get; internal set; }
 
-        public bool Tombstoned { get; private set; }
+        public bool Tombstoned { get; internal set; }
 
         public ImmutableSortedSet<UnbondingRef> UnbondingRefs { get; private set; }
 
@@ -179,6 +186,7 @@ namespace Nekoyume.Delegation
             .Add(RewardCurrency.Serialize())
             .Add(DelegationPoolAddress.Bencoded)
             .Add(RewardRemainderPoolAddress.Bencoded)
+            .Add(SlashedPoolAddress.Bencoded)
             .Add(UnbondingPeriod)
             .Add(MaxUnbondLockInEntries)
             .Add(MaxRebondGraceEntries)
@@ -232,39 +240,6 @@ namespace Nekoyume.Delegation
             TotalShares -= share;
         }
 
-        public void JailUntil(long height)
-        {
-            JailedUntil = height;
-            Jailed = true;
-        }
-
-        public void Unjail(long height)
-        {
-            if (!Jailed)
-            {
-                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
-            }
-
-            if (Tombstoned)
-            {
-                throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
-            }
-
-            if (JailedUntil >= height)
-            {
-                throw new InvalidOperationException("Cannot unjail before jailed until.");
-            }
-
-            JailedUntil = -1L;
-            Jailed = false;
-        }
-
-        public void Tombstone()
-        {
-            JailUntil(long.MaxValue);
-            Tombstoned = true;
-        }
-
         public void AddUnbondingRef(UnbondingRef unbondingRef)
         {
             UnbondingRefs = UnbondingRefs.Add(unbondingRef);
@@ -303,6 +278,7 @@ namespace Nekoyume.Delegation
             && RewardCurrency.Equals(delegatee.RewardCurrency)
             && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
             && RewardRemainderPoolAddress.Equals(delegatee.RewardRemainderPoolAddress)
+            && SlashedPoolAddress.Equals(delegatee.SlashedPoolAddress)
             && UnbondingPeriod == delegatee.UnbondingPeriod
             && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
             && Delegators.SequenceEqual(delegatee.Delegators)

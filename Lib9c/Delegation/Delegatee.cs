@@ -20,6 +20,7 @@ namespace Nekoyume.Delegation
             Currency rewardCurrency,
             Address delegationPoolAddress,
             Address rewardRemainderPoolAddress,
+            Address slashedPoolAddress,
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries,
@@ -32,6 +33,7 @@ namespace Nekoyume.Delegation
                       rewardCurrency,
                       delegationPoolAddress,
                       rewardRemainderPoolAddress,
+                      slashedPoolAddress,
                       unbondingPeriod,
                       maxUnbondLockInEntries,
                       maxRebondGraceEntries),
@@ -54,9 +56,9 @@ namespace Nekoyume.Delegation
 
         public event EventHandler<long>? DelegationChanged;
 
-        public event EventHandler<long>? Enjailed;
+        public event EventHandler? Enjailed;
 
-        public event EventHandler<long>? Unjailed;
+        public event EventHandler? Unjailed;
 
         public DelegateeMetadata Metadata { get; }
 
@@ -75,6 +77,8 @@ namespace Nekoyume.Delegation
         public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
         public Address RewardRemainderPoolAddress => Metadata.RewardRemainderPoolAddress;
+
+        public Address SlashedPoolAddress => Metadata.SlashedPoolAddress;
 
         public long UnbondingPeriod => Metadata.UnbondingPeriod;
 
@@ -113,23 +117,41 @@ namespace Nekoyume.Delegation
         public void DistributeReward(IDelegator delegator, long height)
             => DistributeReward((T)delegator, height);
 
-        public void Jail(long releaseHeight, long height)
+        public void Jail(long releaseHeight)
         {
-            Metadata.JailUntil(releaseHeight);
+            Metadata.JailedUntil = releaseHeight;
+            Metadata.Jailed = true;
             Repository.SetDelegateeMetadata(Metadata);
-            Enjailed?.Invoke(this, height);
+            Enjailed?.Invoke(this, EventArgs.Empty);
         }
 
         public void Unjail(long height)
         {
-            Metadata.Unjail(height);
+            if (!Jailed)
+            {
+                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
+            }
+
+            if (Tombstoned)
+            {
+                throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
+            }
+
+            if (JailedUntil >= height)
+            {
+                throw new InvalidOperationException("Cannot unjail before jailed until.");
+            }
+
+            Metadata.JailedUntil = -1L;
+            Metadata.Jailed = false;
             Repository.SetDelegateeMetadata(Metadata);
-            Unjailed?.Invoke(this, height);
+            Unjailed?.Invoke(this, EventArgs.Empty);
         }
 
         public void Tombstone()
         {
-            Metadata.Tombstone();
+            Jail(long.MaxValue);
+            Metadata.Tombstoned = true;
             Repository.SetDelegateeMetadata(Metadata);
         }
 
@@ -277,13 +299,30 @@ namespace Nekoyume.Delegation
                     Delegators,
                     RewardCurrency);
             record = record.AddLumpSumRewards(rewards);
-            Repository.TransferAsset(RewardPoolAddress, record.Address, rewards);
+
+            if (rewards.Sign > 0)
+            {
+                Repository.TransferAsset(RewardPoolAddress, record.Address, rewards);
+            }
+
             Repository.SetLumpSumRewardsRecord(record);            
         }
 
         public void Slash(BigInteger slashFactor, long infractionHeight, long height)
         {
-            FungibleAssetValue? fav = null;
+            FungibleAssetValue slashed = TotalDelegated.DivRem(slashFactor, out var rem);
+            if (rem.Sign > 0)
+            {
+                slashed += FungibleAssetValue.FromRawValue(rem.Currency, 1);
+            }
+
+            if (slashed > Metadata.TotalDelegatedFAV)
+            {
+                slashed = Metadata.TotalDelegatedFAV;
+            }
+
+            Metadata.RemoveDelegatedFAV(slashed);
+
             foreach (var item in Metadata.UnbondingRefs)
             {
                 var unbonding = UnbondingFactory.GetUnbondingFromRef(item, Repository);
@@ -292,9 +331,7 @@ namespace Nekoyume.Delegation
 
                 if (slashedFAV.HasValue)
                 {
-                    fav = fav.HasValue
-                        ? fav.Value + slashedFAV.Value
-                        : slashedFAV.Value;
+                    slashed += slashedFAV.Value;
                 }
 
                 if (unbonding.IsEmpty)
@@ -315,11 +352,7 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            if (fav.HasValue)
-            {
-                Metadata.RemoveDelegatedFAV(fav.Value);
-            }
-
+            Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
             Repository.SetDelegateeMetadata(Metadata);
             DelegationChanged?.Invoke(this, height);
         }
