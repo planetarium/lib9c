@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
@@ -27,7 +28,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         }
 
         public static ValidatorRepository CreateValidatorDelegatee(
-            this ValidatorRepository repository, IActionContext context, PublicKey publicKey)
+            this ValidatorRepository repository, IActionContext context, PublicKey publicKey, BigInteger commissionPercentage)
         {
             var signer = context.Signer;
 
@@ -42,7 +43,7 @@ namespace Nekoyume.Module.ValidatorDelegation
             }
 
             var validatorDelegatee = new ValidatorDelegatee(
-                signer, publicKey, repository.World.GetGoldCurrency(), repository);
+                signer, publicKey, repository.World.GetGoldCurrency(), commissionPercentage, context.BlockIndex, repository);
 
             repository.SetValidatorDelegatee(validatorDelegatee);
 
