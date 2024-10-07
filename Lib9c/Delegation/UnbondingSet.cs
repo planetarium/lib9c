@@ -149,8 +149,18 @@ namespace Nekoyume.Delegation
             if (_lowestExpireHeights.TryGetValue(unbondigRef, out var expireHeight)
                 && UnbondingRefs.TryGetValue(expireHeight, out var refs))
             {
+                refs = refs.Remove(unbondigRef);
+
+                if (refs.IsEmpty)
+                {
+                    return new UnbondingSet(
+                        UnbondingRefs.Remove(expireHeight),
+                        _lowestExpireHeights.Remove(unbondigRef),
+                        _repository);
+                }
+
                 return new UnbondingSet(
-                    UnbondingRefs.SetItem(expireHeight, refs.Remove(unbondigRef)),
+                    UnbondingRefs.SetItem(expireHeight, refs),
                     _lowestExpireHeights.Remove(unbondigRef),
                     _repository);
             }
