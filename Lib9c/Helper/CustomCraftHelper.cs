@@ -1,10 +1,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using BTAI;
 using Libplanet.Action;
 using Nekoyume.Battle;
 using Nekoyume.Model.Item;
