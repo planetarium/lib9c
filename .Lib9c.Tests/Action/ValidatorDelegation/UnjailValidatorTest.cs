@@ -6,6 +6,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using Xunit;
 
 public class UnjailValidatorTest : ValidatorDelegationTestBase
@@ -27,8 +28,9 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        var validatorGold = NCG * 100;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -135,6 +137,32 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         {
             PreviousState = world,
             BlockIndex = height + SlashValidator.AbstainJailTime,
+            Signer = validatorKey.Address,
+        };
+
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => unjailValidator.Execute(actionContext));
+    }
+
+    [Fact]
+    public void Execute_OnLowDelegatedValidator_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        var validatorGold = MinimumDelegation;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height);
+
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = height++,
             Signer = validatorKey.Address,
         };
 
