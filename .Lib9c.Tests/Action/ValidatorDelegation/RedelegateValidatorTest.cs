@@ -240,7 +240,7 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_ToJailedValidator()
+    public void Execute_FromJailedValidator_ToNotJailedValidator()
     {
         // Given
         var world = World;
@@ -281,7 +281,7 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var actualBond2 = actualRepository.GetBond(actualDelegatee2, delegatorKey.Address);
 
         Assert.Equal(expectedBond1.Share - 10, actualBond1.Share);
-        Assert.Equal(expectedBond2.Share + 10, actualBond2.Share);
+        Assert.Equal(expectedBond2.Share + 9, actualBond2.Share);
     }
 
     [Fact]
@@ -353,14 +353,18 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey1 = new PrivateKey();
         var validatorKey2 = new PrivateKey();
         var delegatorKey = new PrivateKey();
-        var validatorGold = NCG * 10;
+        var validatorCash = NCG * 10;
+        var validatorGold = NCG * 100;
         var delegatorGold = NCG * 10;
         var delegatorBalance = NCG * 100;
         var actionContext = new ActionContext { };
 
         var height = 1L;
         world = EnsureToMintAsset(world, validatorKey1, validatorGold, height++);
-        world = EnsurePromotedValidator(world, validatorKey1, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, validatorCash, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey1, validatorKey1, 10, height++);
+        world = EnsureBondedDelegator(world, validatorKey1, validatorKey1, validatorCash, height++);
+
         world = EnsureToMintAsset(world, validatorKey2, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey2, validatorGold, height++);
         world = EnsureToMintAsset(world, delegatorKey, delegatorBalance, height++);

@@ -234,14 +234,18 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
-        var validatorGold = NCG * 10;
+        var validatorCash = NCG * 10;
+        var validatorGold = NCG * 100;
         var delegatorGold = NCG * 10;
         var delegatorBalance = NCG * 100;
         var actionContext = new ActionContext { };
 
         var height = 1L;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
-        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorCash, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
+        world = EnsureBondedDelegator(world, validatorKey, validatorKey, validatorCash, height++);
+
         world = EnsureToMintAsset(world, delegatorKey, delegatorBalance, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, delegatorGold, height++);
         world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
