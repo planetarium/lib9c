@@ -20,6 +20,8 @@ namespace Nekoyume.ValidatorDelegation
             Address address,
             PublicKey publicKey,
             Currency rewardCurrency,
+            BigInteger commissionPercentage,
+            long creationHeight,
             ValidatorRepository repository)
             : base(
                   address: address,
@@ -39,9 +41,17 @@ namespace Nekoyume.ValidatorDelegation
                 throw new ArgumentException("The address and the public key do not match.");
             }
 
+            if (commissionPercentage < MinCommissionPercentage || commissionPercentage > MaxCommissionPercentage)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(commissionPercentage),
+                    $"The commission percentage must be between {MinCommissionPercentage} and {MaxCommissionPercentage}.");
+            }
+
             PublicKey = publicKey;
             IsBonded = false;
-            CommissionPercentage = DefaultCommissionPercentage;
+            CommissionPercentage = commissionPercentage;
+            CommissionPercentageLastUpdateHeight = creationHeight;
             DelegationChanged += OnDelegationChanged;
             Enjailed += OnEnjailed;
             Unjailed += OnUnjailed;
@@ -69,7 +79,10 @@ namespace Nekoyume.ValidatorDelegation
             PublicKey = new PublicKey(((Binary)bencoded[0]).ByteArray);
             IsBonded = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
+            CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
             DelegationChanged += OnDelegationChanged;
+            Enjailed += OnEnjailed;
+            Unjailed += OnUnjailed;
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
@@ -86,16 +99,23 @@ namespace Nekoyume.ValidatorDelegation
 
         public static BigInteger DefaultCommissionPercentage => 10;
 
+        public static BigInteger MinCommissionPercentage => 0;
+
         public static BigInteger MaxCommissionPercentage => 20;
+
+        public static long CommissionPercentageUpdateCooldown => 100;
 
         public static BigInteger CommissionPercentageMaxChange => 1;
 
         public BigInteger CommissionPercentage { get; private set; }
 
+        public long CommissionPercentageLastUpdateHeight { get; private set; }
+
         public List Bencoded => List.Empty
             .Add(PublicKey.Format(true))
             .Add(IsBonded)
-            .Add(CommissionPercentage);
+            .Add(CommissionPercentage)
+            .Add(CommissionPercentageLastUpdateHeight);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -137,13 +157,19 @@ namespace Nekoyume.ValidatorDelegation
             CollectRewards(height);
         }
 
-        public void SetCommissionPercentage(BigInteger percentage)
+        public void SetCommissionPercentage(BigInteger percentage, long height)
         {
-            if (percentage < 0 || percentage > MaxCommissionPercentage)
+            if (height - CommissionPercentageLastUpdateHeight < CommissionPercentageUpdateCooldown)
+            {
+                throw new InvalidOperationException(
+                    $"The commission percentage can be updated only once in {CommissionPercentageUpdateCooldown} blocks.");
+            }
+
+            if (percentage < MinCommissionPercentage || percentage > MaxCommissionPercentage)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(percentage),
-                    $"The commission percentage must be between 0 and {MaxCommissionPercentage}.");
+                    $"The commission percentage must be between {MinCommissionPercentage} and {MaxCommissionPercentage}.");
             }
 
             if (BigInteger.Abs(CommissionPercentage - percentage) > CommissionPercentageMaxChange)
@@ -154,6 +180,7 @@ namespace Nekoyume.ValidatorDelegation
             }
 
             CommissionPercentage = percentage;
+            CommissionPercentageLastUpdateHeight = height;
         }
         public new void Unjail(long height)
         {
@@ -209,7 +236,8 @@ namespace Nekoyume.ValidatorDelegation
             && Metadata.Equals(validatorDelegatee.Metadata)
             && PublicKey.Equals(validatorDelegatee.PublicKey)
             && IsBonded == validatorDelegatee.IsBonded
-            && CommissionPercentage == validatorDelegatee.CommissionPercentage;
+            && CommissionPercentage == validatorDelegatee.CommissionPercentage
+            && CommissionPercentageLastUpdateHeight == validatorDelegatee.CommissionPercentageLastUpdateHeight;
 
         public bool Equals(IDelegatee? other)
             => Equals(other as ValidatorDelegatee);

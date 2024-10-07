@@ -51,7 +51,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            repository.SetCommissionPercentage(ValidatorDelegatee, CommissionPercentage);
+            repository.SetCommissionPercentage(ValidatorDelegatee, CommissionPercentage, context.BlockIndex);
 
             return repository.World;
         }

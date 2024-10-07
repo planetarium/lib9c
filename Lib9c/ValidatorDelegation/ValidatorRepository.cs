@@ -94,10 +94,10 @@ namespace Nekoyume.ValidatorDelegation
                 ValidatorList.Address, validatorList.Bencoded);
         }
 
-        public void SetCommissionPercentage(Address address, BigInteger commissionPercentage)
+        public void SetCommissionPercentage(Address address, BigInteger commissionPercentage, long height)
         {
             ValidatorDelegatee validatorDelegatee = GetValidatorDelegatee(address);
-            validatorDelegatee.SetCommissionPercentage(commissionPercentage);
+            validatorDelegatee.SetCommissionPercentage(commissionPercentage, height);
             SetValidatorDelegatee(validatorDelegatee);
         }
 

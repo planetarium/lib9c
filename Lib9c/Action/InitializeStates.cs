@@ -203,7 +203,12 @@ namespace Nekoyume.Action
             foreach (var validator in validatorSet.Validators)
             {
                 var validatorDelegatee = new ValidatorDelegatee(
-                    validator.OperatorAddress, validator.PublicKey, repository.World.GetGoldCurrency(), repository);
+                    validator.OperatorAddress,
+                    validator.PublicKey,
+                    repository.World.GetGoldCurrency(),
+                    ValidatorDelegatee.DefaultCommissionPercentage,
+                    context.BlockIndex,
+                    repository);
                 var delegationFAV = FungibleAssetValue.FromRawValue(
                     validatorDelegatee.DelegationCurrency, validator.Power);
                 var validatorDelegator = repository.GetValidatorDelegator(validator.OperatorAddress);
