@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Libplanet.Action.State;
@@ -352,22 +353,46 @@ public class ValidatorDelegationTestBase
     }
 
     protected static IWorld EnsureCommissionChangedValidator(
-        IWorld world, PrivateKey validatorKey, BigInteger commissionPercentage, long blockHeight)
+        IWorld world,
+        PrivateKey validatorKey,
+        BigInteger commissionPercentage,
+        ref long blockHeight)
     {
         if (blockHeight < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(blockHeight));
         }
 
-        var actionContext = new ActionContext
+        if (commissionPercentage < ValidatorDelegatee.MinCommissionPercentage
+            || commissionPercentage > ValidatorDelegatee.MaxCommissionPercentage)
         {
-            PreviousState = world,
-            BlockIndex = blockHeight,
-            Signer = validatorKey.Address,
-        };
-        var setValidatorCommission = new SetValidatorCommission(
-            validatorKey.Address, commissionPercentage);
-        return setValidatorCommission.Execute(actionContext);
+            throw new ArgumentOutOfRangeException(nameof(commissionPercentage));
+        }
+
+        var cooldown = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
+        var repository = new ValidatorRepository(world, new ActionContext());
+        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var currentCommission = delegatee.CommissionPercentage;
+        var increment = commissionPercentage > currentCommission ? 1 : -1;
+        var preferredHeight = delegatee.CommissionPercentageLastUpdateHeight + cooldown;
+
+        while (commissionPercentage != currentCommission)
+        {
+            blockHeight = Math.Min(preferredHeight, blockHeight + cooldown);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight,
+                Signer = validatorKey.Address,
+            };
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address, currentCommission + increment);
+            world = setValidatorCommission.Execute(actionContext);
+            currentCommission += increment;
+            preferredHeight = blockHeight + cooldown;
+        }
+
+        return world;
     }
 
     protected static Vote CreateNullVote(
@@ -539,8 +564,15 @@ public class ValidatorDelegationTestBase
 
     protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav)
     {
-        var num = random.Next(1, 10000);
-        var cash = (fav * num).DivRem(10000).Quotient;
+        if (fav.RawValue >= long.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(fav), "Fungible asset value is too large.");
+        }
+
+        var num = random.NextInt64(1, (long)fav.RawValue);
+        var cash = FungibleAssetValue.FromRawValue(fav.Currency, num);
+
         if (cash.Sign < 0 || cash > fav)
         {
             throw new InvalidOperationException("Invalid cash value.");

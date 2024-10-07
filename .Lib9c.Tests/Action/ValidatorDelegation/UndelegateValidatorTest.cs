@@ -116,6 +116,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
+    [InlineData(17046502)]
     public void Execute_Theory_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -442,6 +443,10 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             Balance = GetRandomNCG(random);
             Cash = GetRandomCash(random, Balance);
             SubtractShare = GetRandomCash(random, Cash).RawValue;
+            if (SubtractShare == 0)
+            {
+                Console.WriteLine("123");
+            }
         }
 
         public PrivateKey Key { get; set; } = new PrivateKey();
