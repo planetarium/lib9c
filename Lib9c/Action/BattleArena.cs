@@ -435,19 +435,13 @@ namespace Nekoyume.Action
             // add medals
             if (roundData.ArenaType != ArenaType.OffSeason && winCount > 0)
             {
+                if (roundData.MedalId == 0)
+                {
+
+                }
+
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();
-                Material medal;
-                if (roundData.MedalId != 0)
-                {
-                    medal = ItemFactory.CreateMaterial(materialSheet, roundData.MedalId);
-                }
-                else
-                {
-                    medal = ArenaHelper.GetMedal(
-                        roundData.ChampionshipId,
-                        roundData.Round,
-                        materialSheet);
-                }
+                var medal = ItemFactory.CreateMaterial(materialSheet, roundData.MedalId);
 
                 myAvatarState.inventory.AddItem(medal, count: winCount);
             }
