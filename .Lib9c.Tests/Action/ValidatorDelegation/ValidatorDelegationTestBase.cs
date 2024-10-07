@@ -351,6 +351,25 @@ public class ValidatorDelegationTestBase
         return world;
     }
 
+    protected static IWorld EnsureCommissionChangedValidator(
+        IWorld world, PrivateKey validatorKey, BigInteger commissionPercentage, long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+        };
+        var setValidatorCommission = new SetValidatorCommission(
+            validatorKey.Address, commissionPercentage);
+        return setValidatorCommission.Execute(actionContext);
+    }
+
     protected static Vote CreateNullVote(
         PrivateKey privateKey, long blockHeight)
     {

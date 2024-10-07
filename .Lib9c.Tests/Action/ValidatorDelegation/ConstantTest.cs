@@ -10,5 +10,7 @@ public class ConstantTest
     public void StaticPropertyTest()
     {
         Assert.True(ValidatorDelegatee.ValidatorUnbondingPeriod > 0);
+        Assert.True(ValidatorDelegatee.MaxCommissionPercentage < int.MaxValue);
+        Assert.True(ValidatorDelegatee.MaxCommissionPercentage >= 0);
     }
 }
