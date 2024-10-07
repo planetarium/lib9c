@@ -93,7 +93,12 @@ namespace Lib9c.Tests
             );
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
+            blockChain.Append(
+                block,
+                GenerateBlockCommit(
+                    block,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
 
             Assert.Equal(
                 1 * Currencies.Mead,
@@ -182,8 +187,26 @@ namespace Lib9c.Tests
                 renderers: new[] { new BlockRenderer() }
             );
             Block block1 = blockChain.ProposeBlock(adminPrivateKey);
+            var invalidBlockCommit = new BlockCommit(
+                block1.Index,
+                0,
+                block1.Hash,
+                new[]
+                {
+                    new VoteMetadata(
+                        block1.Index,
+                        0,
+                        block1.Hash,
+                        DateTimeOffset.UtcNow,
+                        nonValidator.PublicKey,
+                        1000,
+                        VoteFlag.PreCommit
+                    ).Sign(nonValidator),
+                }.ToImmutableArray());
             Assert.Throws<InvalidBlockCommitException>(
-                () => blockChain.Append(block1, GenerateBlockCommit(block1, nonValidator)));
+                () => blockChain.Append(
+                    block1,
+                    invalidBlockCommit));
         }
 
         [Fact]
@@ -293,7 +316,10 @@ namespace Lib9c.Tests
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
             BigInteger power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
-            BlockCommit commit = GenerateBlockCommit(block, adminPrivateKey, power);
+            BlockCommit commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             // Since it's a block right after the Genesis, the reward is 0.
             blockChain.Append(block, commit);
 
@@ -312,7 +338,10 @@ namespace Lib9c.Tests
             );
             block = blockChain.ProposeBlock(adminPrivateKey, commit);
             power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
-            commit = GenerateBlockCommit(block, adminPrivateKey, power);
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             // First Reward : Proposer base reward 10 * 0.01, proposer bonus reward 10 * 0.04, Commission 9.5 * 0.1
             // Total 0.5 + 0.95 = 1.45
             blockChain.Append(block, commit);
@@ -330,7 +359,10 @@ namespace Lib9c.Tests
 
             block = blockChain.ProposeBlock(adminPrivateKey, commit);
             power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
-            commit = GenerateBlockCommit(block, adminPrivateKey, power);
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             // First + Second Reward : Total reward of two blocks : 10 * 2 = 20
             blockChain.Append(block, commit);
 
@@ -412,10 +444,17 @@ namespace Lib9c.Tests
                 evidence: evs).Propose();
             var stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
             Block block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
-            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
+            blockChain.Append(block1, GenerateBlockCommit(
+                block1,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
+            var blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             PreEvaluationBlock preEvalBlock2 = new BlockContent(
                 new BlockMetadata(
                     index: 2,
@@ -423,16 +462,25 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    lastCommit: blockCommit,
                     evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
                 transactions: txs,
                 evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
             Block block2 = EvaluateAndSign(stateRootHash, preEvalBlock2, adminPrivateKey);
-            blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
+            blockChain.Append(
+                block2,
+                GenerateBlockCommit(
+                    block2,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
             txs = GenerateTransactions(11).OrderBy(tx => tx.Id).ToList();
+            blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             PreEvaluationBlock preEvalBlock3 = new BlockContent(
                 new BlockMetadata(
                     index: 3,
@@ -440,14 +488,19 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    lastCommit: blockCommit,
                     evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
                 transactions: txs,
                 evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
             Block block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
             Assert.Throws<InvalidBlockTxCountException>(
-                () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
+                () => blockChain.Append(
+                    block3,
+                    GenerateBlockCommit(
+                        block3,
+                        blockChain.GetNextWorldState().GetValidatorSet(),
+                        new PrivateKey[] { adminPrivateKey })));
             Assert.Equal(3, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block3.Hash));
         }
@@ -528,11 +581,20 @@ namespace Lib9c.Tests
             Block block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
 
             // Should be fine since policy hasn't kicked in yet.
-            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
+            blockChain.Append(
+                block1,
+                GenerateBlockCommit(
+                    block1,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
 
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
+            var blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             PreEvaluationBlock preEvalBlock2 = new BlockContent(
                 new BlockMetadata(
                     index: 2,
@@ -540,7 +602,7 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    lastCommit: blockCommit,
                     evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
                 transactions: txs,
                 evidence: evs).Propose();
@@ -549,7 +611,12 @@ namespace Lib9c.Tests
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
-                () => blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey)));
+                () => blockChain.Append(
+                    block2,
+                    GenerateBlockCommit(
+                        block2,
+                        blockChain.GetNextWorldState().GetValidatorSet(),
+                        new PrivateKey[] { adminPrivateKey })));
             Assert.Equal(2, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block2.Hash));
             // Since failed, roll back nonce.
@@ -557,6 +624,10 @@ namespace Lib9c.Tests
 
             // Limit should also pass.
             txs = GenerateTransactions(5).OrderBy(tx => tx.Id).ToList();
+            blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
             PreEvaluationBlock preEvalBlock3 = new BlockContent(
                 new BlockMetadata(
                     index: 2,
@@ -564,32 +635,37 @@ namespace Lib9c.Tests
                     publicKey: adminPublicKey,
                     previousHash: blockChain.Tip.Hash,
                     txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
+                    lastCommit: blockCommit,
                     evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
                 transactions: txs,
                 evidence: evs).Propose();
             Block block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
-            blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
+            blockChain.Append(
+                block3,
+                GenerateBlockCommit(
+                    block3,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
         }
 
-        private BlockCommit GenerateBlockCommit(Block block, PrivateKey key, BigInteger? power = null)
+        private BlockCommit GenerateBlockCommit(
+            Block block, ValidatorSet validatorSet, IEnumerable<PrivateKey> validatorPrivateKeys)
         {
-            PrivateKey privateKey = key;
             return block.Index != 0
                 ? new BlockCommit(
                     block.Index,
                     0,
                     block.Hash,
-                    ImmutableArray<Vote>.Empty.Add(new VoteMetadata(
+                    validatorPrivateKeys.Select(k => new VoteMetadata(
                         block.Index,
                         0,
                         block.Hash,
                         DateTimeOffset.UtcNow,
-                        privateKey.PublicKey,
-                        power,
-                        VoteFlag.PreCommit).Sign(privateKey)))
+                        k.PublicKey,
+                        validatorSet.GetValidator(k.PublicKey).Power,
+                        VoteFlag.PreCommit).Sign(k)).ToImmutableArray())
                 : null;
         }
 
