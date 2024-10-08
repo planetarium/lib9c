@@ -165,7 +165,7 @@ namespace Nekoyume.Action
             if (!sheet.TryGetValue(randomId, out var costumeRow))
             {
                 throw new SheetRowNotFoundException(
-                    $"Aborted as the costume row ({randomId}) was failed to load.", randomId
+                    $"Aborted as the costume row ({randomId}) was failed to load in {nameof(CostumeItemSheet)}", randomId
                 );
             }
 
