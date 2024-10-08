@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -94,7 +95,7 @@ namespace Nekoyume.Action
                     $"The amount must be greater than or equal to {minimumRequiredGold}.");
             }
 
-            var stakeStateAddress = StakeState.DeriveAddress(context.Signer);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
             var currency = states.GetGoldCurrency();
             var currentBalance = states.GetBalance(context.Signer, currency);
             var stakedBalance = states.GetBalance(stakeStateAddress, currency);
@@ -110,7 +111,7 @@ namespace Nekoyume.Action
 
             var latestStakeContract = new Contract(stakePolicySheet);
             // NOTE: When the staking state is not exist.
-            if (!states.TryGetStakeStateV2(context.Signer, out var stakeStateV2))
+            if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
                 // NOTE: Cannot withdraw staking.
                 if (Amount == 0)
@@ -149,12 +150,21 @@ namespace Nekoyume.Action
                 }
             }
 
+            if (stakeStateV2.StateVersion == 2)
+            {
+                if (!StakeStateUtils.TryMigrateV2ToV3(context, states, stakeStateAddress, stakeStateV2, out var result))
+                {
+                    throw new InvalidOperationException("Failed to migration. Unexpected situation.");
+                }
+
+                states = result.Value.world;
+            }
+
             // NOTE: Withdraw staking.
             if (Amount == 0)
             {
-                return states
-                    .SetLegacyState(stakeStateAddress, Null.Value)
-                    .TransferAsset(context, stakeStateAddress, context.Signer, stakedBalance);
+                return Refund(context, states, stakeStateAddress, context.Signer, stakedBalance)
+                    .SetLegacyState(stakeStateAddress, Null.Value);
             }
 
             // NOTE: Contract a new staking.
@@ -180,19 +190,38 @@ namespace Nekoyume.Action
             FungibleAssetValue targetStakeBalance,
             Contract latestStakeContract)
         {
-            var newStakeState = new StakeStateV2(latestStakeContract, context.BlockIndex);
+            var newStakeState = new StakeState(latestStakeContract, context.BlockIndex);
+
             if (stakedBalance.HasValue)
             {
-                state = state.TransferAsset(
-                    context,
-                    stakeStateAddr,
-                    context.Signer,
-                    stakedBalance.Value);
+                state = Refund(context, state, stakeStateAddr, context.Signer, stakedBalance.Value);
             }
 
             return state
                 .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
+                .MintAsset(context, stakeStateAddr, GetGuildCoinFromNCG(targetStakeBalance))
                 .SetLegacyState(stakeStateAddr, newStakeState.Serialize());
+        }
+
+        private static IWorld Refund(
+            IActionContext context, IWorld world, Address stakeStateAddress, Address signer,
+            FungibleAssetValue stakedBalance)
+        {
+            return world.BurnAsset(
+                context,
+                stakeStateAddress,
+                GetGuildCoinFromNCG(stakedBalance)
+            ).TransferAsset(
+                context,
+                stakeStateAddress,
+                signer,
+                stakedBalance);
+        }
+
+        private static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)
+        {
+            return FungibleAssetValue.Parse(Currencies.GuildGold,
+                balance.GetQuantityString(true));
         }
     }
 }

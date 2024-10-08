@@ -6,14 +6,14 @@ namespace Lib9c.Tests.Model.Stake
     using Nekoyume.Model.State;
     using Xunit;
 
-    public class StakeStateV2Test
+    public class StakeStateTest
     {
         [Fact]
         public void DeriveAddress()
         {
             var agentAddr = new PrivateKey().Address;
-            var expectedStakeStateAddr = StakeState.DeriveAddress(agentAddr);
-            Assert.Equal(expectedStakeStateAddr, StakeStateV2.DeriveAddress(agentAddr));
+            var expectedStakeStateAddr = LegacyStakeState.DeriveAddress(agentAddr);
+            Assert.Equal(expectedStakeStateAddr, StakeState.DeriveAddress(agentAddr));
         }
 
         [Theory]
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Model.Stake
                 Contract.StakeRegularRewardSheetPrefix,
                 1,
                 1);
-            var state = new StakeStateV2(contract, startedBlockIndex, receivedBlockIndex);
+            var state = new StakeState(contract, startedBlockIndex, receivedBlockIndex);
             Assert.Equal(contract, state.Contract);
             Assert.Equal(startedBlockIndex, state.StartedBlockIndex);
             Assert.Equal(receivedBlockIndex, state.ReceivedBlockIndex);
@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Model.Stake
             long receivedBlockIndex)
         {
             Assert.Throws<ArgumentNullException>(() =>
-                new StakeStateV2(null, startedBlockIndex, receivedBlockIndex));
+                new StakeState(null, startedBlockIndex, receivedBlockIndex));
         }
 
         [Theory]
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Model.Stake
             long receivedBlockIndex)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new StakeStateV2(null, startedBlockIndex, receivedBlockIndex));
+                new StakeState(null, startedBlockIndex, receivedBlockIndex));
         }
 
         [Theory]
@@ -62,7 +62,7 @@ namespace Lib9c.Tests.Model.Stake
         [InlineData(long.MaxValue, long.MaxValue)]
         public void Constructor_With_StakeState(long startedBlockIndex, long? receivedBlockIndex)
         {
-            var stakeState = new StakeState(
+            var stakeState = new LegacyStakeState(
                 new PrivateKey().Address,
                 startedBlockIndex);
             if (receivedBlockIndex.HasValue)
@@ -75,7 +75,7 @@ namespace Lib9c.Tests.Model.Stake
                 Contract.StakeRegularRewardSheetPrefix,
                 1,
                 1);
-            var stakeStateV2 = new StakeStateV2(stakeState, contract);
+            var stakeStateV2 = new StakeState(stakeState, contract);
             Assert.Equal(contract, stakeStateV2.Contract);
             Assert.Equal(stakeState.StartedBlockIndex, stakeStateV2.StartedBlockIndex);
             Assert.Equal(stakeState.ReceivedBlockIndex, stakeStateV2.ReceivedBlockIndex);
@@ -84,14 +84,14 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void Constructor_With_StakeState_Throw_ArgumentNullException()
         {
-            var stakeState = new StakeState(new PrivateKey().Address, 0);
+            var stakeState = new LegacyStakeState(new PrivateKey().Address, 0);
             var contract = new Contract(
                 Contract.StakeRegularFixedRewardSheetPrefix,
                 Contract.StakeRegularRewardSheetPrefix,
                 1,
                 1);
-            Assert.Throws<ArgumentNullException>(() => new StakeStateV2(null, contract));
-            Assert.Throws<ArgumentNullException>(() => new StakeStateV2(stakeState, null));
+            Assert.Throws<ArgumentNullException>(() => new StakeState(null, contract));
+            Assert.Throws<ArgumentNullException>(() => new StakeState(stakeState, null));
         }
 
         [Theory]
@@ -104,9 +104,9 @@ namespace Lib9c.Tests.Model.Stake
                 Contract.StakeRegularRewardSheetPrefix,
                 1,
                 1);
-            var state = new StakeStateV2(contract, startedBlockIndex, receivedBlockIndex);
+            var state = new StakeState(contract, startedBlockIndex, receivedBlockIndex);
             var ser = state.Serialize();
-            var des = new StakeStateV2(ser);
+            var des = new StakeState(ser);
             Assert.Equal(state.Contract, des.Contract);
             Assert.Equal(state.StartedBlockIndex, des.StartedBlockIndex);
             Assert.Equal(state.ReceivedBlockIndex, des.ReceivedBlockIndex);
@@ -122,11 +122,11 @@ namespace Lib9c.Tests.Model.Stake
                 Contract.StakeRegularRewardSheetPrefix,
                 1,
                 1);
-            var stateL = new StakeStateV2(contract, 0);
-            var stateR = new StakeStateV2(contract, 0);
+            var stateL = new StakeState(contract, 0);
+            var stateR = new StakeState(contract, 0);
             Assert.Equal(stateL, stateR);
             Assert.True(stateL == stateR);
-            stateR = new StakeStateV2(contract, 1);
+            stateR = new StakeState(contract, 1);
             Assert.NotEqual(stateL, stateR);
             Assert.True(stateL != stateR);
         }
