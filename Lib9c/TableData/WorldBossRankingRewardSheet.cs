@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Types.Assets;
 using Nekoyume.Helper;
+using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
@@ -32,6 +33,7 @@ namespace Nekoyume.TableData
             public int RateMax;
             public List<RuneInfo> Runes;
             public int Crystal;
+            public List<(int itemId, int quantity)> Materials;
             public override int Key => Id;
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -48,20 +50,42 @@ namespace Nekoyume.TableData
                     Runes.Add(new RuneInfo(ParseInt(fields[6 + offset]), ParseInt(fields[7 + offset])));
                 }
                 Crystal = ParseInt(fields[12]);
+
+                if (fields.Count > 13)
+                {
+                    Materials = new List<(int, int)>();
+                    for (int i = 0; i < 2; i++)
+                    {
+                        var offset = i * 2;
+                        Materials.Add(
+                            (ParseInt(fields[13 + offset]), ParseInt(fields[14 + offset])));
+                    }
+                }
             }
 
-            public List<FungibleAssetValue> GetRewards(RuneSheet runeSheet)
+            public (List<FungibleAssetValue> assets, Dictionary<TradableMaterial, int> materials) GetRewards(
+                RuneSheet runeSheet,
+                MaterialItemSheet materialSheet)
             {
-                var result = new List<FungibleAssetValue>
+                var assets = new List<FungibleAssetValue>
                 {
                     Crystal * CrystalCalculator.CRYSTAL
                 };
-                result.AddRange(Runes
+                assets.AddRange(Runes
                     .Where(runeInfo => runeInfo.RuneQty > 0)
                     .Select(runeInfo =>
                         RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId],
                             runeInfo.RuneQty)));
-                return result;
+
+                var materials = new Dictionary<TradableMaterial, int>();
+                foreach (var (itemId, quantity) in Materials)
+                {
+                    var materialRow = materialSheet.Values.First(r => r.Id == itemId);
+                    var material = ItemFactory.CreateTradableMaterial(materialRow);
+                    materials.TryAdd(material, 0);
+                    materials[material] += quantity;
+                }
+                return (assets, materials);
             }
         }
 
