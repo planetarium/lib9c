@@ -42,7 +42,7 @@ namespace Nekoyume.Action
 
 #region Fields
         public List<Guid> MaterialIds = new();
-        public Address    AvatarAddress;
+        public Address AvatarAddress;
         // ItemSubType만 체크하면 ItemType은 자동으로 체크된다고 가정
         public int ItemSubTypeValue;
 #endregion Fields
