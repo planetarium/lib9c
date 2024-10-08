@@ -304,7 +304,6 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         world = EnsureToMintAsset(world, delegatorKey, delegatorGold, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, delegatorGold, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
         world = EnsureUnjailedValidator(world, validatorKey, ref height);
 
         // When

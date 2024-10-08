@@ -369,7 +369,6 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         world = EnsurePromotedValidator(world, validatorKey2, validatorGold, height++);
         world = EnsureToMintAsset(world, delegatorKey, delegatorBalance, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, delegatorGold, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey1, validatorKey1, 10, height++);
         world = EnsureUnjailedValidator(world, validatorKey1, ref height);
         height++;
 
