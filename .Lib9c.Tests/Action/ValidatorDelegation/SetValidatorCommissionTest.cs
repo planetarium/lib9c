@@ -1,21 +1,51 @@
 namespace Lib9c.Tests.Action.ValidatorDelegation
 {
     using System;
-    using System.Linq;
+    using System.Collections.Generic;
     using System.Numerics;
-    using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Nekoyume.ValidatorDelegation;
     using Xunit;
 
-    public class SetValidatorCommissionTest
+    public class SetValidatorCommissionTest : ValidatorDelegationTestBase
     {
+        /// <summary>
+        /// Tested that ValidatorDelegatee.MaxCommissionPercentage is less than int.MaxValue
+        /// in ConstantTest.cs file.
+        /// </summary>
+        private static readonly int MaxCommissionPercentage
+            = (int)ValidatorDelegatee.MaxCommissionPercentage;
+
+        private static readonly long CommissionPercentageChangeCooldown
+            = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
+
+        public static IEnumerable<object[]> RandomCommisionPercentage => new List<object[]>
+        {
+            new object[] { Random.Shared.Next(MaxCommissionPercentage) },
+            new object[] { Random.Shared.Next(MaxCommissionPercentage) },
+            new object[] { Random.Shared.Next(MaxCommissionPercentage) },
+        };
+
+        public static IEnumerable<object[]> RandomInvalidCommisionPercentage => new List<object[]>
+        {
+            new object[] { Random.Shared.Next(MaxCommissionPercentage, int.MaxValue) },
+            new object[] { Random.Shared.Next(MaxCommissionPercentage, int.MaxValue) },
+            new object[] { Random.Shared.Next(MaxCommissionPercentage, int.MaxValue) },
+        };
+
+        public static IEnumerable<object[]> InvalidCommisionPercentageCooldown => new List<object[]>
+        {
+            new object[] { 0 },
+            new object[] { CommissionPercentageChangeCooldown - 1 },
+        };
+
+        public static IEnumerable<object[]> ValidCommisionPercentagePeriod => new List<object[]>
+        {
+            new object[] { CommissionPercentageChangeCooldown },
+            new object[] { CommissionPercentageChangeCooldown + 1 },
+        };
+
         [Fact]
         public void Serialization()
         {
@@ -33,103 +63,188 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
         [Fact]
         public void Execute()
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            // TODO: Use Currencies.GuildGold when it's available.
-            // var gg = Currencies.GuildGold;
-            var gg = ncg;
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = NCG * 10;
+            var height = 1L;
+            world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+            world = EnsurePromotedValidator(world, validatorKey, validatorGold, height);
 
-            var validatorPublicKey = new PrivateKey().PublicKey;
-            world = world.MintAsset(context, validatorPublicKey.Address, gg * 100);
-            var promoteFAV = gg * 10;
-            world = new PromoteValidator(validatorPublicKey, promoteFAV).Execute(new ActionContext
+            // When
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address, commissionPercentage: 11);
+            var actionContext = new ActionContext
             {
                 PreviousState = world,
-                Signer = validatorPublicKey.Address,
-            });
+                Signer = validatorKey.Address,
+                BlockIndex = height + CommissionPercentageChangeCooldown,
+            };
+            world = setValidatorCommission.Execute(actionContext);
 
-            world = new SetValidatorCommission(validatorPublicKey.Address, 11).Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = validatorPublicKey.Address,
-            });
+            // Then
+            var actualRepository = new ValidatorRepository(world, actionContext);
+            var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+            var actualPercentage = actualDelegatee.CommissionPercentage;
 
-            var repository = new ValidatorRepository(world, context);
-            var validator = repository.GetValidatorDelegatee(validatorPublicKey.Address);
-            Assert.Equal(11, validator.CommissionPercentage);
+            Assert.Equal(11, actualPercentage);
         }
 
-        [Fact]
-        public void CannotExceedMaxPercentage()
+        [Theory]
+        [InlineData(9, 10)]
+        [InlineData(9, 8)]
+        [InlineData(0, 1)]
+        [InlineData(20, 19)]
+        public void Execute_Theory(int oldCommissionPercentage, int newCommissionPercentage)
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            // TODO: Use Currencies.GuildGold when it's available.
-            // var gg = Currencies.GuildGold;
-            var gg = ncg;
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = NCG * 10;
+            var height = 1L;
+            world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+            world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+            world = EnsureCommissionChangedValidator(
+                world, validatorKey, oldCommissionPercentage, ref height);
 
-            var validatorPublicKey = new PrivateKey().PublicKey;
-            world = world.MintAsset(context, validatorPublicKey.Address, gg * 100);
-            var promoteFAV = gg * 10;
-            world = new PromoteValidator(validatorPublicKey, promoteFAV).Execute(new ActionContext
+            // When
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address,
+                newCommissionPercentage);
+            var actionContext = new ActionContext
             {
                 PreviousState = world,
-                Signer = validatorPublicKey.Address,
-            });
+                Signer = validatorKey.Address,
+                BlockIndex = height + CommissionPercentageChangeCooldown,
+            };
+            world = setValidatorCommission.Execute(actionContext);
 
-            foreach (var percentage in Enumerable.Range(11, 10))
-            {
-                world = new SetValidatorCommission(validatorPublicKey.Address, percentage).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = validatorPublicKey.Address,
-                });
-            }
+            // Then
+            var actualRepository = new ValidatorRepository(world, actionContext);
+            var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+            var actualPercentage = actualDelegatee.CommissionPercentage;
 
-            Assert.Throws<ArgumentOutOfRangeException>(
-                () => new SetValidatorCommission(validatorPublicKey.Address, 31).Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = validatorPublicKey.Address,
-            }));
+            Assert.Equal(newCommissionPercentage, actualPercentage);
         }
 
-        [Fact]
-        public void CannotExceedMaxChange()
+        [Theory]
+        [MemberData(nameof(RandomInvalidCommisionPercentage))]
+        public void Execute_Theory_WithValueGreaterThanMaximum_Throw(int commissionPercentage)
         {
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var context = new ActionContext { };
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            // TODO: Use Currencies.GuildGold when it's available.
-            // var gg = Currencies.GuildGold;
-            var gg = ncg;
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = NCG * 10;
+            var height = 1L;
 
-            var validatorPublicKey = new PrivateKey().PublicKey;
-            world = world.MintAsset(context, validatorPublicKey.Address, gg * 100);
-            var promoteFAV = gg * 10;
-            world = new PromoteValidator(validatorPublicKey, promoteFAV).Execute(new ActionContext
+            world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+            world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height);
+
+            // When
+            var actionContext = new ActionContext
             {
                 PreviousState = world,
-                Signer = validatorPublicKey.Address,
-            });
+                Signer = validatorKey.Address,
+                BlockIndex = height + CommissionPercentageChangeCooldown,
+            };
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address,
+                commissionPercentage);
 
+            // Then
             Assert.Throws<ArgumentOutOfRangeException>(
-                () => new SetValidatorCommission(validatorPublicKey.Address, 12).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = validatorPublicKey.Address,
-                }));
+                () => setValidatorCommission.Execute(actionContext));
+        }
+
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(-2)]
+        public void Execute_Theory_WithNegative_Throw(int commissionPercentage)
+        {
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = NCG * 10;
+            var height = 1L;
+
+            world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+            world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorKey.Address,
+                BlockIndex = height + CommissionPercentageChangeCooldown,
+            };
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address,
+                commissionPercentage);
+
+            // Then
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => setValidatorCommission.Execute(actionContext));
+        }
+
+        [Theory]
+        [MemberData(nameof(InvalidCommisionPercentageCooldown))]
+        public void Execute_Theory_WithInvalidValue_Throw(int cooldown)
+        {
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = NCG * 10;
+            var height = 1L;
+            world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+            world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+            world = EnsureCommissionChangedValidator(world, validatorKey, 15, ref height);
+
+            // When
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorKey.Address,
+                BlockIndex = height + cooldown,
+            };
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address, commissionPercentage: 14);
+
+            // Then
+            Assert.Throws<InvalidOperationException>(
+                () => setValidatorCommission.Execute(actionContext));
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidCommisionPercentagePeriod))]
+        public void Execute_Theory_WitValue(int period)
+        {
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = NCG * 10;
+            var height = 1L;
+            world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+            world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+            world = EnsureCommissionChangedValidator(world, validatorKey, 11, ref height);
+
+            // When
+            var expectedCommission = 12;
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorKey.Address,
+                BlockIndex = height + period,
+            };
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address, commissionPercentage: expectedCommission);
+            world = setValidatorCommission.Execute(actionContext);
+
+            // Then
+            var actualRepository = new ValidatorRepository(world, actionContext);
+            var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+            var actualPercentage = actualDelegatee.CommissionPercentage;
+
+            Assert.Equal(expectedCommission, actualPercentage);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Libplanet.Action.State;
@@ -33,16 +34,18 @@ public class ValidatorDelegationTestBase
     }
 
     protected static BlockHash EmptyBlockHash { get; }
-        = new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x01));
+        = new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x01));
 
     protected PrivateKey AdminKey { get; } = new PrivateKey();
 
     protected IWorld World { get; }
 
-    protected static T[] GetRandomArray<T>(int length, Func<int, T> creator)
+    protected FungibleAssetValue MinimumDelegation { get; } = NCG * 10;
+
+    protected static T[] CreateArray<T>(int length, Func<int, T> creator)
         => Enumerable.Range(0, length).Select(creator).ToArray();
 
-    protected static IWorld MintAsset(
+    protected static IWorld EnsureToMintAsset(
         IWorld world, PrivateKey privateKey, FungibleAssetValue amount, long blockHeight)
     {
         var actionContext = new ActionContext
@@ -53,33 +56,65 @@ public class ValidatorDelegationTestBase
         return world.MintAsset(actionContext, privateKey.Address, amount);
     }
 
-    protected static IWorld EnsurePromotedValidator(
-        IWorld world, PrivateKey validatorKey, FungibleAssetValue amount, long blockHeight)
-        => EnsurePromotedValidator(world, validatorKey, amount, blockHeight, mint: false);
+    protected static IWorld EnsureToMintAssets(
+        IWorld world, PrivateKey[] privateKeys, FungibleAssetValue[] amounts, long blockHeight)
+    {
+        if (privateKeys.Length != amounts.Length)
+        {
+            throw new ArgumentException(
+                "The length of privateKeys and amounts must be the same.");
+        }
+
+        for (var i = 0; i < privateKeys.Length; i++)
+        {
+            world = EnsureToMintAsset(world, privateKeys[i], amounts[i], blockHeight);
+        }
+
+        return world;
+    }
+
+    protected static IWorld EnsureProposer(
+        IWorld world, PrivateKey validatorKey, long blockHeight)
+    {
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+            Miner = validatorKey.Address,
+        };
+        return new RecordProposer().Execute(actionContext);
+    }
+
+    protected static IWorld EnsurePromotedValidators(
+        IWorld world,
+        PrivateKey[] validatorKeys,
+        FungibleAssetValue[] amounts,
+        long blockHeight)
+    {
+        if (validatorKeys.Length != amounts.Length)
+        {
+            throw new ArgumentException(
+                "The length of validatorPrivateKeys and amounts must be the same.");
+        }
+
+        for (var i = 0; i < validatorKeys.Length; i++)
+        {
+            world = EnsurePromotedValidator(
+                world, validatorKeys[i], amounts[i], blockHeight);
+        }
+
+        return world;
+    }
 
     protected static IWorld EnsurePromotedValidator(
         IWorld world,
         PrivateKey validatorKey,
         FungibleAssetValue amount,
-        long blockHeight,
-        bool mint)
-        => EnsurePromotedValidator(
-            world, validatorKey, amount, blockHeight, mint ? amount : amount * 0);
-
-    protected static IWorld EnsurePromotedValidator(
-        IWorld world,
-        PrivateKey validatorKey,
-        FungibleAssetValue amount,
-        long blockHeight,
-        FungibleAssetValue mintAmount)
+        long blockHeight)
     {
         var validatorPublicKey = validatorKey.PublicKey;
         var promoteValidator = new PromoteValidator(validatorPublicKey, amount);
-
-        if (mintAmount.RawValue > 0)
-        {
-            world = MintAsset(world, validatorKey, mintAmount, blockHeight);
-        }
 
         var actionContext = new ActionContext
         {
@@ -120,7 +155,7 @@ public class ValidatorDelegationTestBase
         var validatorAddress = validatorKey.Address;
         var actionContext = new ActionContext
         {
-            PreviousState = MintAsset(world, delegatorKey, amount, blockHeight),
+            PreviousState = world,
             BlockIndex = blockHeight,
             Signer = delegatorAddress,
         };
@@ -149,6 +184,31 @@ public class ValidatorDelegationTestBase
         }
 
         return world;
+    }
+
+    protected static IWorld EnsureUnbondingDelegator(
+        IWorld world,
+        PrivateKey delegatorKey,
+        PrivateKey validatorKey,
+        BigInteger share,
+        long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var delegatorAddress = delegatorKey.Address;
+        var validatorAddress = validatorKey.Address;
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = delegatorAddress,
+        };
+        var undelegateValidator = new UndelegateValidator(
+            validatorAddress, share);
+        return undelegateValidator.Execute(actionContext);
     }
 
     protected static IWorld EnsureJailedValidator(
@@ -216,6 +276,40 @@ public class ValidatorDelegationTestBase
         return slashValidator.Execute(actionContext);
     }
 
+    protected static IWorld EnsureUnjailedValidator(
+        IWorld world, PrivateKey validatorKey, ref long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var repository = new ValidatorRepository(world, new ActionContext());
+        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        if (!delegatee.Jailed)
+        {
+            throw new ArgumentException(
+                "The validator is not jailed.", nameof(validatorKey));
+        }
+
+        if (delegatee.Tombstoned)
+        {
+            throw new ArgumentException(
+                "The validator is tombstoned.", nameof(validatorKey));
+        }
+
+        blockHeight = Math.Max(blockHeight, delegatee.JailedUntil + 1);
+
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+        };
+        var unjailedValidator = new UnjailValidator();
+        return unjailedValidator.Execute(actionContext);
+    }
+
     protected static IWorld EnsureRewardAllocatedValidator(
         IWorld world, PrivateKey validatorKey, FungibleAssetValue reward, ref long blockHeight)
     {
@@ -237,7 +331,7 @@ public class ValidatorDelegationTestBase
         var actionContext2 = new ActionContext
         {
             PreviousState = world,
-            BlockIndex = blockHeight++,
+            BlockIndex = blockHeight,
             Signer = validatorKey.Address,
             LastCommit = lastCommit2,
         };
@@ -249,11 +343,54 @@ public class ValidatorDelegationTestBase
         var actionContext3 = new ActionContext
         {
             PreviousState = world,
-            BlockIndex = blockHeight++,
+            BlockIndex = blockHeight,
             Signer = validatorKey.Address,
             LastCommit = lastCommit3,
         };
         world = new AllocateReward().Execute(actionContext3);
+
+        return world;
+    }
+
+    protected static IWorld EnsureCommissionChangedValidator(
+        IWorld world,
+        PrivateKey validatorKey,
+        BigInteger commissionPercentage,
+        ref long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        if (commissionPercentage < ValidatorDelegatee.MinCommissionPercentage
+            || commissionPercentage > ValidatorDelegatee.MaxCommissionPercentage)
+        {
+            throw new ArgumentOutOfRangeException(nameof(commissionPercentage));
+        }
+
+        var cooldown = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
+        var repository = new ValidatorRepository(world, new ActionContext());
+        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var currentCommission = delegatee.CommissionPercentage;
+        var increment = commissionPercentage > currentCommission ? 1 : -1;
+        var preferredHeight = delegatee.CommissionPercentageLastUpdateHeight + cooldown;
+
+        while (commissionPercentage != currentCommission)
+        {
+            blockHeight = Math.Min(preferredHeight, blockHeight + cooldown);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                BlockIndex = blockHeight,
+                Signer = validatorKey.Address,
+            };
+            var setValidatorCommission = new SetValidatorCommission(
+                validatorKey.Address, currentCommission + increment);
+            world = setValidatorCommission.Execute(actionContext);
+            currentCommission += increment;
+            preferredHeight = blockHeight + cooldown;
+        }
 
         return world;
     }
@@ -335,7 +472,7 @@ public class ValidatorDelegationTestBase
         var vote1 = new VoteMetadata(
             height: blockHeight,
             round: 0,
-            blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x01)),
+            blockHash: new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x01)),
             timestamp: DateTimeOffset.UtcNow,
             validatorPublicKey: validatorKey.PublicKey,
             validatorPower: BigInteger.One,
@@ -343,7 +480,7 @@ public class ValidatorDelegationTestBase
         var vote2 = new VoteMetadata(
             height: blockHeight,
             round: 0,
-            blockHash: new BlockHash(GetRandomArray(BlockHash.Size, _ => (byte)0x02)),
+            blockHash: new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x02)),
             timestamp: DateTimeOffset.UtcNow,
             validatorPublicKey: validatorKey.PublicKey,
             validatorPower: BigInteger.One,
@@ -357,17 +494,90 @@ public class ValidatorDelegationTestBase
         return evidence;
     }
 
-    protected static FungibleAssetValue GetCommission(
+    protected static FungibleAssetValue CalculateCommission(
+        FungibleAssetValue gold, ValidatorDelegatee delegatee)
+        => CalculateCommission(gold, delegatee.CommissionPercentage);
+
+    protected static FungibleAssetValue CalculateCommission(
         FungibleAssetValue gold, BigInteger percentage)
         => (gold * percentage).DivRem(100).Quotient;
 
-    protected static FungibleAssetValue GetWithoutCommission(
-        FungibleAssetValue gold, BigInteger percentage)
-        => gold - (gold * percentage).DivRem(100).Quotient;
+    protected static FungibleAssetValue CalculatePropserReward(FungibleAssetValue reward)
+        => (reward * ValidatorDelegatee.BaseProposerRewardPercentage).DivRem(100).Quotient;
 
-    protected static FungibleAssetValue GetRandomNCG()
+    protected static FungibleAssetValue CalculateBonusPropserReward(
+        BigInteger preCommitPower, BigInteger totalPower, FungibleAssetValue reward)
+        => (reward * preCommitPower * ValidatorDelegatee.BonusProposerRewardPercentage)
+            .DivRem(totalPower * 100).Quotient;
+
+    protected static FungibleAssetValue CalculateBonusPropserReward(
+        ImmutableArray<Vote> votes, FungibleAssetValue reward)
     {
-        var value = Math.Round(Random.Shared.Next(1, 100000) / 100.0, 2);
+        var totalPower = votes.Select(item => item.ValidatorPower)
+            .OfType<BigInteger>()
+            .Aggregate(BigInteger.Zero, (accum, next) => accum + next);
+
+        var preCommitPower = votes.Where(item => item.Flag == VoteFlag.PreCommit)
+            .Select(item => item.ValidatorPower)
+            .OfType<BigInteger>()
+            .Aggregate(BigInteger.Zero, (accum, next) => accum + next);
+
+        return CalculateBonusPropserReward(preCommitPower, totalPower, reward);
+    }
+
+    protected static FungibleAssetValue CalculateClaim(BigInteger share, BigInteger totalShare, FungibleAssetValue totalClaim)
+        => (totalClaim * share).DivRem(totalShare).Quotient;
+
+    protected static FungibleAssetValue CalculateCommunityFund(ImmutableArray<Vote> votes, FungibleAssetValue reward)
+    {
+        var totalPower = votes.Select(item => item.ValidatorPower)
+            .OfType<BigInteger>()
+            .Aggregate(BigInteger.Zero, (accum, next) => accum + next);
+
+        var powers = votes.Where(item => item.Flag == VoteFlag.PreCommit)
+            .Select(item => item.ValidatorPower)
+            .OfType<BigInteger>();
+
+        var communityFund = reward;
+        foreach (var power in powers)
+        {
+            var distribution = (reward * power).DivRem(totalPower).Quotient;
+            System.Diagnostics.Trace.WriteLine($"expected validator distribution: {reward} * {power} / {totalPower} = {distribution}");
+            communityFund -= distribution;
+        }
+
+        return communityFund;
+    }
+
+    protected static FungibleAssetValue GetRandomNCG() => GetRandomNCG(Random.Shared, 1, 100000);
+
+    protected static FungibleAssetValue GetRandomNCG(Random random)
+        => GetRandomNCG(random, 0.01m, 1000.0m);
+
+    protected static FungibleAssetValue GetRandomNCG(Random random, decimal min, decimal max)
+    {
+        var minLong = (int)(min * 100);
+        var maxLong = (int)(max * 100);
+        var value = Math.Round(random.Next(minLong, maxLong) / 100.0, 2);
         return FungibleAssetValue.Parse(NCG, $"{value:R}");
+    }
+
+    protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav)
+    {
+        if (fav.RawValue >= long.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(fav), "Fungible asset value is too large.");
+        }
+
+        var num = random.NextInt64(1, (long)fav.RawValue);
+        var cash = FungibleAssetValue.FromRawValue(fav.Currency, num);
+
+        if (cash.Sign < 0 || cash > fav)
+        {
+            throw new InvalidOperationException("Invalid cash value.");
+        }
+
+        return cash;
     }
 }

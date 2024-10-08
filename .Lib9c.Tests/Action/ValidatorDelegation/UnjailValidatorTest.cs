@@ -6,6 +6,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using Xunit;
 
 public class UnjailValidatorTest : ValidatorDelegationTestBase
@@ -27,7 +28,9 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        var validatorGold = NCG * 100;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -49,7 +52,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_NotExistedDelegatee_Throw()
+    public void Execute_OnNotPromotedValidator_Throw()
     {
         // Given
         var world = World;
@@ -66,18 +69,18 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         };
 
         // Then
-        Assert.Throws<FailedLoadStateException>(
-            () => unjailValidator.Execute(actionContext));
+        Assert.Throws<FailedLoadStateException>(() => unjailValidator.Execute(actionContext));
     }
 
     [Fact]
-    public void Execute_JaliedValidator_NotJailed_Throw()
+    public void Execute_OnNotJailedValidator_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
 
         // When
         var unjailValidator = new UnjailValidator();
@@ -89,18 +92,18 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         };
 
         // Then
-        Assert.Throws<InvalidOperationException>(
-            () => unjailValidator.Execute(actionContext));
+        Assert.Throws<InvalidOperationException>(() => unjailValidator.Execute(actionContext));
     }
 
     [Fact]
-    public void Execute_JaliedValidator_Early_Throw()
+    public void Execute_TooEarly_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -118,13 +121,14 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
     }
 
     [Fact]
-    public void Execute_JaliedValidator_Tombstoned_Throw()
+    public void Execute_OnTombstonedValidator_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++, mint: true);
+        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When
@@ -133,6 +137,32 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         {
             PreviousState = world,
             BlockIndex = height + SlashValidator.AbstainJailTime,
+            Signer = validatorKey.Address,
+        };
+
+        // Then
+        Assert.Throws<InvalidOperationException>(
+            () => unjailValidator.Execute(actionContext));
+    }
+
+    [Fact]
+    public void Execute_OnLowDelegatedValidator_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        var validatorGold = MinimumDelegation;
+        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+        world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
+        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height);
+
+        // When
+        var unjailValidator = new UnjailValidator();
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = height++,
             Signer = validatorKey.Address,
         };
 

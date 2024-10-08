@@ -47,7 +47,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                     rewardCurrency,
                     lastCommit.Votes);
             }
-           
+
             var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
             if (communityFund.Sign > 0)

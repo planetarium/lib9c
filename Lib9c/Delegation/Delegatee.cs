@@ -180,6 +180,12 @@ namespace Nekoyume.Delegation
                     "Cannot bond with invalid currency.");
             }
 
+            if (Tombstoned)
+            {
+                throw new InvalidOperationException(
+                    "Cannot bond to tombstoned delegatee.");
+            }
+
             Bond bond = Repository.GetBond(this, delegator.Address);
             BigInteger share = ShareFromFAV(fav);
             bond = bond.AddShare(share);
@@ -305,7 +311,7 @@ namespace Nekoyume.Delegation
                 Repository.TransferAsset(RewardPoolAddress, record.Address, rewards);
             }
 
-            Repository.SetLumpSumRewardsRecord(record);            
+            Repository.SetLumpSumRewardsRecord(record);
         }
 
         public void Slash(BigInteger slashFactor, long infractionHeight, long height)
