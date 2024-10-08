@@ -36,8 +36,8 @@ namespace Nekoyume.Action
         {
             ItemSubType.FullCostume,
             ItemSubType.Title,
-            ItemSubType.Title,
-            ItemSubType.Title,
+            ItemSubType.Grimoire,
+            ItemSubType.Aura,
         };
 
 #region Fields
