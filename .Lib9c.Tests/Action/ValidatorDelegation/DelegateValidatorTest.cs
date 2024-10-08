@@ -3,12 +3,15 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Org.BouncyCastle.Crypto.Modes;
 using Xunit;
 
 public class DelegateValidatorTest : ValidatorDelegationTestBase
@@ -248,7 +251,6 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
 
         world = EnsureToMintAsset(world, delegatorKey, delegatorBalance, height++);
         world = EnsureBondedDelegator(world, delegatorKey, validatorKey, delegatorGold, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
         world = EnsureUnjailedValidator(world, validatorKey, ref height);
 
         // When
