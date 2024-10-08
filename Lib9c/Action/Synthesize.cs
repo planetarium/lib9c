@@ -82,15 +82,22 @@ namespace Nekoyume.Action
             {
                 var materialEquipment = GetEquipmentFromId(materialId, avatarState, context, addressesHex);
                 var materialCostume = GetCostumeFromId(materialId, avatarState, addressesHex);
-                if (materialEquipment == null || materialCostume == null)
+                if (materialEquipment == null && materialCostume == null)
                 {
                     throw new InvalidMaterialException(
                         $"{addressesHex} Aborted as the material item is not a valid item type."
                     );
                 }
 
-                materialEquipments.Add(materialEquipment);
-                materialCostumes.Add(materialCostume);
+                if (materialEquipment != null)
+                {
+                    materialEquipments.Add(materialEquipment);
+                }
+
+                if (materialCostume != null)
+                {
+                    materialCostumes.Add(materialCostume);
+                }
             }
 
             // Unequip items
