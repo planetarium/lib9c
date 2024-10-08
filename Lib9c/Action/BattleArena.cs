@@ -437,7 +437,7 @@ namespace Nekoyume.Action
             {
                 if (roundData.MedalId == 0)
                 {
-
+                    throw new MedalIdNotFoundException($"{addressesHex}{roundData.ChampionshipId}-{roundData.Round}.MedalId is zero. Need to set MedalId column at ArenaSheet.");
                 }
 
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();

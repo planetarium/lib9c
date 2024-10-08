@@ -59,12 +59,17 @@ namespace Nekoyume.Arena
             var count = 0;
             foreach (var data in row.Round)
             {
+                var itemId = data.MedalId;
+                if (data.MedalId == 0)
+                {
+                    continue;
+                }
+
                 if (!data.ArenaType.Equals(ArenaType.Season))
                 {
                     continue;
                 }
 
-                var itemId = data.MedalId;
                 if (avatarState.inventory.TryGetItem(itemId, out var item))
                 {
                     count += item.count;
