@@ -161,7 +161,7 @@ namespace Lib9c.Tests.Action
                     continue;
                 }
 
-                var itemId = ArenaHelper.GetMedalItemId(data.ChampionshipId, data.Round);
+                var itemId = data.MedalId;
                 var material = ItemFactory.CreateMaterial(materialSheet, itemId);
                 avatarState.inventory.AddItem(material, count);
             }
