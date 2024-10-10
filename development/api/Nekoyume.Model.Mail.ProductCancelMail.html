@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Mail_ProductCancelMail" data-uid="Nekoyume.Model.Mail.ProductCancelMail" class="text-break">
-Class ProductCancelMail  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class ProductCancelMail  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -179,7 +179,7 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductCancelMail__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Mail.ProductCancelMail.#ctor(Bencodex.Types.Dictionary)">
   ProductCancelMail(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -208,16 +208,16 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
   <a id="Nekoyume_Model_Mail_ProductCancelMail__ctor_" data-uid="Nekoyume.Model.Mail.ProductCancelMail.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Mail_ProductCancelMail__ctor_System_Int64_System_Guid_System_Int64_System_Guid_" data-uid="Nekoyume.Model.Mail.ProductCancelMail.#ctor(System.Int64,System.Guid,System.Int64,System.Guid)">
-  ProductCancelMail(long, Guid, long, Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Mail_ProductCancelMail__ctor_System_Int64_System_Guid_System_Int64_System_Guid_Nekoyume_Model_Market_Product_" data-uid="Nekoyume.Model.Mail.ProductCancelMail.#ctor(System.Int64,System.Guid,System.Int64,System.Guid,Nekoyume.Model.Market.Product)">
+  ProductCancelMail(long, Guid, long, Guid, Product)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ProductCancelMail(long blockIndex, Guid id, long requiredBlockIndex, Guid productId)</code></pre>
+    <pre><code class="lang-csharp hljs">public ProductCancelMail(long blockIndex, Guid id, long requiredBlockIndex, Guid productId, Product product)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -229,6 +229,8 @@ public class ProductCancelMail : Mail, IState</code></pre>
     <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
     <dt><code>productId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>product</code> <a class="xref" href="Nekoyume.Model.Market.Product.html">Product</a></dt>
     <dd></dd>
   </dl>
 
@@ -248,9 +250,39 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
 
 
+  <h3 id="Nekoyume_Model_Mail_ProductCancelMail_Product" data-uid="Nekoyume.Model.Mail.ProductCancelMail.Product">
+  Product
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Product Product</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Market.Product.html">Product</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_Model_Mail_ProductCancelMail_ProductId" data-uid="Nekoyume.Model.Mail.ProductCancelMail.ProductId">
   ProductId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -277,6 +309,36 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
 
 
+
+  <h3 id="Nekoyume_Model_Mail_ProductCancelMail_ProductKey" data-uid="Nekoyume.Model.Mail.ProductCancelMail.ProductKey">
+  ProductKey
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string ProductKey = &quot;p&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -285,7 +347,7 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductCancelMail_MailType" data-uid="Nekoyume.Model.Mail.ProductCancelMail.MailType">
   MailType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -316,7 +378,7 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductCancelMail_TypeId" data-uid="Nekoyume.Model.Mail.ProductCancelMail.TypeId">
   TypeId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -351,7 +413,7 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductCancelMail_Read_Nekoyume_Model_Mail_IMail_" data-uid="Nekoyume.Model.Mail.ProductCancelMail.Read(Nekoyume.Model.Mail.IMail)">
   Read(IMail)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -382,7 +444,7 @@ public class ProductCancelMail : Mail, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Mail_ProductCancelMail_Serialize" data-uid="Nekoyume.Model.Mail.ProductCancelMail.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -413,7 +475,7 @@ public class ProductCancelMail : Mail, IState</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Mail/ProductCancelMail.cs/#L9" class="edit-link">Edit this page</a>
         </div>
 
 
