@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Model.Event;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -425,6 +426,65 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
+        }
+
+        [Theory]
+        [InlineData(1001, 10010001, 10010001)]
+        public void CheckRewardItems(
+            int eventScheduleId,
+            int eventDungeonId,
+            int eventDungeonStageId)
+        {
+            Assert.True(_tableSheets.EventScheduleSheet
+                .TryGetValue(eventScheduleId, out var scheduleRow));
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+
+            var avatarState = _initialStates.GetAvatarState(_avatarAddress);
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level);
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment);
+            }
+
+            var state = _initialStates.SetAvatarState(_avatarAddress, avatarState);
+            var action = new EventDungeonBattle
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = eventScheduleId,
+                EventDungeonId = eventDungeonId,
+                EventDungeonStageId = eventDungeonStageId,
+                Equipments = equipments
+                    .Select(e => e.NonFungibleId)
+                    .ToList(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                RandomSeed = 0,
+                BlockIndex = contextBlockIndex,
+            });
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            var stageSheet = nextState.GetSheet<EventDungeonStageSheet>();
+            if (!stageSheet.TryGetValue(eventDungeonStageId, out var stageRow))
+            {
+                throw new SheetRowNotFoundException(nameof(EventDungeonStageSheet), eventDungeonStageId);
+            }
+
+            var materialItemSheet = nextState.GetSheet<MaterialItemSheet>();
+            var circleRow = materialItemSheet.Values.First(i => i.ItemSubType == ItemSubType.Circle);
+            var circleRewardData = stageRow.Rewards.FirstOrDefault(reward => reward.ItemId == circleRow.Id);
+            if (circleRewardData != null)
+            {
+                var circles = nextAvatar.inventory.Items.Where(x => x.item.Id == circleRow.Id);
+                Assert.All(circles, x => Assert.True(x.item is TradableMaterial));
+            }
         }
 
         private IWorld Execute(

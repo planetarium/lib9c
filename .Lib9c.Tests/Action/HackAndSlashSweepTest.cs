@@ -598,6 +598,80 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        [InlineData(1, 15)]
+        [InlineData(2, 55)]
+        [InlineData(3, 111)]
+        [InlineData(4, 189)]
+        [InlineData(4, 200)]
+        [InlineData(5, 250)]
+        [InlineData(6, 300)]
+        public void CheckRewardItems(int worldId, int stageId)
+        {
+            const int apStoneCount = 10;
+            var avatarState = AvatarState.Create(
+                _avatarAddress,
+                _agentAddress,
+                0,
+                _initialState.GetAvatarSheets(),
+                _rankingMapAddress);
+            avatarState.level = 400;
+            avatarState.worldInformation =
+                new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), stageId);
+
+            var materialSheet = _initialState.GetSheet<MaterialItemSheet>();
+            var itemRow = materialSheet.Values.First(r => r.ItemSubType == ItemSubType.ApStone);
+            var apStone = ItemFactory.CreateTradableMaterial(itemRow);
+            avatarState.inventory.AddItem(apStone, apStoneCount);
+
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level);
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment);
+            }
+
+            var state = _initialState
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    Enumerable.Range(1, worldId).ToList().Select(i => i.Serialize()).Serialize())
+                .SetActionPoint(_avatarAddress, 120);
+            var stageSheet = _initialState.GetSheet<StageSheet>();
+            if (!stageSheet.TryGetValue(stageId, out var stageRow))
+            {
+                throw new SheetRowNotFoundException(nameof(StageSheet), stageId);
+            }
+
+            var actionPoint = _initialState.GetActionPoint(_avatarAddress);
+            var action = new HackAndSlashSweep
+            {
+                costumes = new List<Guid>(),
+                equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                runeInfos = new List<RuneSlotInfo>(),
+                avatarAddress = _avatarAddress,
+                actionPoint = (int)actionPoint,
+                apStoneCount = apStoneCount,
+                worldId = worldId,
+                stageId = stageId,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                RandomSeed = 0,
+            });
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            var circleRow = materialSheet.Values.First(i => i.ItemSubType == ItemSubType.Circle);
+            var circleRewardData = stageRow.Rewards.FirstOrDefault(reward => reward.ItemId == circleRow.Id);
+            if (circleRewardData != null)
+            {
+                var circles = nextAvatar.inventory.Items.Where(x => x.item.Id == circleRow.Id);
+                Assert.All(circles, x => Assert.True(x.item is TradableMaterial));
+            }
+        }
+
+        [Theory]
         [InlineData(0, 30001, 1, 30001, typeof(DuplicatedRuneIdException))]
         [InlineData(1, 10002, 1, 30001, typeof(DuplicatedRuneSlotIndexException))]
         public void ExecuteDuplicatedException(int slotIndex, int runeId, int slotIndex2, int runeId2, Type exception)

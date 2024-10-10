@@ -14,7 +14,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
-    using Nekoyume.Blockchain.Policy;
     using Nekoyume.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
@@ -26,7 +25,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
+    using static SerializeKeys;
 
     public class HackAndSlashTest
     {
@@ -984,6 +983,9 @@ namespace Lib9c.Tests.Action
         [InlineData(2, 55)]
         [InlineData(3, 111)]
         [InlineData(4, 189)]
+        [InlineData(4, 200)]
+        [InlineData(5, 250)]
+        [InlineData(6, 300)]
         public void CheckRewardItems(int worldId, int stageId)
         {
             Assert.True(_tableSheets.WorldSheet.TryGetValue(worldId, out var worldRow));
@@ -1098,6 +1100,14 @@ namespace Lib9c.Tests.Action
             var totalMax = max * stageRow.DropItemMax + questSum;
             var totalCount = rewardItem.Sum(x => x.count);
             Assert.InRange(totalCount, totalMin, totalMax);
+
+            var circleRow = materialItemSheet.Values.First(i => i.ItemSubType == ItemSubType.Circle);
+            var circleRewardData = stageRow.Rewards.FirstOrDefault(reward => reward.ItemId == circleRow.Id);
+            if (circleRewardData != null)
+            {
+                var circles = nextAvatarState.inventory.Items.Where(x => x.item.Id == circleRow.Id);
+                Assert.All(circles, x => Assert.True(x.item is TradableMaterial));
+            }
         }
 
         [Theory]
