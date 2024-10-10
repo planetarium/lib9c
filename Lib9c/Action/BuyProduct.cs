@@ -178,7 +178,7 @@ namespace Nekoyume.Action
             var receipt = new ProductReceipt(productId, sellerAvatarAddress, buyerAvatarState.address, product.Price,
                 context.BlockIndex);
             states = states
-                .SetLegacyState(productAddress, Null.Value)
+                .RemoveLegacyState(productAddress)
                 .SetLegacyState(productsStateAddress, productsState.Serialize())
                 .SetAvatarState(sellerAvatarAddress, sellerAvatarState)
                 .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
