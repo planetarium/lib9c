@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
                 Signer = patron,
                 PreviousState = states,
             });
-            Assert.Equal(Null.Value, nextState.GetLegacyState(agent.GetPledgeAddress()));
+            Assert.Null(nextState.GetLegacyState(agent.GetPledgeAddress()));
             Assert.Equal(mead * 0, nextState.GetBalance(agent, mead));
             if (balance > 0)
             {

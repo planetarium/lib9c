@@ -122,7 +122,7 @@ namespace Nekoyume.Action
                 if (stakeState.IsCancellable(context.BlockIndex))
                 {
                     return states
-                        .SetLegacyState(stakeState.address, Null.Value)
+                        .RemoveLegacyState(stakeState.address)
                         .TransferAsset(context, stakeState.address, context.Signer, stakedBalance);
                 }
             }

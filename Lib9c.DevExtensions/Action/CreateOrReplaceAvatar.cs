@@ -582,7 +582,7 @@ namespace Lib9c.DevExtensions.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr);
             if (CrystalRandomBuff is null)
             {
-                states = states.SetLegacyState(crystalRandomSkillAddr, Null.Value);
+                states = states.RemoveLegacyState(crystalRandomSkillAddr);
             }
             else
             {

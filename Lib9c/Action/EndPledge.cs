@@ -44,7 +44,7 @@ namespace Nekoyume.Action
                 {
                     states = states.TransferAsset(context, AgentAddress, signer, balance);
                 }
-                return states.SetLegacyState(contractAddress, Null.Value);
+                return states.RemoveLegacyState(contractAddress);
             }
 
             throw new FailedLoadStateException("failed to find pledge.");
