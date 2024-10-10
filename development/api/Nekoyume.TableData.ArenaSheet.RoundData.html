@@ -155,16 +155,16 @@ public class ArenaSheet.RoundData</code></pre>
 
   <a id="Nekoyume_TableData_ArenaSheet_RoundData__ctor_" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.#ctor*"></a>
 
-  <h3 id="Nekoyume_TableData_ArenaSheet_RoundData__ctor_System_Int32_System_Int32_Nekoyume_Model_EnumType_ArenaType_System_Int64_System_Int64_System_Int32_System_Int64_System_Int64_System_Int64_System_Int32_System_Int32_" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.#ctor(System.Int32,System.Int32,Nekoyume.Model.EnumType.ArenaType,System.Int64,System.Int64,System.Int32,System.Int64,System.Int64,System.Int64,System.Int32,System.Int32)">
-  RoundData(int, int, ArenaType, long, long, int, long, long, long, int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/ArenaSheet.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_TableData_ArenaSheet_RoundData__ctor_System_Int32_System_Int32_Nekoyume_Model_EnumType_ArenaType_System_Int64_System_Int64_System_Int32_System_Int64_System_Int64_System_Int64_System_Int32_System_Int32_System_Int32_" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.#ctor(System.Int32,System.Int32,Nekoyume.Model.EnumType.ArenaType,System.Int64,System.Int64,System.Int32,System.Int64,System.Int64,System.Int64,System.Int32,System.Int32,System.Int32)">
+  RoundData(int, int, ArenaType, long, long, int, long, long, long, int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/ArenaSheet.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public RoundData(int championshipId, int round, ArenaType arenaType, long startBlockIndex, long endBlockIndex, int requiredMedalCount, long entranceFee, long ticketPrice, long additionalTicketPrice, int maxPurchaseCount, int maxPurchaseCountWithInterval)</code></pre>
+    <pre><code class="lang-csharp hljs">public RoundData(int championshipId, int round, ArenaType arenaType, long startBlockIndex, long endBlockIndex, int requiredMedalCount, long entranceFee, long ticketPrice, long additionalTicketPrice, int maxPurchaseCount, int maxPurchaseCountWithInterval, int medalId = 0)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -190,6 +190,8 @@ public class ArenaSheet.RoundData</code></pre>
     <dt><code>maxPurchaseCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd></dd>
     <dt><code>maxPurchaseCountWithInterval</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>medalId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd></dd>
   </dl>
 
@@ -425,6 +427,37 @@ public class ArenaSheet.RoundData</code></pre>
 
 
 
+  <a id="Nekoyume_TableData_ArenaSheet_RoundData_MedalId_" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.MedalId*"></a>
+
+  <h3 id="Nekoyume_TableData_ArenaSheet_RoundData_MedalId" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.MedalId">
+  MedalId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/ArenaSheet.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MedalId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Nekoyume_TableData_ArenaSheet_RoundData_RequiredMedalCount_" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.RequiredMedalCount*"></a>
 
   <h3 id="Nekoyume_TableData_ArenaSheet_RoundData_RequiredMedalCount" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.RequiredMedalCount">
@@ -557,7 +590,7 @@ public class ArenaSheet.RoundData</code></pre>
 
   <h3 id="Nekoyume_TableData_ArenaSheet_RoundData_IsTheRoundOpened_System_Int64_" data-uid="Nekoyume.TableData.ArenaSheet.RoundData.IsTheRoundOpened(System.Int64)">
   IsTheRoundOpened(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/ArenaSheet.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/ArenaSheet.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

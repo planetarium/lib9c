@@ -3582,6 +3582,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Exceptions.MedalIdNotFoundException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Exceptions.MedalIdNotFoundException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Exceptions.NotEnoughEventDungeonTicketsException.yml",
       "output": {
         ".html": {
