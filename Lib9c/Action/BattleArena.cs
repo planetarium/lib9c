@@ -164,7 +164,7 @@ namespace Nekoyume.Action
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             myRuneSlotState.UpdateSlot(runeInfos, runeListSheet);
             states = states.SetLegacyState(myRuneSlotStateAddress, myRuneSlotState.Serialize());
-            
+
             // update my item slot
             var myItemSlotStateAddress = ItemSlotState.DeriveAddress(myAvatarAddress, BattleType.Arena);
             var myItemSlotState = states.TryGetLegacyState(myItemSlotStateAddress, out List rawItemSlotState)
@@ -435,11 +435,14 @@ namespace Nekoyume.Action
             // add medals
             if (roundData.ArenaType != ArenaType.OffSeason && winCount > 0)
             {
+                if (roundData.MedalId == 0)
+                {
+                    throw new MedalIdNotFoundException($"{addressesHex}{roundData.ChampionshipId}-{roundData.Round}.MedalId is zero. Need to set MedalId column at ArenaSheet.");
+                }
+
                 var materialSheet = sheets.GetSheet<MaterialItemSheet>();
-                var medal = ArenaHelper.GetMedal(
-                    roundData.ChampionshipId,
-                    roundData.Round,
-                    materialSheet);
+                var medal = ItemFactory.CreateMaterial(materialSheet, roundData.MedalId);
+
                 myAvatarState.inventory.AddItem(medal, count: winCount);
             }
 
