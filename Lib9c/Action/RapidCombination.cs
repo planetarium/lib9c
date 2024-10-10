@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -22,10 +23,13 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType("rapid_combination10")]
-    public class RapidCombination : GameAction
+    public class RapidCombination : GameAction, IRapidCombinationV2
     {
         public Address avatarAddress;
         public List<int> slotIndexList = new();
+
+        Address IRapidCombinationV2.AvatarAddress => avatarAddress;
+        List<int> IRapidCombinationV2.SlotIndexList => slotIndexList;
 
         public override IWorld Execute(IActionContext context)
         {
