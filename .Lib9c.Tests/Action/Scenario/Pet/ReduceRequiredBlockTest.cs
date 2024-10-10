@@ -10,14 +10,12 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.Pet;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class ReduceRequiredBlockTest
     {

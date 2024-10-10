@@ -9,7 +9,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Pet;
@@ -17,7 +16,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class IncreaseBlockPerHourglassTest
     {
@@ -69,7 +67,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var recipe =
                 _tableSheets.EquipmentItemRecipeSheet.Values.First(
                     recipe => recipe.RequiredBlockIndex >= requiredBlock
-                );
+                    );
             Assert.NotNull(recipe);
 
             // Get Materials and stages

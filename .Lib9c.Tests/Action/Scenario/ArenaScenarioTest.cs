@@ -54,9 +54,6 @@ namespace Lib9c.Tests.Action.Scenario
 #pragma warning restore CS0618
             var goldCurrencyState = new GoldCurrencyState(_ncg);
             _rankingMapAddress = new PrivateKey().Address;
-            var clearStageId = Math.Max(
-                _tableSheets.StageSheet.First?.Id ?? 1,
-                GameConfig.RequireClearedStageLevel.ActionsInRankingBoard);
 
             _state = _state
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
