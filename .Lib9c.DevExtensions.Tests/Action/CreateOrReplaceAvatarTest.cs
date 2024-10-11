@@ -562,7 +562,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 Addresses.GetSkillStateAddressFromAvatarAddress(avatarAddr.Value);
             if (action.CrystalRandomBuff is null)
             {
-                Assert.Equal(Null.Value, nextStates.GetLegacyState(crystalRandomSkillAddr));
+                Assert.Null(nextStates.GetLegacyState(crystalRandomSkillAddr));
             }
             else
             {

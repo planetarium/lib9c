@@ -321,7 +321,7 @@ namespace Lib9c.Tests.Action.Scenario
                     var sellProductList = new ProductsState((List)latestState.GetLegacyState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
-                    Assert.Equal(Null.Value, latestState.GetLegacyState(Product.DeriveAddress(productId)));
+                    Assert.Null(latestState.GetLegacyState(Product.DeriveAddress(productId)));
                     var product = ProductFactory.DeserializeProduct((List)nextState2.GetLegacyState(Product.DeriveAddress(productId)));
                     switch (product)
                     {
@@ -508,7 +508,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             foreach (var productAddress in action2.ProductInfos.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
-                Assert.Equal(Null.Value, latestState.GetLegacyState(productAddress));
+                Assert.Null(latestState.GetLegacyState(productAddress));
                 var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 switch (product)
                 {
@@ -1097,7 +1097,7 @@ namespace Lib9c.Tests.Action.Scenario
                     var sellProductList = new ProductsState((List)tradedState.GetLegacyState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
-                    Assert.Equal(Null.Value, tradedState.GetLegacyState(Product.DeriveAddress(productId)));
+                    Assert.Null(tradedState.GetLegacyState(Product.DeriveAddress(productId)));
                     var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(Product.DeriveAddress(productId)));
                     switch (product)
                     {
