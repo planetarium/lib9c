@@ -130,11 +130,11 @@ namespace Nekoyume.Model.State
             return blockIndex >= WorkCompleteBlockIndex;
         }
 
-        public void Update(AttachmentActionResult result, long blockIndex, long unlockBlockIndex, int? petId = null)
+        public void Update(AttachmentActionResult result, long blockIndex, long workCompleteBlockIndex, int? petId = null)
         {
             Result = result;
             WorkStartBlockIndex = blockIndex;
-            WorkCompleteBlockIndex = unlockBlockIndex;
+            WorkCompleteBlockIndex = workCompleteBlockIndex;
             PetId = petId;
         }
 
