@@ -77,8 +77,7 @@ namespace Lib9c.Tests.TableData
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             var rewards = row.GetRewards(tableSheets.RuneSheet, tableSheets.MaterialItemSheet);
 
-            Assert.Equal(4, rewards.assets.Count);
-            Assert.Equal(2, rewards.materials.Count);
+            Assert.Equal(6, rewards.Count);
         }
     }
 }
