@@ -101,7 +101,7 @@ public class JoinArenaTest
             _myAvatarState.level);
         var world = _world.MintAsset(new ActionContext(), _myAgentState.address, fee);
         var seasonRound = row.Round.First(e => e.ArenaType == ArenaType.Season);
-        var itemSheetId = ArenaHelper.GetMedalItemId(row.ChampionshipId, seasonRound.Round);
+        var itemSheetId = seasonRound.MedalId;
         Assert.True(_tableSheets.ItemSheet.TryGetValue(itemSheetId, out var itemRow));
         var item = ItemFactory.CreateItem(itemRow, new TestRandom());
         var inventory = _world.GetInventoryV2(_myAvatarState.address);

@@ -1,13 +1,21 @@
 namespace Lib9c.Tests.Action
 {
+    using System;
+    using System.Linq;
     using Libplanet.Types.Assets;
     using Nekoyume.Helper;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
 
     public class WorldBossHelperTest
     {
+        private readonly Currency _crystalCurrency = CrystalCalculator.CRYSTAL;
+
+        private readonly TableSheets _tableSheets =
+            new TableSheets(TableSheetsImporter.ImportSheets());
+
         [Theory]
         [InlineData(10, 10, 0, 10)]
         [InlineData(10, 10, 1, 20)]
@@ -55,6 +63,52 @@ namespace Lib9c.Tests.Action
         public void CanRefillTicket(long blockIndex, long refilledBlockIndex, long startedBlockIndex, int refillInterval, bool expected)
         {
             Assert.Equal(expected, WorldBossHelper.CanRefillTicket(blockIndex, refilledBlockIndex, startedBlockIndex, refillInterval));
+        }
+
+        [Theory]
+        [InlineData(typeof(WorldBossRankRewardSheet))]
+        [InlineData(typeof(WorldBossKillRewardSheet))]
+        public void CalculateReward(Type sheetType)
+        {
+            var random = new TestRandom();
+            IWorldBossRewardSheet sheet;
+            if (sheetType == typeof(WorldBossRankRewardSheet))
+            {
+                sheet = _tableSheets.WorldBossRankRewardSheet;
+            }
+            else
+            {
+                sheet = _tableSheets.WorldBossKillRewardSheet;
+            }
+
+            foreach (var rewardRow in sheet.OrderedRows)
+            {
+                var bossId = rewardRow.BossId;
+                var rank = rewardRow.Rank;
+                var rewards = WorldBossHelper.CalculateReward(
+                    rank,
+                    bossId,
+                    _tableSheets.RuneWeightSheet,
+                    sheet,
+                    _tableSheets.RuneSheet,
+                    _tableSheets.MaterialItemSheet,
+                    random
+                );
+                var expectedRune = rewardRow.Rune;
+                var expectedCrystal = rewardRow.Crystal * _crystalCurrency;
+                var expectedCircle = rewardRow.Circle;
+                var crystal = rewards.assets.First(f => f.Currency.Equals(_crystalCurrency));
+                var rune = rewards.assets
+                    .Where(f => !f.Currency.Equals(_crystalCurrency))
+                    .Sum(r => (int)r.MajorUnit);
+                var circle = rewards.materials
+                    .Where(kv => kv.Key.ItemSubType == ItemSubType.Circle)
+                    .Sum(kv => kv.Value);
+
+                Assert.Equal(expectedCrystal, crystal);
+                Assert.Equal(expectedRune, rune);
+                Assert.Equal(expectedCircle, circle);
+            }
         }
     }
 }

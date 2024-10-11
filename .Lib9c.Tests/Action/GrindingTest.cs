@@ -91,10 +91,11 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, _agentState)
                 .SetActionPoint(_avatarAddress, 120);
 
+            var testRandom = new TestRandom();
             var itemRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
             for (int i = 0; i < equipmentCount; i++)
             {
-                var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, default, 1, itemLevel);
+                var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, testRandom.GenerateRandomGuid(), 1, itemLevel);
                 equipment.equipped = equipped;
                 _avatarState.inventory.AddItem(equipment);
             }
@@ -126,8 +127,9 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, _agentState)
                 .SetActionPoint(_avatarAddress, 120);
 
+            var testRandom = new TestRandom();
             var itemRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, default, 1, itemLevel);
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, testRandom.GenerateRandomGuid(), 1, itemLevel);
             equipment.equipped = false;
             _avatarState.inventory.AddItem(equipment);
 
@@ -191,8 +193,9 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, _agentState)
                 .SetActionPoint(_avatarAddress, ap);
 
+            var testRandom = new TestRandom();
             var itemRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, default, 1);
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, testRandom.GenerateRandomGuid(), 1);
             equipment.equipped = false;
             _avatarState.inventory.AddItem(equipment);
 
@@ -281,17 +284,18 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_agentAddress, _agentState)
                 .SetActionPoint(_avatarAddress, 120);
 
+            var testRandom = new TestRandom();
             if (equipmentExist)
             {
                 var itemRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
-                var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, default, requiredBlockIndex);
+                var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, testRandom.GenerateRandomGuid(), requiredBlockIndex);
                 equipment.equipped = false;
                 _avatarState.inventory.AddItem(equipment);
             }
             else
             {
                 var itemRow = _tableSheets.ConsumableItemSheet.Values.First(r => r.Grade == 1);
-                var consumable = (Consumable)ItemFactory.CreateItemUsable(itemRow, default, requiredBlockIndex);
+                var consumable = (Consumable)ItemFactory.CreateItemUsable(itemRow, testRandom.GenerateRandomGuid(), requiredBlockIndex);
                 _avatarState.inventory.AddItem(consumable);
             }
 
@@ -322,11 +326,11 @@ namespace Lib9c.Tests.Action
             );
 
             Assert.Equal(expected.Count, actual.Count);
-            foreach (var (material, count) in actual)
+            foreach (var (material, actualCount) in actual)
             {
-                if (expected.TryGetValue(material.Id, out var actualCount))
+                if (expected.TryGetValue(material.Id, out var expectedCount))
                 {
-                    Assert.Equal(count, actualCount);
+                    Assert.Equal(expectedCount, actualCount);
                 }
                 else
                 {
@@ -346,10 +350,11 @@ namespace Lib9c.Tests.Action
             int rewardMaterialCount,
             MaterialItemSheet materialItemSheet)
         {
+            var testRandom = new TestRandom();
             var equipmentIds = new List<Guid>();
             for (int i = 0; i < equipmentCount; i++)
             {
-                equipmentIds.Add(default);
+                equipmentIds.Add(testRandom.GenerateRandomGuid());
             }
 
             Assert.Equal(equipmentCount, equipmentIds.Count);
@@ -417,9 +422,9 @@ namespace Lib9c.Tests.Action
                     new[] { 10750008, 10760000, 20160000, 20160003 },
                     new Dictionary<int, int>
                     {
-                        { 306085, 15 },
-                        { 600401, 35 },
-                        { 600402, 21 },
+                        { 306085, 15 },  // 5 + 10 + 0 + 0
+                        { 600401, 12 },  // 0 + 0 + 2 + 10
+                        { 600402, 23 },  // 0 + 0 + 3 + 20
                     },
                 },
                 new object[]
