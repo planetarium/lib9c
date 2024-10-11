@@ -44,6 +44,8 @@ namespace Nekoyume.Blockchain.Policy
             IActionLoader? actionLoader = null,
             int? maxTransactionPerBlock = null)
         {
+            // NOTE: When you change `IActionLoader`, you should also update
+            // `IActionLoader` in `Lib9c.Plugin.PluginActionEvaluator`.
             _actionLoader = actionLoader ?? new NCActionLoader();
             MaxTransactionsPerBlock = Math.Min(
                 maxTransactionPerBlock ?? DefaultMaxTransactionsPerBlock,
@@ -138,6 +140,8 @@ namespace Nekoyume.Blockchain.Policy
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
             return new BlockPolicy(
+                // NOTE: When you change `PolicyActionsRegistry`, you should also update
+                // `PolicyActionsRegistry` in `Lib9c.Plugin.PluginActionEvaluator`.
                 policyActionsRegistry: new PolicyActionsRegistry(
                     beginBlockActions: ImmutableArray<IAction>.Empty,
                     endBlockActions: new IAction[] { new RewardGold() }.ToImmutableArray(),
