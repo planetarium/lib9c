@@ -63,7 +63,7 @@ namespace Nekoyume.TableData
                 }
             }
 
-            public (List<FungibleAssetValue> assets, Dictionary<TradableMaterial, int> materials) GetRewards(
+            public (List<FungibleAssetValue> assets, Dictionary<Material, int> materials) GetRewards(
                 RuneSheet runeSheet,
                 MaterialItemSheet materialSheet)
             {
@@ -77,11 +77,11 @@ namespace Nekoyume.TableData
                         RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId],
                             runeInfo.RuneQty)));
 
-                var materials = new Dictionary<TradableMaterial, int>();
+                var materials = new Dictionary<Material, int>();
                 foreach (var (itemId, quantity) in Materials)
                 {
                     var materialRow = materialSheet.Values.First(r => r.Id == itemId);
-                    var material = ItemFactory.CreateTradableMaterial(materialRow);
+                    var material = ItemFactory.CreateMaterial(materialRow);
                     materials.TryAdd(material, 0);
                     materials[material] += quantity;
                 }
