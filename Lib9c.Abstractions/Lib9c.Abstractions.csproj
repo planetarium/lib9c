@@ -6,7 +6,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
-    <VersionPrefix>1.18.0</VersionPrefix>
+    <VersionPrefix>1.19.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
