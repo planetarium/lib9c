@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c;
 using Libplanet.Types.Assets;
 using Nekoyume.Helper;
 using Nekoyume.Model.Item;
@@ -63,29 +64,29 @@ namespace Nekoyume.TableData
                 }
             }
 
-            public (List<FungibleAssetValue> assets, Dictionary<Material, int> materials) GetRewards(
+            public List<FungibleAssetValue> GetRewards(
                 RuneSheet runeSheet,
                 MaterialItemSheet materialSheet)
             {
-                var assets = new List<FungibleAssetValue>
+                var result = new List<FungibleAssetValue>
                 {
                     Crystal * CrystalCalculator.CRYSTAL
                 };
-                assets.AddRange(Runes
+                result.AddRange(Runes
                     .Where(runeInfo => runeInfo.RuneQty > 0)
                     .Select(runeInfo =>
                         RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId],
                             runeInfo.RuneQty)));
 
-                var materials = new Dictionary<Material, int>();
                 foreach (var (itemId, quantity) in Materials)
                 {
-                    var materialRow = materialSheet.Values.First(r => r.Id == itemId);
-                    var material = ItemFactory.CreateMaterial(materialRow);
-                    materials.TryAdd(material, 0);
-                    materials[material] += quantity;
+                    var isTradable = materialSheet[itemId].ItemSubType
+                        is ItemSubType.Circle or ItemSubType.Scroll;
+                    var currency = Currencies.GetItemCurrency(itemId, isTradable);
+                    result.Add(currency * quantity);
                 }
-                return (assets, materials);
+
+                return result;
             }
         }
 
