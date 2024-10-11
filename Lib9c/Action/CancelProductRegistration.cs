@@ -179,9 +179,9 @@ namespace Nekoyume.Action
                     throw new ArgumentOutOfRangeException(nameof(product));
             }
 
-            var mail = new ProductCancelMail(context.BlockIndex, productId, context.BlockIndex, productId);
+            var mail = new ProductCancelMail(context.BlockIndex, productId, context.BlockIndex, productId, product);
             avatarState.Update(mail);
-            states = states.SetLegacyState(productAddress, Null.Value);
+            states = states.RemoveLegacyState(productAddress);
             return states;
         }
 

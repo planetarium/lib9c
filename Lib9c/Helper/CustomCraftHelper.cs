@@ -1,15 +1,14 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using BTAI;
 using Libplanet.Action;
 using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 using Nekoyume.TableData.CustomEquipmentCraft;
+using static System.Numerics.BigInteger;
 
 namespace Nekoyume.Helper
 {
@@ -30,6 +29,30 @@ namespace Nekoyume.Helper
             return selector.Select(1).First().SelectCp(random);
         }
 
+        public static (BigInteger, IDictionary<int, int>)? CalculateAdditionalCost(
+            int relationship,
+            CustomEquipmentCraftRelationshipSheet relationshipSheet
+        )
+        {
+            var targetRow = relationshipSheet.OrderedList!.FirstOrDefault(
+                row => row.Relationship == relationship + 1
+            );
+
+            if (targetRow is null)
+            {
+                return null;
+            }
+
+            var ncgCost = targetRow.GoldAmount;
+            var itemCosts = new Dictionary<int, int>();
+            foreach (var itemCost in targetRow.MaterialCosts)
+            {
+                itemCosts[itemCost.ItemId] = itemCost.Amount;
+            }
+
+            return (ncgCost, itemCosts);
+        }
+
         public static (BigInteger, IDictionary<int, int>) CalculateCraftCost(
             int iconId,
             int relationship,
@@ -39,7 +62,7 @@ namespace Nekoyume.Helper
             decimal iconCostMultiplier
         )
         {
-            var ncgCost = BigInteger.Zero;
+            var ncgCost = Zero;
             var itemCosts = new Dictionary<int, int>();
             var scrollItemId = materialItemSheet.OrderedList!
                 .First(row => row.ItemSubType == ItemSubType.Scroll).Id;
@@ -60,16 +83,11 @@ namespace Nekoyume.Helper
 
             if (relationshipRow.Relationship == relationship)
             {
-                ncgCost = relationshipRow.GoldAmount;
-                foreach (var itemCost in relationshipRow.MaterialCosts)
-                {
-                    itemCosts[itemCost.ItemId] = itemCost.Amount;
-                }
             }
 
             itemCosts[circleItemId] = (int)Math.Floor(circleCost);
 
-            return (ncgCost, itemCosts.ToImmutableSortedDictionary());
+            return (ncgCost, itemCosts);
         }
     }
 }

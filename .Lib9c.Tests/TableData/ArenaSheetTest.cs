@@ -28,7 +28,7 @@ namespace Lib9c.Tests.TableData
         {
             const string content = @"id,round,arena_type,start_block_index,end_block_index,required_medal_count,entrance_fee,ticket_price,additional_ticket_price
 1,1,OffSeason,1,2,0,0,5,2
-1,2,Season,3,4,0,100,50,20
+1,2,Season,3,4,0,100,50,20,1,1,1
 1,3,OffSeason,5,1005284,0,0,5,2";
 
             var sheet = new ArenaSheet();
@@ -46,6 +46,10 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(0, sheet.First.Round.First().EntranceFee);
             Assert.Equal(5, sheet.First.Round.First().TicketPrice);
             Assert.Equal(2, sheet.First.Round.First().AdditionalTicketPrice);
+            Assert.Equal(0, sheet.First.Round.First().MedalId);
+
+            // 1,2,Season,3,4,0,100,50,20,1
+            Assert.Equal(1, sheet.First.Round[1].MedalId);
         }
 
         [Fact]
