@@ -399,3 +399,803 @@ ID,_PetName,PetLevel,OptionType,OptionValue
 1004,lil fenrir,98,AdditionalOptionRate,147
 1004,lil fenrir,99,AdditionalOptionRate,148
 1004,lil fenrir,100,AdditionalOptionRate,150
+1011,Ribbon BlackCat,1,IncreaseBlockPerHourglass,1.5
+1011,Ribbon BlackCat,2,IncreaseBlockPerHourglass,1.53
+1011,Ribbon BlackCat,3,IncreaseBlockPerHourglass,1.56
+1011,Ribbon BlackCat,4,IncreaseBlockPerHourglass,1.59
+1011,Ribbon BlackCat,5,IncreaseBlockPerHourglass,1.62
+1011,Ribbon BlackCat,6,IncreaseBlockPerHourglass,1.6500000000000001
+1011,Ribbon BlackCat,7,IncreaseBlockPerHourglass,1.6800000000000002
+1011,Ribbon BlackCat,8,IncreaseBlockPerHourglass,1.71
+1011,Ribbon BlackCat,9,IncreaseBlockPerHourglass,1.7399999999999998
+1011,Ribbon BlackCat,10,IncreaseBlockPerHourglass,1.77
+1011,Ribbon BlackCat,11,IncreaseBlockPerHourglass,1.7999999999999998
+1011,Ribbon BlackCat,12,IncreaseBlockPerHourglass,1.83
+1011,Ribbon BlackCat,13,IncreaseBlockPerHourglass,1.8599999999999999
+1011,Ribbon BlackCat,14,IncreaseBlockPerHourglass,1.8900000000000001
+1011,Ribbon BlackCat,15,IncreaseBlockPerHourglass,1.92
+1011,Ribbon BlackCat,16,IncreaseBlockPerHourglass,1.9500000000000002
+1011,Ribbon BlackCat,17,IncreaseBlockPerHourglass,1.98
+1011,Ribbon BlackCat,18,IncreaseBlockPerHourglass,2.0100000000000002
+1011,Ribbon BlackCat,19,IncreaseBlockPerHourglass,2.04
+1011,Ribbon BlackCat,20,IncreaseBlockPerHourglass,2.07
+1011,Ribbon BlackCat,21,IncreaseBlockPerHourglass,2.0999999999999996
+1011,Ribbon BlackCat,22,IncreaseBlockPerHourglass,2.13
+1011,Ribbon BlackCat,23,IncreaseBlockPerHourglass,2.16
+1011,Ribbon BlackCat,24,IncreaseBlockPerHourglass,2.19
+1011,Ribbon BlackCat,25,IncreaseBlockPerHourglass,2.2199999999999998
+1011,Ribbon BlackCat,26,IncreaseBlockPerHourglass,2.25
+1011,Ribbon BlackCat,27,IncreaseBlockPerHourglass,2.2800000000000002
+1011,Ribbon BlackCat,28,IncreaseBlockPerHourglass,2.31
+1011,Ribbon BlackCat,29,IncreaseBlockPerHourglass,2.34
+1011,Ribbon BlackCat,30,IncreaseBlockPerHourglass,2.37
+1011,Ribbon BlackCat,31,IncreaseBlockPerHourglass,2.4000000000000004
+1011,Ribbon BlackCat,32,IncreaseBlockPerHourglass,2.43
+1011,Ribbon BlackCat,33,IncreaseBlockPerHourglass,2.46
+1011,Ribbon BlackCat,34,IncreaseBlockPerHourglass,2.4899999999999998
+1011,Ribbon BlackCat,35,IncreaseBlockPerHourglass,2.52
+1011,Ribbon BlackCat,36,IncreaseBlockPerHourglass,2.55
+1011,Ribbon BlackCat,37,IncreaseBlockPerHourglass,2.58
+1011,Ribbon BlackCat,38,IncreaseBlockPerHourglass,2.61
+1011,Ribbon BlackCat,39,IncreaseBlockPerHourglass,2.64
+1011,Ribbon BlackCat,40,IncreaseBlockPerHourglass,2.67
+1011,Ribbon BlackCat,41,IncreaseBlockPerHourglass,2.7
+1011,Ribbon BlackCat,42,IncreaseBlockPerHourglass,2.73
+1011,Ribbon BlackCat,43,IncreaseBlockPerHourglass,2.7600000000000002
+1011,Ribbon BlackCat,44,IncreaseBlockPerHourglass,2.79
+1011,Ribbon BlackCat,45,IncreaseBlockPerHourglass,2.82
+1011,Ribbon BlackCat,46,IncreaseBlockPerHourglass,2.8499999999999996
+1011,Ribbon BlackCat,47,IncreaseBlockPerHourglass,2.88
+1011,Ribbon BlackCat,48,IncreaseBlockPerHourglass,2.91
+1011,Ribbon BlackCat,49,IncreaseBlockPerHourglass,2.94
+1011,Ribbon BlackCat,50,IncreaseBlockPerHourglass,2.9699999999999998
+1011,Ribbon BlackCat,51,IncreaseBlockPerHourglass,3.0
+1011,Ribbon BlackCat,52,IncreaseBlockPerHourglass,3.0300000000000002
+1011,Ribbon BlackCat,53,IncreaseBlockPerHourglass,3.06
+1011,Ribbon BlackCat,54,IncreaseBlockPerHourglass,3.09
+1011,Ribbon BlackCat,55,IncreaseBlockPerHourglass,3.12
+1011,Ribbon BlackCat,56,IncreaseBlockPerHourglass,3.1500000000000004
+1011,Ribbon BlackCat,57,IncreaseBlockPerHourglass,3.18
+1011,Ribbon BlackCat,58,IncreaseBlockPerHourglass,3.21
+1011,Ribbon BlackCat,59,IncreaseBlockPerHourglass,3.24
+1011,Ribbon BlackCat,60,IncreaseBlockPerHourglass,3.2700000000000005
+1011,Ribbon BlackCat,61,IncreaseBlockPerHourglass,3.3000000000000003
+1011,Ribbon BlackCat,62,IncreaseBlockPerHourglass,3.33
+1011,Ribbon BlackCat,63,IncreaseBlockPerHourglass,3.3600000000000003
+1011,Ribbon BlackCat,64,IncreaseBlockPerHourglass,3.3899999999999997
+1011,Ribbon BlackCat,65,IncreaseBlockPerHourglass,3.42
+1011,Ribbon BlackCat,66,IncreaseBlockPerHourglass,3.4499999999999997
+1011,Ribbon BlackCat,67,IncreaseBlockPerHourglass,3.4799999999999995
+1011,Ribbon BlackCat,68,IncreaseBlockPerHourglass,3.51
+1011,Ribbon BlackCat,69,IncreaseBlockPerHourglass,3.54
+1011,Ribbon BlackCat,70,IncreaseBlockPerHourglass,3.57
+1011,Ribbon BlackCat,71,IncreaseBlockPerHourglass,3.5999999999999996
+1011,Ribbon BlackCat,72,IncreaseBlockPerHourglass,3.63
+1011,Ribbon BlackCat,73,IncreaseBlockPerHourglass,3.66
+1011,Ribbon BlackCat,74,IncreaseBlockPerHourglass,3.69
+1011,Ribbon BlackCat,75,IncreaseBlockPerHourglass,3.7199999999999998
+1011,Ribbon BlackCat,76,IncreaseBlockPerHourglass,3.75
+1011,Ribbon BlackCat,77,IncreaseBlockPerHourglass,3.7800000000000002
+1011,Ribbon BlackCat,78,IncreaseBlockPerHourglass,3.81
+1011,Ribbon BlackCat,79,IncreaseBlockPerHourglass,3.84
+1011,Ribbon BlackCat,80,IncreaseBlockPerHourglass,3.87
+1011,Ribbon BlackCat,81,IncreaseBlockPerHourglass,3.9000000000000004
+1011,Ribbon BlackCat,82,IncreaseBlockPerHourglass,3.93
+1011,Ribbon BlackCat,83,IncreaseBlockPerHourglass,3.96
+1011,Ribbon BlackCat,84,IncreaseBlockPerHourglass,3.99
+1011,Ribbon BlackCat,85,IncreaseBlockPerHourglass,4.0200000000000005
+1011,Ribbon BlackCat,86,IncreaseBlockPerHourglass,4.050000000000001
+1011,Ribbon BlackCat,87,IncreaseBlockPerHourglass,4.08
+1011,Ribbon BlackCat,88,IncreaseBlockPerHourglass,4.11
+1011,Ribbon BlackCat,89,IncreaseBlockPerHourglass,4.14
+1011,Ribbon BlackCat,90,IncreaseBlockPerHourglass,4.17
+1011,Ribbon BlackCat,91,IncreaseBlockPerHourglass,4.199999999999999
+1011,Ribbon BlackCat,92,IncreaseBlockPerHourglass,4.2299999999999995
+1011,Ribbon BlackCat,93,IncreaseBlockPerHourglass,4.26
+1011,Ribbon BlackCat,94,IncreaseBlockPerHourglass,4.29
+1011,Ribbon BlackCat,95,IncreaseBlockPerHourglass,4.32
+1011,Ribbon BlackCat,96,IncreaseBlockPerHourglass,4.35
+1011,Ribbon BlackCat,97,IncreaseBlockPerHourglass,4.38
+1011,Ribbon BlackCat,98,IncreaseBlockPerHourglass,4.41
+1011,Ribbon BlackCat,99,IncreaseBlockPerHourglass,4.4399999999999995
+1011,Ribbon BlackCat,100,IncreaseBlockPerHourglass,4.5
+1012,Peach Dongle,1,DiscountMaterialCostCrystal,30.0
+1012,Peach Dongle,2,DiscountMaterialCostCrystal,30.299999999999997
+1012,Peach Dongle,3,DiscountMaterialCostCrystal,30.599999999999998
+1012,Peach Dongle,4,DiscountMaterialCostCrystal,30.900000000000002
+1012,Peach Dongle,5,DiscountMaterialCostCrystal,31.200000000000003
+1012,Peach Dongle,6,DiscountMaterialCostCrystal,31.5
+1012,Peach Dongle,7,DiscountMaterialCostCrystal,31.799999999999997
+1012,Peach Dongle,8,DiscountMaterialCostCrystal,32.099999999999994
+1012,Peach Dongle,9,DiscountMaterialCostCrystal,32.400000000000006
+1012,Peach Dongle,10,DiscountMaterialCostCrystal,32.7
+1012,Peach Dongle,11,DiscountMaterialCostCrystal,33.0
+1012,Peach Dongle,12,DiscountMaterialCostCrystal,33.3
+1012,Peach Dongle,13,DiscountMaterialCostCrystal,33.599999999999994
+1012,Peach Dongle,14,DiscountMaterialCostCrystal,33.900000000000006
+1012,Peach Dongle,15,DiscountMaterialCostCrystal,34.2
+1012,Peach Dongle,16,DiscountMaterialCostCrystal,34.5
+1012,Peach Dongle,17,DiscountMaterialCostCrystal,34.8
+1012,Peach Dongle,18,DiscountMaterialCostCrystal,35.099999999999994
+1012,Peach Dongle,19,DiscountMaterialCostCrystal,35.400000000000006
+1012,Peach Dongle,20,DiscountMaterialCostCrystal,35.7
+1012,Peach Dongle,21,DiscountMaterialCostCrystal,36.0
+1012,Peach Dongle,22,DiscountMaterialCostCrystal,36.3
+1012,Peach Dongle,23,DiscountMaterialCostCrystal,36.599999999999994
+1012,Peach Dongle,24,DiscountMaterialCostCrystal,36.900000000000006
+1012,Peach Dongle,25,DiscountMaterialCostCrystal,37.2
+1012,Peach Dongle,26,DiscountMaterialCostCrystal,37.5
+1012,Peach Dongle,27,DiscountMaterialCostCrystal,37.8
+1012,Peach Dongle,28,DiscountMaterialCostCrystal,38.099999999999994
+1012,Peach Dongle,29,DiscountMaterialCostCrystal,38.400000000000006
+1012,Peach Dongle,30,DiscountMaterialCostCrystal,38.7
+1012,Peach Dongle,31,DiscountMaterialCostCrystal,39.0
+1012,Peach Dongle,32,DiscountMaterialCostCrystal,39.3
+1012,Peach Dongle,33,DiscountMaterialCostCrystal,39.599999999999994
+1012,Peach Dongle,34,DiscountMaterialCostCrystal,39.900000000000006
+1012,Peach Dongle,35,DiscountMaterialCostCrystal,40.2
+1012,Peach Dongle,36,DiscountMaterialCostCrystal,40.5
+1012,Peach Dongle,37,DiscountMaterialCostCrystal,40.8
+1012,Peach Dongle,38,DiscountMaterialCostCrystal,41.099999999999994
+1012,Peach Dongle,39,DiscountMaterialCostCrystal,41.400000000000006
+1012,Peach Dongle,40,DiscountMaterialCostCrystal,41.7
+1012,Peach Dongle,41,DiscountMaterialCostCrystal,42.0
+1012,Peach Dongle,42,DiscountMaterialCostCrystal,42.3
+1012,Peach Dongle,43,DiscountMaterialCostCrystal,42.599999999999994
+1012,Peach Dongle,44,DiscountMaterialCostCrystal,42.900000000000006
+1012,Peach Dongle,45,DiscountMaterialCostCrystal,43.2
+1012,Peach Dongle,46,DiscountMaterialCostCrystal,43.5
+1012,Peach Dongle,47,DiscountMaterialCostCrystal,43.8
+1012,Peach Dongle,48,DiscountMaterialCostCrystal,44.099999999999994
+1012,Peach Dongle,49,DiscountMaterialCostCrystal,44.400000000000006
+1012,Peach Dongle,50,DiscountMaterialCostCrystal,44.7
+1012,Peach Dongle,51,DiscountMaterialCostCrystal,45.0
+1012,Peach Dongle,52,DiscountMaterialCostCrystal,45.3
+1012,Peach Dongle,53,DiscountMaterialCostCrystal,45.599999999999994
+1012,Peach Dongle,54,DiscountMaterialCostCrystal,45.900000000000006
+1012,Peach Dongle,55,DiscountMaterialCostCrystal,46.2
+1012,Peach Dongle,56,DiscountMaterialCostCrystal,46.5
+1012,Peach Dongle,57,DiscountMaterialCostCrystal,46.8
+1012,Peach Dongle,58,DiscountMaterialCostCrystal,47.099999999999994
+1012,Peach Dongle,59,DiscountMaterialCostCrystal,47.400000000000006
+1012,Peach Dongle,60,DiscountMaterialCostCrystal,47.7
+1012,Peach Dongle,61,DiscountMaterialCostCrystal,48.0
+1012,Peach Dongle,62,DiscountMaterialCostCrystal,48.300000000000004
+1012,Peach Dongle,63,DiscountMaterialCostCrystal,48.599999999999994
+1012,Peach Dongle,64,DiscountMaterialCostCrystal,48.900000000000006
+1012,Peach Dongle,65,DiscountMaterialCostCrystal,49.199999999999996
+1012,Peach Dongle,66,DiscountMaterialCostCrystal,49.5
+1012,Peach Dongle,67,DiscountMaterialCostCrystal,49.800000000000004
+1012,Peach Dongle,68,DiscountMaterialCostCrystal,50.099999999999994
+1012,Peach Dongle,69,DiscountMaterialCostCrystal,50.400000000000006
+1012,Peach Dongle,70,DiscountMaterialCostCrystal,50.699999999999996
+1012,Peach Dongle,71,DiscountMaterialCostCrystal,51.0
+1012,Peach Dongle,72,DiscountMaterialCostCrystal,51.300000000000004
+1012,Peach Dongle,73,DiscountMaterialCostCrystal,51.599999999999994
+1012,Peach Dongle,74,DiscountMaterialCostCrystal,51.900000000000006
+1012,Peach Dongle,75,DiscountMaterialCostCrystal,52.199999999999996
+1012,Peach Dongle,76,DiscountMaterialCostCrystal,52.5
+1012,Peach Dongle,77,DiscountMaterialCostCrystal,52.800000000000004
+1012,Peach Dongle,78,DiscountMaterialCostCrystal,53.099999999999994
+1012,Peach Dongle,79,DiscountMaterialCostCrystal,53.400000000000006
+1012,Peach Dongle,80,DiscountMaterialCostCrystal,53.699999999999996
+1012,Peach Dongle,81,DiscountMaterialCostCrystal,54.0
+1012,Peach Dongle,82,DiscountMaterialCostCrystal,54.300000000000004
+1012,Peach Dongle,83,DiscountMaterialCostCrystal,54.599999999999994
+1012,Peach Dongle,84,DiscountMaterialCostCrystal,54.900000000000006
+1012,Peach Dongle,85,DiscountMaterialCostCrystal,55.199999999999996
+1012,Peach Dongle,86,DiscountMaterialCostCrystal,55.5
+1012,Peach Dongle,87,DiscountMaterialCostCrystal,55.800000000000004
+1012,Peach Dongle,88,DiscountMaterialCostCrystal,56.099999999999994
+1012,Peach Dongle,89,DiscountMaterialCostCrystal,56.400000000000006
+1012,Peach Dongle,90,DiscountMaterialCostCrystal,56.699999999999996
+1012,Peach Dongle,91,DiscountMaterialCostCrystal,57.0
+1012,Peach Dongle,92,DiscountMaterialCostCrystal,57.300000000000004
+1012,Peach Dongle,93,DiscountMaterialCostCrystal,57.599999999999994
+1012,Peach Dongle,94,DiscountMaterialCostCrystal,57.900000000000006
+1012,Peach Dongle,95,DiscountMaterialCostCrystal,58.199999999999996
+1012,Peach Dongle,96,DiscountMaterialCostCrystal,58.5
+1012,Peach Dongle,97,DiscountMaterialCostCrystal,58.800000000000004
+1012,Peach Dongle,98,DiscountMaterialCostCrystal,59.099999999999994
+1012,Peach Dongle,99,DiscountMaterialCostCrystal,59.400000000000006
+1012,Peach Dongle,100,DiscountMaterialCostCrystal,60.0
+1013,Valkyrie of Blue Light,1,ReduceRequiredBlock,30.0
+1013,Valkyrie of Blue Light,2,ReduceRequiredBlock,30.224999999999998
+1013,Valkyrie of Blue Light,3,ReduceRequiredBlock,30.450000000000003
+1013,Valkyrie of Blue Light,4,ReduceRequiredBlock,30.674999999999997
+1013,Valkyrie of Blue Light,5,ReduceRequiredBlock,30.900000000000002
+1013,Valkyrie of Blue Light,6,ReduceRequiredBlock,31.125
+1013,Valkyrie of Blue Light,7,ReduceRequiredBlock,31.349999999999998
+1013,Valkyrie of Blue Light,8,ReduceRequiredBlock,31.575000000000003
+1013,Valkyrie of Blue Light,9,ReduceRequiredBlock,31.799999999999997
+1013,Valkyrie of Blue Light,10,ReduceRequiredBlock,32.025000000000006
+1013,Valkyrie of Blue Light,11,ReduceRequiredBlock,32.25
+1013,Valkyrie of Blue Light,12,ReduceRequiredBlock,32.474999999999994
+1013,Valkyrie of Blue Light,13,ReduceRequiredBlock,32.7
+1013,Valkyrie of Blue Light,14,ReduceRequiredBlock,32.925
+1013,Valkyrie of Blue Light,15,ReduceRequiredBlock,33.150000000000006
+1013,Valkyrie of Blue Light,16,ReduceRequiredBlock,33.375
+1013,Valkyrie of Blue Light,17,ReduceRequiredBlock,33.599999999999994
+1013,Valkyrie of Blue Light,18,ReduceRequiredBlock,33.825
+1013,Valkyrie of Blue Light,19,ReduceRequiredBlock,34.05
+1013,Valkyrie of Blue Light,20,ReduceRequiredBlock,34.275000000000006
+1013,Valkyrie of Blue Light,21,ReduceRequiredBlock,34.5
+1013,Valkyrie of Blue Light,22,ReduceRequiredBlock,34.724999999999994
+1013,Valkyrie of Blue Light,23,ReduceRequiredBlock,34.95
+1013,Valkyrie of Blue Light,24,ReduceRequiredBlock,35.175
+1013,Valkyrie of Blue Light,25,ReduceRequiredBlock,35.400000000000006
+1013,Valkyrie of Blue Light,26,ReduceRequiredBlock,35.625
+1013,Valkyrie of Blue Light,27,ReduceRequiredBlock,35.849999999999994
+1013,Valkyrie of Blue Light,28,ReduceRequiredBlock,36.075
+1013,Valkyrie of Blue Light,29,ReduceRequiredBlock,36.3
+1013,Valkyrie of Blue Light,30,ReduceRequiredBlock,36.525000000000006
+1013,Valkyrie of Blue Light,31,ReduceRequiredBlock,36.75
+1013,Valkyrie of Blue Light,32,ReduceRequiredBlock,36.974999999999994
+1013,Valkyrie of Blue Light,33,ReduceRequiredBlock,37.2
+1013,Valkyrie of Blue Light,34,ReduceRequiredBlock,37.425
+1013,Valkyrie of Blue Light,35,ReduceRequiredBlock,37.650000000000006
+1013,Valkyrie of Blue Light,36,ReduceRequiredBlock,37.875
+1013,Valkyrie of Blue Light,37,ReduceRequiredBlock,38.099999999999994
+1013,Valkyrie of Blue Light,38,ReduceRequiredBlock,38.325
+1013,Valkyrie of Blue Light,39,ReduceRequiredBlock,38.55
+1013,Valkyrie of Blue Light,40,ReduceRequiredBlock,38.775000000000006
+1013,Valkyrie of Blue Light,41,ReduceRequiredBlock,39.0
+1013,Valkyrie of Blue Light,42,ReduceRequiredBlock,39.224999999999994
+1013,Valkyrie of Blue Light,43,ReduceRequiredBlock,39.45
+1013,Valkyrie of Blue Light,44,ReduceRequiredBlock,39.675
+1013,Valkyrie of Blue Light,45,ReduceRequiredBlock,39.900000000000006
+1013,Valkyrie of Blue Light,46,ReduceRequiredBlock,40.125
+1013,Valkyrie of Blue Light,47,ReduceRequiredBlock,40.349999999999994
+1013,Valkyrie of Blue Light,48,ReduceRequiredBlock,40.575
+1013,Valkyrie of Blue Light,49,ReduceRequiredBlock,40.8
+1013,Valkyrie of Blue Light,50,ReduceRequiredBlock,41.025000000000006
+1013,Valkyrie of Blue Light,51,ReduceRequiredBlock,41.25
+1013,Valkyrie of Blue Light,52,ReduceRequiredBlock,41.474999999999994
+1013,Valkyrie of Blue Light,53,ReduceRequiredBlock,41.7
+1013,Valkyrie of Blue Light,54,ReduceRequiredBlock,41.925
+1013,Valkyrie of Blue Light,55,ReduceRequiredBlock,42.150000000000006
+1013,Valkyrie of Blue Light,56,ReduceRequiredBlock,42.375
+1013,Valkyrie of Blue Light,57,ReduceRequiredBlock,42.599999999999994
+1013,Valkyrie of Blue Light,58,ReduceRequiredBlock,42.825
+1013,Valkyrie of Blue Light,59,ReduceRequiredBlock,43.05
+1013,Valkyrie of Blue Light,60,ReduceRequiredBlock,43.275000000000006
+1013,Valkyrie of Blue Light,61,ReduceRequiredBlock,43.5
+1013,Valkyrie of Blue Light,62,ReduceRequiredBlock,43.724999999999994
+1013,Valkyrie of Blue Light,63,ReduceRequiredBlock,43.95
+1013,Valkyrie of Blue Light,64,ReduceRequiredBlock,44.175
+1013,Valkyrie of Blue Light,65,ReduceRequiredBlock,44.400000000000006
+1013,Valkyrie of Blue Light,66,ReduceRequiredBlock,44.625
+1013,Valkyrie of Blue Light,67,ReduceRequiredBlock,44.849999999999994
+1013,Valkyrie of Blue Light,68,ReduceRequiredBlock,45.075
+1013,Valkyrie of Blue Light,69,ReduceRequiredBlock,45.3
+1013,Valkyrie of Blue Light,70,ReduceRequiredBlock,45.525000000000006
+1013,Valkyrie of Blue Light,71,ReduceRequiredBlock,45.75
+1013,Valkyrie of Blue Light,72,ReduceRequiredBlock,45.974999999999994
+1013,Valkyrie of Blue Light,73,ReduceRequiredBlock,46.2
+1013,Valkyrie of Blue Light,74,ReduceRequiredBlock,46.425
+1013,Valkyrie of Blue Light,75,ReduceRequiredBlock,46.650000000000006
+1013,Valkyrie of Blue Light,76,ReduceRequiredBlock,46.875
+1013,Valkyrie of Blue Light,77,ReduceRequiredBlock,47.099999999999994
+1013,Valkyrie of Blue Light,78,ReduceRequiredBlock,47.325
+1013,Valkyrie of Blue Light,79,ReduceRequiredBlock,47.55
+1013,Valkyrie of Blue Light,80,ReduceRequiredBlock,47.775000000000006
+1013,Valkyrie of Blue Light,81,ReduceRequiredBlock,48.0
+1013,Valkyrie of Blue Light,82,ReduceRequiredBlock,48.224999999999994
+1013,Valkyrie of Blue Light,83,ReduceRequiredBlock,48.449999999999996
+1013,Valkyrie of Blue Light,84,ReduceRequiredBlock,48.675000000000004
+1013,Valkyrie of Blue Light,85,ReduceRequiredBlock,48.900000000000006
+1013,Valkyrie of Blue Light,86,ReduceRequiredBlock,49.125
+1013,Valkyrie of Blue Light,87,ReduceRequiredBlock,49.349999999999994
+1013,Valkyrie of Blue Light,88,ReduceRequiredBlock,49.574999999999996
+1013,Valkyrie of Blue Light,89,ReduceRequiredBlock,49.800000000000004
+1013,Valkyrie of Blue Light,90,ReduceRequiredBlock,50.025000000000006
+1013,Valkyrie of Blue Light,91,ReduceRequiredBlock,50.25
+1013,Valkyrie of Blue Light,92,ReduceRequiredBlock,50.474999999999994
+1013,Valkyrie of Blue Light,93,ReduceRequiredBlock,50.699999999999996
+1013,Valkyrie of Blue Light,94,ReduceRequiredBlock,50.925000000000004
+1013,Valkyrie of Blue Light,95,ReduceRequiredBlock,51.150000000000006
+1013,Valkyrie of Blue Light,96,ReduceRequiredBlock,51.375
+1013,Valkyrie of Blue Light,97,ReduceRequiredBlock,51.599999999999994
+1013,Valkyrie of Blue Light,98,ReduceRequiredBlock,51.824999999999996
+1013,Valkyrie of Blue Light,99,ReduceRequiredBlock,52.050000000000004
+1013,Valkyrie of Blue Light,100,ReduceRequiredBlock,52.5
+1014,Forest Lil' Fenrir,1,AdditionalOptionRate,75.0
+1014,Forest Lil' Fenrir,2,AdditionalOptionRate,76.5
+1014,Forest Lil' Fenrir,3,AdditionalOptionRate,78.0
+1014,Forest Lil' Fenrir,4,AdditionalOptionRate,79.5
+1014,Forest Lil' Fenrir,5,AdditionalOptionRate,81.0
+1014,Forest Lil' Fenrir,6,AdditionalOptionRate,82.5
+1014,Forest Lil' Fenrir,7,AdditionalOptionRate,84.0
+1014,Forest Lil' Fenrir,8,AdditionalOptionRate,85.5
+1014,Forest Lil' Fenrir,9,AdditionalOptionRate,87.0
+1014,Forest Lil' Fenrir,10,AdditionalOptionRate,88.5
+1014,Forest Lil' Fenrir,11,AdditionalOptionRate,90.0
+1014,Forest Lil' Fenrir,12,AdditionalOptionRate,91.5
+1014,Forest Lil' Fenrir,13,AdditionalOptionRate,93.0
+1014,Forest Lil' Fenrir,14,AdditionalOptionRate,94.5
+1014,Forest Lil' Fenrir,15,AdditionalOptionRate,96.0
+1014,Forest Lil' Fenrir,16,AdditionalOptionRate,97.5
+1014,Forest Lil' Fenrir,17,AdditionalOptionRate,99.0
+1014,Forest Lil' Fenrir,18,AdditionalOptionRate,100.5
+1014,Forest Lil' Fenrir,19,AdditionalOptionRate,102.0
+1014,Forest Lil' Fenrir,20,AdditionalOptionRate,103.5
+1014,Forest Lil' Fenrir,21,AdditionalOptionRate,105.0
+1014,Forest Lil' Fenrir,22,AdditionalOptionRate,106.5
+1014,Forest Lil' Fenrir,23,AdditionalOptionRate,108.0
+1014,Forest Lil' Fenrir,24,AdditionalOptionRate,109.5
+1014,Forest Lil' Fenrir,25,AdditionalOptionRate,111.0
+1014,Forest Lil' Fenrir,26,AdditionalOptionRate,112.5
+1014,Forest Lil' Fenrir,27,AdditionalOptionRate,114.0
+1014,Forest Lil' Fenrir,28,AdditionalOptionRate,115.5
+1014,Forest Lil' Fenrir,29,AdditionalOptionRate,117.0
+1014,Forest Lil' Fenrir,30,AdditionalOptionRate,118.5
+1014,Forest Lil' Fenrir,31,AdditionalOptionRate,120.0
+1014,Forest Lil' Fenrir,32,AdditionalOptionRate,121.5
+1014,Forest Lil' Fenrir,33,AdditionalOptionRate,123.0
+1014,Forest Lil' Fenrir,34,AdditionalOptionRate,124.5
+1014,Forest Lil' Fenrir,35,AdditionalOptionRate,126.0
+1014,Forest Lil' Fenrir,36,AdditionalOptionRate,127.5
+1014,Forest Lil' Fenrir,37,AdditionalOptionRate,129.0
+1014,Forest Lil' Fenrir,38,AdditionalOptionRate,130.5
+1014,Forest Lil' Fenrir,39,AdditionalOptionRate,132.0
+1014,Forest Lil' Fenrir,40,AdditionalOptionRate,133.5
+1014,Forest Lil' Fenrir,41,AdditionalOptionRate,135.0
+1014,Forest Lil' Fenrir,42,AdditionalOptionRate,136.5
+1014,Forest Lil' Fenrir,43,AdditionalOptionRate,138.0
+1014,Forest Lil' Fenrir,44,AdditionalOptionRate,139.5
+1014,Forest Lil' Fenrir,45,AdditionalOptionRate,141.0
+1014,Forest Lil' Fenrir,46,AdditionalOptionRate,142.5
+1014,Forest Lil' Fenrir,47,AdditionalOptionRate,144.0
+1014,Forest Lil' Fenrir,48,AdditionalOptionRate,145.5
+1014,Forest Lil' Fenrir,49,AdditionalOptionRate,147.0
+1014,Forest Lil' Fenrir,50,AdditionalOptionRate,148.5
+1014,Forest Lil' Fenrir,51,AdditionalOptionRate,150.0
+1014,Forest Lil' Fenrir,52,AdditionalOptionRate,151.5
+1014,Forest Lil' Fenrir,53,AdditionalOptionRate,153.0
+1014,Forest Lil' Fenrir,54,AdditionalOptionRate,154.5
+1014,Forest Lil' Fenrir,55,AdditionalOptionRate,156.0
+1014,Forest Lil' Fenrir,56,AdditionalOptionRate,157.5
+1014,Forest Lil' Fenrir,57,AdditionalOptionRate,159.0
+1014,Forest Lil' Fenrir,58,AdditionalOptionRate,160.5
+1014,Forest Lil' Fenrir,59,AdditionalOptionRate,162.0
+1014,Forest Lil' Fenrir,60,AdditionalOptionRate,163.5
+1014,Forest Lil' Fenrir,61,AdditionalOptionRate,165.0
+1014,Forest Lil' Fenrir,62,AdditionalOptionRate,166.5
+1014,Forest Lil' Fenrir,63,AdditionalOptionRate,168.0
+1014,Forest Lil' Fenrir,64,AdditionalOptionRate,169.5
+1014,Forest Lil' Fenrir,65,AdditionalOptionRate,171.0
+1014,Forest Lil' Fenrir,66,AdditionalOptionRate,172.5
+1014,Forest Lil' Fenrir,67,AdditionalOptionRate,174.0
+1014,Forest Lil' Fenrir,68,AdditionalOptionRate,175.5
+1014,Forest Lil' Fenrir,69,AdditionalOptionRate,177.0
+1014,Forest Lil' Fenrir,70,AdditionalOptionRate,178.5
+1014,Forest Lil' Fenrir,71,AdditionalOptionRate,180.0
+1014,Forest Lil' Fenrir,72,AdditionalOptionRate,181.5
+1014,Forest Lil' Fenrir,73,AdditionalOptionRate,183.0
+1014,Forest Lil' Fenrir,74,AdditionalOptionRate,184.5
+1014,Forest Lil' Fenrir,75,AdditionalOptionRate,186.0
+1014,Forest Lil' Fenrir,76,AdditionalOptionRate,187.5
+1014,Forest Lil' Fenrir,77,AdditionalOptionRate,189.0
+1014,Forest Lil' Fenrir,78,AdditionalOptionRate,190.5
+1014,Forest Lil' Fenrir,79,AdditionalOptionRate,192.0
+1014,Forest Lil' Fenrir,80,AdditionalOptionRate,193.5
+1014,Forest Lil' Fenrir,81,AdditionalOptionRate,195.0
+1014,Forest Lil' Fenrir,82,AdditionalOptionRate,196.5
+1014,Forest Lil' Fenrir,83,AdditionalOptionRate,198.0
+1014,Forest Lil' Fenrir,84,AdditionalOptionRate,199.5
+1014,Forest Lil' Fenrir,85,AdditionalOptionRate,201.0
+1014,Forest Lil' Fenrir,86,AdditionalOptionRate,202.5
+1014,Forest Lil' Fenrir,87,AdditionalOptionRate,204.0
+1014,Forest Lil' Fenrir,88,AdditionalOptionRate,205.5
+1014,Forest Lil' Fenrir,89,AdditionalOptionRate,207.0
+1014,Forest Lil' Fenrir,90,AdditionalOptionRate,208.5
+1014,Forest Lil' Fenrir,91,AdditionalOptionRate,210.0
+1014,Forest Lil' Fenrir,92,AdditionalOptionRate,211.5
+1014,Forest Lil' Fenrir,93,AdditionalOptionRate,213.0
+1014,Forest Lil' Fenrir,94,AdditionalOptionRate,214.5
+1014,Forest Lil' Fenrir,95,AdditionalOptionRate,216.0
+1014,Forest Lil' Fenrir,96,AdditionalOptionRate,217.5
+1014,Forest Lil' Fenrir,97,AdditionalOptionRate,219.0
+1014,Forest Lil' Fenrir,98,AdditionalOptionRate,220.5
+1014,Forest Lil' Fenrir,99,AdditionalOptionRate,222.0
+1014,Forest Lil' Fenrir,100,AdditionalOptionRate,225.0
+1021,Hurt BlackCat,1,IncreaseBlockPerHourglass,2.0
+1021,Hurt BlackCat,2,IncreaseBlockPerHourglass,2.04
+1021,Hurt BlackCat,3,IncreaseBlockPerHourglass,2.08
+1021,Hurt BlackCat,4,IncreaseBlockPerHourglass,2.12
+1021,Hurt BlackCat,5,IncreaseBlockPerHourglass,2.16
+1021,Hurt BlackCat,6,IncreaseBlockPerHourglass,2.2
+1021,Hurt BlackCat,7,IncreaseBlockPerHourglass,2.24
+1021,Hurt BlackCat,8,IncreaseBlockPerHourglass,2.28
+1021,Hurt BlackCat,9,IncreaseBlockPerHourglass,2.32
+1021,Hurt BlackCat,10,IncreaseBlockPerHourglass,2.36
+1021,Hurt BlackCat,11,IncreaseBlockPerHourglass,2.4
+1021,Hurt BlackCat,12,IncreaseBlockPerHourglass,2.44
+1021,Hurt BlackCat,13,IncreaseBlockPerHourglass,2.48
+1021,Hurt BlackCat,14,IncreaseBlockPerHourglass,2.52
+1021,Hurt BlackCat,15,IncreaseBlockPerHourglass,2.56
+1021,Hurt BlackCat,16,IncreaseBlockPerHourglass,2.6
+1021,Hurt BlackCat,17,IncreaseBlockPerHourglass,2.64
+1021,Hurt BlackCat,18,IncreaseBlockPerHourglass,2.68
+1021,Hurt BlackCat,19,IncreaseBlockPerHourglass,2.72
+1021,Hurt BlackCat,20,IncreaseBlockPerHourglass,2.76
+1021,Hurt BlackCat,21,IncreaseBlockPerHourglass,2.8
+1021,Hurt BlackCat,22,IncreaseBlockPerHourglass,2.84
+1021,Hurt BlackCat,23,IncreaseBlockPerHourglass,2.88
+1021,Hurt BlackCat,24,IncreaseBlockPerHourglass,2.92
+1021,Hurt BlackCat,25,IncreaseBlockPerHourglass,2.96
+1021,Hurt BlackCat,26,IncreaseBlockPerHourglass,3.0
+1021,Hurt BlackCat,27,IncreaseBlockPerHourglass,3.04
+1021,Hurt BlackCat,28,IncreaseBlockPerHourglass,3.08
+1021,Hurt BlackCat,29,IncreaseBlockPerHourglass,3.12
+1021,Hurt BlackCat,30,IncreaseBlockPerHourglass,3.16
+1021,Hurt BlackCat,31,IncreaseBlockPerHourglass,3.2
+1021,Hurt BlackCat,32,IncreaseBlockPerHourglass,3.24
+1021,Hurt BlackCat,33,IncreaseBlockPerHourglass,3.28
+1021,Hurt BlackCat,34,IncreaseBlockPerHourglass,3.32
+1021,Hurt BlackCat,35,IncreaseBlockPerHourglass,3.36
+1021,Hurt BlackCat,36,IncreaseBlockPerHourglass,3.4
+1021,Hurt BlackCat,37,IncreaseBlockPerHourglass,3.44
+1021,Hurt BlackCat,38,IncreaseBlockPerHourglass,3.48
+1021,Hurt BlackCat,39,IncreaseBlockPerHourglass,3.52
+1021,Hurt BlackCat,40,IncreaseBlockPerHourglass,3.56
+1021,Hurt BlackCat,41,IncreaseBlockPerHourglass,3.6
+1021,Hurt BlackCat,42,IncreaseBlockPerHourglass,3.64
+1021,Hurt BlackCat,43,IncreaseBlockPerHourglass,3.68
+1021,Hurt BlackCat,44,IncreaseBlockPerHourglass,3.72
+1021,Hurt BlackCat,45,IncreaseBlockPerHourglass,3.76
+1021,Hurt BlackCat,46,IncreaseBlockPerHourglass,3.8
+1021,Hurt BlackCat,47,IncreaseBlockPerHourglass,3.84
+1021,Hurt BlackCat,48,IncreaseBlockPerHourglass,3.88
+1021,Hurt BlackCat,49,IncreaseBlockPerHourglass,3.92
+1021,Hurt BlackCat,50,IncreaseBlockPerHourglass,3.96
+1021,Hurt BlackCat,51,IncreaseBlockPerHourglass,4.0
+1021,Hurt BlackCat,52,IncreaseBlockPerHourglass,4.04
+1021,Hurt BlackCat,53,IncreaseBlockPerHourglass,4.08
+1021,Hurt BlackCat,54,IncreaseBlockPerHourglass,4.12
+1021,Hurt BlackCat,55,IncreaseBlockPerHourglass,4.16
+1021,Hurt BlackCat,56,IncreaseBlockPerHourglass,4.2
+1021,Hurt BlackCat,57,IncreaseBlockPerHourglass,4.24
+1021,Hurt BlackCat,58,IncreaseBlockPerHourglass,4.28
+1021,Hurt BlackCat,59,IncreaseBlockPerHourglass,4.32
+1021,Hurt BlackCat,60,IncreaseBlockPerHourglass,4.36
+1021,Hurt BlackCat,61,IncreaseBlockPerHourglass,4.4
+1021,Hurt BlackCat,62,IncreaseBlockPerHourglass,4.44
+1021,Hurt BlackCat,63,IncreaseBlockPerHourglass,4.48
+1021,Hurt BlackCat,64,IncreaseBlockPerHourglass,4.52
+1021,Hurt BlackCat,65,IncreaseBlockPerHourglass,4.56
+1021,Hurt BlackCat,66,IncreaseBlockPerHourglass,4.6
+1021,Hurt BlackCat,67,IncreaseBlockPerHourglass,4.64
+1021,Hurt BlackCat,68,IncreaseBlockPerHourglass,4.68
+1021,Hurt BlackCat,69,IncreaseBlockPerHourglass,4.72
+1021,Hurt BlackCat,70,IncreaseBlockPerHourglass,4.76
+1021,Hurt BlackCat,71,IncreaseBlockPerHourglass,4.8
+1021,Hurt BlackCat,72,IncreaseBlockPerHourglass,4.84
+1021,Hurt BlackCat,73,IncreaseBlockPerHourglass,4.88
+1021,Hurt BlackCat,74,IncreaseBlockPerHourglass,4.92
+1021,Hurt BlackCat,75,IncreaseBlockPerHourglass,4.96
+1021,Hurt BlackCat,76,IncreaseBlockPerHourglass,5.0
+1021,Hurt BlackCat,77,IncreaseBlockPerHourglass,5.04
+1021,Hurt BlackCat,78,IncreaseBlockPerHourglass,5.08
+1021,Hurt BlackCat,79,IncreaseBlockPerHourglass,5.12
+1021,Hurt BlackCat,80,IncreaseBlockPerHourglass,5.16
+1021,Hurt BlackCat,81,IncreaseBlockPerHourglass,5.2
+1021,Hurt BlackCat,82,IncreaseBlockPerHourglass,5.24
+1021,Hurt BlackCat,83,IncreaseBlockPerHourglass,5.28
+1021,Hurt BlackCat,84,IncreaseBlockPerHourglass,5.32
+1021,Hurt BlackCat,85,IncreaseBlockPerHourglass,5.36
+1021,Hurt BlackCat,86,IncreaseBlockPerHourglass,5.4
+1021,Hurt BlackCat,87,IncreaseBlockPerHourglass,5.44
+1021,Hurt BlackCat,88,IncreaseBlockPerHourglass,5.48
+1021,Hurt BlackCat,89,IncreaseBlockPerHourglass,5.52
+1021,Hurt BlackCat,90,IncreaseBlockPerHourglass,5.56
+1021,Hurt BlackCat,91,IncreaseBlockPerHourglass,5.6
+1021,Hurt BlackCat,92,IncreaseBlockPerHourglass,5.64
+1021,Hurt BlackCat,93,IncreaseBlockPerHourglass,5.68
+1021,Hurt BlackCat,94,IncreaseBlockPerHourglass,5.72
+1021,Hurt BlackCat,95,IncreaseBlockPerHourglass,5.76
+1021,Hurt BlackCat,96,IncreaseBlockPerHourglass,5.8
+1021,Hurt BlackCat,97,IncreaseBlockPerHourglass,5.84
+1021,Hurt BlackCat,98,IncreaseBlockPerHourglass,5.88
+1021,Hurt BlackCat,99,IncreaseBlockPerHourglass,5.92
+1021,Hurt BlackCat,100,IncreaseBlockPerHourglass,6.0
+1022,Shine Muscat Dongle,1,DiscountMaterialCostCrystal,40.0
+1022,Shine Muscat Dongle,2,DiscountMaterialCostCrystal,40.4
+1022,Shine Muscat Dongle,3,DiscountMaterialCostCrystal,40.8
+1022,Shine Muscat Dongle,4,DiscountMaterialCostCrystal,41.2
+1022,Shine Muscat Dongle,5,DiscountMaterialCostCrystal,41.6
+1022,Shine Muscat Dongle,6,DiscountMaterialCostCrystal,42.0
+1022,Shine Muscat Dongle,7,DiscountMaterialCostCrystal,42.4
+1022,Shine Muscat Dongle,8,DiscountMaterialCostCrystal,42.8
+1022,Shine Muscat Dongle,9,DiscountMaterialCostCrystal,43.2
+1022,Shine Muscat Dongle,10,DiscountMaterialCostCrystal,43.6
+1022,Shine Muscat Dongle,11,DiscountMaterialCostCrystal,44.0
+1022,Shine Muscat Dongle,12,DiscountMaterialCostCrystal,44.4
+1022,Shine Muscat Dongle,13,DiscountMaterialCostCrystal,44.8
+1022,Shine Muscat Dongle,14,DiscountMaterialCostCrystal,45.2
+1022,Shine Muscat Dongle,15,DiscountMaterialCostCrystal,45.6
+1022,Shine Muscat Dongle,16,DiscountMaterialCostCrystal,46.0
+1022,Shine Muscat Dongle,17,DiscountMaterialCostCrystal,46.4
+1022,Shine Muscat Dongle,18,DiscountMaterialCostCrystal,46.8
+1022,Shine Muscat Dongle,19,DiscountMaterialCostCrystal,47.2
+1022,Shine Muscat Dongle,20,DiscountMaterialCostCrystal,47.6
+1022,Shine Muscat Dongle,21,DiscountMaterialCostCrystal,48.0
+1022,Shine Muscat Dongle,22,DiscountMaterialCostCrystal,48.4
+1022,Shine Muscat Dongle,23,DiscountMaterialCostCrystal,48.8
+1022,Shine Muscat Dongle,24,DiscountMaterialCostCrystal,49.2
+1022,Shine Muscat Dongle,25,DiscountMaterialCostCrystal,49.6
+1022,Shine Muscat Dongle,26,DiscountMaterialCostCrystal,50.0
+1022,Shine Muscat Dongle,27,DiscountMaterialCostCrystal,50.4
+1022,Shine Muscat Dongle,28,DiscountMaterialCostCrystal,50.8
+1022,Shine Muscat Dongle,29,DiscountMaterialCostCrystal,51.2
+1022,Shine Muscat Dongle,30,DiscountMaterialCostCrystal,51.6
+1022,Shine Muscat Dongle,31,DiscountMaterialCostCrystal,52.0
+1022,Shine Muscat Dongle,32,DiscountMaterialCostCrystal,52.4
+1022,Shine Muscat Dongle,33,DiscountMaterialCostCrystal,52.8
+1022,Shine Muscat Dongle,34,DiscountMaterialCostCrystal,53.2
+1022,Shine Muscat Dongle,35,DiscountMaterialCostCrystal,53.6
+1022,Shine Muscat Dongle,36,DiscountMaterialCostCrystal,54.0
+1022,Shine Muscat Dongle,37,DiscountMaterialCostCrystal,54.4
+1022,Shine Muscat Dongle,38,DiscountMaterialCostCrystal,54.8
+1022,Shine Muscat Dongle,39,DiscountMaterialCostCrystal,55.2
+1022,Shine Muscat Dongle,40,DiscountMaterialCostCrystal,55.6
+1022,Shine Muscat Dongle,41,DiscountMaterialCostCrystal,56.0
+1022,Shine Muscat Dongle,42,DiscountMaterialCostCrystal,56.4
+1022,Shine Muscat Dongle,43,DiscountMaterialCostCrystal,56.8
+1022,Shine Muscat Dongle,44,DiscountMaterialCostCrystal,57.2
+1022,Shine Muscat Dongle,45,DiscountMaterialCostCrystal,57.6
+1022,Shine Muscat Dongle,46,DiscountMaterialCostCrystal,58.0
+1022,Shine Muscat Dongle,47,DiscountMaterialCostCrystal,58.4
+1022,Shine Muscat Dongle,48,DiscountMaterialCostCrystal,58.8
+1022,Shine Muscat Dongle,49,DiscountMaterialCostCrystal,59.2
+1022,Shine Muscat Dongle,50,DiscountMaterialCostCrystal,59.6
+1022,Shine Muscat Dongle,51,DiscountMaterialCostCrystal,60.0
+1022,Shine Muscat Dongle,52,DiscountMaterialCostCrystal,60.4
+1022,Shine Muscat Dongle,53,DiscountMaterialCostCrystal,60.8
+1022,Shine Muscat Dongle,54,DiscountMaterialCostCrystal,61.2
+1022,Shine Muscat Dongle,55,DiscountMaterialCostCrystal,61.6
+1022,Shine Muscat Dongle,56,DiscountMaterialCostCrystal,62.0
+1022,Shine Muscat Dongle,57,DiscountMaterialCostCrystal,62.4
+1022,Shine Muscat Dongle,58,DiscountMaterialCostCrystal,62.8
+1022,Shine Muscat Dongle,59,DiscountMaterialCostCrystal,63.2
+1022,Shine Muscat Dongle,60,DiscountMaterialCostCrystal,63.6
+1022,Shine Muscat Dongle,61,DiscountMaterialCostCrystal,64.0
+1022,Shine Muscat Dongle,62,DiscountMaterialCostCrystal,64.4
+1022,Shine Muscat Dongle,63,DiscountMaterialCostCrystal,64.8
+1022,Shine Muscat Dongle,64,DiscountMaterialCostCrystal,65.2
+1022,Shine Muscat Dongle,65,DiscountMaterialCostCrystal,65.6
+1022,Shine Muscat Dongle,66,DiscountMaterialCostCrystal,66.0
+1022,Shine Muscat Dongle,67,DiscountMaterialCostCrystal,66.4
+1022,Shine Muscat Dongle,68,DiscountMaterialCostCrystal,66.8
+1022,Shine Muscat Dongle,69,DiscountMaterialCostCrystal,67.2
+1022,Shine Muscat Dongle,70,DiscountMaterialCostCrystal,67.6
+1022,Shine Muscat Dongle,71,DiscountMaterialCostCrystal,68.0
+1022,Shine Muscat Dongle,72,DiscountMaterialCostCrystal,68.4
+1022,Shine Muscat Dongle,73,DiscountMaterialCostCrystal,68.8
+1022,Shine Muscat Dongle,74,DiscountMaterialCostCrystal,69.2
+1022,Shine Muscat Dongle,75,DiscountMaterialCostCrystal,69.6
+1022,Shine Muscat Dongle,76,DiscountMaterialCostCrystal,70.0
+1022,Shine Muscat Dongle,77,DiscountMaterialCostCrystal,70.4
+1022,Shine Muscat Dongle,78,DiscountMaterialCostCrystal,70.8
+1022,Shine Muscat Dongle,79,DiscountMaterialCostCrystal,71.2
+1022,Shine Muscat Dongle,80,DiscountMaterialCostCrystal,71.6
+1022,Shine Muscat Dongle,81,DiscountMaterialCostCrystal,72.0
+1022,Shine Muscat Dongle,82,DiscountMaterialCostCrystal,72.4
+1022,Shine Muscat Dongle,83,DiscountMaterialCostCrystal,72.8
+1022,Shine Muscat Dongle,84,DiscountMaterialCostCrystal,73.2
+1022,Shine Muscat Dongle,85,DiscountMaterialCostCrystal,73.6
+1022,Shine Muscat Dongle,86,DiscountMaterialCostCrystal,74.0
+1022,Shine Muscat Dongle,87,DiscountMaterialCostCrystal,74.4
+1022,Shine Muscat Dongle,88,DiscountMaterialCostCrystal,74.8
+1022,Shine Muscat Dongle,89,DiscountMaterialCostCrystal,75.2
+1022,Shine Muscat Dongle,90,DiscountMaterialCostCrystal,75.6
+1022,Shine Muscat Dongle,91,DiscountMaterialCostCrystal,76.0
+1022,Shine Muscat Dongle,92,DiscountMaterialCostCrystal,76.4
+1022,Shine Muscat Dongle,93,DiscountMaterialCostCrystal,76.8
+1022,Shine Muscat Dongle,94,DiscountMaterialCostCrystal,77.2
+1022,Shine Muscat Dongle,95,DiscountMaterialCostCrystal,77.6
+1022,Shine Muscat Dongle,96,DiscountMaterialCostCrystal,78.0
+1022,Shine Muscat Dongle,97,DiscountMaterialCostCrystal,78.4
+1022,Shine Muscat Dongle,98,DiscountMaterialCostCrystal,78.8
+1022,Shine Muscat Dongle,99,DiscountMaterialCostCrystal,79.2
+1022,Shine Muscat Dongle,100,DiscountMaterialCostCrystal,80.0
+1023,Valkyrie of Red Light,1,ReduceRequiredBlock,40.0
+1023,Valkyrie of Red Light,2,ReduceRequiredBlock,40.3
+1023,Valkyrie of Red Light,3,ReduceRequiredBlock,40.6
+1023,Valkyrie of Red Light,4,ReduceRequiredBlock,40.9
+1023,Valkyrie of Red Light,5,ReduceRequiredBlock,41.2
+1023,Valkyrie of Red Light,6,ReduceRequiredBlock,41.5
+1023,Valkyrie of Red Light,7,ReduceRequiredBlock,41.8
+1023,Valkyrie of Red Light,8,ReduceRequiredBlock,42.1
+1023,Valkyrie of Red Light,9,ReduceRequiredBlock,42.4
+1023,Valkyrie of Red Light,10,ReduceRequiredBlock,42.7
+1023,Valkyrie of Red Light,11,ReduceRequiredBlock,43.0
+1023,Valkyrie of Red Light,12,ReduceRequiredBlock,43.3
+1023,Valkyrie of Red Light,13,ReduceRequiredBlock,43.6
+1023,Valkyrie of Red Light,14,ReduceRequiredBlock,43.9
+1023,Valkyrie of Red Light,15,ReduceRequiredBlock,44.2
+1023,Valkyrie of Red Light,16,ReduceRequiredBlock,44.5
+1023,Valkyrie of Red Light,17,ReduceRequiredBlock,44.8
+1023,Valkyrie of Red Light,18,ReduceRequiredBlock,45.1
+1023,Valkyrie of Red Light,19,ReduceRequiredBlock,45.4
+1023,Valkyrie of Red Light,20,ReduceRequiredBlock,45.7
+1023,Valkyrie of Red Light,21,ReduceRequiredBlock,46.0
+1023,Valkyrie of Red Light,22,ReduceRequiredBlock,46.3
+1023,Valkyrie of Red Light,23,ReduceRequiredBlock,46.6
+1023,Valkyrie of Red Light,24,ReduceRequiredBlock,46.9
+1023,Valkyrie of Red Light,25,ReduceRequiredBlock,47.2
+1023,Valkyrie of Red Light,26,ReduceRequiredBlock,47.5
+1023,Valkyrie of Red Light,27,ReduceRequiredBlock,47.8
+1023,Valkyrie of Red Light,28,ReduceRequiredBlock,48.1
+1023,Valkyrie of Red Light,29,ReduceRequiredBlock,48.4
+1023,Valkyrie of Red Light,30,ReduceRequiredBlock,48.7
+1023,Valkyrie of Red Light,31,ReduceRequiredBlock,49.0
+1023,Valkyrie of Red Light,32,ReduceRequiredBlock,49.3
+1023,Valkyrie of Red Light,33,ReduceRequiredBlock,49.6
+1023,Valkyrie of Red Light,34,ReduceRequiredBlock,49.9
+1023,Valkyrie of Red Light,35,ReduceRequiredBlock,50.2
+1023,Valkyrie of Red Light,36,ReduceRequiredBlock,50.5
+1023,Valkyrie of Red Light,37,ReduceRequiredBlock,50.8
+1023,Valkyrie of Red Light,38,ReduceRequiredBlock,51.1
+1023,Valkyrie of Red Light,39,ReduceRequiredBlock,51.4
+1023,Valkyrie of Red Light,40,ReduceRequiredBlock,51.7
+1023,Valkyrie of Red Light,41,ReduceRequiredBlock,52.0
+1023,Valkyrie of Red Light,42,ReduceRequiredBlock,52.3
+1023,Valkyrie of Red Light,43,ReduceRequiredBlock,52.6
+1023,Valkyrie of Red Light,44,ReduceRequiredBlock,52.9
+1023,Valkyrie of Red Light,45,ReduceRequiredBlock,53.2
+1023,Valkyrie of Red Light,46,ReduceRequiredBlock,53.5
+1023,Valkyrie of Red Light,47,ReduceRequiredBlock,53.8
+1023,Valkyrie of Red Light,48,ReduceRequiredBlock,54.1
+1023,Valkyrie of Red Light,49,ReduceRequiredBlock,54.4
+1023,Valkyrie of Red Light,50,ReduceRequiredBlock,54.7
+1023,Valkyrie of Red Light,51,ReduceRequiredBlock,55.0
+1023,Valkyrie of Red Light,52,ReduceRequiredBlock,55.3
+1023,Valkyrie of Red Light,53,ReduceRequiredBlock,55.6
+1023,Valkyrie of Red Light,54,ReduceRequiredBlock,55.9
+1023,Valkyrie of Red Light,55,ReduceRequiredBlock,56.2
+1023,Valkyrie of Red Light,56,ReduceRequiredBlock,56.5
+1023,Valkyrie of Red Light,57,ReduceRequiredBlock,56.8
+1023,Valkyrie of Red Light,58,ReduceRequiredBlock,57.1
+1023,Valkyrie of Red Light,59,ReduceRequiredBlock,57.4
+1023,Valkyrie of Red Light,60,ReduceRequiredBlock,57.7
+1023,Valkyrie of Red Light,61,ReduceRequiredBlock,58.0
+1023,Valkyrie of Red Light,62,ReduceRequiredBlock,58.3
+1023,Valkyrie of Red Light,63,ReduceRequiredBlock,58.6
+1023,Valkyrie of Red Light,64,ReduceRequiredBlock,58.9
+1023,Valkyrie of Red Light,65,ReduceRequiredBlock,59.2
+1023,Valkyrie of Red Light,66,ReduceRequiredBlock,59.5
+1023,Valkyrie of Red Light,67,ReduceRequiredBlock,59.8
+1023,Valkyrie of Red Light,68,ReduceRequiredBlock,60.1
+1023,Valkyrie of Red Light,69,ReduceRequiredBlock,60.4
+1023,Valkyrie of Red Light,70,ReduceRequiredBlock,60.7
+1023,Valkyrie of Red Light,71,ReduceRequiredBlock,61.0
+1023,Valkyrie of Red Light,72,ReduceRequiredBlock,61.3
+1023,Valkyrie of Red Light,73,ReduceRequiredBlock,61.6
+1023,Valkyrie of Red Light,74,ReduceRequiredBlock,61.9
+1023,Valkyrie of Red Light,75,ReduceRequiredBlock,62.2
+1023,Valkyrie of Red Light,76,ReduceRequiredBlock,62.5
+1023,Valkyrie of Red Light,77,ReduceRequiredBlock,62.8
+1023,Valkyrie of Red Light,78,ReduceRequiredBlock,63.1
+1023,Valkyrie of Red Light,79,ReduceRequiredBlock,63.4
+1023,Valkyrie of Red Light,80,ReduceRequiredBlock,63.7
+1023,Valkyrie of Red Light,81,ReduceRequiredBlock,64.0
+1023,Valkyrie of Red Light,82,ReduceRequiredBlock,64.3
+1023,Valkyrie of Red Light,83,ReduceRequiredBlock,64.6
+1023,Valkyrie of Red Light,84,ReduceRequiredBlock,64.9
+1023,Valkyrie of Red Light,85,ReduceRequiredBlock,65.2
+1023,Valkyrie of Red Light,86,ReduceRequiredBlock,65.5
+1023,Valkyrie of Red Light,87,ReduceRequiredBlock,65.8
+1023,Valkyrie of Red Light,88,ReduceRequiredBlock,66.1
+1023,Valkyrie of Red Light,89,ReduceRequiredBlock,66.4
+1023,Valkyrie of Red Light,90,ReduceRequiredBlock,66.7
+1023,Valkyrie of Red Light,91,ReduceRequiredBlock,67.0
+1023,Valkyrie of Red Light,92,ReduceRequiredBlock,67.3
+1023,Valkyrie of Red Light,93,ReduceRequiredBlock,67.6
+1023,Valkyrie of Red Light,94,ReduceRequiredBlock,67.9
+1023,Valkyrie of Red Light,95,ReduceRequiredBlock,68.2
+1023,Valkyrie of Red Light,96,ReduceRequiredBlock,68.5
+1023,Valkyrie of Red Light,97,ReduceRequiredBlock,68.8
+1023,Valkyrie of Red Light,98,ReduceRequiredBlock,69.1
+1023,Valkyrie of Red Light,99,ReduceRequiredBlock,69.4
+1023,Valkyrie of Red Light,100,ReduceRequiredBlock,70.0
+1024,Night Lil' Fenrir,1,AdditionalOptionRate,100.0
+1024,Night Lil' Fenrir,2,AdditionalOptionRate,102.0
+1024,Night Lil' Fenrir,3,AdditionalOptionRate,104.0
+1024,Night Lil' Fenrir,4,AdditionalOptionRate,106.0
+1024,Night Lil' Fenrir,5,AdditionalOptionRate,108.0
+1024,Night Lil' Fenrir,6,AdditionalOptionRate,110.0
+1024,Night Lil' Fenrir,7,AdditionalOptionRate,112.0
+1024,Night Lil' Fenrir,8,AdditionalOptionRate,114.0
+1024,Night Lil' Fenrir,9,AdditionalOptionRate,116.0
+1024,Night Lil' Fenrir,10,AdditionalOptionRate,118.0
+1024,Night Lil' Fenrir,11,AdditionalOptionRate,120.0
+1024,Night Lil' Fenrir,12,AdditionalOptionRate,122.0
+1024,Night Lil' Fenrir,13,AdditionalOptionRate,124.0
+1024,Night Lil' Fenrir,14,AdditionalOptionRate,126.0
+1024,Night Lil' Fenrir,15,AdditionalOptionRate,128.0
+1024,Night Lil' Fenrir,16,AdditionalOptionRate,130.0
+1024,Night Lil' Fenrir,17,AdditionalOptionRate,132.0
+1024,Night Lil' Fenrir,18,AdditionalOptionRate,134.0
+1024,Night Lil' Fenrir,19,AdditionalOptionRate,136.0
+1024,Night Lil' Fenrir,20,AdditionalOptionRate,138.0
+1024,Night Lil' Fenrir,21,AdditionalOptionRate,140.0
+1024,Night Lil' Fenrir,22,AdditionalOptionRate,142.0
+1024,Night Lil' Fenrir,23,AdditionalOptionRate,144.0
+1024,Night Lil' Fenrir,24,AdditionalOptionRate,146.0
+1024,Night Lil' Fenrir,25,AdditionalOptionRate,148.0
+1024,Night Lil' Fenrir,26,AdditionalOptionRate,150.0
+1024,Night Lil' Fenrir,27,AdditionalOptionRate,152.0
+1024,Night Lil' Fenrir,28,AdditionalOptionRate,154.0
+1024,Night Lil' Fenrir,29,AdditionalOptionRate,156.0
+1024,Night Lil' Fenrir,30,AdditionalOptionRate,158.0
+1024,Night Lil' Fenrir,31,AdditionalOptionRate,160.0
+1024,Night Lil' Fenrir,32,AdditionalOptionRate,162.0
+1024,Night Lil' Fenrir,33,AdditionalOptionRate,164.0
+1024,Night Lil' Fenrir,34,AdditionalOptionRate,166.0
+1024,Night Lil' Fenrir,35,AdditionalOptionRate,168.0
+1024,Night Lil' Fenrir,36,AdditionalOptionRate,170.0
+1024,Night Lil' Fenrir,37,AdditionalOptionRate,172.0
+1024,Night Lil' Fenrir,38,AdditionalOptionRate,174.0
+1024,Night Lil' Fenrir,39,AdditionalOptionRate,176.0
+1024,Night Lil' Fenrir,40,AdditionalOptionRate,178.0
+1024,Night Lil' Fenrir,41,AdditionalOptionRate,180.0
+1024,Night Lil' Fenrir,42,AdditionalOptionRate,182.0
+1024,Night Lil' Fenrir,43,AdditionalOptionRate,184.0
+1024,Night Lil' Fenrir,44,AdditionalOptionRate,186.0
+1024,Night Lil' Fenrir,45,AdditionalOptionRate,188.0
+1024,Night Lil' Fenrir,46,AdditionalOptionRate,190.0
+1024,Night Lil' Fenrir,47,AdditionalOptionRate,192.0
+1024,Night Lil' Fenrir,48,AdditionalOptionRate,194.0
+1024,Night Lil' Fenrir,49,AdditionalOptionRate,196.0
+1024,Night Lil' Fenrir,50,AdditionalOptionRate,198.0
+1024,Night Lil' Fenrir,51,AdditionalOptionRate,200.0
+1024,Night Lil' Fenrir,52,AdditionalOptionRate,202.0
+1024,Night Lil' Fenrir,53,AdditionalOptionRate,204.0
+1024,Night Lil' Fenrir,54,AdditionalOptionRate,206.0
+1024,Night Lil' Fenrir,55,AdditionalOptionRate,208.0
+1024,Night Lil' Fenrir,56,AdditionalOptionRate,210.0
+1024,Night Lil' Fenrir,57,AdditionalOptionRate,212.0
+1024,Night Lil' Fenrir,58,AdditionalOptionRate,214.0
+1024,Night Lil' Fenrir,59,AdditionalOptionRate,216.0
+1024,Night Lil' Fenrir,60,AdditionalOptionRate,218.0
+1024,Night Lil' Fenrir,61,AdditionalOptionRate,220.0
+1024,Night Lil' Fenrir,62,AdditionalOptionRate,222.0
+1024,Night Lil' Fenrir,63,AdditionalOptionRate,224.0
+1024,Night Lil' Fenrir,64,AdditionalOptionRate,226.0
+1024,Night Lil' Fenrir,65,AdditionalOptionRate,228.0
+1024,Night Lil' Fenrir,66,AdditionalOptionRate,230.0
+1024,Night Lil' Fenrir,67,AdditionalOptionRate,232.0
+1024,Night Lil' Fenrir,68,AdditionalOptionRate,234.0
+1024,Night Lil' Fenrir,69,AdditionalOptionRate,236.0
+1024,Night Lil' Fenrir,70,AdditionalOptionRate,238.0
+1024,Night Lil' Fenrir,71,AdditionalOptionRate,240.0
+1024,Night Lil' Fenrir,72,AdditionalOptionRate,242.0
+1024,Night Lil' Fenrir,73,AdditionalOptionRate,244.0
+1024,Night Lil' Fenrir,74,AdditionalOptionRate,246.0
+1024,Night Lil' Fenrir,75,AdditionalOptionRate,248.0
+1024,Night Lil' Fenrir,76,AdditionalOptionRate,250.0
+1024,Night Lil' Fenrir,77,AdditionalOptionRate,252.0
+1024,Night Lil' Fenrir,78,AdditionalOptionRate,254.0
+1024,Night Lil' Fenrir,79,AdditionalOptionRate,256.0
+1024,Night Lil' Fenrir,80,AdditionalOptionRate,258.0
+1024,Night Lil' Fenrir,81,AdditionalOptionRate,260.0
+1024,Night Lil' Fenrir,82,AdditionalOptionRate,262.0
+1024,Night Lil' Fenrir,83,AdditionalOptionRate,264.0
+1024,Night Lil' Fenrir,84,AdditionalOptionRate,266.0
+1024,Night Lil' Fenrir,85,AdditionalOptionRate,268.0
+1024,Night Lil' Fenrir,86,AdditionalOptionRate,270.0
+1024,Night Lil' Fenrir,87,AdditionalOptionRate,272.0
+1024,Night Lil' Fenrir,88,AdditionalOptionRate,274.0
+1024,Night Lil' Fenrir,89,AdditionalOptionRate,276.0
+1024,Night Lil' Fenrir,90,AdditionalOptionRate,278.0
+1024,Night Lil' Fenrir,91,AdditionalOptionRate,280.0
+1024,Night Lil' Fenrir,92,AdditionalOptionRate,282.0
+1024,Night Lil' Fenrir,93,AdditionalOptionRate,284.0
+1024,Night Lil' Fenrir,94,AdditionalOptionRate,286.0
+1024,Night Lil' Fenrir,95,AdditionalOptionRate,288.0
+1024,Night Lil' Fenrir,96,AdditionalOptionRate,290.0
+1024,Night Lil' Fenrir,97,AdditionalOptionRate,292.0
+1024,Night Lil' Fenrir,98,AdditionalOptionRate,294.0
+1024,Night Lil' Fenrir,99,AdditionalOptionRate,296.0
+1024,Night Lil' Fenrir,100,AdditionalOptionRate,300.0

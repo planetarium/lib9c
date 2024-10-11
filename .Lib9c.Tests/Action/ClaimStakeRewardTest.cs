@@ -362,7 +362,7 @@ namespace Lib9c.Tests.Action
                     0));
 
             var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
-            var previousState = _initialState.SetLegacyState(stakeAddr, Null.Value);
+            var previousState = _initialState.RemoveLegacyState(stakeAddr);
             Assert.Throws<FailedLoadStateException>(() =>
                 Execute(
                     previousState,
@@ -447,7 +447,7 @@ namespace Lib9c.Tests.Action
             // NOTE: Set StakeRegularFixedRewardSheetTable to Null
             var sheetAddr = Addresses.GetSheetAddress(
                 stakeStateV2.Contract.StakeRegularFixedRewardSheetTableName);
-            prevState = prevState.SetLegacyState(sheetAddr, Null.Value);
+            prevState = prevState.RemoveLegacyState(sheetAddr);
             Assert.Throws<FailedLoadStateException>(() =>
                 Execute(
                     prevState,
@@ -462,7 +462,7 @@ namespace Lib9c.Tests.Action
             // NOTE: Set StakeRegularRewardSheetTableName to Null
             sheetAddr = Addresses.GetSheetAddress(
                 stakeStateV2.Contract.StakeRegularRewardSheetTableName);
-            prevState = prevState.SetLegacyState(sheetAddr, Null.Value);
+            prevState = prevState.RemoveLegacyState(sheetAddr);
             Assert.Throws<FailedLoadStateException>(() =>
                 Execute(
                     prevState,
