@@ -21,7 +21,13 @@ namespace Nekoyume.Model.State
 
         public const string DeriveFormat = "combination-slot-{0}";
 
+        /// <summary>
+        /// Serialize key is "unlockBlockIndex".
+        /// </summary>
         public long WorkCompleteBlockIndex { get; private set; }
+        /// <summary>
+        /// Serialize key is "startBlockIndex".
+        /// </summary>
         public long WorkStartBlockIndex { get; private set; }
         public AttachmentActionResult Result { get; private set; }
         public int? PetId { get; private set; }
