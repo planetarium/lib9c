@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_RapidCombination" data-uid="Nekoyume.Action.RapidCombination" class="text-break">
-Class RapidCombination  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L23"><i class="bi bi-code-slash"></i></a>
+Class RapidCombination  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class RapidCombination  <a class="header-action link-secondary" title="View sour
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Serializable]
 [ActionType(&quot;rapid_combination10&quot;)]
-public class RapidCombination : GameAction, IAction</code></pre>
+public class RapidCombination : GameAction, IAction, IRapidCombinationV2</code></pre>
   </div>
 
 
@@ -124,6 +124,7 @@ public class RapidCombination : GameAction, IAction</code></pre>
     <dt>Implements</dt>
     <dd>
       <div><span class="xref">IAction</span></div>
+      <div><span class="xref">IRapidCombinationV2</span></div>
     </dd>
   </dl>
 
@@ -199,7 +200,7 @@ public class RapidCombination : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_RapidCombination_avatarAddress" data-uid="Nekoyume.Action.RapidCombination.avatarAddress">
   avatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -229,7 +230,7 @@ public class RapidCombination : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_RapidCombination_slotIndexList" data-uid="Nekoyume.Action.RapidCombination.slotIndexList">
   slotIndexList
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -264,7 +265,7 @@ public class RapidCombination : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_RapidCombination_PlainValueInternal" data-uid="Nekoyume.Action.RapidCombination.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L173"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -299,7 +300,7 @@ public class RapidCombination : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_RapidCombination_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.RapidCombination.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Executes the main game logic of an action.  This should be
@@ -384,7 +385,7 @@ your project as a dependency.</p>
 
   <h3 id="Nekoyume_Action_RapidCombination_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.RapidCombination.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -415,7 +416,7 @@ your project as a dependency.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L23" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RapidCombination.cs/#L24" class="edit-link">Edit this page</a>
         </div>
 
 
