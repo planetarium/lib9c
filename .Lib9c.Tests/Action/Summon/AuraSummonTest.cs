@@ -175,7 +175,7 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData("V1", 10001, 1, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
         [InlineData("V1", 10001, 2, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
         // Fail by exceeding summon limit
-        [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
+        [InlineData("V1", 10001, 101, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
         // 15 recipes
         [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
         // 15 recipes

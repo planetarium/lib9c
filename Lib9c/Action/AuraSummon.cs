@@ -34,7 +34,7 @@ namespace Nekoyume.Action
         public const string SummonCountKey = "sc";
         public int SummonCount;
 
-        private const int SummonLimit = 10;
+        private const int SummonLimit = 100;
 
         Address IAuraSummonV1.AvatarAddress => AvatarAddress;
         int IAuraSummonV1.GroupId => GroupId;
@@ -82,9 +82,9 @@ namespace Nekoyume.Action
         )
         {
             // Ten plus one
-            if (summonCount == 10)
+            if (summonCount >= 10)
             {
-                summonCount += 1;
+                summonCount += summonCount / 10;
             }
 
             var result = new List<(int, Equipment)>();
