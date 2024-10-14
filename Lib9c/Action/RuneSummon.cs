@@ -33,7 +33,7 @@ namespace Nekoyume.Action
         public const string SummonCountKey = "sc";
         public int SummonCount;
 
-        private const int SummonLimit = 10;
+        private const int SummonLimit = 100;
         public const int RuneQuantity = 10;
 
         public override IWorld Execute(IActionContext context)
@@ -155,9 +155,9 @@ namespace Nekoyume.Action
         )
         {
             // Ten plus one
-            if (summonCount == 10)
+            if (summonCount >= 10)
             {
-                summonCount += 1;
+                summonCount += summonCount / 10;
             }
 
             var result = SimulateSummon(runeSheet, summonRow, summonCount, random);

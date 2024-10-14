@@ -231,7 +231,7 @@ namespace Lib9c.Tests.Action.Summon
                 // Fail by exceeding summon limit
                 new object[]
                 {
-                    20001, 11, 600201, 22, 1,  typeof(InvalidSummonCountException),
+                    20001, 101, 600201, 22, 1,  typeof(InvalidSummonCountException),
                 },
                 new object[]
                 {
