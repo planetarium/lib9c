@@ -151,7 +151,32 @@ namespace Nekoyume.Action
             return GetRandomCostume(context, 49900001, 21);
         }
 
-        // TODO: 시트 로드 최적화
+        private ItemBase GetRandomAura(IActionContext context)
+        {
+            // TODO: 시트 로드 최적화, 테스트 코드라 냅둠
+            Dictionary<Type, (Address, ISheet)> sheets = context.PreviousState.GetSheets(sheetTypes: new[]
+            {
+                typeof(EquipmentItemSheet),
+            });
+            var sheet = sheets.GetSheet<EquipmentItemSheet>();
+
+            var row = sheet.Values.FirstOrDefault(r => r.ItemSubType == ItemSubType.Aura);
+            return ItemFactory.CreateItem(row, context.GetRandom());
+        }
+
+        private ItemBase GetRandomGrimoire(IActionContext context)
+        {
+            // TODO: 시트 로드 최적화, 테스트 코드라 냅둠
+            Dictionary<Type, (Address, ISheet)> sheets = context.PreviousState.GetSheets(sheetTypes: new[]
+            {
+                typeof(EquipmentItemSheet),
+            });
+            var sheet = sheets.GetSheet<EquipmentItemSheet>();
+
+            var row = sheet.Values.FirstOrDefault(r => r.ItemSubType == ItemSubType.Grimoire);
+            return ItemFactory.CreateItem(row, context.GetRandom());
+        }
+
         private ItemBase GetRandomCostume(IActionContext context, int keyBase, int keyUpperBound)
         {
             var random   = context.GetRandom();
