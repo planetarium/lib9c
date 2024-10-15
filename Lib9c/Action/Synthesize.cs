@@ -26,13 +26,13 @@ namespace Nekoyume.Action
         private const string AvatarAddressKey = "a";
         private const string ItemSubTypeKey = "s";
 
-        private static readonly ItemType[] InvalidItemType =
+        private static readonly ItemType[] ValidItemType =
         {
             ItemType.Costume,
             ItemType.Equipment,
         };
 
-        private static readonly ItemSubType[] InvalidItemSubType =
+        private static readonly ItemSubType[] ValidItemSubType =
         {
             ItemSubType.FullCostume,
             ItemSubType.Title,
@@ -119,7 +119,7 @@ namespace Nekoyume.Action
             // clone random item
             avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(context));
 
-            return states.SetAvatarState(AvatarAddress, avatarState);
+            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
         // TODO: Use Sheet
@@ -133,9 +133,9 @@ namespace Nekoyume.Action
                 case ItemSubType.Title:
                     return GetRandomTitle(context);
                 case ItemSubType.Aura:
-                    //return GetRandomAura(context);
+                    return GetRandomAura(context);
                 case ItemSubType.Grimoire:
-                    //return GetRandomGrimoire(context);
+                    return GetRandomGrimoire(context);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -182,6 +182,7 @@ namespace Nekoyume.Action
             var random   = context.GetRandom();
             var randomId = keyBase + random.Next(0, keyUpperBound);
 
+            // TODO: 시트 로드 최적화, 테스트 코드라 냅둠
             Dictionary<Type, (Address, ISheet)> sheets = context.PreviousState.GetSheets(sheetTypes: new[]
             {
                 typeof(CostumeItemSheet),
@@ -194,7 +195,7 @@ namespace Nekoyume.Action
                 );
             }
 
-            return ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
+            return ItemFactory.CreateItem(costumeRow, context.GetRandom());
         }
 
         private Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, IActionContext context, string addressesHex)
@@ -213,14 +214,14 @@ namespace Nekoyume.Action
             }
 
             // Validate item type
-            if (InvalidItemType.Contains(materialEquipment.ItemType))
+            if (!ValidItemType.Contains(materialEquipment.ItemType))
             {
                 throw new InvalidMaterialException(
                     $"{addressesHex} Aborted as the material item is not a valid item type: {materialEquipment.ItemType}."
                 );
             }
 
-            if (InvalidItemSubType.Contains(materialEquipment.ItemSubType))
+            if (!ValidItemSubType.Contains(materialEquipment.ItemSubType))
             {
                 throw new InvalidMaterialException(
                     $"{addressesHex} Aborted as the material item is not a valid item sub type: {materialEquipment.ItemSubType}."
@@ -246,14 +247,14 @@ namespace Nekoyume.Action
             }
 
             // Validate item type
-            if (InvalidItemType.Contains(costumeItem.ItemType))
+            if (!ValidItemType.Contains(costumeItem.ItemType))
             {
                 throw new InvalidMaterialException(
                     $"{addressesHex} Aborted as the material item is not a valid item type: {costumeItem.ItemType}."
                 );
             }
 
-            if (InvalidItemSubType.Contains(costumeItem.ItemSubType))
+            if (!ValidItemSubType.Contains(costumeItem.ItemSubType))
             {
                 throw new InvalidMaterialException(
                     $"{addressesHex} Aborted as the material item is not a valid item sub type: {costumeItem.ItemSubType}."
