@@ -394,7 +394,6 @@ namespace Lib9c.Tests.Action
             return nextState;
         }
 
-        // Todo : Fill more test cases
         private class CalculateMaterialRewardData : IEnumerable<object[]>
         {
             private readonly List<object[]> _data = new List<object[]>
