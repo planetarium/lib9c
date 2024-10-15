@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Action.Scenario
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
@@ -21,6 +22,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Crystal;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -321,7 +323,7 @@ namespace Lib9c.Tests.Action.Scenario
                     var sellProductList = new ProductsState((List)latestState.GetLegacyState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
-                    Assert.Equal(Null.Value, latestState.GetLegacyState(Product.DeriveAddress(productId)));
+                    Assert.Null(latestState.GetLegacyState(Product.DeriveAddress(productId)));
                     var product = ProductFactory.DeserializeProduct((List)nextState2.GetLegacyState(Product.DeriveAddress(productId)));
                     switch (product)
                     {
@@ -508,7 +510,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             foreach (var productAddress in action2.ProductInfos.Select(productInfo => Product.DeriveAddress(productInfo.ProductId)))
             {
-                Assert.Equal(Null.Value, latestState.GetLegacyState(productAddress));
+                Assert.Null(latestState.GetLegacyState(productAddress));
                 var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(productAddress));
                 switch (product)
                 {
@@ -1097,7 +1099,7 @@ namespace Lib9c.Tests.Action.Scenario
                     var sellProductList = new ProductsState((List)tradedState.GetLegacyState(ProductsState.DeriveAddress(productInfo.AvatarAddress)));
                     var productId = productInfo.ProductId;
                     Assert.Empty(sellProductList.ProductIds);
-                    Assert.Equal(Null.Value, tradedState.GetLegacyState(Product.DeriveAddress(productId)));
+                    Assert.Null(tradedState.GetLegacyState(Product.DeriveAddress(productId)));
                     var product = ProductFactory.DeserializeProduct((List)nextState.GetLegacyState(Product.DeriveAddress(productId)));
                     switch (product)
                     {
@@ -1123,6 +1125,214 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.True(totalTax > 0 * _currency);
             Assert.Equal(0 * _currency, tradedState.GetBalance(_buyerAgentAddress, _currency));
             Assert.Equal(totalTax, tradedState.GetBalance(feeStoreAddress, _currency));
+        }
+
+        [Theory]
+        [ClassData(typeof(ExecuteWithCustomEquipmentData))]
+        public void Grinding_Custom_Equipment_And_Register(int[] equipmentIds, (int, int)[] expected)
+        {
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default);
+            var crystalCurrency = Currencies.Crystal;
+            var random = new TestRandom();
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<CrystalMonsterCollectionMultiplierSheet>(),
+                    _tableSheets.CrystalMonsterCollectionMultiplierSheet.Serialize())
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<CrystalEquipmentGrindingSheet>(),
+                    _tableSheets.CrystalEquipmentGrindingSheet.Serialize())
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<MaterialItemSheet>(),
+                    _tableSheets.MaterialItemSheet.Serialize())
+                .SetLegacyState(
+                    Addresses.GetSheetAddress<StakeRegularRewardSheet>(),
+                    _tableSheets.StakeRegularRewardSheet.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState)
+                .SetActionPoint(avatarAddress, 120);
+            Assert.Equal(0 * crystalCurrency, state.GetBalance(avatarAddress, crystalCurrency));
+
+            state = Execute_Grinding_Custom_Equipment(
+                state,
+                agentAddress,
+                avatarAddress,
+                random,
+                equipmentIds,
+                _tableSheets.EquipmentItemSheet
+            );
+            var expectedAsset = equipmentIds.Length * crystalCurrency;
+            Assert.Equal(expectedAsset, state.GetBalance(agentAddress, crystalCurrency));
+            Assert.Equal(115, state.GetActionPoint(avatarAddress));
+
+            state = Execute_Register_Custom_Equipment(
+                state,
+                agentAddress,
+                avatarAddress,
+                random,
+                expected,
+                _tableSheets.WorldSheet,
+                _tableSheets.WorldUnlockSheet,
+                _tableSheets.MaterialItemSheet
+            );
+        }
+
+        private static IWorld Execute_Grinding_Custom_Equipment(
+            IWorld state,
+            Address agentAddress,
+            Address avatarAddress,
+            IRandom random,
+            int[] equipmentRowIds,
+            EquipmentItemSheet equipmentItemSheet)
+        {
+            var avatarState = state.GetAvatarState(avatarAddress);
+
+            var testRandom = new TestRandom();
+            // Create equipment with ItemFactory
+            var equipmentList = new List<Equipment>();
+            foreach (var equipmentItemId in equipmentRowIds)
+            {
+                var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                    equipmentItemSheet[equipmentItemId],
+                    testRandom.GenerateRandomGuid(),
+                    1);
+                equipment.ByCustomCraft = true;
+                equipmentList.Add(equipment);
+            }
+
+            foreach (var equipment in equipmentList)
+            {
+                avatarState.inventory.AddItem(equipment);
+            }
+
+            state = state.SetInventory(avatarAddress, avatarState.inventory);
+
+            var grinding = new Grinding
+            {
+                AvatarAddress = avatarAddress,
+                EquipmentIds = equipmentList.Select(e => e.ItemId).ToList(),
+                ChargeAp = false,
+            };
+            var nextState = grinding.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = agentAddress,
+                BlockIndex = 1,
+                RandomSeed = random.Seed,
+            });
+
+            return nextState;
+        }
+
+        private static IWorld Execute_Register_Custom_Equipment(
+            IWorld state,
+            Address agentAddress,
+            Address avatarAddress,
+            IRandom random,
+            (int id, int count)[] expectedReward,
+            WorldSheet worldSheet,
+            WorldUnlockSheet worldUnlockSheet,
+            MaterialItemSheet materialItemSheet)
+        {
+            var avatarState = state.GetAvatarState(avatarAddress);
+            var price = 1 * Currency.Legacy("NCG", 2, minters: null);
+            var registerInfos = expectedReward.Select(expected =>
+            {
+                materialItemSheet.TryGetValue(expected.id, out var materialRow);
+                Assert.NotNull(materialRow);
+                Assert.True(materialRow.ItemSubType is ItemSubType.Circle or ItemSubType.Scroll);
+                avatarState.inventory.TryGetFungibleItems(materialRow.ItemId, out var items);
+                Assert.Single(items);
+                var item = items.First();
+
+                Assert.Equal(expected.count, item.count);
+                Assert.IsAssignableFrom<ITradableFungibleItem>(item.item);
+                return new RegisterInfo
+                {
+                    AvatarAddress = avatarAddress,
+                    Price = price,
+                    TradableId = ((ITradableFungibleItem)item.item).TradableId,
+                    ItemCount = item.count,
+                    Type = ProductType.Fungible,
+                };
+            });
+
+            for (int i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
+            {
+                avatarState.worldInformation.ClearStage(1, i + 1, 0, worldSheet, worldUnlockSheet);
+            }
+
+            state = state.SetWorldInformation(avatarAddress, avatarState.worldInformation);
+
+            var register = new RegisterProduct
+            {
+                AvatarAddress = avatarAddress,
+                RegisterInfos = registerInfos,
+                ChargeAp = false,
+            };
+            var nextState = register.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = agentAddress,
+                BlockIndex = 2,
+                RandomSeed = random.Seed,
+            });
+
+            return nextState;
+        }
+
+        private class ExecuteWithCustomEquipmentData : IEnumerable<object[]>
+        {
+            private readonly List<object[]> _data = new ()
+            {
+                new object[]
+                {
+                    new[] { 20160000, 20160001, 20160002 },
+                    new[]
+                    {
+                        (600401, 14),
+                        (600402, 21),
+                    },
+                },
+                new object[]
+                {
+                    new[] { 20160000, 20260000, 20360000, 20460000, 20560000 },
+                    new[]
+                    {
+                        (600401, 10),
+                        (600402, 15),
+                    },
+                },
+                new object[]
+                {
+                    new[] { 20160003, 20260000, 20360001, 20360001, 20460001 },
+                    new[]
+                    {
+                        (600401, 24), // 10 + 2 + 4 + 4 + 4 = 24
+                        (600402, 47), // 20 + 3 + 8 + 8 + 8 = 47
+                    },
+                },
+                new object[]
+                {
+                    new[] { 20560003, 20560003, 20560003 },
+                    new[]
+                    {
+                        (600401, 30), // 10 + 10 + 10 = 30
+                        (600402, 60), // 20 + 20 + 20 = 60
+                    },
+                },
+            };
+
+            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
         }
     }
 }

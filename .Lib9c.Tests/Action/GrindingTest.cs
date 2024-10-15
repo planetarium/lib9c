@@ -326,11 +326,11 @@ namespace Lib9c.Tests.Action
             );
 
             Assert.Equal(expected.Count, actual.Count);
-            foreach (var (material, count) in actual)
+            foreach (var (material, actualCount) in actual)
             {
-                if (expected.TryGetValue(material.Id, out var actualCount))
+                if (expected.TryGetValue(material.Id, out var expectedCount))
                 {
-                    Assert.Equal(count, actualCount);
+                    Assert.Equal(expectedCount, actualCount);
                 }
                 else
                 {
@@ -394,7 +394,6 @@ namespace Lib9c.Tests.Action
             return nextState;
         }
 
-        // Todo : Fill more test cases
         private class CalculateMaterialRewardData : IEnumerable<object[]>
         {
             private readonly List<object[]> _data = new List<object[]>
@@ -422,9 +421,9 @@ namespace Lib9c.Tests.Action
                     new[] { 10750008, 10760000, 20160000, 20160003 },
                     new Dictionary<int, int>
                     {
-                        { 306085, 15 },
-                        { 600401, 35 },
-                        { 600402, 21 },
+                        { 306085, 15 },  // 5 + 10 + 0 + 0
+                        { 600401, 12 },  // 0 + 0 + 2 + 10
+                        { 600402, 23 },  // 0 + 0 + 3 + 20
                     },
                 },
                 new object[]

@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Arena;
+    using Nekoyume.Exceptions;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
@@ -196,6 +197,57 @@ namespace Lib9c.Tests.Action
                 PreviousState = _initialStates,
                 Signer = _agent1Address,
                 RandomSeed = 0,
+            }));
+        }
+
+        [Fact]
+        public void Execute_MedalIdNotFoundException()
+        {
+            var prevState = _initialStates;
+            var context = new ActionContext
+            {
+                PreviousState = prevState,
+                Signer = _agent1Address,
+                RandomSeed = 0,
+            };
+            prevState = prevState.SetLegacyState(Addresses.TableSheet.Derive("ArenaSheet"), @"id,round,arena_type,start_block_index,end_block_index,required_medal_count,entrance_fee,ticket_price,additional_ticket_price,max_purchase_count,max_purchase_count_during_interval,medal_id
+1,1,Season,1,100,0,0,5,2,80,79".Serialize());
+            prevState = JoinArena(
+                context,
+                prevState,
+                _agent1Address,
+                _avatar1Address,
+                1,
+                1,
+                1,
+                new TestRandom());
+            prevState = JoinArena(
+                context,
+                prevState,
+                _agent2Address,
+                _avatar2Address,
+                1,
+                1,
+                1,
+                new TestRandom());
+
+            var action = new BattleArena
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                runeInfos = new List<RuneSlotInfo>(),
+            };
+            Assert.Throws<MedalIdNotFoundException>(() => action.Execute(new ActionContext
+            {
+                PreviousState = prevState,
+                Signer = _agent1Address,
+                RandomSeed = 0,
+                BlockIndex = 10,
             }));
         }
 
@@ -1249,7 +1301,7 @@ namespace Lib9c.Tests.Action
             var medalCount = 0;
             if (roundData.ArenaType != ArenaType.OffSeason)
             {
-                var medalId = ArenaHelper.GetMedalItemId(championshipId, round);
+                var medalId = roundData.MedalId;
                 myAvatarStateNext.inventory.TryGetItem(medalId, out var medal);
                 if (myAfterInfoNext.Win > 0)
                 {
