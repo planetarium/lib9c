@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Lib9c;
+using Libplanet.Action.State;
 using Libplanet.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
@@ -11,6 +12,9 @@ namespace Nekoyume.Module.Guild
 {
     public static class GuildModule
     {
+        public static GuildRepository GetGuildRepository(this IWorld world, IActionContext context)
+            => new GuildRepository(world, context);
+
         public static bool TryGetGuild(
             this GuildRepository repository,
             GuildAddress guildAddress,
@@ -86,11 +90,11 @@ namespace Nekoyume.Module.Guild
 
         public static GuildRepository CollectRewardGuild(
             this GuildRepository repository,
-            IActionContext context,
-            GuildAddress guildAddress)
+            GuildAddress guildAddress,
+            long height)
         {
             var guild = repository.GetGuild(guildAddress);
-            guild.CollectRewards(context.BlockIndex);
+            guild.CollectRewards(height);
             repository.SetGuild(guild);
 
             return repository;
