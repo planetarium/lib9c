@@ -16,6 +16,10 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Synthesize action is a type of action that synthesizes items.
+    /// TODO: Implement Synthesize action.
+    /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class Synthesize : GameAction
@@ -48,6 +52,11 @@ namespace Nekoyume.Action
 #endregion Fields
 
         // TODO: 세부 기획 정해지면 그에 맞게 테스트 코드 우선 작성
+        /// <summary>
+        /// Execute Synthesize action, Input <see cref="MaterialIds"/> and <see cref="AvatarAddress"/>.
+        /// Depending on the probability, you can get different items.
+        /// Success: Return new AvatarState with synthesized item in inventory.
+        /// </summary>
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
