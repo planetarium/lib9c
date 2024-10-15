@@ -53,7 +53,7 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            repository.AcceptGuildApplication(context, signer, Target);
+            repository.AcceptGuildApplication(signer, Target, context.BlockIndex);
             return repository.World;
         }
     }

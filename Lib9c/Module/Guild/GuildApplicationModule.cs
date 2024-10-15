@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
-using Libplanet.Action;
 using Nekoyume.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
@@ -73,7 +72,7 @@ namespace Nekoyume.Module.Guild
         }
 
         public static void AcceptGuildApplication(
-            this GuildRepository repository, IActionContext context, AgentAddress signer, AgentAddress target)
+            this GuildRepository repository, AgentAddress signer, AgentAddress target, long height)
         {
             if (!repository.TryGetGuildApplication(target, out var guildApplication))
             {
