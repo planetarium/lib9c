@@ -56,7 +56,6 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var random = context.GetRandom();
             var guildAddress = GuildAddress;
-            var guildMasterAddress = new AgentAddress(context.Signer);
             var validatorAddress = ValidatorAddress;
 
             // TODO: Remove this check when to deliver features to users.
@@ -66,7 +65,7 @@ namespace Nekoyume.Action.Guild
                     $"This action is not allowed for {context.Signer}.");
             }
 
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, validatorAddress);
             return repository.World;
         }
     }

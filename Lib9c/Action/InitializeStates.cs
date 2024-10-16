@@ -207,8 +207,6 @@ namespace Nekoyume.Action
                 var validatorDelegatee = new ValidatorDelegatee(
                     validator.OperatorAddress,
                     validator.PublicKey,
-                    delegationCurrency: Currencies.GuildGold,
-                    repository.World.GetGoldCurrency(),
                     ValidatorDelegatee.DefaultCommissionPercentage,
                     context.BlockIndex,
                     repository);

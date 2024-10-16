@@ -46,7 +46,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            repository.ClaimRewardValidator(context, ValidatorDelegatee);
+            repository.ClaimRewardValidator(ValidatorDelegatee);
 
             return repository.World;
         }
