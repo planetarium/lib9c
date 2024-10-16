@@ -27,7 +27,6 @@ namespace Nekoyume.Action.ValidatorDelegation
             PublicKey = publicKey;
             FAV = fav;
             CommissionPercentage = commissionPercentage;
-            RewardAddress = publicKey.Address;
         }
 
         public PublicKey PublicKey { get; private set; }
@@ -36,15 +35,12 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public BigInteger CommissionPercentage { get; private set; }
 
-        public Address RewardAddress { get; private set; }
-
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", List.Empty
                 .Add(PublicKey.Format(true))
                 .Add(FAV.Serialize())
-                .Add(CommissionPercentage)
-                .Add(RewardAddress.Bencoded));
+                .Add(CommissionPercentage));
 
         public override void LoadPlainValue(IValue plainValue)
         {
@@ -59,7 +55,6 @@ namespace Nekoyume.Action.ValidatorDelegation
             PublicKey = new PublicKey(((Binary)values[0]).ByteArray);
             FAV = new FungibleAssetValue(values[1]);
             CommissionPercentage = (Integer)values[2];
-            RewardAddress = new Address(values[3]);
         }
 
         public override IWorld Execute(IActionContext context)
@@ -68,10 +63,9 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            var rewardAddress = RewardAddress;
 
-            repository.CreateValidatorDelegatee(context, PublicKey, CommissionPercentage);
-            repository.DelegateValidator(context, context.Signer, rewardAddress, FAV);
+            repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
+            repository.DelegateValidator(context.Signer, FAV);
 
             return repository.World;
         }

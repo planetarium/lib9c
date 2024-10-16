@@ -52,7 +52,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            repository.UndelegateValidator(context, ValidatorDelegatee, Share);
+            repository.UndelegateValidator(ValidatorDelegatee, Share);
 
             return repository.World;
         }

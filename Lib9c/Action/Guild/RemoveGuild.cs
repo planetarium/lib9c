@@ -42,7 +42,7 @@ namespace Nekoyume.Action.Guild
 
             // TODO: Do something to return 'Power' token;
 
-            repository.RemoveGuild(signer, height);
+            repository.RemoveGuild();
             return repository.World;
         }
     }

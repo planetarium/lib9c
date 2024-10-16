@@ -63,7 +63,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            repository.RedelegateValidator(context, SrcValidatorDelegatee, DstValidatorDelegatee, Share);
+            repository.RedelegateValidator(SrcValidatorDelegatee, DstValidatorDelegatee, Share);
 
             return repository.World;
         }
