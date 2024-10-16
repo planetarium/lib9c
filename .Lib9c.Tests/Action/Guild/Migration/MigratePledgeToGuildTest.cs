@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Lib9c.Tests.Action;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
+    using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
@@ -44,13 +45,14 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var target = AddressUtil.CreateAgentAddress();
             var caller = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
+            var validatorAddress = new PrivateKey().Address;
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
             repository.UpdateWorld(repository.World.SetLegacyState(
                 pledgeAddress,
@@ -95,13 +97,14 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var target = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
             var caller = AddressUtil.CreateAgentAddress();
+            var validatorAddress = new PrivateKey().Address;
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
             repository.UpdateWorld(repository.World.SetLegacyState(pledgeAddress, new List(
                 MeadConfig.PatronAddress.Serialize(),
@@ -131,6 +134,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
         {
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
+            var validatorAddress = new PrivateKey().Address;
             var target = AddressUtil.CreateAgentAddress();
             var caller = AddressUtil.CreateAgentAddress();
             IWorld world = new World(MockUtil.MockModernWorldState);
@@ -139,7 +143,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
 
             Assert.Null(repository.GetJoinedGuild(target));

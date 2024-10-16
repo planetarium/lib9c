@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Libplanet.Mocks;
 using Nekoyume;
 using Nekoyume.Action.Guild;
@@ -34,9 +35,10 @@ public class MigratePledgeToGuild
 
         var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
         var guildAddress = AddressUtil.CreateGuildAddress();
+        var validatorAddress = new PrivateKey().Address;
         var repository = new GuildRepository(worldWithPledge, new ActionContext());
         worldWithPledgeAndGuild = repository
-            .MakeGuild(guildAddress, guildMasterAddress).World;
+            .MakeGuild(guildAddress, guildMasterAddress, validatorAddress).World;
         worldAfterMigration = repository
             .JoinGuild(guildAddress, signer).World;
     }

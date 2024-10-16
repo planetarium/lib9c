@@ -69,12 +69,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = NCG * 1000,
+            TotalReward = GG * 1000,
             ValidatorsInfos = CreateArray(4, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = NCG * 10,
-                Balance = NCG * 100,
+                Cash = GG * 10,
+                Balance = GG * 100,
                 VoteFlag = i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null,
             }),
             Delegatorinfos = Array.Empty<DelegatorInfo>(),
@@ -95,12 +95,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward:R}"),
+            TotalReward = FungibleAssetValue.Parse(GG, $"{totalReward:R}"),
             ValidatorsInfos = CreateArray(validatorCount, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = NCG * 10,
-                Balance = NCG * 100,
+                Cash = GG * 10,
+                Balance = GG * 100,
                 VoteFlag = i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null,
             }),
             Delegatorinfos = Array.Empty<DelegatorInfo>(),
@@ -113,12 +113,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = NCG * 0,
+            TotalReward = GG * 0,
             ValidatorsInfos = CreateArray(4, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = NCG * 10,
-                Balance = NCG * 100,
+                Cash = GG * 10,
+                Balance = GG * 100,
                 VoteFlag = i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null,
             }),
             Delegatorinfos = Array.Empty<DelegatorInfo>(),
@@ -196,7 +196,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         var expectedProposer = proposerKey;
         var votes = CreateVotes(validatorInfos, expectedBondedSet, height - 1);
         var balances = votes
-            .Select(vote => world.GetBalance(vote.ValidatorPublicKey.Address, NCG)).ToArray();
+            .Select(vote => world.GetBalance(vote.ValidatorPublicKey.Address, GG)).ToArray();
         var expectedProposerReward
             = CalculatePropserReward(totalReward) + CalculateBonusPropserReward(votes, totalReward);
         var expectedValidatorsReward = totalReward - expectedProposerReward;
@@ -220,8 +220,8 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             .OfType<BigInteger>()
             .Aggregate(BigInteger.Zero, (accum, next) => accum + next);
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualAllocatedReward = NCG * 0;
-        var actualCommunityFund = world.GetBalance(Addresses.CommunityPool, NCG);
+        var actualAllocatedReward = GG * 0;
+        var actualCommunityFund = world.GetBalance(Addresses.CommunityPool, GG);
         foreach (var (vote, index) in votes.Select((v, i) => (v, i)))
         {
             if (vote.ValidatorPower is not { } validatorPower)
@@ -233,14 +233,14 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorAddress);
             var validatorRewardAddress = actualDelegatee.CurrentLumpSumRewardsRecordAddress();
             var balance = balances[index];
-            var actualBalance = world.GetBalance(validatorAddress, NCG);
-            var actualReward = world.GetBalance(validatorRewardAddress, NCG);
+            var actualBalance = world.GetBalance(validatorAddress, GG);
+            var actualReward = world.GetBalance(validatorRewardAddress, GG);
             var isProposer = vote.ValidatorPublicKey.Equals(expectedProposer.PublicKey);
 
             if (vote.Flag == VoteFlag.Null)
             {
                 Assert.Equal(balance, actualBalance);
-                Assert.Equal(NCG * 0, actualReward);
+                Assert.Equal(GG * 0, actualReward);
                 Assert.False(isProposer);
                 continue;
             }
@@ -301,10 +301,10 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         public RandomFixture(int randomSeed)
         {
             _random = new Random(randomSeed);
-            TotalReward = GetRandomNCG(_random);
+            TotalReward = GetRandomGG(_random);
             ValidatorsInfos = CreateArray(_random.Next(1, 200), i =>
             {
-                var balance = GetRandomNCG(_random);
+                var balance = GetRandomGG(_random);
                 var flag = _random.Next() % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null;
                 return new ValidatorInfo
                 {
@@ -316,7 +316,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             });
             Delegatorinfos = CreateArray(_random.Next(1, 200), i =>
             {
-                var balance = GetRandomNCG(_random);
+                var balance = GetRandomGG(_random);
                 return new DelegatorInfo
                 {
                     Key = new PrivateKey(),

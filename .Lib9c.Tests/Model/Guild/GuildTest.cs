@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Model.Guild
     using Lib9c.Tests.Action;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
+    using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume.TypedAddress;
@@ -24,9 +25,11 @@ namespace Lib9c.Tests.Model.Guild
         {
             IWorld world = new World(MockUtil.MockModernWorldState);
             var repository = new Nekoyume.Model.Guild.GuildRepository(world, new ActionContext());
+            var validatorAddress = new PrivateKey().Address;
             var guild = new Nekoyume.Model.Guild.Guild(
-                AddressUtil.CreateAgentAddress(),
+                AddressUtil.CreateGuildAddress(),
                 new AgentAddress("0xd928ae87311dead490c986c24cc23c37eff892f2"),
+                validatorAddress,
                 Currency.Legacy("NCG", 2, null),
                 repository);
 
@@ -38,10 +41,12 @@ namespace Lib9c.Tests.Model.Guild
         {
             IWorld world = new World(MockUtil.MockModernWorldState);
             var repository = new Nekoyume.Model.Guild.GuildRepository(world, new ActionContext());
-            var guildAddress = AddressUtil.CreateAgentAddress();
+            var guildAddress = AddressUtil.CreateGuildAddress();
+            var validatorAddress = new PrivateKey().Address;
             var guild = new Nekoyume.Model.Guild.Guild(
                 guildAddress,
                 AddressUtil.CreateAgentAddress(),
+                validatorAddress,
                 Currency.Legacy("NCG", 2, null),
                 repository);
             repository.SetGuild(guild);

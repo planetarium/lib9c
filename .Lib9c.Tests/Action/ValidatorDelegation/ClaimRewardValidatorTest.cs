@@ -59,8 +59,8 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = NCG * 10;
-        var allocatedReward = NCG * 100;
+        var validatorGold = GG * 10;
+        var allocatedReward = GG * 100;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
@@ -79,7 +79,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         world = claimRewardValidator.Execute(actionContext);
 
         // Then
-        var actualBalance = world.GetBalance(validatorKey.Address, NCG);
+        var actualBalance = world.GetBalance(validatorKey.Address, GG);
 
         Assert.Equal(expectedBalance, actualBalance);
     }
@@ -94,17 +94,17 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var fixture = new StaticFixture
         {
             DelegatorLength = 1,
-            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward}"),
+            TotalReward = FungibleAssetValue.Parse(GG, $"{totalReward}"),
             ValidatorKey = new PrivateKey(),
-            ValidatorBalance = NCG * 100,
-            ValidatorCash = NCG * 10,
+            ValidatorBalance = GG * 100,
+            ValidatorCash = GG * 10,
             DelegatorInfos = new[]
             {
                 new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = NCG * 100,
-                    Cash = NCG * 10,
+                    Balance = GG * 100,
+                    Cash = GG * 10,
                 },
             },
         };
@@ -130,23 +130,23 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var fixture = new StaticFixture
         {
             DelegatorLength = 2,
-            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward}"),
+            TotalReward = FungibleAssetValue.Parse(GG, $"{totalReward}"),
             ValidatorKey = new PrivateKey(),
-            ValidatorBalance = NCG * 100,
-            ValidatorCash = NCG * 10,
+            ValidatorBalance = GG * 100,
+            ValidatorCash = GG * 10,
             DelegatorInfos = new[]
             {
                 new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = NCG * 100,
-                    Cash = NCG * 10,
+                    Balance = GG * 100,
+                    Cash = GG * 10,
                 },
                 new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = NCG * 100,
-                    Cash = NCG * 10,
+                    Balance = GG * 100,
+                    Cash = GG * 10,
                 },
             },
         };
@@ -254,10 +254,10 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         // Then
         var repository = new ValidatorRepository(world, actionContext);
         var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
-        var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, NCG);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, NCG);
+        var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, GG);
+        var actualValidatorBalance = world.GetBalance(validatorKey.Address, GG);
         var actualDelegatorBalances = delegatorKeys
-            .Select(item => world.GetBalance(item.Address, NCG))
+            .Select(item => world.GetBalance(item.Address, GG))
             .ToArray();
         Assert.Equal(expectedRemainReward, actualRemainReward);
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
@@ -297,12 +297,12 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             _random = new Random(randomSeed);
             DelegatorLength = _random.Next(3, 100);
             ValidatorKey = new PrivateKey();
-            TotalReward = GetRandomNCG(_random);
-            ValidatorBalance = GetRandomNCG(_random);
+            TotalReward = GetRandomGG(_random);
+            ValidatorBalance = GetRandomGG(_random);
             ValidatorCash = GetRandomCash(_random, ValidatorBalance);
             DelegatorInfos = CreateArray(DelegatorLength, _ =>
             {
-                var balance = GetRandomNCG(_random);
+                var balance = GetRandomGG(_random);
                 return new DelegatorInfo
                 {
                     Key = new PrivateKey(),

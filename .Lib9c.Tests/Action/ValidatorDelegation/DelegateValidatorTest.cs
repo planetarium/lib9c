@@ -37,7 +37,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
     public void Serialization()
     {
         var address = new PrivateKey().Address;
-        var gold = NCG * 10;
+        var gold = GG * 10;
         var action = new DelegateValidator(address, gold);
         var plainValue = action.PlainValue;
 
@@ -55,11 +55,11 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = NCG * 10;
-        var delegatorGold = NCG * 20;
+        var validatorGold = GG * 10;
+        var delegatorGold = GG * 20;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 100, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 100, height++);
 
         // When
         var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorGold);
@@ -80,7 +80,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(delegatorGold.RawValue, bond.Share);
         Assert.Equal(validatorGold.RawValue + delegatorGold.RawValue, validator.Validator.Power);
         Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
-        Assert.Equal(NCG * 80, world.GetBalance(delegatorKey.Address, NCG));
+        Assert.Equal(GG * 80, world.GetBalance(delegatorKey.Address, GG));
     }
 
     [Theory]
@@ -94,15 +94,15 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             ValidatorInfo = new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = NCG * 10,
-                Balance = NCG * 100,
+                Cash = GG * 10,
+                Balance = GG * 100,
             },
             DelegatorInfos = Enumerable.Range(0, delegatorCount)
                 .Select(_ => new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Cash = NCG * 20,
-                    Balance = NCG * 100,
+                    Cash = GG * 20,
+                    Balance = GG * 100,
                 })
                 .ToArray(),
         };
@@ -135,7 +135,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = NCG * 10;
+        var validatorGold = GG * 10;
         var delegatorDollar = Dollar * 20;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
@@ -161,8 +161,8 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
-        var validatorGold = NCG * 10;
-        var delegatorGold = NCG * 10;
+        var validatorGold = GG * 10;
+        var delegatorGold = GG * 10;
         var height = 1L;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
@@ -175,7 +175,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             Signer = delegatorKey.Address,
             BlockIndex = height++,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, NCG * 11);
+        var delegateValidator = new DelegateValidator(validatorKey.Address, GG * 11);
 
         // Then
         Assert.Throws<InsufficientBalanceException>(() => delegateValidator.Execute(actionContext));
@@ -189,7 +189,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 100, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -197,7 +197,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             PreviousState = world,
             Signer = delegatorKey.Address,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, NCG * 10);
+        var delegateValidator = new DelegateValidator(validatorKey.Address, GG * 10);
 
         // Then
         Assert.Throws<FailedLoadStateException>(() => delegateValidator.Execute(actionContext));
@@ -211,8 +211,8 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = NCG * 10;
-        var delegatorGold = NCG * 10;
+        var validatorGold = GG * 10;
+        var delegatorGold = GG * 10;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
@@ -237,10 +237,10 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
-        var validatorCash = NCG * 10;
-        var validatorGold = NCG * 100;
-        var delegatorGold = NCG * 10;
-        var delegatorBalance = NCG * 100;
+        var validatorCash = GG * 10;
+        var validatorGold = GG * 100;
+        var delegatorGold = GG * 10;
+        var delegatorBalance = GG * 100;
         var actionContext = new ActionContext { };
 
         var height = 1L;
@@ -258,7 +258,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
         var expectedJailed = expectedDelegatee.Jailed;
 
-        var delegateValidator = new DelegateValidator(validatorKey.Address, 1 * NCG);
+        var delegateValidator = new DelegateValidator(validatorKey.Address, 1 * GG);
         actionContext = new ActionContext
         {
             PreviousState = world,
@@ -316,9 +316,9 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidator = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, NCG);
+        var actualValidatorBalance = world.GetBalance(validatorKey.Address, GG);
         var actualDelegatorBalances = delegatorKeys
-            .Select(k => world.GetBalance(k.Address, NCG)).ToArray();
+            .Select(k => world.GetBalance(k.Address, GG)).ToArray();
         var actualPower = actualValidator.Power;
 
         for (var i = 0; i < delegatorKeys.Length; i++)
@@ -342,15 +342,15 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
 
         public ValidatorInfo(Random random)
         {
-            Balance = GetRandomNCG(random);
+            Balance = GetRandomGG(random);
             Cash = GetRandomCash(random, Balance);
         }
 
         public PrivateKey Key { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue Cash { get; set; } = NCG * 10;
+        public FungibleAssetValue Cash { get; set; } = GG * 10;
 
-        public FungibleAssetValue Balance { get; set; } = NCG * 100;
+        public FungibleAssetValue Balance { get; set; } = GG * 100;
     }
 
     private struct DelegatorInfo
@@ -361,15 +361,15 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
 
         public DelegatorInfo(Random random)
         {
-            Balance = GetRandomNCG(random);
+            Balance = GetRandomGG(random);
             Cash = GetRandomCash(random, Balance);
         }
 
         public PrivateKey Key { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue Cash { get; set; } = NCG * 10;
+        public FungibleAssetValue Cash { get; set; } = GG * 10;
 
-        public FungibleAssetValue Balance { get; set; } = NCG * 100;
+        public FungibleAssetValue Balance { get; set; } = GG * 100;
     }
 
     private struct StaticFixture : IDelegateValidatorFixture
