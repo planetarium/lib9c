@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
@@ -43,7 +44,7 @@ namespace Nekoyume.Module.ValidatorDelegation
             }
 
             var validatorDelegatee = new ValidatorDelegatee(
-                signer, publicKey, repository.World.GetGoldCurrency(), commissionPercentage, context.BlockIndex, repository);
+                signer, publicKey, Currencies.GuildGold, repository.World.GetGoldCurrency(), commissionPercentage, context.BlockIndex, repository);
 
             repository.SetValidatorDelegatee(validatorDelegatee);
 
