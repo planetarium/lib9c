@@ -3,10 +3,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Lib9c;
-using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.Guild
 {
@@ -21,64 +22,40 @@ namespace Nekoyume.Module.Guild
                 : null;
         }
 
-        public static GuildRepository JoinGuildWithDelegate(
-            this GuildRepository repository,
-            AgentAddress guildParticipantAddress,
-            GuildAddress guildAddress,
-            long height)
-            => repository
-                .JoinGuild(guildAddress, new AgentAddress(guildParticipantAddress))
-                .Delegate(
-                    guildParticipantAddress,
-                    guildAddress,
-                    repository.World.GetBalance(guildParticipantAddress, Currencies.GuildGold),
-                    height);
-
-        public static GuildRepository LeaveGuildWithUndelegate(
-            this GuildRepository repository,
-            AgentAddress guildParticipantAddress,
-            long height)
-        {
-            var guild = repository.GetJoinedGuild(guildParticipantAddress) is GuildAddress guildAddr
-                ? repository.GetGuild(guildAddr)
-                : throw new InvalidOperationException("The signer does not join any guild.");
-
-            return repository
-                .Undelegate(guildParticipantAddress,
-                    guildAddr,
-                    repository.GetBond(guild, guildParticipantAddress).Share,
-                    height)
-                .LeaveGuild(guildParticipantAddress);
-        }
-
-        public static GuildRepository MoveGuildWithRedelegate(
-            this GuildRepository repository,
-            AgentAddress guildParticipantAddress,
-            GuildAddress srcGuildAddress,
-            GuildAddress dstGuildAddress,
-            long height)
-        {
-            var srcGuild = repository.GetGuild(srcGuildAddress);
-            repository.Redelegate(
-                guildParticipantAddress,
-                srcGuildAddress,
-                dstGuildAddress,
-                repository.GetBond(srcGuild, guildParticipantAddress).Share,
-                height);
-            repository.LeaveGuild(guildParticipantAddress);
-            repository.JoinGuild(dstGuildAddress, guildParticipantAddress);
-
-            return repository;
-        }
-
         public static GuildRepository JoinGuild(
             this GuildRepository repository,
             GuildAddress guildAddress,
             AgentAddress target)
         {
-            var guildParticipant = new Model.Guild.GuildParticipant(target, guildAddress, repository);
+            var guildParticipant = new GuildParticipant(target, guildAddress, repository);
+            var guildGold = repository.GetBalance(guildAddress, Currencies.GuildGold);
             repository.SetGuildParticipant(guildParticipant);
             repository.IncreaseGuildMemberCount(guildAddress);
+            repository.Delegate(target, guildGold);
+
+            return repository;
+        }
+
+        public static GuildRepository MoveGuild(
+            this GuildRepository repository,
+            AgentAddress guildParticipantAddress,
+            GuildAddress dstGuildAddress)
+        {
+            var dstGuild = repository.GetGuild(dstGuildAddress);
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var dstValidatorDelegatee = validatorRepository.GetValidatorDelegatee(dstGuild.ValidatorAddress);
+            if (dstValidatorDelegatee.Tombstoned)
+            {
+                throw new InvalidOperationException("The validator of the guild to move to has been tombstoned.");
+            }
+
+            var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
+            repository.RemoveGuildParticipant(guildParticipantAddress);
+            repository.DecreaseGuildMemberCount(guildParticipant.GuildAddress);
+            repository.SetGuildParticipant(guildParticipant);
+            repository.IncreaseGuildMemberCount(dstGuildAddress);
+            repository.Redelegate(
+                guildParticipantAddress, dstGuildAddress);
 
             return repository;
         }
@@ -104,21 +81,25 @@ namespace Nekoyume.Module.Guild
                     "The signer is a guild master. Guild master cannot quit the guild.");
             }
 
-            return repository.RawLeaveGuild(target);
-        }
-
-        public static GuildRepository RawLeaveGuild(this GuildRepository repository, AgentAddress target)
-        {
-            if (!repository.TryGetGuildParticipant(target, out var guildParticipant))
-            {
-                throw new InvalidOperationException("It may not join any guild.");
-            }
-
             repository.RemoveGuildParticipant(target);
-            repository.DecreaseGuildMemberCount(guildParticipant.GuildAddress);
+            repository.DecreaseGuildMemberCount(guild.Address);
+            repository.Undelegate(target);
 
             return repository;
         }
+
+        // public static GuildRepository RawLeaveGuild(this GuildRepository repository, AgentAddress target)
+        // {
+        //     if (!repository.TryGetGuildParticipant(target, out var guildParticipant))
+        //     {
+        //         throw new InvalidOperationException("It may not join any guild.");
+        //     }
+
+        //     repository.RemoveGuildParticipant(target);
+        //     repository.DecreaseGuildMemberCount(guildParticipant.GuildAddress);
+
+        //     return repository;
+        // }
 
         private static bool TryGetGuildParticipant(
             this GuildRepository repository,
@@ -140,13 +121,41 @@ namespace Nekoyume.Module.Guild
         private static GuildRepository Delegate(
             this GuildRepository repository,
             AgentAddress guildParticipantAddress,
-            GuildAddress guildAddress,
-            FungibleAssetValue fav,
-            long height)
+            FungibleAssetValue fav)
         {
+            var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
-            var guild = repository.GetGuild(guildAddress);
-            guildParticipant.Delegate(guild, fav, height);
+            var guild = repository.GetGuild(guildParticipant.GuildAddress);
+            var validatorAddress = guild.ValidatorAddress;
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(
+                guildParticipantAddress, guild.Address);
+            validatorDelegator.Delegate(validatorDelegatee, fav, height);
+            repository.UpdateWorld(validatorRepository.World);
+            guild.Bond(guildParticipant, fav, height);
+
+            return repository;
+        }
+
+        private static GuildRepository Undelegate(
+            this GuildRepository repository,
+            AgentAddress guildParticipantAddress)
+        {
+            var height = repository.ActionContext.BlockIndex;
+            var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
+            var guild = repository.GetGuild(guildParticipant.GuildAddress);
+            var validatorAddress = guild.ValidatorAddress;
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(
+                guildParticipantAddress, guild.Address);
+            var bond = validatorRepository.GetBond(validatorDelegatee, guildParticipantAddress);
+            var share = bond.Share;
+            validatorDelegator.Undelegate(validatorDelegatee, share, height);
+            repository.UpdateWorld(validatorRepository.World);
+            var guildShare = repository.GetBond(guild, guildParticipantAddress).Share;
+            guild.Unbond(guildParticipant, guildShare, height);
 
             return repository;
         }
@@ -154,13 +163,20 @@ namespace Nekoyume.Module.Guild
         private static GuildRepository Undelegate(
             this GuildRepository repository,
             AgentAddress guildParticipantAddress,
-            GuildAddress guildAddress,
-            BigInteger share,
-            long height)
+            BigInteger share)
         {
+            var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
-            var guild = repository.GetGuild(guildAddress);
-            guildParticipant.Undelegate(guild, share, height);
+            var guild = repository.GetGuild(guildParticipant.GuildAddress);
+            var validatorAddress = guild.ValidatorAddress;
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(
+                guildParticipantAddress, guild.Address);
+            validatorDelegator.Undelegate(validatorDelegatee, share, height);
+            repository.UpdateWorld(validatorRepository.World);
+            var guildShare = repository.GetBond(guild, guildParticipantAddress).Share;
+            guild.Unbond(guildParticipant, guildShare, height);
 
             return repository;
         }
@@ -168,15 +184,26 @@ namespace Nekoyume.Module.Guild
         public static GuildRepository Redelegate(
             this GuildRepository repository,
             AgentAddress guildParticipantAddress,
-            GuildAddress srcGuildAddress,
-            GuildAddress dstGuildAddress,
-            BigInteger share,
-            long height)
+            GuildAddress dstGuildAddress)
         {
+            var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
-            var srcGuild = repository.GetGuild(srcGuildAddress);
+            var guild = repository.GetGuild(guildParticipant.GuildAddress);
+            var srcValidatorAddress = guild.ValidatorAddress;
             var dstGuild = repository.GetGuild(dstGuildAddress);
-            guildParticipant.Redelegate(srcGuild, dstGuild, share, height);
+            var dstValidatorAddress = dstGuild.ValidatorAddress;
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorSrcDelegatee = validatorRepository.GetValidatorDelegatee(srcValidatorAddress);
+            var validatorDstDelegatee = validatorRepository.GetValidatorDelegatee(dstValidatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(
+                guildParticipantAddress, guild.Address);
+            var bond = validatorRepository.GetBond(validatorSrcDelegatee, guildParticipantAddress);
+            var share = bond.Share;
+            validatorDelegator.Redelegate(validatorSrcDelegatee, validatorDstDelegatee, share, height);
+            repository.UpdateWorld(validatorRepository.World);
+            var guildShare = repository.GetBond(guild, guildParticipantAddress).Share;
+            var guildRebondFAV = guild.Unbond(guildParticipant, guildShare, height);
+            dstGuild.Bond(guildParticipant, guildRebondFAV, height);
 
             return repository;
         }
