@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action.Guild
     using System;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
+    using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
@@ -37,6 +38,8 @@ namespace Lib9c.Tests.Action.Guild
             var otherGuildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
             var otherGuildAddress = AddressUtil.CreateGuildAddress();
+            var validatorAddress = new PrivateKey().Address;
+            var otherValidatorAddress = new PrivateKey().Address;
 
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
@@ -44,9 +47,9 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.JoinGuild(guildAddress, guildMemberAddress);
-            repository.MakeGuild(otherGuildAddress, otherGuildMasterAddress);
+            repository.MakeGuild(otherGuildAddress, otherGuildMasterAddress, otherValidatorAddress);
             repository.JoinGuild(otherGuildAddress, otherGuildMemberAddress);
 
             // Guild
@@ -134,6 +137,7 @@ namespace Lib9c.Tests.Action.Guild
             var otherAddress = AddressUtil.CreateAgentAddress();
             var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
+            var validatorAddress = new PrivateKey().Address;
 
             var action = new BanGuildMember(targetGuildMemberAddress);
 
@@ -143,7 +147,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.JoinGuild(guildAddress, guildMemberAddress);
             repository.JoinGuild(guildAddress, targetGuildMemberAddress);
 
@@ -180,6 +184,7 @@ namespace Lib9c.Tests.Action.Guild
             var otherAddress = AddressUtil.CreateAgentAddress();
             var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
+            var validatorAddress = new PrivateKey().Address;
 
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
@@ -187,7 +192,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // Other tries to ban GuildMember.
@@ -205,35 +210,6 @@ namespace Lib9c.Tests.Action.Guild
                 PreviousState = world,
                 Signer = otherAddress,
             }));
-        }
-
-        [Fact]
-        public void RejectGuildApplication()
-        {
-            var guildAddress = AddressUtil.CreateGuildAddress();
-            var guildMasterAddress = AddressUtil.CreateAgentAddress();
-            var agentAddress = AddressUtil.CreateAgentAddress();
-
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.ApplyGuild(agentAddress, guildAddress);
-            Assert.True(repository.TryGetGuildApplication(agentAddress, out _));
-
-            var action = new BanGuildMember(agentAddress);
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = repository.World,
-                Signer = guildMasterAddress,
-            });
-
-            repository.UpdateWorld(world);
-            Assert.True(repository.IsBanned(guildAddress, agentAddress));
-            Assert.False(repository.TryGetGuildApplication(agentAddress, out _));
         }
     }
 }

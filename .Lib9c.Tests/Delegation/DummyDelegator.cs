@@ -9,7 +9,7 @@ public sealed class DummyDelegator : Delegator<DummyDelegatee, DummyDelegator>
     }
 
     public DummyDelegator(Address address, Address accountAddress, DummyRepository repo)
-            : base(address, accountAddress, address, repo)
+        : base(address, accountAddress, address, address, repo)
     {
     }
 }

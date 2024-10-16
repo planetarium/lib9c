@@ -13,7 +13,7 @@ namespace Nekoyume.Delegation
         public TestRepository(IWorld world, IActionContext context)
             : base(
                   world: world,
-                  context: context,
+                  actionContext: context,
                   delegateeAccountAddress: new Address("0000000000000000000000000000000000000000"),
                   delegatorAccountAddress: new Address("0000000000000000000000000000000000000001"),
                   delegateeMetadataAccountAddress: new Address("0000000000000000000000000000000000000002"),

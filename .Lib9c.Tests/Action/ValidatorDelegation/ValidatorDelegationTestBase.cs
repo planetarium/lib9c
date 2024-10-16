@@ -22,13 +22,13 @@ using Nekoyume.ValidatorDelegation;
 
 public class ValidatorDelegationTestBase
 {
-    protected static readonly Currency NCG = Currency.Uncapped("NCG", 2, null);
+    protected static readonly Currency GG = Currencies.GuildGold;
     protected static readonly Currency Dollar = Currency.Uncapped("dollar", 2, null);
 
     public ValidatorDelegationTestBase()
     {
         var world = new World(MockUtil.MockModernWorldState);
-        var goldCurrencyState = new GoldCurrencyState(NCG);
+        var goldCurrencyState = new GoldCurrencyState(GG);
         World = world
             .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
     }
@@ -40,7 +40,7 @@ public class ValidatorDelegationTestBase
 
     protected IWorld World { get; }
 
-    protected FungibleAssetValue MinimumDelegation { get; } = NCG * 10;
+    protected FungibleAssetValue MinimumDelegation { get; } = GG * 10;
 
     protected static T[] CreateArray<T>(int length, Func<int, T> creator)
         => Enumerable.Range(0, length).Select(creator).ToArray();
@@ -53,7 +53,8 @@ public class ValidatorDelegationTestBase
             PreviousState = world,
             BlockIndex = blockHeight,
         };
-        return world.MintAsset(actionContext, privateKey.Address, amount);
+        var address = privateKey.Address;
+        return world.MintAsset(actionContext, address, amount);
     }
 
     protected static IWorld EnsureToMintAssets(
@@ -549,17 +550,17 @@ public class ValidatorDelegationTestBase
         return communityFund;
     }
 
-    protected static FungibleAssetValue GetRandomNCG() => GetRandomNCG(Random.Shared, 1, 100000);
+    protected static FungibleAssetValue GetRandomGG() => GetRandomGG(Random.Shared, 1, 100000);
 
-    protected static FungibleAssetValue GetRandomNCG(Random random)
-        => GetRandomNCG(random, 0.01m, 1000.0m);
+    protected static FungibleAssetValue GetRandomGG(Random random)
+        => GetRandomGG(random, 0.01m, 1000.0m);
 
-    protected static FungibleAssetValue GetRandomNCG(Random random, decimal min, decimal max)
+    protected static FungibleAssetValue GetRandomGG(Random random, decimal min, decimal max)
     {
         var minLong = (int)(min * 100);
         var maxLong = (int)(max * 100);
         var value = Math.Round(random.Next(minLong, maxLong) / 100.0, 2);
-        return FungibleAssetValue.Parse(NCG, $"{value:R}");
+        return FungibleAssetValue.Parse(GG, $"{value:R}");
     }
 
     protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav)

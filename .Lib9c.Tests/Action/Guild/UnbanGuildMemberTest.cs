@@ -68,6 +68,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
+            var validatorAddress = new PrivateKey().Address;
 
             var action = new UnbanGuildMember(targetGuildMemberAddress);
 
@@ -77,7 +78,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             repository.Ban(guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
             Assert.True(repository.IsBanned(guildAddress, targetGuildMemberAddress));

@@ -58,10 +58,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var srcPrivateKey = new PrivateKey();
         var dstPrivateKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, srcPrivateKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, srcPrivateKey, NCG * 10, height++);
-        world = EnsureToMintAsset(world, dstPrivateKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, dstPrivateKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, srcPrivateKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, srcPrivateKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, dstPrivateKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, dstPrivateKey, GG * 10, height++);
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
@@ -87,10 +87,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Contains(srcPrivateKey.Address, actualDstValidator.Delegators);
         Assert.Single(actualValidatorList.Validators);
         Assert.Equal(actualDstValidator.Validator, actualValidatorList.Validators[0]);
-        Assert.Equal((NCG * 10).RawValue, actualDstBond.Share);
-        Assert.Equal(NCG * 20, actualDstValidator.TotalDelegated);
-        Assert.Equal((NCG * 20).RawValue, actualDstValidator.TotalShares);
-        Assert.Equal((NCG * 20).RawValue, actualDstValidator.Power);
+        Assert.Equal((GG * 10).RawValue, actualDstBond.Share);
+        Assert.Equal(GG * 20, actualDstValidator.TotalDelegated);
+        Assert.Equal((GG * 20).RawValue, actualDstValidator.TotalShares);
+        Assert.Equal((GG * 20).RawValue, actualDstValidator.Power);
     }
 
     [Theory]
@@ -104,21 +104,21 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
             ValidatorInfo1 = new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = NCG * 10,
-                Balance = NCG * 100,
+                Cash = GG * 10,
+                Balance = GG * 100,
             },
             ValidatorInfo2 = new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = NCG * 10,
-                Balance = NCG * 100,
+                Cash = GG * 10,
+                Balance = GG * 100,
             },
             DelegatorInfos = Enumerable.Range(0, delegatorCount)
                 .Select(_ => new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Cash = NCG * 20,
-                    Balance = NCG * 100,
+                    Cash = GG * 20,
+                    Balance = GG * 100,
                     Redelegating = 20,
                 })
                 .ToArray(),
@@ -152,10 +152,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, GG * 10, height++);
 
         // When
         var actionContext = new ActionContext
@@ -183,12 +183,12 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey2 = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey1, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, height++);
-        world = EnsureToMintAsset(world, validatorKey2, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey1, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey2, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, GG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, GG * 10, height++);
 
         // When
         var actionContext = new ActionContext
@@ -214,12 +214,12 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey2 = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey1, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, height++);
-        world = EnsureToMintAsset(world, validatorKey2, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey1, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey2, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, GG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, GG * 10, height++);
 
         // When
         var actionContext = new ActionContext
@@ -248,12 +248,12 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey1 = new PrivateKey();
         var validatorKey2 = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey1, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey1, NCG * 10, height++);
-        world = EnsureToMintAsset(world, validatorKey2, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey2, NCG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey1, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey1, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey2, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey2, GG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey1, GG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey1, ref height);
 
         // When
@@ -293,10 +293,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var srcPrivateKey = new PrivateKey();
         var dstPrivateKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, srcPrivateKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, srcPrivateKey, NCG * 10, height++);
-        world = EnsureToMintAsset(world, dstPrivateKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, dstPrivateKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, srcPrivateKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, srcPrivateKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, dstPrivateKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, dstPrivateKey, GG * 10, height++);
         world = EnsureTombstonedValidator(world, dstPrivateKey, height++);
 
         // When
@@ -325,10 +325,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var delegatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, NCG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
+        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, GG * 10, height++);
 
         // When
         var actionContext = new ActionContext
@@ -353,10 +353,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var validatorKey1 = new PrivateKey();
         var validatorKey2 = new PrivateKey();
         var delegatorKey = new PrivateKey();
-        var validatorCash = NCG * 10;
-        var validatorGold = NCG * 100;
-        var delegatorGold = NCG * 10;
-        var delegatorBalance = NCG * 100;
+        var validatorCash = GG * 10;
+        var validatorGold = GG * 100;
+        var delegatorGold = GG * 10;
+        var delegatorBalance = GG * 100;
         var actionContext = new ActionContext { };
 
         var height = 1L;
@@ -429,7 +429,7 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var expectedValidatorBalance1 = validatorBalance1 - validatorCash1;
         var expectedValidatorBalance2 = validatorBalance2 - validatorCash2;
         var expectedDelegatorBalances = delegatorKeys
-            .Select(k => world.GetBalance(k.Address, NCG)).ToArray();
+            .Select(k => world.GetBalance(k.Address, GG)).ToArray();
         var expectedShares1 = delegatorCashes
             .Select((c, i) => c.RawValue - delegatorRedelegatings[i]).ToArray();
         var expectedShares2 = delegatorRedelegatings;
@@ -456,10 +456,10 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidator1 = actualRepository.GetValidatorDelegatee(validatorKey1.Address);
         var actualValidator2 = actualRepository.GetValidatorDelegatee(validatorKey2.Address);
-        var actualValidatorBalance1 = world.GetBalance(validatorKey1.Address, NCG);
-        var actualValidatorBalance2 = world.GetBalance(validatorKey2.Address, NCG);
+        var actualValidatorBalance1 = world.GetBalance(validatorKey1.Address, GG);
+        var actualValidatorBalance2 = world.GetBalance(validatorKey2.Address, GG);
         var actualDelegatorBalances = delegatorKeys
-            .Select(k => world.GetBalance(k.Address, NCG)).ToArray();
+            .Select(k => world.GetBalance(k.Address, GG)).ToArray();
         var actualPower1 = actualValidator1.Power;
         var actualPower2 = actualValidator2.Power;
 
@@ -489,15 +489,15 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
 
         public ValidatorInfo(Random random)
         {
-            Balance = GetRandomNCG(random);
+            Balance = GetRandomGG(random);
             Cash = GetRandomCash(random, Balance);
         }
 
         public PrivateKey Key { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue Cash { get; set; } = NCG * 10;
+        public FungibleAssetValue Cash { get; set; } = GG * 10;
 
-        public FungibleAssetValue Balance { get; set; } = NCG * 100;
+        public FungibleAssetValue Balance { get; set; } = GG * 100;
     }
 
     private struct DelegatorInfo
@@ -508,16 +508,16 @@ public class RedelegateValidatorTest : ValidatorDelegationTestBase
 
         public DelegatorInfo(Random random)
         {
-            Balance = GetRandomNCG(random);
+            Balance = GetRandomGG(random);
             Cash = GetRandomCash(random, Balance);
             Redelegating = GetRandomCash(random, Cash).RawValue;
         }
 
         public PrivateKey Key { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue Cash { get; set; } = NCG * 10;
+        public FungibleAssetValue Cash { get; set; } = GG * 10;
 
-        public FungibleAssetValue Balance { get; set; } = NCG * 100;
+        public FungibleAssetValue Balance { get; set; } = GG * 100;
 
         public BigInteger Redelegating { get; set; } = 100;
     }

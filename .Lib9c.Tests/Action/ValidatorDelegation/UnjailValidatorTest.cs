@@ -28,7 +28,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = NCG * 100;
+        var validatorGold = GG * 100;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
@@ -79,8 +79,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
 
         // When
         var unjailValidator = new UnjailValidator();
@@ -102,8 +102,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -127,8 +127,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, NCG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, NCG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When
