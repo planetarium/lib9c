@@ -29,7 +29,7 @@ namespace Nekoyume.Model.Guild
         public Guild GetGuild(Address address)
             => delegateeAccount.GetState(address) is IValue bencoded
                 ? new Guild(
-                    new AgentAddress(address),
+                    new GuildAddress(address),
                     bencoded,
                     this)
                 : throw new FailedLoadStateException("Guild does not exist.");
@@ -40,7 +40,10 @@ namespace Nekoyume.Model.Guild
 
         public GuildParticipant GetGuildParticipant(Address address)
             => delegatorAccount.GetState(address) is IValue bencoded
-                ? new GuildParticipant(address, bencoded, this)
+                ? new GuildParticipant(
+                    new AgentAddress(address),
+                    bencoded,
+                    this)
                 : throw new FailedLoadStateException("Delegator does not exist.");
 
         public override IDelegator GetDelegator(Address address)

@@ -46,7 +46,7 @@ namespace Nekoyume.ValidatorDelegation
         public override IDelegatee GetDelegatee(Address address)
             => GetValidatorDelegatee(address);
 
-        public ValidatorDelegator GetValidatorDelegator(Address address)
+        public ValidatorDelegator GetValidatorDelegator(Address address, Address rewardAddress)
         {
             try
             {
@@ -55,12 +55,16 @@ namespace Nekoyume.ValidatorDelegation
             catch (FailedLoadStateException)
             {
                 // TODO: delegationPoolAddress have to be changed after guild system is implemented.
-                return new ValidatorDelegator(address, address, this);
+                return new ValidatorDelegator(
+                    address,
+                    address,
+                    rewardAddress,
+                    this);
             }
         }
 
         public override IDelegator GetDelegator(Address address)
-            => GetValidatorDelegator(address);
+            => new ValidatorDelegator(address, this);
 
         public ValidatorList GetValidatorList()
         {
