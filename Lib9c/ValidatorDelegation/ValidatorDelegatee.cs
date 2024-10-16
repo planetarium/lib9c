@@ -19,16 +19,14 @@ namespace Nekoyume.ValidatorDelegation
         public ValidatorDelegatee(
             Address address,
             PublicKey publicKey,
-            Currency delegationCurrency,
-            Currency rewardCurrency,
             BigInteger commissionPercentage,
             long creationHeight,
             ValidatorRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
-                  delegationCurrency: delegationCurrency,
-                  rewardCurrency: rewardCurrency,
+                  delegationCurrency: ValidatorDelegationCurrency,
+                  rewardCurrency: ValidatorRewardCurrency,
                   delegationPoolAddress: UnbondedPoolAddress,
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
@@ -87,6 +85,8 @@ namespace Nekoyume.ValidatorDelegation
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
+
+        public static Currency ValidatorRewardCurrency => Currencies.Mead;
 
         public static long ValidatorUnbondingPeriod => 10L;
 

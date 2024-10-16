@@ -36,9 +36,9 @@ namespace Nekoyume.Module.Guild
         public static GuildRepository MakeGuild(
             this GuildRepository repository,
             GuildAddress guildAddress,
-            AgentAddress signer,
             Address validatorAddress)
         {
+            var signer = new AgentAddress(repository.ActionContext.Signer);
             if (repository.GetJoinedGuild(signer) is not null)
             {
                 throw new InvalidOperationException("The signer already has a guild.");
@@ -58,10 +58,9 @@ namespace Nekoyume.Module.Guild
         }
 
         public static GuildRepository RemoveGuild(
-            this GuildRepository repository,
-            AgentAddress signer,
-            long height)
+            this GuildRepository repository)
         {
+            var signer = new AgentAddress(repository.ActionContext.Signer);
             if (repository.GetJoinedGuild(signer) is not { } guildAddress)
             {
                 throw new InvalidOperationException("The signer does not join any guild.");
@@ -94,11 +93,10 @@ namespace Nekoyume.Module.Guild
 
         public static GuildRepository CollectRewardGuild(
             this GuildRepository repository,
-            GuildAddress guildAddress,
-            long height)
+            GuildAddress guildAddress)
         {
             var guild = repository.GetGuild(guildAddress);
-            guild.CollectRewards(height);
+            guild.CollectRewards(repository.ActionContext.BlockIndex);
             repository.SetGuild(guild);
 
             return repository;
