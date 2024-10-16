@@ -38,10 +38,11 @@ namespace Nekoyume.Action.Guild
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
+            var height = context.BlockIndex;
 
             // TODO: Do something to return 'Power' token;
 
-            repository.RemoveGuild(signer);
+            repository.RemoveGuild(signer, height);
             return repository.World;
         }
     }

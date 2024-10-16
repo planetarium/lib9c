@@ -12,6 +12,8 @@ using Libplanet.Types.Consensus;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Action.Guild;
+using Lib9c;
 
 namespace Nekoyume.Action
 {
@@ -205,13 +207,16 @@ namespace Nekoyume.Action
                 var validatorDelegatee = new ValidatorDelegatee(
                     validator.OperatorAddress,
                     validator.PublicKey,
+                    delegationCurrency: Currencies.GuildGold,
                     repository.World.GetGoldCurrency(),
                     ValidatorDelegatee.DefaultCommissionPercentage,
                     context.BlockIndex,
                     repository);
                 var delegationFAV = FungibleAssetValue.FromRawValue(
                     validatorDelegatee.DelegationCurrency, validator.Power);
-                var validatorDelegator = repository.GetValidatorDelegator(validator.OperatorAddress);
+                var validatorOperatorAddress = validator.OperatorAddress;
+                var validatorDelegator = repository.GetValidatorDelegator(
+                    validatorOperatorAddress, validatorOperatorAddress);
 
                 repository.SetValidatorDelegatee(validatorDelegatee);
                 repository.TransferAsset(
