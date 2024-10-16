@@ -10,11 +10,13 @@ namespace Nekoyume.ValidatorDelegation
         public ValidatorDelegator(
             Address address,
             Address delegationPoolAddress,
+            Address rewardAddress,
             ValidatorRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegatorAccountAddress,
                   delegationPoolAddress: delegationPoolAddress,
+                  rewardAddress: rewardAddress,
                   repository: repository)
         {
         }

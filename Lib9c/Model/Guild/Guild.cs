@@ -10,16 +10,19 @@ using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild
 {
-    public class Guild : Delegatee<GuildParticipant, Guild>, IEquatable<Guild>, IBencodable
+    public class Guild : Delegatee<GuildParticipant, Guild>, IBencodable, IEquatable<Guild>
     {
         private const string StateTypeName = "guild";
         private const long StateVersion = 1;
 
         public readonly AgentAddress GuildMasterAddress;
 
+        public readonly Address ValidatorAddress;
+
         public Guild(
-            Address address,
+            GuildAddress address,
             AgentAddress guildMasterAddress,
+            Address validatorAddress,
             Currency rewardCurrency,
             GuildRepository repository)
             : base(
@@ -30,30 +33,27 @@ namespace Nekoyume.Model.Guild
                   delegationPoolAddress: address,
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
-                  unbondingPeriod: 75600L,
-                  maxUnbondLockInEntries: 10,
-                  maxRebondGraceEntries: 10,
+                  unbondingPeriod: 0L,
+                  maxUnbondLockInEntries: 0,
+                  maxRebondGraceEntries: 0,
                   repository: repository)
         {
+            ValidatorAddress = validatorAddress;
             GuildMasterAddress = guildMasterAddress;
         }
 
         public Guild(
-            Address address,
-            IValue bencoded, GuildRepository repository)
-            : this(address: address, bencoded: (List)bencoded, repository: repository)
+            GuildAddress address,
+            IValue bencoded,
+            GuildRepository repository)
+            : base(address: address, repository: repository)
         {
-        }
+            if (bencoded is not List list)
+            {
+                throw new InvalidCastException();
+            }
 
-        public Guild(
-            Address address, List bencoded, GuildRepository repository)
-            : base(
-                  address: address,
-                  repository: repository)
-        {
-            GuildMasterAddress = new AgentAddress(bencoded[2]);
-
-            if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
+            if (list[0] is not Text text || text != StateTypeName || list[1] is not Integer integer)
             {
                 throw new InvalidCastException();
             }
@@ -62,12 +62,18 @@ namespace Nekoyume.Model.Guild
             {
                 throw new FailedLoadStateException("Un-deserializable state.");
             }
+
+            GuildMasterAddress = new AgentAddress(list[2]);
+            ValidatorAddress = new AgentAddress(list[3]);
         }
+
+        public new GuildAddress Address => new GuildAddress(base.Address);
 
         public List Bencoded => List.Empty
             .Add(StateTypeName)
             .Add(StateVersion)
-            .Add(GuildMasterAddress.Bencoded);
+            .Add(GuildMasterAddress.Bencoded)
+            .Add(ValidatorAddress.Bencoded);
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -75,8 +81,10 @@ namespace Nekoyume.Model.Guild
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return GuildMasterAddress.Equals(other.GuildMasterAddress)
-                && Metadata.Equals(other.Metadata);
+            return Address.Equals(other.Address)
+                 && GuildMasterAddress.Equals(other.GuildMasterAddress)
+                 && ValidatorAddress.Equals(other.ValidatorAddress)
+                 && Metadata.Equals(other.Metadata);
         }
 
         public override bool Equals(object obj)
@@ -89,7 +97,7 @@ namespace Nekoyume.Model.Guild
 
         public override int GetHashCode()
         {
-            return GuildMasterAddress.GetHashCode();
+            return HashCode.Combine(Address, GuildMasterAddress, ValidatorAddress);
         }
     }
 }

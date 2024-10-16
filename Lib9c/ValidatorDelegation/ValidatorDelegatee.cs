@@ -19,6 +19,7 @@ namespace Nekoyume.ValidatorDelegation
         public ValidatorDelegatee(
             Address address,
             PublicKey publicKey,
+            Currency delegationCurrency,
             Currency rewardCurrency,
             BigInteger commissionPercentage,
             long creationHeight,
@@ -26,7 +27,7 @@ namespace Nekoyume.ValidatorDelegation
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
-                  delegationCurrency: rewardCurrency,
+                  delegationCurrency: delegationCurrency,
                   rewardCurrency: rewardCurrency,
                   delegationPoolAddress: UnbondedPoolAddress,
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
