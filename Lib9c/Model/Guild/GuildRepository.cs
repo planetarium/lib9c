@@ -10,10 +10,10 @@ namespace Nekoyume.Model.Guild
 {
     public class GuildRepository : DelegationRepository
     {
-        public GuildRepository(IWorld world, IActionContext context)
+        public GuildRepository(IWorld world, IActionContext actionContext)
             : base(
                   world: world,
-                  context: context,
+                  actionContext: actionContext,
                   delegateeAccountAddress: Addresses.Guild,
                   delegatorAccountAddress: Addresses.GuildParticipant,
                   delegateeMetadataAccountAddress: Addresses.GuildMetadata,
