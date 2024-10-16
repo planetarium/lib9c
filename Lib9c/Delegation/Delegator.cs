@@ -16,12 +16,14 @@ namespace Nekoyume.Delegation
             Address address,
             Address accountAddress,
             Address delegationPoolAddress,
+            Address rewardAddress,
             IDelegationRepository repository)
             : this(
                   new DelegatorMetadata(
                       address,
                       accountAddress,
-                      delegationPoolAddress),
+                      delegationPoolAddress,
+                      rewardAddress),
                   repository)
         {
         }
@@ -50,6 +52,8 @@ namespace Nekoyume.Delegation
         public Address MetadataAddress => Metadata.Address;
 
         public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
+
+        public Address RewardAddress => Metadata.RewardAddress;
 
         public ImmutableSortedSet<Address> Delegatees => Metadata.Delegatees;
 
