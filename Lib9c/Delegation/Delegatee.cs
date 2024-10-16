@@ -261,7 +261,7 @@ namespace Nekoyume.Delegation
                     FungibleAssetValue reward = record.RewardsDuringPeriod(share);
                     if (reward.Sign > 0)
                     {
-                        Repository.TransferAsset(record.Address, delegator.Address, reward);
+                        Repository.TransferAsset(record.Address, delegator.RewardAddress, reward);
                     }
 
                     LumpSumRewardsRecord newRecord = record.RemoveDelegator(delegator.Address);

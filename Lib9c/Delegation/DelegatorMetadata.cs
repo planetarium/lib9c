@@ -15,11 +15,13 @@ namespace Nekoyume.Delegation
         public DelegatorMetadata(
             Address address,
             Address accountAddress,
-            Address delegationPoolAddress)
+            Address delegationPoolAddress,
+            Address rewardAddress)
             : this(
                   address,
                   accountAddress,
                   delegationPoolAddress,
+                  rewardAddress,
                   ImmutableSortedSet<Address>.Empty)
         {
         }
@@ -40,7 +42,8 @@ namespace Nekoyume.Delegation
                 address,
                 accountAddress,
                 new Address(bencoded[0]),
-                ((List)bencoded[1]).Select(item => new Address(item)).ToImmutableSortedSet())
+                new Address(bencoded[1]),
+                ((List)bencoded[2]).Select(item => new Address(item)).ToImmutableSortedSet())
         {
         }
 
@@ -48,11 +51,13 @@ namespace Nekoyume.Delegation
             Address address,
             Address accountAddress,
             Address delegationPoolAddress,
+            Address rewardAddress,
             ImmutableSortedSet<Address> delegatees)
         {
             DelegatorAddress = address;
             DelegatorAccountAddress = accountAddress;
             DelegationPoolAddress = delegationPoolAddress;
+            RewardAddress = rewardAddress;
             Delegatees = delegatees;
         }
 
@@ -67,11 +72,14 @@ namespace Nekoyume.Delegation
 
         public Address DelegationPoolAddress { get; }
 
+        public Address RewardAddress { get; }
+
         public ImmutableSortedSet<Address> Delegatees { get; private set; }
 
         public List Bencoded
             => List.Empty
                 .Add(DelegationPoolAddress.Bencoded)
+                .Add(RewardAddress.Bencoded)
                 .Add(new List(Delegatees.Select(a => a.Bencoded)));
 
         IValue IBencodable.Bencoded => Bencoded;
@@ -94,6 +102,9 @@ namespace Nekoyume.Delegation
             || (other is DelegatorMetadata delegator
             && GetType() != delegator.GetType()
             && DelegatorAddress.Equals(delegator.DelegatorAddress)
+            && DelegatorAccountAddress.Equals(delegator.DelegatorAccountAddress)
+            && DelegationPoolAddress.Equals(delegator.DelegationPoolAddress)
+            && RewardAddress.Equals(delegator.RewardAddress)
             && Delegatees.SequenceEqual(delegator.Delegatees));
 
         public override int GetHashCode()

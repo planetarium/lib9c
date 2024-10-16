@@ -15,6 +15,8 @@ namespace Nekoyume.Delegation
 
         Address DelegationPoolAddress { get; }
 
+        Address RewardAddress { get; }
+
         ImmutableSortedSet<Address> Delegatees { get; }
 
         void Delegate(
