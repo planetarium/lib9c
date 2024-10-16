@@ -15,18 +15,37 @@ namespace Nekoyume.Action.Guild
     {
         public const string TypeIdentifier = "make_guild";
 
+        private const string ValidatorAddressKey = "va";
+
+        public MakeGuild() { }
+
+        public MakeGuild(Address validatorAddress)
+        {
+
+        }
+
+        public GuildAddress GuildAddress { get; private set; }
+
+        public Address ValidatorAddress { get; private set; }
+
+        public bool IsNew{get; private set;}
+
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
-            .Add("values", Null.Value);
+            .Add("values", Dictionary.Empty
+                .Add(ValidatorAddressKey, ValidatorAddress.Bencoded));
 
         public override void LoadPlainValue(IValue plainValue)
         {
             if (plainValue is not Dictionary root ||
                 !root.TryGetValue((Text)"values", out var rawValues) ||
-                rawValues is not Null)
+                rawValues is not Dictionary values ||
+                !values.TryGetValue((Text)ValidatorAddressKey, out var rawValidatorAddress))
             {
                 throw new InvalidCastException();
             }
+
+            ValidatorAddress = new Address(rawValidatorAddress);
         }
 
         public override IWorld Execute(IActionContext context)
@@ -36,6 +55,9 @@ namespace Nekoyume.Action.Guild
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
             var random = context.GetRandom();
+            var guildAddress = GuildAddress;
+            var guildMasterAddress = new AgentAddress(context.Signer);
+            var validatorAddress = ValidatorAddress;
 
             // TODO: Remove this check when to deliver features to users.
             if (context.Signer != GuildConfig.PlanetariumGuildOwner)
@@ -44,10 +66,7 @@ namespace Nekoyume.Action.Guild
                     $"This action is not allowed for {context.Signer}.");
             }
 
-            var guildAddress = new GuildAddress(random.GenerateAddress());
-            var signer = context.GetAgentAddress();
-
-            repository.MakeGuild(guildAddress, signer);
+            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
             return repository.World;
         }
     }
