@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
+using Libplanet.Crypto;
 
 namespace Nekoyume.Module.Guild
 {
@@ -35,7 +36,8 @@ namespace Nekoyume.Module.Guild
         public static GuildRepository MakeGuild(
             this GuildRepository repository,
             GuildAddress guildAddress,
-            AgentAddress signer)
+            AgentAddress signer,
+            Address validatorAddress)
         {
             if (repository.GetJoinedGuild(signer) is not null)
             {
@@ -48,7 +50,7 @@ namespace Nekoyume.Module.Guild
             }
 
             var guild = new Model.Guild.Guild(
-                guildAddress, signer, Currencies.GuildGold, repository);
+                guildAddress, signer, validatorAddress, repository.World.GetGoldCurrency(), repository);
             repository.SetGuild(guild);
             repository.JoinGuild(guildAddress, signer);
 
@@ -57,7 +59,8 @@ namespace Nekoyume.Module.Guild
 
         public static GuildRepository RemoveGuild(
             this GuildRepository repository,
-            AgentAddress signer)
+            AgentAddress signer,
+            long height)
         {
             if (repository.GetJoinedGuild(signer) is not { } guildAddress)
             {
@@ -79,7 +82,8 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("There are remained participants in the guild.");
             }
 
-            repository.RawLeaveGuild(signer);
+            repository.RemoveGuildParticipant(signer);
+            repository.DecreaseGuildMemberCount(guild.Address);
             repository.UpdateWorld(
                 repository.World.MutateAccount(
                     Addresses.Guild, account => account.RemoveState(guildAddress)));
