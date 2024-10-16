@@ -1,11 +1,8 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Model.Guild;
 using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.ValidatorDelegation
@@ -14,19 +11,18 @@ namespace Nekoyume.Module.ValidatorDelegation
     {
         public static ValidatorRepository DelegateValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address validatorAddress,
             FungibleAssetValue fav)
-            => DelegateValidator(repository, context, validatorAddress, validatorAddress, fav);
+            => DelegateValidator(repository, validatorAddress, validatorAddress, fav);
 
 
         public static ValidatorRepository DelegateValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address validatorAddress,
             Address rewardAddress,
             FungibleAssetValue fav)
         {
+            var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
             var validatorDelegator = repository.GetValidatorDelegator(
                 delegatorAddress, rewardAddress);
@@ -38,18 +34,17 @@ namespace Nekoyume.Module.ValidatorDelegation
 
         public static ValidatorRepository UndelegateValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address validatorAddress,
             BigInteger share)
-            => UndelegateValidator(repository, context, validatorAddress, validatorAddress, share);
+            => UndelegateValidator(repository, validatorAddress, validatorAddress, share);
 
         public static ValidatorRepository UndelegateValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address validatorAddress,
             Address rewardAddress,
             BigInteger share)
         {
+            var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
             var validatorDelegator = repository.GetValidatorDelegator(
                 delegatorAddress, rewardAddress);
@@ -61,20 +56,19 @@ namespace Nekoyume.Module.ValidatorDelegation
 
          public static ValidatorRepository RedelegateValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address srcValidatorAddress,
             Address dstValidatorAddress,
             BigInteger share)
-            => RedelegateValidator(repository, context, srcValidatorAddress, dstValidatorAddress, dstValidatorAddress, share);
+            => RedelegateValidator(repository, srcValidatorAddress, dstValidatorAddress, dstValidatorAddress, share);
 
         public static ValidatorRepository RedelegateValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address srcValidatorAddress,
             Address dstValidatorAddress,
             Address rewardAddress,
             BigInteger share)
         {
+            var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
             var validatorDelegator = repository.GetValidatorDelegator(
                 delegatorAddress, rewardAddress);
@@ -87,16 +81,15 @@ namespace Nekoyume.Module.ValidatorDelegation
 
          public static ValidatorRepository ClaimRewardValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address validatorAddress)
-            => ClaimRewardValidator(repository, context, validatorAddress, validatorAddress);
+            => ClaimRewardValidator(repository, validatorAddress, validatorAddress);
 
         public static ValidatorRepository ClaimRewardValidator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address address,
             Address rewardAddress)
         {
+            var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
             var validatorDelegator = repository.GetValidatorDelegator(
                 delegatorAddress, rewardAddress);
@@ -109,7 +102,6 @@ namespace Nekoyume.Module.ValidatorDelegation
 
         public static bool TryGetValidatorDelegator(
             this ValidatorRepository repository,
-            IActionContext context,
             Address address,
             Address rewardAddress,
             [NotNullWhen(true)] out ValidatorDelegator? validatorDelegator)
@@ -117,7 +109,8 @@ namespace Nekoyume.Module.ValidatorDelegation
             try
             {
                 validatorDelegator = repository.GetValidatorDelegator(
-                    address, rewardAddress);
+                    address,
+                    rewardAddress);
                 return true;
             }
             catch

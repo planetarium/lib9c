@@ -3,7 +3,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Lib9c;
-using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;

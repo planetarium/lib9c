@@ -1,5 +1,4 @@
 using System;
-using Libplanet.Action;
 using Nekoyume.Delegation;
 using Nekoyume.ValidatorDelegation;
 
@@ -8,8 +7,9 @@ namespace Nekoyume.Module.ValidatorDelegation
     public static class ValidatorUnbondingModule
     {
         public static ValidatorRepository ReleaseUnbondings(
-            this ValidatorRepository repository, IActionContext context)
+            this ValidatorRepository repository)
         {
+            var context = repository.ActionContext;
             var unbondingSet = repository.GetUnbondingSet();
             var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
 
