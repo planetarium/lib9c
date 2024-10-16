@@ -1,6 +1,11 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
+using Lib9c;
+using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 
@@ -8,40 +13,40 @@ namespace Nekoyume.Model.Stake
 {
     public static class StakeStateUtils
     {
-        public static bool TryMigrate(
+        public static bool TryMigrateV1ToV2(
             IWorldState state,
             Address stakeStateAddr,
-            out StakeStateV2 stakeStateV2)
+            out StakeState stakeState)
         {
             var nullableStateState =
-                Migrate(state.GetLegacyState(stakeStateAddr), state.GetGameConfigState());
+                MigrateV1ToV2(state.GetLegacyState(stakeStateAddr), state.GetGameConfigState());
             if (nullableStateState is null)
             {
-                stakeStateV2 = default;
+                stakeState = default;
                 return false;
             }
 
-            stakeStateV2 = nullableStateState.Value;
+            stakeState = nullableStateState.Value;
             return true;
         }
 
-        public static bool TryMigrate(
+        public static bool TryMigrateV1ToV2(
             IValue serialized,
             GameConfigState gameConfigState,
-            out StakeStateV2 stakeStateV2)
+            out StakeState stakeState)
         {
-            var nullableStateState = Migrate(serialized, gameConfigState);
+            var nullableStateState = MigrateV1ToV2(serialized, gameConfigState);
             if (nullableStateState is null)
             {
-                stakeStateV2 = default;
+                stakeState = default;
                 return false;
             }
 
-            stakeStateV2 = nullableStateState.Value;
+            stakeState = nullableStateState.Value;
             return true;
         }
 
-        public static StakeStateV2? Migrate(
+        public static StakeState? MigrateV1ToV2(
             IValue serialized,
             GameConfigState gameConfigState)
         {
@@ -53,7 +58,7 @@ namespace Nekoyume.Model.Stake
             // NOTE: StakeStateV2 is serialized as Bencodex List.
             if (serialized is List list)
             {
-                return new StakeStateV2(list);
+                return new StakeState(list);
             }
 
             // NOTE: StakeState is serialized as Bencodex Dictionary.
@@ -86,7 +91,7 @@ namespace Nekoyume.Model.Stake
             //       - StakeStateV2.Contract.LockupInterval is StakeState.LockupInterval.
             //       - StakeStateV2.StartedBlockIndex is StakeState.StartedBlockIndex.
             //       - StakeStateV2.ReceivedBlockIndex is StakeState.ReceivedBlockIndex.
-            var stakeStateV1 = new StakeState(dict);
+            var stakeStateV1 = new LegacyStakeState(dict);
             var stakeRegularFixedRewardSheetTableName =
                 stakeStateV1.StartedBlockIndex <
                 gameConfigState.StakeRegularFixedRewardSheet_V2_StartBlockIndex
@@ -118,13 +123,44 @@ namespace Nekoyume.Model.Stake
                 stakeRegularRewardSheetTableName = "StakeRegularRewardSheet_V5";
             }
 
-            return new StakeStateV2(
+            return new StakeState(
                 stakeStateV1,
                 new Contract(
                     stakeRegularFixedRewardSheetTableName: stakeRegularFixedRewardSheetTableName,
                     stakeRegularRewardSheetTableName: stakeRegularRewardSheetTableName,
-                    rewardInterval: StakeState.RewardInterval,
-                    lockupInterval: StakeState.LockupInterval));
+                    rewardInterval: LegacyStakeState.RewardInterval,
+                    lockupInterval: LegacyStakeState.LockupInterval));
+        }
+
+        public static bool TryMigrateV2ToV3(
+            IActionContext context,
+            IWorld world,
+            Address stakeStateAddr,
+            StakeState stakeState,
+            [NotNullWhen(true)]
+            out (IWorld world, StakeState newStakeState)? result
+        )
+        {
+            if (stakeState.StateVersion != 2)
+            {
+                result = null;
+                return false;
+            }
+
+            var goldCurrency = world.GetGoldCurrency();
+            var goldBalance = world.GetBalance(stakeStateAddr, goldCurrency);
+            var newStakeState = new StakeState(
+                stakeState.Contract,
+                stakeState.StartedBlockIndex,
+                stakeState.ReceivedBlockIndex,
+                stateVersion: 3);
+
+            result = (
+                world.MintAsset(context, stakeStateAddr,
+                        FungibleAssetValue.Parse(Currencies.GuildGold,
+                            goldBalance.GetQuantityString(true)))
+                    .SetLegacyState(stakeStateAddr, newStakeState.Serialize()), newStakeState);
+            return true;
         }
     }
 }

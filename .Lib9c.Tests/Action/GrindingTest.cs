@@ -164,8 +164,8 @@ namespace Lib9c.Tests.Action
             if (stake || monsterCollect)
             {
                 // StakeState;
-                var stakeStateAddress = StakeState.DeriveAddress(_agentAddress);
-                var stakeState = new StakeState(stakeStateAddress, 1);
+                var stakeStateAddress = LegacyStakeState.DeriveAddress(_agentAddress);
+                var stakeState = new LegacyStakeState(stakeStateAddress, 1);
                 var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                     .FirstOrDefault(r => r.Level == monsterCollectLevel)?.RequiredGold ?? 0;
 

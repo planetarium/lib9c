@@ -9,7 +9,7 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.State
 {
-    public class StakeState : State
+    public class LegacyStakeState : State
     {
         public class StakeAchievements
         {
@@ -68,14 +68,14 @@ namespace Nekoyume.Model.State
 
         public StakeAchievements Achievements { get; private set; }
 
-        public StakeState(Address address, long startedBlockIndex) : base(address)
+        public LegacyStakeState(Address address, long startedBlockIndex) : base(address)
         {
             StartedBlockIndex = startedBlockIndex;
             CancellableBlockIndex = startedBlockIndex + LockupInterval;
             Achievements = new StakeAchievements();
         }
 
-        public StakeState(
+        public LegacyStakeState(
             Address address,
             long startedBlockIndex,
             long receivedBlockIndex,
@@ -89,7 +89,7 @@ namespace Nekoyume.Model.State
             Achievements = achievements;
         }
 
-        public StakeState(Dictionary serialized) : base(serialized)
+        public LegacyStakeState(Dictionary serialized) : base(serialized)
         {
             CancellableBlockIndex = (long)serialized[CancellableBlockIndexKey].ToBigInteger();
             StartedBlockIndex = (long)serialized[StartedBlockIndexKey].ToBigInteger();

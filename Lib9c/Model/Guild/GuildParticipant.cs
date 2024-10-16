@@ -4,7 +4,7 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
-using Nekoyume.Model.State;
+using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild

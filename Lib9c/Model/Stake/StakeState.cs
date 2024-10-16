@@ -5,14 +5,15 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Model.Stake
 {
-    public readonly struct StakeStateV2 : IState
+    public readonly struct StakeState : IState
     {
         public const string StateTypeName = "stake_state";
-        public const int StateTypeVersion = 2;
+        public const int LatestStateTypeVersion = 3;
 
         public static Address DeriveAddress(Address address) =>
-            StakeState.DeriveAddress(address);
+            LegacyStakeState.DeriveAddress(address);
 
+        public readonly int StateVersion;
         public readonly Contract Contract;
         public readonly long StartedBlockIndex;
         public readonly long ReceivedBlockIndex;
@@ -31,10 +32,11 @@ namespace Nekoyume.Model.Stake
         public long ClaimableBlockIndex =>
             ClaimedBlockIndex + Contract.RewardInterval;
 
-        public StakeStateV2(
+        public StakeState(
             Contract contract,
             long startedBlockIndex,
-            long receivedBlockIndex = 0)
+            long receivedBlockIndex = 0,
+            int stateVersion = LatestStateTypeVersion)
         {
             if (startedBlockIndex < 0)
             {
@@ -55,20 +57,23 @@ namespace Nekoyume.Model.Stake
             Contract = contract ?? throw new ArgumentNullException(nameof(contract));
             StartedBlockIndex = startedBlockIndex;
             ReceivedBlockIndex = receivedBlockIndex;
+            StateVersion = stateVersion;
         }
 
-        public StakeStateV2(
-            StakeState stakeState,
+        // Migration constructor V1 to V2.
+        public StakeState(
+            LegacyStakeState legacyStakeState,
             Contract contract
         ) : this(
             contract,
-            stakeState?.StartedBlockIndex ?? throw new ArgumentNullException(nameof(stakeState)),
-            stakeState.ReceivedBlockIndex
+            legacyStakeState?.StartedBlockIndex ?? throw new ArgumentNullException(nameof(legacyStakeState)),
+            legacyStakeState.ReceivedBlockIndex,
+            stateVersion: 2
         )
         {
         }
 
-        public StakeStateV2(IValue serialized)
+        public StakeState(IValue serialized)
         {
             if (serialized is not List list)
             {
@@ -80,7 +85,8 @@ namespace Nekoyume.Model.Stake
             if (list[0] is not Text stateTypeNameValue ||
                 stateTypeNameValue != StateTypeName ||
                 list[1] is not Integer stateTypeVersionValue ||
-                stateTypeVersionValue.Value != StateTypeVersion)
+                stateTypeVersionValue.Value == 1 ||
+                stateTypeVersionValue.Value > LatestStateTypeVersion)
             {
                 throw new ArgumentException(
                     nameof(serialized),
@@ -89,6 +95,7 @@ namespace Nekoyume.Model.Stake
 
             const int reservedCount = 2;
 
+            StateVersion = stateTypeVersionValue;
             Contract = new Contract(list[reservedCount]);
             StartedBlockIndex = (Integer)list[reservedCount + 1];
             ReceivedBlockIndex = (Integer)list[reservedCount + 2];
@@ -96,22 +103,23 @@ namespace Nekoyume.Model.Stake
 
         public IValue Serialize() => new List(
             (Text)StateTypeName,
-            (Integer)StateTypeVersion,
+            (Integer)StateVersion,
             Contract.Serialize(),
             (Integer)StartedBlockIndex,
             (Integer)ReceivedBlockIndex
         );
 
-        public bool Equals(StakeStateV2 other)
+        public bool Equals(StakeState other)
         {
             return Equals(Contract, other.Contract) &&
                    StartedBlockIndex == other.StartedBlockIndex &&
-                   ReceivedBlockIndex == other.ReceivedBlockIndex;
+                   ReceivedBlockIndex == other.ReceivedBlockIndex &&
+                   StateVersion == other.StateVersion;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is StakeStateV2 other && Equals(other);
+            return obj is StakeState other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -121,16 +129,17 @@ namespace Nekoyume.Model.Stake
                 var hashCode = (Contract != null ? Contract.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ StartedBlockIndex.GetHashCode();
                 hashCode = (hashCode * 397) ^ ReceivedBlockIndex.GetHashCode();
+                hashCode = (hashCode * 397) ^ StateVersion.GetHashCode();
                 return hashCode;
             }
         }
 
-        public static bool operator ==(StakeStateV2 left, StakeStateV2 right)
+        public static bool operator ==(StakeState left, StakeState right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(StakeStateV2 left, StakeStateV2 right)
+        public static bool operator !=(StakeState left, StakeState right)
         {
             return !(left == right);
         }
