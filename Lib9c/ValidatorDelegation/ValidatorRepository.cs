@@ -15,10 +15,10 @@ namespace Nekoyume.ValidatorDelegation
 
         private IAccount _validatorList;
 
-        public ValidatorRepository(IWorld world, IActionContext context)
+        public ValidatorRepository(IWorld world, IActionContext actionContext)
             : base(
                   world,
-                  context,
+                  actionContext,
                   Addresses.ValidatorDelegatee,
                   Addresses.ValidatorDelegator,
                   Addresses.ValidatorDelegateeMetadata,
