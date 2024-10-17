@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Data;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -33,7 +32,7 @@ namespace Nekoyume.Action
         public const string SummonCountKey = "sc";
         public int SummonCount;
 
-        private const int SummonLimit = 100;
+        private static readonly int[] SummonLimit = {1, 10, 100};
 
         public CostumeSummon()
         {
@@ -134,10 +133,10 @@ namespace Nekoyume.Action
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
             }
 
-            if (SummonCount <= 0 || SummonCount > SummonLimit)
+            if (!SummonLimit.Contains(SummonCount))
             {
                 throw new InvalidSummonCountException(
-                    $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use between 1 and 10"
+                    $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use 1 or 10 or 100."
                 );
             }
 
