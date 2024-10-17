@@ -39,14 +39,13 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
-            var validatorAddress = new PrivateKey().Address;
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
             repository.UpdateWorld(repository.World.SetLegacyState(pledgeAddress, new List(
                 MeadConfig.PatronAddress.Serialize(),
@@ -74,14 +73,13 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
-            var validatorAddress = new PrivateKey().Address;
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
             var goldCurrencyState = new GoldCurrencyState(ncg);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
             repository.JoinGuild(guildAddress, guildMasterAddress);
 
             Assert.Null(repository.GetJoinedGuild(agentAddress));

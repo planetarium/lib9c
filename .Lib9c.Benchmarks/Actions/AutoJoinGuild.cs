@@ -34,9 +34,8 @@ public class AutoJoinGuild
 
         var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
         var guildAddress = AddressUtil.CreateGuildAddress();
-        var validatorAddress = new PrivateKey().Address;
         var repository = new GuildRepository(worldWithPledge, new ActionContext());
-        repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+        repository.MakeGuild(guildAddress, guildMasterAddress);
         worldWithPledgeAndGuild = repository.World;
         repository.JoinGuild(guildAddress, signer);
         worldAfterMigration = repository.World;

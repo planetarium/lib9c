@@ -34,7 +34,6 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
-            var validatorAddress = new PrivateKey().Address;
 
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
@@ -42,7 +41,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
@@ -58,7 +57,6 @@ namespace Lib9c.Tests.Action.Guild
 
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
-            var validatorAddress = new PrivateKey().Address;
 
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
@@ -66,7 +64,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             var changedWorld = action.Execute(new ActionContext
             {
@@ -87,7 +85,6 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var otherAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
-            var validatorAddress = new PrivateKey().Address;
 
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
@@ -95,7 +92,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
@@ -112,7 +109,6 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
             var bannedAddress = AddressUtil.CreateAgentAddress();
-            var validatorAddress = new PrivateKey().Address;
 
             IWorld world = new World(MockUtil.MockModernWorldState);
             var ncg = Currency.Uncapped("NCG", 2, null);
@@ -120,7 +116,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
             repository.Ban(guildAddress, guildMasterAddress, bannedAddress);
 
             Assert.True(repository.IsBanned(guildAddress, bannedAddress));
