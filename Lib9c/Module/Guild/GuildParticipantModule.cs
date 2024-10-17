@@ -27,10 +27,13 @@ namespace Nekoyume.Module.Guild
             AgentAddress target)
         {
             var guildParticipant = new GuildParticipant(target, guildAddress, repository);
-            var guildGold = repository.GetBalance(guildAddress, Currencies.GuildGold);
+            var guildGold = repository.GetBalance(target, Currencies.GuildGold);
             repository.SetGuildParticipant(guildParticipant);
             repository.IncreaseGuildMemberCount(guildAddress);
-            repository.Delegate(target, guildGold);
+            if (guildGold.RawValue > 0)
+            {
+                repository.Delegate(target, guildGold);
+            }
 
             return repository;
         }
@@ -40,30 +43,36 @@ namespace Nekoyume.Module.Guild
             AgentAddress guildParticipantAddress,
             GuildAddress dstGuildAddress)
         {
+            var guildParticipant1 = repository.GetGuildParticipant(guildParticipantAddress);
+            var srcGuild = repository.GetGuild(guildParticipant1.GuildAddress);
             var dstGuild = repository.GetGuild(dstGuildAddress);
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var srcValidatorDelegatee = validatorRepository.GetValidatorDelegatee(srcGuild.ValidatorAddress);
             var dstValidatorDelegatee = validatorRepository.GetValidatorDelegatee(dstGuild.ValidatorAddress);
             if (dstValidatorDelegatee.Tombstoned)
             {
                 throw new InvalidOperationException("The validator of the guild to move to has been tombstoned.");
             }
 
-            var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
+            var guildParticipant2 = new GuildParticipant(guildParticipantAddress, dstGuildAddress, repository);
+            var bond = validatorRepository.GetBond(srcValidatorDelegatee, guildParticipantAddress);
             repository.RemoveGuildParticipant(guildParticipantAddress);
-            repository.DecreaseGuildMemberCount(guildParticipant.GuildAddress);
-            repository.SetGuildParticipant(guildParticipant);
+            repository.DecreaseGuildMemberCount(guildParticipant1.GuildAddress);
+            repository.SetGuildParticipant(guildParticipant2);
             repository.IncreaseGuildMemberCount(dstGuildAddress);
-            repository.Redelegate(
-                guildParticipantAddress, dstGuildAddress);
+            if (bond.Share > 0)
+            {
+                repository.Redelegate(guildParticipantAddress, dstGuildAddress);
+            }
 
             return repository;
         }
 
         public static GuildRepository LeaveGuild(
             this GuildRepository repository,
-            AgentAddress target)
+            AgentAddress agentAddress)
         {
-            if (repository.GetJoinedGuild(target) is not { } guildAddress)
+            if (repository.GetJoinedGuild(agentAddress) is not { } guildAddress)
             {
                 throw new InvalidOperationException("The signer does not join any guild.");
             }
@@ -74,15 +83,22 @@ namespace Nekoyume.Module.Guild
                     "There is no such guild.");
             }
 
-            if (guild.GuildMasterAddress == target)
+            if (guild.GuildMasterAddress == agentAddress)
             {
                 throw new InvalidOperationException(
                     "The signer is a guild master. Guild master cannot quit the guild.");
             }
 
-            repository.RemoveGuildParticipant(target);
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+            var bond = validatorRepository.GetBond(validatorDelegatee, agentAddress);
+
+            repository.RemoveGuildParticipant(agentAddress);
             repository.DecreaseGuildMemberCount(guild.Address);
-            repository.Undelegate(target);
+            if (bond.Share > 0)
+            {
+                repository.Undelegate(agentAddress);
+            }
 
             return repository;
         }

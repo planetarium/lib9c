@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Action.Guild;
     using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
@@ -14,7 +15,7 @@ namespace Lib9c.Tests.Action.Guild
     using Nekoyume.Module.Guild;
     using Xunit;
 
-    public class RemoveGuildTest
+    public class RemoveGuildTest : GuildTestBase
     {
         [Fact]
         public void Serialization()
@@ -24,6 +25,31 @@ namespace Lib9c.Tests.Action.Guild
 
             var deserialized = new RemoveGuild();
             deserialized.LoadPlainValue(plainValue);
+        }
+
+        [Fact]
+        public void Execute()
+        {
+            var validatorKey = new PrivateKey();
+            var guildMasterAddress = AddressUtil.CreateAgentAddress();
+            var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
+            var guildAddress = AddressUtil.CreateGuildAddress();
+
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+
+            var removeGuild = new RemoveGuild();
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = guildMasterAddress,
+            };
+            world = removeGuild.Execute(actionContext);
+
+            var repository = new GuildRepository(world, actionContext);
+            Assert.Throws<FailedLoadStateException>(() => repository.GetGuild(guildAddress));
         }
 
         [Fact]

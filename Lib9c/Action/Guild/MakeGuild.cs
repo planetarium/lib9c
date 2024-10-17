@@ -54,7 +54,6 @@ namespace Nekoyume.Action.Guild
 
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
-            var random = context.GetRandom();
             var guildAddress = GuildAddress;
             var validatorAddress = ValidatorAddress;
 
