@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Libplanet.Common;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
@@ -95,6 +96,8 @@ namespace Nekoyume
         public static readonly Address EmptyAccountAddress = new("ffffffffffffffffffffffffffffffffffffffff");
 
         #endregion
+
+        public static Address GetAccountAddress(Currency currency) => new(currency.Hash.ToByteArray());
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);
 
