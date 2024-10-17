@@ -196,17 +196,7 @@
                 },
                 new object[]
                 {
-                    50001, 2, 600202, 2, 54, null,
-                },
-                // Nine plus zero
-                new object[]
-                {
-                    50002,
-                    9,
-                    600202,
-                    9,
-                    0,
-                    null,
+                    50001, 2, 600202, 2, 54, typeof(InvalidSummonCountException),
                 },
                 // Ten plus one
                 new object[]
