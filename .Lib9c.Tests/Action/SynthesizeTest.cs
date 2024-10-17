@@ -72,7 +72,6 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            ItemSubTypeValue = (int)itemSubTypes[0],
             MaterialIds = items,
         };
 
@@ -106,7 +105,6 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            ItemSubTypeValue = (int)itemSubTypes[0],
             MaterialIds = items,
         };
 

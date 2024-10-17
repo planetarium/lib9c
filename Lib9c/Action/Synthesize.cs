@@ -28,7 +28,6 @@ namespace Nekoyume.Action
 
         private const string MaterialsKey = "m";
         private const string AvatarAddressKey = "a";
-        private const string ItemSubTypeKey = "s";
 
         private static readonly ItemType[] ValidItemType =
         {
@@ -47,8 +46,8 @@ namespace Nekoyume.Action
 #region Fields
         public List<Guid> MaterialIds = new();
         public Address AvatarAddress;
-        // ItemSubType만 체크하면 ItemType은 자동으로 체크된다고 가정
-        public int ItemSubTypeValue;
+
+        private ItemSubType? _cachedItemSubType;
 #endregion Fields
 
         // TODO: 세부 기획 정해지면 그에 맞게 테스트 코드 우선 작성
@@ -109,6 +108,11 @@ namespace Nekoyume.Action
                 }
             }
 
+            if (_cachedItemSubType == null)
+            {
+                throw new InvalidOperationException("ItemSubType is not set.");
+            }
+
             // Unequip items
             foreach (var materialEquipment in materialEquipments)
             {
@@ -126,16 +130,16 @@ namespace Nekoyume.Action
             }
 
             // clone random item
-            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(context));
+            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(context, _cachedItemSubType.Value));
 
             return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
         // TODO: Use Sheet
-        private ItemBase GetSynthesizedItem(IActionContext context)
+        private ItemBase GetSynthesizedItem(IActionContext context, ItemSubType itemSubTypeValue)
         {
             // TODO: 기획 상세에 따라 구현, 현재는 임의 아이템 생성
-            switch ((ItemSubType)ItemSubTypeValue)
+            switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
                     return GetRandomFullCostume(context);
@@ -237,11 +241,11 @@ namespace Nekoyume.Action
                 );
             }
 
-            var itemSubType = (ItemSubType)ItemSubTypeValue;
-            if (materialEquipment.ItemSubType != itemSubType)
+            _cachedItemSubType ??= materialEquipment.ItemSubType;
+            if (materialEquipment.ItemSubType != _cachedItemSubType)
             {
                 throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a {itemSubType}, but {materialEquipment.ItemSubType}."
+                    $"{addressesHex} Aborted as the material item is not a {_cachedItemSubType}, but {materialEquipment.ItemSubType}."
                     );
             }
 
@@ -270,11 +274,11 @@ namespace Nekoyume.Action
                 );
             }
 
-            var itemSubType = (ItemSubType)ItemSubTypeValue;
-            if (costumeItem.ItemSubType != itemSubType)
+            _cachedItemSubType ??= costumeItem.ItemSubType;
+            if (costumeItem.ItemSubType != _cachedItemSubType)
             {
                 throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a {itemSubType}, but {costumeItem.ItemSubType}."
+                    $"{addressesHex} Aborted as the material item is not a {_cachedItemSubType}, but {costumeItem.ItemSubType}."
                     );
             }
 
@@ -286,7 +290,6 @@ namespace Nekoyume.Action
                 {
                     [MaterialsKey] = new List(MaterialIds.OrderBy(i => i).Select(i => i.Serialize())),
                     [AvatarAddressKey] = AvatarAddress.Serialize(),
-                    [ItemSubTypeKey] = (Integer)ItemSubTypeValue,
                 }
                 .ToImmutableDictionary();
 
@@ -294,7 +297,6 @@ namespace Nekoyume.Action
         {
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
-            ItemSubTypeValue= (Integer)plainValue[ItemSubTypeKey];
         }
     }
 }
