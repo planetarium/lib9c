@@ -39,7 +39,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, agentAddress, guildAddress);
+            world = EnsureToJoinGuild(world, guildAddress, agentAddress);
 
             var quitGuild = new QuitGuild();
             var actionContext = new ActionContext

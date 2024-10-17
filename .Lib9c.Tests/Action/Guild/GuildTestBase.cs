@@ -73,8 +73,8 @@ namespace Lib9c.Tests.Action.Guild
 
         protected static IWorld EnsureToJoinGuild(
             IWorld world,
-            AgentAddress agentAddress,
-            GuildAddress guildAddress)
+            GuildAddress guildAddress,
+            AgentAddress agentAddress)
         {
             var actionContext = new ActionContext
             {

@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, targetGuildMemberAddress, guildAddress);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress);
 
             var banGuildMember = new BanGuildMember(targetGuildMemberAddress);
             var actionContext = new ActionContext
@@ -59,6 +59,7 @@ namespace Lib9c.Tests.Action.Guild
         [Fact]
         public void Ban_By_GuildMaster()
         {
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var otherGuildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildMemberAddress = AddressUtil.CreateAgentAddress();
@@ -66,17 +67,15 @@ namespace Lib9c.Tests.Action.Guild
             var guildAddress = AddressUtil.CreateGuildAddress();
             var otherGuildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.JoinGuild(guildAddress, guildMemberAddress);
-            repository.MakeGuild(otherGuildAddress, otherGuildMasterAddress);
-            repository.JoinGuild(otherGuildAddress, otherGuildMemberAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress);
+            world = EnsureToMakeGuild(world, otherGuildAddress, otherGuildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, otherGuildAddress, otherGuildMemberAddress);
 
+            var repository = new GuildRepository(world, new ActionContext());
             // Guild
             Assert.False(repository.IsBanned(guildAddress, guildMasterAddress));
             Assert.Equal(guildAddress, repository.GetJoinedGuild(guildMasterAddress));
@@ -157,6 +156,7 @@ namespace Lib9c.Tests.Action.Guild
         [Fact]
         public void Ban_By_GuildMember()
         {
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildMemberAddress = AddressUtil.CreateAgentAddress();
             var otherAddress = AddressUtil.CreateAgentAddress();
@@ -165,15 +165,14 @@ namespace Lib9c.Tests.Action.Guild
 
             var action = new BanGuildMember(targetGuildMemberAddress);
 
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress);
+
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.JoinGuild(guildAddress, guildMemberAddress);
-            repository.JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // GuildMember tries to ban other guild member.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
@@ -214,11 +213,9 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, targetGuildMemberAddress, guildAddress);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress);
 
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // Other tries to ban GuildMember.
             var action = new BanGuildMember(targetGuildMemberAddress);
