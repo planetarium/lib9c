@@ -49,16 +49,16 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
             {
                 [AvatarAddressKey] = AvatarAddress.Serialize(),
-                [GroupIdKey] = GroupId.Serialize(),
-                [SummonCountKey] = SummonCount.Serialize(),
+                [GroupIdKey] = (Integer)GroupId,
+                [SummonCountKey] = (Integer)SummonCount,
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
-            GroupId = plainValue[GroupIdKey].ToInteger();
-            SummonCount = plainValue[SummonCountKey].ToInteger();
+            GroupId = (Integer)plainValue[GroupIdKey];
+            SummonCount = (Integer)plainValue[SummonCountKey];
         }
 
         public static IEnumerable<Costume> SimulateSummon(
