@@ -3932,6 +3932,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SummonHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SummonHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Helper.WorldBossHelper.yml",
       "output": {
         ".html": {

@@ -1959,6 +1959,11 @@
     "title": "Class RuneHelper | Lib9c",
     "keywords": "Class RuneHelper Namespace Nekoyume.Helper Assembly Lib9c.dll public static class RuneHelper Inheritance object RuneHelper Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields DailyRewardRune public static readonly Currency DailyRewardRune Field Value Currency StakeRune public static readonly Currency StakeRune Field Value Currency Methods CalculateRuneLevelBonus(AllRuneState, RuneListSheet, RuneLevelBonusSheet) public static int CalculateRuneLevelBonus(AllRuneState allRuneState, RuneListSheet runeListSheet, RuneLevelBonusSheet runeLevelBonusSheet) Parameters allRuneState AllRuneState runeListSheet RuneListSheet runeLevelBonusSheet RuneLevelBonusSheet Returns int CalculateStakeReward(FungibleAssetValue, int) public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount, int rate) Parameters stakeAmount FungibleAssetValue rate int Returns FungibleAssetValue ToCurrency(Row) public static Currency ToCurrency(RuneSheet.Row runeRow) Parameters runeRow RuneSheet.Row Returns Currency ToFungibleAssetValue(Row, int) public static FungibleAssetValue ToFungibleAssetValue(RuneSheet.Row runeRow, int quantity) Parameters runeRow RuneSheet.Row quantity int Returns FungibleAssetValue TryEnhancement(int, Row, IRandom, int, out LevelUpResult) public static bool TryEnhancement(int startRuneLevel, RuneCostSheet.Row costRow, IRandom random, int tryCount, out RuneEnhancement.LevelUpResult levelUpResult) Parameters startRuneLevel int costRow RuneCostSheet.Row random IRandom tryCount int levelUpResult RuneEnhancement.LevelUpResult Returns bool"
   },
+  "api/Nekoyume.Helper.SummonHelper.html": {
+    "href": "api/Nekoyume.Helper.SummonHelper.html",
+    "title": "Class SummonHelper | Lib9c",
+    "keywords": "Class SummonHelper Namespace Nekoyume.Helper Assembly Lib9c.dll public static class SummonHelper Inheritance object SummonHelper Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields AllowedSummonCount public static readonly int[] AllowedSummonCount Field Value int[] Methods CalculateSummonCount(int) count를 넣으면 10+1 이라는 규칙에 의해 증가된 값을 반환합니다. public static int CalculateSummonCount(int count) Parameters count int Returns int CheckSummonCountIsValid(int) summon에서 쓸 count를 넣으면 허용된 count인지 체크한 뒤 허용 여부를 반환합니다. public static bool CheckSummonCountIsValid(int count) Parameters count int Returns bool GetSummonRecipeIdByRandom(Row, IRandom) public static int GetSummonRecipeIdByRandom(SummonSheet.Row summonRow, IRandom random) Parameters summonRow SummonSheet.Row random IRandom Returns int"
+  },
   "api/Nekoyume.Helper.WorldBossHelper.html": {
     "href": "api/Nekoyume.Helper.WorldBossHelper.html",
     "title": "Class WorldBossHelper | Lib9c",
@@ -1967,7 +1972,7 @@
   "api/Nekoyume.Helper.html": {
     "href": "api/Nekoyume.Helper.html",
     "title": "Namespace Nekoyume.Helper | Lib9c",
-    "keywords": "Namespace Nekoyume.Helper Classes AdventureBossHelper AvatarStateExtensions CrystalCalculator CustomCraftHelper InventoryExtensions ItemOptionHelper ItemOptionInfo PetHelper RuneHelper WorldBossHelper"
+    "keywords": "Namespace Nekoyume.Helper Classes AdventureBossHelper AvatarStateExtensions CrystalCalculator CustomCraftHelper InventoryExtensions ItemOptionHelper ItemOptionInfo PetHelper RuneHelper SummonHelper WorldBossHelper"
   },
   "api/Nekoyume.MeadConfig.html": {
     "href": "api/Nekoyume.MeadConfig.html",
