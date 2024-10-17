@@ -16,8 +16,10 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
+    using Nekoyume.Module.ValidatorDelegation;
     using Nekoyume.PolicyAction.Tx.Begin;
     using Nekoyume.TypedAddress;
+    using Nekoyume.ValidatorDelegation;
     using Xunit;
 
     public class AutoJoinGuildTest
@@ -35,18 +37,29 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
         [Fact]
         public void Execute_When_WithPledgeContract()
         {
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
             IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
+            var goldCurrencyState = new GoldCurrencyState(Currencies.GuildGold);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.JoinGuild(guildAddress, guildMasterAddress);
+
+            world = world.MintAsset(new ActionContext(), validatorKey.Address, Currencies.GuildGold * 100);
+            var validatorRepository = new ValidatorRepository(world, new ActionContext
+            {
+                Signer = validatorKey.Address,
+            });
+            validatorRepository.CreateValidatorDelegatee(validatorKey.PublicKey, 10);
+            world = validatorRepository.World;
+
+            var repository = new GuildRepository(world, new ActionContext
+            {
+                Signer = guildMasterAddress,
+            });
+            repository.MakeGuild(guildAddress, validatorKey.Address);
             repository.UpdateWorld(repository.World.SetLegacyState(pledgeAddress, new List(
                 MeadConfig.PatronAddress.Serialize(),
                 true.Serialize(),
@@ -70,17 +83,24 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
         [Fact]
         public void Execute_When_WithoutPledgeContract()
         {
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
             var guildAddress = AddressUtil.CreateGuildAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
             IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
+            var goldCurrencyState = new GoldCurrencyState(Currencies.GuildGold);
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+
+            world = world.MintAsset(new ActionContext(), validatorKey.Address, Currencies.GuildGold * 100);
+            var validatorRepository = new ValidatorRepository(world, new ActionContext
+            {
+                Signer = validatorKey.Address,
+            });
+            validatorRepository.CreateValidatorDelegatee(validatorKey.PublicKey, 10);
+            world = validatorRepository.World;
+
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.JoinGuild(guildAddress, guildMasterAddress);
 
             Assert.Null(repository.GetJoinedGuild(agentAddress));
             var action = new AutoJoinGuild();
