@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action.Guild
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
+    using Nekoyume.Action;
     using Nekoyume.Action.Guild;
     using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
@@ -14,7 +15,7 @@ namespace Lib9c.Tests.Action.Guild
     using Nekoyume.Module.Guild;
     using Xunit;
 
-    public class QuitGuildTest
+    public class QuitGuildTest : GuildTestBase
     {
         [Fact]
         public void Serialization()
@@ -29,46 +30,28 @@ namespace Lib9c.Tests.Action.Guild
         [Fact]
         public void Execute()
         {
+            var validatorKey = new PrivateKey();
             var agentAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
 
-            var action = new QuitGuild();
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, agentAddress, guildAddress);
 
-            // This case should fail because guild master cannot quit the guild.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            var quitGuild = new QuitGuild();
+            var actionContext = new ActionContext
             {
-                PreviousState = repository.World,
-                Signer = guildMasterAddress,
-            }));
-
-            // This case should fail because the agent is not a member of the guild.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = repository.World,
+                PreviousState = world,
                 Signer = agentAddress,
-            }));
+            };
+            world = quitGuild.Execute(actionContext);
 
-            // Join the guild.
-            repository.JoinGuild(guildAddress, agentAddress);
-            Assert.NotNull(repository.GetJoinedGuild(agentAddress));
-
-            // This case should fail because the agent is not a member of the guild.
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = repository.World,
-                Signer = agentAddress,
-            });
-
-            repository.UpdateWorld(world);
-            Assert.Null(repository.GetJoinedGuild(agentAddress));
+            var repository = new GuildRepository(world, actionContext);
+            Assert.Throws<FailedLoadStateException>(
+                () => repository.GetGuildParticipant(agentAddress));
         }
     }
 }

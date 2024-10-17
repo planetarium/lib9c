@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Model.Guild
         {
             IWorld world = new World(MockUtil.MockModernWorldState);
             var repository = new Nekoyume.Model.Guild.GuildRepository(world, new ActionContext());
-            var validatorAddress = new PrivateKey().Address;
+            var validatorAddress = new Address("0x614bBf3cE78657b6E1673cA77997adDf510538Df");
             var guild = new Nekoyume.Model.Guild.Guild(
                 AddressUtil.CreateGuildAddress(),
                 new AgentAddress("0xd928ae87311dead490c986c24cc23c37eff892f2"),

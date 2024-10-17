@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.Guild
     using System.Collections.Generic;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
+    using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Nekoyume;
@@ -15,7 +16,7 @@ namespace Lib9c.Tests.Action.Guild
     using Nekoyume.TypedAddress;
     using Xunit;
 
-    public class MakeGuildTest
+    public class MakeGuildTest : GuildTestBase
     {
         public static IEnumerable<object[]> TestCases => new[]
         {
@@ -46,12 +47,11 @@ namespace Lib9c.Tests.Action.Guild
         [MemberData(nameof(TestCases))]
         public void Execute(AgentAddress guildMasterAddress, bool fail)
         {
-            var action = new MakeGuild();
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            IWorld world = World;
+            var validatorPrivateKey = new PrivateKey();
+            world = EnsureToMintAsset(world, validatorPrivateKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorPrivateKey.PublicKey);
+            var action = new MakeGuild(validatorPrivateKey.Address);
 
             if (fail)
             {

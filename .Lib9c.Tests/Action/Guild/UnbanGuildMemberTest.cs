@@ -14,7 +14,7 @@ namespace Lib9c.Tests.Action.Guild
     using Nekoyume.Module.Guild;
     using Xunit;
 
-    public class UnbanGuildMemberTest
+    public class UnbanGuildMemberTest : GuildTestBase
     {
         [Fact]
         public void Serialization()
@@ -26,6 +26,34 @@ namespace Lib9c.Tests.Action.Guild
             var deserialized = new UnbanGuildMember();
             deserialized.LoadPlainValue(plainValue);
             Assert.Equal(guildMemberAddress, deserialized.Target);
+        }
+
+        [Fact]
+        public void Execute()
+        {
+            var validatorKey = new PrivateKey();
+            var guildMasterAddress = AddressUtil.CreateAgentAddress();
+            var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
+            var guildAddress = AddressUtil.CreateGuildAddress();
+
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, targetGuildMemberAddress, guildAddress);
+            world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
+
+            var unbanGuildMember = new UnbanGuildMember(targetGuildMemberAddress);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = guildMasterAddress,
+            };
+            world = unbanGuildMember.Execute(actionContext);
+
+            var repository = new GuildRepository(world, actionContext);
+            Assert.False(repository.IsBanned(guildAddress, targetGuildMemberAddress));
+            Assert.Null(repository.GetJoinedGuild(targetGuildMemberAddress));
         }
 
         [Fact]
