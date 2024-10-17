@@ -46,7 +46,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToCreateValidator(world, validatorKey2.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress1, guildMasterAddress1, validatorKey1.Address);
             world = EnsureToMakeGuild(world, guildAddress2, guildMasterAddress2, validatorKey2.Address);
-            world = EnsureToJoinGuild(world, agentAddress, guildAddress1);
+            world = EnsureToJoinGuild(world, guildAddress1, agentAddress);
 
             var moveGuild = new MoveGuild(guildAddress2);
             var actionContext = new ActionContext

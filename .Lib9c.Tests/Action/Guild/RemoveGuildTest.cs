@@ -53,107 +53,99 @@ namespace Lib9c.Tests.Action.Guild
         }
 
         [Fact]
-        public void Execute_By_GuildMember()
+        public void Execute_ByGuildMember_Throw()
         {
-            var action = new RemoveGuild();
-
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress);
 
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            var actionContext = new ActionContext
             {
-                PreviousState = repository.World,
+                PreviousState = world,
                 Signer = guildMemberAddress,
-            }));
+            };
+            var removeGuild = new RemoveGuild();
+
+            Assert.Throws<InvalidOperationException>(() => removeGuild.Execute(actionContext));
         }
 
         [Fact]
-        public void Execute_By_GuildMaster()
+        public void Execute_WhenDelegationExists_Throw()
         {
-            var action = new RemoveGuild();
-
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMintAsset(world, guildMasterAddress, GG * 100);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
 
-            var changedWorld = action.Execute(new ActionContext
+            var actionContext = new ActionContext
             {
-                PreviousState = repository.World,
+                PreviousState = world,
                 Signer = guildMasterAddress,
-            });
+            };
+            var removeGuild = new RemoveGuild();
 
-            repository.UpdateWorld(changedWorld);
-            Assert.False(repository.TryGetGuild(guildAddress, out _));
-            Assert.Null(repository.GetJoinedGuild(guildMasterAddress));
+            Assert.Throws<InvalidOperationException>(() => removeGuild.Execute(actionContext));
         }
 
         [Fact]
-        public void Execute_By_Other()
+        public void Execute_ByNonGuildMember_Throw()
         {
-            var action = new RemoveGuild();
-
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var otherAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
 
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            var actionContext = new ActionContext
             {
-                PreviousState = repository.World,
+                PreviousState = world,
                 Signer = otherAddress,
-            }));
+            };
+            var removeGuild = new RemoveGuild();
+
+            Assert.Throws<InvalidOperationException>(() => removeGuild.Execute(actionContext));
         }
 
         [Fact]
-        public void ResetBannedAddresses()
+        public void Execute_ResetBannedAddresses()
         {
-            var action = new RemoveGuild();
-
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
             var bannedAddress = AddressUtil.CreateAgentAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState);
-            var ncg = Currency.Uncapped("NCG", 2, null);
-            var goldCurrencyState = new GoldCurrencyState(ncg);
-            world = world
-                .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
-            var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.Ban(guildAddress, guildMasterAddress, bannedAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, bannedAddress);
+            world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, bannedAddress);
 
-            Assert.True(repository.IsBanned(guildAddress, bannedAddress));
-
-            world = action.Execute(new ActionContext
+            var actionContext = new ActionContext
             {
-                PreviousState = repository.World,
+                PreviousState = world,
                 Signer = guildMasterAddress,
-            });
+            };
+            var removeGuild = new RemoveGuild();
+            world = removeGuild.Execute(actionContext);
 
-            repository.UpdateWorld(world);
+            var repository = new GuildRepository(world, actionContext);
             Assert.False(repository.IsBanned(guildAddress, bannedAddress));
         }
     }

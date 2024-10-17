@@ -8,6 +8,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 using Libplanet.Crypto;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.Guild
 {
@@ -79,6 +80,14 @@ namespace Nekoyume.Module.Guild
             if (repository.GetGuildMemberCount(guildAddress) > 1)
             {
                 throw new InvalidOperationException("There are remained participants in the guild.");
+            }
+
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+            var bond = validatorRepository.GetBond(validatorDelegatee, signer);
+            if (bond.Share > 0)
+            {
+                throw new InvalidOperationException("The signer has a bond with the validator.");
             }
 
             repository.RemoveGuildParticipant(signer);
