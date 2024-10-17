@@ -19,9 +19,6 @@ namespace Nekoyume.Action
     [Serializable]
     public abstract class ActionBase : IAction
     {
-        // FIXME GoldCurrencyState 에 정의된 것과 다른데 괜찮을지 점검해봐야 합니다.
-        protected static readonly Currency GoldCurrencyMock = new Currency();
-
         public abstract IValue PlainValue { get; }
         public abstract void LoadPlainValue(IValue plainValue);
         public abstract IWorld Execute(IActionContext context);
@@ -43,18 +40,6 @@ namespace Nekoyume.Action
 
             sb.Append("]");
             return sb.ToString();
-        }
-
-        protected IWorld LogError(IActionContext context, string message, params object[] values)
-        {
-            string actionType = GetType().Name;
-            object[] prependedValues = new object[values.Length + 2];
-            prependedValues[0] = context.BlockIndex;
-            prependedValues[1] = context.Signer;
-            values.CopyTo(prependedValues, 2);
-            string msg = $"#{{BlockIndex}} {actionType} (by {{Signer}}): {message}";
-            Log.Error(msg, prependedValues);
-            return context.PreviousState;
         }
 
         protected bool TryGetAdminState(IActionContext ctx, out AdminState state)
@@ -95,19 +80,6 @@ namespace Nekoyume.Action
             if (ctx.BlockIndex > obsoleteIndex)
             {
                 throw new ActionObsoletedException();
-            }
-        }
-
-        protected bool UseV100291Sheets(long blockIndex)
-        {
-            return blockIndex < ActionObsoleteConfig.V100301ExecutedBlockIndex;
-        }
-
-        protected void CheckActionAvailable(long startedIndex, IActionContext ctx)
-        {
-            if (ctx.BlockIndex <= startedIndex)
-            {
-                throw new ActionUnavailableException();
             }
         }
     }
