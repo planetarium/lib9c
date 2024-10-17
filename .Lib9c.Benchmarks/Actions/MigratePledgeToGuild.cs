@@ -35,10 +35,9 @@ public class MigratePledgeToGuild
 
         var guildMasterAddress = GuildConfig.PlanetariumGuildOwner;
         var guildAddress = AddressUtil.CreateGuildAddress();
-        var validatorAddress = new PrivateKey().Address;
         var repository = new GuildRepository(worldWithPledge, new ActionContext());
         worldWithPledgeAndGuild = repository
-            .MakeGuild(guildAddress, guildMasterAddress, validatorAddress).World;
+            .MakeGuild(guildAddress, guildMasterAddress).World;
         worldAfterMigration = repository
             .JoinGuild(guildAddress, signer).World;
     }

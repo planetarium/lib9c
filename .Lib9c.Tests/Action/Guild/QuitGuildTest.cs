@@ -32,7 +32,6 @@ namespace Lib9c.Tests.Action.Guild
             var agentAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
-            var validatorAddress = new PrivateKey().Address;
 
             var action = new QuitGuild();
             IWorld world = new World(MockUtil.MockModernWorldState);
@@ -41,7 +40,7 @@ namespace Lib9c.Tests.Action.Guild
             world = world
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
             var repository = new GuildRepository(world, new ActionContext());
-            repository.MakeGuild(guildAddress, guildMasterAddress, validatorAddress);
+            repository.MakeGuild(guildAddress, guildMasterAddress);
 
             // This case should fail because guild master cannot quit the guild.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
