@@ -10,6 +10,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -31,8 +32,6 @@ namespace Nekoyume.Action
 
         public const string SummonCountKey = "sc";
         public int SummonCount;
-
-        private static readonly int[] SummonLimit = {1, 10, 100};
 
         public CostumeSummon()
         {
@@ -78,16 +77,7 @@ namespace Nekoyume.Action
             var result = new List<Costume>();
             for (var i = 0; i < summonCount; i++)
             {
-                var recipeId = 0;
-                var targetRatio = random.Next(1, summonRow.TotalRatio() + 1);
-                for (var j = 1; j <= SummonSheet.Row.MaxRecipeCount; j++)
-                {
-                    if (targetRatio <= summonRow.CumulativeRatio(j))
-                    {
-                        recipeId = summonRow.Recipes[j - 1].Item1;
-                        break;
-                    }
-                }
+                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
 
                 // Validate Recipe ResultEquipmentId
                 if (!costumeItemSheet.TryGetValue(recipeId,
@@ -133,7 +123,7 @@ namespace Nekoyume.Action
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
             }
 
-            if (!SummonLimit.Contains(SummonCount))
+            if (!SummonHelper.CheckSummonCountIsValid(SummonCount))
             {
                 throw new InvalidSummonCountException(
                     $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use 1 or 10 or 100."

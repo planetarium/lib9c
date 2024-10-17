@@ -13,6 +13,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -33,7 +34,6 @@ namespace Nekoyume.Action
         public const string SummonCountKey = "sc";
         public int SummonCount;
 
-        private static readonly int[] SummonLimit = {1, 10, 100};
         public const int RuneQuantity = 10;
 
         public override IWorld Execute(IActionContext context)
@@ -51,7 +51,7 @@ namespace Nekoyume.Action
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
             }
 
-            if (!SummonLimit.Contains(SummonCount))
+            if (!SummonHelper.CheckSummonCountIsValid(SummonCount))
             {
                 throw new InvalidSummonCountException(
                     $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use 1 or 10 or 100"
@@ -178,25 +178,12 @@ namespace Nekoyume.Action
             IRandom random
         )
         {
-            // Ten plus one
-            if (summonCount == 10)
-            {
-                summonCount += 1;
-            }
+            summonCount = SummonHelper.CalculateSummonCount(summonCount);
 
             var result = new Dictionary<Currency, int>();
             for (var i = 0; i < summonCount; i++)
             {
-                var recipeId = 0;
-                var targetRatio = random.Next(1, summonRow.TotalRatio() + 1);
-                for (var j = 1; j <= SummonSheet.Row.MaxRecipeCount; j++)
-                {
-                    if (targetRatio <= summonRow.CumulativeRatio(j))
-                    {
-                        recipeId = summonRow.Recipes[j - 1].Item1;
-                        break;
-                    }
-                }
+                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
 
                 // Validate RecipeId
                 var runeRow = runeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
