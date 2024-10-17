@@ -84,7 +84,7 @@ namespace Nekoyume.Action
                     throw new RequiredBlockIndexException($"{addressesHex}Already met the required block index. context block index: {context.BlockIndex}, required block index: {slotState.Result.itemUsable.RequiredBlockIndex}");
                 }
 
-                var actionableBlockIndex = slotState.StartBlockIndex;
+                var actionableBlockIndex = slotState.WorkStartBlockIndex;
                 if (context.BlockIndex < actionableBlockIndex)
                 {
                     throw new AppraiseBlockNotReachedException(
