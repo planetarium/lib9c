@@ -194,10 +194,6 @@ namespace Lib9c.Tests.Action.Summon
                 {
                     20001, 1, 600201, 1, 1, null,
                 },
-                new object[]
-                {
-                        20001, 2, 600201, 2, 54, null,
-                },
                 // Nine plus zero
                 new object[]
                 {
@@ -206,7 +202,7 @@ namespace Lib9c.Tests.Action.Summon
                     600201,
                     9,
                     0,
-                    null,
+                    typeof(InvalidSummonCountException),
                 },
                 // Ten plus one
                 new object[]
