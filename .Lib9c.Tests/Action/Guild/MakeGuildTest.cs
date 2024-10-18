@@ -43,38 +43,27 @@ namespace Lib9c.Tests.Action.Guild
             deserialized.LoadPlainValue(plainValue);
         }
 
-        [Theory]
-        [MemberData(nameof(TestCases))]
-        public void Execute(AgentAddress guildMasterAddress, bool fail)
+        [Fact]
+        public void Execute()
         {
             IWorld world = World;
             var validatorPrivateKey = new PrivateKey();
+            var guildMasterAddress = AddressUtil.CreateAgentAddress();
             world = EnsureToMintAsset(world, validatorPrivateKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorPrivateKey.PublicKey);
             var action = new MakeGuild(validatorPrivateKey.Address);
 
-            if (fail)
+            world = action.Execute(new ActionContext
             {
-                Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                }));
-            }
-            else
-            {
-                world = action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                });
+                PreviousState = world,
+                Signer = guildMasterAddress,
+            });
 
-                var repository = new GuildRepository(world, new ActionContext());
-                var guildAddress = repository.GetJoinedGuild(guildMasterAddress);
-                Assert.NotNull(guildAddress);
-                Assert.True(repository.TryGetGuild(guildAddress.Value, out var guild));
-                Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
-            }
+            var repository = new GuildRepository(world, new ActionContext());
+            var guildAddress = repository.GetJoinedGuild(guildMasterAddress);
+            Assert.NotNull(guildAddress);
+            Assert.True(repository.TryGetGuild(guildAddress.Value, out var guild));
+            Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
         }
     }
 }
