@@ -6,7 +6,6 @@ using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using Xunit;
 
 public class UnjailValidatorTest : ValidatorDelegationTestBase
@@ -28,7 +27,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = GG * 100;
+        var validatorGold = DelegationCurrency * 100;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
@@ -79,8 +78,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
 
         // When
         var unjailValidator = new UnjailValidator();
@@ -102,8 +101,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
@@ -127,8 +126,8 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When
@@ -155,7 +154,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         var validatorGold = MinimumDelegation;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height);
+        world = EnsureUnbondingValidator(world, validatorKey.Address, 10, height);
 
         // When
         var unjailValidator = new UnjailValidator();

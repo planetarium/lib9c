@@ -3,7 +3,6 @@ using Bencodex;
 using Bencodex.Types;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
-using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild

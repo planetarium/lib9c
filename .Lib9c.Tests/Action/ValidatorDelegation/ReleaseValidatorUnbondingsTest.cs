@@ -26,15 +26,15 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var validatorGold = GG * 50;
-        var validatorBalance = GG * 100;
+        var validatorGold = DelegationCurrency * 50;
+        var validatorBalance = DelegationCurrency * 100;
         var share = new BigInteger(10);
         var height = 1L;
         var actionContext = new ActionContext { };
 
         world = EnsureToMintAsset(world, validatorKey, validatorBalance, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, share, height);
+        world = EnsureUnbondingValidator(world, validatorKey.Address, share, height);
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
@@ -42,7 +42,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         var expectedUnbondingSet = expectedRepository.GetUnbondingSet();
         var expectedReleaseCount = expectedUnbondingSet.UnbondingRefs.Count;
         var expectedDepositGold = expectedDelegatee.FAVFromShare(share);
-        var expectedBalance = world.GetBalance(validatorKey.Address, GG) + expectedDepositGold;
+        var expectedBalance = world.GetBalance(validatorKey.Address, DelegationCurrency) + expectedDepositGold;
 
         var releaseValidatorUnbondings = new ReleaseValidatorUnbondings(validatorKey.Address);
         actionContext = new ActionContext
@@ -55,7 +55,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualBalance = world.GetBalance(validatorKey.Address, GG);
+        var actualBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
         var actualUnbondingSet = actualRepository.GetUnbondingSet();
         var actualReleaseCount = actualUnbondingSet.UnbondingRefs.Count;
 
@@ -75,9 +75,9 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         var actionContext = new ActionContext { };
         var share = new BigInteger(10);
 
-        world = EnsureToMintAsset(world, validatorKey, GG * 100, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 50, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, share, height);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 100, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 50, height++);
+        world = EnsureUnbondingValidator(world, validatorKey.Address, share, height);
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
