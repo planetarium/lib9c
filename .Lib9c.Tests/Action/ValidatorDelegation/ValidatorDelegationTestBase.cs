@@ -176,7 +176,8 @@ public class ValidatorDelegationTestBase
         IWorld world,
         Address guildMasterAddress,
         Address validatorAddress,
-        long blockHeight)
+        long blockHeight,
+        int seed)
     {
         if (blockHeight < 0)
         {
@@ -188,9 +189,9 @@ public class ValidatorDelegationTestBase
             PreviousState = world,
             BlockIndex = blockHeight,
             Signer = guildMasterAddress,
+            RandomSeed = seed,
         };
-        var guildAddress = AddressUtil.CreateGuildAddress();
-        var makeGuild = new MakeGuild(guildAddress, validatorAddress);
+        var makeGuild = new MakeGuild(validatorAddress);
         return makeGuild.Execute(actionContext);
     }
 

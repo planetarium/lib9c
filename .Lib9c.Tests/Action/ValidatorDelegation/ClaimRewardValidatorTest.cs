@@ -183,10 +183,12 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var validatorBalance = fixture.ValidatorBalance;
         var validatorCash = fixture.ValidatorCash;
         var totalReward = fixture.TotalReward;
+        int seed = 0;
         world = EnsureToMintAsset(world, validatorKey, validatorBalance, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorCash, height++);
         world = EnsureToMintAssets(world, delegatorKeys, delegatorBalances, height++);
-        world = delegatorKeys.Aggregate(world, (w, d) => EnsureMakeGuild(w, d.Address, validatorKey.Address, height++));
+        world = delegatorKeys.Aggregate(world, (w, d) => EnsureMakeGuild(
+                w, d.Address, validatorKey.Address, height++, seed++));
 
         world = EnsureRewardAllocatedValidator(world, validatorKey, totalReward, ref height);
 

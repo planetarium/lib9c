@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
@@ -18,17 +19,12 @@ namespace Nekoyume.Action.Guild
 
         public MakeGuild() { }
 
-        public MakeGuild(GuildAddress guildAddress, Address validatorAddress)
+        public MakeGuild(Address validatorAddress)
         {
-            GuildAddress = guildAddress;
             ValidatorAddress = validatorAddress;
         }
 
-        public GuildAddress GuildAddress { get; private set; }
-
         public Address ValidatorAddress { get; private set; }
-
-        public bool IsNew { get; private set; }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
@@ -53,8 +49,10 @@ namespace Nekoyume.Action.Guild
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var random = context.GetRandom();
+
             var repository = new GuildRepository(world, context);
-            var guildAddress = GuildAddress;
+            var guildAddress = new GuildAddress(random.GenerateAddress());
             var validatorAddress = ValidatorAddress;
 
             // TODO: Remove this check when to deliver features to users.
