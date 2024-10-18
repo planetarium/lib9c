@@ -49,10 +49,9 @@ namespace Lib9c.Tests.Action.Guild
             IWorld world = World;
             var validatorPrivateKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
-            var guildAddress = AddressUtil.CreateGuildAddress();
             world = EnsureToMintAsset(world, validatorPrivateKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorPrivateKey.PublicKey);
-            var action = new MakeGuild(guildAddress, validatorPrivateKey.Address);
+            var action = new MakeGuild(validatorPrivateKey.Address);
 
             world = action.Execute(new ActionContext
             {
@@ -61,9 +60,9 @@ namespace Lib9c.Tests.Action.Guild
             });
 
             var repository = new GuildRepository(world, new ActionContext());
-            var guildParticipant = repository.GetGuildParticipant(guildMasterAddress);
-            var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            Assert.Equal(guildAddress, guild.Address);
+            var guildAddress = repository.GetJoinedGuild(guildMasterAddress);
+            Assert.NotNull(guildAddress);
+            var guild = repository.GetGuild(guildAddress.Value);
             Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
         }
     }

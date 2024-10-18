@@ -40,10 +40,12 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var delegatorGolds = CreateArray(length, i => DelegationCurrency * Random.Shared.Next(10, 100));
         var height = 1L;
         var actionContext = new ActionContext { };
+        int seed = 0;
         world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsureToMintAssets(world, delegatorKeys, delegatorGolds, height++);
-        world = delegatorKeys.Aggregate(world, (w, d) => EnsureMakeGuild(w, d.Address, validatorKey.Address, height++));
+        world = delegatorKeys.Aggregate(world, (w, d) => EnsureMakeGuild(
+            w, d.Address, validatorKey.Address, height++, seed++));
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
