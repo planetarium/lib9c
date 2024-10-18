@@ -3,7 +3,6 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
@@ -19,16 +18,17 @@ namespace Nekoyume.Action.Guild
 
         public MakeGuild() { }
 
-        public MakeGuild(Address validatorAddress)
+        public MakeGuild(GuildAddress guildAddress, Address validatorAddress)
         {
-
+            GuildAddress = guildAddress;
+            ValidatorAddress = validatorAddress;
         }
 
         public GuildAddress GuildAddress { get; private set; }
 
         public Address ValidatorAddress { get; private set; }
 
-        public bool IsNew{get; private set;}
+        public bool IsNew { get; private set; }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
