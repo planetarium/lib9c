@@ -1,0 +1,1079 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ArenaInfo | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ArenaInfo | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/prepare/200250/apiSpec/new?filename=Nekoyume_Model_State_ArenaInfo.md&amp;value=---%0Auid%3A%20Nekoyume.Model.State.ArenaInfo%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.State.ArenaInfo">
+
+
+
+  <h1 id="Nekoyume_Model_State_ArenaInfo" data-uid="Nekoyume.Model.State.ArenaInfo" class="text-break">
+Class ArenaInfo  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.State.html">State</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ArenaInfo : IState</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ArenaInfo</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.State.IState.html">IState</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo__ctor_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor(Bencodex.Types.Dictionary)">
+  ArenaInfo(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ArenaInfo(Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo__ctor_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo__ctor_Nekoyume_Model_State_ArenaInfo_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor(Nekoyume.Model.State.ArenaInfo)">
+  ArenaInfo(ArenaInfo)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ArenaInfo(ArenaInfo prevInfo)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>prevInfo</code> <a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo__ctor_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo__ctor_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterSheet_Nekoyume_TableData_CostumeStatSheet_System_Boolean_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterSheet,Nekoyume.TableData.CostumeStatSheet,System.Boolean)">
+  ArenaInfo(AvatarState, CharacterSheet, CostumeStatSheet, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ArenaInfo(AvatarState avatarState, CharacterSheet characterSheet, CostumeStatSheet costumeStatSheet, bool active)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>characterSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a></dt>
+    <dd></dd>
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+    <dt><code>active</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo__ctor_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo__ctor_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterSheet_System_Boolean_" data-uid="Nekoyume.Model.State.ArenaInfo.#ctor(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterSheet,System.Boolean)">
+  ArenaInfo(AvatarState, CharacterSheet, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ArenaInfo(AvatarState avatarState, CharacterSheet characterSheet, bool active)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>characterSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a></dt>
+    <dd></dd>
+    <dt><code>active</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_AgentAddress" data-uid="Nekoyume.Model.State.ArenaInfo.AgentAddress">
+  AgentAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Address AgentAddress</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_ArenaRecord" data-uid="Nekoyume.Model.State.ArenaInfo.ArenaRecord">
+  ArenaRecord
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly ArenaInfo.Record ArenaRecord</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a>.<a class="xref" href="Nekoyume.Model.State.ArenaInfo.Record.html">Record</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_ArmorId" data-uid="Nekoyume.Model.State.ArenaInfo.ArmorId">
+  ArmorId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not used anymore since v100070&quot;)]
+public int ArmorId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_AvatarAddress" data-uid="Nekoyume.Model.State.ArenaInfo.AvatarAddress">
+  AvatarAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Address AvatarAddress</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_AvatarName" data-uid="Nekoyume.Model.State.ArenaInfo.AvatarName">
+  AvatarName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly string AvatarName</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_CombatPoint" data-uid="Nekoyume.Model.State.ArenaInfo.CombatPoint">
+  CombatPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not used anymore since v100070&quot;)]
+public int CombatPoint</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Level" data-uid="Nekoyume.Model.State.ArenaInfo.Level">
+  Level
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not used anymore since v100070&quot;)]
+public int Level</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Receive" data-uid="Nekoyume.Model.State.ArenaInfo.Receive">
+  Receive
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not used anymore since v100070&quot;)]
+public bool Receive</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_Active_" data-uid="Nekoyume.Model.State.ArenaInfo.Active*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Active" data-uid="Nekoyume.Model.State.ArenaInfo.Active">
+  Active
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Active { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_DailyChallengeCount_" data-uid="Nekoyume.Model.State.ArenaInfo.DailyChallengeCount*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_DailyChallengeCount" data-uid="Nekoyume.Model.State.ArenaInfo.DailyChallengeCount">
+  DailyChallengeCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DailyChallengeCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_Score_" data-uid="Nekoyume.Model.State.ArenaInfo.Score*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Score" data-uid="Nekoyume.Model.State.ArenaInfo.Score">
+  Score
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Score { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_Activate_" data-uid="Nekoyume.Model.State.ArenaInfo.Activate*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Activate" data-uid="Nekoyume.Model.State.ArenaInfo.Activate">
+  Activate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L268"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Activate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_Clone_" data-uid="Nekoyume.Model.State.ArenaInfo.Clone*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Clone" data-uid="Nekoyume.Model.State.ArenaInfo.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ArenaInfo Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_GetRewardCount_" data-uid="Nekoyume.Model.State.ArenaInfo.GetRewardCount*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_GetRewardCount" data-uid="Nekoyume.Model.State.ArenaInfo.GetRewardCount">
+  GetRewardCount()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetRewardCount()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_IsActive_" data-uid="Nekoyume.Model.State.ArenaInfo.IsActive*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_IsActive_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.State.ArenaInfo.IsActive(Bencodex.Types.Dictionary)">
+  IsActive(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsActive(Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_ResetCount_" data-uid="Nekoyume.Model.State.ArenaInfo.ResetCount*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_ResetCount" data-uid="Nekoyume.Model.State.ArenaInfo.ResetCount">
+  ResetCount()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResetCount()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_Serialize_" data-uid="Nekoyume.Model.State.ArenaInfo.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Serialize" data-uid="Nekoyume.Model.State.ArenaInfo.Serialize">
+  Serialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IValue Serialize()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_Update_" data-uid="Nekoyume.Model.State.ArenaInfo.Update*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_Update_Nekoyume_Model_State_ArenaInfo_Nekoyume_Model_BattleStatus_BattleLog_Result_System_Func_System_Int32_System_Int32_Nekoyume_Model_BattleStatus_BattleLog_Result_System_ValueTuple_System_Int32_System_Int32___" data-uid="Nekoyume.Model.State.ArenaInfo.Update(Nekoyume.Model.State.ArenaInfo,Nekoyume.Model.BattleStatus.BattleLog.Result,System.Func{System.Int32,System.Int32,Nekoyume.Model.BattleStatus.BattleLog.Result,System.ValueTuple{System.Int32,System.Int32}})">
+  Update(ArenaInfo, Result, Func&lt;int, int, Result, (int challengerScore, int defenderScore)&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L241"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Update(ArenaInfo enemyInfo, BattleLog.Result result, Func&lt;int, int, BattleLog.Result, (int challengerScore, int defenderScore)&gt; scoreGetter)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enemyInfo</code> <a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.html">BattleLog</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.Result.html">Result</a></dt>
+    <dd></dd>
+    <dt><code>scoreGetter</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-4">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.html">BattleLog</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.Result.html">Result</a>, (<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.challengerscore">challengerScore</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.defenderscore">defenderScore</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_UpdateV1_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV1*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_UpdateV1_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterSheet_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV1(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterSheet)">
+  UpdateV1(AvatarState, CharacterSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update()&quot;)]
+public void UpdateV1(AvatarState state, CharacterSheet characterSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>state</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>characterSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_UpdateV2_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV2*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_UpdateV2_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterSheet_Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV2(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterSheet,Nekoyume.TableData.CostumeStatSheet)">
+  UpdateV2(AvatarState, CharacterSheet, CostumeStatSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L153"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update()&quot;)]
+public void UpdateV2(AvatarState state, CharacterSheet characterSheet, CostumeStatSheet costumeStatSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>state</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>characterSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a></dt>
+    <dd></dd>
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_UpdateV3_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV3*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_UpdateV3_Nekoyume_Model_State_AvatarState_Nekoyume_Model_State_ArenaInfo_Nekoyume_Model_BattleStatus_BattleLog_Result_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV3(Nekoyume.Model.State.AvatarState,Nekoyume.Model.State.ArenaInfo,Nekoyume.Model.BattleStatus.BattleLog.Result)">
+  UpdateV3(AvatarState, ArenaInfo, Result)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update()&quot;)]
+public int UpdateV3(AvatarState avatarState, ArenaInfo enemyInfo, BattleLog.Result result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>enemyInfo</code> <a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.html">BattleLog</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.Result.html">Result</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_UpdateV4_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV4*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_UpdateV4_Nekoyume_Model_State_ArenaInfo_Nekoyume_Model_BattleStatus_BattleLog_Result_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV4(Nekoyume.Model.State.ArenaInfo,Nekoyume.Model.BattleStatus.BattleLog.Result)">
+  UpdateV4(ArenaInfo, Result)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update()&quot;)]
+public int UpdateV4(ArenaInfo enemyInfo, BattleLog.Result result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enemyInfo</code> <a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.html">BattleLog</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.Result.html">Result</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_ArenaInfo_UpdateV5_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV5*"></a>
+
+  <h3 id="Nekoyume_Model_State_ArenaInfo_UpdateV5_Nekoyume_Model_State_ArenaInfo_Nekoyume_Model_BattleStatus_BattleLog_Result_" data-uid="Nekoyume.Model.State.ArenaInfo.UpdateV5(Nekoyume.Model.State.ArenaInfo,Nekoyume.Model.BattleStatus.BattleLog.Result)">
+  UpdateV5(ArenaInfo, Result)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L213"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update()&quot;)]
+public int UpdateV5(ArenaInfo enemyInfo, BattleLog.Result result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enemyInfo</code> <a class="xref" href="Nekoyume.Model.State.ArenaInfo.html">ArenaInfo</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.html">BattleLog</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.BattleLog.Result.html">Result</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/prepare/200250/Lib9c/Model/State/ArenaInfo.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
