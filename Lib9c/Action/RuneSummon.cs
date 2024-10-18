@@ -154,12 +154,6 @@ namespace Nekoyume.Action
             IWorld states
         )
         {
-            // Ten plus one
-            if (summonCount >= 10)
-            {
-                summonCount += summonCount / 10;
-            }
-
             var result = SimulateSummon(runeSheet, summonRow, summonCount, random);
 #pragma warning disable LAA1002
             foreach (var pair in result)
