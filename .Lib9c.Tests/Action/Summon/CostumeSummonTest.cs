@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Action.Summon
+﻿namespace Lib9c.Tests.Action.Summon
 {
     using System;
     using System.Collections;
@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action.Summon
     using Xunit;
     using static SerializeKeys;
 
-    public class RuneSummonTest
+    public class CostumeSummonTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action.Summon
         private TableSheets _tableSheets;
         private IWorld _initialState;
 
-        public RuneSummonTest()
+        public CostumeSummonTest()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
@@ -112,7 +112,7 @@ namespace Lib9c.Tests.Action.Summon
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
-            var action = new RuneSummon
+            var action = new CostumeSummon
             {
                 AvatarAddress = _avatarAddress,
                 GroupId = groupId,
@@ -130,22 +130,21 @@ namespace Lib9c.Tests.Action.Summon
                 };
                 ctx.SetRandom(random);
                 var nextState = action.Execute(ctx);
-                var result = RuneSummon.SimulateSummon(
-                    _tableSheets.RuneSheet,
+                var result = CostumeSummon.SimulateSummon(
+                    string.Empty,
+                    _tableSheets.CostumeItemSheet,
                     _tableSheets.SummonSheet[groupId],
                     summonCount,
                     new TestRandom(seed)
                 );
-                foreach (var pair in result)
+                var inventory = nextState.GetAvatarState(_avatarAddress).inventory;
+                foreach (var costume in result)
                 {
-                    var currency = pair.Key;
-                    var prevBalance = state.GetBalance(_avatarAddress, currency);
-                    var balance = nextState.GetBalance(_avatarAddress, currency);
-                    Assert.Equal(currency * pair.Value, balance - prevBalance);
+                    inventory.TryGetNonFungibleItem(costume.ItemId, out Costume outItem);
+                    Assert.Equal(costume, outItem);
                 }
 
-                nextState.GetAvatarState(_avatarAddress).inventory
-                    .TryGetItem((int)materialId!, out var resultMaterial);
+                inventory.TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
             }
             else
@@ -170,25 +169,29 @@ namespace Lib9c.Tests.Action.Summon
             {
                 new object[]
                 {
-                    20001, 1, 600201, 1, 1, null,
+                    50001, 1, 600202, 1, 1, null,
                 },
-                // Nine plus zero
                 new object[]
                 {
-                    20001,
-                    9,
-                    600201,
-                    9,
-                    0,
-                    typeof(InvalidSummonCountException),
+                    50001, 2, 600202, 2, 54, typeof(InvalidSummonCountException),
                 },
                 // Ten plus one
                 new object[]
                 {
-                    20001,
+                    50002,
                     10,
-                    600201,
+                    600202,
                     10,
+                    0,
+                    null,
+                },
+                // 100 + 10
+                new object[]
+                {
+                    50002,
+                    100,
+                    600202,
+                    100,
                     0,
                     null,
                 },
@@ -200,16 +203,12 @@ namespace Lib9c.Tests.Action.Summon
                 // fail by not enough material
                 new object[]
                 {
-                    20001, 1, 600201, 0, 0,  typeof(NotEnoughMaterialException),
+                    50002, 1, 600202, 0, 0,  typeof(NotEnoughMaterialException),
                 },
                 // Fail by exceeding summon limit
                 new object[]
                 {
-                    20001, 101, 600201, 22, 1,  typeof(InvalidSummonCountException),
-                },
-                new object[]
-                {
-                    10002, 1, 600201, 1, 1, typeof(SheetRowNotFoundException),
+                    50002, 101, 600202, 22, 1,  typeof(InvalidSummonCountException),
                 },
             };
 
