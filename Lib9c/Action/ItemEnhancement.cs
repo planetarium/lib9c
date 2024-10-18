@@ -12,12 +12,15 @@ using Libplanet.Crypto;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
+using Nekoyume.TypedAddress;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -377,13 +380,11 @@ namespace Nekoyume.Action
             // TransferAsset (NCG)
             // Total cost = Total cost to reach target level - total cost to reach start level (already used)
             var requiredNcg = targetCostRow.Cost - startCostRow.Cost;
-            if (requiredNcg > 0)
+            var repository = new GuildRepository(states, context);
+            var guildAddress = repository.GetJoinedGuild(ctx.GetAgentAddress());
+            if (requiredNcg > 0 && guildAddress is not null)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress =
-                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                states = states.TransferAsset(ctx, ctx.Signer, feeStoreAddress,
+                states = states.TransferAsset(ctx, ctx.Signer, guildAddress!.Value,
                     states.GetGoldCurrency() * requiredNcg);
             }
 

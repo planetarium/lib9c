@@ -13,13 +13,17 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild;
     using Nekoyume.Arena;
     using Nekoyume.Extensions;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
     using Nekoyume.TableData;
+    using Nekoyume.TypedAddress;
     using Xunit;
 
     public class ItemEnhancementTest
@@ -552,6 +556,66 @@ namespace Lib9c.Tests.Action
             Assert.Equal(preItemUsable.ItemId, slotResult.preItemUsable.ItemId);
             Assert.Equal(preItemUsable.ItemId, resultEquipment.ItemId);
             Assert.Equal(expectedCost, slotResult.gold);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_With_Guild(bool guild)
+        {
+            var state = _initialState;
+            var guildMasterAddress = new AgentAddress(_agentAddress);
+            var guildAddress = new GuildAddress(new PrivateKey().Address);
+
+            var enhancementCostSheet = new EnhancementCostSheetV3();
+            enhancementCostSheet.Set(EnhancementCostSheetFixtures.V4);
+            var costRow = enhancementCostSheet.Values.First(r => r.Cost > 0);
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == costRow.ItemSubType && r.Grade == costRow.Grade);
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, costRow.Level);
+            var materialIds = new List<Guid>();
+            for (int i = 0; i < 5; i++)
+            {
+                var material = (Equipment)ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 0, costRow.Level);
+                material.Exp = costRow.Exp;
+                materialIds.Add(material.ItemId);
+                _avatarState.inventory.AddItem(material);
+            }
+
+            _avatarState.inventory.AddItem(equipment);
+            state = state.SetInventory(_avatarAddress, _avatarState.inventory);
+            var prevBalance = _initialState.GetBalance(_agentAddress, _currency);
+            var repository = new GuildRepository(state, new ActionContext());
+
+            if (guild)
+            {
+                repository.MakeGuild(guildAddress, guildMasterAddress);
+                repository.JoinGuild(guildAddress, guildMasterAddress);
+                var joinedGuildAddress = repository.GetJoinedGuild(guildMasterAddress);
+                Assert.NotNull(joinedGuildAddress);
+            }
+
+            var action = new ItemEnhancement
+            {
+                itemId = default,
+                materialIds = materialIds,
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+            };
+
+            var nextState = action.Execute(new ActionContext
+            {
+                PreviousState = repository.World,
+                Signer = _agentAddress,
+            });
+
+            if (guild)
+            {
+                Assert.True(prevBalance > nextState.GetBalance(_agentAddress, _currency));
+            }
+            else
+            {
+                Assert.Equal(prevBalance, nextState.GetBalance(_agentAddress, _currency));
+            }
         }
     }
 }
