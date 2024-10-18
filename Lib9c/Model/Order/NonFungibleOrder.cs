@@ -152,7 +152,7 @@ namespace Lib9c.Model.Order
 
                     if (nonFungibleItem is Costume costume)
                     {
-                        buyer.UpdateFromAddCostume(costume, false);
+                        buyer.UpdateFromAddCostume(costume);
                     }
                     else
                     {
@@ -176,7 +176,7 @@ namespace Lib9c.Model.Order
                 nonFungibleItem.RequiredBlockIndex = blockIndex;
                 if (nonFungibleItem is Costume costume)
                 {
-                    buyer.UpdateFromAddCostume(costume, false);
+                    buyer.UpdateFromAddCostume(costume);
                 }
                 else
                 {
@@ -202,7 +202,7 @@ namespace Lib9c.Model.Order
 
                     if (nonFungibleItem is Costume costume)
                     {
-                        buyer.UpdateFromAddCostume(costume, false);
+                        buyer.UpdateFromAddCostume(costume);
                     }
                     else
                     {

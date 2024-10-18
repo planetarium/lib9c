@@ -94,5 +94,34 @@ namespace Lib9c.Tests.TableData.Summon
             // If index exceeds recipe count, just return total cumulative ratio.
             Assert.Equal(100, row.CumulativeRatio(3));
         }
+
+        [Theory]
+        [InlineData(10001)]
+        [InlineData(10002)]
+        [InlineData(20001)]
+        [InlineData(30001)]
+        [InlineData(30002)]
+        [InlineData(40001)]
+        [InlineData(50001)]
+        [InlineData(50002)]
+        public void CumulativeRatio(int groupId)
+        {
+            var sheet = _summonSheet;
+            var targetRow = sheet.OrderedList.First(r => r.GroupId == groupId);
+
+            for (var i = 1; i <= SummonSheet.Row.MaxRecipeCount; i++)
+            {
+                var sum = 0;
+                for (var j = 0; j < i; j++)
+                {
+                    if (j < targetRow.Recipes.Count)
+                    {
+                        sum += targetRow.Recipes[j].Item2;
+                    }
+                }
+
+                Assert.Equal(sum, targetRow.CumulativeRatio(i));
+            }
+        }
     }
 }

@@ -11,6 +11,7 @@ using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
@@ -33,8 +34,6 @@ namespace Nekoyume.Action
 
         public const string SummonCountKey = "sc";
         public int SummonCount;
-
-        private const int SummonLimit = 10;
 
         Address IAuraSummonV1.AvatarAddress => AvatarAddress;
         int IAuraSummonV1.GroupId => GroupId;
@@ -81,25 +80,12 @@ namespace Nekoyume.Action
             long blockIndex
         )
         {
-            // Ten plus one
-            if (summonCount == 10)
-            {
-                summonCount += 1;
-            }
+            summonCount = SummonHelper.CalculateSummonCount(summonCount);
 
             var result = new List<(int, Equipment)>();
             for (var i = 0; i < summonCount; i++)
             {
-                var recipeId = 0;
-                var targetRatio = random.Next(1, summonRow.TotalRatio() + 1);
-                for (var j = 1; j <= SummonSheet.Row.MaxRecipeCount; j++)
-                {
-                    if (targetRatio <= summonRow.CumulativeRatio(j))
-                    {
-                        recipeId = summonRow.Recipes[j - 1].Item1;
-                        break;
-                    }
-                }
+                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
 
                 // Validate RecipeId
                 var recipeRow = recipeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
@@ -182,10 +168,10 @@ namespace Nekoyume.Action
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
             }
 
-            if (SummonCount <= 0 || SummonCount > SummonLimit)
+            if (!SummonHelper.CheckSummonCountIsValid(SummonCount))
             {
                 throw new InvalidSummonCountException(
-                    $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use between 1 and 10"
+                    $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use 1 or 10 or 100"
                 );
             }
 

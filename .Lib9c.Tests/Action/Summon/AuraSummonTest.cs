@@ -123,10 +123,8 @@ namespace Lib9c.Tests.Action.Summon
         [Theory]
         // success first group
         [InlineData("V1", 10001, 1, 800201, 1, 1, new[] { 10610000 }, null)]
-        [InlineData("V1", 10001, 2, 800201, 2, 54, new[] { 10620000, 10630000 }, null)]
         // success second group
         [InlineData("V1", 10002, 1, 600201, 1, 1, new[] { 10620001 }, null)]
-        [InlineData("V1", 10002, 2, 600201, 2, 4, new[] { 10620001, 10630001 }, null)]
         // Nine plus zero
         [InlineData(
             "V1",
@@ -136,7 +134,7 @@ namespace Lib9c.Tests.Action.Summon
             9,
             0,
             new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
-            null
+            typeof(InvalidSummonCountException)
         )]
         [InlineData(
             "V1",
@@ -146,7 +144,7 @@ namespace Lib9c.Tests.Action.Summon
             9,
             0,
             new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10630001 },
-            null
+            typeof(InvalidSummonCountException)
         )]
         // Ten plus one
         [InlineData(
@@ -173,9 +171,9 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData("V1", 100003, 1, null, 0, 0, new int[] { }, typeof(RowNotInTableException))]
         // fail by not enough material
         [InlineData("V1", 10001, 1, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
-        [InlineData("V1", 10001, 2, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
+        [InlineData("V1", 10001, 10, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
         // Fail by exceeding summon limit
-        [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
+        [InlineData("V1", 10001, 101, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
         // 15 recipes
         [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
         // 15 recipes

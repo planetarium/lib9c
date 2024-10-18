@@ -162,7 +162,7 @@ namespace Nekoyume.Action
                     switch (itemProduct.TradableItem)
                     {
                         case Costume costume:
-                            avatarState.UpdateFromAddCostume(costume, true);
+                            avatarState.UpdateFromAddCostume(costume);
                             break;
                         case ItemUsable itemUsable:
                             avatarState.UpdateFromAddItem(itemUsable, true);
