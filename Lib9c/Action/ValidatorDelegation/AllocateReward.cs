@@ -8,7 +8,6 @@ using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.ValidatorDelegation;
 using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.Module;
 using Libplanet.Types.Blocks;
 
 namespace Nekoyume.Action.ValidatorDelegation
@@ -29,7 +28,7 @@ namespace Nekoyume.Action.ValidatorDelegation
         {
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            var rewardCurrency = world.GetGoldCurrency();
+            var rewardCurrency = ValidatorDelegatee.ValidatorRewardCurrency;
             var proposerInfo = repository.GetProposerInfo();
 
             if (context.LastCommit is BlockCommit lastCommit)

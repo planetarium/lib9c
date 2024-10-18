@@ -17,8 +17,6 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     private interface IUndelegateValidatorFixture
     {
         ValidatorInfo ValidatorInfo { get; }
-
-        DelegatorInfo[] DelegatorInfos { get; }
     }
 
     public static IEnumerable<object[]> RandomSeeds => new List<object[]>
@@ -53,8 +51,8 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var actionContext = new ActionContext { };
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = GG * 10;
-        world = EnsureToMintAsset(world, validatorKey, GG * 100, height++);
+        var validatorGold = DelegationCurrency * 10;
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 100, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
 
         // When
@@ -84,30 +82,18 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(BigInteger.Zero, actualBond.Share);
     }
 
-    [Theory]
-    [InlineData(2)]
-    [InlineData(3)]
-    [InlineData(9)]
-    public void Execute_Theory(int delegatorCount)
+    [Fact]
+    public void Execute_Theory()
     {
         var fixture = new StaticFixture
         {
             ValidatorInfo = new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = GG * 10,
-                Balance = GG * 100,
+                Cash = DelegationCurrency * 10,
+                Balance = DelegationCurrency * 100,
                 SubtractShare = 10,
             },
-            DelegatorInfos = Enumerable.Range(0, delegatorCount)
-                .Select(_ => new DelegatorInfo
-                {
-                    Key = new PrivateKey(),
-                    Cash = GG * 20,
-                    Balance = GG * 100,
-                    SubtractShare = 20,
-                })
-                .ToArray(),
         };
         ExecuteWithFixture(fixture);
     }
@@ -136,25 +122,22 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     {
         // Given
         var world = World;
-        var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
 
         // When
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = delegatorKey.Address,
+            Signer = validatorKey.Address,
             BlockIndex = height++,
         };
         var undelegateValidator = new UndelegateValidator(new PrivateKey().Address, 10);
 
         // Then
-        Assert.Throws<FailedLoadStateException>(
+        Assert.Throws<InvalidAddressException>(
             () => undelegateValidator.Execute(actionContext));
     }
 
@@ -165,48 +148,20 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     {
         // Given
         var world = World;
-        var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
 
         // When
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = delegatorKey.Address,
+            Signer = validatorKey.Address,
             BlockIndex = height++,
         };
         var undelegateValidator = new UndelegateValidator(validatorKey.Address, share);
-
-        // Then
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () => undelegateValidator.Execute(actionContext));
-    }
-
-    [Fact]
-    public void Execute_WithoutDelegating_Throw()
-    {
-        // Given
-        var world = World;
-        var delegatorKey = new PrivateKey();
-        var validatorKey = new PrivateKey();
-        var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
-
-        // When
-        var actionContext = new ActionContext
-        {
-            PreviousState = world,
-            Signer = delegatorKey.Address,
-            BlockIndex = height++,
-        };
-        var undelegateValidator = new UndelegateValidator(
-            validatorKey.Address, 10);
 
         // Then
         Assert.Throws<ArgumentOutOfRangeException>(
@@ -218,25 +173,22 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     {
         // Given
         var world = World;
-        var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         // When
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = delegatorKey.Address,
+            Signer = validatorKey.Address,
             BlockIndex = height,
         };
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
-        var expectedBond = expectedRepository.GetBond(expectedDelegatee, delegatorKey.Address);
+        var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
 
         var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
         world = undelegateValidator.Execute(actionContext);
@@ -244,7 +196,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualBond = actualRepository.GetBond(actualDelegatee, delegatorKey.Address);
+        var actualBond = actualRepository.GetBond(actualDelegatee, validatorKey.Address);
 
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
     }
@@ -254,25 +206,22 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     {
         // Given
         var world = World;
-        var delegatorKey = new PrivateKey();
         var validatorKey = new PrivateKey();
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
-        world = EnsureToMintAsset(world, delegatorKey, GG * 10, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = delegatorKey.Address,
+            Signer = validatorKey.Address,
             BlockIndex = height,
         };
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
-        var expectedBond = expectedRepository.GetBond(expectedDelegatee, delegatorKey.Address);
+        var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
 
         var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
         world = undelegateValidator.Execute(actionContext);
@@ -280,53 +229,9 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualBond = actualRepository.GetBond(actualDelegatee, delegatorKey.Address);
+        var actualBond = actualRepository.GetBond(actualDelegatee, validatorKey.Address);
 
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
-    }
-
-    [Fact]
-    public void Execute_CannotBeJailedDueToDelegatorUndelegating()
-    {
-        // Given
-        var world = World;
-        var validatorKey = new PrivateKey();
-        var delegatorKey = new PrivateKey();
-        var validatorCash = GG * 10;
-        var validatorGold = GG * 100;
-        var delegatorGold = GG * 10;
-        var actionContext = new ActionContext { };
-        var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
-        world = EnsurePromotedValidator(world, validatorKey, validatorCash, height++);
-        world = EnsureUnbondingDelegator(world, validatorKey, validatorKey, 10, height++);
-        world = EnsureBondedDelegator(world, validatorKey, validatorKey, validatorCash, height++);
-
-        world = EnsureToMintAsset(world, delegatorKey, delegatorGold, height++);
-        world = EnsureBondedDelegator(world, delegatorKey, validatorKey, delegatorGold, height++);
-        world = EnsureUnjailedValidator(world, validatorKey, ref height);
-
-        // When
-        var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
-        var expectedJailed = expectedDelegatee.Jailed;
-
-        var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
-        actionContext = new ActionContext
-        {
-            PreviousState = world,
-            Signer = delegatorKey.Address,
-            BlockIndex = height,
-        };
-        world = undelegateValidator.Execute(actionContext);
-
-        // Then
-        var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualJailed = actualDelegatee.Jailed;
-
-        Assert.False(actualJailed);
-        Assert.Equal(expectedJailed, actualJailed);
     }
 
     [Fact]
@@ -374,61 +279,35 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var height = 1L;
         var validatorCash = fixture.ValidatorInfo.Cash;
         var validatorBalance = fixture.ValidatorInfo.Balance;
-        var delegatorKeys = fixture.DelegatorInfos.Select(i => i.Key).ToArray();
-        var delegatorCashes = fixture.DelegatorInfos.Select(i => i.Cash).ToArray();
-        var delegatorBalances = fixture.DelegatorInfos.Select(i => i.Balance).ToArray();
-        var delegatorSubtractShares = fixture.DelegatorInfos.Select(i => i.SubtractShare).ToArray();
         var actionContext = new ActionContext { };
         world = EnsureToMintAsset(world, validatorKey, validatorBalance, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorCash, height++);
-        world = EnsureToMintAssets(world, delegatorKeys, delegatorBalances, height++);
-        world = EnsureBondedDelegators(
-            world, delegatorKeys, validatorKey, delegatorCashes, height++);
 
         // When
         var expectedRepository = new ValidatorRepository(world, new ActionContext());
         var expectedValidator = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
         var expectedValidatorBalance = validatorBalance - validatorCash;
-        var expectedDelegatorBalances = delegatorKeys
-            .Select(k => world.GetBalance(k.Address, GG)).ToArray();
-        var expectedShares = delegatorCashes
-            .Select((c, i) => c.RawValue - delegatorSubtractShares[i]).ToArray();
-        var expectedPower = expectedValidator.Power - delegatorSubtractShares.Aggregate(
-            BigInteger.Zero, (a, b) => a + b);
+        var expectedValidatorPower = expectedValidator.Power - fixture.ValidatorInfo.SubtractShare;
 
-        for (var i = 0; i < delegatorKeys.Length; i++)
+        var subtractShare = fixture.ValidatorInfo.SubtractShare;
+        var undelegateValidator = new UndelegateValidator(
+            validatorKey.Address, subtractShare);
+        actionContext = new ActionContext
         {
-            var subtractShare = fixture.DelegatorInfos[i].SubtractShare;
-            var undelegateValidator = new UndelegateValidator(
-                validatorKey.Address, subtractShare);
-            actionContext = new ActionContext
-            {
-                PreviousState = world,
-                Signer = delegatorKeys[i].Address,
-                BlockIndex = height++,
-            };
-            world = undelegateValidator.Execute(actionContext);
-        }
+            PreviousState = world,
+            Signer = validatorKey.Address,
+            BlockIndex = height++,
+        };
+        world = undelegateValidator.Execute(actionContext);
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidator = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, GG);
-        var actualDelegatorBalances = delegatorKeys
-            .Select(k => world.GetBalance(k.Address, GG)).ToArray();
-        var actualPower = actualValidator.Power;
-
-        for (var i = 0; i < delegatorKeys.Length; i++)
-        {
-            var actualBond = actualRepository.GetBond(actualValidator, delegatorKeys[i].Address);
-            Assert.Contains(delegatorKeys[i].Address, actualValidator.Delegators);
-            Assert.Equal(expectedShares[i], actualBond.Share);
-            Assert.Equal(expectedDelegatorBalances[i], actualDelegatorBalances[i]);
-        }
+        var actualValidatorBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
+        var actualValiatorPower = actualValidator.Power;
 
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
-        Assert.Equal(expectedPower, actualPower);
-        Assert.Equal(expectedDelegatorBalances, actualDelegatorBalances);
+        Assert.Equal(expectedValidatorPower, actualValiatorPower);
     }
 
     private struct ValidatorInfo
@@ -439,7 +318,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         public ValidatorInfo(Random random)
         {
-            Balance = GetRandomGG(random);
+            Balance = GetRandomFAV(DelegationCurrency, random);
             Cash = GetRandomCash(random, Balance);
             SubtractShare = GetRandomCash(random, Cash).RawValue;
             if (SubtractShare == 0)
@@ -450,31 +329,9 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         public PrivateKey Key { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue Cash { get; set; } = GG * 10;
+        public FungibleAssetValue Cash { get; set; } = DelegationCurrency * 10;
 
-        public FungibleAssetValue Balance { get; set; } = GG * 100;
-
-        public BigInteger SubtractShare { get; set; } = 100;
-    }
-
-    private struct DelegatorInfo
-    {
-        public DelegatorInfo()
-        {
-        }
-
-        public DelegatorInfo(Random random)
-        {
-            Balance = GetRandomGG(random);
-            Cash = GetRandomCash(random, Balance);
-            SubtractShare = GetRandomCash(random, Cash).RawValue;
-        }
-
-        public PrivateKey Key { get; set; } = new PrivateKey();
-
-        public FungibleAssetValue Cash { get; set; } = GG * 10;
-
-        public FungibleAssetValue Balance { get; set; } = GG * 100;
+        public FungibleAssetValue Balance { get; set; } = DelegationCurrency * 100;
 
         public BigInteger SubtractShare { get; set; } = 100;
     }
@@ -482,8 +339,6 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     private struct StaticFixture : IUndelegateValidatorFixture
     {
         public ValidatorInfo ValidatorInfo { get; set; }
-
-        public DelegatorInfo[] DelegatorInfos { get; set; }
     }
 
     private class RandomFixture : IUndelegateValidatorFixture
@@ -494,13 +349,8 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         {
             _random = new Random(randomSeed);
             ValidatorInfo = new ValidatorInfo(_random);
-            DelegatorInfos = Enumerable.Range(0, _random.Next(1, 10))
-                .Select(_ => new DelegatorInfo(_random))
-                .ToArray();
         }
 
         public ValidatorInfo ValidatorInfo { get; }
-
-        public DelegatorInfo[] DelegatorInfos { get; }
     }
 }

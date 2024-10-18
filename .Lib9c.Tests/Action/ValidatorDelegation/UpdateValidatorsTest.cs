@@ -29,7 +29,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         const int length = 10;
         var world = World;
         var validatorKeys = CreateArray(length, _ => new PrivateKey());
-        var validatorGolds = CreateArray(length, i => GG * Random.Shared.Next(1, length + 1));
+        var validatorGolds = CreateArray(length, i => DelegationCurrency * Random.Shared.Next(1, length + 1));
         var height = 1L;
         var actionContext = new ActionContext { };
         world = EnsureToMintAssets(world, validatorKeys, validatorGolds, height++);
@@ -65,9 +65,9 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         const int length = 10;
         var world = World;
         var validatorKeys = CreateArray(length, _ => new PrivateKey());
-        var validatorGolds = CreateArray(length, i => GG * 100);
+        var validatorGolds = CreateArray(length, i => DelegationCurrency * 100);
         var height = 1L;
-        var validatorGold = GG * 100;
+        var validatorGold = DelegationCurrency * 100;
         var actionContext = new ActionContext { };
         world = EnsureToMintAssets(world, validatorKeys, validatorGolds, height++);
         world = EnsurePromotedValidators(world, validatorKeys, validatorGolds, height++);

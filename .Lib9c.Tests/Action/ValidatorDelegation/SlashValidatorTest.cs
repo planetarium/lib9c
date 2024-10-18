@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Numerics;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -34,16 +35,15 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         const int length = 10;
         var world = World;
         var validatorKey = new PrivateKey();
-        var validatorGold = GG * 10;
-        var deletatorKeys = CreateArray(length, _ => new PrivateKey());
-        var delegatorGolds = CreateArray(length, i => GG * Random.Shared.Next(10, 100));
+        var validatorGold = DelegationCurrency * 10;
+        var delegatorKeys = CreateArray(length, _ => new PrivateKey());
+        var delegatorGolds = CreateArray(length, i => DelegationCurrency * Random.Shared.Next(10, 100));
         var height = 1L;
         var actionContext = new ActionContext { };
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
-        world = EnsureToMintAssets(world, deletatorKeys, delegatorGolds, height++);
-        world = EnsureBondedDelegators(
-            world, deletatorKeys, validatorKey, delegatorGolds, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsureToMintAssets(world, delegatorKeys, delegatorGolds, height++);
+        world = delegatorKeys.Aggregate(world, (w, d) => EnsureMakeGuild(w, d.Address, validatorKey.Address, height++));
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
@@ -92,7 +92,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         world = slashValidator.Execute(actionContext);
 
         // Then
-        var balance = world.GetBalance(validatorKey.Address, GG);
+        var balance = world.GetBalance(validatorKey.Address, DelegationCurrency);
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
         var actualValidatorShare = actualRepository.GetBond(actualDelegatee, validatorKey.Address).Share;
@@ -138,8 +138,8 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var actionContext = new ActionContext { };
         var height = 1L;
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
 
         // When
         for (var i = 0L; i <= AbstainHistory.MaxAbstainAllowance; i++)
@@ -176,8 +176,8 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         var validatorKey = new PrivateKey();
         var height = 1L;
         var actionContext = new ActionContext();
-        world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-        world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
         world = EnsureTombstonedValidator(world, validatorKey, height++);
 
         // When

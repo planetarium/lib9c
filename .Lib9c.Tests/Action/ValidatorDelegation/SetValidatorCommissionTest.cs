@@ -66,7 +66,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Given
             var world = World;
             var validatorKey = new PrivateKey();
-            var validatorGold = GG * 10;
+            var validatorGold = DelegationCurrency * 10;
             var height = 1L;
             world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
             world = EnsurePromotedValidator(world, validatorKey, validatorGold, height);
@@ -100,7 +100,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Given
             var world = World;
             var validatorKey = new PrivateKey();
-            var validatorGold = GG * 10;
+            var validatorGold = DelegationCurrency * 10;
             var height = 1L;
             world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
             world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
@@ -134,11 +134,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Given
             var world = World;
             var validatorKey = new PrivateKey();
-            var validatorGold = GG * 10;
+            var validatorGold = DelegationCurrency * 10;
             var height = 1L;
 
-            world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-            world = EnsurePromotedValidator(world, validatorKey, GG * 10, height);
+            world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+            world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height);
 
             // When
             var actionContext = new ActionContext
@@ -164,11 +164,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Given
             var world = World;
             var validatorKey = new PrivateKey();
-            var validatorGold = GG * 10;
+            var validatorGold = DelegationCurrency * 10;
             var height = 1L;
 
-            world = EnsureToMintAsset(world, validatorKey, GG * 10, height++);
-            world = EnsurePromotedValidator(world, validatorKey, GG * 10, height++);
+            world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+            world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
 
             // When
             var actionContext = new ActionContext
@@ -193,7 +193,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Given
             var world = World;
             var validatorKey = new PrivateKey();
-            var validatorGold = GG * 10;
+            var validatorGold = DelegationCurrency * 10;
             var height = 1L;
             world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
             world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
@@ -221,7 +221,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             // Given
             var world = World;
             var validatorKey = new PrivateKey();
-            var validatorGold = GG * 10;
+            var validatorGold = DelegationCurrency * 10;
             var height = 1L;
             world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
             world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);

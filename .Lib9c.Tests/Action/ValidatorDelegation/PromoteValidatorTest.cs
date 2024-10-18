@@ -13,7 +13,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
     public void Serialization()
     {
         var publicKey = new PrivateKey().PublicKey;
-        var gold = GG * 10;
+        var gold = DelegationCurrency * 10;
         var action = new PromoteValidator(publicKey, gold);
         var plainValue = action.PlainValue;
 
@@ -30,8 +30,8 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var gold = GG * 10;
-        world = EnsureToMintAsset(world, validatorKey, GG * 100, height++);
+        var gold = DelegationCurrency * 10;
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -53,7 +53,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(gold.RawValue, bond.Share);
         Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
         Assert.Equal(validator.Validator, Assert.Single(validatorList.GetBonded()));
-        Assert.Equal(GG * 90, world.GetBalance(validatorKey.Address, GG));
+        Assert.Equal(DelegationCurrency * 90, world.GetBalance(validatorKey.Address, DelegationCurrency));
         Assert.Empty(validatorList.GetUnbonded());
     }
 
@@ -65,8 +65,8 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var context = new ActionContext { };
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var gold = GG * 10;
-        world = EnsureToMintAsset(world, validatorKey, GG * 100, height++);
+        var gold = DelegationCurrency * 10;
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 100, height++);
 
         // When
         var actionContext = new ActionContext
@@ -113,7 +113,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey().PublicKey;
         var height = 1L;
-        var gold = GG * 10;
+        var gold = DelegationCurrency * 10;
 
         // When
         var actionContext = new ActionContext
@@ -136,7 +136,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = GG * 10;
+        var validatorGold = DelegationCurrency * 10;
         world = EnsureToMintAsset(world, validatorKey, validatorGold * 2, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
 

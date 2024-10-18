@@ -34,10 +34,11 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         FungibleAssetValue[] ValidatorBalances
             => ValidatorsInfos.Select(info => info.Balance).ToArray();
 
-        PrivateKey GetProposerKey()
+        PrivateKey GetProposerKey(List<Validator> validators)
         {
             return ValidatorsInfos
                 .Where(item => item.VoteFlag == VoteFlag.PreCommit)
+                .Where(item => validators.Any(v => v.PublicKey.Equals(item.Key.PublicKey)))
                 .Take(ValidatorList.MaxBondedSetSize)
                 .First()
                 .Key;
@@ -69,12 +70,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = GG * 1000,
+            TotalReward = RewardCurrency * 1000,
             ValidatorsInfos = CreateArray(4, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = GG * 10,
-                Balance = GG * 100,
+                Cash = DelegationCurrency * 10,
+                Balance = DelegationCurrency * 100,
                 VoteFlag = i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null,
             }),
             Delegatorinfos = Array.Empty<DelegatorInfo>(),
@@ -95,12 +96,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = FungibleAssetValue.Parse(GG, $"{totalReward:R}"),
+            TotalReward = FungibleAssetValue.Parse(RewardCurrency, $"{totalReward:R}"),
             ValidatorsInfos = CreateArray(validatorCount, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = GG * 10,
-                Balance = GG * 100,
+                Cash = DelegationCurrency * 10,
+                Balance = DelegationCurrency * 100,
                 VoteFlag = i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null,
             }),
             Delegatorinfos = Array.Empty<DelegatorInfo>(),
@@ -113,12 +114,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = GG * 0,
+            TotalReward = RewardCurrency * 0,
             ValidatorsInfos = CreateArray(4, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
-                Cash = GG * 10,
-                Balance = GG * 100,
+                Cash = DelegationCurrency * 10,
+                Balance = DelegationCurrency * 100,
                 VoteFlag = i % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null,
             }),
             Delegatorinfos = Array.Empty<DelegatorInfo>(),
@@ -183,25 +184,22 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         var validatorKeys = fixture.ValidatorKeys;
         var validatorCashes = fixture.ValidatorCashes;
         var validatorBalances = fixture.ValidatorBalances;
-        var proposerKey = fixture.GetProposerKey();
         var height = 1L;
         world = EnsureToMintAssets(world, validatorKeys, validatorBalances, height++);
         world = EnsurePromotedValidators(world, validatorKeys, validatorCashes, height++);
-        world = EnsureProposer(world, proposerKey, height++);
         world = world.MintAsset(actionContext, Addresses.RewardPool, totalReward);
+        var repository = new ValidatorRepository(world, actionContext);
+        var bondedSet = repository.GetValidatorList().GetBonded();
+        var proposerKey = fixture.GetProposerKey(bondedSet);
+        world = EnsureProposer(world, proposerKey, height++);
 
         // Calculate expected values for comparison with actual values.
-        var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedBondedSet = expectedRepository.GetValidatorList().GetBonded();
-        var expectedProposer = proposerKey;
-        var votes = CreateVotes(validatorInfos, expectedBondedSet, height - 1);
-        var balances = votes
-            .Select(vote => world.GetBalance(vote.ValidatorPublicKey.Address, GG)).ToArray();
+        var votes = CreateVotes(validatorInfos, bondedSet, height - 1);
         var expectedProposerReward
             = CalculatePropserReward(totalReward) + CalculateBonusPropserReward(votes, totalReward);
         var expectedValidatorsReward = totalReward - expectedProposerReward;
         var expectedCommunityFund = CalculateCommunityFund(votes, expectedValidatorsReward);
-        var expectedAllocatedReward = expectedValidatorsReward - expectedCommunityFund;
+        var expectedAllocatedReward = totalReward - expectedCommunityFund;
 
         // When
         var lastCommit = new BlockCommit(height - 1, round: 0, votes[0].BlockHash, votes);
@@ -209,7 +207,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = expectedProposer.PublicKey.Address,
+            Signer = proposerKey.PublicKey.Address,
             LastCommit = lastCommit,
             BlockIndex = height++,
         };
@@ -220,8 +218,8 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             .OfType<BigInteger>()
             .Aggregate(BigInteger.Zero, (accum, next) => accum + next);
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualAllocatedReward = GG * 0;
-        var actualCommunityFund = world.GetBalance(Addresses.CommunityPool, GG);
+        var actualAllocatedReward = RewardCurrency * 0;
+        var actualCommunityFund = world.GetBalance(Addresses.CommunityPool, RewardCurrency);
         foreach (var (vote, index) in votes.Select((v, i) => (v, i)))
         {
             if (vote.ValidatorPower is not { } validatorPower)
@@ -232,33 +230,30 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             var validatorAddress = vote.ValidatorPublicKey.Address;
             var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorAddress);
             var validatorRewardAddress = actualDelegatee.CurrentLumpSumRewardsRecordAddress();
-            var balance = balances[index];
-            var actualBalance = world.GetBalance(validatorAddress, GG);
-            var actualReward = world.GetBalance(validatorRewardAddress, GG);
-            var isProposer = vote.ValidatorPublicKey.Equals(expectedProposer.PublicKey);
+            var actualDelegationBalance = world.GetBalance(validatorAddress, DelegationCurrency);
+            var actualCommission = world.GetBalance(validatorAddress, RewardCurrency);
+            var actualUnclaimedReward = world.GetBalance(validatorRewardAddress, RewardCurrency);
+            var isProposer = vote.ValidatorPublicKey.Equals(proposerKey.PublicKey);
 
             if (vote.Flag == VoteFlag.Null)
             {
-                Assert.Equal(balance, actualBalance);
-                Assert.Equal(GG * 0, actualReward);
+                Assert.Equal(RewardCurrency * 0, actualCommission);
+                Assert.Equal(RewardCurrency * 0, actualUnclaimedReward);
                 Assert.False(isProposer);
                 continue;
             }
 
             var reward = (expectedValidatorsReward * validatorPower).DivRem(totalPower).Quotient;
             var expectedCommission = CalculateCommission(reward, actualDelegatee);
-            var expectedBalance = isProposer
-                ? expectedCommission + balance + expectedProposerReward
-                : expectedCommission + balance;
-            var expectedReward = reward - expectedCommission;
+            var expectedUnclaimedReward = reward - expectedCommission;
+            expectedCommission = isProposer
+                ? expectedCommission + expectedProposerReward
+                : expectedCommission;
 
-            Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(expectedReward, actualReward);
+            Assert.Equal(expectedCommission, actualCommission);
+            Assert.Equal(expectedUnclaimedReward, actualUnclaimedReward);
 
-            Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(expectedReward, actualReward);
-
-            actualAllocatedReward += expectedCommission + expectedReward;
+            actualAllocatedReward += expectedCommission + expectedUnclaimedReward;
         }
 
         Assert.Equal(expectedAllocatedReward, actualAllocatedReward);
@@ -301,10 +296,10 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         public RandomFixture(int randomSeed)
         {
             _random = new Random(randomSeed);
-            TotalReward = GetRandomGG(_random);
+            TotalReward = GetRandomFAV(RewardCurrency, _random);
             ValidatorsInfos = CreateArray(_random.Next(1, 200), i =>
             {
-                var balance = GetRandomGG(_random);
+                var balance = GetRandomFAV(DelegationCurrency, _random);
                 var flag = _random.Next() % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null;
                 return new ValidatorInfo
                 {
@@ -316,7 +311,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             });
             Delegatorinfos = CreateArray(_random.Next(1, 200), i =>
             {
-                var balance = GetRandomGG(_random);
+                var balance = GetRandomFAV(DelegationCurrency, _random);
                 return new DelegatorInfo
                 {
                     Key = new PrivateKey(),
