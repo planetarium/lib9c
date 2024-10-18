@@ -496,7 +496,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                     var slotState = resultState.GetAllCombinationSlotState(_avatarAddress)
                         .GetSlot(craftData.SlotIndex);
-                    Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
+                    Assert.Equal(currentBlockIndex + additionalBlock, slotState.WorkCompleteBlockIndex);
 
                     var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values
                         .First(row => row.Id == craftData.RecipeId).ItemSubType;

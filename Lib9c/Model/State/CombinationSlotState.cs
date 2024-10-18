@@ -11,19 +11,28 @@ namespace Nekoyume.Model.State
 {
     public class CombinationSlotState : State
     {
-        private const string UnlockBlockIndexKey = "unlockBlockIndex";
-        private const string StartBlockIndexKey = "startBlockIndex";
+        private const string WorkCompleteBlockIndexKey = "unlockBlockIndex";
+        private const string WorkStartBlockIndexKey = "startBlockIndex";
+
         private const string ResultKey = "result";
         private const string PetIdKey = "petId";
         private const string IndexKey = "index";
         private const string IsUnlockedKey = "isUnlocked";
 
         public const string DeriveFormat = "combination-slot-{0}";
-        public long UnlockBlockIndex { get; private set; }
-        public long StartBlockIndex { get; private set; }
+
+        /// <summary>
+        /// Serialize key is "unlockBlockIndex".
+        /// </summary>
+        public long WorkCompleteBlockIndex { get; private set; }
+        /// <summary>
+        /// Serialize key is "startBlockIndex".
+        /// </summary>
+        public long WorkStartBlockIndex { get; private set; }
         public AttachmentActionResult Result { get; private set; }
         public int? PetId { get; private set; }
-        public long RequiredBlockIndex => UnlockBlockIndex - StartBlockIndex;
+        public long RequiredBlockIndex => WorkCompleteBlockIndex - WorkStartBlockIndex;
+
         /// <summary>
         /// It is a CombinationSlot index. start from 0.
         /// </summary>
@@ -59,14 +68,14 @@ namespace Nekoyume.Model.State
                     "The index of the combination slot must be between 0 and CombinationSlotCapacity.");
             }
 
-            UnlockBlockIndex = 0;
+            WorkCompleteBlockIndex = 0;
             Index = index;
             IsUnlocked = AvatarState.DefaultCombinationSlotCount > index;
         }
 
         public CombinationSlotState(Dictionary serialized) : base(serialized)
         {
-            UnlockBlockIndex = serialized[UnlockBlockIndexKey].ToLong();
+            WorkCompleteBlockIndex = serialized[WorkCompleteBlockIndexKey].ToLong();
 
             if (serialized.TryGetValue((Text)IndexKey, out var index))
             {
@@ -78,9 +87,9 @@ namespace Nekoyume.Model.State
                 Result = AttachmentActionResult.Deserialize((Dictionary) result);
             }
 
-            if (serialized.TryGetValue((Text)StartBlockIndexKey, out var value))
+            if (serialized.TryGetValue((Text)WorkStartBlockIndexKey, out var value))
             {
-                StartBlockIndex = value.ToLong();
+                WorkStartBlockIndex = value.ToLong();
             }
 
             if (serialized.TryGetValue((Text)PetIdKey, out var petId))
@@ -96,7 +105,7 @@ namespace Nekoyume.Model.State
 
         public static bool ValidateSlotIndex(int index)
         {
-            return index >= 0 && index < AvatarState.CombinationSlotCapacity;
+            return index is >= 0 and < AvatarState.CombinationSlotCapacity;
         }
 
         [Obsolete("Use ValidateV2")]
@@ -108,7 +117,7 @@ namespace Nekoyume.Model.State
             }
 
             return avatarState.worldInformation != null &&
-                   blockIndex >= UnlockBlockIndex;
+                   blockIndex >= WorkCompleteBlockIndex;
         }
 
         public bool ValidateV2(long blockIndex)
@@ -118,20 +127,20 @@ namespace Nekoyume.Model.State
                 return false;
             }
 
-            return blockIndex >= UnlockBlockIndex;
+            return blockIndex >= WorkCompleteBlockIndex;
         }
 
-        public void Update(AttachmentActionResult result, long blockIndex, long unlockBlockIndex, int? petId = null)
+        public void Update(AttachmentActionResult result, long blockIndex, long workCompleteBlockIndex, int? petId = null)
         {
             Result = result;
-            StartBlockIndex = blockIndex;
-            UnlockBlockIndex = unlockBlockIndex;
+            WorkStartBlockIndex = blockIndex;
+            WorkCompleteBlockIndex = workCompleteBlockIndex;
             PetId = petId;
         }
 
         public void Update(long blockIndex)
         {
-            UnlockBlockIndex = blockIndex;
+            WorkCompleteBlockIndex = blockIndex;
             Result.itemUsable.Update(blockIndex);
         }
 
@@ -170,8 +179,8 @@ namespace Nekoyume.Model.State
         {
             var values = new Dictionary<IKey, IValue>
             {
-                [(Text)UnlockBlockIndexKey] = UnlockBlockIndex.Serialize(),
-                [(Text)StartBlockIndexKey] = StartBlockIndex.Serialize(),
+                [(Text)WorkCompleteBlockIndexKey] = WorkCompleteBlockIndex.Serialize(),
+                [(Text)WorkStartBlockIndexKey] = WorkStartBlockIndex.Serialize(),
                 [(Text)IndexKey] = (Integer)Index,
                 [(Text)IsUnlockedKey] = IsUnlocked.Serialize(),
             };
