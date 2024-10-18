@@ -610,11 +610,15 @@ namespace Lib9c.Tests.Action
 
             if (guild)
             {
-                Assert.True(prevBalance > nextState.GetBalance(_agentAddress, _currency));
+                var balance = nextState.GetBalance(_agentAddress, _currency);
+                var cost = prevBalance - balance;
+                Assert.True(cost > 0 * _currency);
+                Assert.Equal(cost, nextState.GetBalance(guildAddress, _currency));
             }
             else
             {
                 Assert.Equal(prevBalance, nextState.GetBalance(_agentAddress, _currency));
+                Assert.Equal(0 * _currency, nextState.GetBalance(guildAddress, _currency));
             }
         }
     }
