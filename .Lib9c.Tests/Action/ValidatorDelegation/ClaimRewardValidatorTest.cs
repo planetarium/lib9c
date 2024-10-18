@@ -8,6 +8,9 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
+using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
@@ -244,8 +247,9 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         }
 
         // Then
-        var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var validatorRepository = new ValidatorRepository(world, actionContext);
+        var guildRepository = new GuildRepository(world, actionContext);
+        var delegatee = validatorRepository.GetValidatorDelegatee(validatorKey.Address);
         var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, RewardCurrency);
         var actualValidatorBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
         var actualValidatorReward = world.GetBalance(validatorKey.Address, RewardCurrency);
@@ -253,7 +257,11 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             .Select(item => world.GetBalance(item.Address, DelegationCurrency))
             .ToArray();
         var actualDelegatorRewards = delegatorKeys
-            .Select(item => world.GetBalance(item.Address, RewardCurrency))
+            .Select(item => world.GetBalance(
+                guildRepository.GetJoinedGuild(
+                    new AgentAddress(item.Address))
+                ?? throw new Exception($"Delegator {item.Address} does not joind to guild."),
+                RewardCurrency))
             .ToArray();
         Assert.Equal(expectedRemainReward, actualRemainReward);
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
