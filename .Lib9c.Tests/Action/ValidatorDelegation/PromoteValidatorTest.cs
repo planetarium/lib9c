@@ -53,7 +53,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(gold.RawValue, bond.Share);
         Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
         Assert.Equal(validator.Validator, Assert.Single(validatorList.GetBonded()));
-        Assert.Equal(DelegationCurrency * 90, world.GetBalance(validatorKey.Address, DelegationCurrency));
+        Assert.Equal(DelegationCurrency * 90, GetBalance(world, validatorKey.Address));
         Assert.Empty(validatorList.GetUnbonded());
     }
 

@@ -8,6 +8,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.Model.Stake;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
@@ -74,7 +75,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(validatorGold.RawValue + delegatorGold.RawValue, bond.Share);
         Assert.Equal(validatorGold.RawValue + delegatorGold.RawValue, validator.Validator.Power);
         Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
-        Assert.Equal(DelegationCurrency * 80, world.GetBalance(validatorKey.Address, DelegationCurrency));
+        Assert.Equal(DelegationCurrency * 80, GetBalance(world, validatorKey.Address));
     }
 
     [Fact]
@@ -240,7 +241,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidator = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
+        var actualValidatorBalance = GetBalance(world, validatorKey.Address);
         var actualPower = actualValidator.Power;
         var actualBond = actualRepository.GetBond(actualValidator, validatorKey.Address);
 
@@ -258,7 +259,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         public ValidatorInfo(Random random)
         {
             Balance = GetRandomFAV(DelegationCurrency, random);
-            Cash = GetRandomCash(random, Balance);
+            Cash = GetRandomCash(random, Balance, 99);
             CashToDelegate = GetRandomCash(random, Balance - Cash);
         }
 

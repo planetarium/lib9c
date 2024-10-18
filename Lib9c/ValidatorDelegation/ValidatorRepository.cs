@@ -5,6 +5,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
+using Nekoyume.Model.Stake;
 using System.Numerics;
 
 namespace Nekoyume.ValidatorDelegation
@@ -57,7 +58,7 @@ namespace Nekoyume.ValidatorDelegation
                 // TODO: delegationPoolAddress have to be changed after guild system is implemented.
                 return new ValidatorDelegator(
                     address,
-                    address,
+                    StakeState.DeriveAddress(address),
                     rewardAddress,
                     this);
             }

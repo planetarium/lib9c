@@ -303,7 +303,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidator = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
+        var actualValidatorBalance = GetBalance(world, validatorKey.Address);
         var actualValiatorPower = actualValidator.Power;
 
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);

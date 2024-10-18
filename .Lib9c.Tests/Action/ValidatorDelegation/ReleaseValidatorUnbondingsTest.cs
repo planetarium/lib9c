@@ -42,7 +42,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         var expectedUnbondingSet = expectedRepository.GetUnbondingSet();
         var expectedReleaseCount = expectedUnbondingSet.UnbondingRefs.Count;
         var expectedDepositGold = expectedDelegatee.FAVFromShare(share);
-        var expectedBalance = world.GetBalance(validatorKey.Address, DelegationCurrency) + expectedDepositGold;
+        var expectedBalance = GetBalance(world, validatorKey.Address) + expectedDepositGold;
 
         var releaseValidatorUnbondings = new ReleaseValidatorUnbondings(validatorKey.Address);
         actionContext = new ActionContext
@@ -55,7 +55,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
+        var actualBalance = GetBalance(world, validatorKey.Address);
         var actualUnbondingSet = actualRepository.GetUnbondingSet();
         var actualReleaseCount = actualUnbondingSet.UnbondingRefs.Count;
 
