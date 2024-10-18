@@ -4,9 +4,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using Lib9c.Tests.Util;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
@@ -15,20 +15,29 @@ using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
 using Nekoyume;
+using Nekoyume.Action.Guild;
 using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
+using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
+using Xunit;
 
 public class ValidatorDelegationTestBase
 {
-    protected static readonly Currency NCG = Currency.Uncapped("NCG", 2, null);
+    protected static readonly Currency GoldCurrency = Currency.Uncapped("NCG", 2, null);
+    protected static readonly Currency DelegationCurrency = Currencies.GuildGold;
+    protected static readonly Currency RewardCurrency = Currencies.Mead;
     protected static readonly Currency Dollar = Currency.Uncapped("dollar", 2, null);
+    private static readonly int _maximumIntegerLength = 15;
 
     public ValidatorDelegationTestBase()
     {
         var world = new World(MockUtil.MockModernWorldState);
-        var goldCurrencyState = new GoldCurrencyState(NCG);
+        var goldCurrencyState = new GoldCurrencyState(GoldCurrency);
         World = world
             .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
     }
@@ -40,7 +49,7 @@ public class ValidatorDelegationTestBase
 
     protected IWorld World { get; }
 
-    protected FungibleAssetValue MinimumDelegation { get; } = NCG * 10;
+    protected FungibleAssetValue MinimumDelegation { get; } = DelegationCurrency * 10;
 
     protected static T[] CreateArray<T>(int length, Func<int, T> creator)
         => Enumerable.Range(0, length).Select(creator).ToArray();
@@ -53,7 +62,9 @@ public class ValidatorDelegationTestBase
             PreviousState = world,
             BlockIndex = blockHeight,
         };
-        return world.MintAsset(actionContext, privateKey.Address, amount);
+        var address = privateKey.Address;
+        var poolAddress = StakeState.DeriveAddress(address);
+        return world.MintAsset(actionContext, poolAddress, amount);
     }
 
     protected static IWorld EnsureToMintAssets(
@@ -125,6 +136,28 @@ public class ValidatorDelegationTestBase
         return promoteValidator.Execute(actionContext);
     }
 
+    protected static IWorld EnsureUnbondingValidator(
+        IWorld world,
+        Address validatorAddress,
+        BigInteger share,
+        long blockHeight)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorAddress,
+        };
+        var undelegateValidator = new UndelegateValidator(
+            validatorAddress, share);
+        return undelegateValidator.Execute(actionContext);
+    }
+
     protected static IWorld ExecuteSlashValidator(
         IWorld world, PublicKey validatorKey, BlockCommit lastCommit, long blockHeight)
     {
@@ -139,11 +172,34 @@ public class ValidatorDelegationTestBase
         return slashValidator.Execute(actionContext);
     }
 
-    protected static IWorld EnsureBondedDelegator(
+    protected static IWorld EnsureMakeGuild(
         IWorld world,
-        PrivateKey delegatorKey,
-        PrivateKey validatorKey,
-        FungibleAssetValue amount,
+        Address guildMasterAddress,
+        Address validatorAddress,
+        long blockHeight,
+        int seed)
+    {
+        if (blockHeight < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(blockHeight));
+        }
+
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = guildMasterAddress,
+            RandomSeed = seed,
+        };
+        var makeGuild = new MakeGuild(validatorAddress);
+        return makeGuild.Execute(actionContext);
+    }
+
+    protected static IWorld EnsureJoinGuild(
+        IWorld world,
+        Address guildParticipantAddress,
+        Address guildMasterAddress,
+        Address validatorAddress,
         long blockHeight)
     {
         if (blockHeight < 0)
@@ -151,46 +207,28 @@ public class ValidatorDelegationTestBase
             throw new ArgumentOutOfRangeException(nameof(blockHeight));
         }
 
-        var delegatorAddress = delegatorKey.Address;
-        var validatorAddress = validatorKey.Address;
-        var actionContext = new ActionContext
-        {
-            PreviousState = world,
-            BlockIndex = blockHeight,
-            Signer = delegatorAddress,
-        };
-        var delegatorValidator = new DelegateValidator(
-            validatorAddress, amount);
-        return delegatorValidator.Execute(actionContext);
-    }
-
-    protected static IWorld EnsureBondedDelegators(
-        IWorld world,
-        PrivateKey[] delegatorKeys,
-        PrivateKey validatorKey,
-        FungibleAssetValue[] amounts,
-        long blockHeight)
-    {
-        if (delegatorKeys.Length != amounts.Length)
+        var repo = new GuildRepository(world, new ActionContext());
+        var guildAddress = repo.GetJoinedGuild(new AgentAddress(guildMasterAddress))
+            ?? throw new ArgumentException($"Guild master {guildMasterAddress} does not have guild");
+        if (validatorAddress != repo.GetGuild(guildAddress).ValidatorAddress)
         {
             throw new ArgumentException(
-                "The length of delegatorPrivateKeys and amounts must be the same.");
+                $"The guild of guild master does not belong to validator {validatorAddress}.");
         }
 
-        for (var i = 0; i < delegatorKeys.Length; i++)
+        var actionContext = new ActionContext
         {
-            world = EnsureBondedDelegator(
-                world, delegatorKeys[i], validatorKey, amounts[i], blockHeight);
-        }
-
-        return world;
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = guildParticipantAddress,
+        };
+        var joinGuild = new JoinGuild(guildAddress);
+        return joinGuild.Execute(actionContext);
     }
 
-    protected static IWorld EnsureUnbondingDelegator(
+    protected static IWorld EnsureQuitGuild(
         IWorld world,
-        PrivateKey delegatorKey,
-        PrivateKey validatorKey,
-        BigInteger share,
+        Address guildParticipantAddress,
         long blockHeight)
     {
         if (blockHeight < 0)
@@ -198,16 +236,14 @@ public class ValidatorDelegationTestBase
             throw new ArgumentOutOfRangeException(nameof(blockHeight));
         }
 
-        var delegatorAddress = delegatorKey.Address;
-        var validatorAddress = validatorKey.Address;
+        var delegatorAddress = guildParticipantAddress;
         var actionContext = new ActionContext
         {
             PreviousState = world,
             BlockIndex = blockHeight,
             Signer = delegatorAddress,
         };
-        var undelegateValidator = new UndelegateValidator(
-            validatorAddress, share);
+        var undelegateValidator = new QuitGuild();
         return undelegateValidator.Execute(actionContext);
     }
 
@@ -549,35 +585,38 @@ public class ValidatorDelegationTestBase
         return communityFund;
     }
 
-    protected static FungibleAssetValue GetRandomNCG() => GetRandomNCG(Random.Shared, 1, 100000);
+    protected static FungibleAssetValue GetRandomFAV(Currency currency) => GetRandomFAV(currency, Random.Shared);
 
-    protected static FungibleAssetValue GetRandomNCG(Random random)
-        => GetRandomNCG(random, 0.01m, 1000.0m);
-
-    protected static FungibleAssetValue GetRandomNCG(Random random, decimal min, decimal max)
+    protected static FungibleAssetValue GetRandomFAV(Currency currency, Random random)
     {
-        var minLong = (int)(min * 100);
-        var maxLong = (int)(max * 100);
-        var value = Math.Round(random.Next(minLong, maxLong) / 100.0, 2);
-        return FungibleAssetValue.Parse(NCG, $"{value:R}");
+        var decimalLength = random.Next(currency.DecimalPlaces);
+        var integerLength = random.Next(1, _maximumIntegerLength);
+        var decimalPart = Enumerable.Range(0, decimalLength)
+            .Aggregate(string.Empty, (s, i) => s + random.Next(10));
+        var integerPart = Enumerable.Range(0, integerLength)
+            .Aggregate(string.Empty, (s, i) => s + (integerLength > 1 ? random.Next(10) : random.Next(1, 10)));
+        var isDecimalZero = decimalLength == 0 || decimalPart.All(c => c == '0');
+        var text = isDecimalZero is false ? $"{integerPart}.{decimalPart}" : integerPart;
+
+        return FungibleAssetValue.Parse(currency, text);
     }
 
-    protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav)
+    protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav, int maxDivisor = 100)
     {
-        if (fav.RawValue >= long.MaxValue)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(fav), "Fungible asset value is too large.");
-        }
-
-        var num = random.NextInt64(1, (long)fav.RawValue);
-        var cash = FungibleAssetValue.FromRawValue(fav.Currency, num);
-
+        Assert.True(maxDivisor > 0 && maxDivisor <= 100);
+        var denominator = random.Next(maxDivisor) + 1;
+        var cash = fav.DivRem(denominator, out var remainder);
         if (cash.Sign < 0 || cash > fav)
         {
             throw new InvalidOperationException("Invalid cash value.");
         }
 
         return cash;
+    }
+
+    protected static FungibleAssetValue GetBalance(IWorld world, Address address)
+    {
+        var poolAddress = StakeState.DeriveAddress(address);
+        return world.GetBalance(poolAddress, DelegationCurrency);
     }
 }

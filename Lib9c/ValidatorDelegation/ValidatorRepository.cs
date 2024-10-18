@@ -5,6 +5,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
+using Nekoyume.Model.Stake;
 using System.Numerics;
 
 namespace Nekoyume.ValidatorDelegation
@@ -15,10 +16,10 @@ namespace Nekoyume.ValidatorDelegation
 
         private IAccount _validatorList;
 
-        public ValidatorRepository(IWorld world, IActionContext context)
+        public ValidatorRepository(IWorld world, IActionContext actionContext)
             : base(
                   world,
-                  context,
+                  actionContext,
                   Addresses.ValidatorDelegatee,
                   Addresses.ValidatorDelegator,
                   Addresses.ValidatorDelegateeMetadata,
@@ -46,7 +47,7 @@ namespace Nekoyume.ValidatorDelegation
         public override IDelegatee GetDelegatee(Address address)
             => GetValidatorDelegatee(address);
 
-        public ValidatorDelegator GetValidatorDelegator(Address address)
+        public ValidatorDelegator GetValidatorDelegator(Address address, Address rewardAddress)
         {
             try
             {
@@ -55,12 +56,16 @@ namespace Nekoyume.ValidatorDelegation
             catch (FailedLoadStateException)
             {
                 // TODO: delegationPoolAddress have to be changed after guild system is implemented.
-                return new ValidatorDelegator(address, address, this);
+                return new ValidatorDelegator(
+                    address,
+                    StakeState.DeriveAddress(address),
+                    rewardAddress,
+                    this);
             }
         }
 
         public override IDelegator GetDelegator(Address address)
-            => GetValidatorDelegator(address);
+            => new ValidatorDelegator(address, this);
 
         public ValidatorList GetValidatorList()
         {

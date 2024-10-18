@@ -64,8 +64,8 @@ namespace Nekoyume.Action.ValidatorDelegation
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
 
-            repository.CreateValidatorDelegatee(context, PublicKey, CommissionPercentage);
-            repository.DelegateValidator(context, context.Signer, FAV);
+            repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
+            repository.DelegateValidator(context.Signer, FAV);
 
             return repository.World;
         }

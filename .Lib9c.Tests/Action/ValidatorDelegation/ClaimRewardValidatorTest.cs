@@ -8,6 +8,10 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
+using Nekoyume.Module.Guild;
+using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
@@ -28,8 +32,6 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         PrivateKey[] DelegatorKeys => DelegatorInfos.Select(i => i.Key).ToArray();
 
         FungibleAssetValue[] DelegatorBalances => DelegatorInfos.Select(i => i.Balance).ToArray();
-
-        FungibleAssetValue[] DelegatorCashes => DelegatorInfos.Select(i => i.Cash).ToArray();
     }
 
     public static IEnumerable<object[]> RandomSeeds => new List<object[]>
@@ -59,8 +61,8 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var world = World;
         var validatorKey = new PrivateKey();
         var height = 1L;
-        var validatorGold = NCG * 10;
-        var allocatedReward = NCG * 100;
+        var validatorGold = DelegationCurrency * 10;
+        var allocatedReward = RewardCurrency * 100;
         world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorGold, height++);
         world = EnsureRewardAllocatedValidator(world, validatorKey, allocatedReward, ref height);
@@ -79,7 +81,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         world = claimRewardValidator.Execute(actionContext);
 
         // Then
-        var actualBalance = world.GetBalance(validatorKey.Address, NCG);
+        var actualBalance = world.GetBalance(validatorKey.Address, RewardCurrency);
 
         Assert.Equal(expectedBalance, actualBalance);
     }
@@ -94,17 +96,16 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var fixture = new StaticFixture
         {
             DelegatorLength = 1,
-            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward}"),
+            TotalReward = FungibleAssetValue.Parse(RewardCurrency, $"{totalReward}"),
             ValidatorKey = new PrivateKey(),
-            ValidatorBalance = NCG * 100,
-            ValidatorCash = NCG * 10,
+            ValidatorBalance = DelegationCurrency * 100,
+            ValidatorCash = DelegationCurrency * 10,
             DelegatorInfos = new[]
             {
                 new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = NCG * 100,
-                    Cash = NCG * 10,
+                    Balance = DelegationCurrency * 100,
                 },
             },
         };
@@ -130,23 +131,21 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var fixture = new StaticFixture
         {
             DelegatorLength = 2,
-            TotalReward = FungibleAssetValue.Parse(NCG, $"{totalReward}"),
+            TotalReward = FungibleAssetValue.Parse(RewardCurrency, $"{totalReward}"),
             ValidatorKey = new PrivateKey(),
-            ValidatorBalance = NCG * 100,
-            ValidatorCash = NCG * 10,
+            ValidatorBalance = DelegationCurrency * 100,
+            ValidatorCash = DelegationCurrency * 10,
             DelegatorInfos = new[]
             {
                 new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = NCG * 100,
-                    Cash = NCG * 10,
+                    Balance = DelegationCurrency * 100,
                 },
                 new DelegatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = NCG * 100,
-                    Cash = NCG * 10,
+                    Balance = DelegationCurrency * 100,
                 },
             },
         };
@@ -179,17 +178,18 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var validatorKey = fixture.ValidatorKey;
         var delegatorKeys = fixture.DelegatorKeys;
         var delegatorBalances = fixture.DelegatorBalances;
-        var delegatorCashes = fixture.DelegatorCashes;
         var height = 1L;
         var actionContext = new ActionContext();
         var validatorBalance = fixture.ValidatorBalance;
         var validatorCash = fixture.ValidatorCash;
         var totalReward = fixture.TotalReward;
+        int seed = 0;
         world = EnsureToMintAsset(world, validatorKey, validatorBalance, height++);
         world = EnsurePromotedValidator(world, validatorKey, validatorCash, height++);
         world = EnsureToMintAssets(world, delegatorKeys, delegatorBalances, height++);
-        world = EnsureBondedDelegators(
-            world, delegatorKeys, validatorKey, delegatorCashes, height++);
+        world = delegatorKeys.Aggregate(world, (w, d) => EnsureMakeGuild(
+                w, d.Address, validatorKey.Address, height++, seed++));
+
         world = EnsureRewardAllocatedValidator(world, validatorKey, totalReward, ref height);
 
         // Calculate expected values for comparison with actual values.
@@ -214,12 +214,10 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             i => CalculateClaim(expectedDelegatorShares[i], expectedTotalShares, expectedClaim));
         var expectedValidatorBalance = validatorBalance;
         expectedValidatorBalance -= validatorCash;
-        expectedValidatorBalance += expectedProposerReward;
-        expectedValidatorBalance += expectedCommission;
-        expectedValidatorBalance += expectedValidatorClaim;
-        var expectedDelegatorBalances = CreateArray(
-            length,
-            i => delegatorBalances[i] - delegatorCashes[i] + expectedDelegatorClaims[i]);
+        var expectedValidatorReward = expectedProposerReward;
+        expectedValidatorReward += expectedCommission;
+        expectedValidatorReward += expectedValidatorClaim;
+        var expectedDelegatorBalances = CreateArray(length, i => DelegationCurrency * 0);
         var expectedRemainReward = totalReward;
         expectedRemainReward -= expectedProposerReward;
         expectedRemainReward -= expectedCommission;
@@ -252,23 +250,32 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         }
 
         // Then
-        var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
-        var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, NCG);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, NCG);
+        var validatorRepository = new ValidatorRepository(world, actionContext);
+        var guildRepository = new GuildRepository(world, actionContext);
+        var delegatee = validatorRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, RewardCurrency);
+        var actualValidatorBalance = world.GetBalance(StakeState.DeriveAddress(validatorKey.Address), DelegationCurrency);
+        var actualValidatorReward = world.GetBalance(validatorKey.Address, RewardCurrency);
         var actualDelegatorBalances = delegatorKeys
-            .Select(item => world.GetBalance(item.Address, NCG))
+            .Select(item => world.GetBalance(item.Address, DelegationCurrency))
+            .ToArray();
+        var actualDelegatorRewards = delegatorKeys
+            .Select(item => world.GetBalance(
+                guildRepository.GetJoinedGuild(
+                    new AgentAddress(item.Address))
+                ?? throw new Exception($"Delegator {item.Address} does not joind to guild."),
+                RewardCurrency))
             .ToArray();
         Assert.Equal(expectedRemainReward, actualRemainReward);
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
         Assert.Equal(expectedDelegatorBalances, actualDelegatorBalances);
+        Assert.Equal(expectedValidatorReward, actualValidatorReward);
+        Assert.Equal(expectedDelegatorClaims, actualDelegatorRewards);
     }
 
     private struct DelegatorInfo
     {
         public PrivateKey Key { get; set; }
-
-        public FungibleAssetValue Cash { get; set; }
 
         public FungibleAssetValue Balance { get; set; }
     }
@@ -297,17 +304,16 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
             _random = new Random(randomSeed);
             DelegatorLength = _random.Next(3, 100);
             ValidatorKey = new PrivateKey();
-            TotalReward = GetRandomNCG(_random);
-            ValidatorBalance = GetRandomNCG(_random);
+            TotalReward = GetRandomFAV(RewardCurrency, _random);
+            ValidatorBalance = GetRandomFAV(DelegationCurrency, _random);
             ValidatorCash = GetRandomCash(_random, ValidatorBalance);
             DelegatorInfos = CreateArray(DelegatorLength, _ =>
             {
-                var balance = GetRandomNCG(_random);
+                var balance = GetRandomFAV(DelegationCurrency, _random);
                 return new DelegatorInfo
                 {
                     Key = new PrivateKey(),
                     Balance = balance,
-                    Cash = GetRandomCash(_random, balance),
                 };
             });
         }

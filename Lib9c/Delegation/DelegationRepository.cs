@@ -11,7 +11,6 @@ namespace Nekoyume.Delegation
     public abstract class DelegationRepository : IDelegationRepository
     {
         protected IWorld previousWorld;
-        protected IActionContext actionContext;
         protected IAccount delegateeAccount;
         protected IAccount delegatorAccount;
         protected IAccount delegateeMetadataAccount;
@@ -24,7 +23,7 @@ namespace Nekoyume.Delegation
 
         public DelegationRepository(
             IWorld world,
-            IActionContext context,
+            IActionContext actionContext,
             Address delegateeAccountAddress,
             Address delegatorAccountAddress,
             Address delegateeMetadataAccountAddress,
@@ -36,7 +35,7 @@ namespace Nekoyume.Delegation
             Address lumpSumRewardRecordAccountAddress)
         {
             previousWorld = world;
-            actionContext = context;
+            ActionContext = actionContext;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegatorAccountAddress = delegatorAccountAddress;
             DelegateeMetadataAccountAddress = delegateeMetadataAccountAddress;
@@ -68,6 +67,8 @@ namespace Nekoyume.Delegation
             .SetAccount(RebondGraceAccountAddress, rebondGraceAccount)
             .SetAccount(UnbondingSetAccountAddress, unbondingSetAccount)
             .SetAccount(LumpSumRewardsRecordAccountAddress, lumpSumRewardsRecordAccount);
+
+        public IActionContext ActionContext { get; }
 
         public Address DelegateeAccountAddress { get; }
 
@@ -231,7 +232,7 @@ namespace Nekoyume.Delegation
         }
 
         public void TransferAsset(Address sender, Address recipient, FungibleAssetValue value)
-            => previousWorld = previousWorld.TransferAsset(actionContext, sender, recipient, value);
+            => previousWorld = previousWorld.TransferAsset(ActionContext, sender, recipient, value);
 
         public virtual void UpdateWorld(IWorld world)
         {

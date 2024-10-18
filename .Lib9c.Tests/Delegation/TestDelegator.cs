@@ -11,7 +11,7 @@ namespace Lib9c.Tests.Delegation
         }
 
         public TestDelegator(Address address, Address accountAddress, TestRepository repo)
-            : base(address, accountAddress, address, repo)
+            : base(address, accountAddress, address, address, repo)
         {
         }
     }

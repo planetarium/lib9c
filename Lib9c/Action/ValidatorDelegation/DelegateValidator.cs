@@ -50,9 +50,17 @@ namespace Nekoyume.Action.ValidatorDelegation
         {
             GasTracer.UseGas(1);
 
+            if (context.Signer != ValidatorDelegatee)
+            {
+                throw new InvalidAddressException(
+                    $"{nameof(context.Signer)}({context.Signer}) is " +
+                    $"not equal to {nameof(ValidatorDelegatee)}({ValidatorDelegatee})."
+                );
+            }
+
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            repository.DelegateValidator(context, ValidatorDelegatee, FAV);
+            repository.DelegateValidator(ValidatorDelegatee, FAV);
 
             return repository.World;
         }

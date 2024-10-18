@@ -7,6 +7,8 @@ using Libplanet.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
+using Libplanet.Crypto;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.Guild
 {
@@ -35,8 +37,9 @@ namespace Nekoyume.Module.Guild
         public static GuildRepository MakeGuild(
             this GuildRepository repository,
             GuildAddress guildAddress,
-            AgentAddress signer)
+            Address validatorAddress)
         {
+            var signer = new AgentAddress(repository.ActionContext.Signer);
             if (repository.GetJoinedGuild(signer) is not null)
             {
                 throw new InvalidOperationException("The signer already has a guild.");
@@ -48,7 +51,7 @@ namespace Nekoyume.Module.Guild
             }
 
             var guild = new Model.Guild.Guild(
-                guildAddress, signer, Currencies.GuildGold, repository);
+                guildAddress, signer, validatorAddress, repository.World.GetGoldCurrency(), repository);
             repository.SetGuild(guild);
             repository.JoinGuild(guildAddress, signer);
 
@@ -56,9 +59,9 @@ namespace Nekoyume.Module.Guild
         }
 
         public static GuildRepository RemoveGuild(
-            this GuildRepository repository,
-            AgentAddress signer)
+            this GuildRepository repository)
         {
+            var signer = new AgentAddress(repository.ActionContext.Signer);
             if (repository.GetJoinedGuild(signer) is not { } guildAddress)
             {
                 throw new InvalidOperationException("The signer does not join any guild.");
@@ -79,7 +82,16 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("There are remained participants in the guild.");
             }
 
-            repository.RawLeaveGuild(signer);
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+            var bond = validatorRepository.GetBond(validatorDelegatee, signer);
+            if (bond.Share > 0)
+            {
+                throw new InvalidOperationException("The signer has a bond with the validator.");
+            }
+
+            repository.RemoveGuildParticipant(signer);
+            repository.DecreaseGuildMemberCount(guild.Address);
             repository.UpdateWorld(
                 repository.World.MutateAccount(
                     Addresses.Guild, account => account.RemoveState(guildAddress)));
@@ -90,11 +102,10 @@ namespace Nekoyume.Module.Guild
 
         public static GuildRepository CollectRewardGuild(
             this GuildRepository repository,
-            GuildAddress guildAddress,
-            long height)
+            GuildAddress guildAddress)
         {
             var guild = repository.GetGuild(guildAddress);
-            guild.CollectRewards(height);
+            guild.CollectRewards(repository.ActionContext.BlockIndex);
             repository.SetGuild(guild);
 
             return repository;

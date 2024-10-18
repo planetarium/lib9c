@@ -11,15 +11,15 @@ namespace Nekoyume.Action.Guild
 {
     // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
     // [ActionType(TypeIdentifier)]
-    public class ApplyGuild : ActionBase
+    public class MoveGuild : ActionBase
     {
-        public const string TypeIdentifier = "apply_guild";
+        public const string TypeIdentifier = "move_guild";
 
         private const string GuildAddressKey = "ga";
 
-        public ApplyGuild() {}
+        public MoveGuild() {}
 
-        public ApplyGuild(GuildAddress guildAddress)
+        public MoveGuild(GuildAddress guildAddress)
         {
             GuildAddress = guildAddress;
         }
@@ -51,11 +51,11 @@ namespace Nekoyume.Action.Guild
 
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
-            var signer = context.GetAgentAddress();
+            var target = context.GetAgentAddress();
+            var guildAddress = GuildAddress;
 
-            // TODO: Do something related with ConsensusPower delegation.
+            repository.MoveGuild(target, guildAddress);
 
-            repository.ApplyGuild(signer, GuildAddress);
             return repository.World;
         }
     }

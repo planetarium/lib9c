@@ -11,25 +11,25 @@ namespace Nekoyume.Action.Guild
 {
     // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
     // [ActionType(TypeIdentifier)]
-    public class RejectGuildApplication : ActionBase
+    public class JoinGuild : ActionBase
     {
-        public const string TypeIdentifier = "reject_guild_application";
+        public const string TypeIdentifier = "join_guild";
 
-        private const string TargetKey = "t";
+        private const string GuildAddressKey = "ga";
 
-        public RejectGuildApplication() {}
+        public JoinGuild() {}
 
-        public RejectGuildApplication(AgentAddress target)
+        public JoinGuild(GuildAddress guildAddress)
         {
-            Target = target;
+            GuildAddress = guildAddress;
         }
 
-        public AgentAddress Target { get; private set; }
+        public GuildAddress GuildAddress { get; private set; }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", Dictionary.Empty
-                .Add(TargetKey, Target.Bencoded));
+                .Add(GuildAddressKey, GuildAddress.Bencoded));
 
         public override void LoadPlainValue(IValue plainValue)
         {
@@ -37,12 +37,12 @@ namespace Nekoyume.Action.Guild
             if (plainValue is not Dictionary ||
                 !root.TryGetValue((Text)"values", out var rawValues) ||
                 rawValues is not Dictionary values ||
-                !values.TryGetValue((Text)TargetKey, out var rawTargetAddress))
+                !values.TryGetValue((Text)GuildAddressKey, out var rawGuildAddress))
             {
                 throw new InvalidCastException();
             }
 
-            Target = new AgentAddress(rawTargetAddress);
+            GuildAddress = new GuildAddress(rawGuildAddress);
         }
 
         public override IWorld Execute(IActionContext context)
@@ -51,9 +51,11 @@ namespace Nekoyume.Action.Guild
 
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
-            var signer = context.GetAgentAddress();
+            var target = context.GetAgentAddress();
+            var guildAddress = GuildAddress;
 
-            repository.RejectGuildApplication(signer, Target);
+            repository.JoinGuild(guildAddress, target);
+
             return repository.World;
         }
     }

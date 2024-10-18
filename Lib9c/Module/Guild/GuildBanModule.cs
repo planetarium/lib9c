@@ -1,5 +1,4 @@
 using System;
-using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Extensions;
@@ -29,7 +28,11 @@ namespace Nekoyume.Module.Guild
             return false;
         }
 
-        public static void Ban(this GuildRepository repository, GuildAddress guildAddress, AgentAddress signer, AgentAddress target)
+        public static void Ban(
+            this GuildRepository repository,
+            GuildAddress guildAddress,
+            AgentAddress signer,
+            AgentAddress target)
         {
             if (!repository.TryGetGuild(guildAddress, out var guild))
             {
@@ -44,11 +47,6 @@ namespace Nekoyume.Module.Guild
             if (guild.GuildMasterAddress == target)
             {
                 throw new InvalidOperationException("The guild master cannot be banned.");
-            }
-
-            if (repository.TryGetGuildApplication(target, out var guildApplication) && guildApplication.GuildAddress == guildAddress)
-            {
-                repository.RejectGuildApplication(signer, target);
             }
 
             if (repository.GetJoinedGuild(target) == guildAddress)

@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
 
@@ -28,8 +27,9 @@ namespace Nekoyume.Module.ValidatorDelegation
         }
 
         public static ValidatorRepository CreateValidatorDelegatee(
-            this ValidatorRepository repository, IActionContext context, PublicKey publicKey, BigInteger commissionPercentage)
+            this ValidatorRepository repository, PublicKey publicKey, BigInteger commissionPercentage)
         {
+            var context = repository.ActionContext;
             var signer = context.Signer;
 
             if (!publicKey.Address.Equals(signer))
@@ -43,7 +43,7 @@ namespace Nekoyume.Module.ValidatorDelegation
             }
 
             var validatorDelegatee = new ValidatorDelegatee(
-                signer, publicKey, repository.World.GetGoldCurrency(), commissionPercentage, context.BlockIndex, repository);
+                signer, publicKey, commissionPercentage, context.BlockIndex, repository);
 
             repository.SetValidatorDelegatee(validatorDelegatee);
 

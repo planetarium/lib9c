@@ -10,10 +10,12 @@ namespace Nekoyume.Delegation
 
     public class TestRepository : DelegationRepository
     {
+        private readonly IActionContext _context;
+
         public TestRepository(IWorld world, IActionContext context)
             : base(
                   world: world,
-                  context: context,
+                  actionContext: context,
                   delegateeAccountAddress: new Address("0000000000000000000000000000000000000000"),
                   delegatorAccountAddress: new Address("0000000000000000000000000000000000000001"),
                   delegateeMetadataAccountAddress: new Address("0000000000000000000000000000000000000002"),
@@ -24,6 +26,7 @@ namespace Nekoyume.Delegation
                   unbondingSetAccountAddress: new Address("0000000000000000000000000000000000000007"),
                   lumpSumRewardRecordAccountAddress: new Address("0000000000000000000000000000000000000008"))
         {
+            _context = context;
         }
 
         public override TestDelegatee GetDelegatee(Address address)
@@ -57,6 +60,6 @@ namespace Nekoyume.Delegation
             => SetDelegatorMetadata(((TestDelegator)delegator).Metadata);
 
         public void MintAsset(Address recipient, FungibleAssetValue value)
-            => previousWorld = previousWorld.MintAsset(actionContext, recipient, value);
+            => previousWorld = previousWorld.MintAsset(_context, recipient, value);
     }
 }

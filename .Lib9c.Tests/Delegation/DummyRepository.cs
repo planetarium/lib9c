@@ -12,7 +12,7 @@ namespace Nekoyume.Delegation
         public DummyRepository(IWorld world, IActionContext context)
             : base(
                   world: world,
-                  context: context,
+                  actionContext: context,
                   delegateeAccountAddress: new Address("1000000000000000000000000000000000000000"),
                   delegatorAccountAddress: new Address("1000000000000000000000000000000000000001"),
                   delegateeMetadataAccountAddress: new Address("0000000000000000000000000000000000000002"),
@@ -54,8 +54,5 @@ namespace Nekoyume.Delegation
 
         public override void SetDelegator(IDelegator delegator)
             => SetDelegatorMetadata(((DummyDelegator)delegator).Metadata);
-
-        public void MintAsset(Address recipient, FungibleAssetValue value)
-            => previousWorld = previousWorld.MintAsset(actionContext, recipient, value);
     }
 }

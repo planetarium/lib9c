@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Libplanet.Mocks;
 using Nekoyume;
 using Nekoyume.Action.Guild;
