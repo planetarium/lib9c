@@ -18,6 +18,7 @@ using Nekoyume;
 using Nekoyume.Action.Guild;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
@@ -62,7 +63,8 @@ public class ValidatorDelegationTestBase
             BlockIndex = blockHeight,
         };
         var address = privateKey.Address;
-        return world.MintAsset(actionContext, address, amount);
+        var poolAddress = StakeState.DeriveAddress(address);
+        return world.MintAsset(actionContext, poolAddress, amount);
     }
 
     protected static IWorld EnsureToMintAssets(
@@ -598,9 +600,10 @@ public class ValidatorDelegationTestBase
         return FungibleAssetValue.Parse(currency, text);
     }
 
-    protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav)
+    protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav, int maxDivisor = 100)
     {
-        var denominator = random.Next(100) + 1;
+        Assert.True(maxDivisor > 0 && maxDivisor <= 100);
+        var denominator = random.Next(maxDivisor) + 1;
         var cash = fav.DivRem(denominator, out var remainder);
         if (cash.Sign < 0 || cash > fav)
         {
@@ -608,5 +611,11 @@ public class ValidatorDelegationTestBase
         }
 
         return cash;
+    }
+
+    protected static FungibleAssetValue GetBalance(IWorld world, Address address)
+    {
+        var poolAddress = StakeState.DeriveAddress(address);
+        return world.GetBalance(poolAddress, DelegationCurrency);
     }
 }

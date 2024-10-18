@@ -92,7 +92,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         world = slashValidator.Execute(actionContext);
 
         // Then
-        var balance = world.GetBalance(validatorKey.Address, DelegationCurrency);
+        var balance = GetBalance(world, validatorKey.Address);
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
         var actualValidatorShare = actualRepository.GetBond(actualDelegatee, validatorKey.Address).Share;
