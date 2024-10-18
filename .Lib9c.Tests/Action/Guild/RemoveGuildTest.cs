@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action.Guild
     using Nekoyume.Action;
     using Nekoyume.Action.Guild;
     using Nekoyume.Model.Guild;
+    using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -81,13 +82,15 @@ namespace Lib9c.Tests.Action.Guild
         {
             var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
+            var guildParticipantAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
             IWorld world = World;
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-            world = EnsureToMintAsset(world, guildMasterAddress, GG * 100);
+            world = EnsureToMintAsset(world, StakeState.DeriveAddress(guildMasterAddress), GG * 100);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, guildParticipantAddress);
 
             var actionContext = new ActionContext
             {
