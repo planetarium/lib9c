@@ -217,8 +217,11 @@ namespace Nekoyume.Action
                     validatorOperatorAddress, validatorOperatorAddress);
 
                 repository.SetValidatorDelegatee(validatorDelegatee);
-                repository.TransferAsset(
-                    GoldCurrencyState.Address, validatorDelegator.DelegationPoolAddress, delegationFAV);
+                repository.UpdateWorld(
+                    repository.World.MintAsset(
+                        repository.ActionContext,
+                        validatorDelegator.DelegationPoolAddress,
+                        delegationFAV));
                 validatorDelegator.Delegate(validatorDelegatee, delegationFAV, context.BlockIndex);
 
                 states = repository.World;
