@@ -5,7 +5,8 @@
 
     public class EquipmentItemSubRecipeSheetTest
     {
-        private const string _csv = @"id,required_action_point,required_gold,required_block_index,material_id,material_count,material_2_id,material_2_count,material_3_id,material_3_count,option_id,option_ratio,option_2_id,option_2_ratio,option_3_id,option_3_ratio,option_4_id,option_4_ratio,max_option_limit
+        private const string _csv =
+            @"id,required_action_point,required_gold,required_block_index,material_id,material_count,material_2_id,material_2_count,material_3_id,material_3_count,option_id,option_ratio,option_2_id,option_2_ratio,option_3_id,option_3_ratio,option_4_id,option_4_ratio,max_option_limit
 1,0,0,0,306040,1,306041,1,306023,1,1,0.74,2,0.2,3,0.06,,,1
 2,0,150,0,306040,2,306041,1,306024,1,4,0.46,5,0.35,6,0.11,7,0.08,1";
 

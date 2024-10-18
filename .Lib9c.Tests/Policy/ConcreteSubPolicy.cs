@@ -16,7 +16,9 @@ namespace Lib9c.Tests.Policy
         {
         }
 
-        public static ConcreteSubPolicy<T> Create(T defaultValue) =>
-            new ConcreteSubPolicy<T>(defaultValue);
+        public static ConcreteSubPolicy<T> Create(T defaultValue)
+        {
+            return new ConcreteSubPolicy<T>(defaultValue);
+        }
     }
 }

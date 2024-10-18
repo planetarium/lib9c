@@ -137,13 +137,13 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            IWorld state = _initialState;
+            var state = _initialState;
             if (unlockIdsExist)
             {
                 var unlockIds = List.Empty.Add(1.Serialize());
                 if (crystalUnlock)
                 {
-                    for (int i = 2; i < recipeId + 1; i++)
+                    for (var i = 2; i < recipeId + 1; i++)
                     {
                         unlockIds = unlockIds.Add(i.Serialize());
                     }
@@ -207,7 +207,7 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            int expectedCrystal = 0;
+            var expectedCrystal = 0;
             if (payByCrystal)
             {
                 var crystalBalance = 0;
@@ -353,9 +353,9 @@ namespace Lib9c.Tests.Action
             int recipeId)
         {
             var context = new ActionContext();
-            IWorld state = _initialState;
+            var state = _initialState;
             var unlockIds = List.Empty.Add(1.Serialize());
-            for (int i = 2; i < recipeId + 1; i++)
+            for (var i = 2; i < recipeId + 1; i++)
             {
                 unlockIds = unlockIds.Add(i.Serialize());
             }
@@ -404,7 +404,7 @@ namespace Lib9c.Tests.Action
                 if (exc is null)
                 {
                     var costCrystal = CrystalCalculator.CRYSTAL *
-                                      hammerPointSheet[recipeId].CRYSTAL;
+                        hammerPointSheet[recipeId].CRYSTAL;
                     state = state.MintAsset(
                         context,
                         _agentAddress,

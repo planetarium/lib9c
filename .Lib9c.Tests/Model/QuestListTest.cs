@@ -20,9 +20,12 @@ namespace Lib9c.Tests.Model
         }
 
         [Fact]
-        public void SerializeExceptions() => ExceptionTest.AssertException(
-            new UpdateListVersionException("test"),
-            new UpdateListQuestsCountException("test"));
+        public void SerializeExceptions()
+        {
+            ExceptionTest.AssertException(
+                new UpdateListVersionException("test"),
+                new UpdateListQuestsCountException("test"));
+        }
 
         [Fact]
         public void GetEnumerator()

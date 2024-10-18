@@ -215,7 +215,7 @@ namespace Lib9c.Tests.TableData.Garages
                     expect: i * 0.16m))
                 .ToArray();
             var expect = favTuples.Select(t => t.expect).Sum() +
-                         fungibleIdAndCountTuples.Select(t => t.expect).Sum();
+                fungibleIdAndCountTuples.Select(t => t.expect).Sum();
             var favArr = favTuples.Select(t => t.fav).ToArray();
             var fungibleIdAndCountArr = fungibleIdAndCountTuples
                 .Select(t => (t.fungibleId, t.count)).ToArray();

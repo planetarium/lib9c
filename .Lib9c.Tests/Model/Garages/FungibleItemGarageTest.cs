@@ -15,8 +15,8 @@ namespace Lib9c.Tests.Model.Garages
         public FungibleItemGarageTest()
         {
             if (!TableSheetsImporter.TryGetCsv(
-                    nameof(MaterialItemSheet),
-                    out var materialItemSheetCsv))
+                nameof(MaterialItemSheet),
+                out var materialItemSheetCsv))
             {
                 throw new Exception("Failed to load MaterialItemSheet.csv");
             }

@@ -67,7 +67,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var recipe =
                 _tableSheets.EquipmentItemRecipeSheet.Values.First(
                     recipe => recipe.RequiredBlockIndex >= requiredBlock
-                    );
+                );
             Assert.NotNull(recipe);
 
             // Get Materials and stages
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     recipe.RequiredBlockIndex
                     /
                     (stateV2.GetGameConfigState().HourglassPerBlock
-                     + petRow.LevelOptionMap[(int)petLevel].OptionValue)
+                        + petRow.LevelOptionMap[(int)petLevel].OptionValue)
                 );
             }
 
@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _avatarAddr,
                 new List<EquipmentItemSubRecipeSheet.MaterialInfo>
                 {
-                    new EquipmentItemSubRecipeSheet.MaterialInfo(
+                    new (
                         _hourglassItemId,
                         expectedHourglass
                     ),
@@ -160,7 +160,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var rapidAction = new RapidCombination
             {
                 avatarAddress = _avatarAddr,
-                slotIndexList = new List<int> { 0 },
+                slotIndexList = new List<int> { 0, },
             };
             stateV2 = rapidAction.Execute(new ActionContext
             {

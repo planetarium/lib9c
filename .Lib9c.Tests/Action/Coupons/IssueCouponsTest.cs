@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     AdminState.Address,
                     new AdminState(CouponsFixture.AgentAddress1, 1)
@@ -56,8 +56,8 @@ namespace Lib9c.Tests.Action.Coupons
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty,
                 new IssueCoupons(
-                    ImmutableDictionary<RewardSet, uint>.Empty,
-                    CouponsFixture.AgentAddress1)
+                        ImmutableDictionary<RewardSet, uint>.Empty,
+                        CouponsFixture.AgentAddress1)
                     .Execute(
                         new ActionContext
                         {
@@ -156,19 +156,19 @@ namespace Lib9c.Tests.Action.Coupons
                 Dictionary.Empty
                     .Add("type_id", "issue_coupons")
                     .Add("values", new Bencodex.Types.Dictionary(
-                        ImmutableDictionary<string, IValue>.Empty
-                            .Add("recipient", new Binary(CouponsFixture.AgentAddress1.ByteArray))
-                            .Add(
-                                "rewards",
-                                Bencodex.Types.List.Empty
-                                    .Add(Bencodex.Types.Dictionary.Empty
-                                        .Add("rewardSet", CouponsFixture.RewardSet1.Serialize())
-                                        .Add("quantity", 2))
-                                    .Add(Bencodex.Types.Dictionary.Empty
-                                        .Add("rewardSet", CouponsFixture.RewardSet2.Serialize())
-                                        .Add("quantity", 1)))
-                            .Select(kv => new KeyValuePair<IKey, IValue>((Text)kv.Key, kv.Value)))
-                    .SetItem("id", new Guid("6E69DC55-A0D0-435A-A787-C62356CBE517").Serialize())));
+                            ImmutableDictionary<string, IValue>.Empty
+                                .Add("recipient", new Binary(CouponsFixture.AgentAddress1.ByteArray))
+                                .Add(
+                                    "rewards",
+                                    Bencodex.Types.List.Empty
+                                        .Add(Bencodex.Types.Dictionary.Empty
+                                            .Add("rewardSet", CouponsFixture.RewardSet1.Serialize())
+                                            .Add("quantity", 2))
+                                        .Add(Bencodex.Types.Dictionary.Empty
+                                            .Add("rewardSet", CouponsFixture.RewardSet2.Serialize())
+                                            .Add("quantity", 1)))
+                                .Select(kv => new KeyValuePair<IKey, IValue>((Text)kv.Key, kv.Value)))
+                        .SetItem("id", new Guid("6E69DC55-A0D0-435A-A787-C62356CBE517").Serialize())));
 
             Assert.Equal(expected.Rewards, actual.Rewards);
             Assert.Equal(expected.Recipient, actual.Recipient);

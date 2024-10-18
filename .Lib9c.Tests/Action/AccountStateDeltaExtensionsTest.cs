@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Action
             IWorld states = new World(MockUtil.MockModernWorldState);
             var rewardInfoAddress = new PrivateKey().Address;
             var rewardRecord = new WorldBossKillRewardRecord();
-            for (int i = 0; i < level; i++)
+            for (var i = 0; i < level; i++)
             {
                 rewardRecord[i] = false;
             }
@@ -176,8 +176,8 @@ namespace Lib9c.Tests.Action
             var agentContractAddress = _agentAddress.GetPledgeAddress();
             var mead = Currencies.Mead;
             var price = RequestPledge.DefaultRefillMead * mead;
-            ActionContext context = new ActionContext();
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var context = new ActionContext();
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     agentContractAddress,
                     List.Empty.Add(patron.Serialize()).Add(true.Serialize()))

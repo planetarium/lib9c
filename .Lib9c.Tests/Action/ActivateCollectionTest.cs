@@ -26,7 +26,8 @@ namespace Lib9c.Tests.Action
         {
             var sheets = TableSheetsImporter.ImportSheets();
             // Fix csv data for test
-            sheets[nameof(CollectionSheet)] = @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
+            sheets[nameof(CollectionSheet)] =
+                @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
 1,10110000,1,0,,302000,2,,,200000,2,,,40100000,1,,,,,,,,,,,ATK,Add,1,,,,,,
 2,10110000,1,0,,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,1,,,,,,";
 
@@ -84,7 +85,7 @@ namespace Lib9c.Tests.Action
                 }
                 else
                 {
-                    for (int i = 0; i < material.Count; i++)
+                    for (var i = 0; i < material.Count; i++)
                     {
                         var item = ItemFactory.CreateItem(itemRow, random);
                         var nonFungibleId = ((INonFungibleItem)item).NonFungibleId;
@@ -120,7 +121,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
             };
-            ActivateCollection activateCollection = new ActivateCollection()
+            var activateCollection = new ActivateCollection()
             {
                 AvatarAddress = _avatarAddress,
                 CollectionData =

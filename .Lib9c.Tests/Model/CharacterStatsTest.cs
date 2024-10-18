@@ -28,14 +28,14 @@ namespace Lib9c.Tests.Model
             var groupId = deBuff.RowData.GroupId;
             deBuffLimitSheet.Set($"group_id,percentage\n{groupId},-50");
             var def = stats.DEF;
-            stats.AddBuff(deBuff, deBuffLimitSheet: deBuffLimitSheet);
+            stats.AddBuff(deBuff, deBuffLimitSheet);
             var modifier = deBuffLimitSheet[groupId].GetModifier(deBuff.RowData.StatType);
             Assert.Equal(modifier.GetModifiedAll(def), stats.DEF);
 
             // -500% critical with no limit
             var deBuff2 = new StatBuff(_tableSheets.StatBuffSheet[204003]);
             Assert.True(stats.CRI > 0);
-            stats.AddBuff(deBuff2, deBuffLimitSheet: deBuffLimitSheet);
+            stats.AddBuff(deBuff2, deBuffLimitSheet);
             Assert.Equal(0, stats.CRI);
         }
     }

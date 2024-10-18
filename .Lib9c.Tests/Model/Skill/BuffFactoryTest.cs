@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Model.Skill
         public void GetBuffs()
         {
             var player = new Player(
-                level: 1,
+                1,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
@@ -96,7 +96,7 @@ namespace Lib9c.Tests.Model.Skill
         public void Thorns()
         {
             var player = new Player(
-                level: 1,
+                1,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
@@ -120,7 +120,7 @@ namespace Lib9c.Tests.Model.Skill
             var equipmentRow =
                 _tableSheets.EquipmentItemSheet.Values.Where(r => r.Stat.StatType == StatType.HP).OrderByDescending(r => r.Stat.TotalValue).First();
             var equipment = (Equipment)ItemFactory.CreateItem(equipmentRow, new TestRandom());
-            player.Stats.SetEquipments(new[] { equipment }, _tableSheets.EquipmentItemSetEffectSheet);
+            player.Stats.SetEquipments(new[] { equipment, }, _tableSheets.EquipmentItemSetEffectSheet);
             Assert.True(player.Stats.HP > hp);
             buffs = BuffFactory.GetBuffs(
                 player.Stats,
@@ -157,15 +157,15 @@ namespace Lib9c.Tests.Model.Skill
         public void IsDebuff(int buffId, bool hasCustom)
         {
             var player = new Player(
-                level: 1,
+                1,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
             var skillId = _tableSheets.SkillBuffSheet.Values.First(r => r.BuffIds.Contains(buffId)).SkillId;
             var skillRow = _tableSheets.SkillSheet[skillId];
-            int power = hasCustom ? 0 : 100;
-            int statPower = hasCustom ? 250 : 0;
-            StatType referencedStat = hasCustom ? StatType.HP : StatType.NONE;
+            var power = hasCustom ? 0 : 100;
+            var statPower = hasCustom ? 250 : 0;
+            var referencedStat = hasCustom ? StatType.HP : StatType.NONE;
             var skill = SkillFactory.Get(skillRow, power, 100, statPower, referencedStat);
             var buffs = BuffFactory.GetBuffs(
                 player.Stats,
@@ -188,15 +188,15 @@ namespace Lib9c.Tests.Model.Skill
         public void IsBuff(int buffId, bool hasCustom)
         {
             var player = new Player(
-                level: 1,
+                1,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
             var skillId = _tableSheets.SkillBuffSheet.Values.First(r => r.BuffIds.Contains(buffId)).SkillId;
             var skillRow = _tableSheets.SkillSheet[skillId];
-            int power = hasCustom ? 0 : 100;
-            int statPower = hasCustom ? 250 : 0;
-            StatType referencedStat = hasCustom ? StatType.ATK : StatType.NONE;
+            var power = hasCustom ? 0 : 100;
+            var statPower = hasCustom ? 250 : 0;
+            var referencedStat = hasCustom ? StatType.ATK : StatType.NONE;
             var skill = SkillFactory.Get(skillRow, power, 100, statPower, referencedStat);
             var buffs = BuffFactory.GetBuffs(
                 player.Stats,
@@ -217,7 +217,7 @@ namespace Lib9c.Tests.Model.Skill
         public void IceShield()
         {
             var player = new Player(
-                level: 1,
+                1,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
@@ -241,7 +241,7 @@ namespace Lib9c.Tests.Model.Skill
             var frostBite = iceShield.FrostBite(_tableSheets.StatBuffSheet, _tableSheets.BuffLinkSheet);
             Assert.Null(frostBite.CustomField);
             var power = frostBite.RowData.Value;
-            for (int i = 0; i < frostBite.RowData.MaxStack; i++)
+            for (var i = 0; i < frostBite.RowData.MaxStack; i++)
             {
                 frostBite.SetStack(i);
                 var modifier = frostBite.GetModifier();

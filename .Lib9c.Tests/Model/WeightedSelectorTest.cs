@@ -65,8 +65,8 @@ namespace Lib9c.Tests.Model
                 .Select(r => r.Key)
                 .ToArray();
 
-            Assert.Equal(new[] { 1, 2, 3, 4 }, ordered);
-            Assert.Equal(new[] { 1, 2, 3, 4 }, ordered2);
+            Assert.Equal(new[] { 1, 2, 3, 4, }, ordered);
+            Assert.Equal(new[] { 1, 2, 3, 4, }, ordered2);
         }
 
         [Fact]
@@ -118,8 +118,8 @@ namespace Lib9c.Tests.Model
                 .Select(r => r.Key)
                 .ToArray();
 
-            Assert.Equal(new[] { 1, 4, 2, 3 }, ordered);
-            Assert.Equal(new[] { 1, 2, 3, 4 }, ordered2);
+            Assert.Equal(new[] { 1, 4, 2, 3, }, ordered);
+            Assert.Equal(new[] { 1, 2, 3, 4, }, ordered2);
         }
 
         [Theory]
@@ -153,7 +153,7 @@ namespace Lib9c.Tests.Model
                 .Select(r => r.Key)
                 .ToArray();
 
-            Assert.Equal(new[] { 1, 2, 3, 4 }, ordered);
+            Assert.Equal(new[] { 1, 2, 3, 4, }, ordered);
         }
 
         private WeightedSelector<int> GetSelector()

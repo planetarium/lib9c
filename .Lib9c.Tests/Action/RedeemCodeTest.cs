@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Action
 
     public class RedeemCodeTest
     {
-        private readonly Address _agentAddress = new Address(new byte[]
+        private readonly Address _agentAddress = new (new byte[]
         {
             0x10, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00,
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Action
             0x00, 0x00, 0x00, 0x00, 0x02,
         });
 
-        private readonly Address _avatarAddress = new Address(new byte[]
+        private readonly Address _avatarAddress = new (new byte[]
         {
             0x10, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00,
@@ -47,10 +47,10 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var privateKey = new PrivateKey();
-            PublicKey publicKey = privateKey.PublicKey;
+            var publicKey = privateKey.PublicKey;
             var prevRedeemCodesState = new RedeemCodeState(new Dictionary<PublicKey, Reward>()
             {
-                [publicKey] = new Reward(1),
+                [publicKey] = new (1),
             });
             var gameConfigState = new GameConfigState();
             var agentState = new AgentState(_agentAddress);
@@ -89,7 +89,7 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            IWorld nextState = redeemCode.Execute(new ActionContext()
+            var nextState = redeemCode.Execute(new ActionContext()
             {
                 BlockIndex = 1,
                 Miner = default,
@@ -99,18 +99,15 @@ namespace Lib9c.Tests.Action
             });
 
             // Check target avatar & agent
-            AvatarState nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             // See also Data/TableCSV/RedeemRewardSheet.csv
-            ItemSheet itemSheet = initialState.GetItemSheet();
-            HashSet<int> expectedItems = new[] { 302006, 302004, 302001, 302002 }.ToHashSet();
+            var itemSheet = initialState.GetItemSheet();
+            var expectedItems = new[] { 302006, 302004, 302001, 302002, }.ToHashSet();
             Assert.Subset(nextAvatarState.inventory.Items.Select(i => i.item.Id).ToHashSet(), expectedItems);
 
             // Check the code redeemed properly
-            RedeemCodeState nextRedeemCodeState = nextState.GetRedeemCodeState();
-            Assert.Throws<DuplicateRedeemException>(() =>
-            {
-                nextRedeemCodeState.Redeem(redeemCode.Code, redeemCode.AvatarAddress);
-            });
+            var nextRedeemCodeState = nextState.GetRedeemCodeState();
+            Assert.Throws<DuplicateRedeemException>(() => { nextRedeemCodeState.Redeem(redeemCode.Code, redeemCode.AvatarAddress); });
         }
     }
 }

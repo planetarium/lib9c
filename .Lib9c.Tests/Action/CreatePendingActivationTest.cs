@@ -14,7 +14,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var pubKey = new PublicKey(
                 ByteUtil.ParseHex("02ed49dbe0f2c34d9dff8335d6dd9097f7a3ef17dfb5f048382eebc7f451a50aa1")
             );
@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void CheckPermission()
         {
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var pubKey = new PublicKey(
                 ByteUtil.ParseHex("02ed49dbe0f2c34d9dff8335d6dd9097f7a3ef17dfb5f048382eebc7f451a50aa1")
             );

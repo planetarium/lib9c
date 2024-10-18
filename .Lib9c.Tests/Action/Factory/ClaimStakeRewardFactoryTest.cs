@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Action.Factory
                 var ver = string.IsNullOrEmpty(verStr)
                     ? 1
                     : int.Parse(verStr);
-                yield return new object[] { str, ver };
+                yield return new object[] { str, ver, };
             }
         }
 

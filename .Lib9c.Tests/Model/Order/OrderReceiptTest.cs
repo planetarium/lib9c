@@ -13,9 +13,9 @@ namespace Lib9c.Tests.Model.Order
         [Fact]
         public void Serialize()
         {
-            Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
+            var orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             var receipt = new OrderReceipt(orderId, Addresses.Admin, Addresses.Blacksmith, 10);
-            Dictionary serialized = (Dictionary)receipt.Serialize();
+            var serialized = (Dictionary)receipt.Serialize();
             var deserialized = new OrderReceipt(serialized);
 
             Assert.Equal(orderId, deserialized.OrderId);
@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Model.Order
         [Fact]
         public void Serialize_DotNet_Api()
         {
-            Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
+            var orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
             var receipt = new OrderReceipt(orderId, Addresses.Admin, Addresses.Blacksmith, 10);
             var formatter = new BinaryFormatter();
             using var ms = new MemoryStream();

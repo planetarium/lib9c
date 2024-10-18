@@ -23,10 +23,9 @@ namespace Lib9c.Tests.Action
 
     public class RegisterProductTest
     {
-        private static readonly Address AvatarAddress =
-            new Address("47d082a115c63e7b58b1532d20e631538eafadde");
+        private static readonly Address AvatarAddress = new ("47d082a115c63e7b58b1532d20e631538eafadde");
 
-        private static readonly Currency Gold = Currency.Legacy("NCG", 2, minters: null);
+        private static readonly Currency Gold = Currency.Legacy("NCG", 2, null);
 
         private readonly Address _agentAddress;
         private readonly AvatarState _avatarState;
@@ -286,7 +285,7 @@ namespace Lib9c.Tests.Action
             var productsState =
                 new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(AvatarAddress)));
             var random = new TestRandom();
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productsState.ProductIds);
@@ -320,7 +319,7 @@ namespace Lib9c.Tests.Action
                     var action = new RegisterProduct
                     {
                         AvatarAddress = AvatarAddress,
-                        RegisterInfos = new[] { registerInfo },
+                        RegisterInfos = new[] { registerInfo, },
                     };
                     Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
                     {
@@ -406,7 +405,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var registerInfos = new List<RegisterInfo>();
-            for (int i = 0; i < RegisterProduct.Capacity + 1; i++)
+            for (var i = 0; i < RegisterProduct.Capacity + 1; i++)
             {
                 registerInfos.Add(new RegisterInfo());
             }

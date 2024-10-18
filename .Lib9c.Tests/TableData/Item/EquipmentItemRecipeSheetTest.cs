@@ -26,7 +26,7 @@ namespace Lib9c.Tests.TableData.Item
 
             Assert.Single(sheet);
 
-            EquipmentItemRecipeSheet.Row row = sheet.First!;
+            var row = sheet.First!;
 
             Assert.Equal(expected, row.CRYSTAL);
             Assert.Equal(expectedItemSubType, row.ItemSubType);

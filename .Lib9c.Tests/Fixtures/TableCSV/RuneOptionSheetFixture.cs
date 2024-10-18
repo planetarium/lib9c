@@ -1,8 +1,8 @@
-namespace Lib9c.Tests.Fixtures.TableCSV;
-
-public static class RuneOptionSheetFixture
+namespace Lib9c.Tests.Fixtures.TableCSV
 {
-    public const string Default = @"rune_id,level,total_cp,stat_type_1,value_1,value_type_1,stat_type_2,value_2,value_type_2,stat_type_3,value_3,value_type3,skillId,cooldown,chance,skill_value,skill_stat_ratio,skill_value_type,stat_reference_type,buff_duration
+    public static class RuneOptionSheetFixture
+    {
+        public const string Default = @"rune_id,level,total_cp,stat_type_1,value_1,value_type_1,stat_type_2,value_2,value_type_2,stat_type_3,value_3,value_type3,skillId,cooldown,chance,skill_value,skill_stat_ratio,skill_value_type,stat_reference_type,buff_duration
                                     30001,1,364,HP,520,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
                                     30001,2,504,HP,720,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
                                     30001,3,644,HP,920,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
@@ -6903,4 +6903,5 @@ public static class RuneOptionSheetFixture
                                     10035,298,2033000,CRI,19.92,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
                                     10035,299,2048000,CRI,19.96,Add,NONE,0,Add,NONE,0,Add,,,,,,,,
                                     10035,300,2063000,CRI,20,Add,NONE,0,Add,NONE,0,Add,,,,,,,,";
+    }
 }

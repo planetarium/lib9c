@@ -22,22 +22,22 @@ namespace Lib9c.Tests.Action
 
     public class TransferAssetsTest
     {
-        private static readonly Address _sender = new Address(
+        private static readonly Address _sender = new (
             new byte[]
             {
-                 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
             }
         );
 
-        private static readonly Address _recipient = new Address(new byte[]
+        private static readonly Address _recipient = new (new byte[]
             {
-                 0x02, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x02, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
             }
         );
 
-        private static readonly Address _recipient2 = new Address(new byte[]
+        private static readonly Address _recipient2 = new (new byte[]
             {
                 0x03, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action
         );
 
 #pragma warning disable CS0618
-            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+        // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
         private static readonly Currency _currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
 
@@ -74,14 +74,14 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAssets(
-                sender: _sender,
+                _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
                     (_recipient, _currency * 100),
                     (_recipient2, _currency * 100),
                 }
             );
-            IWorld nextState = action.Execute(new ActionContext()
+            var nextState = action.Execute(new ActionContext()
             {
                 PreviousState = prevState,
                 Signer = _sender,
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAssets(
-                sender: _sender,
+                _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
                     (_recipient, _currency * 100),
@@ -134,7 +134,7 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_sender, _currency * 1000));
             // Should not allow TransferAsset with same sender and recipient.
             var action = new TransferAssets(
-                sender: _sender,
+                _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
                     (_sender, _currency * 100),
@@ -159,19 +159,19 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InsufficientBalanceException()
         {
             var prevState = new World(
-                MockWorldState.CreateModern()
-                    .SetBalance(_sender, _currency * 1000)
-                    .SetBalance(_recipient, _currency * 10))
+                    MockWorldState.CreateModern()
+                        .SetBalance(_sender, _currency * 1000)
+                        .SetBalance(_recipient, _currency * 10))
                 .SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAssets(
-                sender: _sender,
+                _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
                     (_recipient, _currency * 100000),
                 }
             );
 
-            InsufficientBalanceException exc = Assert.Throws<InsufficientBalanceException>(() =>
+            var exc = Assert.Throws<InsufficientBalanceException>(() =>
             {
                 action.Execute(new ActionContext()
                 {
@@ -193,12 +193,12 @@ namespace Lib9c.Tests.Action
             var currencyBySender = Currency.Legacy("NCG", 2, _sender);
 #pragma warning restore CS0618
             var prevState = new World(
-                MockWorldState.CreateModern()
-                    .SetBalance(_sender, currencyBySender * 1000)
-                    .SetBalance(_recipient, currencyBySender * 10))
+                    MockWorldState.CreateModern()
+                        .SetBalance(_sender, currencyBySender * 1000)
+                        .SetBalance(_recipient, currencyBySender * 10))
                 .SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAssets(
-                sender: _sender,
+                _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
                     (_recipient, currencyBySender * 100),
@@ -214,7 +214,7 @@ namespace Lib9c.Tests.Action
                 });
             });
 
-            Assert.Equal(new[] { _sender }, ex.Minters);
+            Assert.Equal(new[] { _sender, }, ex.Minters);
             Assert.Equal(_sender, ex.Sender);
             Assert.Equal(_recipient, ex.Recipient);
         }
@@ -233,8 +233,8 @@ namespace Lib9c.Tests.Action
                 memo
             );
 
-            Dictionary plainValue = (Dictionary)action.PlainValue;
-            Dictionary values = (Dictionary)plainValue["values"];
+            var plainValue = (Dictionary)action.PlainValue;
+            var values = (Dictionary)plainValue["values"];
 
             var recipients = (List)values["recipients"];
             var info = (List)recipients[0];
@@ -323,7 +323,7 @@ namespace Lib9c.Tests.Action
         {
             var recipients = new List<(Address, FungibleAssetValue)>();
 
-            for (int i = 0; i < TransferAssets.RecipientsCapacity + 1; i++)
+            for (var i = 0; i < TransferAssets.RecipientsCapacity + 1; i++)
             {
                 recipients.Add((_recipient, _currency * 100));
             }
@@ -345,12 +345,12 @@ namespace Lib9c.Tests.Action
         {
             var crystal = CrystalCalculator.CRYSTAL;
             var prevState = new World(
-                MockWorldState.CreateModern()
-                    .SetBalance(_sender, crystal * 1000))
+                    MockWorldState.CreateModern()
+                        .SetBalance(_sender, crystal * 1000))
                 .SetLegacyState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize());
             var action = new TransferAssets(
-                sender: _sender,
-                recipients: new List<(Address, FungibleAssetValue)>
+                _sender,
+                new List<(Address, FungibleAssetValue)>
                 {
                     (_recipient, 1000 * crystal),
                     (_recipient, 100 * _currency),
@@ -369,7 +369,7 @@ namespace Lib9c.Tests.Action
         {
             var baseState = new World(MockWorldState.CreateModern().SetBalance(_sender, _currency * 1000));
             var action = new TransferAssets(
-                sender: _sender,
+                _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
                     (StakeState.DeriveAddress(_recipient), _currency * 100),

@@ -102,9 +102,9 @@ namespace Lib9c.Tests.Action.Garages
                 des.LoadPlainValue(ser);
                 Assert.Equal(action.RecipientAgentAddr, des.RecipientAgentAddr);
                 Assert.True(action.FungibleAssetValues?.SequenceEqual(des.FungibleAssetValues!) ??
-                            des.FungibleAssetValues is null);
+                    des.FungibleAssetValues is null);
                 Assert.True(action.FungibleIdAndCounts?.SequenceEqual(des.FungibleIdAndCounts!) ??
-                            des.FungibleIdAndCounts is null);
+                    des.FungibleIdAndCounts is null);
                 Assert.Equal(action.Memo, des.Memo);
                 Assert.Equal(ser, des.PlainValue);
 
@@ -133,7 +133,7 @@ namespace Lib9c.Tests.Action.Garages
                 _fungibleAssetValues,
                 _fungibleIdAndCounts,
                 "memo");
-            if (action.FungibleAssetValues is { })
+            if (action.FungibleAssetValues is not null)
             {
                 var senderGarageBalanceAddr =
                     Addresses.GetGarageBalanceAddress(SenderAgentAddr);
@@ -216,7 +216,7 @@ namespace Lib9c.Tests.Action.Garages
         {
             // Sender's FungibleAssetValue Garage does not have enough balance.
             var previousStatesWithEmptyBalances = _previousStates;
-            var actionContext = new ActionContext { Signer = SenderAgentAddr };
+            var actionContext = new ActionContext { Signer = SenderAgentAddr, };
             var senderFungibleAssetValueGarageAddr =
                 Addresses.GetGarageBalanceAddress(SenderAgentAddr);
             foreach (var vaf in _fungibleAssetValues)
@@ -357,7 +357,7 @@ namespace Lib9c.Tests.Action.Garages
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;
-            var actionContext = new ActionContext { Signer = Addresses.Admin };
+            var actionContext = new ActionContext { Signer = Addresses.Admin, };
             var senderFavGarageBalanceAddr =
                 Addresses.GetGarageBalanceAddress(SenderAgentAddr);
             var fungibleAssetValues = GetFungibleAssetValues();
@@ -380,16 +380,16 @@ namespace Lib9c.Tests.Action.Garages
             }
 
             var fungibleIdAndCounts = new List<(IFungibleItem fungibleItem, int count)>();
-            var tradableIds = new[] { 400000, 500000 };
-            var nonTradableIds = new[] { 600201, 800201, 800202 };
-            for (int i = 0; i < tradableIds.Count(); i++)
+            var tradableIds = new[] { 400000, 500000, };
+            var nonTradableIds = new[] { 600201, 800201, 800202, };
+            for (var i = 0; i < tradableIds.Count(); i++)
             {
                 var id = tradableIds[i];
                 var row = _tableSheets.MaterialItemSheet[id];
                 fungibleIdAndCounts.Add((ItemFactory.CreateTradableMaterial(row), i + 1));
             }
 
-            for (int i = 0; i < nonTradableIds.Count(); i++)
+            for (var i = 0; i < nonTradableIds.Count(); i++)
             {
                 var id = nonTradableIds[i];
                 var row = _tableSheets.MaterialItemSheet[id];
@@ -402,7 +402,7 @@ namespace Lib9c.Tests.Action.Garages
                     SenderAgentAddr,
                     fungibleItem.FungibleId);
                 var garageState = previousStates.GetLegacyState(senderGarageAddr);
-                Material material = fungibleItem is TradableMaterial tradableMaterial
+                var material = fungibleItem is TradableMaterial tradableMaterial
                     ? new Material(tradableMaterial)
                     : (Material)fungibleItem;
                 var garage = garageState is null

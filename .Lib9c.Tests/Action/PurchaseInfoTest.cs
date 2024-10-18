@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action
                 price
             );
 
-            Dictionary serialized = (Dictionary)purchaseInfo.Serialize();
+            var serialized = (Dictionary)purchaseInfo.Serialize();
 
             Assert.Equal(purchaseInfo, new PurchaseInfo(serialized));
 

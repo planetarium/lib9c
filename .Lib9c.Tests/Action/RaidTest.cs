@@ -116,21 +116,21 @@ namespace Lib9c.Tests.Action
                 FoodIds = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(slotIndex, runeId),
-                    new RuneSlotInfo(slotIndex2, runeId2),
+                    new (slotIndex, runeId),
+                    new (slotIndex2, runeId2),
                 },
                 PayNcg = payNcg,
             };
-            Currency crystal = CrystalCalculator.CRYSTAL;
-            int raidId = _tableSheets.WorldBossListSheet.FindRaidIdByBlockIndex(blockIndex);
-            Address raiderAddress = Addresses.GetRaiderAddress(_avatarAddress, raidId);
+            var crystal = CrystalCalculator.CRYSTAL;
+            var raidId = _tableSheets.WorldBossListSheet.FindRaidIdByBlockIndex(blockIndex);
+            var raiderAddress = Addresses.GetRaiderAddress(_avatarAddress, raidId);
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            WorldBossListSheet.Row worldBossRow = _tableSheets.WorldBossListSheet.FindRowByBlockIndex(blockIndex);
+            var worldBossRow = _tableSheets.WorldBossListSheet.FindRowByBlockIndex(blockIndex);
             var hpSheet = _tableSheets.WorldBossGlobalHpSheet;
-            Address bossAddress = Addresses.GetWorldBossAddress(raidId);
-            Address worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(_avatarAddress, raidId);
-            Address raiderListAddress = Addresses.GetRaiderListAddress(raidId);
-            int level = 1;
+            var bossAddress = Addresses.GetWorldBossAddress(raidId);
+            var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(_avatarAddress, raidId);
+            var raiderListAddress = Addresses.GetRaiderListAddress(raidId);
+            var level = 1;
             if (kill & !levelUp)
             {
                 level = hpSheet.OrderedList.Last().Level;
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Action
             var fee = _tableSheets.WorldBossListSheet[raidId].EntranceFee;
 
             var context = new ActionContext();
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
@@ -167,7 +167,7 @@ namespace Lib9c.Tests.Action
 
                 if (stageCleared)
                 {
-                    for (int i = 0; i < 50; i++)
+                    for (var i = 0; i < 50; i++)
                     {
                         avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                     }
@@ -231,10 +231,10 @@ namespace Lib9c.Tests.Action
             {
                 var bossState =
                     new WorldBossState(worldBossRow, _tableSheets.WorldBossGlobalHpSheet[level])
-                        {
-                            CurrentHp = 0,
-                            Level = level,
-                        };
+                    {
+                        CurrentHp = 0,
+                        Level = level,
+                    };
                 state = state.SetLegacyState(bossAddress, bossState.Serialize());
             }
 
@@ -266,7 +266,7 @@ namespace Lib9c.Tests.Action
                     new List<StatModifier>(),
                     _tableSheets.DeBuffLimitSheet,
                     _tableSheets.BuffLinkSheet
-                    );
+                );
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
 
@@ -292,7 +292,7 @@ namespace Lib9c.Tests.Action
                     var bossRow = raidSimulatorSheets.WorldBossCharacterSheet[bossListRow.BossId];
                     Assert.True(state.TryGetLegacyState(bossAddress, out List prevRawBoss));
                     var prevBossState = new WorldBossState(prevRawBoss);
-                    int rank = WorldBossHelper.CalculateRank(bossRow, raiderStateExist ? 1_000 : 0);
+                    var rank = WorldBossHelper.CalculateRank(bossRow, raiderStateExist ? 1_000 : 0);
                     var rewards = WorldBossHelper.CalculateReward(
                         rank,
                         prevBossState.Id,
@@ -355,9 +355,9 @@ namespace Lib9c.Tests.Action
 
                 Assert.True(nextState.TryGetLegacyState(raiderAddress, out List rawRaider));
                 var raiderState = new RaiderState(rawRaider);
-                long expectedTotalScore = raiderStateExist ? 1_000 + score : score;
-                int expectedRemainChallenge = payNcg ? 0 : 2;
-                int expectedTotalChallenge = raiderStateExist ? 2 : 1;
+                var expectedTotalScore = raiderStateExist ? 1_000 + score : score;
+                var expectedRemainChallenge = payNcg ? 0 : 2;
+                var expectedTotalChallenge = raiderStateExist ? 2 : 1;
 
                 Assert.Equal(score, raiderState.HighScore);
                 Assert.Equal(expectedTotalScore, raiderState.TotalScore);
@@ -369,7 +369,7 @@ namespace Lib9c.Tests.Action
 
                 Assert.True(nextState.TryGetLegacyState(bossAddress, out List rawBoss));
                 var bossState = new WorldBossState(rawBoss);
-                int expectedLevel = level;
+                var expectedLevel = level;
                 if (kill & levelUp)
                 {
                     expectedLevel++;
@@ -412,7 +412,7 @@ namespace Lib9c.Tests.Action
                 }
 
                 Assert.True(nextState.TryGetLegacyState(raiderListAddress, out List rawRaiderList));
-                List<Address> raiderList = rawRaiderList.ToList(StateExtensions.ToAddress);
+                var raiderList = rawRaiderList.ToList(StateExtensions.ToAddress);
 
                 Assert.Contains(raiderAddress, raiderList);
             }
@@ -462,13 +462,13 @@ namespace Lib9c.Tests.Action
             };
 
             var worldBossRow = _tableSheets.WorldBossListSheet.First().Value;
-            int raidId = worldBossRow.Id;
-            Address raiderAddress = Addresses.GetRaiderAddress(_avatarAddress, raidId);
+            var raidId = worldBossRow.Id;
+            var raiderAddress = Addresses.GetRaiderAddress(_avatarAddress, raidId);
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            Address bossAddress = Addresses.GetWorldBossAddress(raidId);
-            Address worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(_avatarAddress, raidId);
+            var bossAddress = Addresses.GetWorldBossAddress(raidId);
+            var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(_avatarAddress, raidId);
 
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
@@ -486,7 +486,7 @@ namespace Lib9c.Tests.Action
                 default
             );
 
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
@@ -516,10 +516,10 @@ namespace Lib9c.Tests.Action
 
             var bossState =
                 new WorldBossState(worldBossRow, _tableSheets.WorldBossGlobalHpSheet[2])
-                    {
-                        CurrentHp = 0,
-                        Level = 2,
-                    };
+                {
+                    CurrentHp = 0,
+                    Level = 2,
+                };
             state = state.SetLegacyState(bossAddress, bossState.Serialize());
             var randomSeed = 0;
             var random = new TestRandom(randomSeed);
@@ -536,7 +536,7 @@ namespace Lib9c.Tests.Action
                 new List<StatModifier>(),
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet
-                );
+            );
             simulator.Simulate();
 
             var rewardMap = new Dictionary<Currency, FungibleAssetValue>();
@@ -642,14 +642,14 @@ namespace Lib9c.Tests.Action
                 RuneInfos = new List<RuneSlotInfo>(),
                 PayNcg = false,
             };
-            Currency crystal = CrystalCalculator.CRYSTAL;
+            var crystal = CrystalCalculator.CRYSTAL;
 
             _sheets[nameof(WorldBossListSheet)] =
                 "id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count\r\n" +
                 "1,900002,0,100,0,1,1,40";
 
             var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
                 .SetAgentState(_agentAddress, new AgentState(_agentAddress));
 
@@ -667,7 +667,7 @@ namespace Lib9c.Tests.Action
                 default
             );
 
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }

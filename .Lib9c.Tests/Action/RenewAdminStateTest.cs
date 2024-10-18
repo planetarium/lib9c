@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Action
                 new PendingActivationState(nonce, privateKey.PublicKey),
             });
 
-            long blockIndex = _validUntil + 1;
+            var blockIndex = _validUntil + 1;
             Assert.Throws<PolicyExpiredException>(() => createPendingActivations.Execute(new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action
                 Signer = _adminPrivateKey.Address,
             });
 
-            Address expectedPendingActivationStateAddress =
+            var expectedPendingActivationStateAddress =
                 PendingActivationState.DeriveAddress(nonce, privateKey.PublicKey);
             Assert.NotNull(stateDelta.GetLegacyState(expectedPendingActivationStateAddress));
         }

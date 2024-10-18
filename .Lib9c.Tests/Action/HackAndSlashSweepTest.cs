@@ -208,8 +208,8 @@ namespace Lib9c.Tests.Action
 
             var state = _initialState
                 .SetLegacyState(
-                _avatarAddress.Derive("world_ids"),
-                List.Empty.Add(worldId.Serialize())
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize())
                 )
                 .SetAvatarState(_avatarAddress, _avatarState);
 
@@ -238,7 +238,7 @@ namespace Lib9c.Tests.Action
             avatarState.worldInformation =
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 10000001);
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             if (unlockedIdsExist)
             {
@@ -278,7 +278,7 @@ namespace Lib9c.Tests.Action
             avatarState.worldInformation =
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new HackAndSlashSweep
             {
@@ -318,7 +318,7 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(row);
             avatarState.inventory.AddItem(apStone, holdingApStoneCount);
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
             var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
@@ -371,7 +371,7 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
@@ -425,7 +425,7 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = state.GetActionPoint(_avatarAddress);
 
@@ -479,13 +479,13 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 1;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = state.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
             var (expectedLevel, expectedExp) = (0, 0L);
-            int stageId = 24;
+            var stageId = 24;
             if (stageSheet.TryGetValue(stageId, out var stageRow))
             {
                 var itemPlayCount =
@@ -742,8 +742,8 @@ namespace Lib9c.Tests.Action
                     equipments = new List<Guid>(),
                     runeInfos = new List<RuneSlotInfo>()
                     {
-                        new RuneSlotInfo(slotIndex, runeId),
-                        new RuneSlotInfo(slotIndex2, runeId2),
+                        new (slotIndex, runeId),
+                        new (slotIndex2, runeId2),
                     },
                     avatarAddress = _avatarAddress,
                     actionPoint = (int)actionPoint,
@@ -782,7 +782,7 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 

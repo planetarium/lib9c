@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
             var buffRow = new ActionBuffSheet.Row();
             buffRow.Set(
                 new List<string>
-                    { "706000", "706000", "100", "9999", "Self", "Focus", "Normal", "0" }
+                    { "706000", "706000", "100", "9999", "Self", "Focus", "Normal", "0", }
             );
             player.AddBuff(new Focus(buffRow));
 

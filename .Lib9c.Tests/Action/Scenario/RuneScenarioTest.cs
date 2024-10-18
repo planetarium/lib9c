@@ -40,12 +40,12 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             var context = new ActionContext();
-            IWorld initialState = new World(MockUtil.MockModernWorldState)
+            var initialState = new World(MockUtil.MockModernWorldState)
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(
                     Addresses.GoldCurrency,
-                    new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())
+                    new GoldCurrencyState(Currency.Legacy("NCG", 2, null)).Serialize())
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             foreach (var (key, value) in sheets)
@@ -121,7 +121,7 @@ namespace Lib9c.Tests.Action.Scenario
                 WorldId = 1,
                 RuneInfos = new List<RuneSlotInfo>
                 {
-                    new RuneSlotInfo(6, runeId),
+                    new (6, runeId),
                 },
             };
 
@@ -163,12 +163,12 @@ namespace Lib9c.Tests.Action.Scenario
             );
 
             var context = new ActionContext();
-            IWorld initialState = new World(MockUtil.MockModernWorldState)
+            var initialState = new World(MockUtil.MockModernWorldState)
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(
                     Addresses.GoldCurrency,
-                    new GoldCurrencyState(Currency.Legacy("NCG", 2, minters: null)).Serialize())
+                    new GoldCurrencyState(Currency.Legacy("NCG", 2, null)).Serialize())
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             foreach (var (key, value) in sheets)

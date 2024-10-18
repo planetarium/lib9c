@@ -13,10 +13,12 @@ namespace Lib9c.Tests.Extensions
         [InlineData(99_999_999, 9_999)]
         public void ToEventScheduleId(
             int eventDungeonId,
-            int expected) =>
+            int expected)
+        {
             Assert.Equal(
                 expected,
                 eventDungeonId.ToEventScheduleId());
+        }
 
         [Theory]
         [InlineData(int.MinValue)]
@@ -32,9 +34,11 @@ namespace Lib9c.Tests.Extensions
         [InlineData(100_000_000)]
         [InlineData(int.MaxValue)]
         public void ToEventScheduleId_Throw_ArgumentException(
-            int eventDungeonId) =>
+            int eventDungeonId)
+        {
             Assert.Throws<ArgumentException>(() =>
                 eventDungeonId.ToEventScheduleId());
+        }
 
         [Theory]
         [InlineData(0, 0, 0, 0L)]

@@ -28,7 +28,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
 
             var action = new QuitGuild();
-            IWorld world = new World(MockUtil.MockModernWorldState)
+            var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress);
 
             // This case should fail because guild master cannot quit the guild.

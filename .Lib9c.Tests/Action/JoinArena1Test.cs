@@ -102,7 +102,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatar2Address, avatar2State)
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
-            foreach ((string key, string value) in sheets)
+            foreach ((var key, var value) in sheets)
             {
                 _state = _state
                     .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
@@ -188,7 +188,7 @@ namespace Lib9c.Tests.Action
             avatarState = AddMedal(avatarState, row, 80);
 
             var context = new ActionContext();
-            var state = (balance == "0")
+            var state = balance == "0"
                 ? _state
                 : _state.MintAsset(context, _signer, FungibleAssetValue.Parse(_currency, balance));
 

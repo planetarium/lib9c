@@ -17,14 +17,15 @@ namespace Lib9c.Tests.Action
         {
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+
             PendingActivationState CreatePendingActivation()
             {
-                var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+                var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
                 var pubKey = new PrivateKey().PublicKey;
                 return new PendingActivationState(nonce, pubKey);
             }
 
-            PendingActivationState[] activations =
+            var activations =
                 Enumerable.Range(0, 5000).Select(_ => CreatePendingActivation()).ToArray();
             var action = new CreatePendingActivations(activations);
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
@@ -40,7 +41,7 @@ namespace Lib9c.Tests.Action
 
             var nextState = action.Execute(actionContext);
 
-            foreach (PendingActivationState pa in activations)
+            foreach (var pa in activations)
             {
                 Assert.Equal(
                     pa.Serialize(),
@@ -52,9 +53,9 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void PlainValue()
         {
-            byte[] nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
-            PublicKey pubKey = new PrivateKey().PublicKey;
-            Address address = PendingActivationState.DeriveAddress(nonce, pubKey);
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
+            var pubKey = new PrivateKey().PublicKey;
+            var address = PendingActivationState.DeriveAddress(nonce, pubKey);
             var plainValue = Dictionary.Empty
                 .Add("type_id", "create_pending_activations")
                 .Add("values", new List()

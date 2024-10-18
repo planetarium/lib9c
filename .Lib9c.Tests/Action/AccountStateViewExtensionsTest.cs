@@ -67,10 +67,10 @@ namespace Lib9c.Tests.Action
         {
             var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
-                default,
-                Dictionary.Empty
-                    .Add("agentAddress", default(Address).Serialize())
-            );
+                    default,
+                    Dictionary.Empty
+                        .Add("agentAddress", default(Address).Serialize())
+                );
 
             Assert.False(states.TryGetAvatarState(default, default, out _));
         }
@@ -110,7 +110,7 @@ namespace Lib9c.Tests.Action
         [InlineData("questList")]
         public void GetAvatarStateV2_Throw_FailedLoadStateException(string account)
         {
-            Address accountAddress = account switch
+            var accountAddress = account switch
             {
                 "inventory" => Addresses.Inventory,
                 "worldInformation" => Addresses.WorldInformation,
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void TryGetAvatarState()
         {
-            IWorld states = new World(MockUtil.MockModernWorldState).SetAvatarState(_avatarAddress, _avatarState);
+            var states = new World(MockUtil.MockModernWorldState).SetAvatarState(_avatarAddress, _avatarState);
             Assert.True(states.TryGetAvatarState(_agentAddress, _avatarAddress, out _));
         }
 
@@ -193,8 +193,8 @@ namespace Lib9c.Tests.Action
         public void GetCrystalCostState(bool exist)
         {
             IWorld states = new World(MockUtil.MockModernWorldState);
-            int expectedCount = exist ? 1 : 0;
-            FungibleAssetValue expectedCrystal = exist
+            var expectedCount = exist ? 1 : 0;
+            var expectedCrystal = exist
                 ? 100 * CrystalCalculator.CRYSTAL
                 : 0 * CrystalCalculator.CRYSTAL;
             Address address = default;
@@ -205,7 +205,7 @@ namespace Lib9c.Tests.Action
                 states = states.SetLegacyState(address, crystalCostState.Serialize());
             }
 
-            CrystalCostState actual = states.GetCrystalCostState(address);
+            var actual = states.GetCrystalCostState(address);
             Assert.Equal(expectedCount, actual.Count);
             Assert.Equal(expectedCrystal, actual.CRYSTAL);
         }
@@ -217,15 +217,15 @@ namespace Lib9c.Tests.Action
         [InlineData(151_200L, true)]
         public void GetCrystalCostStates(long blockIndex, bool previousWeeklyExist)
         {
-            long interval = _tableSheets.CrystalFluctuationSheet.Values.First(r => r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
+            var interval = _tableSheets.CrystalFluctuationSheet.Values.First(r => r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
             var weeklyIndex = (int)(blockIndex / interval);
-            Address dailyCostAddress =
+            var dailyCostAddress =
                 Addresses.GetDailyCrystalCostAddress((int)(blockIndex / CrystalCostState.DailyIntervalIndex));
-            Address weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex);
-            Address previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 1);
-            Address beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
+            var weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex);
+            var previousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 1);
+            var beforePreviousCostAddress = Addresses.GetWeeklyCrystalCostAddress(weeklyIndex - 2);
             var crystalCostState = new CrystalCostState(default, 100 * CrystalCalculator.CRYSTAL);
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(dailyCostAddress, crystalCostState.Serialize())
                 .SetLegacyState(weeklyCostAddress, crystalCostState.Serialize())
                 .SetLegacyState(previousCostAddress, crystalCostState.Serialize())
@@ -311,7 +311,7 @@ namespace Lib9c.Tests.Action
 
             states = states.SetLegacyState(
                 agentAddress1.Derive(CouponWalletKey),
-                (Bencodex.Types.Binary)new byte[] { 0x00 });
+                (Bencodex.Types.Binary)new byte[] { 0x00, });
 
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress1));
             Assert.Throws<InvalidCastException>(() => states.GetCouponWallet(agentAddress2));

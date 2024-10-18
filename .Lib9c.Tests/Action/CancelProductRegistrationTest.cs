@@ -199,7 +199,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var productInfos = new List<IProductInfo>();
-            for (int i = 0; i < CancelProductRegistration.Capacity + 1; i++)
+            for (var i = 0; i < CancelProductRegistration.Capacity + 1; i++)
             {
                 productInfos.Add(new ItemProductInfo());
             }
@@ -239,7 +239,7 @@ namespace Lib9c.Tests.Action
                 case ProductType.Fungible:
                 case ProductType.NonFungible:
                 {
-                    ITradableItem tradableItem = productType == ProductType.Fungible
+                    var tradableItem = productType == ProductType.Fungible
                         ? ItemFactory.CreateTradableMaterial(_tableSheets.MaterialItemSheet.First)
                         : (ITradableItem)ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet.First, Guid.NewGuid(), 0L);
                     product = new ItemProduct

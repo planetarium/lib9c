@@ -188,7 +188,7 @@ namespace Lib9c.Tests.Action
             bool oldMaterial,
             int materialCount,
             bool duplicated = false
-            )
+        )
         {
             var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Id == 10110000);
             var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, startLevel);
@@ -209,7 +209,7 @@ namespace Lib9c.Tests.Action
                 equipment.Exp = 0L;
             }
 
-            _avatarState.inventory.AddItem(equipment, count: 1);
+            _avatarState.inventory.AddItem(equipment, 1);
 
             var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(r =>
                 r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
@@ -244,7 +244,7 @@ namespace Lib9c.Tests.Action
                     material.Exp = 0L;
                 }
 
-                _avatarState.inventory.AddItem(material, count: 1);
+                _avatarState.inventory.AddItem(material, 1);
             }
 
             var result = new CombinationConsumable5.ResultModel()
@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Action
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             var expectedTargetRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(
                 r => r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
-                     r.Level == level);
+                    r.Level == level);
             var expectedCost = (expectedTargetRow?.Cost ?? 0) - (startRow?.Cost ?? 0);
             var expectedBlockIndex =
                 (expectedTargetRow?.RequiredBlockIndex ?? 0) - (startRow?.RequiredBlockIndex ?? 0);
@@ -392,8 +392,8 @@ namespace Lib9c.Tests.Action
         public void Execute_With_Hammer(bool oldStart)
         {
             var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Id == 10110000);
-            int startLevel = 0;
-            int materialCount = 1;
+            var startLevel = 0;
+            var materialCount = 1;
             var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, startLevel);
             equipment.Exp = (long)row.Exp!;
             var hammerId = ItemEnhancement.HammerIds.First();
@@ -404,7 +404,7 @@ namespace Lib9c.Tests.Action
                 equipment.Exp = 0L;
             }
 
-            _avatarState.inventory.AddItem(equipment, count: 1);
+            _avatarState.inventory.AddItem(equipment, 1);
 
             var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(r =>
                 r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
@@ -419,7 +419,7 @@ namespace Lib9c.Tests.Action
                     (Equipment)ItemFactory.CreateItemUsable(row, materialId, 0, 0);
                 material.Exp = (long)row.Exp!;
                 expectedExpIncrement += material.Exp;
-                _avatarState.inventory.AddItem(material, count: 1);
+                _avatarState.inventory.AddItem(material, 1);
             }
 
             _avatarState.inventory.AddItem(
@@ -484,7 +484,7 @@ namespace Lib9c.Tests.Action
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             var expectedTargetRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(
                 r => r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
-                     r.Level == level);
+                    r.Level == level);
             var expectedCost = (expectedTargetRow?.Cost ?? 0) - (startRow?.Cost ?? 0);
             var expectedBlockIndex =
                 (expectedTargetRow?.RequiredBlockIndex ?? 0) - (startRow?.RequiredBlockIndex ?? 0);

@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState)
+            var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .ApplyGuild(appliedMemberAddress, guildAddress);
 

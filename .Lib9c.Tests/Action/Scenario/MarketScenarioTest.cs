@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             agentState3.avatarAddresses[0] = _buyerAvatarAddress;
 
-            _currency = Currency.Legacy("NCG", 2, minters: null);
+            _currency = Currency.Legacy("NCG", 2, null);
             _initialState = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(_currency).Serialize())
                 .SetLegacyState(Addresses.GameConfig, _gameConfigState.Serialize())
@@ -364,8 +364,8 @@ namespace Lib9c.Tests.Action.Scenario
             _sellerAvatarState.inventory.AddItem(equipment);
             Assert.Equal(2, _sellerAvatarState.inventory.Items.Count);
             _initialState = _initialState
-                    .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState)
-                    .MintAsset(context, _sellerAvatarAddress, 1 * RuneHelper.StakeRune);
+                .SetAvatarState(_sellerAvatarAddress, _sellerAvatarState)
+                .MintAsset(context, _sellerAvatarAddress, 1 * RuneHelper.StakeRune);
             var action = new RegisterProduct
             {
                 AvatarAddress = _sellerAvatarAddress,
@@ -417,7 +417,7 @@ namespace Lib9c.Tests.Action.Scenario
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
             Guid assetProductId = default;
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
 
@@ -448,7 +448,7 @@ namespace Lib9c.Tests.Action.Scenario
                 }
             }
 
-            Assert.All(new[] { nonFungibleProductId, fungibleProductId, assetProductId }, productId => Assert.NotEqual(default, productId));
+            Assert.All(new[] { nonFungibleProductId, fungibleProductId, assetProductId, }, productId => Assert.NotEqual(default, productId));
             var action2 = new CancelProductRegistration
             {
                 AvatarAddress = _sellerAvatarAddress,
@@ -591,7 +591,7 @@ namespace Lib9c.Tests.Action.Scenario
             Guid fungibleProductId = default;
             Guid nonFungibleProductId = default;
             Guid assetProductId = default;
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
                 switch (i)
@@ -911,9 +911,9 @@ namespace Lib9c.Tests.Action.Scenario
             var productsStateAddress = ProductsState.DeriveAddress(_sellerAvatarAddress);
             var productsState = new ProductsState((List)nextState.GetLegacyState(productsStateAddress));
             foreach (var product in productsState.ProductIds.Select(Product.DeriveAddress)
-                         .Select(productAddress =>
-                             ProductFactory.DeserializeProduct(
-                                 (List)nextState.GetLegacyState(productAddress))))
+                .Select(productAddress =>
+                    ProductFactory.DeserializeProduct(
+                        (List)nextState.GetLegacyState(productAddress))))
             {
                 switch (product)
                 {
@@ -1242,7 +1242,7 @@ namespace Lib9c.Tests.Action.Scenario
             MaterialItemSheet materialItemSheet)
         {
             var avatarState = state.GetAvatarState(avatarAddress);
-            var price = 1 * Currency.Legacy("NCG", 2, minters: null);
+            var price = 1 * Currency.Legacy("NCG", 2, null);
             var registerInfos = expectedReward.Select(expected =>
             {
                 materialItemSheet.TryGetValue(expected.id, out var materialRow);
@@ -1264,7 +1264,7 @@ namespace Lib9c.Tests.Action.Scenario
                 };
             });
 
-            for (int i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
+            for (var i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, worldSheet, worldUnlockSheet);
             }
@@ -1294,7 +1294,7 @@ namespace Lib9c.Tests.Action.Scenario
             {
                 new object[]
                 {
-                    new[] { 20160000, 20160001, 20160002 },
+                    new[] { 20160000, 20160001, 20160002, },
                     new[]
                     {
                         (600401, 14),
@@ -1303,7 +1303,7 @@ namespace Lib9c.Tests.Action.Scenario
                 },
                 new object[]
                 {
-                    new[] { 20160000, 20260000, 20360000, 20460000, 20560000 },
+                    new[] { 20160000, 20260000, 20360000, 20460000, 20560000, },
                     new[]
                     {
                         (600401, 10),
@@ -1312,7 +1312,7 @@ namespace Lib9c.Tests.Action.Scenario
                 },
                 new object[]
                 {
-                    new[] { 20160003, 20260000, 20360001, 20360001, 20460001 },
+                    new[] { 20160003, 20260000, 20360001, 20360001, 20460001, },
                     new[]
                     {
                         (600401, 24), // 10 + 2 + 4 + 4 + 4 = 24
@@ -1321,7 +1321,7 @@ namespace Lib9c.Tests.Action.Scenario
                 },
                 new object[]
                 {
-                    new[] { 20560003, 20560003, 20560003 },
+                    new[] { 20560003, 20560003, 20560003, },
                     new[]
                     {
                         (600401, 30), // 10 + 10 + 10 = 30
@@ -1330,9 +1330,15 @@ namespace Lib9c.Tests.Action.Scenario
                 },
             };
 
-            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
 
-            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
         }
     }
 }

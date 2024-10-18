@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Model
                 new List<StatModifier>(),
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet
-                );
+            );
             Assert.False(simulator.Log.IsClear);
         }
 

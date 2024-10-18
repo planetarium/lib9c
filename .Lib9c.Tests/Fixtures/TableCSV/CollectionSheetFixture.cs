@@ -1,8 +1,9 @@
-namespace Lib9c.Tests.Fixtures.TableCSV;
-
-public static class CollectionSheetFixture
+namespace Lib9c.Tests.Fixtures.TableCSV
 {
-    public const string Default = @"id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,level3,skill3,item_id4,count4,level4,skill4,item_id5,count5,level5,skill5,item_id6,count6,level6,skill6,stat_type1,modify_type1,modify_value1,stat_type2,modify_type2,modify_value2,stat_type3,modify_type3,modify_value3
+    public static class CollectionSheetFixture
+    {
+        public const string Default =
+            @"id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,level3,skill3,item_id4,count4,level4,skill4,item_id5,count5,level5,skill5,item_id6,count6,level6,skill6,stat_type1,modify_type1,modify_value1,stat_type2,modify_type2,modify_value2,stat_type3,modify_type3,modify_value3
 1,10110000,1,0,TRUE,10211000,1,0,TRUE,10510000,1,0,TRUE,10120000,1,0,TRUE,10222000,1,0,TRUE,,,,,HP,Add,310,ATK,Add,110,DEF,Add,22
 2,10110000,1,0,TRUE,10114000,1,0,TRUE,,,,,,,,,,,,,,,,,ATK,Add,177,,,,,,
 3,10120000,1,0,TRUE,10124000,1,0,TRUE,,,,,,,,,,,,,,,,,ATK,Add,125,,,,,,
@@ -576,4 +577,5 @@ public static class CollectionSheetFixture
 1000178,600203,20,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Percentage,4,,,,,,
 1000179,600203,20,,FALSE,,,,,,,,,,,,,,,,,,,,,HIT,Percentage,4,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,,,CDMG,Percentage,10,,,,,,";
+    }
 }

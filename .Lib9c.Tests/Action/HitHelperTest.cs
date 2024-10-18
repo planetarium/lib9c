@@ -20,9 +20,9 @@ namespace Lib9c.Tests.Action
                     HitHelper.GetHitStep2AdditionalCorrectionMax);
             }
 
-            for (int i = 0; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
-                for (int j = 0; j < 9; j++)
+                for (var j = 0; j < 9; j++)
                 {
                     var legacy = GetHitStep2Legacy(i, j);
                     var current = HitHelper.GetHitStep2(i, j);

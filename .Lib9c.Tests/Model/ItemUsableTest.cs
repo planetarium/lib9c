@@ -20,8 +20,8 @@ namespace Lib9c.Tests.Model
         {
             var row = _tableSheets.EquipmentItemSheet.Values.First();
             var itemUsable = (Equipment)ItemFactory.CreateItemUsable(row, default, 0);
-            var skillIds = new[] { 100001, 100003 };
-            var buffIds = new[] { 200000, 210000 };
+            var skillIds = new[] { 100001, 100003, };
+            var buffIds = new[] { 200000, 210000, };
             for (var index = 0; index < skillIds.Length; index++)
             {
                 var skillId = skillIds[index];

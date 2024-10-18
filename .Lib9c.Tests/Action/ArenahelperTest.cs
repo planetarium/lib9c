@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Action
                             additionalTicketPrice = 40;
                         }
 
-                        var sum = ticketPrice + (additionalTicketPrice * arenaInformation.PurchasedTicketCount);
+                        var sum = ticketPrice + additionalTicketPrice * arenaInformation.PurchasedTicketCount;
                         var major = sum / 100;
                         var miner = sum % 100;
                         var expectedPrice = new FungibleAssetValue(_state.GetGoldCurrency(), major, miner);

@@ -10,16 +10,16 @@ namespace Lib9c.Tests.Model.State
     {
         public static IEnumerable<object[]> Get_Long_MemberData()
         {
-            yield return new object[] { long.MinValue };
-            yield return new object[] { 0L };
-            yield return new object[] { long.MaxValue };
+            yield return new object[] { long.MinValue, };
+            yield return new object[] { 0L, };
+            yield return new object[] { long.MaxValue, };
         }
 
         public static IEnumerable<object[]> Get_BigInteger_MemberData()
         {
-            yield return new object[] { (BigInteger)decimal.MinValue };
-            yield return new object[] { (BigInteger)0 };
-            yield return new object[] { (BigInteger)decimal.MaxValue };
+            yield return new object[] { (BigInteger)decimal.MinValue, };
+            yield return new object[] { (BigInteger)0, };
+            yield return new object[] { (BigInteger)decimal.MaxValue, };
         }
 
         [Fact]

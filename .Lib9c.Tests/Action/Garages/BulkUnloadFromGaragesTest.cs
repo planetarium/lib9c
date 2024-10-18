@@ -76,7 +76,7 @@ namespace Lib9c.Tests.Action.Garages
             var actions = new[]
             {
                 new BulkUnloadFromGarages(),
-                new BulkUnloadFromGarages(new[] { unloadData }),
+                new BulkUnloadFromGarages(new[] { unloadData, }),
             };
 
             foreach (var action in actions)
@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action.Garages
         {
             const long blockIndex = 0L;
             var (states, unloadDataEnumerable) = RegisterPlainValue(_previousStates);
-            var action = new BulkUnloadFromGarages(new[] { unloadDataEnumerable });
+            var action = new BulkUnloadFromGarages(new[] { unloadDataEnumerable, });
             states = action.Execute(new ActionContext
             {
                 Signer = AgentAddress,
@@ -146,7 +146,7 @@ namespace Lib9c.Tests.Action.Garages
                 {
                     var garageAddress = Addresses.GetGarageAddress(AgentAddress, fungibleId);
                     Assert.Equal(0, new FungibleItemGarage(states.GetLegacyState(garageAddress)).Count);
-                    Assert.True(inventory.HasFungibleItem(fungibleId, blockIndex: 0, count));
+                    Assert.True(inventory.HasFungibleItem(fungibleId, 0, count));
                 }
             }
 
@@ -159,9 +159,9 @@ namespace Lib9c.Tests.Action.Garages
             Assert.Equal(blockIndex, mail.blockIndex);
             Assert.Equal(blockIndex, mail.requiredBlockIndex);
             Assert.True(action.UnloadData[0].fungibleAssetValues?.SequenceEqual(mail.FungibleAssetValues!) ??
-                        mail.FungibleAssetValues is null);
+                mail.FungibleAssetValues is null);
             Assert.True(action.UnloadData[0].fungibleIdAndCounts?.SequenceEqual(mail.FungibleIdAndCounts!) ??
-                        mail.FungibleIdAndCounts is null);
+                mail.FungibleIdAndCounts is null);
             Assert.Equal(action.UnloadData[0].memo, mail.Memo);
         }
 
@@ -209,7 +209,7 @@ namespace Lib9c.Tests.Action.Garages
                 .Select(tuple => (fungibleId: tuple.FungibleItem.FungibleId, tuple.count))
                 .ToArray();
 
-            var actionContext = new ActionContext { Signer = Addresses.Admin };
+            var actionContext = new ActionContext { Signer = Addresses.Admin, };
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(AgentAddress);
             foreach (var (_, value) in fungibleAssetValues)
             {

@@ -109,7 +109,7 @@ namespace Lib9c.Tests.Action.Scenario
                 StageId = stageIdToClear,
                 AvatarAddress = _avatarAddress,
                 Costumes = new List<Guid>(),
-                Equipments = new List<Guid> { doomfist.NonFungibleId },
+                Equipments = new List<Guid> { doomfist.NonFungibleId, },
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
             };

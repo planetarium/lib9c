@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Model.Coupons
                 coupon,
                 new Coupon(
                     Guid.Parse("4a09d5d1-d702-45d5-aa6f-44e19bdab42d"),
-                    new List<(int, uint)> { (1, 2U), (3, 4U) }
+                    new List<(int, uint)> { (1, 2U), (3, 4U), }
                 )
             );
             Assert.Equal(

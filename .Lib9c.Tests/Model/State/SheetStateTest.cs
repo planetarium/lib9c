@@ -21,15 +21,15 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void PrintSheetAddresses()
         {
-            Assembly assembly = Assembly.GetAssembly(typeof(ISheet));
+            var assembly = Assembly.GetAssembly(typeof(ISheet));
             Assert.NotNull(assembly);
 
-            IEnumerable<string> sheetNames = assembly.GetTypes()
+            var sheetNames = assembly.GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract && typeof(ISheet).IsAssignableFrom(type))
                 .Select(type => type.Name);
-            foreach (string sheetName in sheetNames)
+            foreach (var sheetName in sheetNames)
             {
-                Address address = Addresses.GetSheetAddress(sheetName);
+                var address = Addresses.GetSheetAddress(sheetName);
                 _testOutputHelper.WriteLine("{0}: {1}", sheetName, address.ToHex());
             }
         }

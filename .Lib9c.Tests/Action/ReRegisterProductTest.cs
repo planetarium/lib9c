@@ -164,7 +164,7 @@ namespace Lib9c.Tests.Action
 
             if (inventoryCount > 1)
             {
-                for (int i = 0; i < inventoryCount; i++)
+                for (var i = 0; i < inventoryCount; i++)
                 {
                     // Different RequiredBlockIndex for divide inventory slot.
                     if (tradableItem is ITradableFungibleItem tradableFungibleItem)
@@ -225,7 +225,7 @@ namespace Lib9c.Tests.Action
             var action = new UpdateSell
             {
                 sellerAvatarAddress = _avatarAddress,
-                updateSellInfos = new[] { updateSellInfo },
+                updateSellInfos = new[] { updateSellInfo, },
             };
 
             var expectedState = action.Execute(new ActionContext
@@ -314,7 +314,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var reRegisterInfos = new List<(IProductInfo, IRegisterInfo)>();
-            for (int i = 0; i < ReRegisterProduct.Capacity + 1; i++)
+            for (var i = 0; i < ReRegisterProduct.Capacity + 1; i++)
             {
                 reRegisterInfos.Add((new ItemProductInfo(), new RegisterInfo()));
             }

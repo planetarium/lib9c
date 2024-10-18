@@ -39,17 +39,17 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (ActivationKey activationKey, PendingActivationState pendingActivation) =
+            (var activationKey, var pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(
                     new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
                     1500000
@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
                 activatedAccountsState: new ActivatedAccountsState(),
                 goldCurrencyState: new GoldCurrencyState(ncg),
                 goldDistributions: goldDistributions,
-                pendingActivationStates: new[] { pendingActivation }
+                pendingActivationStates: new[] { pendingActivation, }
             );
 
             var genesisState = action.Execute(new ActionContext()
@@ -101,17 +101,17 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (ActivationKey activationKey, PendingActivationState pendingActivation) =
+            (var activationKey, var pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(
                     new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
                     1500000
@@ -119,11 +119,11 @@ namespace Lib9c.Tests.Action
                 activatedAccountsState: new ActivatedAccountsState(),
                 goldCurrencyState: new GoldCurrencyState(ncg),
                 goldDistributions: goldDistributions,
-                pendingActivationStates: new[] { pendingActivation },
+                pendingActivationStates: new[] { pendingActivation, },
                 authorizedMinersState: new AuthorizedMinersState(
                     interval: 50,
                     validUntil: 1000,
-                    miners: new[] { default(Address) }
+                    miners: new[] { default(Address), }
                 )
             );
 
@@ -141,7 +141,7 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(50, fetchedState.Interval);
             Assert.Equal(1000, fetchedState.ValidUntil);
-            Assert.Equal(new[] { default(Address) }, fetchedState.Miners);
+            Assert.Equal(new[] { default(Address), }, fetchedState.Miners);
         }
 
         [Fact]
@@ -157,23 +157,23 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (ActivationKey activationKey, PendingActivationState pendingActivation) =
+            (var activationKey, var pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(adminAddress, 1500000),
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty.Add(adminAddress)),
                 goldCurrencyState: new GoldCurrencyState(ncg),
                 goldDistributions: goldDistributions,
-                pendingActivationStates: new[] { pendingActivation }
+                pendingActivationStates: new[] { pendingActivation, }
             );
 
             var genesisState = action.Execute(new ActionContext()
@@ -203,7 +203,7 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
             var creditState = new CreditsState(
                 new[]
@@ -215,11 +215,11 @@ namespace Lib9c.Tests.Action
             );
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(adminAddress, 1500000),
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty.Add(adminAddress)),
                 goldCurrencyState: new GoldCurrencyState(ncg),
@@ -256,22 +256,22 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (ActivationKey activationKey, PendingActivationState pendingActivation) =
+            (var activationKey, var pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: null,
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty),
                 goldCurrencyState: new GoldCurrencyState(ncg),
                 goldDistributions: goldDistributions,
-                pendingActivationStates: new[] { pendingActivation }
+                pendingActivationStates: new[] { pendingActivation, }
             );
 
             var genesisState = action.Execute(new ActionContext()
@@ -301,15 +301,15 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: null,
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty),
                 goldCurrencyState: new GoldCurrencyState(ncg, 0),
@@ -341,21 +341,21 @@ namespace Lib9c.Tests.Action
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var ncg = Currency.Legacy("NCG", 2, minterKey.Address);
 #pragma warning restore CS0618
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
 
             var action = new InitializeStates(
-                rankingState: new RankingState0(),
-                shopState: new ShopState(),
-                tableSheets: _sheets,
-                gameConfigState: gameConfigState,
-                redeemCodeState: new RedeemCodeState(redeemCodeListSheet),
+                new RankingState0(),
+                new ShopState(),
+                _sheets,
+                gameConfigState,
+                new RedeemCodeState(redeemCodeListSheet),
                 adminAddressState: new AdminState(adminAddress, 1500000),
                 activatedAccountsState: new ActivatedAccountsState(ImmutableHashSet<Address>.Empty.Add(adminAddress)),
                 goldCurrencyState: new GoldCurrencyState(ncg),
                 goldDistributions: goldDistributions,
                 pendingActivationStates: Array.Empty<PendingActivationState>(),
-                assetMinters: new[] { default(Address) }.ToHashSet()
+                assetMinters: new[] { default(Address), }.ToHashSet()
             );
 
             var genesisState = action.Execute(new ActionContext()

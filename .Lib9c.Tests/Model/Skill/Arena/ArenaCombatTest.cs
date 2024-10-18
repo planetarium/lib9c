@@ -44,8 +44,8 @@ namespace Lib9c.Tests.Model.Skill.Arena
         }
 
         [Theory]
-        [InlineData(700009, new[] { 600001 })]
-        [InlineData(700009, new[] { 600001, 704000 })]
+        [InlineData(700009, new[] { 600001, })]
+        [InlineData(700009, new[] { 600001, 704000, })]
         public void DispelOnUse(int dispelId, int[] debuffIdList)
         {
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();

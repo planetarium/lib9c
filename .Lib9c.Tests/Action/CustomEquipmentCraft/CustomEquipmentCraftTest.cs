@@ -364,7 +364,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             state = state.SetRelationship(_avatarAddress, initialRelationship);
 
             var gameConfig = state.GetGameConfigState();
-            var materialList = new List<int> { ScrollItemId, CircleItemId };
+            var materialList = new List<int> { ScrollItemId, CircleItemId, };
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
@@ -388,8 +388,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     var circleRow = materialSheet[CircleItemId];
                     var circle = ItemFactory.CreateMaterial(circleRow);
                     var circleAmount = (decimal)recipeRow.CircleAmount
-                                       * relationshipRow.CostMultiplier
-                                       / 10000m;
+                        * relationshipRow.CostMultiplier
+                        / 10000m;
                     if (craftData.IconId != 0)
                     {
                         circleAmount *=
@@ -520,7 +520,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         Assert.Contains(craftData.IconId, iconIdList);
                     }
 
-                    var cp = equipment.StatsMap.GetAdditionalStats(ignoreZero: true).Sum(
+                    var cp = equipment.StatsMap.GetAdditionalStats(true).Sum(
                         stat => CPHelper.GetStatCP(stat.statType, stat.additionalValue)
                     );
                     // CP > Stat convert can drop sub-1 values and vise versa.

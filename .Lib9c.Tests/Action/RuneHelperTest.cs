@@ -7,8 +7,7 @@ namespace Lib9c.Tests.Action
 
     public class RuneHelperTest
     {
-        private readonly TableSheets _tableSheets =
-            new TableSheets(TableSheetsImporter.ImportSheets());
+        private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
 
         [Theory]
         [InlineData(50, 0)]

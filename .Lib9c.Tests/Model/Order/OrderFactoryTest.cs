@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Model.Order
         public void Create(ItemType itemType, long blockIndex, Order.OrderType orderType)
         {
             ITradableItem tradableItem;
-            Guid itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
             switch (itemType)
             {
                 case ItemType.Consumable:
@@ -61,9 +61,9 @@ namespace Lib9c.Tests.Model.Order
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
+            var orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
 
-            Order order = OrderFactory.Create(
+            var order = OrderFactory.Create(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 orderId,
@@ -138,7 +138,7 @@ namespace Lib9c.Tests.Model.Order
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            Order order = OrderFactory.Create(
+            var order = OrderFactory.Create(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 default,
@@ -149,8 +149,8 @@ namespace Lib9c.Tests.Model.Order
                 1
             );
 
-            Dictionary serialized = (Dictionary)order.Serialize();
-            Order deserialized = OrderFactory.Deserialize(serialized);
+            var serialized = (Dictionary)order.Serialize();
+            var deserialized = OrderFactory.Deserialize(serialized);
             Assert.Equal(order, deserialized);
             Assert.Equal(orderType, deserialized.Type);
         }

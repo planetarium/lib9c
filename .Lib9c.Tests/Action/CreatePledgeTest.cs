@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Action
             var agentAddress = new PrivateKey().Address;
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var context = new ActionContext();
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.Admin, adminState.Serialize())
                 .MintAsset(context, patronAddress, 4 * 500 * mead);
 
@@ -44,7 +44,7 @@ namespace Lib9c.Tests.Action
             {
                 (agentAddress, pledgeAddress),
             };
-            for (int i = 0; i < 499; i++)
+            for (var i = 0; i < 499; i++)
             {
                 var address = new PrivateKey().Address;
                 agentAddresses.Add((address, address.GetPledgeAddress()));
@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
                 AgentAddresses = agentAddresses,
             };
 
-            Address singer = admin ? adminAddress : poolAddress;
+            var singer = admin ? adminAddress : poolAddress;
             var actionContext = new ActionContext
             {
                 Signer = singer,

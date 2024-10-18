@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            IWorld previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new CombinationConsumable
             {

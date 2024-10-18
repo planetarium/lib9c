@@ -15,7 +15,7 @@ namespace Lib9c.Tests
         public void Load()
         {
             var codec = new Codec();
-            Text barValue = (Text)"bar";
+            var barValue = (Text)"bar";
             IFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
             {
                 { "/foo", new MockFileData($"{{\"foo\": \"{Convert.ToBase64String(codec.Encode(barValue))}\"}}") },

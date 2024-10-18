@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 default);
 
             _player = new Player(
-                level: 1,
+                1,
                 _tableSheets.CharacterSheet,
                 _tableSheets.CharacterLevelSheet,
                 _tableSheets.EquipmentItemSetEffectSheet);
@@ -138,9 +138,9 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         }
 
         [Theory]
-        [InlineData(700009, 50, 3, new[] { 600001 }, new[] { 600001, 707000 })]
-        [InlineData(700009, 100, 0, new[] { 600001 }, new[] { 707000 })]
-        [InlineData(700010, 100, 0, new[] { 600001, 704000 }, new[] { 707000 })]
+        [InlineData(700009, 50, 3, new[] { 600001, }, new[] { 600001, 707000, })]
+        [InlineData(700009, 100, 0, new[] { 600001, }, new[] { 707000, })]
+        [InlineData(700010, 100, 0, new[] { 600001, 704000, }, new[] { 707000, })]
         public void DispelOnUse(int dispelId, int chance, int seed, int[] debuffIdList, int[] expectedResult)
         {
             var simulator = new TestSimulator(
@@ -163,13 +163,13 @@ namespace Lib9c.Tests.Model.Skill.Adventure
 
             // Use Dispel
             var actionBuffRow = new ActionBuffSheet.Row();
-            actionBuffRow.Set(new[] { "707000", "707000", chance.ToString(), "0", "Self", "Dispel", "Normal", "0" });
+            actionBuffRow.Set(new[] { "707000", "707000", chance.ToString(), "0", "Self", "Dispel", "Normal", "0", });
             var dispelRow = _tableSheets.SkillSheet.Values.First(bf => bf.Id == dispelId);
             var dispel = new BuffSkill(dispelRow, 0, chance, 0, StatType.NONE);
             var battleStatus = dispel.Use(
                 _player,
                 0,
-                new List<Buff>() { new Dispel(actionBuffRow) },
+                new List<Buff>() { new Dispel(actionBuffRow), },
                 false);
             Assert.NotNull(battleStatus);
             // Remove Bleed, add Dispel

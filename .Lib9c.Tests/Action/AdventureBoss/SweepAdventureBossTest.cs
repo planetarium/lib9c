@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "wanted"
+            "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "Tester"
+            "Tester"
         );
 
         private static readonly AgentState TesterState = new (TesterAddress)
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             state = Stake(state, WantedAddress);
-            var sheets = state.GetSheets(sheetTypes: new[]
+            var sheets = state.GetSheets(new[]
             {
                 typeof(MaterialItemSheet),
             });

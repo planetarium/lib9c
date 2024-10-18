@@ -105,7 +105,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize())
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
-            foreach ((string key, string value) in sheets)
+            foreach ((var key, var value) in sheets)
             {
                 _state = _state
                     .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
@@ -190,7 +190,7 @@ namespace Lib9c.Tests.Action
             avatarState = AddMedal(avatarState, row, 80);
 
             var context = new ActionContext();
-            var state = (balance == "0")
+            var state = balance == "0"
                 ? _state
                 : _state.MintAsset(context, _signer, FungibleAssetValue.Parse(_currency, balance));
 
@@ -499,8 +499,8 @@ namespace Lib9c.Tests.Action
         [InlineData(1, 10002, 1, 30001, typeof(DuplicatedRuneSlotIndexException))]
         public void ExecuteDuplicatedException(int slotIndex, int runeId, int slotIndex2, int runeId2, Type exception)
         {
-            int championshipId = 1;
-            int round = 1;
+            var championshipId = 1;
+            var round = 1;
             var arenaSheet = _state.GetSheet<ArenaSheet>();
             if (!arenaSheet.TryGetValue(championshipId, out var row))
             {
@@ -538,8 +538,8 @@ namespace Lib9c.Tests.Action
                 equipments = equipments,
                 runeInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(slotIndex, runeId),
-                    new RuneSlotInfo(slotIndex2, runeId2),
+                    new (slotIndex, runeId),
+                    new (slotIndex2, runeId2),
                 },
                 avatarAddress = _avatarAddress,
             };

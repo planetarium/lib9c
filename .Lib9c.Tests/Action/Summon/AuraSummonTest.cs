@@ -122,11 +122,11 @@ namespace Lib9c.Tests.Action.Summon
 
         [Theory]
         // success first group
-        [InlineData("V1", 10001, 1, 800201, 1, 1, new[] { 10610000 }, null)]
-        [InlineData("V1", 10001, 2, 800201, 2, 54, new[] { 10620000, 10630000 }, null)]
+        [InlineData("V1", 10001, 1, 800201, 1, 1, new[] { 10610000, }, null)]
+        [InlineData("V1", 10001, 2, 800201, 2, 54, new[] { 10620000, 10630000, }, null)]
         // success second group
-        [InlineData("V1", 10002, 1, 600201, 1, 1, new[] { 10620001 }, null)]
-        [InlineData("V1", 10002, 2, 600201, 2, 4, new[] { 10620001, 10630001 }, null)]
+        [InlineData("V1", 10002, 1, 600201, 1, 1, new[] { 10620001, }, null)]
+        [InlineData("V1", 10002, 2, 600201, 2, 4, new[] { 10620001, 10630001, }, null)]
         // Nine plus zero
         [InlineData(
             "V1",
@@ -135,7 +135,7 @@ namespace Lib9c.Tests.Action.Summon
             800201,
             9,
             0,
-            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
+            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000, },
             null
         )]
         [InlineData(
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action.Summon
             600201,
             9,
             0,
-            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10630001 },
+            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10630001, },
             null
         )]
         // Ten plus one
@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Action.Summon
             800201,
             10,
             0,
-            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
+            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000, },
             null
         )]
         [InlineData(
@@ -166,7 +166,7 @@ namespace Lib9c.Tests.Action.Summon
             600201,
             10,
             0,
-            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001 },
+            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001, },
             null
         )]
         // fail by invalid group
@@ -177,7 +177,7 @@ namespace Lib9c.Tests.Action.Summon
         // Fail by exceeding summon limit
         [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
         // 15 recipes
-        [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
+        [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006, }, null)]
         // 15 recipes
         [InlineData("V3", 20001, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
         public void Execute(
@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Action.Summon
                 "V1" => SummonSheetFixtures.V1.Serialize(),
                 "V2" => SummonSheetFixtures.V2.Serialize(),
                 "V3" => SummonSheetFixtures.V3.Serialize(),
-                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null),
             };
             state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(SummonSheet)), sheet);
 

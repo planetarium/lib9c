@@ -12,26 +12,26 @@ namespace Lib9c.Tests.TableData
 
     public class CollectionSheetTest
     {
-        private readonly TableSheets _tableSheets =
-            new TableSheets(TableSheetsImporter.ImportSheets());
+        private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
 
         [Fact]
         public void Set()
         {
-            const string csv = @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,option_count,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value\n
+            const string csv =
+                @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,option_count,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value\n
 1,1,2,3,,,,,,,,,,,,,,,,,,,,,,ATK,Add,1,,,,,,\n
 2,2,3,4,,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,1,,,,,,\n";
             var sheet = new CollectionSheet();
             sheet.Set(csv);
 
-            for (int i = 0; i < 1; i++)
+            for (var i = 0; i < 1; i++)
             {
                 var id = i + 1;
                 var row = sheet[id];
                 Assert.Equal(id, row.Id);
                 Assert.Equal(id, row.Materials.Count);
                 Assert.Equal(id, row.StatModifiers.Count);
-                for (int j = 0; j < id; j++)
+                for (var j = 0; j < id; j++)
                 {
                     var material = row.Materials[j];
                     Assert.Equal(id, material.ItemId);
@@ -60,14 +60,14 @@ namespace Lib9c.Tests.TableData
         {
             var row = _tableSheets.ItemSheet.Values.First(r => r.ItemType == ItemType.Equipment);
             var item = (Equipment)ItemFactory.CreateItem(row, new TestRandom());
-            for (int i = 0; i < skillCount; i++)
+            for (var i = 0; i < skillCount; i++)
             {
                 var skillRow = _tableSheets.SkillSheet.Values.First();
                 var skill = SkillFactory.Get(skillRow, 0, 0, 0, StatType.NONE);
                 item.Skills.Add(skill);
             }
 
-            for (int i = 0; i < buffSkillCount; i++)
+            for (var i = 0; i < buffSkillCount; i++)
             {
                 var skillId = _tableSheets.SkillBuffSheet.Values.First().SkillId;
                 var buffSkillRow = _tableSheets.SkillSheet[skillId];
@@ -108,7 +108,7 @@ namespace Lib9c.Tests.TableData
         {
             var collectionMaterials = new List<CollectionSheet.RequiredMaterial>();
             var materials = new List<ICollectionMaterial>();
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 var itemId = i + 1;
                 var count = 3 - i;

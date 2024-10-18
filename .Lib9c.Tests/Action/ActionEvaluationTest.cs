@@ -171,7 +171,7 @@ namespace Lib9c.Tests.Action
                             new PrivateKey().Address,
                             ItemSubType.Armor,
 #pragma warning disable CS0618
-                    // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+                            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
                             Currency.Legacy("NCG", 2, null) * 10
 #pragma warning restore CS0618
                         ),
@@ -181,7 +181,7 @@ namespace Lib9c.Tests.Action
                 CombinationConsumable _ => new CombinationConsumable(),
                 CombinationEquipment _ => new CombinationEquipment(),
                 CreatePendingActivation _ => new CreatePendingActivation(
-                    new PendingActivationState(new byte[] { 0x0 }, new PrivateKey().PublicKey)
+                    new PendingActivationState(new byte[] { 0x0, }, new PrivateKey().PublicKey)
                 ),
                 DailyReward _ => new DailyReward(),
                 InitializeStates _ => new InitializeStates
@@ -437,7 +437,7 @@ namespace Lib9c.Tests.Action
                 CreatePledge _ => new CreatePledge
                 {
                     PatronAddress = new PrivateKey().Address,
-                    AgentAddresses = new[] { (new PrivateKey().Address, new PrivateKey().Address) },
+                    AgentAddresses = new[] { (new PrivateKey().Address, new PrivateKey().Address), },
                     Mead = 4,
                 },
                 TransferAssets _ => new TransferAssets(_sender, new List<(Address, FungibleAssetValue)>
@@ -476,7 +476,7 @@ namespace Lib9c.Tests.Action
                         ),
                     },
                 },
-                RetrieveAvatarAssets _ => new RetrieveAvatarAssets(avatarAddress: new PrivateKey().Address),
+                RetrieveAvatarAssets _ => new RetrieveAvatarAssets(new PrivateKey().Address),
                 MigrateFee _ => new MigrateFee
                 {
                     TransferData = new List<(Address sender, Address recipient, BigInteger amount)>

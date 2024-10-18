@@ -35,9 +35,9 @@ namespace Lib9c.Tests.Action.Scenario
             _sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(_sheets);
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
+            var addresses = new[] { _avatarAddress, _enemyAvatarAddress, };
             _initialState = new World(MockUtil.MockModernWorldState);
-            for (int i = 0; i < addresses.Length; i++)
+            for (var i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];
                 agentState.avatarAddresses.Add(i, avatarAddress);
@@ -49,11 +49,11 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 _initialState = _initialState.SetAvatarState(
-                    avatarAddress, avatarState, true, true, true, true)
+                        avatarAddress, avatarState, true, true, true, true)
                     .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
-            var currency = Currency.Legacy("NCG", 2, minters: null);
+            var currency = Currency.Legacy("NCG", 2, null);
             _initialState = _initialState
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(
@@ -169,14 +169,14 @@ namespace Lib9c.Tests.Action.Scenario
                 prevStates = prevStates.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
+            var addresses = new[] { _avatarAddress, _enemyAvatarAddress, };
             foreach (var avatarAddress in addresses)
             {
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
                 Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
 
                 var avatarState = prevStates.GetAvatarState(avatarAddress);
-                for (int i = 0; i < 50; i++)
+                for (var i = 0; i < 50; i++)
                 {
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }

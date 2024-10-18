@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Action.Coupons
             Assert.Equal(emptySet, new RewardSet(new (int, uint)[0]));
 
             var set = new RewardSet(ImmutableDictionary<int, uint>.Empty.Add(1, 2).Add(3, 4));
-            Assert.Equal(set, new RewardSet(new List<(int, uint)> { (1, 2U), (3, 4U) }));
+            Assert.Equal(set, new RewardSet(new List<(int, uint)> { (1, 2U), (3, 4U), }));
             Assert.Equal(set, new RewardSet((1, 2U), (3, 4U)));
         }
 

@@ -15,12 +15,12 @@ namespace Lib9c.Tests.Action
             var formatter = new BinaryFormatter();
             using var ms = new MemoryStream();
             var pending = new PendingActivationState(
-                new byte[] { 0x00 },
+                new byte[] { 0x00, },
                 new PrivateKey().PublicKey
             );
             var exc = new InvalidSignatureException(
                 pending,
-                new byte[] { 0x01 }
+                new byte[] { 0x01, }
             );
 
             formatter.Serialize(ms, exc);

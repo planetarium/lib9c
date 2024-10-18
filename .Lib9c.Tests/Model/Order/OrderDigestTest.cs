@@ -35,7 +35,7 @@ namespace Lib9c.Tests.Model.Order
                 100,
                 1
             );
-            Dictionary serialized = (Dictionary)digest.Serialize();
+            var serialized = (Dictionary)digest.Serialize();
             Assert.Equal(digest, new OrderDigest(serialized));
         }
 
@@ -55,12 +55,12 @@ namespace Lib9c.Tests.Model.Order
                 1
             );
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            using MemoryStream ms = new MemoryStream();
+            var formatter = new BinaryFormatter();
+            using var ms = new MemoryStream();
             formatter.Serialize(ms, digest);
             ms.Seek(0, SeekOrigin.Begin);
 
-            OrderDigest deserialized = (OrderDigest)formatter.Deserialize(ms);
+            var deserialized = (OrderDigest)formatter.Deserialize(ms);
             Assert.Equal(digest, deserialized);
         }
     }

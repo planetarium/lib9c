@@ -27,7 +27,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Dictionary<string, string> Sheets =
             TableSheetsImporter.ImportSheets();
 
-        private static readonly TableSheets TableSheets = new TableSheets(Sheets);
+        private static readonly TableSheets TableSheets = new (Sheets);
 #pragma warning disable CS0618
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1419
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "wanted"
+            "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -66,7 +66,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "Tester"
+            "Tester"
         );
 
         private static readonly AgentState TesterState = new (TesterAddress)
@@ -170,7 +170,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             );
 
             state = Stake(state, WantedAddress);
-            var sheets = state.GetSheets(sheetTypes: new[]
+            var sheets = state.GetSheets(new[]
             {
                 typeof(MaterialItemSheet),
                 typeof(RuneSheet),
@@ -227,7 +227,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var expectedFavRewards = new List<(int, int)>();
             var firstRewardSheet = TableSheets.AdventureBossFloorFirstRewardSheet;
             foreach (var row in firstRewardSheet.Values.Where(r =>
-                         r.FloorId > floor && r.FloorId <= expectedFloor))
+                r.FloorId > floor && r.FloorId <= expectedFloor))
             {
                 foreach (var reward in row.Rewards)
                 {

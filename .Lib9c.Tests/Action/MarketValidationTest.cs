@@ -16,9 +16,9 @@ namespace Lib9c.Tests.Action
 
     public class MarketValidationTest
     {
-        private static readonly Address AgentAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
-        private static readonly Address AvatarAddress = new Address("47d082a115c63e7b58b1532d20e631538eafadde");
-        private static readonly Currency Gold = Currency.Legacy("NCG", 2, minters: null);
+        private static readonly Address AgentAddress = new ("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
+        private static readonly Address AvatarAddress = new ("47d082a115c63e7b58b1532d20e631538eafadde");
+        private static readonly Currency Gold = Currency.Legacy("NCG", 2, null);
 
         private readonly IWorld _initialState;
 
@@ -207,7 +207,7 @@ namespace Lib9c.Tests.Action
                     var registerProduct = new RegisterProduct
                     {
                         AvatarAddress = AvatarAddress,
-                        RegisterInfos = new[] { registerInfo },
+                        RegisterInfos = new[] { registerInfo, },
                     };
                     Assert.Throws(validateMember.Exc, () => registerProduct.Execute(actionContext));
 
@@ -241,7 +241,7 @@ namespace Lib9c.Tests.Action
                     var buyProduct = new BuyProduct
                     {
                         AvatarAddress = AvatarAddress,
-                        ProductInfos = new[] { productInfo },
+                        ProductInfos = new[] { productInfo, },
                     };
 
                     Assert.Throws(validateMember.Exc, () => buyProduct.Execute(actionContext));
@@ -249,7 +249,7 @@ namespace Lib9c.Tests.Action
                     var cancelRegister = new CancelProductRegistration
                     {
                         AvatarAddress = AvatarAddress,
-                        ProductInfos = new List<IProductInfo>() { productInfo },
+                        ProductInfos = new List<IProductInfo>() { productInfo, },
                     };
 
                     Assert.Throws(validateMember.Exc, () => cancelRegister.Execute(actionContext));

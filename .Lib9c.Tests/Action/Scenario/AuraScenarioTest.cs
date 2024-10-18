@@ -50,9 +50,9 @@ namespace Lib9c.Tests.Action.Scenario
             var skillRow = _tableSheets.SkillSheet[210011];
             var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
             _aura.Skills.Add(skill);
-            var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
+            var addresses = new[] { _avatarAddress, _enemyAvatarAddress, };
             _initialState = new World(MockUtil.MockModernWorldState);
-            for (int i = 0; i < addresses.Length; i++)
+            for (var i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];
                 agentState.avatarAddresses.Add(i, avatarAddress);
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action.Scenario
                     .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
-            _currency = Currency.Legacy("NCG", 2, minters: null);
+            _currency = Currency.Legacy("NCG", 2, null);
             _initialState = _initialState
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(
@@ -136,7 +136,7 @@ namespace Lib9c.Tests.Action.Scenario
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
             Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
@@ -169,14 +169,14 @@ namespace Lib9c.Tests.Action.Scenario
         public void Arena()
         {
             var prevState = _initialState;
-            var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
+            var addresses = new[] { _avatarAddress, _enemyAvatarAddress, };
             foreach (var avatarAddress in addresses)
             {
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
                 Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
 
                 var avatarState = prevState.GetAvatarState(avatarAddress);
-                for (int i = 0; i < 50; i++)
+                for (var i = 0; i < 50; i++)
                 {
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
@@ -266,7 +266,7 @@ namespace Lib9c.Tests.Action.Scenario
                 // Check player, enemy equip aura
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
-                    ArenaCharacter character = spawn.Character;
+                    var character = spawn.Character;
                     Assert.Equal(400, character.HIT);
                     Assert.Equal(11, character.CRI);
                 }
@@ -311,7 +311,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.NotNull(aura);
             Assert.IsAssignableFrom<Equipment>(aura);
             Assert.Null(aura as ITradableItem);
-            for (int i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
+            for (var i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
@@ -351,7 +351,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert_ItemSlot(state, itemSlotStateAddress);
             var player = new Player(avatarState, _tableSheets.GetSimulatorSheets());
             var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
-            int diffLevel = equippedPlayer.Level - player.Level;
+            var diffLevel = equippedPlayer.Level - player.Level;
             var row = _tableSheets.CharacterSheet[player.CharacterId];
             Assert.Null(player.aura);
             Assert.NotNull(equippedPlayer.aura);

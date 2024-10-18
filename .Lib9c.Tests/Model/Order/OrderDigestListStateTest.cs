@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Model.Order
                 orderId,
                 tradableId,
 #pragma warning disable CS0618
-            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+                // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
                 Currency.Legacy("NCG", 2, null) * 1,
 #pragma warning restore CS0618
                 2,
@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Model.Order
             orderDigestList.Add(_orderDigest);
 
             Assert.Single(orderDigestList.OrderDigestList);
-            OrderDigest orderDigest = orderDigestList.OrderDigestList.First();
+            var orderDigest = orderDigestList.OrderDigestList.First();
             Assert.Equal(_orderDigest, orderDigest);
 
             Assert.Throws<DuplicateOrderIdException>(() => orderDigestList.Add(_orderDigest));
@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Model.Order
             var orderDigestList = new OrderDigestListState(address);
             orderDigestList.Add(_orderDigest);
 
-            Dictionary serialized = (Dictionary)orderDigestList.Serialize();
+            var serialized = (Dictionary)orderDigestList.Serialize();
             Assert.Equal(orderDigestList, new OrderDigestListState(serialized));
         }
 

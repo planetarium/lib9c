@@ -16,7 +16,7 @@ namespace Lib9c.Tests.Model.State
         public RankingMapStateTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _agentAddress = default(Address);
+            _agentAddress = default;
             _rankingMapAddress = _agentAddress.Derive("ranking_map");
         }
 

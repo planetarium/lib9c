@@ -357,7 +357,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.EquipmentItemSetEffectSheet);
 
             Assert.Empty(player.eventMap);
-            for (int i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var requiredExp = _tableSheets.CharacterLevelSheet[level].ExpNeed;
                 player.GetExp3(requiredExp);
@@ -404,7 +404,7 @@ namespace Lib9c.Tests.Model
             Assert.Empty(player.eventMap);
             Assert.Empty(simulator.Log);
             long requiredExp = 0;
-            for (int i = player.Level; i < nextLevel; ++i)
+            for (var i = player.Level; i < nextLevel; ++i)
             {
                 requiredExp += _tableSheets.CharacterLevelSheet[i + 1].ExpNeed;
             }
@@ -503,7 +503,7 @@ namespace Lib9c.Tests.Model
             var log = simulator.Log;
             var logCount = log.Count;
             var logList = log.ToList();
-            for (int i = 0; i < logCount; i++)
+            for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
                 if (currLog is Tick)
@@ -555,7 +555,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.BuffLinkSheet
             );
             var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
-            skill.CustomField = new SkillCustomField { BuffDuration = 2 };
+            skill.CustomField = new SkillCustomField { BuffDuration = 2, };
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
             player.Targets.Add(enemy);
@@ -576,7 +576,7 @@ namespace Lib9c.Tests.Model
             var log = simulator.Log;
             var logCount = log.Count;
             var logList = log.ToList();
-            for (int i = 0; i < logCount; i++)
+            for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
                 if (currLog is Tick)
@@ -657,7 +657,7 @@ namespace Lib9c.Tests.Model
             // force add buff 'Vampiric'
             // 705000 is ActionBuff id of Vampiric
             var vampiric = (Vampiric)BuffFactory.GetCustomActionBuff(
-                new SkillCustomField { BuffDuration = duration, BuffValue = percent }, actionBuffSheet[705000]);
+                new SkillCustomField { BuffDuration = duration, BuffValue = percent, }, actionBuffSheet[705000]);
             player.AddBuff(vampiric);
             var row = actionBuffSheet.Values.First();
             var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
@@ -668,7 +668,7 @@ namespace Lib9c.Tests.Model
             var log = simulator.Log;
             var logCount = log.Count;
             var logList = log.ToList();
-            for (int i = 0; i < logCount; i++)
+            for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
                 if (currLog is Nekoyume.Model.BattleStatus.NormalAttack)
@@ -791,7 +791,7 @@ namespace Lib9c.Tests.Model
                 }
             }
 
-            StatBuff stageAtkBuff = statBuffs.Single(s => s.GetModifier().StatType == StatType.ATK);
+            var stageAtkBuff = statBuffs.Single(s => s.GetModifier().StatType == StatType.ATK);
             var stageModifier = stageAtkBuff.GetModifier();
             var stageBuffAtk = (long)stageModifier.GetModifiedValue(collectionLayerAtk);
             // StageBuffStats 1101(50%)
@@ -979,7 +979,7 @@ namespace Lib9c.Tests.Model
             // increase def by ice shield buff
             Assert.True(character.DEF > def);
             enemy.InitAI();
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 enemy.Tick();
                 e = log.Last();

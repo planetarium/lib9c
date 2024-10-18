@@ -73,7 +73,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet,
                 copyCharacter,
-                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+                gameConfigState.ShatterStrikeMaxDamage
             );
             var player = new Player(avatarState, simulator);
             var enemyRow = _tableSheets.CharacterSheet.OrderedList
@@ -153,7 +153,7 @@ shatter_strike_max_damage,1";
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet,
                 copyCharacter,
-                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+                gameConfigState.ShatterStrikeMaxDamage
             );
             var player = new Player(avatarState, simulator);
             var enemyRow = _tableSheets.CharacterSheet.OrderedList

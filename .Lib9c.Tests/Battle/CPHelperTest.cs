@@ -27,7 +27,7 @@ namespace Lib9c.Tests
         [InlineData(10)]
         public void GetStatsCp(int level)
         {
-            CharacterSheet.Row row =
+            var row =
                 _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
             var characterStats = new CharacterStats(row, level);
             Assert.Equal(CPHelper.GetStatsCP(row.ToStats(level), level), CPHelper.GetStatsCP(characterStats, level));
@@ -36,24 +36,24 @@ namespace Lib9c.Tests
         [Fact]
         public void TotalCP()
         {
-            CharacterSheet.Row row =
+            var row =
                 _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
-            CostumeStatSheet costumeStatSheet = _tableSheets.CostumeStatSheet;
+            var costumeStatSheet = _tableSheets.CostumeStatSheet;
             var random = new TestRandom();
             // Arrange
-            List<Equipment> equipments = new List<Equipment>(); // Populate your equipments
+            var equipments = new List<Equipment>(); // Populate your equipments
             var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.EquipmentItemSheet.Values.First(), random);
             var skill = SkillFactory.Get(_tableSheets.SkillSheet.Values.First(), 0, 0, 0, StatType.HP);
             equipment.Skills.Add(skill);
             equipments.Add(equipment);
-            List<Costume> costumes = new List<Costume>(); // Populate your costumes
+            var costumes = new List<Costume>(); // Populate your costumes
             var costume = ItemFactory.CreateCostume(_tableSheets.CostumeItemSheet.Values.First(), random.GenerateRandomGuid());
             costumes.Add(costume);
-            List<RuneOptionSheet.Row.RuneOptionInfo> runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>(); // Populate your runeOptions
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>(); // Populate your runeOptions
             var runeOptionInfo = _tableSheets.RuneOptionSheet.Values.First().LevelOptionMap[1];
             runeOptions.Add(runeOptionInfo);
-            int level = 1;    // A level for testing
-            List<StatModifier> collectionStatModifiers = new List<StatModifier>(); // Populate your collectionStatModifiers
+            var level = 1; // A level for testing
+            var collectionStatModifiers = new List<StatModifier>(); // Populate your collectionStatModifiers
             var result = CPHelper.TotalCP(equipments, costumes, runeOptions, level, row, costumeStatSheet, collectionStatModifiers, 0);
             var characterStats = new CharacterStats(row, level);
             characterStats.SetEquipments(equipments, new EquipmentItemSetEffectSheet());

@@ -82,7 +82,7 @@ namespace Lib9c.Tests
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
-            CharacterSheet.Row row =
+            var row =
                 _tableSheets.CharacterSheet[GameConfig.DefaultAvatarCharacterId];
             var expectedHp = (new CharacterStats(row, myDigest.Level).HP + 100) * simulator.HpModifier;
 
@@ -302,7 +302,7 @@ namespace Lib9c.Tests
             var runes = new AllRuneState(10003, 89);
 
             var runeSlotState = new RuneSlotState(BattleType.Arena);
-            runeSlotState.UpdateSlot(new List<RuneSlotInfo> { new (3, 10003) }, _tableSheets.RuneListSheet);
+            runeSlotState.UpdateSlot(new List<RuneSlotInfo> { new (3, 10003), }, _tableSheets.RuneListSheet);
 
             const int runeBonus = 896; // Base stat 1777 * 50.424% bonus from RuneLevelBonusSheet
             const int finalAtk = totalAtk + runeBonus;
@@ -376,8 +376,8 @@ namespace Lib9c.Tests
             avatarState2.inventory.AddItem(equipment);
             var runeSlotState = new RuneSlotState(BattleType.Arena);
             var simulator = new ArenaSimulator(random);
-            var myDigest = new ArenaPlayerDigest(avatarState1, new List<Costume>(), new List<Equipment> { equipment }, runes, runeSlotState);
-            var enemyDigest = new ArenaPlayerDigest(avatarState2, new List<Costume>(), new List<Equipment> { equipment }, runes, runeSlotState);
+            var myDigest = new ArenaPlayerDigest(avatarState1, new List<Costume>(), new List<Equipment> { equipment, }, runes, runeSlotState);
+            var enemyDigest = new ArenaPlayerDigest(avatarState2, new List<Costume>(), new List<Equipment> { equipment, }, runes, runeSlotState);
             var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
             var log = simulator.Simulate(myDigest, enemyDigest, arenaSheets, new List<StatModifier>(), new List<StatModifier>(), _tableSheets.DeBuffLimitSheet, _tableSheets.BuffLinkSheet, true);
             var spawns = log.Events.OfType<ArenaSpawnCharacter>().ToList();
