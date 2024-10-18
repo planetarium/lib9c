@@ -127,7 +127,7 @@ namespace Lib9c.Tests.Action
                 },
                 null
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = _prevState,
@@ -149,8 +149,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_FungibleItemValue()
         {
-            IWorld prevState = GenerateAvatar(_prevState, out Address avatarAddress);
-            HashDigest<SHA256> fungibleId = HashDigest<SHA256>.FromString(
+            var prevState = GenerateAvatar(_prevState, out var avatarAddress);
+            var fungibleId = HashDigest<SHA256>.FromString(
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
 
@@ -165,7 +165,7 @@ namespace Lib9c.Tests.Action
                 },
                 "Execute_With_FungibleItemValue"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -180,15 +180,15 @@ namespace Lib9c.Tests.Action
             var avatarState = nextState.GetAvatarState(avatarAddress);
             Assert.Single(avatarState.mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
-            Assert.Equal(new[] { (fungibleId, 42) }, mail.FungibleIdAndCounts);
+            Assert.Equal(new[] { (fungibleId, 42), }, mail.FungibleIdAndCounts);
             Assert.Equal(action.Memo, mail.Memo);
         }
 
         [Fact]
         public void Execute_With_Mixed()
         {
-            IWorld prevState = GenerateAvatar(_prevState, out Address avatarAddress);
-            HashDigest<SHA256> fungibleId = HashDigest<SHA256>.FromString(
+            var prevState = GenerateAvatar(_prevState, out var avatarAddress);
+            var fungibleId = HashDigest<SHA256>.FromString(
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
 
@@ -209,7 +209,7 @@ namespace Lib9c.Tests.Action
                 },
                 "Execute_With_FungibleItemValue"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -224,8 +224,8 @@ namespace Lib9c.Tests.Action
             var avatarState = nextState.GetAvatarState(avatarAddress);
             Assert.Single(avatarState.mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
-            Assert.Equal(new[] { (fungibleId, 42) }, mail.FungibleIdAndCounts);
-            Assert.Equal(new[] { (avatarAddress, Currencies.StakeRune * 123) }, mail.FungibleAssetValues);
+            Assert.Equal(new[] { (fungibleId, 42), }, mail.FungibleIdAndCounts);
+            Assert.Equal(new[] { (avatarAddress, Currencies.StakeRune * 123), }, mail.FungibleAssetValues);
             Assert.Equal(action.Memo, mail.Memo);
         }
 
@@ -252,7 +252,7 @@ namespace Lib9c.Tests.Action
             );
 
             // Allows minters
-            foreach (Address m in _minters)
+            foreach (var m in _minters)
             {
                 _ = action.Execute(
                     new ActionContext()
@@ -285,8 +285,8 @@ namespace Lib9c.Tests.Action
             action.LoadPlainValue(a);
             var address = action.MintSpecs!.First().Recipient;
             var avatarAddress = action.MintSpecs.Last().Recipient;
-            IWorld prevState = GenerateAvatar(_prevState, address, avatarAddress);
-            IWorld nextState = action.Execute(
+            var prevState = GenerateAvatar(_prevState, address, avatarAddress);
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,

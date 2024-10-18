@@ -16,7 +16,7 @@ namespace Lib9c.Tests.Action
 
     public class RetrieveAvatarAssetsTest
     {
-        private static readonly Address _minter = new Address(
+        private static readonly Address _minter = new (
             new byte[]
             {
                 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
@@ -106,9 +106,9 @@ namespace Lib9c.Tests.Action
             var avatarAddress = agentState.avatarAddresses[0];
             var prevState = _state.MintAsset(
                 new ActionContext
-            {
-                Signer = _minter,
-            },
+                {
+                    Signer = _minter,
+                },
                 avatarAddress,
                 1 * _currency
             );

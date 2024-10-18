@@ -126,7 +126,7 @@ namespace Lib9c.Tests.Action
                 TableCsv = "New Value",
             };
 
-            PolicyExpiredException exc1 = Assert.Throws<PolicyExpiredException>(() =>
+            var exc1 = Assert.Throws<PolicyExpiredException>(() =>
             {
                 action.Execute(
                     new ActionContext()
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Action
             });
             Assert.Equal(101, exc1.BlockIndex);
 
-            PermissionDeniedException exc2 = Assert.Throws<PermissionDeniedException>(() =>
+            var exc2 = Assert.Throws<PermissionDeniedException>(() =>
             {
                 action.Execute(
                     new ActionContext()

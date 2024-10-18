@@ -34,13 +34,13 @@ namespace Lib9c.Tests.TestHelper
             IStore store = null,
             IStateStore stateStore = null)
         {
-            PrivateKey adminPrivateKey = new PrivateKey();
+            var adminPrivateKey = new PrivateKey();
 
             policy ??= new BlockPolicy();
             stagePolicy ??= new VolatileStagePolicy();
             store ??= new DefaultStore(null);
             stateStore ??= new TrieStateStore(new DefaultKeyValueStore(null));
-            Block genesis = MakeGenesisBlock(adminPrivateKey.Address, ImmutableHashSet<Address>.Empty);
+            var genesis = MakeGenesisBlock(adminPrivateKey.Address, ImmutableHashSet<Address>.Empty);
             return BlockChain.Create(
                 policy,
                 stagePolicy,
@@ -49,10 +49,10 @@ namespace Lib9c.Tests.TestHelper
                 genesis,
                 new ActionEvaluator(
                     policy.PolicyActionsRegistry,
-                    stateStore: stateStore,
-                    actionTypeLoader: new NCActionLoader()
+                    stateStore,
+                    new NCActionLoader()
                 ),
-                renderers: blockRenderers);
+                blockRenderers);
         }
 
         public static Block MakeGenesisBlock(
@@ -63,13 +63,13 @@ namespace Lib9c.Tests.TestHelper
             PendingActivationState[] pendingActivations = null
         )
         {
-            PrivateKey privateKey = new PrivateKey();
+            var privateKey = new PrivateKey();
             if (pendingActivations is null)
             {
-                var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
-                (ActivationKey activationKey, PendingActivationState pendingActivation) =
+                var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
+                (var activationKey, var pendingActivation) =
                     ActivationKey.Create(privateKey, nonce);
-                pendingActivations = new[] { pendingActivation };
+                pendingActivations = new[] { pendingActivation, };
             }
 
             var sheets = TableSheetsImporter.ImportSheets();
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.TestHelper
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
                 .MintAsset(context, GoldCurrencyState.Address, initCurrencyGold)
-                .TransferAsset(context, Addresses.GoldCurrency, agentAddress,  agentCurrencyGold);
+                .TransferAsset(context, Addresses.GoldCurrency, agentAddress, agentCurrencyGold);
 
             var action = new CreateTestbed
             {

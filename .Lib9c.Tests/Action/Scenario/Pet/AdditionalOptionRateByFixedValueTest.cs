@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             Assert.NotNull(recipe);
 
             // Get Materials and stages
-            List<EquipmentItemSubRecipeSheet.MaterialInfo> materialList =
+            var materialList =
                 recipe.GetAllMaterials(
                     _tableSheets.EquipmentItemSubRecipeSheetV2, CraftType.Premium
                 ).ToList();

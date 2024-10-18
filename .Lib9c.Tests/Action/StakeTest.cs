@@ -194,7 +194,7 @@ namespace Lib9c.Tests.Action
             if (balance > 0)
             {
                 previousState = _initialState.MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     _agentAddr,
                     _ncg * balance);
             }
@@ -234,12 +234,12 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
+                stakeStateAddr,
+                previousStartedBlockIndex);
             Assert.True(stakeState.IsClaimable(blockIndex));
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
@@ -267,11 +267,11 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeStateV2(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex);
+                new Contract(_stakePolicySheet),
+                previousStartedBlockIndex);
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
@@ -302,14 +302,14 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
+                stakeStateAddr,
+                previousStartedBlockIndex);
             Assert.False(stakeState.IsCancellable(blockIndex));
             stakeState.Claim(blockIndex);
             Assert.False(stakeState.IsClaimable(blockIndex));
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
@@ -340,12 +340,12 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeStateV2(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex);
+                new Contract(_stakePolicySheet),
+                previousStartedBlockIndex,
+                blockIndex);
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
@@ -365,7 +365,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Success_When_Staking_State_Null(long amount)
         {
             var previousState = _initialState.MintAsset(
-                new ActionContext { Signer = Addresses.Admin },
+                new ActionContext { Signer = Addresses.Admin, },
                 _agentAddr,
                 _ncg * amount);
             Execute(
@@ -402,8 +402,8 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
+                stakeStateAddr,
+                previousStartedBlockIndex);
             stakeState.Claim(blockIndex);
             var previousState = _initialState
                 .MintAsset(
@@ -451,9 +451,9 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeStateV2(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex);
+                new Contract(_stakePolicySheet),
+                previousStartedBlockIndex,
+                blockIndex);
             var previousState = _initialState
                 .MintAsset(
                     new ActionContext(),

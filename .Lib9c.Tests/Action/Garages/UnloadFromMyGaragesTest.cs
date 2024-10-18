@@ -108,9 +108,9 @@ namespace Lib9c.Tests.Action.Garages
                 des.LoadPlainValue(ser);
                 Assert.Equal(action.RecipientAvatarAddr, des.RecipientAvatarAddr);
                 Assert.True(action.FungibleAssetValues?.SequenceEqual(des.FungibleAssetValues!) ??
-                            des.FungibleAssetValues is null);
+                    des.FungibleAssetValues is null);
                 Assert.True(action.FungibleIdAndCounts?.SequenceEqual(des.FungibleIdAndCounts!) ??
-                            des.FungibleIdAndCounts is null);
+                    des.FungibleIdAndCounts is null);
                 Assert.Equal(action.Memo, des.Memo);
 
                 Assert.Equal(ser, des.PlainValue);
@@ -144,7 +144,7 @@ namespace Lib9c.Tests.Action.Garages
                 memo);
             var garageBalanceAddr =
                 Addresses.GetGarageBalanceAddress(AgentAddr);
-            if (action.FungibleAssetValues is { })
+            if (action.FungibleAssetValues is not null)
             {
                 foreach (var (balanceAddr, value) in action.FungibleAssetValues)
                 {
@@ -158,7 +158,7 @@ namespace Lib9c.Tests.Action.Garages
             }
 
             var avatarState = nextStates.GetAvatarState(_recipientAvatarAddr);
-            if (action.FungibleIdAndCounts is { })
+            if (action.FungibleIdAndCounts is not null)
             {
                 foreach (var (fungibleId, count) in action.FungibleIdAndCounts)
                 {
@@ -168,7 +168,7 @@ namespace Lib9c.Tests.Action.Garages
                     Assert.Equal(0, new FungibleItemGarage(nextStates.GetLegacyState(garageAddr)).Count);
                     Assert.True(avatarState.inventory.HasFungibleItem(
                         fungibleId,
-                        blockIndex: 0,
+                        0,
                         count));
                 }
             }
@@ -179,9 +179,9 @@ namespace Lib9c.Tests.Action.Garages
             Assert.Equal(blockIndex, mail.blockIndex);
             Assert.Equal(blockIndex, mail.requiredBlockIndex);
             Assert.True(action.FungibleAssetValues?.SequenceEqual(mail.FungibleAssetValues!) ??
-                        mail.FungibleAssetValues is null);
+                mail.FungibleAssetValues is null);
             Assert.True(action.FungibleIdAndCounts?.SequenceEqual(mail.FungibleIdAndCounts!) ??
-                        mail.FungibleIdAndCounts is null);
+                mail.FungibleIdAndCounts is null);
             Assert.Equal(action.Memo, mail.Memo);
         }
 
@@ -229,7 +229,7 @@ namespace Lib9c.Tests.Action.Garages
         {
             // Agent's FungibleAssetValue garages does not have enough balance.
             var previousStatesWithEmptyBalances = _previousStates;
-            var actionContext = new ActionContext { Signer = AgentAddr };
+            var actionContext = new ActionContext { Signer = AgentAddr, };
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(AgentAddr);
             foreach (var (_, value) in _fungibleAssetValues)
             {
@@ -340,7 +340,7 @@ namespace Lib9c.Tests.Action.Garages
             GetSuccessfulPreviousStatesWithPlainValue()
         {
             var previousStates = _initialStatesWithAvatarStateV2;
-            var actionContext = new ActionContext { Signer = Addresses.Admin };
+            var actionContext = new ActionContext { Signer = Addresses.Admin, };
             var garageBalanceAddress = Addresses.GetGarageBalanceAddress(AgentAddr);
             var fungibleAssetValues = GetFungibleAssetValues(
                 AgentAddr,

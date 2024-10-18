@@ -225,22 +225,22 @@ namespace Lib9c.Tests.Action.Coupons
             actual.LoadPlainValue(Dictionary.Empty
                 .Add("type_id", "transfer_coupons")
                 .Add("values", new Bencodex.Types.Dictionary(
-                    ImmutableDictionary<string, IValue>.Empty
-                        .Add(
-                            "couponsPerRecipient",
-                            Bencodex.Types.Dictionary.Empty
-                                .Add(
-                                    (Bencodex.Types.Binary)CouponsFixture.AgentAddress1.ByteArray,
-                                    Bencodex.Types.List.Empty
-                                .Add(CouponsFixture.Guid1.ToByteArray()))
-                                .Add(
-                                    (Bencodex.Types.Binary)CouponsFixture.AgentAddress2.ByteArray,
-                                    Bencodex.Types.List.Empty
-                                        .Add(CouponsFixture.Guid2.ToByteArray())
-                                        .Add(CouponsFixture.Guid3.ToByteArray()))
-                                .Add(
-                                    (Bencodex.Types.Binary)CouponsFixture.AgentAddress3.ByteArray,
-                                    Bencodex.Types.List.Empty)))
+                        ImmutableDictionary<string, IValue>.Empty
+                            .Add(
+                                "couponsPerRecipient",
+                                Bencodex.Types.Dictionary.Empty
+                                    .Add(
+                                        (Bencodex.Types.Binary)CouponsFixture.AgentAddress1.ByteArray,
+                                        Bencodex.Types.List.Empty
+                                            .Add(CouponsFixture.Guid1.ToByteArray()))
+                                    .Add(
+                                        (Bencodex.Types.Binary)CouponsFixture.AgentAddress2.ByteArray,
+                                        Bencodex.Types.List.Empty
+                                            .Add(CouponsFixture.Guid2.ToByteArray())
+                                            .Add(CouponsFixture.Guid3.ToByteArray()))
+                                    .Add(
+                                        (Bencodex.Types.Binary)CouponsFixture.AgentAddress3.ByteArray,
+                                        Bencodex.Types.List.Empty)))
                     .SetItem("id", new Guid("AE3FA099-B97C-480F-9E3A-4E1FEF1EA783").Serialize())));
             Assert.Equal(expected.CouponsPerRecipient, actual.CouponsPerRecipient);
         }

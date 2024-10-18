@@ -70,7 +70,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_WhenThereIsMonsterCollection()
         {
-            Address monsterCollectionAddress =
+            var monsterCollectionAddress =
                 MonsterCollectionState.DeriveAddress(_signerAddress, 0);
             var agentState = new AgentState(_signerAddress)
             {
@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_WhenClaimableExisting()
         {
-            Address stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
+            var stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
             var context = new ActionContext();
             var states = _initialState
                 .SetLegacyState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Action
             }));
 
             // Same (since 4611070)
-            if (states.TryGetStakeState(_signerAddress, out StakeState stakeState))
+            if (states.TryGetStakeState(_signerAddress, out var stakeState))
             {
                 states = states.SetLegacyState(
                     stakeState.address,
@@ -180,7 +180,7 @@ namespace Lib9c.Tests.Action
                 _currency * 100,
                 states.GetBalance(StakeState.DeriveAddress(_signerAddress), _currency));
 
-            states.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            states.TryGetStakeState(_signerAddress, out var stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -192,7 +192,7 @@ namespace Lib9c.Tests.Action
             Assert.False(achievements.Check(0, 1));
             Assert.False(achievements.Check(1, 0));
 
-            StakeState producedStakeState = new StakeState(
+            var producedStakeState = new StakeState(
                 stakeState.address,
                 stakeState.StartedBlockIndex,
                 // Produce a situation that it already received rewards.
@@ -224,7 +224,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = 0,
             });
 
-            states.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            states.TryGetStakeState(_signerAddress, out var stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);

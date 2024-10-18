@@ -36,6 +36,7 @@ namespace Lib9c.Tests.Action.Garages
         private readonly FungibleAssetValue _cost;
         private readonly IWorld _previousStates;
         private readonly IFungibleItem[] _fungibleItems;
+
         private readonly int[] _nonTradableIds = new[]
         {
             600201,
@@ -111,10 +112,10 @@ namespace Lib9c.Tests.Action.Garages
                 var des = new LoadIntoMyGarages();
                 des.LoadPlainValue(ser);
                 Assert.True(action.FungibleAssetValues?.SequenceEqual(des.FungibleAssetValues!) ??
-                            des.FungibleAssetValues is null);
+                    des.FungibleAssetValues is null);
                 Assert.Equal(action.AvatarAddr, des.AvatarAddr);
                 Assert.True(action.FungibleIdAndCounts?.SequenceEqual(des.FungibleIdAndCounts!) ??
-                            des.FungibleIdAndCounts is null);
+                    des.FungibleIdAndCounts is null);
                 Assert.Equal(action.Memo, des.Memo);
                 Assert.Equal(ser, des.PlainValue);
 
@@ -151,7 +152,7 @@ namespace Lib9c.Tests.Action.Garages
                 nextStates.GetBalance(Addresses.GarageWallet, Currencies.Garage));
             var garageBalanceAddr =
                 Addresses.GetGarageBalanceAddress(AgentAddr);
-            if (action.FungibleAssetValues is { })
+            if (action.FungibleAssetValues is not null)
             {
                 foreach (var (balanceAddr, value) in action.FungibleAssetValues)
                 {
@@ -176,7 +177,7 @@ namespace Lib9c.Tests.Action.Garages
             {
                 Assert.False(inventory.HasFungibleItem(
                     fungibleId,
-                    blockIndex: 0,
+                    0,
                     1));
                 var garageAddr = Addresses.GetGarageAddress(
                     AgentAddr,
@@ -266,7 +267,7 @@ namespace Lib9c.Tests.Action.Garages
             // Balance does not enough to pay cost.
             var balance = _previousStates.GetBalance(AgentAddr, Currencies.Garage);
             var previousStatesWithNotEnoughCost = _previousStates.BurnAsset(
-                new ActionContext { Signer = AgentAddr },
+                new ActionContext { Signer = AgentAddr, },
                 AgentAddr,
                 balance);
             Assert.Throws<InsufficientBalanceException>(() => Execute(
@@ -283,7 +284,7 @@ namespace Lib9c.Tests.Action.Garages
             foreach (var (balanceAddr, value) in _fungibleAssetValues)
             {
                 previousStatesWithEmptyBalances = previousStatesWithEmptyBalances.BurnAsset(
-                    new ActionContext { Signer = AgentAddr },
+                    new ActionContext { Signer = AgentAddr, },
                     balanceAddr,
                     value);
             }
@@ -319,8 +320,8 @@ namespace Lib9c.Tests.Action.Garages
             {
                 avatarState.inventory.RemoveTradableFungibleItem(
                     fungibleId,
-                    requiredBlockIndex: null,
-                    blockIndex: 0,
+                    null,
+                    0,
                     count - 1);
             }
 
@@ -408,7 +409,7 @@ namespace Lib9c.Tests.Action.Garages
                 .Select(objects => (FungibleAssetValue)objects[0])
                 .Where(fav =>
                     (tableSheets?.LoadIntoMyGaragesCostSheet.HasCost(fav.Currency.Ticker) ??
-                     true) &&
+                        true) &&
                     fav.Sign > 0)
                 .Select(fav =>
                 {
@@ -433,7 +434,7 @@ namespace Lib9c.Tests.Action.Garages
                 AgentAddr,
                 _avatarAddress,
                 _tableSheets);
-            var actionContext = new ActionContext { Signer = Addresses.Admin };
+            var actionContext = new ActionContext { Signer = Addresses.Admin, };
             foreach (var (balanceAddr, value) in fungibleAssetValues)
             {
                 if (value.Currency.Equals(_ncg))
@@ -471,7 +472,7 @@ namespace Lib9c.Tests.Action.Garages
                 fungibleItemAndCounts
                     .Select(tuple => (tuple.fungibleItem.FungibleId, tuple.count)));
             previousStates = previousStates.MintAsset(
-                new ActionContext { Signer = AgentAddr },
+                new ActionContext { Signer = AgentAddr, },
                 AgentAddr,
                 garageCost);
             return (

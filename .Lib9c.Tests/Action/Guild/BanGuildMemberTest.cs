@@ -191,7 +191,7 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState)
+            var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .ApplyGuild(agentAddress, guildAddress);
             Assert.True(world.TryGetGuildApplication(agentAddress, out _));

@@ -122,14 +122,14 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            IWorld prevState = _prevState;
+            var prevState = _prevState;
 
             var action = new BurnAsset(
                 _signer,
                 Currencies.Crystal * 42,
                 "42"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -147,8 +147,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_AvatarAddress()
         {
-            IWorld prevState = _prevState;
-            Address avatarAddress = _signer.Derive(
+            var prevState = _prevState;
+            var avatarAddress = _signer.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     CreateAvatar.DeriveFormat,
@@ -161,7 +161,7 @@ namespace Lib9c.Tests.Action
                 Currencies.DailyRewardRune * 10,
                 "10"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -179,7 +179,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_InsufficientBalanceException()
         {
-            IWorld prevState = _prevState;
+            var prevState = _prevState;
 
             var action = new BurnAsset(
                 _signer,
@@ -202,7 +202,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_InvalidActionFieldException()
         {
-            IWorld prevState = _prevState;
+            var prevState = _prevState;
 
             var action = new BurnAsset(
                 default, // Wrong address

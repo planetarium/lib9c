@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            IWorld newWorld = action.Execute(new ActionContext
+            var newWorld = action.Execute(new ActionContext
             {
                 PreviousState = world,
                 Signer = caller,

@@ -168,8 +168,8 @@ namespace Lib9c.Tests.Action
                 eventScheduleId,
                 eventDungeonId,
                 eventDungeonStageId,
-                buyTicketIfNeeded: true,
-                blockIndex: scheduleRow.StartBlockIndex);
+                true,
+                scheduleRow.StartBlockIndex);
             var nextEventDungeonInfoList =
                 (Bencodex.Types.List)nextStates.GetLegacyState(eventDungeonInfoAddr)!;
             Assert.Equal(
@@ -179,7 +179,7 @@ namespace Lib9c.Tests.Action
                 nextStates.TryGetGoldBalance(
                     _agentAddress,
                     _ncgCurrency,
-                    out FungibleAssetValue balance
+                    out var balance
                 )
             );
             Assert.Equal(0 * _ncgCurrency, balance);
@@ -191,13 +191,15 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidActionFieldException_By_EventScheduleId(
             int eventScheduleId,
             int eventDungeonId,
-            int eventDungeonStageId) =>
+            int eventDungeonStageId)
+        {
             Assert.Throws<InvalidActionFieldException>(() =>
                 Execute(
                     _initialStates,
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId));
+        }
 
         [Theory]
         [InlineData(1001, 10010001, 10010001)]
@@ -323,8 +325,8 @@ namespace Lib9c.Tests.Action
                     eventScheduleId,
                     eventDungeonId,
                     eventDungeonStageId,
-                    buyTicketIfNeeded: true,
-                    blockIndex: scheduleRow.StartBlockIndex));
+                    true,
+                    scheduleRow.StartBlockIndex));
         }
 
         [Theory]
@@ -387,9 +389,9 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_V100301()
         {
-            int eventScheduleId = 1001;
-            int eventDungeonId = 10010001;
-            int eventDungeonStageId = 10010001;
+            var eventScheduleId = 1001;
+            var eventDungeonId = 10010001;
+            var eventDungeonStageId = 10010001;
             var csv = $@"id,_name,start_block_index,dungeon_end_block_index,dungeon_tickets_max,dungeon_tickets_reset_interval_block_range,dungeon_ticket_price,dungeon_ticket_additional_price,dungeon_exp_seed_value,recipe_end_block_index
             1001,2022 Summer Event,{ActionObsoleteConfig.V100301ExecutedBlockIndex},{ActionObsoleteConfig.V100301ExecutedBlockIndex + 100},5,7200,5,2,1,5018000";
             _initialStates =
@@ -520,8 +522,8 @@ namespace Lib9c.Tests.Action
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(slotIndex, runeId),
-                    new RuneSlotInfo(slotIndex2, runeId2),
+                    new (slotIndex, runeId),
+                    new (slotIndex2, runeId2),
                 },
                 BuyTicketIfNeeded = buyTicketIfNeeded,
             };

@@ -57,8 +57,8 @@ namespace Lib9c.Tests.Model.Arena
             _avatarState = avatarState;
 
             _arenaAvatarState = new ArenaAvatarState(_avatarState);
-            _arenaAvatarState.UpdateEquipment(new List<Guid>() { weapon.ItemId, armor.ItemId });
-            _arenaAvatarState.UpdateCostumes(new List<Guid>() { costume.ItemId, costume2.ItemId });
+            _arenaAvatarState.UpdateEquipment(new List<Guid>() { weapon.ItemId, armor.ItemId, });
+            _arenaAvatarState.UpdateCostumes(new List<Guid>() { costume.ItemId, costume2.ItemId, });
         }
 
         [Fact]
@@ -98,8 +98,8 @@ namespace Lib9c.Tests.Model.Arena
 
         [Theory]
         [InlineData(new int[] { })]
-        [InlineData(new[] { 10001 })]
-        [InlineData(new[] { 10001, 10002 })]
+        [InlineData(new[] { 10001, })]
+        [InlineData(new[] { 10001, 10002, })]
         public void SerializeWithRune(int[] runeIds)
         {
             var runes = new AllRuneState();

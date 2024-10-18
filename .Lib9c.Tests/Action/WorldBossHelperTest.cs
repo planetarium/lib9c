@@ -13,8 +13,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly Currency _crystalCurrency = CrystalCalculator.CRYSTAL;
 
-        private readonly TableSheets _tableSheets =
-            new TableSheets(TableSheetsImporter.ImportSheets());
+        private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
 
         [Theory]
         [InlineData(10, 10, 0, 10)]

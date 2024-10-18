@@ -17,13 +17,13 @@ namespace Lib9c.Tests.Policy
         public void Constructor()
         {
             IVariableSubPolicy<bool> genericSubPolicy;
-            List<long> indices = Enumerable.Range(0, 100).Select(i => (long)i).ToList();
+            var indices = Enumerable.Range(0, 100).Select(i => (long)i).ToList();
 
-            SpannedSubPolicy<bool> first = new SpannedSubPolicy<bool>(10, null, null, true);
-            SpannedSubPolicy<bool> badSecond = new SpannedSubPolicy<bool>(5, null, index => index % 2 == 0, true);
-            SpannedSubPolicy<bool> second = new SpannedSubPolicy<bool>(20, 50, index => index % 2 == 0, true);
-            SpannedSubPolicy<bool> third = new SpannedSubPolicy<bool>(30, 40, null, true);
-            SpannedSubPolicy<bool> fourth = new SpannedSubPolicy<bool>(50, 80, index => index % 5 == 0, true);
+            var first = new SpannedSubPolicy<bool>(10, null, null, true);
+            var badSecond = new SpannedSubPolicy<bool>(5, null, index => index % 2 == 0, true);
+            var second = new SpannedSubPolicy<bool>(20, 50, index => index % 2 == 0, true);
+            var third = new SpannedSubPolicy<bool>(30, 40, null, true);
+            var fourth = new SpannedSubPolicy<bool>(50, 80, index => index % 5 == 0, true);
 
             // Should be fine.
             genericSubPolicy = ConcreteSubPolicy<bool>
@@ -71,10 +71,10 @@ namespace Lib9c.Tests.Policy
             // Create using AddRange().
             genericSubPolicy = ConcreteSubPolicy<bool>
                 .Create(false)
-                .AddRange(new List<SpannedSubPolicy<bool>>() { first, second, third, fourth }.ToImmutableList());
+                .AddRange(new List<SpannedSubPolicy<bool>>() { first, second, third, fourth, }.ToImmutableList());
             Assert.Throws<ArgumentOutOfRangeException>(() => ConcreteSubPolicy<bool>
                 .Create(false)
-                .AddRange(new List<SpannedSubPolicy<bool>>() { second, first }.ToImmutableList()));
+                .AddRange(new List<SpannedSubPolicy<bool>>() { second, first, }.ToImmutableList()));
 
             // Type check
             Assert.IsType<ConcreteSubPolicy<bool>>(genericSubPolicy);

@@ -130,10 +130,10 @@ namespace Lib9c.Tests.Action
             if (avatarLevel >= GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot)
             {
                 var costumeId = _tableSheets
-                .CostumeItemSheet
-                .Values
-                .First(r => r.ItemSubType == ItemSubType.FullCostume)
-                .Id;
+                    .CostumeItemSheet
+                    .Values
+                    .First(r => r.ItemSubType == ItemSubType.FullCostume)
+                    .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
                     _tableSheets.ItemSheet[costumeId], random);
@@ -167,7 +167,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IWorld state = _initialState
+            var state = _initialState
                 .SetAvatarState(_avatarAddress, previousAvatarState)
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
@@ -301,7 +301,7 @@ namespace Lib9c.Tests.Action
 
             var worldRow = _tableSheets.WorldSheet
                 .FirstOrDefault(row => stageId >= row.Value.StageBegin &&
-                stageId <= row.Value.StageEnd);
+                    stageId <= row.Value.StageEnd);
             var worldId = worldRow.Value.Id;
 
             previousAvatarState.worldInformation = new WorldInformation(
@@ -360,8 +360,8 @@ namespace Lib9c.Tests.Action
             foreach (var row in weaponRows)
             {
                 var equipment = ItemFactory.CreateItem(
-                    _tableSheets.EquipmentItemSheet[row.Id],
-                    new TestRandom())
+                        _tableSheets.EquipmentItemSheet[row.Id],
+                        new TestRandom())
                     as Equipment;
 
                 equipments.Add(equipment.ItemId);
@@ -407,7 +407,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            IWorld state = empty
+            var state = empty
                 ? new World(MockUtil.MockModernWorldState)
                 : _initialState
                     .SetAvatarState(_avatarAddress, _avatarState)
@@ -530,7 +530,7 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            IWorld state = _initialState;
+            var state = _initialState;
             if (unlockedIdsExist)
             {
                 state = state.SetLegacyState(
@@ -765,7 +765,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, previousAvatarState);
 
             var action = new HackAndSlash
             {
@@ -807,7 +807,7 @@ namespace Lib9c.Tests.Action
             };
 
             var state = _initialState;
-            var itemIds = new[] { GameConfig.DefaultAvatarWeaponId, 40100000 };
+            var itemIds = new[] { GameConfig.DefaultAvatarWeaponId, 40100000, };
             foreach (var itemId in itemIds)
             {
                 foreach (var requirementRow in _tableSheets.ItemRequirementSheet.OrderedList
@@ -1036,7 +1036,7 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.Update(mail);
             }
 
-            IWorld state = _initialState
+            var state = _initialState
                 .SetAvatarState(_avatarAddress, previousAvatarState)
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
@@ -1068,8 +1068,8 @@ namespace Lib9c.Tests.Action
 
             var rewardItem = nextAvatarState.inventory.Items.Where(
                 x => x.item.ItemSubType != ItemSubType.FoodMaterial &&
-                     x.item is IFungibleItem ownedFungibleItem &&
-                     x.item.Id != 400000 && x.item.Id != 500000);
+                    x.item is IFungibleItem ownedFungibleItem &&
+                    x.item.Id != 400000 && x.item.Id != 500000);
 
             var worldQuestSheet = state.GetSheet<WorldQuestSheet>();
             var questRow = worldQuestSheet.OrderedList.FirstOrDefault(e => e.Goal == stageId);
@@ -1319,8 +1319,8 @@ namespace Lib9c.Tests.Action
                 .MintAsset(context, stakeStateAddress, requiredGold * _initialState.GetGoldCurrency());
 
             var expectedAp = state.GetActionPoint(_avatarAddress) -
-                             _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
-                                 _tableSheets.StageSheet[stageId].CostAP, playCount, level);
+                _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
+                    _tableSheets.StageSheet[stageId].CostAP, playCount, level);
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -1479,10 +1479,10 @@ namespace Lib9c.Tests.Action
             if (avatarLevel >= GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot)
             {
                 var costumeId = _tableSheets
-                .CostumeItemSheet
-                .Values
-                .First(r => r.ItemSubType == ItemSubType.FullCostume)
-                .Id;
+                    .CostumeItemSheet
+                    .Values
+                    .First(r => r.ItemSubType == ItemSubType.FullCostume)
+                    .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
                     _tableSheets.ItemSheet[costumeId], random);
@@ -1526,8 +1526,8 @@ namespace Lib9c.Tests.Action
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(0, 30001),
-                    new RuneSlotInfo(1, 10002),
+                    new (0, 30001),
+                    new (1, 10002),
                 },
                 WorldId = worldId,
                 StageId = stageId,
@@ -1549,8 +1549,8 @@ namespace Lib9c.Tests.Action
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(0, 10002),
-                    new RuneSlotInfo(1, 30001),
+                    new (0, 10002),
+                    new (1, 30001),
                 },
                 WorldId = worldId,
                 StageId = stageId,
@@ -1593,10 +1593,10 @@ namespace Lib9c.Tests.Action
             if (avatarLevel >= GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot)
             {
                 var costumeId = _tableSheets
-                .CostumeItemSheet
-                .Values
-                .First(r => r.ItemSubType == ItemSubType.FullCostume)
-                .Id;
+                    .CostumeItemSheet
+                    .Values
+                    .First(r => r.ItemSubType == ItemSubType.FullCostume)
+                    .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
                     _tableSheets.ItemSheet[costumeId], random);
@@ -1659,8 +1659,8 @@ namespace Lib9c.Tests.Action
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(slotIndex, runeId),
-                    new RuneSlotInfo(slotIndex2, runeId2),
+                    new (slotIndex, runeId),
+                    new (slotIndex2, runeId2),
                 },
                 WorldId = worldId,
                 StageId = stageId,

@@ -34,8 +34,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(ItemSubType.FullCostume, "9", "006681cA9BD83Bb35cb6675f2cbAE7bD1Fb15F4D")]
         public void DeriveAddress(ItemSubType itemSubType, string nonce, string addressHex)
         {
-            Guid guid = new Guid($"{nonce}9168C5E-CEB2-4faa-B6BF-329BF39FA1E4");
-            Address expectedAddress = new Address(addressHex);
+            var guid = new Guid($"{nonce}9168C5E-CEB2-4faa-B6BF-329BF39FA1E4");
+            var expectedAddress = new Address(addressHex);
             Assert.Equal(expectedAddress, ShardedShopStateV2.DeriveAddress(itemSubType, guid));
         }
 
@@ -55,7 +55,7 @@ namespace Lib9c.Tests.Model.State
             var orderId = new Guid("F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4");
             var orderId2 = new Guid("936DA01F-9ABD-4d9d-80C7-02AF85C822A8");
 
-            ShardedShopStateV2 shardedShopState = new ShardedShopStateV2(default(Address));
+            var shardedShopState = new ShardedShopStateV2(default(Address));
             Assert.Empty(shardedShopState.OrderDigestList);
 
             var orderDigest = new OrderDigest(
@@ -95,8 +95,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            ShardedShopStateV2 shardedShopState = new ShardedShopStateV2(default(Address));
-            for (int i = 0; i < 4; i++)
+            var shardedShopState = new ShardedShopStateV2(default(Address));
+            for (var i = 0; i < 4; i++)
             {
                 var orderDigest = new OrderDigest(
                     default,
@@ -115,8 +115,8 @@ namespace Lib9c.Tests.Model.State
 
             Assert.NotEmpty(shardedShopState.OrderDigestList);
 
-            Dictionary serialized = (Dictionary)shardedShopState.Serialize();
-            ShardedShopStateV2 deserialized = new ShardedShopStateV2(serialized);
+            var serialized = (Dictionary)shardedShopState.Serialize();
+            var deserialized = new ShardedShopStateV2(serialized);
             Assert.NotEmpty(deserialized.OrderDigestList);
             Assert.Equal(shardedShopState.address, deserialized.address);
             Assert.Equal(shardedShopState.OrderDigestList.First(), deserialized.OrderDigestList.First());
@@ -125,8 +125,8 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize_DotNet_Api()
         {
-            ShardedShopStateV2 shardedShopState = new ShardedShopStateV2(default(Address));
-            for (int i = 0; i < 4; i++)
+            var shardedShopState = new ShardedShopStateV2(default(Address));
+            for (var i = 0; i < 4; i++)
             {
                 var orderDigest = new OrderDigest(
                     default,
@@ -179,7 +179,7 @@ namespace Lib9c.Tests.Model.State
             var orderId = new Guid("F9168C5E-CEB2-4faa-B6BF-329BF39FA1E4");
             var orderId2 = new Guid("936DA01F-9ABD-4d9d-80C7-02AF85C822A8");
 
-            ShardedShopStateV2 shardedShopState = new ShardedShopStateV2(default(Address));
+            var shardedShopState = new ShardedShopStateV2(default(Address));
             Assert.Empty(shardedShopState.OrderDigestList);
 
             var order = OrderFactory.Create(

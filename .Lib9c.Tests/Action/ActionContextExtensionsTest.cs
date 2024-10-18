@@ -74,7 +74,7 @@ namespace Lib9c.Tests.Action
                     Currency.Legacy("BTC", 2, new Address("47d082a115c63e7b58b1532d20e631538eafadde"))),
                 false,
             };
-            #pragma warning restore CS0618
+#pragma warning restore CS0618
         }
 
         public static IEnumerable<object[]> IsPreviewNetTestcases()

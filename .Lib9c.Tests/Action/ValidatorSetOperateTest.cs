@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(AdminState.Address, adminState.Serialize());
             var action = ValidatorSetOperate.Append(_validator);
 
-            PermissionDeniedException exc1 = Assert.Throws<PermissionDeniedException>(() =>
+            var exc1 = Assert.Throws<PermissionDeniedException>(() =>
             {
                 action.Execute(
                     new ActionContext()
@@ -87,7 +87,7 @@ namespace Lib9c.Tests.Action
         public void Append_Throws_WhenAlreadyExistValidator()
         {
             var action = ValidatorSetOperate.Append(_validator);
-            InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
+            var exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext
                 {
                     PreviousState = _initialState,
@@ -102,7 +102,7 @@ namespace Lib9c.Tests.Action
         {
             var state = new World(MockUtil.MockModernWorldState);
             var action = ValidatorSetOperate.Update(_validator);
-            InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
+            var exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext
                 {
                     PreviousState = state,
@@ -117,7 +117,7 @@ namespace Lib9c.Tests.Action
         {
             var state = new World(MockUtil.MockModernWorldState);
             var action = ValidatorSetOperate.Remove(_validator);
-            InvalidOperationException exc = Assert.Throws<InvalidOperationException>(() =>
+            var exc = Assert.Throws<InvalidOperationException>(() =>
                 action.Execute(new ActionContext
                 {
                     PreviousState = state,
@@ -130,7 +130,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Append()
         {
-            PublicKey validatorPubKey = new PrivateKey().PublicKey;
+            var validatorPubKey = new PrivateKey().PublicKey;
             var validator = new Validator(validatorPubKey, BigInteger.One);
             var action = ValidatorSetOperate.Append(validator);
             var states = action.Execute(new ActionContext

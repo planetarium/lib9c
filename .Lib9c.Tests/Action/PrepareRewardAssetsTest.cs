@@ -38,7 +38,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             }
 
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(Addresses.Admin, adminState.Serialize());
 
             var action = new PrepareRewardAssets(poolAddress, assets);

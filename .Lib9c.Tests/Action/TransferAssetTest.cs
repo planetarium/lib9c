@@ -22,23 +22,23 @@ namespace Lib9c.Tests.Action
 
     public class TransferAssetTest
     {
-        private static readonly Address _sender = new Address(
+        private static readonly Address _sender = new (
             new byte[]
             {
-                 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
             }
         );
 
-        private static readonly Address _recipient = new Address(new byte[]
+        private static readonly Address _recipient = new (new byte[]
             {
-                 0x02, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x02, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
             }
         );
 
 #pragma warning disable CS0618
-            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
+        // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
         private static readonly Currency _currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
 
@@ -59,11 +59,11 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_sender, _currency * 1000)
                     .SetBalance(_recipient, _currency * 10));
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: _recipient,
-                amount: _currency * 100
+                _sender,
+                _recipient,
+                _currency * 100
             );
-            IWorld nextState = action.Execute(new ActionContext()
+            var nextState = action.Execute(new ActionContext()
             {
                 PreviousState = prevState,
                 Signer = _sender,
@@ -83,9 +83,9 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_recipient, _currency * 10)
                     .SetBalance(_sender, Currencies.Mead * 1));
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: _recipient,
-                amount: _currency * 100
+                _sender,
+                _recipient,
+                _currency * 100
             );
 
             var exc = Assert.Throws<InvalidTransferSignerException>(() =>
@@ -113,9 +113,9 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_sender, Currencies.Mead * 1));
             // Should not allow TransferAsset with same sender and recipient.
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: _sender,
-                amount: _currency * 100
+                _sender,
+                _sender,
+                _currency * 100
             );
 
             var exc = Assert.Throws<InvalidTransferRecipientException>(() =>
@@ -141,12 +141,12 @@ namespace Lib9c.Tests.Action
                     .SetBalance(_recipient, _currency * 10));
             prevState = prevState.SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: _recipient,
-                amount: _currency * 100000
+                _sender,
+                _recipient,
+                _currency * 100000
             );
 
-            InsufficientBalanceException exc = Assert.Throws<InsufficientBalanceException>(() =>
+            var exc = Assert.Throws<InsufficientBalanceException>(() =>
             {
                 action.Execute(new ActionContext()
                 {
@@ -165,21 +165,21 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Execute_Throw_InvalidTransferMinterException(bool minterAsSender)
         {
-            Address minter = minterAsSender ? _sender : _recipient;
+            var minter = minterAsSender ? _sender : _recipient;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currencyBySender = Currency.Legacy("NCG", 2, minter);
 #pragma warning restore CS0618
             var prevState = new World(
-                MockWorldState.CreateModern()
-                    .SetBalance(_sender, currencyBySender * 1000)
-                    .SetBalance(_recipient, currencyBySender * 10)
-                    .SetBalance(_sender, Currencies.Mead * 1))
+                    MockWorldState.CreateModern()
+                        .SetBalance(_sender, currencyBySender * 1000)
+                        .SetBalance(_recipient, currencyBySender * 10)
+                        .SetBalance(_sender, Currencies.Mead * 1))
                 .SetAgentState(_recipient, new AgentState(_recipient));
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: _recipient,
-                amount: currencyBySender * 100
+                _sender,
+                _recipient,
+                currencyBySender * 100
             );
             var ex = Assert.Throws<InvalidTransferMinterException>(() =>
             {
@@ -191,7 +191,7 @@ namespace Lib9c.Tests.Action
                 });
             });
 
-            Assert.Equal(new[] { minter }, ex.Minters);
+            Assert.Equal(new[] { minter, }, ex.Minters);
             Assert.Equal(_sender, ex.Sender);
             Assert.Equal(_recipient, ex.Recipient);
         }
@@ -202,8 +202,8 @@ namespace Lib9c.Tests.Action
         public void PlainValue(string memo)
         {
             var action = new TransferAsset(_sender, _recipient, _currency * 100, memo);
-            Dictionary plainValue = (Dictionary)action.PlainValue;
-            Dictionary values = (Dictionary)plainValue["values"];
+            var plainValue = (Dictionary)action.PlainValue;
+            var values = (Dictionary)plainValue["values"];
 
             Assert.Equal((Text)"transfer_asset5", plainValue["type_id"]);
             Assert.Equal(_sender, values["sender"].ToAddress());
@@ -248,14 +248,14 @@ namespace Lib9c.Tests.Action
         {
             var crystal = CrystalCalculator.CRYSTAL;
             var prevState = new World(
-                MockWorldState.CreateModern()
-                    .SetBalance(_sender, crystal * 1000)
-                    .SetBalance(_sender, Currencies.Mead * 1))
+                    MockWorldState.CreateModern()
+                        .SetBalance(_sender, crystal * 1000)
+                        .SetBalance(_sender, Currencies.Mead * 1))
                 .SetLegacyState(_recipient.Derive(ActivationKey.DeriveKey), true.Serialize());
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: _recipient,
-                amount: 1000 * crystal
+                _sender,
+                _recipient,
+                1000 * crystal
             );
             Assert.Throws<InvalidTransferCurrencyException>(() => action.Execute(new ActionContext()
             {
@@ -289,9 +289,9 @@ namespace Lib9c.Tests.Action
                 MockWorldState.CreateModern()
                     .SetBalance(_sender, _currency * 1000));
             var action = new TransferAsset(
-                sender: _sender,
-                recipient: StakeState.DeriveAddress(_recipient),
-                amount: _currency * 100
+                _sender,
+                StakeState.DeriveAddress(_recipient),
+                _currency * 100
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
             Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()

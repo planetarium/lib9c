@@ -18,7 +18,7 @@ namespace Lib9c.Tests.TableData.WorldAndStage
             sheet.Set(csv);
 
             Assert.Single(sheet);
-            WorldUnlockSheet.Row row = sheet.First;
+            var row = sheet.First;
             Assert.Equal(expected, row!.CRYSTAL);
         }
     }

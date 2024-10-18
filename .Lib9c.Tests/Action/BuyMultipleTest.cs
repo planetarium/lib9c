@@ -282,9 +282,9 @@ namespace Lib9c.Tests.Action
                 {
                     ++buyCount;
                     var purchaseInfo = new BuyMultiple.PurchaseInfo(
-                            shopItem.ProductId,
-                            shopItem.SellerAgentAddress,
-                            shopItem.SellerAvatarAddress);
+                        shopItem.ProductId,
+                        shopItem.SellerAgentAddress,
+                        shopItem.SellerAvatarAddress);
                     itemsToBuy.Add(purchaseInfo);
                 }
             }
@@ -307,7 +307,7 @@ namespace Lib9c.Tests.Action
                     .SetAvatarState(avatarState.address, avatarState);
             }
 
-            IWorld previousStates = _initialState;
+            var previousStates = _initialState;
 
             var buyerGold = previousStates.GetBalance(_buyerAgentAddress, goldCurrency);
             var priceSumData = productDatas
@@ -375,8 +375,8 @@ namespace Lib9c.Tests.Action
         {
             var shopState = _initialState.GetShopState();
             var costume = ItemFactory.CreateCostume(
-                   _tableSheets.CostumeItemSheet.First,
-                   Guid.NewGuid());
+                _tableSheets.CostumeItemSheet.First,
+                Guid.NewGuid());
             shopState.Register(new ShopItem(
                 _buyerAgentAddress,
                 _buyerAvatarAddress,
@@ -559,7 +559,7 @@ namespace Lib9c.Tests.Action
             var sellerAgentAddress = new PrivateKey().Address;
             var (avatarState, agentState) = CreateAvatarState(sellerAgentAddress, sellerAvatarAddress);
 
-            IWorld previousStates = _initialState;
+            var previousStates = _initialState;
             var shopState = previousStates.GetShopState();
 
             var productId = Guid.NewGuid();

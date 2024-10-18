@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(false, false, false, false,  typeof(FailedLoadStateException))]
+        [InlineData(false, false, false, false, typeof(FailedLoadStateException))]
         [InlineData(true, false, false, false, typeof(NotEnoughMaterialException))]
         [InlineData(true, true, false, false, typeof(NotEnoughMaterialException))]
         [InlineData(true, false, true, true, typeof(ActionPointExceededException))]

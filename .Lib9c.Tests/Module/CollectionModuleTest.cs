@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Module
             IWorld states = new World(MockUtil.MockModernWorldState);
             var address = new PrivateKey().Address;
             var address2 = new PrivateKey().Address;
-            var addresses = new[] { address, address2 };
+            var addresses = new[] { address, address2, };
             var result = states.GetCollectionStates(addresses);
             Assert.Empty(result);
 

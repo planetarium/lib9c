@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Model.Item
         public void LevelUp()
         {
             var row = new EquipmentItemSheet.Row();
-            row.Set(new List<string>() { "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000" });
+            row.Set(new List<string>() { "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000", });
             var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, 0);
 
             Assert.Equal(1m, equipment.StatsMap.ATK);

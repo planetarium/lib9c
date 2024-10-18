@@ -954,7 +954,7 @@
         {
             var row = TableSheets.ConsumableItemSheet.Values.First();
             var inventory = new Inventory();
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var consumable = ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 4 + i);
                 inventory.AddItem(consumable);

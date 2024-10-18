@@ -196,7 +196,7 @@ namespace Lib9c.Tests.Action.Summon
                 },
                 new object[]
                 {
-                        20001, 2, 600201, 2, 54, null,
+                    20001, 2, 600201, 2, 54, null,
                 },
                 // Nine plus zero
                 new object[]
@@ -221,17 +221,17 @@ namespace Lib9c.Tests.Action.Summon
                 // fail by invalid group
                 new object[]
                 {
-                    100003, 1, null, 0, 0,  typeof(RowNotInTableException),
+                    100003, 1, null, 0, 0, typeof(RowNotInTableException),
                 },
                 // fail by not enough material
                 new object[]
                 {
-                    20001, 1, 600201, 0, 0,  typeof(NotEnoughMaterialException),
+                    20001, 1, 600201, 0, 0, typeof(NotEnoughMaterialException),
                 },
                 // Fail by exceeding summon limit
                 new object[]
                 {
-                    20001, 11, 600201, 22, 1,  typeof(InvalidSummonCountException),
+                    20001, 11, 600201, 22, 1, typeof(InvalidSummonCountException),
                 },
                 new object[]
                 {
@@ -239,9 +239,15 @@ namespace Lib9c.Tests.Action.Summon
                 },
             };
 
-            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
 
-            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
         }
     }
 }

@@ -161,7 +161,7 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         private Sell GetSell(ITradableItem tradableItem, int count, Guid orderId) =>
-            new Sell
+            new()
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = tradableItem.TradableId,
@@ -177,13 +177,15 @@ namespace Lib9c.Tests.Action.Scenario
                 orderId = orderId,
             };
 
-        private SellCancellation GetSellCancellation(Guid orderId, ITradableItem tradableItem) =>
-            new SellCancellation
+        private SellCancellation GetSellCancellation(Guid orderId, ITradableItem tradableItem)
+        {
+            return new SellCancellation()
             {
                 orderId = orderId,
                 tradableId = tradableItem.TradableId,
                 sellerAvatarAddress = _avatarAddress,
                 itemSubType = tradableItem.ItemSubType,
             };
+        }
     }
 }

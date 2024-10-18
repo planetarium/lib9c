@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 .JoinGuild(guildAddress, guildMasterAddress)
                 .SetLegacyState(pledgeAddress, new List(
                     MeadConfig.PatronAddress.Serialize(),
-                    false.Serialize(),  // Unapproved
+                    false.Serialize(), // Unapproved
                     RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));

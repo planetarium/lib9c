@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Dictionary<string, string> Sheets =
             TableSheetsImporter.ImportSheets();
 
-        private static readonly TableSheets TableSheets = new TableSheets(Sheets);
+        private static readonly TableSheets TableSheets = new (Sheets);
 #pragma warning disable CS0618
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1419
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "wanted"
+            "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "explorer"
+            "explorer"
         );
 
         private static readonly AgentState ExplorerState = new (ExplorerAddress)
@@ -92,7 +92,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "Tester"
+            "Tester"
         );
 
         private static readonly AgentState TesterState = new (TesterAddress)
@@ -454,7 +454,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 10035, 84 },  // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
+                    { 10035, 84 }, // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
@@ -699,9 +699,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 var avatarState = resultState.GetAvatarState(
                     TesterAvatarAddress,
-                    getInventory: true,
-                    getWorldInformation: false,
-                    getQuestList: false
+                    true,
+                    false,
+                    false
                 );
                 Assert.IsType<AdventureBossRaffleWinnerMail>(avatarState.mailBox.First());
             }

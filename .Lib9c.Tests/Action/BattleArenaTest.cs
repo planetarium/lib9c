@@ -871,11 +871,11 @@ namespace Lib9c.Tests.Action
         public void ExecuteDuplicatedException(int slotIndex, int runeId, int slotIndex2, int runeId2, Type exception)
         {
             long nextBlockIndex = 4;
-            int championshipId = 1;
-            int round = 1;
-            int ticket = 1;
-            int arenaInterval = 5;
-            int randomSeed = 3;
+            var championshipId = 1;
+            var round = 1;
+            var ticket = 1;
+            var arenaInterval = 5;
+            var randomSeed = 3;
 
             var context = new ActionContext();
             var previousStates = _initialStates;
@@ -944,8 +944,8 @@ namespace Lib9c.Tests.Action
                 equipments = new List<Guid>(),
                 runeInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(slotIndex, runeId),
-                    new RuneSlotInfo(slotIndex2, runeId2),
+                    new (slotIndex, runeId),
+                    new (slotIndex2, runeId2),
                 },
             };
 
@@ -1080,7 +1080,7 @@ namespace Lib9c.Tests.Action
         [InlineData(-1, typeof(ArgumentException))]
         public void PlainValue(int ticket, Type exc)
         {
-            BattleArena action = new BattleArena
+            var action = new BattleArena
             {
                 myAvatarAddress = _avatar1Address,
                 enemyAvatarAddress = _avatar2Address,
@@ -1091,8 +1091,8 @@ namespace Lib9c.Tests.Action
                 equipments = new List<Guid>(),
                 runeInfos = new List<RuneSlotInfo>(),
             };
-            IValue plainValue = action.PlainValue;
-            BattleArena des = new BattleArena();
+            var plainValue = action.PlainValue;
+            var des = new BattleArena();
             if (exc is null)
             {
                 des.LoadPlainValue(plainValue);
@@ -1316,7 +1316,7 @@ namespace Lib9c.Tests.Action
             }
 
             var materialCount = myAvatarStateNext.inventory.Materials.Count();
-            var high = (ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket) + medalCount;
+            var high = ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket + medalCount;
             Assert.InRange(materialCount, 0, high);
 
             var myArenaAvatarStateAddr = ArenaAvatarState.DeriveAddress(myAvatarAddress);

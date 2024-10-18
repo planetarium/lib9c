@@ -16,7 +16,7 @@ namespace Lib9c.Tests
         public void Constructor()
         {
             SpannedSubPolicy<int> spannedSubPolicy;
-            List<long> indices = Enumerable.Range(0, 100).Select(i => (long)i).ToList();
+            var indices = Enumerable.Range(0, 100).Select(i => (long)i).ToList();
 
             // Bad start index
             Assert.Throws<ArgumentOutOfRangeException>(() =>

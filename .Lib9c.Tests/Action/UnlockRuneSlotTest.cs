@@ -214,7 +214,7 @@ namespace Lib9c.Tests.Action
             state = state.MintAsset(context, agentAddress, cost * Currencies.Crystal);
             if (legacyState)
             {
-                foreach (var battleType in new[] { BattleType.Adventure, BattleType.Arena, BattleType.Raid })
+                foreach (var battleType in new[] { BattleType.Adventure, BattleType.Arena, BattleType.Raid, })
                 {
                     var runeSlotState = new RuneSlotState(battleType);
                     var serialized = (List)runeSlotState.Serialize();

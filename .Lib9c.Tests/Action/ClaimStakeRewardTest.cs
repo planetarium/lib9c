@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
     {
         private const string AgentAddressHex = "0x0000000001000000000100000000010000000001";
         private const int AvatarIndex = 0;
-        private static readonly Address AgentAddr = new Address(AgentAddressHex);
+        private static readonly Address AgentAddr = new (AgentAddressHex);
 
         private static readonly Address AvatarAddr =
             Addresses.GetAvatarAddress(AgentAddr, AvatarIndex);

@@ -332,10 +332,10 @@ namespace Lib9c.Tests.Action.Scenario
         private static string ShowLog(Address adr, ArenaSheet.RoundData data, ArenaScore score, ArenaInformation ai, int medalCount)
         {
             return $"[#{adr.ToHex().Substring(0, 6)}] arenaType({data.ArenaType}) / " +
-                   $"score({score.Score}) / " +
-                   $"Win({ai.Win}) / Lose({ai.Lose}) / " +
-                   $"Ticket({ai.Ticket}) / TicketResetCount({ai.TicketResetCount}) / " +
-                   $"MedalCount({medalCount})";
+                $"score({score.Score}) / " +
+                $"Win({ai.Win}) / Lose({ai.Lose}) / " +
+                $"Ticket({ai.Ticket}) / TicketResetCount({ai.TicketResetCount}) / " +
+                $"MedalCount({medalCount})";
         }
 
         private bool TryGetTarget(

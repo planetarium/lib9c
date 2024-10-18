@@ -64,26 +64,26 @@ namespace Lib9c.Tests.Action
         // Recipe 6 unlocks at stage 27
         // Recipe 94 unlocks at stage 90
         // Recipe 133 unlocks at stage 17
-        [InlineData(new[] { 6, 5 }, true, false, true, true, null)]
-        [InlineData(new[] { 6 }, true, false, true, true, null)]
+        [InlineData(new[] { 6, 5, }, true, false, true, true, null)]
+        [InlineData(new[] { 6, }, true, false, true, true, null)]
         // Unlock Belt without Armor unlock.
-        [InlineData(new[] { 94 }, true, false, true, true, null)]
+        [InlineData(new[] { 94, }, true, false, true, true, null)]
         // Unlock Weapon & Ring
-        [InlineData(new[] { 6, 133 }, true, false, true, true, null)]
+        [InlineData(new[] { 6, 133, }, true, false, true, true, null)]
         // Invalid recipe id.
-        [InlineData(new[] { -1 }, true, false, false, false, typeof(InvalidRecipeIdException))]
-        [InlineData(new[] { 1 }, true, false, true, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { -1, }, true, false, false, false, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 1, }, true, false, true, false, typeof(InvalidRecipeIdException))]
         [InlineData(new int[] { }, true, false, false, false, typeof(InvalidRecipeIdException))]
         // AvatarState is null.
-        [InlineData(new[] { 6 }, false, false, true, true, typeof(FailedLoadStateException))]
+        [InlineData(new[] { 6, }, false, false, true, true, typeof(FailedLoadStateException))]
         // Already unlocked recipe.
-        [InlineData(new[] { 6 }, true, true, true, true, typeof(AlreadyRecipeUnlockedException))]
+        [InlineData(new[] { 6, }, true, true, true, true, typeof(AlreadyRecipeUnlockedException))]
         // Skip prev recipe.
-        [InlineData(new[] { 5 }, true, false, true, true, typeof(InvalidRecipeIdException))]
+        [InlineData(new[] { 5, }, true, false, true, true, typeof(InvalidRecipeIdException))]
         // Stage not cleared.
-        [InlineData(new[] { 6 }, true, false, false, true, typeof(NotEnoughClearedStageLevelException))]
+        [InlineData(new[] { 6, }, true, false, false, true, typeof(NotEnoughClearedStageLevelException))]
         // Insufficient CRYSTAL.
-        [InlineData(new[] { 6 }, true, false, true, false, typeof(NotEnoughFungibleAssetValueException))]
+        [InlineData(new[] { 6, }, true, false, true, false, typeof(NotEnoughFungibleAssetValueException))]
         public void Execute(
             IEnumerable<int> ids,
             bool stateExist,
@@ -94,12 +94,12 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            List<int> recipeIds = ids.ToList();
+            var recipeIds = ids.ToList();
             var rows = _tableSheets.EquipmentItemRecipeSheet.Values
                 .Where(r => recipeIds.Contains(r.Id)).ToList();
             var balance = balanceEnough ? rows.Sum(r => r.CRYSTAL) : 1;
             var state = _initialState.MintAsset(context, _agentAddress, balance * _currency);
-            Address unlockedRecipeIdsAddress = _avatarAddress.Derive("recipe_ids");
+            var unlockedRecipeIdsAddress = _avatarAddress.Derive("recipe_ids");
             if (stateExist)
             {
                 var stage = rows.Any() ? rows.Max(r => r.UnlockStage) : 1;
@@ -109,7 +109,7 @@ namespace Lib9c.Tests.Action
                 var worldInformation = _avatarState.worldInformation;
                 if (stageCleared)
                 {
-                    for (int j = 1; j < worldId + 1; j++)
+                    for (var j = 1; j < worldId + 1; j++)
                     {
                         for (var i = 1; i < stage + 1; i++)
                         {
@@ -145,7 +145,7 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IWorld nextState = action.Execute(new ActionContext
+                var nextState = action.Execute(new ActionContext
                 {
                     PreviousState = state,
                     Signer = _agentAddress,
@@ -186,10 +186,10 @@ namespace Lib9c.Tests.Action
                 .Where(i => i.ItemSubType == itemSubType && i.Id != 1 && i.UnlockStage != 999 && i.CRYSTAL != 0);
 
             // Clear Stage
-            for (int i = 0; i < _tableSheets.WorldSheet.Count; i++)
+            for (var i = 0; i < _tableSheets.WorldSheet.Count; i++)
             {
                 var worldRow = _tableSheets.WorldSheet.OrderedList[i];
-                for (int v = worldRow.StageBegin; v < worldRow.StageEnd + 1; v++)
+                for (var v = worldRow.StageBegin; v < worldRow.StageEnd + 1; v++)
                 {
                     worldInformation.ClearStage(worldRow.Id, v, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }

@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var recipe = _tableSheets.EquipmentItemRecipeSheet.Values.First(
                 recipe => recipe.ResultEquipmentId == itemId
             );
-            List<EquipmentItemSubRecipeSheet.MaterialInfo> materialList =
+            var materialList =
                 recipe.GetAllMaterials(_tableSheets.EquipmentItemSubRecipeSheetV2).ToList();
             var stageList = List.Empty;
             for (var i = 0; i < recipe.UnlockStage; i++)

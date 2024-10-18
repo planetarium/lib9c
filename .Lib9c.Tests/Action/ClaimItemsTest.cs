@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action
             _itemIds = _tableSheets.CostumeItemSheet.Values.Take(3).Select(x => x.Id).ToList();
             _itemCurrencies = _itemIds.Select(id => Currencies.GetItemCurrency(id, true)).ToList();
             _wrappedFavCurrencies = new List<Currency>();
-            foreach (var currency in new[] { Currencies.Crystal, Currencies.StakeRune })
+            foreach (var currency in new[] { Currencies.Crystal, Currencies.StakeRune, })
             {
                 var wrappedCurrency = Currencies.GetWrappedCurrency(currency);
                 _wrappedFavCurrencies.Add(wrappedCurrency);
@@ -78,18 +78,18 @@ namespace Lib9c.Tests.Action
         {
             var states = GenerateAvatar(_initialState, out var avatarAddress1, out _);
             GenerateAvatar(states, out var avatarAddress2, out _);
-            string memo = memoExist ? "memo" : null;
+            var memo = memoExist ? "memo" : null;
             var action = new ClaimItems(
                 new List<(Address, IReadOnlyList<FungibleAssetValue>)>
                 {
-                    (avatarAddress1, new List<FungibleAssetValue> { _itemCurrencies[0] * 1, _itemCurrencies[1] * 1 }),
-                    (avatarAddress2, new List<FungibleAssetValue> { _itemCurrencies[0] * 1 }),
+                    (avatarAddress1, new List<FungibleAssetValue> { _itemCurrencies[0] * 1, _itemCurrencies[1] * 1, }),
+                    (avatarAddress2, new List<FungibleAssetValue> { _itemCurrencies[0] * 1, }),
                 },
                 memo
             );
             Assert.Equal(!memoExist, string.IsNullOrEmpty(action.Memo));
-            Dictionary serialized = (Dictionary)action.PlainValue;
-            Dictionary values = (Dictionary)serialized["values"];
+            var serialized = (Dictionary)action.PlainValue;
+            var values = (Dictionary)serialized["values"];
             Assert.Equal(memoExist, values.ContainsKey("m"));
             var deserialized = new ClaimItems();
             deserialized.LoadPlainValue(action.PlainValue);
@@ -112,7 +112,7 @@ namespace Lib9c.Tests.Action
             var currency = Currencies.Crystal;
             var action = new ClaimItems(new List<(Address, IReadOnlyList<FungibleAssetValue>)>
             {
-                (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 1 }),
+                (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 1, }),
             });
             Assert.Throws<ArgumentException>(() =>
                 action.Execute(new ActionContext
@@ -132,7 +132,7 @@ namespace Lib9c.Tests.Action
             var currency = _itemCurrencies.First();
             var action = new ClaimItems(new List<(Address, IReadOnlyList<FungibleAssetValue>)>
             {
-                (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 6 }),
+                (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 6, }),
             });
             Assert.Throws<InsufficientBalanceException>(() =>
                 action.Execute(new ActionContext
@@ -210,7 +210,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(1, mailItems.count);
             }
 
-            for (int i = 0; i < _wrappedFavCurrencies.Count; i++)
+            for (var i = 0; i < _wrappedFavCurrencies.Count; i++)
             {
                 var wrappedCurrency = _wrappedFavCurrencies[i];
                 Assert.Equal(wrappedCurrency * 4, states.GetBalance(_signerAddress, wrappedCurrency));
@@ -219,7 +219,7 @@ namespace Lib9c.Tests.Action
                     currency,
                     recipientAgentAddress,
                     recipientAvatarAddress
-                    );
+                );
                 Assert.Equal(currency * 1, states.GetBalance(recipientAddress, currency));
                 var mailFav = mail.FungibleAssetValues.Single(f => f.Currency.Equals(currency));
                 Assert.Equal(currency * 1, mailFav);

@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Action
         public void Execute(Type exc, int rank, int latestRank)
         {
             Address agentAddress = default;
-            Address avatarAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
             var bossRow = _tableSheets.WorldBossListSheet.OrderedList.First();
             var raiderAddress = Addresses.GetRaiderAddress(avatarAddress, bossRow.Id);
             var highScore = 0;
@@ -115,8 +115,8 @@ namespace Lib9c.Tests.Action
 
                 var rune = 0;
                 var runeIds = _tableSheets.RuneWeightSheet.Values
-                        .Where(r => r.BossId == bossRow.BossId)
-                        .SelectMany(r => r.RuneInfos.Select(i => i.RuneId)).ToHashSet();
+                    .Where(r => r.BossId == bossRow.BossId)
+                    .SelectMany(r => r.RuneInfos.Select(i => i.RuneId)).ToHashSet();
                 foreach (var runeId in runeIds)
                 {
                     var runeCurrency = RuneHelper.ToCurrency(_tableSheets.RuneSheet[runeId]);

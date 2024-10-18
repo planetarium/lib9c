@@ -183,7 +183,7 @@ namespace Lib9c.Tests.Action
                     _targetPetId,
                     currentPetLevel,
                     targetPetLevel,
-                    mintAssets: false));
+                    false));
         }
 
         private static IWorld Execute(
@@ -214,7 +214,7 @@ namespace Lib9c.Tests.Action
             var ncgCurrency = prevStates.GetGoldCurrency();
             var petSheet = prevStates.GetSheet<PetSheet>();
             Assert.True(petSheet.TryGetValue(petId, out var petRow));
-            var soulStoneCurrency = Currency.Legacy(petRow.SoulStoneTicker, 0, minters: null);
+            var soulStoneCurrency = Currency.Legacy(petRow.SoulStoneTicker, 0, null);
             if (mintAssets &&
                 // NOTE: If the currentPetLevel does not less than targetPetLevel,
                 //       ArgumentOutOfRangeException will be thrown.

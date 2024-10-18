@@ -57,13 +57,15 @@ namespace Lib9c.Tests.Model
             int resetTicketsInterval,
             int remainingTickets,
             int numberOfTicketPurchases,
-            int clearedStageId) =>
+            int clearedStageId)
+        {
             Assert.Throws<ArgumentException>(() =>
                 new EventDungeonInfo(
                     resetTicketsInterval,
                     remainingTickets,
                     numberOfTicketPurchases,
                     clearedStageId));
+        }
 
         [Theory]
         [InlineData(1)]
