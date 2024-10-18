@@ -9,6 +9,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
@@ -251,7 +252,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         var guildRepository = new GuildRepository(world, actionContext);
         var delegatee = validatorRepository.GetValidatorDelegatee(validatorKey.Address);
         var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, RewardCurrency);
-        var actualValidatorBalance = world.GetBalance(validatorKey.Address, DelegationCurrency);
+        var actualValidatorBalance = world.GetBalance(StakeState.DeriveAddress(validatorKey.Address), DelegationCurrency);
         var actualValidatorReward = world.GetBalance(validatorKey.Address, RewardCurrency);
         var actualDelegatorBalances = delegatorKeys
             .Select(item => world.GetBalance(item.Address, DelegationCurrency))
