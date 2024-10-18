@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using Lib9c.Tests.Util;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
@@ -186,7 +187,8 @@ public class ValidatorDelegationTestBase
             BlockIndex = blockHeight,
             Signer = guildMasterAddress,
         };
-        var makeGuild = new MakeGuild(validatorAddress);
+        var guildAddress = AddressUtil.CreateGuildAddress();
+        var makeGuild = new MakeGuild(guildAddress, validatorAddress);
         return makeGuild.Execute(actionContext);
     }
 
