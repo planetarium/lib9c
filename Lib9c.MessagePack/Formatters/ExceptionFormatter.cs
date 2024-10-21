@@ -55,13 +55,29 @@ namespace Lib9c.Formatters
             for (int i = 0; i < count; i++)
             {
                 var name = reader.ReadString();
+                if (name == null)
+                {
+                    throw new MessagePackSerializationException("Exception Name is missing.");
+                }
+                
                 if (name == "ExceptionType")
                 {
                     typeName = reader.ReadString();
                 }
                 else
                 {
-                    var type = Type.GetType(reader.ReadString());
+                    var readType = reader.ReadString();
+                    if (readType == null)
+                    {
+                        throw new MessagePackSerializationException("Exception type information is missing.");
+                    }
+                    
+                    var type  = Type.GetType(readType);
+                    if (type == null)
+                    {
+                        throw new MessagePackSerializationException("Exception type information is missing.");
+                    }
+                    
                     var value = MessagePackSerializer.Deserialize(type, ref reader, options);
                     info.AddValue(name, value);
                 }
