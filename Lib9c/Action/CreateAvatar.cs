@@ -22,11 +22,9 @@ using Serilog;
 using static Lib9c.SerializeKeys;
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-using System.Linq;
 using Lib9c.DevExtensions;
 using Lib9c.DevExtensions.Model;
 using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
 #endif
 
 namespace Nekoyume.Action
@@ -54,30 +52,31 @@ namespace Nekoyume.Action
         int ICreateAvatarV2.Tail => tail;
         string ICreateAvatarV2.Name => name;
 
-        protected override IImmutableDictionary<string, IValue> PlainValueInternal => new Dictionary<string, IValue>()
-        {
-            ["index"] = (Integer) index,
-            ["hair"] = (Integer) hair,
-            ["lens"] = (Integer) lens,
-            ["ear"] = (Integer) ear,
-            ["tail"] = (Integer) tail,
-            ["name"] = (Text) name,
-        }.ToImmutableDictionary();
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>()
+            {
+                ["index"] = (Integer)index,
+                ["hair"] = (Integer)hair,
+                ["lens"] = (Integer)lens,
+                ["ear"] = (Integer)ear,
+                ["tail"] = (Integer)tail,
+                ["name"] = (Text)name,
+            }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
-            index = (int) ((Integer) plainValue["index"]).Value;
-            hair = (int) ((Integer) plainValue["hair"]).Value;
-            lens = (int) ((Integer) plainValue["lens"]).Value;
-            ear = (int) ((Integer) plainValue["ear"]).Value;
-            tail = (int) ((Integer) plainValue["tail"]).Value;
-            name = (Text) plainValue["name"];
+            index = (int)((Integer)plainValue["index"]).Value;
+            hair = (int)((Integer)plainValue["hair"]).Value;
+            lens = (int)((Integer)plainValue["lens"]).Value;
+            ear = (int)((Integer)plainValue["ear"]).Value;
+            tail = (int)((Integer)plainValue["tail"]).Value;
+            name = (Text)plainValue["name"];
         }
 
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
-            IActionContext ctx = context;
+            var ctx = context;
             var signer = ctx.Signer;
             var states = ctx.PreviousState;
             var avatarAddress = signer.Derive(
@@ -89,36 +88,15 @@ namespace Nekoyume.Action
             );
 
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
-
-            if (!Regex.IsMatch(name, GameConfig.AvatarNickNamePattern))
-            {
-                throw new InvalidNamePatternException(
-                    $"{addressesHex}Aborted as the input name {name} does not follow the allowed name pattern.");
-            }
+            ValidateName(addressesHex);
 
             var sw = new Stopwatch();
             sw.Start();
             var started = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CreateAvatar exec started", addressesHex);
-            AgentState existingAgentState = states.GetAgentState(signer);
-            var agentState = existingAgentState ?? new AgentState(signer);
-            var avatarState = states.GetAvatarState(avatarAddress);
-            if (avatarState is not null)
-            {
-                throw new InvalidAddressException($"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
-            }
 
-            if (!(0 <= index && index < GameConfig.SlotCount))
-            {
-                throw new AvatarIndexOutOfRangeException(
-                    $"{addressesHex}Aborted as the index is out of range #{index}.");
-            }
+            var agentState = GetAgentState(states, signer, avatarAddress, addressesHex);
 
-            if (agentState.avatarAddresses.ContainsKey(index))
-            {
-                throw new AvatarIndexAlreadyUsedException(
-                    $"{addressesHex}Aborted as the signer already has an avatar at index #{index}.");
-            }
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar Get AgentAvatarStates: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
@@ -129,112 +107,30 @@ namespace Nekoyume.Action
 
             // Avoid NullReferenceException in test
             var materialItemSheet = ctx.PreviousState.GetSheet<MaterialItemSheet>();
+            var avatarState = CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
 
-            avatarState = CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
+            CustomizeAvatar(avatarState);
 
-            if (hair < 0) hair = 0;
-            if (lens < 0) lens = 0;
-            if (ear < 0) ear = 0;
-            if (tail < 0) tail = 0;
-
-            avatarState.Customize(hair, lens, ear, tail);
-            
-            var allCombinationSlotState = new AllCombinationSlotState();
-            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
-            {
-                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, i);
-                var slot = new CombinationSlotState(slotAddr, i);
-                allCombinationSlotState.AddSlot(slot);
-            }
+            var allCombinationSlotState = CreateCombinationSlots(avatarAddress);
             states = states.SetCombinationSlotState(avatarAddress, allCombinationSlotState);
 
             avatarState.UpdateQuestRewards(materialItemSheet);
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            // prepare for test when executing on editor mode.
-            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
-
-            states = AddRunesForTest(ctx, avatarAddress, states, data.RuneStoneCount);
-            states = AddSoulStoneForTest(ctx, avatarAddress, states, data.SoulStoneCount);
-            if (data.AddPet)
-            {
-                states = AddPetsForTest(avatarAddress, states);
-            }
-
-            var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
-            var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
-            var subRecipeSheet = states.GetSheet<EquipmentItemSubRecipeSheetV2>();
-            var optionSheet = states.GetSheet<EquipmentItemOptionSheet>();
-            var skillSheet = states.GetSheet<SkillSheet>();
-            var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
-            var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
-            var random = context.GetRandom();
-
-            avatarState.level = data.Level;
-            avatarState.exp = characterLevelSheet[data.Level].Exp;
-
-            foreach (var recipeId in data.FullOptionEquipmentRecipeIds)
-            {
-                var recipeRow = recipeSheet[recipeId];
-                var subRecipeId = recipeRow.SubRecipeIds[1];
-                var subRecipeRow = subRecipeSheet[subRecipeId];
-                var equipmentRow = equipmentSheet[recipeRow.ResultEquipmentId];
-
-                var equipment = (Equipment)ItemFactory.CreateItemUsable(
-                    equipmentRow,
-                    random.GenerateRandomGuid(),
-                    0L,
-                    madeWithMimisbrunnrRecipe: subRecipeRow.IsMimisbrunnrSubRecipe ?? false);
-
-                foreach (var option in subRecipeRow.Options)
-                {
-                    var optionRow = optionSheet[option.Id];
-                    // Add stats.
-                    if (optionRow.StatType != StatType.NONE)
-                    {
-                        var statMap = new DecimalStat(optionRow.StatType, optionRow.StatMax);
-                        equipment.StatsMap.AddStatAdditionalValue(statMap.StatType, statMap.TotalValue);
-                        equipment.optionCountFromCombination++;
-                    }
-                    // Add skills.
-                    else
-                    {
-                        var skillRow = skillSheet.OrderedList.First(r => r.Id == optionRow.SkillId);
-                        var skill = SkillFactory.Get(
-                            skillRow,
-                            optionRow.SkillDamageMax,
-                            optionRow.SkillChanceMax,
-                            optionRow.StatDamageRatioMax,
-                            optionRow.ReferencedStatType);
-                        if (skill != null)
-                        {
-                            equipment.Skills.Add(skill);
-                            equipment.optionCountFromCombination++;
-                        }
-                    }
-                }
-
-                for (int i = 1; i <= 20; ++i)
-                {
-                    var subType = equipment.ItemSubType;
-                    var grade = equipment.Grade;
-                    var costRow = enhancementCostSheet.Values
-                        .First(x => x.ItemSubType == subType &&
-                                    x.Grade == grade &&
-                                    x.Level == i);
-                    equipment.LevelUp(random, costRow, true);
-                }
-
-                avatarState.inventory.AddItem(equipment);
-            }
+            states = ExecuteDevExtensions(ctx, avatarAddress, states, avatarState);
 #endif
+
             var sheets = ctx.PreviousState.GetSheets(containItemSheet: true,
-                sheetTypes: new[] {typeof(CreateAvatarItemSheet), typeof(CreateAvatarFavSheet)});
+                sheetTypes: new[]
+                {
+                    typeof(CreateAvatarItemSheet), typeof(CreateAvatarFavSheet),
+                });
             var itemSheet = sheets.GetItemSheet();
             var createAvatarItemSheet = sheets.GetSheet<CreateAvatarItemSheet>();
             AddItem(itemSheet, createAvatarItemSheet, avatarState, context.GetRandom());
             var createAvatarFavSheet = sheets.GetSheet<CreateAvatarFavSheet>();
             states = MintAsset(createAvatarFavSheet, avatarState, states, context);
+
             sw.Stop();
             Log.Verbose("{AddressesHex}CreateAvatar CreateAvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             var ended = DateTimeOffset.UtcNow;
@@ -244,6 +140,79 @@ namespace Nekoyume.Action
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetActionPoint(avatarAddress, DailyReward.ActionPointMax)
                 .SetDailyRewardReceivedBlockIndex(avatarAddress, 0L);
+        }
+
+        private void ValidateName(string addressesHex)
+        {
+            if (!Regex.IsMatch(name, GameConfig.AvatarNickNamePattern))
+            {
+                throw new InvalidNamePatternException(
+                    $"{addressesHex}Aborted as the input name {name} does not follow the allowed name pattern.");
+            }
+        }
+
+        private AgentState GetAgentState(IWorld states, Address signer, Address avatarAddress, string addressesHex)
+        {
+            var existingAgentState = states.GetAgentState(signer);
+            var agentState = existingAgentState ?? new AgentState(signer);
+            var avatarState = states.GetAvatarState(avatarAddress);
+            if (avatarState is not null)
+            {
+                throw new InvalidAddressException(
+                    $"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
+            }
+
+            if (index is < 0 or >= GameConfig.SlotCount)
+            {
+                throw new AvatarIndexOutOfRangeException(
+                    $"{addressesHex}Aborted as the index is out of range #{index}.");
+            }
+
+            if (agentState.avatarAddresses.ContainsKey(index))
+            {
+                throw new AvatarIndexAlreadyUsedException(
+                    $"{addressesHex}Aborted as the signer already has an avatar at index #{index}.");
+            }
+
+            return agentState;
+        }
+
+        private void CustomizeAvatar(AvatarState avatarState)
+        {
+            if (hair < 0)
+            {
+                hair = 0;
+            }
+
+            if (lens < 0)
+            {
+                lens = 0;
+            }
+
+            if (ear < 0)
+            {
+                ear = 0;
+            }
+
+            if (tail < 0)
+            {
+                tail = 0;
+            }
+
+            avatarState.Customize(hair, lens, ear, tail);
+        }
+
+        private AllCombinationSlotState CreateCombinationSlots(Address avatarAddress)
+        {
+            var allCombinationSlotState = new AllCombinationSlotState();
+            for (var i = 0; i < AvatarState.DefaultCombinationSlotCount; i++)
+            {
+                var slotAddr = Addresses.GetCombinationSlotAddress(avatarAddress, i);
+                var slot = new CombinationSlotState(slotAddr, i);
+                allCombinationSlotState.AddSlot(slot);
+            }
+
+            return allCombinationSlotState;
         }
 
         public static void AddItem(ItemSheet itemSheet, CreateAvatarItemSheet createAvatarItemSheet,
@@ -261,7 +230,7 @@ namespace Nekoyume.Action
                 }
                 else
                 {
-                    for (int i = 0; i < count; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         var item = ItemFactory.CreateItem(itemRow, random);
                         avatarState.inventory.AddItem(item);
@@ -280,7 +249,7 @@ namespace Nekoyume.Action
                 {
                     CreateAvatarFavSheet.Target.Agent => avatarState.agentAddress,
                     CreateAvatarFavSheet.Target.Avatar => avatarState.address,
-                    _ => throw new ArgumentOutOfRangeException()
+                    _ => throw new ArgumentOutOfRangeException(),
                 };
                 states = states.MintAsset(context, targetAddress, currency * row.Quantity);
             }
@@ -306,6 +275,134 @@ namespace Nekoyume.Action
             );
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+            AddTestItems(ctx, avatarState, random, materialItemSheet);
+#endif
+
+            return avatarState;
+        }
+
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+        private static IWorld ExecuteDevExtensions(IActionContext ctx, Address avatarAddress, IWorld states, AvatarState avatarState)
+        {
+            // prepare for test when executing on editor mode.
+            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
+
+            states = AddRunesForTest(ctx, avatarAddress, states, data.RuneStoneCount);
+            states = AddSoulStoneForTest(ctx, avatarAddress, states, data.SoulStoneCount);
+            if (data.AddPet)
+            {
+                states = AddPetsForTest(avatarAddress, states);
+            }
+
+            var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
+            var recipeSheet = states.GetSheet<EquipmentItemRecipeSheet>();
+            var subRecipeSheet = states.GetSheet<EquipmentItemSubRecipeSheetV2>();
+            var optionSheet = states.GetSheet<EquipmentItemOptionSheet>();
+            var skillSheet = states.GetSheet<SkillSheet>();
+            var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
+            var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
+            var random = ctx.GetRandom();
+
+            avatarState.level = data.Level;
+            avatarState.exp = characterLevelSheet[data.Level].Exp;
+
+            foreach (var recipeId in data.FullOptionEquipmentRecipeIds)
+            {
+                AddFullOptionEquipment(
+                    avatarState,
+                    random,
+                    equipmentSheet,
+                    recipeSheet,
+                    subRecipeSheet,
+                    optionSheet,
+                    skillSheet,
+                    enhancementCostSheet,
+                    recipeId);
+            }
+
+            return states;
+        }
+
+        private static void AddFullOptionEquipment(
+            AvatarState avatarState,
+            IRandom random,
+            EquipmentItemSheet equipmentSheet,
+            EquipmentItemRecipeSheet recipeSheet,
+            EquipmentItemSubRecipeSheetV2 subRecipeSheet,
+            EquipmentItemOptionSheet optionSheet,
+            SkillSheet skillSheet,
+            EnhancementCostSheetV2 enhancementCostSheet,
+            int recipeId)
+        {
+            var recipeRow = recipeSheet[recipeId];
+            var subRecipeId = recipeRow.SubRecipeIds[1];
+            var subRecipeRow = subRecipeSheet[subRecipeId];
+            var equipmentRow = equipmentSheet[recipeRow.ResultEquipmentId];
+
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                equipmentRow,
+                random.GenerateRandomGuid(),
+                0L,
+                madeWithMimisbrunnrRecipe: subRecipeRow.IsMimisbrunnrSubRecipe ?? false);
+
+            foreach (var option in subRecipeRow.Options)
+            {
+                var optionRow = optionSheet[option.Id];
+                AddOptionToEquipment(equipment, optionRow, skillSheet);
+            }
+
+            EnhanceEquipmentToMaxLevel(equipment, enhancementCostSheet, random);
+
+            avatarState.inventory.AddItem(equipment);
+        }
+
+        private static void AddOptionToEquipment(Equipment equipment, EquipmentItemOptionSheet.Row optionRow, SkillSheet skillSheet)
+        {
+            // Add stats.
+            if (optionRow.StatType != StatType.NONE)
+            {
+                var statMap = new DecimalStat(optionRow.StatType, optionRow.StatMax);
+                equipment.StatsMap.AddStatAdditionalValue(statMap.StatType, statMap.TotalValue);
+                equipment.optionCountFromCombination++;
+            }
+            // Add skills.
+            else
+            {
+                var skillRow = skillSheet.OrderedList.First(r => r.Id == optionRow.SkillId);
+                var skill = SkillFactory.Get(
+                    skillRow,
+                    optionRow.SkillDamageMax,
+                    optionRow.SkillChanceMax,
+                    optionRow.StatDamageRatioMax,
+                    optionRow.ReferencedStatType);
+                if (skill != null)
+                {
+                    equipment.Skills.Add(skill);
+                    equipment.optionCountFromCombination++;
+                }
+            }
+        }
+
+        private static void EnhanceEquipmentToMaxLevel(Equipment equipment, EnhancementCostSheetV2 enhancementCostSheet, IRandom random)
+        {
+            for (int i = 1; i <= 20; ++i)
+            {
+                var subType = equipment.ItemSubType;
+                var grade = equipment.Grade;
+                var costRow = enhancementCostSheet.Values
+                    .First(x => x.ItemSubType == subType &&
+                                x.Grade == grade &&
+                                x.Level == i);
+                equipment.LevelUp(random, costRow, true);
+            }
+        }
+
+        private static void AddTestItems(
+            IActionContext ctx,
+            AvatarState avatarState,
+            IRandom random,
+            MaterialItemSheet materialItemSheet)
+        {
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
             var costumeItemSheet = ctx.PreviousState.GetSheet<CostumeItemSheet>();
             var equipmentItemSheet = ctx.PreviousState.GetSheet<EquipmentItemSheet>();
@@ -341,12 +438,8 @@ namespace Nekoyume.Action
                     // Add optionIds here.
                     item.OptionIds);
             }
-#endif
-
-            return avatarState;
         }
 
-#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
         private static IWorld AddRunesForTest(
             IActionContext context,
             Address avatarAddress,
