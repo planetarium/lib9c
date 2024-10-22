@@ -14,7 +14,7 @@ namespace Nekoyume.Blockchain.Policy
         {
         }
 
-        public PolicyActionsRegistry PolicyActionsRegistry { get; } = new PolicyActionsRegistry();
+        public IPolicyActionsRegistry PolicyActionsRegistry { get; } = new PolicyActionsRegistry();
 
         public TxPolicyViolationException ValidateNextBlockTx(
             BlockChain blockChain, Transaction transaction)
