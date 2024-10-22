@@ -25,8 +25,8 @@ namespace Lib9c.Tests.TableData.Summon
         public void SetToSheet()
         {
             const string content =
-                @"groupID,cost_material,cost_material_count,cost_ncg,recipe1ID,recipe1ratio,recipe1ID,recipe2ratio
-10001,800201,10,0,171,70,172,30";
+                @"groupID,result_type,cost_material,cost_material_count,cost_ncg,recipe1ID,recipe1ratio,recipe1ID,recipe2ratio
+10001,Aura,800201,10,0,171,70,172,30";
             var sheet = new SummonSheet();
             sheet.Set(content);
 
@@ -34,6 +34,7 @@ namespace Lib9c.Tests.TableData.Summon
             Assert.NotNull(sheet.Values.First());
             var row = sheet.Values.First();
             Assert.Equal(10001, row.GroupId);
+            Assert.Equal(SummonSheet.ResultType.Aura, row.SummonResultType);
             Assert.Equal(800201, row.CostMaterial);
             Assert.Equal(10, row.CostMaterialCount);
             Assert.Equal(0, row.CostNcg);
@@ -57,8 +58,8 @@ namespace Lib9c.Tests.TableData.Summon
         {
             var sbHeader = new StringBuilder();
             var sbContent = new StringBuilder();
-            sbHeader.Append("groupID,cost_material,cost_material_count,cost_ncg");
-            sbContent.Append("10001,800201,10,0");
+            sbHeader.Append("groupID,result_type,cost_material,cost_material_count,cost_ncg");
+            sbContent.Append("10001,Aura,800201,10,0");
             for (var i = 1; i <= recipeCount; i++)
             {
                 sbHeader.Append($",recipe{i}ID,recipe{i}ratio");
@@ -83,8 +84,8 @@ namespace Lib9c.Tests.TableData.Summon
         public void Total_Cumulative_Ratio()
         {
             const string content =
-                @"groupID,cost_material,cost_material_count,cost_ncg,recipe1ID,recipe1ratio,recipe1ID,recipe2ratio
-10001,800201,10,0,171,70,172,30";
+                @"groupID,result_type,cost_material,cost_material_count,cost_ncg,recipe1ID,recipe1ratio,recipe1ID,recipe2ratio
+10001,Aura,800201,10,0,171,70,172,30";
             var sheet = new SummonSheet();
             sheet.Set(content);
             var row = sheet.Values.First();
