@@ -58,19 +58,21 @@ namespace Lib9c.Tests.Action
         public void Execute_Throws_WhenNotEnoughBalance()
         {
             var action = new Stake2(200);
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                action.Execute(new ActionContext
-                {
-                    PreviousState = _initialState,
-                    Signer = _signerAddress,
-                    BlockIndex = 100,
-                }));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = _initialState,
+                            Signer = _signerAddress,
+                            BlockIndex = 100,
+                        }));
         }
 
         [Fact]
         public void Execute_Throws_WhenThereIsMonsterCollection()
         {
-            Address monsterCollectionAddress =
+            var monsterCollectionAddress =
                 MonsterCollectionState.DeriveAddress(_signerAddress, 0);
             var agentState = new AgentState(_signerAddress)
             {
@@ -82,64 +84,73 @@ namespace Lib9c.Tests.Action
                     monsterCollectionAddress,
                     new MonsterCollectionState(monsterCollectionAddress, 1, 0).Serialize());
             var action = new Stake2(200);
-            Assert.Throws<MonsterCollectionExistingException>(() =>
-                action.Execute(new ActionContext
-                {
-                    PreviousState = states,
-                    Signer = _signerAddress,
-                    BlockIndex = 100,
-                }));
+            Assert.Throws<MonsterCollectionExistingException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = states,
+                            Signer = _signerAddress,
+                            BlockIndex = 100,
+                        }));
         }
 
         [Fact]
         public void Execute_Throws_WhenClaimableExisting()
         {
-            Address stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
+            var stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
             var context = new ActionContext();
             var states = _initialState
                 .SetLegacyState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
                 .MintAsset(context, stakeStateAddress, _currency * 50);
             var action = new Stake2(100);
-            Assert.Throws<StakeExistingClaimableException>(() =>
-                action.Execute(new ActionContext
-                {
-                    PreviousState = states,
-                    Signer = _signerAddress,
-                    BlockIndex = StakeState.RewardInterval,
-                }));
+            Assert.Throws<StakeExistingClaimableException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = states,
+                            Signer = _signerAddress,
+                            BlockIndex = StakeState.RewardInterval,
+                        }));
         }
 
         [Fact]
         public void Execute_Throws_WhenCancelOrUpdateWhileLockup()
         {
             var action = new Stake2(51);
-            var states = action.Execute(new ActionContext
-            {
-                PreviousState = _initialState,
-                Signer = _signerAddress,
-                BlockIndex = 0,
-            });
+            var states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = _initialState,
+                    Signer = _signerAddress,
+                    BlockIndex = 0,
+                });
 
             // Cancel
             var updateAction = new Stake2(0);
-            Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<RequiredBlockIndexException>(
+                () => updateAction.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _signerAddress,
+                        BlockIndex = 1,
+                    }));
 
             // Less
             updateAction = new Stake2(50);
-            Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<RequiredBlockIndexException>(
+                () => updateAction.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _signerAddress,
+                        BlockIndex = 1,
+                    }));
 
             // Same (since 4611070)
-            if (states.TryGetStakeState(_signerAddress, out StakeState stakeState))
+            if (states.TryGetStakeState(_signerAddress, out var stakeState))
             {
                 states = states.SetLegacyState(
                     stakeState.address,
@@ -147,20 +158,24 @@ namespace Lib9c.Tests.Action
             }
 
             updateAction = new Stake2(51);
-            Assert.Throws<RequiredBlockIndexException>(() => updateAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = 4611070,
-            }));
+            Assert.Throws<RequiredBlockIndexException>(
+                () => updateAction.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _signerAddress,
+                        BlockIndex = 4611070,
+                    }));
 
             // At 4611070 - 99, it should be updated.
-            Assert.True(updateAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = 4611070 - 99,
-            }).TryGetStakeState(_signerAddress, out stakeState));
+            Assert.True(
+                updateAction.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _signerAddress,
+                        BlockIndex = 4611070 - 99,
+                    }).TryGetStakeState(_signerAddress, out stakeState));
             Assert.Equal(4611070 - 99, stakeState.StartedBlockIndex);
         }
 
@@ -168,19 +183,20 @@ namespace Lib9c.Tests.Action
         public void Execute()
         {
             var action = new Stake2(100);
-            var states = action.Execute(new ActionContext
-            {
-                PreviousState = _initialState,
-                Signer = _signerAddress,
-                BlockIndex = 0,
-            });
+            var states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = _initialState,
+                    Signer = _signerAddress,
+                    BlockIndex = 0,
+                });
 
             Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
             Assert.Equal(
                 _currency * 100,
                 states.GetBalance(StakeState.DeriveAddress(_signerAddress), _currency));
 
-            states.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            states.TryGetStakeState(_signerAddress, out var stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -192,7 +208,7 @@ namespace Lib9c.Tests.Action
             Assert.False(achievements.Check(0, 1));
             Assert.False(achievements.Check(1, 0));
 
-            StakeState producedStakeState = new StakeState(
+            var producedStakeState = new StakeState(
                 stakeState.address,
                 stakeState.StartedBlockIndex,
                 // Produce a situation that it already received rewards.
@@ -201,12 +217,13 @@ namespace Lib9c.Tests.Action
                 stakeState.Achievements);
             states = states.SetLegacyState(stakeState.address, producedStakeState.SerializeV2());
             var cancelAction = new Stake2(0);
-            states = cancelAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = StakeState.LockupInterval,
-            });
+            states = cancelAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _signerAddress,
+                    BlockIndex = StakeState.LockupInterval,
+                });
 
             Assert.Null(states.GetLegacyState(stakeState.address));
             Assert.Equal(_currency * 0, states.GetBalance(stakeState.address, _currency));
@@ -217,14 +234,15 @@ namespace Lib9c.Tests.Action
         public void Update()
         {
             var action = new Stake2(50);
-            var states = action.Execute(new ActionContext
-            {
-                PreviousState = _initialState,
-                Signer = _signerAddress,
-                BlockIndex = 0,
-            });
+            var states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = _initialState,
+                    Signer = _signerAddress,
+                    BlockIndex = 0,
+                });
 
-            states.TryGetStakeState(_signerAddress, out StakeState stakeState);
+            states.TryGetStakeState(_signerAddress, out var stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
             Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
@@ -232,12 +250,13 @@ namespace Lib9c.Tests.Action
             Assert.Equal(_currency * 50, states.GetBalance(_signerAddress, _currency));
 
             var updateAction = new Stake2(100);
-            states = updateAction.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signerAddress,
-                BlockIndex = 1,
-            });
+            states = updateAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _signerAddress,
+                    BlockIndex = 1,
+                });
 
             states.TryGetStakeState(_signerAddress, out stakeState);
             Assert.Equal(1, stakeState.StartedBlockIndex);
@@ -251,20 +270,22 @@ namespace Lib9c.Tests.Action
         public void RestrictForStakeStateV2()
         {
             var action = new Stake2(50);
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialState.SetLegacyState(
-                    StakeState.DeriveAddress(_signerAddress),
-                    new StakeStateV2(
-                        new Contract(
-                            "StakeRegularFixedRewardSheet_V1",
-                            "StakeRegularRewardSheet_V1",
-                            50400,
-                            201600),
-                        0).Serialize()),
-                Signer = _signerAddress,
-                BlockIndex = 0,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialState.SetLegacyState(
+                            StakeState.DeriveAddress(_signerAddress),
+                            new StakeStateV2(
+                                new Contract(
+                                    "StakeRegularFixedRewardSheet_V1",
+                                    "StakeRegularRewardSheet_V1",
+                                    50400,
+                                    201600),
+                                0).Serialize()),
+                        Signer = _signerAddress,
+                        BlockIndex = 0,
+                    }));
         }
 
         [Fact]

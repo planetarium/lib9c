@@ -32,11 +32,13 @@ namespace Lib9c.Tests.Action.Guild
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress);
 
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMemberAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMemberAddress,
+                    }));
         }
 
         [Fact]
@@ -50,11 +52,12 @@ namespace Lib9c.Tests.Action.Guild
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress);
 
-            var changedWorld = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            var changedWorld = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             Assert.False(changedWorld.TryGetGuild(guildAddress, out _));
             Assert.Null(changedWorld.GetJoinedGuild(guildMasterAddress));
@@ -72,11 +75,13 @@ namespace Lib9c.Tests.Action.Guild
             IWorld world = new World(MockWorldState.CreateModern());
             world = world.MakeGuild(guildAddress, guildMasterAddress);
 
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = otherAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = otherAddress,
+                    }));
         }
 
         [Fact]
@@ -94,11 +99,12 @@ namespace Lib9c.Tests.Action.Guild
 
             Assert.True(world.IsBanned(guildAddress, bannedAddress));
 
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             Assert.False(world.IsBanned(guildAddress, bannedAddress));
         }

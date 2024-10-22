@@ -13,20 +13,22 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void IsClaimable()
         {
-            Assert.False(new StakeState(
-                    default,
-                    0,
-                    RewardInterval + 1,
-                    LockupInterval,
-                    new StakeAchievements())
-                .IsClaimable(RewardInterval * 2));
-            Assert.True(new StakeState(
-                    default,
-                    ActionObsoleteConfig.V100290ObsoleteIndex - 100,
-                    ActionObsoleteConfig.V100290ObsoleteIndex - 100 + RewardInterval + 1,
-                    ActionObsoleteConfig.V100290ObsoleteIndex - 100 + LockupInterval,
-                    new StakeAchievements())
-                .IsClaimable(ActionObsoleteConfig.V100290ObsoleteIndex - 100 + RewardInterval * 2));
+            Assert.False(
+                new StakeState(
+                        default,
+                        0,
+                        RewardInterval + 1,
+                        LockupInterval,
+                        new StakeAchievements())
+                    .IsClaimable(RewardInterval * 2));
+            Assert.True(
+                new StakeState(
+                        default,
+                        ActionObsoleteConfig.V100290ObsoleteIndex - 100,
+                        ActionObsoleteConfig.V100290ObsoleteIndex - 100 + RewardInterval + 1,
+                        ActionObsoleteConfig.V100290ObsoleteIndex - 100 + LockupInterval,
+                        new StakeAchievements())
+                    .IsClaimable(ActionObsoleteConfig.V100290ObsoleteIndex - 100 + RewardInterval * 2));
         }
 
         [Fact]

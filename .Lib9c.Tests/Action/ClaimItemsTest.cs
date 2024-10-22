@@ -50,7 +50,7 @@ namespace Lib9c.Tests.Action
             _itemIds = _tableSheets.CostumeItemSheet.Values.Take(3).Select(x => x.Id).ToList();
             _itemCurrencies = _itemIds.Select(id => Currencies.GetItemCurrency(id, true)).ToList();
             _wrappedFavCurrencies = new List<Currency>();
-            foreach (var currency in new[] { Currencies.Crystal, Currencies.StakeRune })
+            foreach (var currency in new[] { Currencies.Crystal, Currencies.StakeRune, })
             {
                 var wrappedCurrency = Currencies.GetWrappedCurrency(currency);
                 _wrappedFavCurrencies.Add(wrappedCurrency);
@@ -78,18 +78,18 @@ namespace Lib9c.Tests.Action
         {
             var states = GenerateAvatar(_initialState, out var avatarAddress1, out _);
             GenerateAvatar(states, out var avatarAddress2, out _);
-            string memo = memoExist ? "memo" : null;
+            var memo = memoExist ? "memo" : null;
             var action = new ClaimItems(
                 new List<(Address, IReadOnlyList<FungibleAssetValue>)>
                 {
-                    (avatarAddress1, new List<FungibleAssetValue> { _itemCurrencies[0] * 1, _itemCurrencies[1] * 1 }),
-                    (avatarAddress2, new List<FungibleAssetValue> { _itemCurrencies[0] * 1 }),
+                    (avatarAddress1, new List<FungibleAssetValue> { _itemCurrencies[0] * 1, _itemCurrencies[1] * 1, }),
+                    (avatarAddress2, new List<FungibleAssetValue> { _itemCurrencies[0] * 1, }),
                 },
                 memo
             );
             Assert.Equal(!memoExist, string.IsNullOrEmpty(action.Memo));
-            Dictionary serialized = (Dictionary)action.PlainValue;
-            Dictionary values = (Dictionary)serialized["values"];
+            var serialized = (Dictionary)action.PlainValue;
+            var values = (Dictionary)serialized["values"];
             Assert.Equal(memoExist, values.ContainsKey("m"));
             var deserialized = new ClaimItems();
             deserialized.LoadPlainValue(action.PlainValue);
@@ -97,8 +97,9 @@ namespace Lib9c.Tests.Action
             foreach (var i in Enumerable.Range(0, 2))
             {
                 Assert.Equal(action.ClaimData[i].address, deserialized.ClaimData[i].address);
-                Assert.True(action.ClaimData[i].fungibleAssetValues
-                    .SequenceEqual(deserialized.ClaimData[i].fungibleAssetValues));
+                Assert.True(
+                    action.ClaimData[i].fungibleAssetValues
+                        .SequenceEqual(deserialized.ClaimData[i].fungibleAssetValues));
             }
 
             Assert.Equal(action.Memo, deserialized.Memo);
@@ -110,18 +111,21 @@ namespace Lib9c.Tests.Action
             var state = GenerateAvatar(_initialState, out var recipientAvatarAddress, out _);
 
             var currency = Currencies.Crystal;
-            var action = new ClaimItems(new List<(Address, IReadOnlyList<FungibleAssetValue>)>
-            {
-                (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 1 }),
-            });
-            Assert.Throws<ArgumentException>(() =>
-                action.Execute(new ActionContext
+            var action = new ClaimItems(
+                new List<(Address, IReadOnlyList<FungibleAssetValue>)>
                 {
-                    PreviousState = state,
-                    Signer = _signerAddress,
-                    BlockIndex = 100,
-                    RandomSeed = 0,
-                }));
+                    (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 1, }),
+                });
+            Assert.Throws<ArgumentException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = _signerAddress,
+                            BlockIndex = 100,
+                            RandomSeed = 0,
+                        }));
         }
 
         [Fact]
@@ -130,18 +134,21 @@ namespace Lib9c.Tests.Action
             var state = GenerateAvatar(_initialState, out var recipientAvatarAddress, out _);
 
             var currency = _itemCurrencies.First();
-            var action = new ClaimItems(new List<(Address, IReadOnlyList<FungibleAssetValue>)>
-            {
-                (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 6 }),
-            });
-            Assert.Throws<InsufficientBalanceException>(() =>
-                action.Execute(new ActionContext
+            var action = new ClaimItems(
+                new List<(Address, IReadOnlyList<FungibleAssetValue>)>
                 {
-                    PreviousState = state,
-                    Signer = _signerAddress,
-                    BlockIndex = 100,
-                    RandomSeed = 0,
-                }));
+                    (recipientAvatarAddress, new List<FungibleAssetValue> { currency * 6, }),
+                });
+            Assert.Throws<InsufficientBalanceException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = _signerAddress,
+                            BlockIndex = 100,
+                            RandomSeed = 0,
+                        }));
         }
 
         [Theory]
@@ -174,13 +181,14 @@ namespace Lib9c.Tests.Action
                 },
                 memo
             );
-            var states = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _signerAddress,
-                BlockIndex = 0,
-                RandomSeed = 0,
-            });
+            var states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _signerAddress,
+                    BlockIndex = 0,
+                    RandomSeed = 0,
+                });
 
             var avatarState = states.GetAvatarState(recipientAvatarAddress, getQuestList: false, getWorldInformation: false);
             Assert.Null(avatarState.questList);
@@ -210,7 +218,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(1, mailItems.count);
             }
 
-            for (int i = 0; i < _wrappedFavCurrencies.Count; i++)
+            for (var i = 0; i < _wrappedFavCurrencies.Count; i++)
             {
                 var wrappedCurrency = _wrappedFavCurrencies[i];
                 Assert.Equal(wrappedCurrency * 4, states.GetBalance(_signerAddress, wrappedCurrency));
@@ -219,7 +227,7 @@ namespace Lib9c.Tests.Action
                     currency,
                     recipientAgentAddress,
                     recipientAvatarAddress
-                    );
+                );
                 Assert.Equal(currency * 1, states.GetBalance(recipientAddress, currency));
                 var mailFav = mail.FungibleAssetValues.Single(f => f.Currency.Equals(currency));
                 Assert.Equal(currency * 1, mailFav);
@@ -238,19 +246,21 @@ namespace Lib9c.Tests.Action
             };
             var fungibleAssetValues = _itemCurrencies.Select(currency => currency * 1).ToList();
 
-            var action = new ClaimItems(new List<(Address, IReadOnlyList<FungibleAssetValue>)>
-            {
-                (recipientAvatarAddress1, fungibleAssetValues.Take(2).ToList()),
-                (recipientAvatarAddress2, fungibleAssetValues),
-            });
+            var action = new ClaimItems(
+                new List<(Address, IReadOnlyList<FungibleAssetValue>)>
+                {
+                    (recipientAvatarAddress1, fungibleAssetValues.Take(2).ToList()),
+                    (recipientAvatarAddress2, fungibleAssetValues),
+                });
 
-            var states = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _signerAddress,
-                BlockIndex = 0,
-                RandomSeed = 0,
-            });
+            var states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _signerAddress,
+                    BlockIndex = 0,
+                    RandomSeed = 0,
+                });
 
             Assert.Equal(states.GetBalance(_signerAddress, _itemCurrencies[0]), _itemCurrencies[0] * 3);
             Assert.Equal(states.GetBalance(_signerAddress, _itemCurrencies[1]), _itemCurrencies[1] * 3);
@@ -285,18 +295,20 @@ namespace Lib9c.Tests.Action
                 _signerAddress,
                 currency * itemCount);
 
-            var action = new ClaimItems(new List<(Address, IReadOnlyList<FungibleAssetValue>)>
-            {
-                (recipientAvatarAddress1, new List<FungibleAssetValue> { currency * itemCount, }),
-            });
+            var action = new ClaimItems(
+                new List<(Address, IReadOnlyList<FungibleAssetValue>)>
+                {
+                    (recipientAvatarAddress1, new List<FungibleAssetValue> { currency * itemCount, }),
+                });
 
-            var states = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _signerAddress,
-                BlockIndex = 0,
-                RandomSeed = 0,
-            });
+            var states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _signerAddress,
+                    BlockIndex = 0,
+                    RandomSeed = 0,
+                });
 
             Assert.Equal(states.GetBalance(_signerAddress, currency), currency * 0);
 
@@ -309,19 +321,24 @@ namespace Lib9c.Tests.Action
         {
             var fungibleAssetValues = _itemCurrencies.Select(currency => currency * 1).ToList();
 
-            var action = new ClaimItems(Enumerable.Repeat(0, 101)
-                .Select(_ => (new PrivateKey().Address,
-                    (IReadOnlyList<FungibleAssetValue>)fungibleAssetValues))
-                .ToImmutableList());
+            var action = new ClaimItems(
+                Enumerable.Repeat(0, 101)
+                    .Select(
+                        _ => (new PrivateKey().Address,
+                            (IReadOnlyList<FungibleAssetValue>)fungibleAssetValues))
+                    .ToImmutableList());
 
-            Assert.Throws<ArgumentOutOfRangeException>("ClaimData", () =>
-                action.Execute(new ActionContext
-                {
-                    PreviousState = _initialState,
-                    Signer = _signerAddress,
-                    BlockIndex = 0,
-                    RandomSeed = 0,
-                }));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                "ClaimData",
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = _initialState,
+                            Signer = _signerAddress,
+                            BlockIndex = 0,
+                            RandomSeed = 0,
+                        }));
         }
 
         private IWorld GenerateAvatar(IWorld state, out Address avatarAddress, out Address agentAddress)

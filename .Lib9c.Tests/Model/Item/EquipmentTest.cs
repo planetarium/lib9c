@@ -61,7 +61,7 @@ namespace Lib9c.Tests.Model.Item
         public void LevelUp()
         {
             var row = new EquipmentItemSheet.Row();
-            row.Set(new List<string>() { "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000" });
+            row.Set(new List<string>() { "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000", });
             var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, 0);
 
             Assert.Equal(1m, equipment.StatsMap.ATK);
@@ -73,7 +73,8 @@ namespace Lib9c.Tests.Model.Item
         public void GetHammerExp()
         {
             var costSheet = new EnhancementCostSheetV3();
-            costSheet.Set(@"600301,EquipmentMaterial,1,0,0,100,0,0,0,0,0,0,0,0,0
+            costSheet.Set(
+                @"600301,EquipmentMaterial,1,0,0,100,0,0,0,0,0,0,0,0,0
 600302,EquipmentMaterial,2,0,0,200,0,0,0,0,0,0,0,0,0
 600303,EquipmentMaterial,3,0,0,300,0,0,0,0,0,0,0,0,0
 600304,EquipmentMaterial,4,0,0,400,0,0,0,0,0,0,0,0,0

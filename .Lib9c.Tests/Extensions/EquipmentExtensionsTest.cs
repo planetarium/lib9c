@@ -68,10 +68,11 @@ namespace Lib9c.Tests.Extensions
                         false);
                     try
                     {
-                        Assert.False(equipment.IsMadeWithMimisbrunnrRecipe(
-                            recipeSheet,
-                            subRecipeSheet,
-                            equipmentOptionSheet));
+                        Assert.False(
+                            equipment.IsMadeWithMimisbrunnrRecipe(
+                                recipeSheet,
+                                subRecipeSheet,
+                                equipmentOptionSheet));
                     }
                     catch
                     {

@@ -67,7 +67,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var recipe =
                 _tableSheets.EquipmentItemRecipeSheet.Values.First(
                     recipe => recipe.RequiredBlockIndex >= requiredBlock
-                    );
+                );
             Assert.NotNull(recipe);
 
             // Get Materials and stages
@@ -103,7 +103,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                     recipe.RequiredBlockIndex
                     /
                     (stateV2.GetGameConfigState().HourglassPerBlock
-                     + petRow.LevelOptionMap[(int)petLevel].OptionValue)
+                        + petRow.LevelOptionMap[(int)petLevel].OptionValue)
                 );
             }
 
@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 _avatarAddr,
                 new List<EquipmentItemSubRecipeSheet.MaterialInfo>
                 {
-                    new EquipmentItemSubRecipeSheet.MaterialInfo(
+                    new (
                         _hourglassItemId,
                         expectedHourglass
                     ),
@@ -148,27 +148,29 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 petId = _petId,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    RandomSeed = random.Seed,
+                });
 
             // Do rapid combination
             var rapidAction = new RapidCombination
             {
                 avatarAddress = _avatarAddr,
-                slotIndexList = new List<int> { 0 },
+                slotIndexList = new List<int> { 0, },
             };
-            stateV2 = rapidAction.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = rapidAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0,
+                    RandomSeed = random.Seed,
+                });
 
             var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
             var slotState = allSlotState.GetSlot(0);
@@ -180,8 +182,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
             // TEST: All Hourglasses should be used
             var avatarState = stateV2.GetAvatarState(_avatarAddr);
-            Assert.Throws<InvalidOperationException>(() =>
-                avatarState.inventory.Items.First(item => item.item.Id == _hourglassItemId));
+            Assert.Throws<InvalidOperationException>(
+                () =>
+                    avatarState.inventory.Items.First(item => item.item.Id == _hourglassItemId));
         }
     }
 }

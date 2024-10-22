@@ -69,11 +69,12 @@ namespace Lib9c.Tests.Model.State
         public void ArenaInfoGetRewardCount(int minScore, int maxScore, int expected)
         {
             var score = new Random().Next(minScore, maxScore);
-            var serialized = new Dictionary(new Dictionary<IKey, IValue>
-            {
-                [(Text)"score"] = score.Serialize(),
-                [(Text)"receive"] = false.Serialize(),
-            });
+            var serialized = new Dictionary(
+                new Dictionary<IKey, IValue>
+                {
+                    [(Text)"score"] = score.Serialize(),
+                    [(Text)"receive"] = false.Serialize(),
+                });
             var info = new ArenaInfo(serialized);
             Assert.Equal(expected, info.GetRewardCount());
         }
@@ -143,8 +144,9 @@ namespace Lib9c.Tests.Model.State
                     new ArenaInfo(avatarState, characterSheet, new CostumeStatSheet(), true));
             }
 
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                weeklyArenaState.GetArenaInfos(firstRank, 100));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    weeklyArenaState.GetArenaInfos(firstRank, 100));
         }
 
         [Theory]

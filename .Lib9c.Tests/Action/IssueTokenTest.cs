@@ -24,11 +24,12 @@ namespace Lib9c.Tests.Action
         public IssueTokenTest()
         {
             _signer = new PrivateKey().Address;
-            _avatarAddress = _signer.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CreateAvatar.DeriveFormat,
-                0
-            ));
+            _avatarAddress = _signer.Derive(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    CreateAvatar.DeriveFormat,
+                    0
+                ));
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
 
@@ -44,7 +45,7 @@ namespace Lib9c.Tests.Action
                 .Select(r => r.ItemId);
             var inventory = new Inventory();
             foreach (var row in tableSheets.MaterialItemSheet.OrderedList!
-                         .Where(r => materialIds.Contains(r.Id)))
+                .Where(r => materialIds.Contains(r.Id)))
             {
                 var material = ItemFactory.CreateMaterial(row);
                 var tradableMaterial = ItemFactory.CreateTradableMaterial(row);
@@ -109,7 +110,7 @@ namespace Lib9c.Tests.Action
             };
             var prevState = _prevState.MintAsset(new ActionContext(), _signer, FungibleAssetValue.Parse(Currencies.Garage, "4.2000042"));
 
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -165,8 +166,8 @@ namespace Lib9c.Tests.Action
             );
 
             Assert.Equal(0 * Currencies.Garage, nextState.GetBalance(_signer, Currencies.Garage));
-            Currency nonTradableItemCurrency = Currency.Legacy("Item_NT_500000", 0, null);
-            Currency tradableItemCurrency = Currency.Legacy("Item_T_500000", 0, null);
+            var nonTradableItemCurrency = Currency.Legacy("Item_NT_500000", 0, null);
+            var tradableItemCurrency = Currency.Legacy("Item_T_500000", 0, null);
             Assert.Equal(nonTradableItemCurrency * 42, nextState.GetBalance(_signer, nonTradableItemCurrency));
             Assert.Equal(tradableItemCurrency * 42, nextState.GetBalance(_signer, tradableItemCurrency));
             var inventory = nextState.GetInventoryV2(_avatarAddress);
@@ -200,14 +201,15 @@ namespace Lib9c.Tests.Action
                 .MintAsset(actionContext, _signer, Currencies.Garage * 1000)
                 .MintAsset(actionContext, _signer, currencyWithMinter * 1000);
 
-            Assert.Throws<InvalidCurrencyException>(() => action.Execute(
-                new ActionContext()
-                {
-                    PreviousState = prevState,
-                    Signer = _signer,
-                    BlockIndex = 42,
-                }
-            ));
+            Assert.Throws<InvalidCurrencyException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = prevState,
+                        Signer = _signer,
+                        BlockIndex = 42,
+                    }
+                ));
         }
     }
 }

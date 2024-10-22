@@ -39,8 +39,9 @@ namespace Lib9c.Tests.Model.Stake
             long startedBlockIndex,
             long receivedBlockIndex)
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                new StakeStateV2(null, startedBlockIndex, receivedBlockIndex));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    new StakeStateV2(null, startedBlockIndex, receivedBlockIndex));
         }
 
         [Theory]
@@ -51,8 +52,9 @@ namespace Lib9c.Tests.Model.Stake
             long startedBlockIndex,
             long receivedBlockIndex)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new StakeStateV2(null, startedBlockIndex, receivedBlockIndex));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    new StakeStateV2(null, startedBlockIndex, receivedBlockIndex));
         }
 
         [Theory]

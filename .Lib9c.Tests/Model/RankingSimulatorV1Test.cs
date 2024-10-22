@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Model
                 new ArenaInfo(avatarState, _tableSheets.CharacterSheet, false));
 
             var rewardIds = new HashSet<int>();
-            for (int i = 0; i < simulationCount; ++i)
+            for (var i = 0; i < simulationCount; ++i)
             {
                 simulator.SimulateV2();
                 foreach (var itemBase in simulator.Reward)

@@ -47,23 +47,25 @@ namespace Lib9c.Tests.Action
 
             var requirementSheet = tableSheets.ItemRequirementSheet;
             var row = tableSheets.EquipmentItemSheet.OrderedList
-                .Where(e =>
-                    e.ItemSubType == itemSubType &&
-                    (!elementalType.HasValue || e.ElementalType == elementalType.Value) &&
-                    requirementSheet.TryGetValue(e.Id, out var requirementRow) &&
-                    avatarLevel >= requirementRow.Level)
-                .Aggregate((row1, row2) =>
-                {
-                    var row1Value = row1.Stat.StatType == statType
-                        ? row1.Stat.BaseValueAsLong
-                        : 0;
-                    var row2Value = row2.Stat.StatType == statType
-                        ? row2.Stat.BaseValueAsLong
-                        : 0;
-                    return row1Value > row2Value
-                        ? row1
-                        : row2;
-                });
+                .Where(
+                    e =>
+                        e.ItemSubType == itemSubType &&
+                        (!elementalType.HasValue || e.ElementalType == elementalType.Value) &&
+                        requirementSheet.TryGetValue(e.Id, out var requirementRow) &&
+                        avatarLevel >= requirementRow.Level)
+                .Aggregate(
+                    (row1, row2) =>
+                    {
+                        var row1Value = row1.Stat.StatType == statType
+                            ? row1.Stat.BaseValueAsLong
+                            : 0;
+                        var row2Value = row2.Stat.StatType == statType
+                            ? row2.Stat.BaseValueAsLong
+                            : 0;
+                        return row1Value > row2Value
+                            ? row1
+                            : row2;
+                    });
             Assert.NotNull(row);
             return (Equipment)ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 0, 10);
         }

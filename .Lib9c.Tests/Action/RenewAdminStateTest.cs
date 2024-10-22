@@ -31,11 +31,12 @@ namespace Lib9c.Tests.Action
         {
             var newValidUntil = _validUntil + 1000;
             var action = new RenewAdminState(newValidUntil);
-            var stateDelta = action.Execute(new ActionContext
-            {
-                PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.Address,
-            });
+            var stateDelta = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = _stateDelta,
+                    Signer = _adminPrivateKey.Address,
+                });
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetLegacyState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
@@ -47,15 +48,17 @@ namespace Lib9c.Tests.Action
         {
             var newValidUntil = _validUntil + 1000;
             var action = new RenewAdminState(newValidUntil);
-            Assert.Throws<PermissionDeniedException>(() =>
-            {
-                var userPrivateKey = new PrivateKey();
-                action.Execute(new ActionContext
+            Assert.Throws<PermissionDeniedException>(
+                () =>
                 {
-                    PreviousState = _stateDelta,
-                    Signer = userPrivateKey.Address,
+                    var userPrivateKey = new PrivateKey();
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = _stateDelta,
+                            Signer = userPrivateKey.Address,
+                        });
                 });
-            });
         }
 
         [Fact]
@@ -63,12 +66,13 @@ namespace Lib9c.Tests.Action
         {
             var newValidUntil = _validUntil + 1000;
             var action = new RenewAdminState(newValidUntil);
-            var stateDelta = action.Execute(new ActionContext
-            {
-                BlockIndex = _validUntil + 1,
-                PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.Address,
-            });
+            var stateDelta = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = _validUntil + 1,
+                    PreviousState = _stateDelta,
+                    Signer = _adminPrivateKey.Address,
+                });
 
             var adminState = new AdminState((Bencodex.Types.Dictionary)stateDelta.GetLegacyState(Addresses.Admin));
             Assert.Equal(newValidUntil, adminState.ValidUntil);
@@ -93,40 +97,45 @@ namespace Lib9c.Tests.Action
             random.NextBytes(nonce);
             var privateKey = new PrivateKey();
 
-            var createPendingActivations = new CreatePendingActivations(new[]
-            {
-                new PendingActivationState(nonce, privateKey.PublicKey),
-            });
+            var createPendingActivations = new CreatePendingActivations(
+                new[]
+                {
+                    new PendingActivationState(nonce, privateKey.PublicKey),
+                });
 
-            long blockIndex = _validUntil + 1;
-            Assert.Throws<PolicyExpiredException>(() => createPendingActivations.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.Address,
-            }));
+            var blockIndex = _validUntil + 1;
+            Assert.Throws<PolicyExpiredException>(
+                () => createPendingActivations.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = _stateDelta,
+                        Signer = _adminPrivateKey.Address,
+                    }));
 
             var newValidUntil = _validUntil + 1000;
             var action = new RenewAdminState(newValidUntil);
-            var stateDelta = action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = _stateDelta,
-                Signer = _adminPrivateKey.Address,
-            });
+            var stateDelta = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = _stateDelta,
+                    Signer = _adminPrivateKey.Address,
+                });
 
             // After 100 blocks.
             blockIndex += 100;
 
             Assert.True(blockIndex < newValidUntil);
-            stateDelta = createPendingActivations.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = stateDelta,
-                Signer = _adminPrivateKey.Address,
-            });
+            stateDelta = createPendingActivations.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = stateDelta,
+                    Signer = _adminPrivateKey.Address,
+                });
 
-            Address expectedPendingActivationStateAddress =
+            var expectedPendingActivationStateAddress =
                 PendingActivationState.DeriveAddress(nonce, privateKey.PublicKey);
             Assert.NotNull(stateDelta.GetLegacyState(expectedPendingActivationStateAddress));
         }

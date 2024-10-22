@@ -93,9 +93,10 @@ namespace Lib9c.Tests.Model
             var filtered =
                 simulator.Log
                     .Select(e => e.GetType())
-                    .Where(type =>
-                        type != typeof(GetReward) ||
-                        type != typeof(DropBox));
+                    .Where(
+                        type =>
+                            type != typeof(GetReward) ||
+                            type != typeof(DropBox));
             Assert.Equal(typeof(WaveTurnEnd), filtered.Last());
             Assert.Equal(1, simulator.Log.OfType<WaveTurnEnd>().First().TurnNumber);
         }

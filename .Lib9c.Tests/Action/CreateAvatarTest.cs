@@ -60,13 +60,14 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * CrystalCalculator.CRYSTAL, state.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL));
 
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                BlockIndex = blockIndex,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    BlockIndex = blockIndex,
+                    RandomSeed = 0,
+                });
 
             var avatarAddress = _agentAddress.Derive(
                 string.Format(
@@ -75,10 +76,11 @@ namespace Lib9c.Tests.Action
                     0
                 )
             );
-            Assert.True(nextState.TryGetAvatarState(
-                default,
-                avatarAddress,
-                out var nextAvatarState)
+            Assert.True(
+                nextState.TryGetAvatarState(
+                    default,
+                    avatarAddress,
+                    out var nextAvatarState)
             );
             var agentState = nextState.GetAgentState(default);
             Assert.NotNull(agentState);
@@ -123,12 +125,14 @@ namespace Lib9c.Tests.Action
 
             var state = new World(MockUtil.MockModernWorldState);
 
-            Assert.Throws<InvalidNamePatternException>(() => action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    BlockIndex = 0,
-                })
+            Assert.Throws<InvalidNamePatternException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = agentAddress,
+                        BlockIndex = 0,
+                    })
             );
         }
 
@@ -163,12 +167,14 @@ namespace Lib9c.Tests.Action
 
             var state = new World(MockUtil.MockModernWorldState).SetAvatarState(avatarAddress, avatarState);
 
-            Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 0,
-                })
+            Assert.Throws<InvalidAddressException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 0,
+                    })
             );
         }
 
@@ -189,12 +195,14 @@ namespace Lib9c.Tests.Action
                 name = "test",
             };
 
-            Assert.Throws<AvatarIndexOutOfRangeException>(() => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 0,
-                })
+            Assert.Throws<AvatarIndexOutOfRangeException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 0,
+                    })
             );
         }
 
@@ -225,12 +233,14 @@ namespace Lib9c.Tests.Action
                 name = "test",
             };
 
-            Assert.Throws<AvatarIndexAlreadyUsedException>(() => action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 0,
-                })
+            Assert.Throws<AvatarIndexAlreadyUsedException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 0,
+                    })
             );
         }
 
@@ -239,7 +249,8 @@ namespace Lib9c.Tests.Action
         {
             var itemSheet = _tableSheets.ItemSheet;
             var createAvatarItemSheet = new CreateAvatarItemSheet();
-            createAvatarItemSheet.Set(@"item_id,count
+            createAvatarItemSheet.Set(
+                @"item_id,count
 10112000,2
 10512000,2
 600201,2
@@ -263,7 +274,8 @@ namespace Lib9c.Tests.Action
         public void MintAsset()
         {
             var createAvatarFavSheet = new CreateAvatarFavSheet();
-            createAvatarFavSheet.Set(@"currency,quantity,target
+            createAvatarFavSheet.Set(
+                @"currency,quantity,target
 CRYSTAL,200000,Agent
 RUNE_GOLDENLEAF,200000,Avatar
 ");

@@ -15,8 +15,8 @@ namespace Lib9c.Tests.Model.Garages
         public FungibleItemGarageTest()
         {
             if (!TableSheetsImporter.TryGetCsv(
-                    nameof(MaterialItemSheet),
-                    out var materialItemSheetCsv))
+                nameof(MaterialItemSheet),
+                out var materialItemSheetCsv))
             {
                 throw new Exception("Failed to load MaterialItemSheet.csv");
             }
@@ -49,8 +49,9 @@ namespace Lib9c.Tests.Model.Garages
         [InlineData(int.MaxValue)]
         public void Constructor_Failure_With_Null_Item(int count)
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                new FungibleItemGarage(null!, count));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    new FungibleItemGarage(null!, count));
         }
 
         [Theory]
@@ -58,19 +59,23 @@ namespace Lib9c.Tests.Model.Garages
         [InlineData(-1)]
         public void Constructor_Failure_With_Negative_Count(int count)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new FungibleItemGarage(_tradableMaterial, count));
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new FungibleItemGarage(_tradableMaterial2, count));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    new FungibleItemGarage(_tradableMaterial, count));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    new FungibleItemGarage(_tradableMaterial2, count));
         }
 
         [Fact]
         public void Constructor_With_IValue_Failure()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                new FungibleItemGarage(null));
-            Assert.Throws<ArgumentNullException>(() =>
-                new FungibleItemGarage(Null.Value));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    new FungibleItemGarage(null));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    new FungibleItemGarage(Null.Value));
         }
 
         [Theory]
@@ -94,8 +99,9 @@ namespace Lib9c.Tests.Model.Garages
         public void Load_Failure(int count1, int count2)
         {
             var garage = new FungibleItemGarage(_tradableMaterial, count1);
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                garage.Load(count2));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    garage.Load(count2));
         }
 
         [Theory]
@@ -121,8 +127,9 @@ namespace Lib9c.Tests.Model.Garages
         {
             var garage1 = new FungibleItemGarage(_tradableMaterial, count1);
             var garage2 = new FungibleItemGarage(_tradableMaterial, 0);
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                garage1.Deliver(garage2, count2));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    garage1.Deliver(garage2, count2));
         }
 
         [Fact]
@@ -130,8 +137,9 @@ namespace Lib9c.Tests.Model.Garages
         {
             var garage1 = new FungibleItemGarage(_tradableMaterial, 1);
             var garage2 = new FungibleItemGarage(_tradableMaterial2, 0);
-            Assert.Throws<ArgumentException>(() =>
-                garage1.Deliver(garage2, 1));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    garage1.Deliver(garage2, 1));
         }
 
         [Theory]
@@ -154,8 +162,9 @@ namespace Lib9c.Tests.Model.Garages
         public void Unload_Failure(int count1, int count2)
         {
             var garage = new FungibleItemGarage(_tradableMaterial, count1);
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                garage.Unload(count2));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    garage.Unload(count2));
         }
 
         private static void AssertSerialization(FungibleItemGarage garage)

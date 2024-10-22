@@ -24,13 +24,14 @@ namespace Lib9c.Tests.Action
 
     public class BuyProductTest
     {
-        private static readonly Address BuyerAgentAddress = new Address("47d082a115c63e7b58b1532d20e631538eafadde");
-        private static readonly Address BuyerAvatarAddress = new Address("340f110b91d0577a9ae0ea69ce15269436f217da");
-        private static readonly Address SellerAgentAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
-        private static readonly Address SellerAvatarAddress = new Address("Fb90278C67f9b266eA309E6AE8463042f5461449");
+        private static readonly Address BuyerAgentAddress = new ("47d082a115c63e7b58b1532d20e631538eafadde");
+        private static readonly Address BuyerAvatarAddress = new ("340f110b91d0577a9ae0ea69ce15269436f217da");
+        private static readonly Address SellerAgentAddress = new ("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
+        private static readonly Address SellerAvatarAddress = new ("Fb90278C67f9b266eA309E6AE8463042f5461449");
         private static readonly Guid ProductId = Guid.NewGuid();
         private static readonly Currency Gold = Currency.Legacy("NCG", 2, null);
-        private static readonly TableSheets TableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+        private static readonly TableSheets TableSheets = new (TableSheetsImporter.ImportSheets());
+
         private static readonly ITradableItem TradableItem =
             (ITradableItem)ItemFactory.CreateItemUsable(TableSheets.EquipmentItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Armor), Guid.NewGuid(), 1L);
 
@@ -297,14 +298,17 @@ namespace Lib9c.Tests.Action
                     var action = new BuyProduct
                     {
                         AvatarAddress = BuyerAvatarAddress,
-                        ProductInfos = new[] { productInfo },
+                        ProductInfos = new[] { productInfo, },
                     };
-                    Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
-                    {
-                        PreviousState = previousState,
-                        RandomSeed = 0,
-                        Signer = BuyerAgentAddress,
-                    }));
+                    Assert.Throws(
+                        validateMember.Exc,
+                        () => action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = previousState,
+                                RandomSeed = 0,
+                                Signer = BuyerAgentAddress,
+                            }));
                 }
             }
         }
@@ -313,7 +317,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var productInfos = new List<ItemProductInfo>();
-            for (int i = 0; i < BuyProduct.Capacity + 1; i++)
+            for (var i = 0; i < BuyProduct.Capacity + 1; i++)
             {
                 productInfos.Add(new ItemProductInfo());
             }
