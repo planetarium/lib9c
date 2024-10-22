@@ -4,10 +4,10 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Lib9c.Tests.Util;
     using Nekoyume.Action;
     using Nekoyume.Arena;
     using Nekoyume.Model.Arena;

@@ -3,11 +3,11 @@ namespace Lib9c.Tests.Model.Mail
     using System;
     using System.Collections.Generic;
     using Bencodex.Types;
+    using Libplanet.Types.Assets;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.TableData;
     using Xunit;
-    using Libplanet.Types.Assets;
 
     public class CustomCraftMailTest
     {
