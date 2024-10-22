@@ -28,5 +28,11 @@ namespace Nekoyume.Blockchain.Policy
                 .Add(new SpannedSubPolicy<int>(
                     startIndex: 0,
                     value: BlockPolicySource.MaxTransactionsPerBlock));
+
+        public static IVariableSubPolicy<int> Thor =>
+            Default
+                .Add(new SpannedSubPolicy<int>(
+                    startIndex: 0,
+                    value: BlockPolicySource.MaxTransactionsPerBlock));
     }
 }
