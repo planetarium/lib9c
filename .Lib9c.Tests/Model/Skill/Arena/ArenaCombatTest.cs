@@ -84,14 +84,18 @@ namespace Lib9c.Tests.Model.Skill.Arena
                     .BuffIds.First()
             );
             var dispel = new ArenaBuffSkill(skillRow, 0, 100, 0, StatType.NONE);
-            dispel.Use(challenger, challenger, simulator.Turn, BuffFactory.GetBuffs(
-                challenger.Stats,
-                dispel,
-                _tableSheets.SkillBuffSheet,
-                _tableSheets.StatBuffSheet,
-                _tableSheets.SkillActionBuffSheet,
-                _tableSheets.ActionBuffSheet
-            ));
+            dispel.Use(
+                challenger,
+                challenger,
+                simulator.Turn,
+                BuffFactory.GetBuffs(
+                    challenger.Stats,
+                    dispel,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                ));
             Assert.Single(challenger.Buffs);
             Assert.Equal(dispelRow.GroupId, challenger.Buffs.First().Value.BuffInfo.GroupId);
         }

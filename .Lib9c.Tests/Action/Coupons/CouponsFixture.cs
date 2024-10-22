@@ -14,17 +14,20 @@ namespace Lib9c.Tests.Action.Coupons
         public static Address AgentAddress3 { get; } = new ("0000000000000000000000000000000000000002");
 
         public static RewardSet RewardSet1 { get; } =
-            new (ImmutableDictionary<int, uint>.Empty
-                .Add(302001, 1));
+            new (
+                ImmutableDictionary<int, uint>.Empty
+                    .Add(302001, 1));
 
         public static RewardSet RewardSet2 { get; } =
-            new (ImmutableDictionary<int, uint>.Empty
-                .Add(302001, 1)
-                .Add(302002, 2));
+            new (
+                ImmutableDictionary<int, uint>.Empty
+                    .Add(302001, 1)
+                    .Add(302002, 2));
 
         public static RewardSet RewardSet3 { get; } =
-            new (ImmutableDictionary<int, uint>.Empty
-                .Add(302002, 2));
+            new (
+                ImmutableDictionary<int, uint>.Empty
+                    .Add(302002, 2));
 
         public static Guid Guid1 { get; } = new ("9CB96C65-3D47-4BAD-8BE6-18D97042B6C9");
 

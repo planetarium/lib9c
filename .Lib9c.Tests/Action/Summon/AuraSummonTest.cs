@@ -237,8 +237,9 @@ namespace Lib9c.Tests.Action.Summon
                 var checkedEquipments = new List<Guid>();
                 foreach (var equipmentId in expectedEquipmentId)
                 {
-                    var resultEquipment = equipments.First(e =>
-                        e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
+                    var resultEquipment = equipments.First(
+                        e =>
+                            e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
                     );
 
                     checkedEquipments.Add(resultEquipment.ItemId);
@@ -254,16 +255,19 @@ namespace Lib9c.Tests.Action.Summon
             else
             {
                 // Failure
-                Assert.Throws(expectedExc, () =>
-                {
-                    action.Execute(new ActionContext
+                Assert.Throws(
+                    expectedExc,
+                    () =>
                     {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        BlockIndex = 1,
-                        RandomSeed = random.Seed,
+                        action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                BlockIndex = 1,
+                                RandomSeed = random.Seed,
+                            });
                     });
-                });
             }
         }
     }

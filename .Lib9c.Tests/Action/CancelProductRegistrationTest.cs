@@ -146,13 +146,14 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            var nexState = registerProduct.Execute(new ActionContext
-            {
-                PreviousState = prevState,
-                BlockIndex = 1L,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            var nexState = registerProduct.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevState,
+                    BlockIndex = 1L,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
             Assert.Equal(
                 0 * RuneHelper.StakeRune,
                 nexState.GetBalance(_avatarAddress, RuneHelper.StakeRune)
@@ -186,13 +187,15 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            Assert.Throws<ProductNotFoundException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = nexState,
-                BlockIndex = 2L,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ProductNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = nexState,
+                        BlockIndex = 2L,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]

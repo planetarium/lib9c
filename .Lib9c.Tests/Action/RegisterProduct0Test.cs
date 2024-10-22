@@ -239,13 +239,14 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                BlockIndex = 1L,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1L,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
@@ -293,12 +294,15 @@ namespace Lib9c.Tests.Action
                         AvatarAddress = AvatarAddress,
                         RegisterInfos = new[] { registerInfo, },
                     };
-                    Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
-                    {
-                        PreviousState = _initialState,
-                        RandomSeed = 0,
-                        Signer = _agentAddress,
-                    }));
+                    Assert.Throws(
+                        validateMember.Exc,
+                        () => action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = _initialState,
+                                RandomSeed = 0,
+                                Signer = _agentAddress,
+                            }));
                 }
             }
         }
@@ -363,13 +367,15 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            Assert.Throws<ItemDoesNotExistException>(() => action.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                BlockIndex = blockIndex,
-                RandomSeed = 0,
-                PreviousState = _initialState,
-            }));
+            Assert.Throws<ItemDoesNotExistException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        BlockIndex = blockIndex,
+                        RandomSeed = 0,
+                        PreviousState = _initialState,
+                    }));
         }
 
         [Fact]

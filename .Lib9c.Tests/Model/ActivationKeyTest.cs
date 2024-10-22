@@ -13,7 +13,7 @@ namespace Lib9c.Tests.Model
         {
             var privateKey = new PrivateKey(ByteUtil.ParseHex("ac84ad2eb0bc62c63e8c4e4f22f7c19d283b36e60fdc4eed182d4d7a7bb4c716"));
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
-            (var ak, var pending) = ActivationKey.Create(privateKey, nonce);
+            var (ak, pending) = ActivationKey.Create(privateKey, nonce);
 
             Assert.Equal(privateKey, ak.PrivateKey);
             Assert.Equal(pending.address, ak.PendingAddress);

@@ -59,22 +59,25 @@ namespace Lib9c.Tests.Policy
             Assert.Equal(19, genericSubPolicy.SpannedSubPolicies.First().EndIndex);
 
             // Out of order addition should not work.
-            Assert.Throws<ArgumentOutOfRangeException>(() => ConcreteSubPolicy<bool>
-                .Create(false)
-                .Add(fourth)
-                .Add(third));
-            Assert.Throws<ArgumentOutOfRangeException>(() => ConcreteSubPolicy<bool>
-                .Create(false)
-                .Add(first)
-                .Add(badSecond));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => ConcreteSubPolicy<bool>
+                    .Create(false)
+                    .Add(fourth)
+                    .Add(third));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => ConcreteSubPolicy<bool>
+                    .Create(false)
+                    .Add(first)
+                    .Add(badSecond));
 
             // Create using AddRange().
             genericSubPolicy = ConcreteSubPolicy<bool>
                 .Create(false)
                 .AddRange(new List<SpannedSubPolicy<bool>>() { first, second, third, fourth, }.ToImmutableList());
-            Assert.Throws<ArgumentOutOfRangeException>(() => ConcreteSubPolicy<bool>
-                .Create(false)
-                .AddRange(new List<SpannedSubPolicy<bool>>() { second, first, }.ToImmutableList()));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => ConcreteSubPolicy<bool>
+                    .Create(false)
+                    .AddRange(new List<SpannedSubPolicy<bool>>() { second, first, }.ToImmutableList()));
 
             // Type check
             Assert.IsType<ConcreteSubPolicy<bool>>(genericSubPolicy);

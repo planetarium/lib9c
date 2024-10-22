@@ -201,8 +201,9 @@ namespace Lib9c.Tests.Action
 
             if (chargeAp && apStoneExist)
             {
-                var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                    r.ItemSubType == ItemSubType.ApStone);
+                var row = _tableSheets.MaterialItemSheet.Values.First(
+                    r =>
+                        r.ItemSubType == ItemSubType.ApStone);
                 var apStone = ItemFactory.CreateMaterial(row);
                 _avatarState.inventory.AddItem(apStone);
             }
@@ -217,8 +218,10 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () =>
-                    Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet));
+                Assert.Throws(
+                    exc,
+                    () =>
+                        Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet));
             }
         }
 
@@ -241,8 +244,9 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            Assert.Throws<InvalidItemCountException>(() =>
-                Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
+            Assert.Throws<InvalidItemCountException>(
+                () =>
+                    Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -269,8 +273,9 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
             }
 
-            Assert.Throws<FailedLoadStateException>(() =>
-                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -303,8 +308,10 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            Assert.Throws(exc, () =>
-                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
+            Assert.Throws(
+                exc,
+                () =>
+                    Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -366,13 +373,14 @@ namespace Lib9c.Tests.Action
                 ChargeAp = chargeAp,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = prevStates,
-                Signer = agentAddress,
-                BlockIndex = 1,
-                RandomSeed = random.Seed,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevStates,
+                    Signer = agentAddress,
+                    BlockIndex = 1,
+                    RandomSeed = random.Seed,
+                });
 
             var crystalCurrency = Currencies.Crystal; // CrystalCurrencyState.Address;
             var nextAvatarState = nextState.GetAvatarState(avatarAddress);
@@ -396,7 +404,7 @@ namespace Lib9c.Tests.Action
 
         private class CalculateMaterialRewardData : IEnumerable<object[]>
         {
-            private readonly List<object[]> _data = new()
+            private readonly List<object[]> _data = new ()
             {
                 new object[]
                 {

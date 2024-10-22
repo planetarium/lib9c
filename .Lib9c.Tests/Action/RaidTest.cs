@@ -97,15 +97,16 @@ namespace Lib9c.Tests.Action
         {
             var blockIndex = _tableSheets.WorldBossListSheet.Values
                 .OrderBy(x => x.StartedBlockIndex)
-                .First(x =>
-                {
-                    if (exc == typeof(InsufficientBalanceException))
+                .First(
+                    x =>
                     {
-                        return ncgExist ? x.TicketPrice > 0 : x.EntranceFee > 0;
-                    }
+                        if (exc == typeof(InsufficientBalanceException))
+                        {
+                            return ncgExist ? x.TicketPrice > 0 : x.EntranceFee > 0;
+                        }
 
-                    return true;
-                })
+                        return true;
+                    })
                 .StartedBlockIndex;
 
             var action = new Raid
@@ -429,22 +430,26 @@ namespace Lib9c.Tests.Action
                         SlotIndex = 1,
                     };
 
-                    state = unlockRuneSlot.Execute(new ActionContext
-                    {
-                        BlockIndex = 1,
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        RandomSeed = 0,
-                    });
+                    state = unlockRuneSlot.Execute(
+                        new ActionContext
+                        {
+                            BlockIndex = 1,
+                            PreviousState = state,
+                            Signer = _agentAddress,
+                            RandomSeed = 0,
+                        });
                 }
 
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    BlockIndex = blockIndex + executeOffset,
-                    PreviousState = state,
-                    RandomSeed = 0,
-                    Signer = _agentAddress,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            BlockIndex = blockIndex + executeOffset,
+                            PreviousState = state,
+                            RandomSeed = 0,
+                            Signer = _agentAddress,
+                        }));
             }
         }
 
@@ -567,13 +572,14 @@ namespace Lib9c.Tests.Action
             );
 
             var blockIndex = worldBossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval;
-            var nextState = action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = state,
-                RandomSeed = randomSeed,
-                Signer = _agentAddress,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = state,
+                    RandomSeed = randomSeed,
+                    Signer = _agentAddress,
+                });
 
             Assert.True(nextState.TryGetLegacyState(raiderAddress, out List rawRaider));
             var nextRaiderState = new RaiderState(rawRaider);

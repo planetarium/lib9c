@@ -73,14 +73,15 @@ namespace Lib9c.Tests.Action
         {
             var invalidSigner = new Address("0x94cde435616875310f0739FAf2c8671c58987bf0");
             var action = new SecureMiningReward(_recipient);
-            Assert.Throws<PermissionDeniedException>(() => action.Execute(
-                new ActionContext
-                {
-                    PreviousState = _previousState,
-                    Signer = invalidSigner,
-                    BlockIndex = 1,
-                }
-            ));
+            Assert.Throws<PermissionDeniedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _previousState,
+                        Signer = invalidSigner,
+                        BlockIndex = 1,
+                    }
+                ));
         }
     }
 }

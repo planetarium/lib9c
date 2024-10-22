@@ -77,11 +77,12 @@ namespace Lib9c.Tests.Model.Stake
             long rewardInterval,
             long lockupInterval)
         {
-            Assert.Throws<ArgumentException>(() => new Contract(
-                stakeRegularFixedRewardSheetTableName,
-                stakeRegularRewardSheetTableName,
-                rewardInterval,
-                lockupInterval));
+            Assert.Throws<ArgumentException>(
+                () => new Contract(
+                    stakeRegularFixedRewardSheetTableName,
+                    stakeRegularRewardSheetTableName,
+                    rewardInterval,
+                    lockupInterval));
         }
 
         [Theory]
@@ -111,11 +112,12 @@ namespace Lib9c.Tests.Model.Stake
             long rewardInterval,
             long lockupInterval)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Contract(
-                stakeRegularFixedRewardSheetTableName,
-                stakeRegularRewardSheetTableName,
-                rewardInterval,
-                lockupInterval));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => new Contract(
+                    stakeRegularFixedRewardSheetTableName,
+                    stakeRegularRewardSheetTableName,
+                    rewardInterval,
+                    lockupInterval));
         }
 
         [Fact]

@@ -44,12 +44,13 @@ namespace Lib9c.Tests.Action
             var action = new PrepareRewardAssets(poolAddress, assets);
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    Signer = admin ? adminAddress : poolAddress,
-                    BlockIndex = 1,
-                    PreviousState = state,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        Signer = admin ? adminAddress : poolAddress,
+                        BlockIndex = 1,
+                        PreviousState = state,
+                    });
                 foreach (var asset in assets)
                 {
                     Assert.Equal(asset, nextState.GetBalance(poolAddress, asset.Currency));
@@ -57,12 +58,15 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    Signer = admin ? adminAddress : poolAddress,
-                    BlockIndex = 1,
-                    PreviousState = state,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            Signer = admin ? adminAddress : poolAddress,
+                            BlockIndex = 1,
+                            PreviousState = state,
+                        }));
             }
         }
     }

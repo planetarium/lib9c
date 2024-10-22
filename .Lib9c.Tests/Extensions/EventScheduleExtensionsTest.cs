@@ -36,8 +36,9 @@ namespace Lib9c.Tests.Extensions
         public void ToEventScheduleId_Throw_ArgumentException(
             int eventDungeonId)
         {
-            Assert.Throws<ArgumentException>(() =>
-                eventDungeonId.ToEventScheduleId());
+            Assert.Throws<ArgumentException>(
+                () =>
+                    eventDungeonId.ToEventScheduleId());
         }
 
         [Theory]
@@ -60,18 +61,19 @@ namespace Lib9c.Tests.Extensions
             long expectedCost)
         {
             var scheduleRow = new EventScheduleSheet.Row();
-            scheduleRow.Set(new[]
-            {
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                dungeonTicketPrice.ToString(),
-                dungeonTicketAdditionalPrice.ToString(),
-                "0",
-                "0",
-            });
+            scheduleRow.Set(
+                new[]
+                {
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    dungeonTicketPrice.ToString(),
+                    dungeonTicketAdditionalPrice.ToString(),
+                    "0",
+                    "0",
+                });
             var cost = scheduleRow.GetDungeonTicketCostV1(numberOfTicketPurchases);
             Assert.Equal(expectedCost, cost);
         }
@@ -97,18 +99,19 @@ namespace Lib9c.Tests.Extensions
             int expectedFractionalDigits)
         {
             var scheduleRow = new EventScheduleSheet.Row();
-            scheduleRow.Set(new[]
-            {
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                dungeonTicketPriceOnSheet.ToString(),
-                dungeonTicketAdditionalPriceOnSheet.ToString(),
-                "0",
-                "0",
-            });
+            scheduleRow.Set(
+                new[]
+                {
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    dungeonTicketPriceOnSheet.ToString(),
+                    dungeonTicketAdditionalPriceOnSheet.ToString(),
+                    "0",
+                    "0",
+                });
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
             var currency = Currency.Legacy("NCG", 2, null);
@@ -127,19 +130,21 @@ namespace Lib9c.Tests.Extensions
         public void GetDungeonTicketCost_Throw_ArgumentException(
             int numberOfTicketPurchases)
         {
-            Assert.Throws<ArgumentException>(() =>
-                GetDungeonTicketCostV1(
-                    default,
-                    default,
-                    numberOfTicketPurchases,
-                    default));
-            Assert.Throws<ArgumentException>(() =>
-                GetDungeonTicketCost(
-                    default,
-                    default,
-                    numberOfTicketPurchases,
-                    default,
-                    default));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    GetDungeonTicketCostV1(
+                        default,
+                        default,
+                        numberOfTicketPurchases,
+                        default));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    GetDungeonTicketCost(
+                        default,
+                        default,
+                        numberOfTicketPurchases,
+                        default,
+                        default));
         }
 
         [Theory]
@@ -155,18 +160,19 @@ namespace Lib9c.Tests.Extensions
             int expected)
         {
             var scheduleRow = new EventScheduleSheet.Row();
-            scheduleRow.Set(new[]
-            {
-                scheduleId.ToString(),
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                "0",
-                expSeedValue.ToString(),
-                "0",
-            });
+            scheduleRow.Set(
+                new[]
+                {
+                    scheduleId.ToString(),
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    "0",
+                    expSeedValue.ToString(),
+                    "0",
+                });
             var actual = scheduleRow.GetStageExp(stageNumber, multiplier);
             Assert.Equal(expected, actual);
         }

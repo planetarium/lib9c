@@ -78,13 +78,14 @@ namespace Lib9c.Tests.Model.Item
         {
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0);
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ShopItem(
-                new PrivateKey().Address,
-                new PrivateKey().Address,
-                Guid.NewGuid(),
-                new FungibleAssetValue(_currency, 100, 0),
-                -1,
-                (ITradableItem)equipment));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => new ShopItem(
+                    new PrivateKey().Address,
+                    new PrivateKey().Address,
+                    Guid.NewGuid(),
+                    new FungibleAssetValue(_currency, 100, 0),
+                    -1,
+                    (ITradableItem)equipment));
         }
 
         [Fact]

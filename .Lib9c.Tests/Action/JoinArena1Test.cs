@@ -102,7 +102,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatar2Address, avatar2State)
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
-            foreach ((var key, var value) in sheets)
+            foreach (var (key, value) in sheets)
             {
                 _state = _state
                     .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
@@ -130,7 +130,8 @@ namespace Lib9c.Tests.Action
                     .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
-                    _tableSheets.ItemSheet[costumeId], random);
+                    _tableSheets.ItemSheet[costumeId],
+                    random);
                 avatarState.inventory.AddItem(costume);
                 costumes.Add(costume.ItemId);
             }
@@ -180,7 +181,8 @@ namespace Lib9c.Tests.Action
             if (!arenaSheet.TryGetValue(championshipId, out var row))
             {
                 throw new SheetRowNotFoundException(
-                    nameof(ArenaSheet), $"championship Id : {championshipId}");
+                    nameof(ArenaSheet),
+                    $"championship Id : {championshipId}");
             }
 
             var avatarState = _state.GetAvatarState(_avatarAddress);
@@ -201,13 +203,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            state = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = _random.Seed,
-                BlockIndex = blockIndex,
-            });
+            state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _signer,
+                    RandomSeed = _random.Seed,
+                    BlockIndex = blockIndex,
+                });
 
             // ArenaParticipants
             var arenaParticipantsAdr = ArenaParticipants.DeriveAddress(championshipId, round);
@@ -277,12 +280,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<ActionObsoletedException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ActionObsoletedException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -302,13 +307,15 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<RoundNotFoundException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<RoundNotFoundException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                        BlockIndex = 1,
+                    }));
         }
 
         [Theory]
@@ -330,13 +337,15 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<NotEnoughMedalException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-                BlockIndex = 100,
-            }));
+            Assert.Throws<NotEnoughMedalException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                        BlockIndex = 100,
+                    }));
         }
 
         [Theory]
@@ -357,13 +366,15 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-                BlockIndex = blockIndex,
-            }));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                        BlockIndex = blockIndex,
+                    }));
         }
 
         [Fact]
@@ -382,21 +393,24 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            state = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = _random.Seed,
-                BlockIndex = 1,
-            });
+            state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _signer,
+                    RandomSeed = _random.Seed,
+                    BlockIndex = 1,
+                });
 
-            Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-                BlockIndex = 2,
-            }));
+            Assert.Throws<ArenaScoreAlreadyContainsException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                        BlockIndex = 2,
+                    }));
         }
 
         [Fact]
@@ -422,13 +436,15 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<ArenaScoreAlreadyContainsException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<ArenaScoreAlreadyContainsException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                        BlockIndex = 1,
+                    }));
         }
 
         [Fact]
@@ -454,13 +470,15 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            Assert.Throws<ArenaInformationAlreadyContainsException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _signer,
-                RandomSeed = 0,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<ArenaInformationAlreadyContainsException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                        BlockIndex = 1,
+                    }));
         }
 
         [Fact]
@@ -475,12 +493,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatar2Address,
             };
 
-            Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = _state,
-                Signer = _signer2,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<NotEnoughClearedStageLevelException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = _state,
+                        Signer = _signer2,
+                        RandomSeed = 0,
+                    }));
         }
     }
 }

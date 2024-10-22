@@ -31,11 +31,12 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0 * mead, states.GetBalance(address, mead));
             Assert.Equal(2 * mead, states.GetBalance(patron, mead));
 
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = patron,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = patron,
+                    PreviousState = states,
+                });
             var contract = Assert.IsType<List>(nextState.GetLegacyState(address.GetPledgeAddress()));
 
             Assert.Equal(patron, contract[0].ToAddress());
@@ -58,11 +59,13 @@ namespace Lib9c.Tests.Action
                 RefillMead = 1,
             };
 
-            Assert.Throws<AlreadyContractedException>(() => action.Execute(new ActionContext
-            {
-                Signer = patron,
-                PreviousState = states,
-            }));
+            Assert.Throws<AlreadyContractedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = patron,
+                        PreviousState = states,
+                    }));
         }
     }
 }

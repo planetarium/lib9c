@@ -75,13 +75,14 @@ namespace Lib9c.Tests.Action.Scenario
                 RuneId = runeId,
             };
 
-            var prevState = craftAction.Execute(new ActionContext
-            {
-                BlockIndex = 1,
-                PreviousState = initialState,
-                RandomSeed = 0,
-                Signer = agentAddress,
-            });
+            var prevState = craftAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = initialState,
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                });
 
             allRuneState =
                 Assert.IsType<AllRuneState>(prevState.GetRuneState(avatarAddress, out _));
@@ -99,13 +100,14 @@ namespace Lib9c.Tests.Action.Scenario
                 SlotIndex = 6,
             };
 
-            var state = unlockAction.Execute(new ActionContext
-            {
-                BlockIndex = 1,
-                PreviousState = prevState,
-                RandomSeed = 0,
-                Signer = agentAddress,
-            });
+            var state = unlockAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = prevState,
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                });
 
             var runeSlotState = new RuneSlotState((List)state.GetLegacyState(runeSlotStateAddress));
             Assert.Single(runeSlotState.GetRuneSlot().Where(r => r.RuneSlotType == RuneSlotType.Crystal && !r.IsLock));
@@ -125,13 +127,14 @@ namespace Lib9c.Tests.Action.Scenario
                 },
             };
 
-            var nextState = has.Execute(new ActionContext
-            {
-                BlockIndex = 2,
-                PreviousState = state,
-                RandomSeed = 0,
-                Signer = agentAddress,
-            });
+            var nextState = has.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 2,
+                    PreviousState = state,
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
@@ -182,7 +185,8 @@ namespace Lib9c.Tests.Action.Scenario
             var runeState = new RuneState(testRuneId);
             runeState.LevelUp(testRuneLevel);
             initialState = initialState.SetLegacyState(
-                RuneState.DeriveAddress(avatarAddress, testRuneId), runeState.Serialize()
+                RuneState.DeriveAddress(avatarAddress, testRuneId),
+                runeState.Serialize()
             );
 
             var costumes = new List<Guid>();
@@ -205,13 +209,14 @@ namespace Lib9c.Tests.Action.Scenario
                 StageId = 1,
                 AvatarAddress = avatarAddress,
             };
-            var state = action.Execute(new ActionContext
-            {
-                PreviousState = initialState,
-                Signer = agentAddress,
-                RandomSeed = 0,
-                BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
-            });
+            var state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = initialState,
+                    Signer = agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
             var runeStates = state.GetRuneState(avatarAddress, out var migrateRequired);
             Assert.False(migrateRequired);
             var runeStateExist = runeStates.TryGetRuneState(testRuneId, out var nextRuneState);

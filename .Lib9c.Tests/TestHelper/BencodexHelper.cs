@@ -43,8 +43,9 @@ namespace Lib9c.Tests.TestHelper
 
             var diff = string.Join(
                 Environment.NewLine,
-                diffModel.Lines.Select(line =>
-                    (prefixes.TryGetValue(line.Type, out var prefix) ? prefix : " ") + line.Text
+                diffModel.Lines.Select(
+                    line =>
+                        (prefixes.TryGetValue(line.Type, out var prefix) ? prefix : " ") + line.Text
                 )
             );
             throw new XunitException(

@@ -68,9 +68,11 @@ namespace Lib9c.Tests
             var action = new IssueTokensFromGarage(specs);
             var expected = Dictionary.Empty
                 .Add("type_id", "issue_tokens_from_garage")
-                .Add("values", List.Empty
-                    .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
-                    .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
+                        .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
             Assert.Equal(
                 expected,
                 action.PlainValue
@@ -82,9 +84,11 @@ namespace Lib9c.Tests
         {
             var encoded = Dictionary.Empty
                 .Add("type_id", "issue_tokens_from_garage")
-                .Add("values", List.Empty
-                    .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
-                    .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
+                        .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
             var action = new IssueTokensFromGarage();
             action.LoadPlainValue(encoded);
             var expected = new List<IssueTokensFromGarage.Spec>()
@@ -99,10 +103,11 @@ namespace Lib9c.Tests
         [Fact]
         public void Execute_With_FungibleAssetValue()
         {
-            var action = new IssueTokensFromGarage(new[]
-            {
-                IssueTokensFromGarage.Spec.FromFungibleAssetValue(Currencies.Crystal * 42),
-            });
+            var action = new IssueTokensFromGarage(
+                new[]
+                {
+                    IssueTokensFromGarage.Spec.FromFungibleAssetValue(Currencies.Crystal * 42),
+                });
 
             var nextState = action.Execute(
                 new ActionContext()
@@ -128,10 +133,11 @@ namespace Lib9c.Tests
         [Fact]
         public void Execute_With_FungibleItemValue()
         {
-            var action = new IssueTokensFromGarage(new[]
-            {
-                IssueTokensFromGarage.Spec.FromFungibleItemValue(new FungibleItemValue(SampleFungibleId, 42)),
-            });
+            var action = new IssueTokensFromGarage(
+                new[]
+                {
+                    IssueTokensFromGarage.Spec.FromFungibleItemValue(new FungibleItemValue(SampleFungibleId, 42)),
+                });
 
             var nextState = action.Execute(
                 new ActionContext()

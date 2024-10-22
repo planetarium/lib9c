@@ -86,12 +86,13 @@ namespace Lib9c.Tests.Action
                 avatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             Assert.True(nextState.TryGetActionPoint(_avatarAddress, out var nextActionPoint));
             Assert.Equal(DailyReward.ActionPointMax, nextActionPoint);
@@ -139,12 +140,15 @@ namespace Lib9c.Tests.Action
                 avatarAddress = avatarAddress,
             };
 
-            Assert.Throws(exc, () => action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    RandomSeed = 0,
-                })
+            Assert.Throws(
+                exc,
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    })
             );
         }
     }

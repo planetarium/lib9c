@@ -177,7 +177,8 @@ namespace Lib9c.Tests.Action
                             foreach (var materialInfo in subRow.Materials)
                             {
                                 var subMaterial = ItemFactory.CreateItem(
-                                    _tableSheets.MaterialItemSheet[materialInfo.Id], _random);
+                                    _tableSheets.MaterialItemSheet[materialInfo.Id],
+                                    _random);
                                 _avatarState.inventory.AddItem(subMaterial, materialInfo.Count);
                             }
 
@@ -246,8 +247,9 @@ namespace Lib9c.Tests.Action
 
             var dailyCostAddress =
                 Addresses.GetDailyCrystalCostAddress((int)(blockIndex / CrystalCostState.DailyIntervalIndex));
-            var weeklyInterval = _tableSheets.CrystalFluctuationSheet.Values.First(r =>
-                r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
+            var weeklyInterval = _tableSheets.CrystalFluctuationSheet.Values.First(
+                r =>
+                    r.Type == CrystalFluctuationSheet.ServiceType.Combination).BlockInterval;
             var weeklyCostAddress = Addresses.GetWeeklyCrystalCostAddress((int)(blockIndex / weeklyInterval));
 
             Assert.Null(state.GetLegacyState(dailyCostAddress));
@@ -265,13 +267,14 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = blockIndex,
-                    RandomSeed = _random.Seed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = blockIndex,
+                        RandomSeed = _random.Seed,
+                    });
 
                 var currency = nextState.GetGoldCurrency();
                 Assert.Equal(0 * currency, nextState.GetBalance(_agentAddress, currency));
@@ -330,13 +333,16 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = blockIndex,
-                    RandomSeed = _random.Seed,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = _agentAddress,
+                            BlockIndex = blockIndex,
+                            RandomSeed = _random.Seed,
+                        }));
             }
         }
 
@@ -377,7 +383,8 @@ namespace Lib9c.Tests.Action
             foreach (var materialInfo in subRow.Materials)
             {
                 var subMaterial = ItemFactory.CreateItem(
-                    _tableSheets.MaterialItemSheet[materialInfo.Id], _random);
+                    _tableSheets.MaterialItemSheet[materialInfo.Id],
+                    _random);
                 _avatarState.inventory.AddItem(subMaterial, materialInfo.Count);
             }
 
@@ -428,13 +435,14 @@ namespace Lib9c.Tests.Action
             };
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 1,
-                    RandomSeed = _random.Seed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                        RandomSeed = _random.Seed,
+                    });
 
                 Assert.True(nextState.TryGetLegacyState(hammerPointAddress, out List serialized));
                 var hammerPointState = new HammerPointState(hammerPointAddress, serialized);
@@ -454,16 +462,19 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () =>
-                {
-                    action.Execute(new ActionContext
+                Assert.Throws(
+                    exc,
+                    () =>
                     {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        BlockIndex = 1,
-                        RandomSeed = _random.Seed,
+                        action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                BlockIndex = 1,
+                                RandomSeed = _random.Seed,
+                            });
                     });
-                });
             }
         }
 

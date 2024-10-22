@@ -24,10 +24,11 @@ namespace Lib9c.Tests.Action
                 MockWorldState.CreateModern()
                     .SetBalance(_signer, Currencies.Crystal * 100)
                     .SetBalance(
-                        _signer.Derive(string.Format(
-                            CultureInfo.InvariantCulture,
-                            CreateAvatar.DeriveFormat,
-                            1)),
+                        _signer.Derive(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                CreateAvatar.DeriveFormat,
+                                1)),
                         Currencies.DailyRewardRune * 20));
         }
 
@@ -55,10 +56,12 @@ namespace Lib9c.Tests.Action
                 new KeyValuePair<IKey, IValue>[]
                 {
                     new (
-                        (Text)"type_id", (Text)"burn_asset"
+                        (Text)"type_id",
+                        (Text)"burn_asset"
                     ),
                     new (
-                        (Text)"values", new List(
+                        (Text)"values",
+                        new List(
                             _signer.Bencoded,
                             (Currencies.Crystal * 100).Serialize(),
                             (Text)"memo"
@@ -77,10 +80,12 @@ namespace Lib9c.Tests.Action
                 new KeyValuePair<IKey, IValue>[]
                 {
                     new (
-                        (Text)"type_id", (Text)"burn_asset"
+                        (Text)"type_id",
+                        (Text)"burn_asset"
                     ),
                     new (
-                        (Text)"values", new List(
+                        (Text)"values",
+                        new List(
                             _signer.Bencoded,
                             (Currencies.Crystal * 100).Serialize(),
                             (Text)"memo"
@@ -102,10 +107,12 @@ namespace Lib9c.Tests.Action
                 new KeyValuePair<IKey, IValue>[]
                 {
                     new (
-                        (Text)"type_id", (Text)"burn_asset"
+                        (Text)"type_id",
+                        (Text)"burn_asset"
                     ),
                     new (
-                        (Text)"values", new List(
+                        (Text)"values",
+                        new List(
                             _signer.Bencoded,
                             (Currencies.Crystal * 100).Serialize(),
                             (Text)"very long memo".PadRight(100, ' ')
@@ -186,17 +193,18 @@ namespace Lib9c.Tests.Action
                 Currencies.Crystal * 1000,
                 "1000"
             );
-            Assert.Throws<InsufficientBalanceException>(() =>
-            {
-                action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = prevState,
-                        Signer = _signer,
-                        BlockIndex = 1,
-                    }
-                );
-            });
+            Assert.Throws<InsufficientBalanceException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _signer,
+                            BlockIndex = 1,
+                        }
+                    );
+                });
         }
 
         [Fact]
@@ -209,17 +217,18 @@ namespace Lib9c.Tests.Action
                 Currencies.Crystal * 1000,
                 "42"
             );
-            Assert.Throws<InvalidActionFieldException>(() =>
-            {
-                action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = prevState,
-                        Signer = _signer,
-                        BlockIndex = 1,
-                    }
-                );
-            });
+            Assert.Throws<InvalidActionFieldException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _signer,
+                            BlockIndex = 1,
+                        }
+                    );
+                });
         }
     }
 }

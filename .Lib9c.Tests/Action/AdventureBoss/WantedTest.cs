@@ -92,13 +92,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = minBounty * NCG,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = AgentAddress,
-                BlockIndex = 0L,
-                RandomSeed = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
 
             // Test
             var season = nextState.GetSeasonInfo(1);
@@ -129,13 +130,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Add new bounty
             action.AvatarAddress = AvatarAddress2;
-            nextState = action.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = AgentAddress,
-                BlockIndex = 1L,
-                RandomSeed = 1,
-            });
+            nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = AgentAddress,
+                    BlockIndex = 1L,
+                    RandomSeed = 1,
+                });
 
             Assert.Equal(
                 startBalance - minBounty * 2 * NCG,
@@ -167,12 +169,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             // Add additional bounty
             action.AvatarAddress = AvatarAddress;
-            nextState = action.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = AgentAddress,
-                BlockIndex = 2L,
-            });
+            nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = AgentAddress,
+                    BlockIndex = 2L,
+                });
 
             Assert.Equal(
                 startBalance - minBounty * 3 * NCG,
@@ -210,13 +213,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = AgentAddress,
-                BlockIndex = 0L,
-                RandomSeed = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
 
             // Validate new season
             latestSeasonInfo = nextState.GetLatestAdventureBossSeason();
@@ -265,14 +269,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
-            Assert.Throws<InvalidAdventureBossSeasonException>(() => action.Execute(
-                new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = AgentAddress,
-                    BlockIndex = 100L,
-                }
-            ));
+            Assert.Throws<InvalidAdventureBossSeasonException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = AgentAddress,
+                        BlockIndex = 100L,
+                    }
+                ));
         }
 
         [Theory]
@@ -303,14 +308,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
 
-            Assert.Throws<InvalidAdventureBossSeasonException>(() =>
-                action.Execute(new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = AgentAddress,
-                        BlockIndex = 0L,
-                    }
-                )
+            Assert.Throws<InvalidAdventureBossSeasonException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = AgentAddress,
+                            BlockIndex = 0L,
+                        }
+                    )
             );
         }
 
@@ -339,13 +346,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
             };
-            Assert.Throws<InvalidAdventureBossSeasonException>(() =>
-                action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = AgentAddress,
-                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                })
+            Assert.Throws<InvalidAdventureBossSeasonException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = AgentAddress,
+                            BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                        })
             );
         }
 
@@ -377,23 +386,25 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             if (err)
             {
-                Assert.Throws<InsufficientStakingException>(() => action.Execute(
+                Assert.Throws<InsufficientStakingException>(
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = AgentAddress,
+                            BlockIndex = 100L,
+                        }
+                    ));
+            }
+            else
+            {
+                action.Execute(
                     new ActionContext
                     {
                         PreviousState = state,
                         Signer = AgentAddress,
                         BlockIndex = 100L,
-                    }
-                ));
-            }
-            else
-            {
-                action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = AgentAddress,
-                    BlockIndex = 100L,
-                });
+                    });
             }
         }
 
@@ -417,14 +428,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = minBounty * NCG,
             };
-            Assert.Throws<InsufficientBalanceException>(() => action.Execute(
-                new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = AgentAddress,
-                    BlockIndex = 100L,
-                }
-            ));
+            Assert.Throws<InsufficientBalanceException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = AgentAddress,
+                        BlockIndex = 100L,
+                    }
+                ));
         }
 
         [Fact]
@@ -439,14 +451,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress = AvatarAddress,
                 Bounty = bounty * NCG,
             };
-            Assert.Throws<InvalidBountyException>(() => action.Execute(
-                new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = AgentAddress,
-                    BlockIndex = 100L,
-                }
-            ));
+            Assert.Throws<InvalidBountyException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = AgentAddress,
+                        BlockIndex = 100L,
+                    }
+                ));
         }
 
         [Fact]
@@ -460,12 +473,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = AgentAddress,
-                BlockIndex = 0L,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = 0L,
+                });
 
             var prevSeason = state.GetSeasonInfo(1);
             state = new Wanted
@@ -473,12 +487,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 2,
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = AgentAddress,
-                BlockIndex = prevSeason.NextStartBlockIndex,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = prevSeason.NextStartBlockIndex,
+                });
 
             var requiredStakingLevel =
                 state.GetGameConfigState().AdventureBossWantedRequiredStakingLevel;
@@ -537,12 +552,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 3,
                 AvatarAddress = AvatarAddress,
                 Bounty = gameConfig.AdventureBossMinBounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = AgentAddress,
-                BlockIndex = prevSeason.NextStartBlockIndex,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = AgentAddress,
+                    BlockIndex = prevSeason.NextStartBlockIndex,
+                });
             var latestSeason = state.GetLatestAdventureBossSeason();
 
             Assert.Contains(latestSeason.BossId, candidate);
@@ -575,12 +591,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             var action = new Stake(new BigInteger(amount));
-            return action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = AgentAddress,
-                BlockIndex = 0L,
-            });
+            return action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = AgentAddress,
+                    BlockIndex = 0L,
+                });
         }
     }
 }

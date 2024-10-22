@@ -37,43 +37,49 @@ namespace Lib9c.Tests.Action.Guild
             // These cases should fail because the member didn't apply the guild and
             // non-guild-master-addresses cannot accept the guild application.
             Assert.Throws<InvalidOperationException>(
-                () => new AcceptGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                }));
+                () => new AcceptGuildApplication(nonAppliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMasterAddress,
+                    }));
             Assert.Throws<InvalidOperationException>(
-                () => new AcceptGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = appliedMemberAddress,
-                }));
+                () => new AcceptGuildApplication(nonAppliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = appliedMemberAddress,
+                    }));
             Assert.Throws<InvalidOperationException>(
-                () => new AcceptGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = nonAppliedMemberAddress,
-                }));
+                () => new AcceptGuildApplication(nonAppliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = nonAppliedMemberAddress,
+                    }));
 
             // These cases should fail because non-guild-master-addresses cannot accept the guild application.
             Assert.Throws<InvalidOperationException>(
-                () => new AcceptGuildApplication(appliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = appliedMemberAddress,
-                }));
+                () => new AcceptGuildApplication(appliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = appliedMemberAddress,
+                    }));
             Assert.Throws<InvalidOperationException>(
-                () => new AcceptGuildApplication(appliedMemberAddress).Execute(new ActionContext
+                () => new AcceptGuildApplication(appliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = nonAppliedMemberAddress,
+                    }));
+
+            world = new AcceptGuildApplication(appliedMemberAddress).Execute(
+                new ActionContext
                 {
                     PreviousState = world,
-                    Signer = nonAppliedMemberAddress,
-                }));
-
-            world = new AcceptGuildApplication(appliedMemberAddress).Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+                    Signer = guildMasterAddress,
+                });
 
             Assert.False(world.TryGetGuildApplication(appliedMemberAddress, out _));
             Assert.Equal(guildAddress, world.GetJoinedGuild(appliedMemberAddress));

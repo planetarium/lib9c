@@ -45,31 +45,35 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        true.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            var newWorld = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = caller,
-            });
+            var newWorld = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = caller,
+                });
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(newWorld.GetJoinedGuild(target));
             Assert.True(newWorld.TryGetGuild(joinedGuildAddress, out var guild));
             Assert.Equal(GuildConfig.PlanetariumGuildOwner, guild.GuildMasterAddress);
 
             // Migrate by itself.
-            newWorld = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = target,
-            });
+            newWorld = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = target,
+                });
 
             joinedGuildAddress = Assert.IsType<GuildAddress>(newWorld.GetJoinedGuild(target));
             Assert.True(newWorld.TryGetGuild(joinedGuildAddress, out guild));
@@ -87,27 +91,33 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    false.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        false.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = caller,
-            }));
+            Assert.Throws<GuildMigrationFailedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = caller,
+                    }));
 
             // Migrate by itself.
-            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = target,
-            }));
+            Assert.Throws<GuildMigrationFailedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = target,
+                    }));
         }
 
         [Fact]
@@ -125,18 +135,22 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = caller,
-            }));
+            Assert.Throws<GuildMigrationFailedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = caller,
+                    }));
 
             // Migrate by itself.
-            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = target,
-            }));
+            Assert.Throws<GuildMigrationFailedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = target,
+                    }));
         }
 
         [Fact]
@@ -146,27 +160,33 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var caller = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
             var world = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        true.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
             var action = new MigratePledgeToGuild(target);
 
             // Migrate by other.
-            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = caller,
-            }));
+            Assert.Throws<GuildMigrationFailedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = caller,
+                    }));
 
             // Migrate by itself.
-            Assert.Throws<GuildMigrationFailedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = target,
-            }));
+            Assert.Throws<GuildMigrationFailedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = target,
+                    }));
         }
     }
 }

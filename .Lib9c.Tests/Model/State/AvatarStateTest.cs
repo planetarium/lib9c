@@ -393,8 +393,9 @@ namespace Lib9c.Tests.Model.State
                 Assert.False(equippableItem.Equipped);
             }
 
-            avatarState.EquipItems(equippableItems.OfType<INonFungibleItem>()
-                .Select(nonFungibleItem => nonFungibleItem.NonFungibleId));
+            avatarState.EquipItems(
+                equippableItems.OfType<INonFungibleItem>()
+                    .Select(nonFungibleItem => nonFungibleItem.NonFungibleId));
 
             foreach (var equippableItem in equippableItems)
             {

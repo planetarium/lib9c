@@ -657,7 +657,8 @@ namespace Lib9c.Tests.Model
             // force add buff 'Vampiric'
             // 705000 is ActionBuff id of Vampiric
             var vampiric = (Vampiric)BuffFactory.GetCustomActionBuff(
-                new SkillCustomField { BuffDuration = duration, BuffValue = percent, }, actionBuffSheet[705000]);
+                new SkillCustomField { BuffDuration = duration, BuffValue = percent, },
+                actionBuffSheet[705000]);
             player.AddBuff(vampiric);
             var row = actionBuffSheet.Values.First();
             var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
@@ -705,8 +706,9 @@ namespace Lib9c.Tests.Model
         [Fact]
         public void StatsLayerTest()
         {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
-                r.Stat.StatType == StatType.ATK);
+            var row = _tableSheets.EquipmentItemSheet.Values.First(
+                r =>
+                    r.Stat.StatType == StatType.ATK);
             var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
             equipment.equipped = true;
             _avatarState.inventory.AddItem(equipment);
@@ -717,8 +719,9 @@ namespace Lib9c.Tests.Model
             // costume.equipped = true;
             // _avatarState.inventory.AddItem(costume);
             var foodRow =
-                _tableSheets.ConsumableItemSheet.Values.First(r =>
-                    r.Stats.Any(s => s.StatType == StatType.ATK));
+                _tableSheets.ConsumableItemSheet.Values.First(
+                    r =>
+                        r.Stats.Any(s => s.StatType == StatType.ATK));
             var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
             _avatarState.inventory.AddItem(food);
             var runeId = 10002;
@@ -800,9 +803,10 @@ namespace Lib9c.Tests.Model
             // Assert.Equal(3304, player.ATK);
 
             // Update skill buff stats
-            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
-                r.StatType == StatType.ATK &&
-                r.OperationType == StatModifier.OperationType.Percentage);
+            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(
+                r =>
+                    r.StatType == StatType.ATK &&
+                    r.OperationType == StatModifier.OperationType.Percentage);
             var percentageBuff = new StatBuff(percentageBuffRow);
             statBuffs.Add(percentageBuff);
             var percentageModifier = percentageBuff.GetModifier();
@@ -830,8 +834,9 @@ namespace Lib9c.Tests.Model
         [Fact]
         public void IncreaseHpForArena()
         {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
-                r.Stat.StatType == StatType.HP);
+            var row = _tableSheets.EquipmentItemSheet.Values.First(
+                r =>
+                    r.Stat.StatType == StatType.HP);
             var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
             equipment.equipped = true;
             _avatarState.inventory.AddItem(equipment);
@@ -842,8 +847,9 @@ namespace Lib9c.Tests.Model
             costume.equipped = true;
             _avatarState.inventory.AddItem(costume);
             var foodRow =
-                _tableSheets.ConsumableItemSheet.Values.First(r =>
-                    r.Stats.Any(s => s.StatType == StatType.HP));
+                _tableSheets.ConsumableItemSheet.Values.First(
+                    r =>
+                        r.Stats.Any(s => s.StatType == StatType.HP));
             var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
             _avatarState.inventory.AddItem(food);
 
@@ -860,10 +866,11 @@ namespace Lib9c.Tests.Model
             var equipmentLayerHp = player.HP;
 
             // Update consumable stats
-            player.Use(new List<Guid>
-            {
-                food.ItemId,
-            });
+            player.Use(
+                new List<Guid>
+                {
+                    food.ItemId,
+                });
             Assert.Equal(equipmentLayerHp + food.Stats.Where(s => s.StatType == StatType.HP).Sum(s => s.BaseValueAsLong), player.HP);
             // ConsumableStats 29
             // Assert.Equal(359, player.HP);
@@ -915,9 +922,10 @@ namespace Lib9c.Tests.Model
             var arenaHp = player.HP;
 
             var statBuffs = new List<StatBuff>();
-            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
-                r.StatType == StatType.HP &&
-                r.OperationType == StatModifier.OperationType.Percentage);
+            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(
+                r =>
+                    r.StatType == StatType.HP &&
+                    r.OperationType == StatModifier.OperationType.Percentage);
             var percentageBuff = new StatBuff(percentageBuffRow);
             statBuffs.Add(percentageBuff);
             var percentageModifier = percentageBuff.GetModifier();

@@ -24,11 +24,12 @@ namespace Lib9c.Tests.Action
         public IssueTokenTest()
         {
             _signer = new PrivateKey().Address;
-            _avatarAddress = _signer.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CreateAvatar.DeriveFormat,
-                0
-            ));
+            _avatarAddress = _signer.Derive(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    CreateAvatar.DeriveFormat,
+                    0
+                ));
             var sheets = TableSheetsImporter.ImportSheets();
             var tableSheets = new TableSheets(sheets);
 
@@ -200,14 +201,15 @@ namespace Lib9c.Tests.Action
                 .MintAsset(actionContext, _signer, Currencies.Garage * 1000)
                 .MintAsset(actionContext, _signer, currencyWithMinter * 1000);
 
-            Assert.Throws<InvalidCurrencyException>(() => action.Execute(
-                new ActionContext()
-                {
-                    PreviousState = prevState,
-                    Signer = _signer,
-                    BlockIndex = 42,
-                }
-            ));
+            Assert.Throws<InvalidCurrencyException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = prevState,
+                        Signer = _signer,
+                        BlockIndex = 42,
+                    }
+                ));
         }
     }
 }

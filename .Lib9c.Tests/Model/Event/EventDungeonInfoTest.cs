@@ -59,12 +59,13 @@ namespace Lib9c.Tests.Model
             int numberOfTicketPurchases,
             int clearedStageId)
         {
-            Assert.Throws<ArgumentException>(() =>
-                new EventDungeonInfo(
-                    resetTicketsInterval,
-                    remainingTickets,
-                    numberOfTicketPurchases,
-                    clearedStageId));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    new EventDungeonInfo(
+                        resetTicketsInterval,
+                        remainingTickets,
+                        numberOfTicketPurchases,
+                        clearedStageId));
         }
 
         [Theory]
@@ -121,8 +122,9 @@ namespace Lib9c.Tests.Model
             int tickets)
         {
             var eventDungeonInfo = new EventDungeonInfo();
-            Assert.Throws<ArgumentException>(() =>
-                eventDungeonInfo.ResetTickets(resetTicketsInterval, tickets));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    eventDungeonInfo.ResetTickets(resetTicketsInterval, tickets));
         }
 
         [Theory]
@@ -131,8 +133,9 @@ namespace Lib9c.Tests.Model
         public void HasTickets_Throw_ArgumentException(int tickets)
         {
             var eventDungeonInfo = new EventDungeonInfo();
-            Assert.Throws<ArgumentException>(() =>
-                eventDungeonInfo.HasTickets(tickets));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    eventDungeonInfo.HasTickets(tickets));
         }
 
         [Theory]
@@ -141,8 +144,9 @@ namespace Lib9c.Tests.Model
         public void TryUseTickets_Throw_ArgumentException(int tickets)
         {
             var eventDungeonInfo = new EventDungeonInfo();
-            Assert.Throws<ArgumentException>(() =>
-                eventDungeonInfo.TryUseTickets(tickets));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    eventDungeonInfo.TryUseTickets(tickets));
         }
 
         [Theory]
@@ -174,13 +178,14 @@ namespace Lib9c.Tests.Model
         {
             var eventDungeonInfo = new EventDungeonInfo(
                 numberOfTicketPurchases: initialNumberOfTicketPurchases);
-            Assert.Throws<InvalidOperationException>(() =>
-            {
-                for (var i = 0; i < numberOfIncrease; i++)
+            Assert.Throws<InvalidOperationException>(
+                () =>
                 {
-                    eventDungeonInfo.IncreaseNumberOfTicketPurchases();
-                }
-            });
+                    for (var i = 0; i < numberOfIncrease; i++)
+                    {
+                        eventDungeonInfo.IncreaseNumberOfTicketPurchases();
+                    }
+                });
         }
 
         [Theory]

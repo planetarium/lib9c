@@ -18,14 +18,15 @@ namespace Lib9c.Tests.Model.Mail
     {
         public static IEnumerable<object[]> Get_Sample_PlainValue()
         {
-            return UnloadFromMyGaragesTest.Get_Sample_PlainValue().Select(objects =>
-                new[]
-                {
-                    // objects[0], This test doesn't need to test recipientAvatarAddr.
-                    objects[1],
-                    objects[2],
-                    objects[3],
-                });
+            return UnloadFromMyGaragesTest.Get_Sample_PlainValue().Select(
+                objects =>
+                    new[]
+                    {
+                        // objects[0], This test doesn't need to test recipientAvatarAddr.
+                        objects[1],
+                        objects[2],
+                        objects[3],
+                    });
         }
 
         [Theory]
@@ -46,9 +47,11 @@ namespace Lib9c.Tests.Model.Mail
                 memo);
             var mailValue = mail.Serialize();
             var de = new UnloadFromMyGaragesRecipientMail((Dictionary)mailValue);
-            Assert.True(mail.FungibleAssetValues?.SequenceEqual(de.FungibleAssetValues!) ??
+            Assert.True(
+                mail.FungibleAssetValues?.SequenceEqual(de.FungibleAssetValues!) ??
                 de.FungibleAssetValues is null);
-            Assert.True(mail.FungibleIdAndCounts?.SequenceEqual(de.FungibleIdAndCounts!) ??
+            Assert.True(
+                mail.FungibleIdAndCounts?.SequenceEqual(de.FungibleIdAndCounts!) ??
                 de.FungibleIdAndCounts is null);
             Assert.Equal(mail.Memo, de.Memo);
             var mailValue2 = de.Serialize();

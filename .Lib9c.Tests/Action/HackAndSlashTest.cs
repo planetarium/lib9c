@@ -136,7 +136,8 @@ namespace Lib9c.Tests.Action
                     .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
-                    _tableSheets.ItemSheet[costumeId], random);
+                    _tableSheets.ItemSheet[costumeId],
+                    random);
                 previousAvatarState.inventory.AddItem(costume);
                 costumes.Add(costume.ItemId);
             }
@@ -184,13 +185,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
 
@@ -259,12 +261,13 @@ namespace Lib9c.Tests.Action
             );
 
             // Second Execute
-            state = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             avatarState = state.GetAvatarState(avatarState.address);
             avatarWorldQuests = avatarState.questList.OfType<WorldQuest>().ToList();
@@ -288,9 +291,10 @@ namespace Lib9c.Tests.Action
             try
             {
                 stageId = _tableSheets.StageSheet
-                    .FirstOrDefault(row =>
-                        previousAvatarState.level - row.Value.Id <= StageRewardExpHelper.DifferLowerLimit ||
-                        previousAvatarState.level - row.Value.Id > StageRewardExpHelper.DifferUpperLimit)
+                    .FirstOrDefault(
+                        row =>
+                            previousAvatarState.level - row.Value.Id <= StageRewardExpHelper.DifferLowerLimit ||
+                            previousAvatarState.level - row.Value.Id > StageRewardExpHelper.DifferUpperLimit)
                     .Value.Id;
             }
             catch
@@ -300,8 +304,9 @@ namespace Lib9c.Tests.Action
             }
 
             var worldRow = _tableSheets.WorldSheet
-                .FirstOrDefault(row => stageId >= row.Value.StageBegin &&
-                    stageId <= row.Value.StageEnd);
+                .FirstOrDefault(
+                    row => stageId >= row.Value.StageBegin &&
+                        stageId <= row.Value.StageEnd);
             var worldId = worldRow.Value.Id;
 
             previousAvatarState.worldInformation = new WorldInformation(
@@ -322,12 +327,13 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Equal(maxLevelExp + requiredExp - 1, nextAvatarState.exp);
@@ -381,12 +387,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var exec = Assert.Throws<DuplicateEquipmentException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<DuplicateEquipmentException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<DuplicateEquipmentException>(exec);
         }
@@ -413,12 +421,14 @@ namespace Lib9c.Tests.Action
                     .SetAvatarState(_avatarAddress, _avatarState)
                     .SetAccount(Addresses.Inventory, new Account(MockUtil.MockAccountState));
 
-            var exec = Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<FailedLoadStateException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<FailedLoadStateException>(exec);
         }
@@ -439,12 +449,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var exec = Assert.Throws<SheetRowColumnException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialState,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<SheetRowColumnException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialState,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<SheetRowColumnException>(exec);
         }
@@ -466,12 +478,14 @@ namespace Lib9c.Tests.Action
             var state = _initialState;
             state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(StageSheet)), "test".Serialize());
 
-            var exec = Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<SheetRowNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<SheetRowNotFoundException>(exec);
         }
@@ -501,12 +515,14 @@ namespace Lib9c.Tests.Action
 
             Assert.False(avatarState.worldInformation.IsStageCleared(0));
 
-            var exec = Assert.Throws<FailedAddWorldException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<FailedAddWorldException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<FailedAddWorldException>(exec);
         }
@@ -539,12 +555,14 @@ namespace Lib9c.Tests.Action
                 );
             }
 
-            var exec = Assert.Throws<InvalidWorldException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<InvalidWorldException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<InvalidWorldException>(exec);
         }
@@ -580,12 +598,14 @@ namespace Lib9c.Tests.Action
             var state = _initialState;
             state = state.SetAvatarState(_avatarAddress, avatarState);
 
-            var exec = Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<InvalidStageException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<InvalidStageException>(exec);
         }
@@ -607,12 +627,14 @@ namespace Lib9c.Tests.Action
             _avatarState.worldInformation.TryGetWorld(1, out var world);
             Assert.False(world.IsStageCleared);
 
-            var exec = Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialState,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<InvalidStageException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialState,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<InvalidStageException>(exec);
         }
@@ -646,12 +668,14 @@ namespace Lib9c.Tests.Action
 
             var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
-            var exec = Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<RequiredBlockIndexException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<RequiredBlockIndexException>(exec);
         }
@@ -690,12 +714,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var exec = Assert.Throws<EquipmentSlotUnlockException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<EquipmentSlotUnlockException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<EquipmentSlotUnlockException>(exec);
         }
@@ -724,12 +750,14 @@ namespace Lib9c.Tests.Action
             state = state.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, ap);
 
-            var exec = Assert.Throws<NotEnoughActionPointException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<NotEnoughActionPointException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<NotEnoughActionPointException>(exec);
         }
@@ -778,13 +806,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = 1,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(1));
@@ -844,12 +873,14 @@ namespace Lib9c.Tests.Action
                         AvatarAddress = avatarState.address,
                     };
 
-                    var exec = Assert.Throws<NotEnoughAvatarLevelException>(() => action.Execute(new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = avatarState.agentAddress,
-                        RandomSeed = random.Seed,
-                    }));
+                    var exec = Assert.Throws<NotEnoughAvatarLevelException>(
+                        () => action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                Signer = avatarState.agentAddress,
+                                RandomSeed = random.Seed,
+                            }));
 
                     SerializeException<NotEnoughAvatarLevelException>(exec);
                 }
@@ -878,12 +909,14 @@ namespace Lib9c.Tests.Action
                 ApStoneCount = -1,
             };
 
-            var exec = Assert.Throws<InvalidItemCountException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = avatarState.agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<InvalidItemCountException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = avatarState.agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<InvalidItemCountException>(exec);
         }
@@ -914,12 +947,14 @@ namespace Lib9c.Tests.Action
                 ApStoneCount = apStoneCount,
             };
 
-            var exec = Assert.Throws<PlayCountIsZeroException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = avatarState.agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<PlayCountIsZeroException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = avatarState.agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<PlayCountIsZeroException>(exec);
         }
@@ -941,12 +976,14 @@ namespace Lib9c.Tests.Action
                 ApStoneCount = 11,
             };
 
-            var exec = Assert.Throws<UsageLimitExceedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _avatarState.agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<UsageLimitExceedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _avatarState.agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<UsageLimitExceedException>(exec);
         }
@@ -968,12 +1005,14 @@ namespace Lib9c.Tests.Action
                 ApStoneCount = 1,
             };
 
-            var exec = Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _avatarState.agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<NotEnoughMaterialException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _avatarState.agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<NotEnoughMaterialException>(exec);
         }
@@ -1009,7 +1048,8 @@ namespace Lib9c.Tests.Action
                 .Id;
 
             var costume = (Costume)ItemFactory.CreateItem(
-                _tableSheets.ItemSheet[costumeId], random);
+                _tableSheets.ItemSheet[costumeId],
+                random);
             previousAvatarState.inventory.AddItem(costume);
             costumes.Add(costume.ItemId);
 
@@ -1054,13 +1094,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = 1,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
@@ -1079,9 +1120,10 @@ namespace Lib9c.Tests.Action
             var questItemRewardSheet = state.GetSheet<QuestItemRewardSheet>();
             var materialItemSheet = state.GetSheet<MaterialItemSheet>();
             var sortedMaterialItemSheet = materialItemSheet
-                .Where(x =>
-                    x.Value.ItemSubType == ItemSubType.EquipmentMaterial ||
-                    x.Value.ItemSubType == ItemSubType.MonsterPart).ToList();
+                .Where(
+                    x =>
+                        x.Value.ItemSubType == ItemSubType.EquipmentMaterial ||
+                        x.Value.ItemSubType == ItemSubType.MonsterPart).ToList();
 
             var selectedIdn = new Dictionary<int, int>();
             foreach (var row in questItemRewardSheet)
@@ -1144,7 +1186,8 @@ namespace Lib9c.Tests.Action
                 .Id;
 
             var costume = (Costume)ItemFactory.CreateItem(
-                _tableSheets.ItemSheet[costumeId], random);
+                _tableSheets.ItemSheet[costumeId],
+                random);
             previousAvatarState.inventory.AddItem(costume);
             costumes.Add(costume.ItemId);
 
@@ -1187,8 +1230,9 @@ namespace Lib9c.Tests.Action
                 if (useCrystalSkill)
                 {
                     skillState.Update(int.MaxValue, _tableSheets.CrystalStageBuffGachaSheet);
-                    skillState.Update(_tableSheets.CrystalRandomBuffSheet
-                        .Select(pair => pair.Value.Id).ToList());
+                    skillState.Update(
+                        _tableSheets.CrystalRandomBuffSheet
+                            .Select(pair => pair.Value.Id).ToList());
                 }
 
                 state = state.SetLegacyState(skillStateAddress, skillState.Serialize());
@@ -1235,8 +1279,9 @@ namespace Lib9c.Tests.Action
             {
                 var skill = _tableSheets
                     .SkillSheet
-                    .FirstOrDefault(pair => pair.Key == _tableSheets
-                        .CrystalRandomBuffSheet[stageBuffId.Value].SkillId);
+                    .FirstOrDefault(
+                        pair => pair.Key == _tableSheets
+                            .CrystalRandomBuffSheet[stageBuffId.Value].SkillId);
                 if (skill.Value != null)
                 {
                     skillsOnWaveStart.Add(SkillFactory.GetV1(skill.Value, default, 100));
@@ -1320,7 +1365,9 @@ namespace Lib9c.Tests.Action
 
             var expectedAp = state.GetActionPoint(_avatarAddress) -
                 _tableSheets.StakeActionPointCoefficientSheet.GetActionPointByStaking(
-                    _tableSheets.StageSheet[stageId].CostAP, playCount, level);
+                    _tableSheets.StageSheet[stageId].CostAP,
+                    playCount,
+                    level);
             var action = new HackAndSlash
             {
                 Costumes = new List<Guid>(),
@@ -1368,8 +1415,9 @@ namespace Lib9c.Tests.Action
                 0,
                 _tableSheets.WorldSheet,
                 clearedStageId);
-            var apStoneRow = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.ApStone);
+            var apStoneRow = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
             previousAvatarState.inventory.AddItem(apStone, apStoneCount);
             var stakeStateAddress = StakeState.DeriveAddress(_agentAddress);
@@ -1425,8 +1473,9 @@ namespace Lib9c.Tests.Action
                 level = 1,
             };
 
-            var apStoneRow = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.ApStone);
+            var apStoneRow = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
             avatarState.inventory.AddItem(apStone);
             var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
@@ -1444,12 +1493,14 @@ namespace Lib9c.Tests.Action
                 ApStoneCount = 1,
             };
 
-            var exec = Assert.Throws<InvalidRepeatPlayException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = avatarState.agentAddress,
-                RandomSeed = 0,
-            }));
+            var exec = Assert.Throws<InvalidRepeatPlayException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = avatarState.agentAddress,
+                        RandomSeed = 0,
+                    }));
 
             SerializeException<InvalidRepeatPlayException>(exec);
         }
@@ -1485,7 +1536,8 @@ namespace Lib9c.Tests.Action
                     .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
-                    _tableSheets.ItemSheet[costumeId], random);
+                    _tableSheets.ItemSheet[costumeId],
+                    random);
                 previousAvatarState.inventory.AddItem(costume);
                 costumes.Add(costume.ItemId);
             }
@@ -1534,13 +1586,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
 
             var action2 = new HackAndSlash
             {
@@ -1557,13 +1610,14 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            action2.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
-            });
+            action2.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
         }
 
         [Theory]
@@ -1599,7 +1653,8 @@ namespace Lib9c.Tests.Action
                     .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
-                    _tableSheets.ItemSheet[costumeId], random);
+                    _tableSheets.ItemSheet[costumeId],
+                    random);
                 previousAvatarState.inventory.AddItem(costume);
                 costumes.Add(costume.ItemId);
             }
@@ -1644,13 +1699,14 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            state = unlockRuneSlot.Execute(new ActionContext
-            {
-                BlockIndex = 1,
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            state = unlockRuneSlot.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             var action = new HackAndSlash
             {
@@ -1667,12 +1723,15 @@ namespace Lib9c.Tests.Action
                 AvatarAddress = _avatarAddress,
             };
 
-            Assert.Throws(exception, () => action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws(
+                exception,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         private static void SerializeException<T>(Exception exec)

@@ -67,7 +67,7 @@ namespace Lib9c.Tests.TestHelper
             if (pendingActivations is null)
             {
                 var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
-                (var activationKey, var pendingActivation) =
+                var (activationKey, pendingActivation) =
                     ActivationKey.Create(privateKey, nonce);
                 pendingActivations = new[] { pendingActivation, };
             }
@@ -151,12 +151,13 @@ namespace Lib9c.Tests.TestHelper
             {
                 weeklyArenaAddress = weeklyArenaAddress,
             };
-            var nextState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                PreviousState = initialState,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    PreviousState = initialState,
+                    RandomSeed = 0,
+                });
 
             return new MakeInitialStateResult(
                 nextState,

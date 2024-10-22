@@ -30,14 +30,16 @@ namespace Lib9c.Tests.Action
             }
         );
 
-        private static readonly Address _recipient = new (new byte[]
+        private static readonly Address _recipient = new (
+            new byte[]
             {
                 0x02, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
             }
         );
 
-        private static readonly Address _recipient2 = new (new byte[]
+        private static readonly Address _recipient2 = new (
+            new byte[]
             {
                 0x03, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
@@ -52,15 +54,16 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Constructor_ThrowsMemoLengthOverflowException()
         {
-            Assert.Throws<MemoLengthOverflowException>(() =>
-                new TransferAssets(
-                    _sender,
-                    new List<(Address, FungibleAssetValue)>()
-                    {
-                        (_recipient, _currency * 100),
-                    },
-                    new string(' ', 100)
-                )
+            Assert.Throws<MemoLengthOverflowException>(
+                () =>
+                    new TransferAssets(
+                        _sender,
+                        new List<(Address, FungibleAssetValue)>()
+                        {
+                            (_recipient, _currency * 100),
+                        },
+                        new string(' ', 100)
+                    )
             );
         }
 
@@ -81,12 +84,13 @@ namespace Lib9c.Tests.Action
                     (_recipient2, _currency * 100),
                 }
             );
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = prevState,
-                Signer = _sender,
-                BlockIndex = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = prevState,
+                    Signer = _sender,
+                    BlockIndex = 1,
+                });
 
             Assert.Equal(_currency * 800, nextState.GetBalance(_sender, _currency));
             Assert.Equal(_currency * 110, nextState.GetBalance(_recipient, _currency));
@@ -110,16 +114,18 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var exc = Assert.Throws<InvalidTransferSignerException>(() =>
-            {
-                _ = action.Execute(new ActionContext()
+            var exc = Assert.Throws<InvalidTransferSignerException>(
+                () =>
                 {
-                    PreviousState = prevState,
-                    // 송금자가 직접 사인하지 않으면 실패해야 합니다.
-                    Signer = _recipient,
-                    BlockIndex = 1,
+                    _ = action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            // 송금자가 직접 사인하지 않으면 실패해야 합니다.
+                            Signer = _recipient,
+                            BlockIndex = 1,
+                        });
                 });
-            });
 
             Assert.Equal(exc.Sender, _sender);
             Assert.Equal(exc.Recipient, _recipient);
@@ -141,15 +147,17 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var exc = Assert.Throws<InvalidTransferRecipientException>(() =>
-            {
-                _ = action.Execute(new ActionContext()
+            var exc = Assert.Throws<InvalidTransferRecipientException>(
+                () =>
                 {
-                    PreviousState = prevState,
-                    Signer = _sender,
-                    BlockIndex = 1,
+                    _ = action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _sender,
+                            BlockIndex = 1,
+                        });
                 });
-            });
 
             Assert.Equal(exc.Sender, _sender);
             Assert.Equal(exc.Recipient, _sender);
@@ -171,15 +179,17 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var exc = Assert.Throws<InsufficientBalanceException>(() =>
-            {
-                action.Execute(new ActionContext()
+            var exc = Assert.Throws<InsufficientBalanceException>(
+                () =>
                 {
-                    PreviousState = prevState,
-                    Signer = _sender,
-                    BlockIndex = 1,
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _sender,
+                            BlockIndex = 1,
+                        });
                 });
-            });
 
             Assert.Equal(_sender, exc.Address);
             Assert.Equal(_currency, exc.Balance.Currency);
@@ -204,15 +214,17 @@ namespace Lib9c.Tests.Action
                     (_recipient, currencyBySender * 100),
                 }
             );
-            var ex = Assert.Throws<InvalidTransferMinterException>(() =>
-            {
-                action.Execute(new ActionContext()
+            var ex = Assert.Throws<InvalidTransferMinterException>(
+                () =>
                 {
-                    PreviousState = prevState,
-                    Signer = _sender,
-                    BlockIndex = 1,
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _sender,
+                            BlockIndex = 1,
+                        });
                 });
-            });
 
             Assert.Equal(new[] { _sender, }, ex.Minters);
             Assert.Equal(_sender, ex.Sender);
@@ -281,12 +293,15 @@ namespace Lib9c.Tests.Action
             var action = new TransferAssets();
             var plainValue = Dictionary.Empty
                 .Add("type_id", "transfer_assets")
-                .Add("values", new Dictionary(new[]
-                {
-                    new KeyValuePair<IKey, IValue>((Text)"sender", _sender.Serialize()),
-                    new KeyValuePair<IKey, IValue>((Text)"recipients", List.Empty.Add(List.Empty.Add(_recipient.Serialize()).Add((_currency * 100).Serialize()))),
-                    new KeyValuePair<IKey, IValue>((Text)"memo", new string(' ', 81).Serialize()),
-                }));
+                .Add(
+                    "values",
+                    new Dictionary(
+                        new[]
+                        {
+                            new KeyValuePair<IKey, IValue>((Text)"sender", _sender.Serialize()),
+                            new KeyValuePair<IKey, IValue>((Text)"recipients", List.Empty.Add(List.Empty.Add(_recipient.Serialize()).Add((_currency * 100).Serialize()))),
+                            new KeyValuePair<IKey, IValue>((Text)"memo", new string(' ', 81).Serialize()),
+                        }));
 
             Assert.Throws<MemoLengthOverflowException>(() => action.LoadPlainValue(plainValue));
         }
@@ -329,15 +344,17 @@ namespace Lib9c.Tests.Action
             }
 
             var action = new TransferAssets(_sender, recipients);
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                action.Execute(new ActionContext()
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
                 {
-                    PreviousState = new World(MockUtil.MockModernWorldState),
-                    Signer = _sender,
-                    BlockIndex = 1,
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = new World(MockUtil.MockModernWorldState),
+                            Signer = _sender,
+                            BlockIndex = 1,
+                        });
                 });
-            });
         }
 
         [Fact]
@@ -356,12 +373,14 @@ namespace Lib9c.Tests.Action
                     (_recipient, 100 * _currency),
                 }
             );
-            Assert.Throws<InvalidTransferCurrencyException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = prevState,
-                Signer = _sender,
-                BlockIndex = TransferAsset3.CrystalTransferringRestrictionStartIndex,
-            }));
+            Assert.Throws<InvalidTransferCurrencyException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = prevState,
+                        Signer = _sender,
+                        BlockIndex = TransferAsset3.CrystalTransferringRestrictionStartIndex,
+                    }));
         }
 
         [Fact]
@@ -377,60 +396,72 @@ namespace Lib9c.Tests.Action
                 }
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
-            {
-                PreviousState = baseState
-                    .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
-                        new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
-                Signer = _sender,
-                BlockIndex = 1,
-            }));
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
-            {
-                PreviousState = baseState
-                    .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
-                        new StakeStateV2(
-                            new Contract(
-                                "StakeRegularFixedRewardSheet_V1",
-                                "StakeRegularRewardSheet_V1",
-                                50400,
-                                201600),
-                            0).Serialize()),
-                Signer = _sender,
-                BlockIndex = 1,
-            }));
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
-            {
-                PreviousState = baseState
-                    .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
-                        new MonsterCollectionState(
-                                MonsterCollectionState.DeriveAddress(_sender, 0),
-                                1,
-                                0)
-                            .Serialize()),
-                Signer = _sender,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<ArgumentException>(
+                "recipient",
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = baseState
+                            .SetLegacyState(
+                                StakeState.DeriveAddress(_recipient),
+                                new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
+                        Signer = _sender,
+                        BlockIndex = 1,
+                    }));
+            Assert.Throws<ArgumentException>(
+                "recipient",
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = baseState
+                            .SetLegacyState(
+                                StakeState.DeriveAddress(_recipient),
+                                new StakeStateV2(
+                                    new Contract(
+                                        "StakeRegularFixedRewardSheet_V1",
+                                        "StakeRegularRewardSheet_V1",
+                                        50400,
+                                        201600),
+                                    0).Serialize()),
+                        Signer = _sender,
+                        BlockIndex = 1,
+                    }));
+            Assert.Throws<ArgumentException>(
+                "recipient",
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = baseState
+                            .SetLegacyState(
+                                StakeState.DeriveAddress(_recipient),
+                                new MonsterCollectionState(
+                                        MonsterCollectionState.DeriveAddress(_sender, 0),
+                                        1,
+                                        0)
+                                    .Serialize()),
+                        Signer = _sender,
+                        BlockIndex = 1,
+                    }));
             var monsterCollectionRewardSheet = new MonsterCollectionRewardSheet();
             monsterCollectionRewardSheet.Set(
                 "level,required_gold,reward_id\n1,500,1\n2,1800,2\n3,7200,3\n4,54000,4\n5,270000,5\n6,480000,6\n7,1500000,7\n");
-            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
-            {
-                PreviousState = baseState
-                    .SetLegacyState(
-                        StakeState.DeriveAddress(_recipient),
-                        new MonsterCollectionState0(
-                                MonsterCollectionState.DeriveAddress(_sender, 0),
-                                1,
-                                0,
-                                monsterCollectionRewardSheet)
-                            .Serialize()),
-                Signer = _sender,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<ArgumentException>(
+                "recipient",
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = baseState
+                            .SetLegacyState(
+                                StakeState.DeriveAddress(_recipient),
+                                new MonsterCollectionState0(
+                                        MonsterCollectionState.DeriveAddress(_sender, 0),
+                                        1,
+                                        0,
+                                        monsterCollectionRewardSheet)
+                                    .Serialize()),
+                        Signer = _sender,
+                        BlockIndex = 1,
+                    }));
         }
     }
 }

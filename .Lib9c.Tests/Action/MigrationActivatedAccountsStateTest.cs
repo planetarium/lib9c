@@ -24,12 +24,13 @@ namespace Lib9c.Tests.Action
 
             var action = new MigrationActivatedAccountsState();
 
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = admin,
-                BlockIndex = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = state,
+                    Signer = admin,
+                    BlockIndex = 1,
+                });
 
             var nextAccountsState = new ActivatedAccountsState(
                 (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)

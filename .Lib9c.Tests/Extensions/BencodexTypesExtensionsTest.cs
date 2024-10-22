@@ -17,8 +17,9 @@ namespace Lib9c.Tests.Extensions
             var list = new List(new int[count]);
             if (throwException)
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() =>
-                    list.Replace(index, (Integer)1));
+                Assert.Throws<ArgumentOutOfRangeException>(
+                    () =>
+                        list.Replace(index, (Integer)1));
             }
             else
             {

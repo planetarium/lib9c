@@ -119,13 +119,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 payByCrystal = true,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    RandomSeed = random.Seed,
+                });
 
             // TEST: All given crystals are used
             Assert.Equal(0 * crystal, stateV2.GetBalance(_agentAddr, crystal));

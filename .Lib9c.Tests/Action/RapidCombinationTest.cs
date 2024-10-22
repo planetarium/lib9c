@@ -98,8 +98,9 @@ namespace Lib9c.Tests.Action
                 _initialState.GetSheet<WorldSheet>(),
                 slotStateUnlockStage);
 
-            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.Hourglass);
+            var row = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.Hourglass);
             avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), 83);
             avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), 100);
             Assert.True(avatarState.inventory.HasFungibleItem(row.ItemId, 0, 183));
@@ -144,12 +145,13 @@ namespace Lib9c.Tests.Action
                 slotIndexList = new List<int> { 0, },
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = 51,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = tempState,
+                    Signer = _agentAddress,
+                    BlockIndex = 51,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             var item = nextAvatarState.inventory.Equipments.First();
@@ -170,8 +172,9 @@ namespace Lib9c.Tests.Action
                 _initialState.GetSheet<WorldSheet>(),
                 slotStateUnlockStage);
 
-            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.Hourglass);
+            var row = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.Hourglass);
 
             var numOfHourglass = 83 * AvatarState.DefaultCombinationSlotCount;
             avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), numOfHourglass);
@@ -228,12 +231,13 @@ namespace Lib9c.Tests.Action
                 slotIndexList = slotIndexList,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = targetState,
-                Signer = _agentAddress,
-                BlockIndex = 51,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = targetState,
+                    Signer = _agentAddress,
+                    BlockIndex = 51,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             var item = nextAvatarState.inventory.Equipments.First();
@@ -246,10 +250,11 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_CombinationSlotResultNullException()
         {
-            var slotAddress = _avatarAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CombinationSlotState.DeriveFormat,
-                0));
+            var slotAddress = _avatarAddress.Derive(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    CombinationSlotState.DeriveFormat,
+                    0));
             var slotState = new CombinationSlotState(slotAddress, 0);
             slotState.Update(null, 0, 0);
 
@@ -262,12 +267,14 @@ namespace Lib9c.Tests.Action
                 slotIndexList = new List<int> { 0, },
             };
 
-            Assert.Throws<CombinationSlotResultNullException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<CombinationSlotResultNullException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = tempState,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                    }));
         }
 
         [Theory]
@@ -317,12 +324,14 @@ namespace Lib9c.Tests.Action
                 slotIndexList = new List<int> { 0, },
             };
 
-            Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = contextBlockIndex,
-            }));
+            Assert.Throws<RequiredBlockIndexException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = tempState,
+                        Signer = _agentAddress,
+                        BlockIndex = contextBlockIndex,
+                    }));
         }
 
         [Theory]
@@ -392,12 +401,14 @@ namespace Lib9c.Tests.Action
                 slotIndexList = new List<int> { 0, },
             };
 
-            Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = 51,
-            }));
+            Assert.Throws<NotEnoughMaterialException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = tempState,
+                        Signer = _agentAddress,
+                        BlockIndex = 51,
+                    }));
         }
 
         [Theory]
@@ -475,8 +486,9 @@ namespace Lib9c.Tests.Action
                 _initialState.GetSheet<WorldSheet>(),
                 slotStateUnlockStage);
 
-            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.Hourglass);
+            var row = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.Hourglass);
             avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), 22);
 
             var firstEquipmentRow = _tableSheets.EquipmentItemSheet.First;
@@ -520,12 +532,14 @@ namespace Lib9c.Tests.Action
                 slotIndexList = new List<int> { 0, },
             };
 
-            Assert.Throws<AppraiseBlockNotReachedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<AppraiseBlockNotReachedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = tempState,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                    }));
         }
 
         [Theory]
@@ -544,8 +558,9 @@ namespace Lib9c.Tests.Action
                 _initialState.GetSheet<WorldSheet>(),
                 slotStateUnlockStage);
 
-            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.Hourglass);
+            var row = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.Hourglass);
             avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), 83);
             avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), 100);
             Assert.True(avatarState.inventory.HasFungibleItem(row.ItemId, 0, 183));
@@ -588,10 +603,11 @@ namespace Lib9c.Tests.Action
 
                 case 9:
                 {
-                    Assert.True(ItemEnhancement9.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
+                    Assert.True(
+                        ItemEnhancement9.TryGetRow(
+                            equipment,
+                            _tableSheets.EnhancementCostSheetV2,
+                            out var costRow));
                     var equipmentResult = ItemEnhancement9.GetEnhancementResult(costRow, random);
                     equipment.LevelUp(
                         random,
@@ -613,10 +629,11 @@ namespace Lib9c.Tests.Action
 
                 case 10:
                 {
-                    Assert.True(ItemEnhancement10.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
+                    Assert.True(
+                        ItemEnhancement10.TryGetRow(
+                            equipment,
+                            _tableSheets.EnhancementCostSheetV2,
+                            out var costRow));
                     var equipmentResult = ItemEnhancement10.GetEnhancementResult(costRow, random);
                     equipment.LevelUp(
                         random,
@@ -638,10 +655,11 @@ namespace Lib9c.Tests.Action
 
                 case 11:
                 {
-                    Assert.True(ItemEnhancement11.TryGetRow(
-                        equipment,
-                        _tableSheets.EnhancementCostSheetV2,
-                        out var costRow));
+                    Assert.True(
+                        ItemEnhancement11.TryGetRow(
+                            equipment,
+                            _tableSheets.EnhancementCostSheetV2,
+                            out var costRow));
                     var equipmentResult = ItemEnhancement11.GetEnhancementResult(costRow, random);
                     equipment.LevelUp(
                         random,
@@ -688,12 +706,13 @@ namespace Lib9c.Tests.Action
                 slotIndexList = new List<int> { 0, },
             };
 
-            action.Execute(new ActionContext
-            {
-                PreviousState = tempState,
-                Signer = _agentAddress,
-                BlockIndex = 51,
-            });
+            action.Execute(
+                new ActionContext
+                {
+                    PreviousState = tempState,
+                    Signer = _agentAddress,
+                    BlockIndex = 51,
+                });
         }
     }
 }

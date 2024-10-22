@@ -67,11 +67,13 @@ namespace Lib9c.Tests.Action
             );
             var bossId = bossState.Id;
             var runeWeightSheet = new RuneWeightSheet();
-            runeWeightSheet.Set($@"id,boss_id,rank,rune_id,weight
+            runeWeightSheet.Set(
+                $@"id,boss_id,rank,rune_id,weight
 1,{bossId},0,10001,100
 ");
             var killRewardSheet = new WorldBossKillRewardSheet();
-            killRewardSheet.Set($@"id,boss_id,rank,rune_min,rune_max,crystal,circle
+            killRewardSheet.Set(
+                $@"id,boss_id,rank,rune_min,rune_max,crystal,circle
 1,{bossId},0,1,1,100,0
 ");
 

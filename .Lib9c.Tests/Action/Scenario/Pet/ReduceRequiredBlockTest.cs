@@ -105,13 +105,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 petId = _petId,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    RandomSeed = random.Seed,
+                });
 
             var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
             var slotState = allSlotState.GetSlot(0);

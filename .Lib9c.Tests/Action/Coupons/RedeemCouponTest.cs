@@ -273,7 +273,8 @@ namespace Lib9c.Tests.Action.Coupons
                     });
             actual = state.GetAvatarState(agent1Avatar0Address);
             var aggregateRewardSet = CouponsFixture.RewardSet1.Aggregate(
-                CouponsFixture.RewardSet2, (rewardSet, kv) =>
+                CouponsFixture.RewardSet2,
+                (rewardSet, kv) =>
                 {
                     if (rewardSet.TryGetValue(kv.Key, out var val))
                     {

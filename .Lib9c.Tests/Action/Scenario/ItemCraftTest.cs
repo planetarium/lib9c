@@ -78,10 +78,11 @@ namespace Lib9c.Tests.Action.Scenario
             foreach (var recipe in recipeList)
             {
                 allMaterialList = allMaterialList
-                    .Concat(recipe.GetAllMaterials(
-                        _tableSheets.EquipmentItemSubRecipeSheetV2,
-                        CraftType.Normal
-                    ))
+                    .Concat(
+                        recipe.GetAllMaterials(
+                            _tableSheets.EquipmentItemSubRecipeSheetV2,
+                            CraftType.Normal
+                        ))
                     .ToList();
             }
 
@@ -132,13 +133,14 @@ namespace Lib9c.Tests.Action.Scenario
                     subRecipeId = equipmentRecipe.SubRecipeIds?[0],
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = 0L,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = 0L,
+                        RandomSeed = randomSeed,
+                    });
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
                 var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlock
@@ -216,13 +218,14 @@ namespace Lib9c.Tests.Action.Scenario
                     recipeId = recipe.Id,
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = 0L,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = 0L,
+                        RandomSeed = randomSeed,
+                    });
 
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
                 var slotState = allSlotState.GetSlot(i);
@@ -298,13 +301,14 @@ namespace Lib9c.Tests.Action.Scenario
                     SlotIndex = i,
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = eventRow.StartBlockIndex,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = eventRow.StartBlockIndex,
+                        RandomSeed = randomSeed,
+                    });
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
                 var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
@@ -393,13 +397,14 @@ namespace Lib9c.Tests.Action.Scenario
                     MaterialsToUse = materialsToUse,
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = eventRow.StartBlockIndex,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = eventRow.StartBlockIndex,
+                        RandomSeed = randomSeed,
+                    });
                 var slotState = stateV2.GetCombinationSlotStateLegacy(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);

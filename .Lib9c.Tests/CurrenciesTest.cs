@@ -131,8 +131,10 @@ namespace Lib9c.Tests
             Assert.Equal(sheet.Count, currencies.Length);
             foreach (var currency in currencies)
             {
-                Assert.NotNull(sheet.OrderedList!.FirstOrDefault(row =>
-                    row.Ticker == currency.Ticker));
+                Assert.NotNull(
+                    sheet.OrderedList!.FirstOrDefault(
+                        row =>
+                            row.Ticker == currency.Ticker));
             }
         }
 
@@ -191,8 +193,10 @@ namespace Lib9c.Tests
             Assert.Equal(sheet.Count, currencies.Length);
             foreach (var currency in currencies)
             {
-                Assert.NotNull(sheet.OrderedList!.FirstOrDefault(row =>
-                    row.SoulStoneTicker == currency.Ticker));
+                Assert.NotNull(
+                    sheet.OrderedList!.FirstOrDefault(
+                        row =>
+                            row.SoulStoneTicker == currency.Ticker));
             }
         }
 

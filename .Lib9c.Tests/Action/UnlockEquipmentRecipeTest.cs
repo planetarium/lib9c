@@ -145,13 +145,14 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 1,
-                    RandomSeed = _random.Seed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                        RandomSeed = _random.Seed,
+                    });
 
                 Assert.True(nextState.TryGetLegacyState(unlockedRecipeIdsAddress, out List rawIds));
 
@@ -163,13 +164,16 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 1,
-                    RandomSeed = _random.Seed,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = _agentAddress,
+                            BlockIndex = 1,
+                            RandomSeed = _random.Seed,
+                        }));
             }
         }
 

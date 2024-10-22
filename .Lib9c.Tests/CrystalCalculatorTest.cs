@@ -114,8 +114,9 @@ namespace Lib9c.Tests
             var bps = bpsExist
                 ? new CrystalCostState(default, bpsCrystal * CrystalCalculator.CRYSTAL)
                 : null;
-            var row = _tableSheets.CrystalFluctuationSheet.Values.First(r =>
-                r.Type == CrystalFluctuationSheet.ServiceType.Combination);
+            var row = _tableSheets.CrystalFluctuationSheet.Values.First(
+                r =>
+                    r.Type == CrystalFluctuationSheet.ServiceType.Combination);
             Assert.Equal(
                 expected * CrystalCalculator.CRYSTAL,
                 CrystalCalculator.CalculateCombinationCost(crystal, row, ps, bps)
@@ -156,7 +157,7 @@ namespace Lib9c.Tests
 
         private class CalculateCrystalData : IEnumerable<object[]>
         {
-            private readonly List<object[]> _data = new()
+            private readonly List<object[]> _data = new ()
             {
                 // 1 + ((2^0 - 1) * 1) = 1
                 // enchant level 2

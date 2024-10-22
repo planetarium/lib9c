@@ -261,15 +261,17 @@ namespace Lib9c.Tests
             avatarState2.inventory.AddItem(equipment2);
 
             var arenaAvatarState1 = new ArenaAvatarState(avatarState1);
-            arenaAvatarState1.UpdateEquipment(new List<Guid>
-            {
-                equipment.ItemId,
-            });
+            arenaAvatarState1.UpdateEquipment(
+                new List<Guid>
+                {
+                    equipment.ItemId,
+                });
             var arenaAvatarState2 = new ArenaAvatarState(avatarState2);
-            arenaAvatarState2.UpdateEquipment(new List<Guid>
-            {
-                equipment2.ItemId,
-            });
+            arenaAvatarState2.UpdateEquipment(
+                new List<Guid>
+                {
+                    equipment2.ItemId,
+                });
 
             var simulator = new ArenaSimulator(_random);
             var myDigest = new ArenaPlayerDigest(avatarState1, arenaAvatarState1);
@@ -310,11 +312,12 @@ namespace Lib9c.Tests
             var optionInfo = runeRow.LevelOptionMap[89];
             var statModifiers = new List<StatModifier>();
             statModifiers.AddRange(
-                optionInfo.Stats.Select(x =>
-                    new StatModifier(
-                        x.stat.StatType,
-                        x.operationType,
-                        x.stat.TotalValueAsLong)));
+                optionInfo.Stats.Select(
+                    x =>
+                        new StatModifier(
+                            x.stat.StatType,
+                            x.operationType,
+                            x.stat.TotalValueAsLong)));
             foreach (var modifier in statModifiers)
             {
                 if (modifier.StatType == StatType.ATK)

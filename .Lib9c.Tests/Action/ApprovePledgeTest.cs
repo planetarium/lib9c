@@ -35,11 +35,12 @@ namespace Lib9c.Tests.Action
             {
                 PatronAddress = patron,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = address,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = address,
+                    PreviousState = states,
+                });
 
             var contract = Assert.IsType<List>(nextState.GetLegacyState(contractAddress));
             Assert.Equal(patron, contract[0].ToAddress());
@@ -68,11 +69,12 @@ namespace Lib9c.Tests.Action
             {
                 PatronAddress = patron,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = address,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = address,
+                    PreviousState = states,
+                });
 
             var contract = Assert.IsType<List>(nextState.GetLegacyState(contractAddress));
             Assert.Equal(patron, contract[0].ToAddress());
@@ -109,11 +111,14 @@ namespace Lib9c.Tests.Action
             {
                 PatronAddress = patron,
             };
-            Assert.Throws(exc, () => action.Execute(new ActionContext
-            {
-                Signer = address,
-                PreviousState = states,
-            }));
+            Assert.Throws(
+                exc,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = address,
+                        PreviousState = states,
+                    }));
         }
     }
 }

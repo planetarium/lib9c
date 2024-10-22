@@ -97,9 +97,10 @@ namespace Lib9c.Tests.Action
                 ArenaScoreHelper.GetScoreV4);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
-            IWorld state = new World(_baseState
-                .SetLegacyState(weekly.address, weekly.Serialize())
-                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize()));
+            IWorld state = new World(
+                _baseState
+                    .SetLegacyState(weekly.address, weekly.Serialize())
+                    .SetLegacyState(gameConfigState.address, gameConfigState.Serialize()));
             var blockIndex = 0;
 
             if (resetCount)
@@ -113,9 +114,10 @@ namespace Lib9c.Tests.Action
                 blockIndex = gameConfigState.WeeklyArenaInterval;
                 // Avoid NRE in test case.
                 var nextWeekly = new WeeklyArenaState(1);
-                state = new World(state
-                    .SetLegacyState(weekly.address, weekly.Serialize())
-                    .SetLegacyState(nextWeekly.address, nextWeekly.Serialize()));
+                state = new World(
+                    state
+                        .SetLegacyState(weekly.address, weekly.Serialize())
+                        .SetLegacyState(nextWeekly.address, nextWeekly.Serialize()));
             }
 
             Assert.False(weekly.Ended);

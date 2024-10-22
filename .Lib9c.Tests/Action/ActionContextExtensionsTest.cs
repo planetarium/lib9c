@@ -156,20 +156,23 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Since()
         {
-            Assert.True(new ActionContext
-            {
-                BlockIndex = 1001,
-            }.Since(1000));
+            Assert.True(
+                new ActionContext
+                {
+                    BlockIndex = 1001,
+                }.Since(1000));
 
-            Assert.True(new ActionContext
-            {
-                BlockIndex = 0,
-            }.Since(0));
+            Assert.True(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                }.Since(0));
 
-            Assert.False(new ActionContext
-            {
-                BlockIndex = 0,
-            }.Since(1));
+            Assert.False(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                }.Since(1));
         }
     }
 }

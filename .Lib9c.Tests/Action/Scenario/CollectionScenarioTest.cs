@@ -49,7 +49,12 @@ namespace Lib9c.Tests.Action.Scenario
                     rankingMapAddress
                 );
                 _initialState = _initialState.SetAvatarState(
-                        avatarAddress, avatarState, true, true, true, true)
+                        avatarAddress,
+                        avatarState,
+                        true,
+                        true,
+                        true,
+                        true)
                     .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
@@ -98,12 +103,13 @@ namespace Lib9c.Tests.Action.Scenario
                 Foods = new List<Guid>(),
             };
 
-            action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            action.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
         }
 
         [Theory]
@@ -137,13 +143,14 @@ namespace Lib9c.Tests.Action.Scenario
                 RuneInfos = new List<RuneSlotInfo>(),
                 FoodIds = new List<Guid>(),
             };
-            action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = _tableSheets.WorldBossListSheet.First().Value.StartedBlockIndex,
-            });
+            action.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = _tableSheets.WorldBossListSheet.First().Value.StartedBlockIndex,
+                });
         }
 
         [Theory]
@@ -182,7 +189,12 @@ namespace Lib9c.Tests.Action.Scenario
                 }
 
                 prevStates = prevStates.SetAvatarState(
-                    avatarAddress, avatarState, false, false, true, false);
+                    avatarAddress,
+                    avatarState,
+                    false,
+                    false,
+                    true,
+                    false);
 
                 var join = new JoinArena3
                 {
@@ -193,12 +205,13 @@ namespace Lib9c.Tests.Action.Scenario
                     equipments = new List<Guid>(),
                     runeInfos = new List<RuneSlotInfo>(),
                 };
-                var nextState = join.Execute(new ActionContext
-                {
-                    BlockIndex = 1,
-                    Signer = _agentAddress,
-                    PreviousState = prevStates,
-                });
+                var nextState = join.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1,
+                        Signer = _agentAddress,
+                        PreviousState = prevStates,
+                    });
                 prevStates = nextState;
             }
 
@@ -219,13 +232,14 @@ namespace Lib9c.Tests.Action.Scenario
                     runeInfos = new List<RuneSlotInfo>(),
                 };
 
-                battle.Execute(new ActionContext
-                {
-                    Signer = _agentAddress,
-                    PreviousState = prevStates,
-                    BlockIndex = 2,
-                    RandomSeed = 0,
-                });
+                battle.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = prevStates,
+                        BlockIndex = 2,
+                        RandomSeed = 0,
+                    });
             }
         }
 
@@ -254,9 +268,10 @@ namespace Lib9c.Tests.Action.Scenario
             }
 
             var scheduleRow = _tableSheets.EventScheduleSheet.Values.First();
-            Assert.True(_tableSheets.EventDungeonSheet.TryGetRowByEventScheduleId(
-                scheduleRow.Id,
-                out var eventDungeonRow));
+            Assert.True(
+                _tableSheets.EventDungeonSheet.TryGetRowByEventScheduleId(
+                    scheduleRow.Id,
+                    out var eventDungeonRow));
             var action = new EventDungeonBattle
             {
                 AvatarAddress = _avatarAddress,
@@ -269,13 +284,14 @@ namespace Lib9c.Tests.Action.Scenario
                 EventDungeonId = eventDungeonRow.Id,
             };
 
-            action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = scheduleRow.StartBlockIndex,
-            });
+            action.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = scheduleRow.StartBlockIndex,
+                });
         }
     }
 }

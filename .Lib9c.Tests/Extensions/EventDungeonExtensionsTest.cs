@@ -34,8 +34,9 @@
         public void ToEventDungeonStageNumber_Throw_ArgumentException(
             int eventDungeonStageId)
         {
-            Assert.Throws<ArgumentException>(() =>
-                eventDungeonStageId.ToEventDungeonStageNumber());
+            Assert.Throws<ArgumentException>(
+                () =>
+                    eventDungeonStageId.ToEventDungeonStageNumber());
         }
     }
 }

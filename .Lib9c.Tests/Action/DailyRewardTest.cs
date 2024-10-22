@@ -89,10 +89,11 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidAddressException()
         {
-            Assert.Throws<InvalidAddressException>(() =>
-                ExecuteInternal(
-                    new World(MockUtil.MockModernWorldState),
-                    new PrivateKey().Address));
+            Assert.Throws<InvalidAddressException>(
+                () =>
+                    ExecuteInternal(
+                        new World(MockUtil.MockModernWorldState),
+                        new PrivateKey().Address));
         }
 
         private IWorld ExecuteInternal(IWorld previousStates, Address avatarAddress, long blockIndex = 0)
@@ -102,13 +103,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = avatarAddress,
             };
 
-            return dailyRewardAction.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            return dailyRewardAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = previousStates,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
         }
     }
 }

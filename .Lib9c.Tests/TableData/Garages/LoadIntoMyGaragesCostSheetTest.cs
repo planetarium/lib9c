@@ -203,16 +203,18 @@ namespace Lib9c.Tests.TableData.Garages
         {
             var currency = Currencies.GetMinterlessCurrency("RUNE_GOLDENLEAF");
             var favTuples = Enumerable.Range(1, 10)
-                .Select(i => (
-                    fav: new FungibleAssetValue(currency, i, 0),
-                    expect: i * 10m))
+                .Select(
+                    i => (
+                        fav: new FungibleAssetValue(currency, i, 0),
+                        expect: i * 10m))
                 .ToArray();
             var fungibleIdAndCountTuples = Enumerable.Range(1, 10)
-                .Select(i => (
-                    fungibleId: HashDigest<SHA256>.FromString(
-                        "00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe"),
-                    count: i,
-                    expect: i * 0.16m))
+                .Select(
+                    i => (
+                        fungibleId: HashDigest<SHA256>.FromString(
+                            "00dfffe23964af9b284d121dae476571b7836b8d9e2e5f510d92a840fecc64fe"),
+                        count: i,
+                        expect: i * 0.16m))
                 .ToArray();
             var expect = favTuples.Select(t => t.expect).Sum() +
                 fungibleIdAndCountTuples.Select(t => t.expect).Sum();

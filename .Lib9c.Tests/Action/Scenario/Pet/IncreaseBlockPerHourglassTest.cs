@@ -148,13 +148,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 petId = _petId,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    RandomSeed = random.Seed,
+                });
 
             // Do rapid combination
             var rapidAction = new RapidCombination
@@ -162,13 +163,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 avatarAddress = _avatarAddr,
                 slotIndexList = new List<int> { 0, },
             };
-            stateV2 = rapidAction.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = rapidAction.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0,
+                    RandomSeed = random.Seed,
+                });
 
             var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
             var slotState = allSlotState.GetSlot(0);
@@ -180,8 +182,9 @@ namespace Lib9c.Tests.Action.Scenario.Pet
 
             // TEST: All Hourglasses should be used
             var avatarState = stateV2.GetAvatarState(_avatarAddr);
-            Assert.Throws<InvalidOperationException>(() =>
-                avatarState.inventory.Items.First(item => item.item.Id == _hourglassItemId));
+            Assert.Throws<InvalidOperationException>(
+                () =>
+                    avatarState.inventory.Items.First(item => item.item.Id == _hourglassItemId));
         }
     }
 }

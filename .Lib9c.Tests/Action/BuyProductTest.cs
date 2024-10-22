@@ -300,12 +300,15 @@ namespace Lib9c.Tests.Action
                         AvatarAddress = BuyerAvatarAddress,
                         ProductInfos = new[] { productInfo, },
                     };
-                    Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
-                    {
-                        PreviousState = previousState,
-                        RandomSeed = 0,
-                        Signer = BuyerAgentAddress,
-                    }));
+                    Assert.Throws(
+                        validateMember.Exc,
+                        () => action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = previousState,
+                                RandomSeed = 0,
+                                Signer = BuyerAgentAddress,
+                            }));
                 }
             }
         }

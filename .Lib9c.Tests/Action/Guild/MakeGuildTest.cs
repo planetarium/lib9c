@@ -48,19 +48,22 @@ namespace Lib9c.Tests.Action.Guild
 
             if (fail)
             {
-                Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                }));
+                Assert.Throws<InvalidOperationException>(
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = world,
+                            Signer = guildMasterAddress,
+                        }));
             }
             else
             {
-                world = action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                });
+                world = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMasterAddress,
+                    });
 
                 var guildAddress = world.GetJoinedGuild(guildMasterAddress);
                 Assert.NotNull(guildAddress);

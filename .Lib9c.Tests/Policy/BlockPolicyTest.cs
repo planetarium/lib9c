@@ -195,7 +195,7 @@ namespace Lib9c.Tests
             var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
 
-            (var ak, var ps) = ActivationKey.Create(
+            var (ak, ps) = ActivationKey.Create(
                 new PrivateKey(),
                 new byte[] { 0x00, 0x01, }
             );
@@ -235,9 +235,11 @@ namespace Lib9c.Tests
             );
 
             var unloadableAction = blockChain.MakeTransaction(
-                adminPrivateKey, new ActionBase[] { new RewardGold(), }).Actions[0];
-            Assert.Throws<InvalidActionException>(() =>
-                actionLoader.LoadAction(blockChain.Tip.Index, unloadableAction));
+                adminPrivateKey,
+                new ActionBase[] { new RewardGold(), }).Actions[0];
+            Assert.Throws<InvalidActionException>(
+                () =>
+                    actionLoader.LoadAction(blockChain.Tip.Index, unloadableAction));
         }
 
         [Fact]
@@ -247,7 +249,7 @@ namespace Lib9c.Tests
             var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
 
-            (var ak, var ps) = ActivationKey.Create(
+            var (ak, ps) = ActivationKey.Create(
                 new PrivateKey(),
                 new byte[] { 0x00, 0x01, }
             );
@@ -345,14 +347,15 @@ namespace Lib9c.Tests
                 var list = new List<Transaction>();
                 for (var i = 0; i < count; i++)
                 {
-                    list.Add(Transaction.Create(
-                        nonce++,
-                        adminPrivateKey,
-                        genesis.Hash,
-                        Array.Empty<IValue>(),
-                        gasLimit: 1,
-                        maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
-                    ));
+                    list.Add(
+                        Transaction.Create(
+                            nonce++,
+                            adminPrivateKey,
+                            genesis.Hash,
+                            Array.Empty<IValue>(),
+                            gasLimit: 1,
+                            maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
+                        ));
                 }
 
                 return list;
@@ -460,14 +463,15 @@ namespace Lib9c.Tests
                 var list = new List<Transaction>();
                 for (var i = 0; i < count; i++)
                 {
-                    list.Add(Transaction.Create(
-                        nonce++,
-                        adminPrivateKey,
-                        genesis.Hash,
-                        Array.Empty<IValue>(),
-                        gasLimit: 1,
-                        maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
-                    ));
+                    list.Add(
+                        Transaction.Create(
+                            nonce++,
+                            adminPrivateKey,
+                            genesis.Hash,
+                            Array.Empty<IValue>(),
+                            gasLimit: 1,
+                            maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
+                        ));
                 }
 
                 return list;
@@ -545,14 +549,15 @@ namespace Lib9c.Tests
                     block.Index,
                     0,
                     block.Hash,
-                    ImmutableArray<Vote>.Empty.Add(new VoteMetadata(
-                        block.Index,
-                        0,
-                        block.Hash,
-                        DateTimeOffset.UtcNow,
-                        privateKey.PublicKey,
-                        null,
-                        VoteFlag.PreCommit).Sign(privateKey)))
+                    ImmutableArray<Vote>.Empty.Add(
+                        new VoteMetadata(
+                            block.Index,
+                            0,
+                            block.Hash,
+                            DateTimeOffset.UtcNow,
+                            privateKey.PublicKey,
+                            null,
+                            VoteFlag.PreCommit).Sign(privateKey)))
                 : null;
         }
 
@@ -569,7 +574,7 @@ namespace Lib9c.Tests
             if (pendingActivations is null)
             {
                 var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
-                (var activationKey, var pendingActivation) =
+                var (activationKey, pendingActivation) =
                     ActivationKey.Create(_privateKey, nonce);
                 pendingActivations = new[] { pendingActivation, };
             }

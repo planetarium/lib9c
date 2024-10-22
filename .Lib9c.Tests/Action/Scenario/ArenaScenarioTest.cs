@@ -81,7 +81,8 @@ namespace Lib9c.Tests.Action.Scenario
                     .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
-                    _tableSheets.ItemSheet[costumeId], random);
+                    _tableSheets.ItemSheet[costumeId],
+                    random);
                 avatarState.inventory.AddItem(costume);
                 costumes.Add(costume.ItemId);
             }
@@ -108,13 +109,14 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarAddress = avatarAddress,
             };
 
-            _state = action.Execute(new ActionContext
-            {
-                PreviousState = _state,
-                Signer = signer,
-                RandomSeed = random.Seed,
-                BlockIndex = roundData.StartBlockIndex,
-            });
+            _state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = _state,
+                    Signer = signer,
+                    RandomSeed = random.Seed,
+                    BlockIndex = roundData.StartBlockIndex,
+                });
             return _state;
         }
 
@@ -138,13 +140,14 @@ namespace Lib9c.Tests.Action.Scenario
                 equipments = new List<Guid>(),
             };
 
-            _state = action.Execute(new ActionContext
-            {
-                PreviousState = _state,
-                Signer = signer,
-                RandomSeed = random.Seed,
-                BlockIndex = blockIndex,
-            });
+            _state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = _state,
+                    Signer = signer,
+                    RandomSeed = random.Seed,
+                    BlockIndex = blockIndex,
+                });
             return _state;
         }
 

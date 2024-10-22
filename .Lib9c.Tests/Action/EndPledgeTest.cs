@@ -32,11 +32,12 @@ namespace Lib9c.Tests.Action
             {
                 AgentAddress = agent,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = patron,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = patron,
+                    PreviousState = states,
+                });
             Assert.Null(nextState.GetLegacyState(agent.GetPledgeAddress()));
             Assert.Equal(mead * 0, nextState.GetBalance(agent, mead));
             if (balance > 0)
@@ -60,11 +61,14 @@ namespace Lib9c.Tests.Action
                 AgentAddress = invalidAgent ? new PrivateKey().Address : agent,
             };
 
-            Assert.Throws(exc, () => action.Execute(new ActionContext
-            {
-                Signer = invalidSigner ? new PrivateKey().Address : patron,
-                PreviousState = states,
-            }));
+            Assert.Throws(
+                exc,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = invalidSigner ? new PrivateKey().Address : patron,
+                        PreviousState = states,
+                    }));
         }
     }
 }

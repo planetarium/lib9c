@@ -59,13 +59,14 @@ namespace Lib9c.Tests.Action
                     new GameConfigState(_csv[nameof(GameConfigSheet)]).Serialize())
                 .SetLegacyState(Addresses.GoldCurrency, new GoldCurrencyState(_currency).Serialize());
 
-            _state = ca.Execute(new ActionContext
-            {
-                PreviousState = state,
-                BlockIndex = 0,
-                Signer = _signer,
-                RandomSeed = 0,
-            });
+            _state = ca.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    BlockIndex = 0,
+                    Signer = _signer,
+                    RandomSeed = 0,
+                });
         }
 
         [Fact]
@@ -115,13 +116,14 @@ namespace Lib9c.Tests.Action
             Assert.Equal(1 * _currency, prevState.GetBalance(avatarAddress, _currency));
 
             var action = new RetrieveAvatarAssets(avatarAddress);
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = prevState,
-                BlockIndex = 1L,
-                Signer = _signer,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevState,
+                    BlockIndex = 1L,
+                    Signer = _signer,
+                    RandomSeed = 0,
+                });
             Assert.Equal(0 * _currency, nextState.GetBalance(avatarAddress, _currency));
             Assert.Equal(1 * _currency, nextState.GetBalance(_signer, _currency));
         }
@@ -152,13 +154,15 @@ namespace Lib9c.Tests.Action
             Assert.Equal(0 * _currency, _state.GetBalance(avatarAddress, _currency));
 
             var action = new RetrieveAvatarAssets(avatarAddress);
-            Assert.Throws<ArgumentOutOfRangeException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _state,
-                BlockIndex = 1L,
-                Signer = _signer,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _state,
+                        BlockIndex = 1L,
+                        Signer = _signer,
+                        RandomSeed = 0,
+                    }));
         }
     }
 }

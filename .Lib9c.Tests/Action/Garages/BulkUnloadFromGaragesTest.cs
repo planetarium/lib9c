@@ -97,12 +97,14 @@ namespace Lib9c.Tests.Action.Garages
                         actionData.recipientAvatarAddress,
                         deserializedData.recipientAvatarAddress);
                     Assert.True(
-                        actionData.fungibleAssetValues?.SequenceEqual(deserializedData
-                            .fungibleAssetValues!)
+                        actionData.fungibleAssetValues?.SequenceEqual(
+                            deserializedData
+                                .fungibleAssetValues!)
                         ?? deserializedData.fungibleAssetValues is null);
                     Assert.True(
-                        actionData.fungibleIdAndCounts?.SequenceEqual(deserializedData
-                            .fungibleIdAndCounts!)
+                        actionData.fungibleIdAndCounts?.SequenceEqual(
+                            deserializedData
+                                .fungibleIdAndCounts!)
                         ?? deserializedData.fungibleIdAndCounts is null);
                     Assert.Equal(actionData.memo, deserializedData.memo);
                 }
@@ -115,13 +117,14 @@ namespace Lib9c.Tests.Action.Garages
             const long blockIndex = 0L;
             var (states, unloadDataEnumerable) = RegisterPlainValue(_previousStates);
             var action = new BulkUnloadFromGarages(new[] { unloadDataEnumerable, });
-            states = action.Execute(new ActionContext
-            {
-                Signer = AgentAddress,
-                BlockIndex = blockIndex,
-                PreviousState = states,
-                RandomSeed = new TestRandom().Seed,
-            });
+            states = action.Execute(
+                new ActionContext
+                {
+                    Signer = AgentAddress,
+                    BlockIndex = blockIndex,
+                    PreviousState = states,
+                    RandomSeed = new TestRandom().Seed,
+                });
 
             // Test fungibleAssetValues
             var unloadData = action.UnloadData.ToArray();
@@ -158,9 +161,11 @@ namespace Lib9c.Tests.Action.Garages
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(mailBox.First());
             Assert.Equal(blockIndex, mail.blockIndex);
             Assert.Equal(blockIndex, mail.requiredBlockIndex);
-            Assert.True(action.UnloadData[0].fungibleAssetValues?.SequenceEqual(mail.FungibleAssetValues!) ??
+            Assert.True(
+                action.UnloadData[0].fungibleAssetValues?.SequenceEqual(mail.FungibleAssetValues!) ??
                 mail.FungibleAssetValues is null);
-            Assert.True(action.UnloadData[0].fungibleIdAndCounts?.SequenceEqual(mail.FungibleIdAndCounts!) ??
+            Assert.True(
+                action.UnloadData[0].fungibleIdAndCounts?.SequenceEqual(mail.FungibleIdAndCounts!) ??
                 mail.FungibleIdAndCounts is null);
             Assert.Equal(action.UnloadData[0].memo, mail.Memo);
         }
@@ -173,11 +178,12 @@ namespace Lib9c.Tests.Action.Garages
             return CurrenciesTest.GetSampleCurrencies()
                 .Select(objects => (FungibleAssetValue)objects[0])
                 .Where(fav => fav.Sign > 0)
-                .Select(fav =>
-                {
-                    var recipient = Currencies.PickAddress(fav.Currency, agentAddr, avatarAddr);
-                    return (recipient, fav);
-                })
+                .Select(
+                    fav =>
+                    {
+                        var recipient = Currencies.PickAddress(fav.Currency, agentAddr, avatarAddr);
+                        return (recipient, fav);
+                    })
                 .ToArray();
         }
 
@@ -195,15 +201,16 @@ namespace Lib9c.Tests.Action.Garages
             var fungibleItemAndCounts = _tableSheets.MaterialItemSheet.OrderedList!
                 .Take(3)
                 .Select(ItemFactory.CreateMaterial)
-                .Select((material, index) =>
-                {
-                    var garageAddress =
-                        Addresses.GetGarageAddress(AgentAddress, material.FungibleId);
-                    var count = index + 1;
-                    var garage = new FungibleItemGarage(material, count);
-                    states = states.SetLegacyState(garageAddress, garage.Serialize());
-                    return (FungibleItem: (IFungibleItem)material, count);
-                })
+                .Select(
+                    (material, index) =>
+                    {
+                        var garageAddress =
+                            Addresses.GetGarageAddress(AgentAddress, material.FungibleId);
+                        var count = index + 1;
+                        var garage = new FungibleItemGarage(material, count);
+                        states = states.SetLegacyState(garageAddress, garage.Serialize());
+                        return (FungibleItem: (IFungibleItem)material, count);
+                    })
                 .ToArray();
             var fungibleItemIdAndCounts = fungibleItemAndCounts
                 .Select(tuple => (fungibleId: tuple.FungibleItem.FungibleId, tuple.count))

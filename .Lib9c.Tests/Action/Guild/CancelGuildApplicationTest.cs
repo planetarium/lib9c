@@ -34,29 +34,32 @@ namespace Lib9c.Tests.Action.Guild
             var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress);
             Assert.Throws<InvalidOperationException>(
-                () => action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = signer,
-                }));
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = signer,
+                    }));
 
             var otherAddress = AddressUtil.CreateAgentAddress();
             world = world.ApplyGuild(otherAddress, guildAddress);
 
             // It should fail because other agent applied the guild but the signer didn't apply.
             Assert.Throws<InvalidOperationException>(
-                () => action.Execute(new ActionContext
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = signer,
+                    }));
+
+            world = world.ApplyGuild(signer, guildAddress);
+            world = action.Execute(
+                new ActionContext
                 {
                     PreviousState = world,
                     Signer = signer,
-                }));
-
-            world = world.ApplyGuild(signer, guildAddress);
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = signer,
-            });
+                });
 
             Assert.False(world.TryGetGuildApplication(signer, out _));
         }

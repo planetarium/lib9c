@@ -312,31 +312,34 @@ namespace Lib9c.Tests.Action
             var buyerGold = previousStates.GetBalance(_buyerAgentAddress, goldCurrency);
             var priceSumData = productDatas
                 .Where(i => i.Buy)
-                .Aggregate(priceData, (priceSum, next) =>
-                {
-                    var price = new FungibleAssetValue(goldCurrency, next.Price, 0);
-                    var tax = price.DivRem(100, out _) * Buy.TaxRate;
-                    var taxedPrice = price - tax;
-                    priceData.TaxSum += tax;
+                .Aggregate(
+                    priceData,
+                    (priceSum, next) =>
+                    {
+                        var price = new FungibleAssetValue(goldCurrency, next.Price, 0);
+                        var tax = price.DivRem(100, out _) * Buy.TaxRate;
+                        var taxedPrice = price - tax;
+                        priceData.TaxSum += tax;
 
-                    var prevSum = priceData.TaxedPriceSum[next.SellerAgentAddress];
-                    priceData.TaxedPriceSum[next.SellerAgentAddress] = prevSum + taxedPrice;
-                    priceData.PriceSum += price;
-                    return priceData;
-                });
+                        var prevSum = priceData.TaxedPriceSum[next.SellerAgentAddress];
+                        priceData.TaxedPriceSum[next.SellerAgentAddress] = prevSum + taxedPrice;
+                        priceData.PriceSum += price;
+                        return priceData;
+                    });
 
             var buyMultipleAction = new BuyMultiple
             {
                 buyerAvatarAddress = _buyerAvatarAddress,
                 purchaseInfos = itemsToBuy,
             };
-            var nextState = buyMultipleAction.Execute(new ActionContext()
-            {
-                BlockIndex = 1,
-                PreviousState = previousStates,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            var nextState = buyMultipleAction.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 1,
+                    PreviousState = previousStates,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             var nextShopState = nextState.GetShopState();
             Assert.Equal(productDatas.Length - buyCount, nextShopState.Products.Count);
@@ -377,23 +380,25 @@ namespace Lib9c.Tests.Action
             var costume = ItemFactory.CreateCostume(
                 _tableSheets.CostumeItemSheet.First,
                 Guid.NewGuid());
-            shopState.Register(new ShopItem(
-                _buyerAgentAddress,
-                _buyerAvatarAddress,
-                Guid.NewGuid(),
-                new FungibleAssetValue(_goldCurrencyState.Currency, 100, 0),
-                100,
-                costume));
+            shopState.Register(
+                new ShopItem(
+                    _buyerAgentAddress,
+                    _buyerAvatarAddress,
+                    Guid.NewGuid(),
+                    new FungibleAssetValue(_goldCurrencyState.Currency, 100, 0),
+                    100,
+                    costume));
 
             _initialState = _initialState
                 .SetLegacyState(Addresses.Shop, shopState.Serialize());
 
             shopState = _initialState.GetShopState();
             var products = shopState.Products.Values
-                .Select(p => new BuyMultiple.PurchaseInfo(
-                    p.ProductId,
-                    p.SellerAgentAddress,
-                    p.SellerAvatarAddress))
+                .Select(
+                    p => new BuyMultiple.PurchaseInfo(
+                        p.ProductId,
+                        p.SellerAgentAddress,
+                        p.SellerAvatarAddress))
                 .ToList();
             Assert.NotEmpty(products);
 
@@ -403,13 +408,15 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = products,
             };
 
-            Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext()
-                {
-                    BlockIndex = 0,
-                    PreviousState = new World(MockUtil.MockModernWorldState),
-                    RandomSeed = 0,
-                    Signer = _buyerAgentAddress,
-                })
+            Assert.Throws<InvalidAddressException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = 0,
+                        PreviousState = new World(MockUtil.MockModernWorldState),
+                        RandomSeed = 0,
+                        Signer = _buyerAgentAddress,
+                    })
             );
         }
 
@@ -422,13 +429,15 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new List<BuyMultiple.PurchaseInfo>(),
             };
 
-            Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
-                {
-                    BlockIndex = 0,
-                    PreviousState = new World(MockUtil.MockModernWorldState),
-                    RandomSeed = 0,
-                    Signer = _buyerAgentAddress,
-                })
+            Assert.Throws<FailedLoadStateException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = 0,
+                        PreviousState = new World(MockUtil.MockModernWorldState),
+                        RandomSeed = 0,
+                        Signer = _buyerAgentAddress,
+                    })
             );
         }
 
@@ -451,13 +460,15 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new List<BuyMultiple.PurchaseInfo>(),
             };
 
-            Assert.Throws<NotEnoughClearedStageLevelException>(() => action.Execute(new ActionContext()
-                {
-                    BlockIndex = 0,
-                    PreviousState = _initialState,
-                    RandomSeed = 0,
-                    Signer = _buyerAgentAddress,
-                })
+            Assert.Throws<NotEnoughClearedStageLevelException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = 0,
+                        PreviousState = _initialState,
+                        RandomSeed = 0,
+                        Signer = _buyerAgentAddress,
+                    })
             );
         }
 
@@ -469,13 +480,14 @@ namespace Lib9c.Tests.Action
                 buyerAvatarAddress = _buyerAvatarAddress,
                 purchaseInfos = new List<BuyMultiple.PurchaseInfo>(),
             };
-            action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             var nextBuyerAvatarState = _initialState.GetAvatarState(_buyerAvatarAddress);
             foreach (var result in action.buyerResult.purchaseResults)
@@ -497,24 +509,26 @@ namespace Lib9c.Tests.Action
                 _tableSheets.EquipmentItemSheet.First,
                 Guid.NewGuid(),
                 1);
-            shopState.Register(new ShopItem(
-                sellerAgentAddress,
-                sellerAvatarAddress,
-                Guid.NewGuid(),
-                new FungibleAssetValue(_goldCurrencyState.Currency, 1, 0),
-                100,
-                (ITradableItem)equipment));
+            shopState.Register(
+                new ShopItem(
+                    sellerAgentAddress,
+                    sellerAvatarAddress,
+                    Guid.NewGuid(),
+                    new FungibleAssetValue(_goldCurrencyState.Currency, 1, 0),
+                    100,
+                    (ITradableItem)equipment));
 
             var costume = ItemFactory.CreateCostume(
                 _tableSheets.CostumeItemSheet.First,
                 Guid.NewGuid());
-            shopState.Register(new ShopItem(
-                sellerAgentAddress,
-                sellerAvatarAddress,
-                Guid.NewGuid(),
-                new FungibleAssetValue(_goldCurrencyState.Currency, 100, 0),
-                100,
-                costume));
+            shopState.Register(
+                new ShopItem(
+                    sellerAgentAddress,
+                    sellerAvatarAddress,
+                    Guid.NewGuid(),
+                    new FungibleAssetValue(_goldCurrencyState.Currency, 100, 0),
+                    100,
+                    costume));
 
             var context = new ActionContext();
             _initialState = _initialState
@@ -523,10 +537,11 @@ namespace Lib9c.Tests.Action
             Assert.NotEmpty(shopState.Products);
 
             var products = shopState.Products.Values
-                .Select(p => new BuyMultiple.PurchaseInfo(
-                    p.ProductId,
-                    p.SellerAgentAddress,
-                    p.SellerAvatarAddress))
+                .Select(
+                    p => new BuyMultiple.PurchaseInfo(
+                        p.ProductId,
+                        p.SellerAgentAddress,
+                        p.SellerAvatarAddress))
                 .ToList();
             Assert.NotEmpty(products);
 
@@ -539,13 +554,14 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = products,
             };
 
-            action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             var results = action.buyerResult.purchaseResults;
             var isAllFailed = results.Any(r => r.errorCode == BuyMultiple.ERROR_CODE_INSUFFICIENT_BALANCE);
@@ -567,13 +583,14 @@ namespace Lib9c.Tests.Action
                 _tableSheets.EquipmentItemSheet.First,
                 Guid.NewGuid(),
                 10);
-            shopState.Register(new ShopItem(
-                sellerAgentAddress,
-                sellerAvatarAddress,
-                productId,
-                new FungibleAssetValue(_goldCurrencyState.Currency, 100, 0),
-                10,
-                (ITradableItem)equipment));
+            shopState.Register(
+                new ShopItem(
+                    sellerAgentAddress,
+                    sellerAvatarAddress,
+                    productId,
+                    new FungibleAssetValue(_goldCurrencyState.Currency, 100, 0),
+                    10,
+                    (ITradableItem)equipment));
 
             previousStates = previousStates
                 .SetLegacyState(Addresses.Shop, shopState.Serialize());
@@ -581,10 +598,11 @@ namespace Lib9c.Tests.Action
 
             Assert.True(shopState.Products.ContainsKey(productId));
             var products = shopState.Products.Values
-                .Select(p => new BuyMultiple.PurchaseInfo(
-                    p.ProductId,
-                    p.SellerAgentAddress,
-                    p.SellerAvatarAddress))
+                .Select(
+                    p => new BuyMultiple.PurchaseInfo(
+                        p.ProductId,
+                        p.SellerAgentAddress,
+                        p.SellerAvatarAddress))
                 .ToList();
 
             var action = new BuyMultiple
@@ -593,13 +611,14 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = products,
             };
 
-            action.Execute(new ActionContext()
-            {
-                BlockIndex = 11,
-                PreviousState = previousStates,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 11,
+                    PreviousState = previousStates,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             var results = action.buyerResult.purchaseResults;
             var isAllFailed = results.Any(r => r.errorCode == BuyMultiple.ERROR_CODE_SHOPITEM_EXPIRED);
@@ -607,7 +626,8 @@ namespace Lib9c.Tests.Action
         }
 
         private (AvatarState AvatarState, AgentState AgentState) CreateAvatarState(
-            Address agentAddress, Address avatarAddress)
+            Address agentAddress,
+            Address avatarAddress)
         {
             var agentState = new AgentState(agentAddress);
             var rankingMapAddress = new PrivateKey().Address;

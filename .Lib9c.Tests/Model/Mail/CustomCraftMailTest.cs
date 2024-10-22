@@ -20,8 +20,9 @@ namespace Lib9c.Tests.Model.Mail
         public void Serialize()
         {
             var row = new EquipmentItemSheet.Row();
-            row.Set(new List<string>
-                { "20151000", "Weapon", "6", "Normal", "0", "ATK", "10", "0", "20160000", "0", });
+            row.Set(
+                new List<string>
+                    { "20151000", "Weapon", "6", "Normal", "0", "ATK", "10", "0", "20160000", "0", });
             var equipment = (Equipment)ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 1L);
             var mail = new CustomCraftMail(1, Guid.NewGuid(), 2, equipment);
             var serialized = (Dictionary)mail.Serialize();

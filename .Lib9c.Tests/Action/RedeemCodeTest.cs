@@ -18,21 +18,23 @@ namespace Lib9c.Tests.Action
 
     public class RedeemCodeTest
     {
-        private readonly Address _agentAddress = new (new byte[]
-        {
-            0x10, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x02,
-        });
+        private readonly Address _agentAddress = new (
+            new byte[]
+            {
+                0x10, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x02,
+            });
 
-        private readonly Address _avatarAddress = new (new byte[]
-        {
-            0x10, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x01,
-        });
+        private readonly Address _avatarAddress = new (
+            new byte[]
+            {
+                0x10, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x01,
+            });
 
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
@@ -48,10 +50,11 @@ namespace Lib9c.Tests.Action
         {
             var privateKey = new PrivateKey();
             var publicKey = privateKey.PublicKey;
-            var prevRedeemCodesState = new RedeemCodeState(new Dictionary<PublicKey, Reward>()
-            {
-                [publicKey] = new (1),
-            });
+            var prevRedeemCodesState = new RedeemCodeState(
+                new Dictionary<PublicKey, Reward>()
+                {
+                    [publicKey] = new (1),
+                });
             var gameConfigState = new GameConfigState();
             var agentState = new AgentState(_agentAddress);
             agentState.avatarAddresses[0] = _avatarAddress;
@@ -89,14 +92,15 @@ namespace Lib9c.Tests.Action
                 _avatarAddress
             );
 
-            var nextState = redeemCode.Execute(new ActionContext()
-            {
-                BlockIndex = 1,
-                Miner = default,
-                PreviousState = initialState,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            var nextState = redeemCode.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 1,
+                    Miner = default,
+                    PreviousState = initialState,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             // Check target avatar & agent
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);

@@ -77,11 +77,12 @@ namespace Lib9c.Tests.Action
                 {
                     var item = ItemFactory.CreateItem(itemRow, random);
                     avatarState.inventory.AddItem(item, material.Count);
-                    materials.Add(new FungibleCollectionMaterial
-                    {
-                        ItemId = item.Id,
-                        ItemCount = material.Count,
-                    });
+                    materials.Add(
+                        new FungibleCollectionMaterial
+                        {
+                            ItemId = item.Id,
+                            ItemCount = material.Count,
+                        });
                 }
                 else
                 {
@@ -92,23 +93,25 @@ namespace Lib9c.Tests.Action
                         avatarState.inventory.AddItem(item);
                         if (item.ItemType != ItemType.Consumable)
                         {
-                            materials.Add(new NonFungibleCollectionMaterial
-                            {
-                                ItemId = item.Id,
-                                NonFungibleId = nonFungibleId,
-                                SkillContains = material.SkillContains,
-                            });
+                            materials.Add(
+                                new NonFungibleCollectionMaterial
+                                {
+                                    ItemId = item.Id,
+                                    NonFungibleId = nonFungibleId,
+                                    SkillContains = material.SkillContains,
+                                });
                         }
                         else
                         {
                             // Add consumable material only one.
                             if (i == 0)
                             {
-                                materials.Add(new FungibleCollectionMaterial
-                                {
-                                    ItemId = item.Id,
-                                    ItemCount = material.Count,
-                                });
+                                materials.Add(
+                                    new FungibleCollectionMaterial
+                                    {
+                                        ItemId = item.Id,
+                                        ItemCount = material.Count,
+                                    });
                             }
                         }
                     }
@@ -137,11 +140,13 @@ namespace Lib9c.Tests.Action
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
 
-            Assert.Throws<AlreadyActivatedException>(() => activateCollection.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = _agentAddress,
-            }));
+            Assert.Throws<AlreadyActivatedException>(
+                () => activateCollection.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = nextState,
+                        Signer = _agentAddress,
+                    }));
         }
     }
 }

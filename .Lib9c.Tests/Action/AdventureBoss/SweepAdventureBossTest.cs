@@ -131,10 +131,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             }
 
             state = Stake(state, WantedAddress);
-            var sheets = state.GetSheets(new[]
-            {
-                typeof(MaterialItemSheet),
-            });
+            var sheets = state.GetSheets(
+                new[]
+                {
+                    typeof(MaterialItemSheet),
+                });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var materialRow =
                 materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
@@ -150,13 +151,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = WantedAvatarAddress,
                 Bounty = gameConfigState.AdventureBossMinBounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = WantedAddress,
-                BlockIndex = 0L,
-                RandomSeed = 1,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
             var exp = new Explorer(TesterAvatarAddress, TesterAvatarState.name)
             {
                 MaxFloor = 5 * Math.Max(floor / 5, 1),
@@ -176,22 +178,26 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             if (exc is not null)
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = TesterAddress,
+                            BlockIndex = 1L,
+                        }
+                    ));
+            }
+            else
+            {
+                state = action.Execute(
+                    new ActionContext
                     {
                         PreviousState = state,
                         Signer = TesterAddress,
                         BlockIndex = 1L,
-                    }
-                ));
-            }
-            else
-            {
-                state = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = TesterAddress,
-                    BlockIndex = 1L,
-                });
+                    });
 
                 var potion = state.GetInventoryV2(TesterAvatarAddress).Items
                     .FirstOrDefault(i => i.item.ItemSubType == ItemSubType.ApStone);
@@ -242,12 +248,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private IWorld Stake(IWorld world, Address agentAddress)
         {
             var action = new Stake(new BigInteger(500_000));
-            var state = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                BlockIndex = 0L,
-            });
+            var state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                    BlockIndex = 0L,
+                });
             return state;
         }
     }

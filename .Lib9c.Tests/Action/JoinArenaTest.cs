@@ -60,13 +60,16 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Season_Success()
         {
-            var row = _tableSheets.ArenaSheet.OrderedList!.First(e =>
-                e.Round.Any(e2 =>
-                    e2.ArenaType == ArenaType.Season &&
-                    e2.EntranceFee > 0));
-            var roundData = row.Round.First(e =>
-                e.ArenaType == ArenaType.Season &&
-                e.EntranceFee > 0);
+            var row = _tableSheets.ArenaSheet.OrderedList!.First(
+                e =>
+                    e.Round.Any(
+                        e2 =>
+                            e2.ArenaType == ArenaType.Season &&
+                            e2.EntranceFee > 0));
+            var roundData = row.Round.First(
+                e =>
+                    e.ArenaType == ArenaType.Season &&
+                    e.EntranceFee > 0);
             var blockIndex = roundData.StartBlockIndex;
             var fee = ArenaHelper.GetEntranceFee(
                 roundData,
@@ -89,10 +92,12 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Championship_Success()
         {
-            var row = _tableSheets.ArenaSheet.OrderedList!.First(e =>
-                e.Round.Any(e2 =>
-                    e2.ArenaType == ArenaType.Championship &&
-                    e2.RequiredMedalCount > 0));
+            var row = _tableSheets.ArenaSheet.OrderedList!.First(
+                e =>
+                    e.Round.Any(
+                        e2 =>
+                            e2.ArenaType == ArenaType.Championship &&
+                            e2.RequiredMedalCount > 0));
             Assert.True(row.TryGetChampionshipRound(out var roundData));
             var blockIndex = roundData.StartBlockIndex;
             var fee = ArenaHelper.GetEntranceFee(
@@ -125,60 +130,66 @@ namespace Lib9c.Tests.Action
         [InlineData(int.MaxValue)]
         public void Execute_SheetRowNotFoundException(int championshipId)
         {
-            Assert.Throws<SheetRowNotFoundException>(() => Execute(
-                _world,
-                _myAgentState.address,
-                0,
-                0,
-                _myAvatarState.address,
-                championshipId,
-                1,
-                new List<Guid>(),
-                new List<Guid>(),
-                new List<RuneSlotInfo>()));
+            Assert.Throws<SheetRowNotFoundException>(
+                () => Execute(
+                    _world,
+                    _myAgentState.address,
+                    0,
+                    0,
+                    _myAvatarState.address,
+                    championshipId,
+                    1,
+                    new List<Guid>(),
+                    new List<Guid>(),
+                    new List<RuneSlotInfo>()));
         }
 
         [Theory]
         [InlineData(10)]
         public void Execute_RoundNotFoundByIdsException(int round)
         {
-            Assert.Throws<RoundNotFoundException>(() => Execute(
-                _world,
-                _myAgentState.address,
-                0,
-                0,
-                _myAvatarState.address,
-                1,
-                round,
-                new List<Guid>(),
-                new List<Guid>(),
-                new List<RuneSlotInfo>()));
+            Assert.Throws<RoundNotFoundException>(
+                () => Execute(
+                    _world,
+                    _myAgentState.address,
+                    0,
+                    0,
+                    _myAvatarState.address,
+                    1,
+                    round,
+                    new List<Guid>(),
+                    new List<Guid>(),
+                    new List<RuneSlotInfo>()));
         }
 
         [Fact]
         public void Execute_NotEnoughFungibleAssetValueException()
         {
-            var row = _tableSheets.ArenaSheet.OrderedList!.First(e =>
-                e.Round.Any(e2 =>
-                    e2.ArenaType == ArenaType.Season &&
-                    e2.EntranceFee > 0));
-            var roundData = row.Round.First(e =>
-                e.ArenaType == ArenaType.Season &&
-                e.EntranceFee > 0);
+            var row = _tableSheets.ArenaSheet.OrderedList!.First(
+                e =>
+                    e.Round.Any(
+                        e2 =>
+                            e2.ArenaType == ArenaType.Season &&
+                            e2.EntranceFee > 0));
+            var roundData = row.Round.First(
+                e =>
+                    e.ArenaType == ArenaType.Season &&
+                    e.EntranceFee > 0);
             var blockIndex = roundData.StartBlockIndex;
 
             // with 0 assets.
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() => Execute(
-                _world,
-                _myAgentState.address,
-                blockIndex,
-                0,
-                _myAvatarState.address,
-                row.ChampionshipId,
-                roundData.Round,
-                new List<Guid>(),
-                new List<Guid>(),
-                new List<RuneSlotInfo>()));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () => Execute(
+                    _world,
+                    _myAgentState.address,
+                    blockIndex,
+                    0,
+                    _myAvatarState.address,
+                    row.ChampionshipId,
+                    roundData.Round,
+                    new List<Guid>(),
+                    new List<Guid>(),
+                    new List<RuneSlotInfo>()));
 
             // get discounted fee.
             var fee = ArenaHelper.GetEntranceFee(
@@ -189,17 +200,18 @@ namespace Lib9c.Tests.Action
                 .MintAsset(new ActionContext(), _myAgentState.address, fee)
                 .BurnAsset(new ActionContext(), _myAgentState.address, new FungibleAssetValue(fee.Currency, 0, 1));
             // with not enough assets in discount period.
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() => Execute(
-                world,
-                _myAgentState.address,
-                blockIndex - 1,
-                0,
-                _myAvatarState.address,
-                row.ChampionshipId,
-                roundData.Round,
-                new List<Guid>(),
-                new List<Guid>(),
-                new List<RuneSlotInfo>()));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () => Execute(
+                    world,
+                    _myAgentState.address,
+                    blockIndex - 1,
+                    0,
+                    _myAvatarState.address,
+                    row.ChampionshipId,
+                    roundData.Round,
+                    new List<Guid>(),
+                    new List<Guid>(),
+                    new List<RuneSlotInfo>()));
 
             // get original fee.
             fee = ArenaHelper.GetEntranceFee(
@@ -210,26 +222,29 @@ namespace Lib9c.Tests.Action
                 .MintAsset(new ActionContext(), _myAgentState.address, fee)
                 .BurnAsset(new ActionContext(), _myAgentState.address, new FungibleAssetValue(fee.Currency, 0, 1));
             // with not enough assets in discount period.
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() => Execute(
-                world,
-                _myAgentState.address,
-                blockIndex,
-                0,
-                _myAvatarState.address,
-                row.ChampionshipId,
-                roundData.Round,
-                new List<Guid>(),
-                new List<Guid>(),
-                new List<RuneSlotInfo>()));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () => Execute(
+                    world,
+                    _myAgentState.address,
+                    blockIndex,
+                    0,
+                    _myAvatarState.address,
+                    row.ChampionshipId,
+                    roundData.Round,
+                    new List<Guid>(),
+                    new List<Guid>(),
+                    new List<RuneSlotInfo>()));
         }
 
         [Fact]
         public void Execute_NotEnoughMedalException()
         {
-            var row = _tableSheets.ArenaSheet.OrderedList!.First(e =>
-                e.Round.Any(e2 =>
-                    e2.ArenaType == ArenaType.Championship &&
-                    e2.RequiredMedalCount > 0));
+            var row = _tableSheets.ArenaSheet.OrderedList!.First(
+                e =>
+                    e.Round.Any(
+                        e2 =>
+                            e2.ArenaType == ArenaType.Championship &&
+                            e2.RequiredMedalCount > 0));
             Assert.True(row.TryGetChampionshipRound(out var roundData));
             var blockIndex = roundData.StartBlockIndex;
             var fee = ArenaHelper.GetEntranceFee(
@@ -237,17 +252,18 @@ namespace Lib9c.Tests.Action
                 blockIndex,
                 _myAvatarState.level);
             var world = _world.MintAsset(new ActionContext(), _myAgentState.address, fee);
-            Assert.Throws<NotEnoughMedalException>(() => Execute(
-                world,
-                _myAgentState.address,
-                blockIndex,
-                0,
-                _myAvatarState.address,
-                row.ChampionshipId,
-                roundData.Round,
-                new List<Guid>(),
-                new List<Guid>(),
-                new List<RuneSlotInfo>()));
+            Assert.Throws<NotEnoughMedalException>(
+                () => Execute(
+                    world,
+                    _myAgentState.address,
+                    blockIndex,
+                    0,
+                    _myAvatarState.address,
+                    row.ChampionshipId,
+                    roundData.Round,
+                    new List<Guid>(),
+                    new List<Guid>(),
+                    new List<RuneSlotInfo>()));
         }
 
         private IWorld Execute(
@@ -271,13 +287,14 @@ namespace Lib9c.Tests.Action
                 equipments = equipments,
                 runeInfos = runeInfos,
             };
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = signer,
-                BlockIndex = blockIndex,
-                RandomSeed = randomSeed,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = signer,
+                    BlockIndex = blockIndex,
+                    RandomSeed = randomSeed,
+                });
 
             // check ItemSlotState
             var itemSlotState = new ItemSlotState(BattleType.Arena);

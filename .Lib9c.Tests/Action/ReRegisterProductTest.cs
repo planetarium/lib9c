@@ -228,13 +228,14 @@ namespace Lib9c.Tests.Action
                 updateSellInfos = new[] { updateSellInfo, },
             };
 
-            var expectedState = action.Execute(new ActionContext
-            {
-                BlockIndex = 101,
-                PreviousState = prevState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var expectedState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 101,
+                    PreviousState = prevState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
 
             var updateSellShopAddress = ShardedShopStateV2.DeriveAddress(itemSubType, updateSellOrderId);
             var nextShopState = new ShardedShopStateV2((Dictionary)expectedState.GetLegacyState(updateSellShopAddress));
@@ -274,13 +275,14 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            var actualState = reRegister.Execute(new ActionContext
-            {
-                BlockIndex = 101,
-                PreviousState = prevState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var actualState = reRegister.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 101,
+                    PreviousState = prevState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
 
             var targetShopState = new ShardedShopStateV2((Dictionary)actualState.GetLegacyState(shardedShopAddress));
             var nextOrderDigestListState = new OrderDigestListState((Dictionary)actualState.GetLegacyState(orderDigestList.Address));

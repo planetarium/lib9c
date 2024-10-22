@@ -12,7 +12,8 @@ namespace Lib9c.Tests
         public void Keys_Duplicate()
         {
             var type = typeof(SerializeKeys);
-            var fields = type.GetFields(BindingFlags.Public
+            var fields = type.GetFields(
+                BindingFlags.Public
                 | BindingFlags.Static
                 | BindingFlags.FlattenHierarchy);
             var keyMap = new Dictionary<string, string>();

@@ -16,10 +16,11 @@ namespace Lib9c.Tests
         {
             var codec = new Codec();
             var barValue = (Text)"bar";
-            IFileSystem fileSystem = new MockFileSystem(new Dictionary<string, MockFileData>
-            {
-                { "/foo", new MockFileData($"{{\"foo\": \"{Convert.ToBase64String(codec.Encode(barValue))}\"}}") },
-            });
+            IFileSystem fileSystem = new MockFileSystem(
+                new Dictionary<string, MockFileData>
+                {
+                    { "/foo", new MockFileData($"{{\"foo\": \"{Convert.ToBase64String(codec.Encode(barValue))}\"}}") },
+                });
             var loader = new JsonStatesLoader(fileSystem);
             var states = loader.Load("/foo");
             Assert.Single(states);

@@ -41,7 +41,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (var activationKey, var pendingActivation) =
+            var (activationKey, pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
 
             var action = new InitializeStates(
@@ -60,13 +60,14 @@ namespace Lib9c.Tests.Action
                 pendingActivationStates: new[] { pendingActivation, }
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Signer = minterKey.Address,
-                Miner = default,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Signer = minterKey.Address,
+                    Miner = default,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             var addresses = new List<Address>()
             {
@@ -103,7 +104,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (var activationKey, var pendingActivation) =
+            var (activationKey, pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
 
             var action = new InitializeStates(
@@ -127,13 +128,14 @@ namespace Lib9c.Tests.Action
                 )
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Miner = default,
-                Signer = minterKey.Address,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Miner = default,
+                    Signer = minterKey.Address,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             var fetchedState = new AuthorizedMinersState(
                 (Dictionary)genesisState.GetLegacyState(AuthorizedMinersState.Address)
@@ -159,7 +161,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (var activationKey, var pendingActivation) =
+            var (activationKey, pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
             var adminAddress = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
 
@@ -176,13 +178,14 @@ namespace Lib9c.Tests.Action
                 pendingActivationStates: new[] { pendingActivation, }
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Miner = default,
-                Signer = minterKey.Address,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Miner = default,
+                    Signer = minterKey.Address,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             var fetchedState = new ActivatedAccountsState(
                 (Dictionary)genesisState.GetLegacyState(Addresses.ActivatedAccount));
@@ -228,13 +231,14 @@ namespace Lib9c.Tests.Action
                 creditsState: creditState
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Miner = default,
-                Signer = minterKey.Address,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Miner = default,
+                    Signer = minterKey.Address,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             var fetchedState = new CreditsState(
                 (Dictionary)genesisState.GetLegacyState(CreditsState.Address));
@@ -258,7 +262,7 @@ namespace Lib9c.Tests.Action
 #pragma warning restore CS0618
             var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var privateKey = new PrivateKey();
-            (var activationKey, var pendingActivation) =
+            var (activationKey, pendingActivation) =
                 ActivationKey.Create(privateKey, nonce);
 
             var action = new InitializeStates(
@@ -274,13 +278,14 @@ namespace Lib9c.Tests.Action
                 pendingActivationStates: new[] { pendingActivation, }
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Miner = default,
-                Signer = minterKey.Address,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Miner = default,
+                    Signer = minterKey.Address,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             var fetchedState = new ActivatedAccountsState(
                 (Dictionary)genesisState.GetLegacyState(Addresses.ActivatedAccount));
@@ -317,13 +322,14 @@ namespace Lib9c.Tests.Action
                 pendingActivationStates: Array.Empty<PendingActivationState>()
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Miner = default,
-                Signer = minterKey.Address,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Miner = default,
+                    Signer = minterKey.Address,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             Assert.Equal(0 * ncg, genesisState.GetBalance(GoldCurrencyState.Address, ncg));
         }
@@ -358,13 +364,14 @@ namespace Lib9c.Tests.Action
                 assetMinters: new[] { default(Address), }.ToHashSet()
             );
 
-            var genesisState = action.Execute(new ActionContext()
-            {
-                BlockIndex = 0,
-                Miner = default,
-                Signer = minterKey.Address,
-                PreviousState = new World(MockUtil.MockModernWorldState),
-            });
+            var genesisState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 0,
+                    Miner = default,
+                    Signer = minterKey.Address,
+                    PreviousState = new World(MockUtil.MockModernWorldState),
+                });
 
             var assetMinters = Assert.IsType<List>(genesisState.GetLegacyState(Addresses.AssetMinters));
             Assert.Contains(default(Address).Serialize(), assetMinters);

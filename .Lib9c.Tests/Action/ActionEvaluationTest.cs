@@ -440,10 +440,12 @@ namespace Lib9c.Tests.Action
                     AgentAddresses = new[] { (new PrivateKey().Address, new PrivateKey().Address), },
                     Mead = 4,
                 },
-                TransferAssets _ => new TransferAssets(_sender, new List<(Address, FungibleAssetValue)>
-                {
-                    (_signer, 1 * _currency),
-                }),
+                TransferAssets _ => new TransferAssets(
+                    _sender,
+                    new List<(Address, FungibleAssetValue)>
+                    {
+                        (_signer, 1 * _currency),
+                    }),
                 RuneSummon _ => new RuneSummon
                 {
                     AvatarAddress = _sender,

@@ -49,13 +49,14 @@ namespace Lib9c.Tests.Action
                 Memo = "memo",
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                BlockIndex = 1L,
-                PreviousState = state,
-                RandomSeed = 0,
-                Signer = admin,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1L,
+                    PreviousState = state,
+                    RandomSeed = 0,
+                    Signer = admin,
+                });
 
             foreach (var (sender, _, _) in transferData)
             {
@@ -126,13 +127,15 @@ namespace Lib9c.Tests.Action
                 Memo = "memo",
             };
 
-            Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = 1L,
-                PreviousState = state,
-                RandomSeed = 0,
-                Signer = admin,
-            }));
+            Assert.Throws<InsufficientBalanceException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1L,
+                        PreviousState = state,
+                        RandomSeed = 0,
+                        Signer = admin,
+                    }));
         }
     }
 }

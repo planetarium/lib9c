@@ -308,14 +308,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 1,
             };
 
-            Assert.Throws<RuneCostNotFoundException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<RuneCostNotFoundException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -374,14 +376,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 1,
             };
 
-            Assert.Throws<RuneCostDataNotFoundException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<RuneCostDataNotFoundException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Theory]
@@ -492,14 +496,16 @@ namespace Lib9c.Tests.Action
                 return;
             }
 
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -547,14 +553,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 0,
             };
 
-            Assert.Throws<TryCountIsZeroException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<TryCountIsZeroException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -598,14 +606,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 0,
             };
 
-            Assert.Throws<FailedLoadStateException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Theory]

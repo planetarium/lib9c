@@ -56,7 +56,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
 
-            foreach ((var key, var value) in sheets)
+            foreach (var (key, value) in sheets)
             {
                 _state = _state
                     .SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
@@ -68,19 +68,24 @@ namespace Lib9c.Tests.Action
         {
             var monsterCollectionAddress = MonsterCollectionState.DeriveAddress(_signer, 0);
             var monsterCollectionState = new MonsterCollectionState(
-                monsterCollectionAddress, 1, 0);
+                monsterCollectionAddress,
+                1,
+                0);
             var stakeStateAddress = StakeState.DeriveAddress(_signer);
             var states = _state.SetLegacyState(
-                    stakeStateAddress, new StakeState(stakeStateAddress, 0).SerializeV2())
+                    stakeStateAddress,
+                    new StakeState(stakeStateAddress, 0).SerializeV2())
                 .SetLegacyState(monsterCollectionAddress, monsterCollectionState.Serialize());
             var action = new MigrateMonsterCollection(_avatarAddress);
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signer,
-                BlockIndex = 0,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _signer,
+                        BlockIndex = 0,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -88,25 +93,29 @@ namespace Lib9c.Tests.Action
         {
             var monsterCollectionAddress = MonsterCollectionState.DeriveAddress(_signer, 0);
             var monsterCollectionState = new MonsterCollectionState(
-                monsterCollectionAddress, 1, ActionObsoleteConfig.V100220ObsoleteIndex - MonsterCollectionState.RewardInterval);
+                monsterCollectionAddress,
+                1,
+                ActionObsoleteConfig.V100220ObsoleteIndex - MonsterCollectionState.RewardInterval);
             var currency = _state.GetGoldCurrency();
             var context = new ActionContext();
             var states = _state
                 .SetLegacyState(monsterCollectionAddress, monsterCollectionState.Serialize())
                 .MintAsset(context, monsterCollectionAddress, currency * 100);
             var action = new MigrateMonsterCollection(_avatarAddress);
-            states = action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signer,
-                BlockIndex = ActionObsoleteConfig.V100220ObsoleteIndex + 1,
-                RandomSeed = 0,
-            });
+            states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _signer,
+                    BlockIndex = ActionObsoleteConfig.V100220ObsoleteIndex + 1,
+                    RandomSeed = 0,
+                });
 
-            Assert.True(states.TryGetAvatarState(
-                _signer,
-                _avatarAddress,
-                out var avatarState));
+            Assert.True(
+                states.TryGetAvatarState(
+                    _signer,
+                    _avatarAddress,
+                    out var avatarState));
 
             Assert.Equal(80, avatarState.inventory.Items.First(item => item.item.Id == 400000).count);
             Assert.Equal(1, avatarState.inventory.Items.First(item => item.item.Id == 500000).count);
@@ -130,13 +139,14 @@ namespace Lib9c.Tests.Action
             Assert.Equal(stakedAmount * currency, states.GetBalance(collectionAddress, currency));
 
             var action = new MigrateMonsterCollection(_avatarAddress);
-            states = action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = _signer,
-                BlockIndex = claimBlockIndex,
-                RandomSeed = 0,
-            });
+            states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _signer,
+                    BlockIndex = claimBlockIndex,
+                    RandomSeed = 0,
+                });
 
             Assert.True(states.TryGetStakeState(_signer, out var stakeState));
             Assert.Equal(
@@ -167,7 +177,7 @@ namespace Lib9c.Tests.Action
 
         private class ExecuteFixture : IEnumerable<object[]>
         {
-            private readonly List<object[]> _data = new()
+            private readonly List<object[]> _data = new ()
             {
                 new object[]
                 {

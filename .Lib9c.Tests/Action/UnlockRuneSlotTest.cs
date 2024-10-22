@@ -114,14 +114,16 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            Assert.Throws<InsufficientBalanceException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<InsufficientBalanceException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -134,14 +136,16 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 99,
             };
 
-            Assert.Throws<SlotNotFoundException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<SlotNotFoundException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -154,14 +158,16 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 0,
             };
 
-            Assert.Throws<MismatchRuneSlotTypeException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<MismatchRuneSlotTypeException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -188,14 +194,16 @@ namespace Lib9c.Tests.Action
 
             state = action.Execute(ctx);
 
-            Assert.Throws<SlotIsAlreadyUnlockedException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<SlotIsAlreadyUnlockedException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Theory]

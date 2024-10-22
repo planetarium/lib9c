@@ -58,8 +58,10 @@ namespace Lib9c.Tests.Action
             var address = PendingActivationState.DeriveAddress(nonce, pubKey);
             var plainValue = Dictionary.Empty
                 .Add("type_id", "create_pending_activations")
-                .Add("values", new List()
-                    .Add(new List(address.Serialize(), (Binary)nonce, pubKey.Serialize())));
+                .Add(
+                    "values",
+                    new List()
+                        .Add(new List(address.Serialize(), (Binary)nonce, pubKey.Serialize())));
 
             var action = new CreatePendingActivations();
             action.LoadPlainValue(plainValue);
@@ -84,21 +86,23 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(AdminState.Address, adminState.Serialize());
 
             Assert.Throws<PolicyExpiredException>(
-                () => action.Execute(new ActionContext()
-                {
-                    BlockIndex = 101,
-                    PreviousState = state,
-                    Signer = adminAddress,
-                })
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = 101,
+                        PreviousState = state,
+                        Signer = adminAddress,
+                    })
             );
 
             Assert.Throws<PermissionDeniedException>(
-                () => action.Execute(new ActionContext()
-                {
-                    BlockIndex = 1,
-                    PreviousState = state,
-                    Signer = default,
-                })
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = 1,
+                        PreviousState = state,
+                        Signer = default,
+                    })
             );
         }
     }

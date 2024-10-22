@@ -100,13 +100,14 @@ namespace Lib9c.Tests.Action
             var action = new ClaimRaidReward(avatarAddress);
             if (exc is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    Signer = agentAddress,
-                    BlockIndex = blockIndex,
-                    RandomSeed = randomSeed,
-                    PreviousState = state,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        Signer = agentAddress,
+                        BlockIndex = blockIndex,
+                        RandomSeed = randomSeed,
+                        PreviousState = state,
+                    });
 
                 var crystalCurrency = CrystalCalculator.CRYSTAL;
                 Assert.Equal(
@@ -134,13 +135,16 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    Signer = default,
-                    BlockIndex = 5055201L,
-                    RandomSeed = randomSeed,
-                    PreviousState = state,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            Signer = default,
+                            BlockIndex = 5055201L,
+                            RandomSeed = randomSeed,
+                            PreviousState = state,
+                        }));
             }
         }
     }

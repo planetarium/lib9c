@@ -128,11 +128,12 @@ namespace Lib9c.Tests.Action.Scenario
         {
             Assert.True(state.GetBalance(signer, Currencies.Mead) > 0 * Currencies.Mead);
             var nextState = state.BurnAsset(context, signer, 1 * Currencies.Mead);
-            var executedState = action.Execute(new ActionContext
-            {
-                Signer = signer,
-                PreviousState = nextState,
-            });
+            var executedState = action.Execute(
+                new ActionContext
+                {
+                    Signer = signer,
+                    PreviousState = nextState,
+                });
             return RewardGold.TransferMead(context, executedState);
         }
     }

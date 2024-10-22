@@ -32,29 +32,34 @@ namespace Lib9c.Tests.Action.Guild
                 .MakeGuild(guildAddress, guildMasterAddress);
 
             // This case should fail because guild master cannot quit the guild.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMasterAddress,
+                    }));
 
             // This case should fail because the agent is not a member of the guild.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = agentAddress,
+                    }));
 
             // Join the guild.
             world = world.JoinGuild(guildAddress, agentAddress);
             Assert.NotNull(world.GetJoinedGuild(agentAddress));
 
             // This case should fail because the agent is not a member of the guild.
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                });
 
             Assert.Null(world.GetJoinedGuild(agentAddress));
         }

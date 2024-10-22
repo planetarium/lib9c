@@ -225,7 +225,7 @@ namespace Lib9c.Tests.Action
             var legacyShopState = _initialState.GetShopState();
             foreach (var orderData in orderDataList)
             {
-                (var sellerAvatarState, var sellerAgentState) = CreateAvatarState(
+                var (sellerAvatarState, sellerAgentState) = CreateAvatarState(
                     orderData.SellerAgentAddress,
                     orderData.SellerAvatarAddress
                 );
@@ -341,26 +341,28 @@ namespace Lib9c.Tests.Action
                 buyerAvatarAddress = _buyerAvatarAddress,
                 purchaseInfos = purchaseInfos,
             };
-            var expectedState = buyAction.Execute(new ActionContext()
-            {
-                BlockIndex = 100,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            var expectedState = buyAction.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 100,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             var buyProductAction = new BuyProduct
             {
                 AvatarAddress = _buyerAvatarAddress,
                 ProductInfos = productInfos,
             };
-            var actualState = buyProductAction.Execute(new ActionContext
-            {
-                BlockIndex = 100,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            var actualState = buyProductAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 100,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             Assert.Empty(buyAction.errors);
 
@@ -484,13 +486,16 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new[] { purchaseInfo, },
             };
 
-            Assert.Throws(exc, () => action.Execute(new ActionContext()
-                {
-                    BlockIndex = 0,
-                    PreviousState = _initialState,
-                    RandomSeed = 0,
-                    Signer = _buyerAgentAddress,
-                })
+            Assert.Throws(
+                exc,
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = 0,
+                        PreviousState = _initialState,
+                        RandomSeed = 0,
+                        Signer = _buyerAgentAddress,
+                    })
             );
         }
 
@@ -513,7 +518,8 @@ namespace Lib9c.Tests.Action
             }
 
             var item = ItemFactory.CreateItem(
-                _tableSheets.ConsumableItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Food), new TestRandom());
+                _tableSheets.ConsumableItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Food),
+                new TestRandom());
             var orderTradableId = ((ITradableItem)item).TradableId;
             var tradableId = errorCodeMember.EqualTradableId ? orderTradableId : Guid.NewGuid();
             var price = errorCodeMember.EqualPrice ? orderPrice : default;
@@ -614,13 +620,14 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = new[] { purchaseInfo, },
             };
 
-            var nextState = action.Execute(new ActionContext()
-            {
-                BlockIndex = blockIndex,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             Assert.Contains(
                 errorCodeMember.ErrorCode,
@@ -648,13 +655,16 @@ namespace Lib9c.Tests.Action
                 _ => throw new ArgumentNullException(),
             };
 
-            Assert.Throws(exc, () => buyProductAction.Execute(new ActionContext()
-            {
-                BlockIndex = blockIndex,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            }));
+            Assert.Throws(
+                exc,
+                () => buyProductAction.Execute(
+                    new ActionContext()
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = _initialState,
+                        RandomSeed = 0,
+                        Signer = _buyerAgentAddress,
+                    }));
 
             foreach (var address in new[] { agentAddress, sellerAgentAddress, GoldCurrencyState.Address, })
             {
@@ -767,13 +777,14 @@ namespace Lib9c.Tests.Action
                 buyerAvatarAddress = _buyerAvatarAddress,
                 purchaseInfos = purchaseInfos,
             };
-            var nextState = buyAction.Execute(new ActionContext()
-            {
-                BlockIndex = 100,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _buyerAgentAddress,
-            });
+            var nextState = buyAction.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 100,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _buyerAgentAddress,
+                });
 
             var nextBuyerAvatarState = nextState.GetAvatarState(_buyerAvatarAddress);
 
@@ -874,13 +885,14 @@ namespace Lib9c.Tests.Action
                 purchaseInfos = purchaseInfos,
             };
 
-            nextState = buyAction.Execute(new ActionContext()
-            {
-                BlockIndex = 100,
-                PreviousState = nextState,
-                RandomSeed = 0,
-                Signer = result.GetAgentState().address,
-            });
+            nextState = buyAction.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 100,
+                    PreviousState = nextState,
+                    RandomSeed = 0,
+                    Signer = result.GetAgentState().address,
+                });
 
             var totalTax = 0 * _goldCurrencyState.Currency;
             var totalPrice = 0 * _goldCurrencyState.Currency;
@@ -904,10 +916,18 @@ namespace Lib9c.Tests.Action
                 var nextSellerAvatarState =
                     nextState.GetAvatarState(purchaseInfo.SellerAvatarAddress);
 
-                Assert.True(nextBuyerAvatarState.inventory.TryGetTradableItem(
-                    tradableId, 100, itemCount, out var _));
-                Assert.False(nextSellerAvatarState.inventory.TryGetTradableItem(
-                    tradableId, 100, itemCount, out var _));
+                Assert.True(
+                    nextBuyerAvatarState.inventory.TryGetTradableItem(
+                        tradableId,
+                        100,
+                        itemCount,
+                        out var _));
+                Assert.False(
+                    nextSellerAvatarState.inventory.TryGetTradableItem(
+                        tradableId,
+                        100,
+                        itemCount,
+                        out var _));
 
                 Assert.Empty(nextSellerAvatarState.mailBox.OfType<OrderExpirationMail>());
                 var orderReceipt = new OrderReceipt((Dictionary)nextState.GetLegacyState(OrderReceipt.DeriveAddress(order.OrderId)));
@@ -929,8 +949,9 @@ namespace Lib9c.Tests.Action
                     agentRevenue.Add(order.SellerAgentAddress, revenue);
                 }
 
-                var mailCount = purchaseInfos.Count(x =>
-                    x.SellerAvatarAddress.Equals(purchaseInfo.SellerAvatarAddress));
+                var mailCount = purchaseInfos.Count(
+                    x =>
+                        x.SellerAvatarAddress.Equals(purchaseInfo.SellerAvatarAddress));
                 Assert.Equal(mailCount, nextSellerAvatarState.mailBox.OfType<OrderSellerMail>().Count());
                 Assert.Empty(nextSellerAvatarState.mailBox.OfType<OrderExpirationMail>());
             }
@@ -958,7 +979,8 @@ namespace Lib9c.Tests.Action
         }
 
         private (AvatarState AvatarState, AgentState AgentState) CreateAvatarState(
-            Address agentAddress, Address avatarAddress)
+            Address agentAddress,
+            Address avatarAddress)
         {
             var agentState = new AgentState(agentAddress);
             var rankingMapAddress = new PrivateKey().Address;

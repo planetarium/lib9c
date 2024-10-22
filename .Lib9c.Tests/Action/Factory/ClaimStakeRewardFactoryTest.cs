@@ -19,11 +19,13 @@ namespace Lib9c.Tests.Action.Factory
         public static IEnumerable<object[]> GetAllClaimStakeRewardV1()
         {
             var arr = Assembly.GetAssembly(typeof(ClaimRaidReward))?.GetTypes()
-                .Where(type =>
-                    type.IsClass &&
-                    typeof(IClaimStakeRewardV1).IsAssignableFrom(type))
-                .Select(type =>
-                    type.GetCustomAttribute<ActionTypeAttribute>()?.TypeIdentifier)
+                .Where(
+                    type =>
+                        type.IsClass &&
+                        typeof(IClaimStakeRewardV1).IsAssignableFrom(type))
+                .Select(
+                    type =>
+                        type.GetCustomAttribute<ActionTypeAttribute>()?.TypeIdentifier)
                 .OfType<IValue>()
                 .ToArray() ?? Array.Empty<IValue>();
 

@@ -104,13 +104,15 @@ namespace Lib9c.Tests.Action.Scenario
                 RuneInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<DuplicateEquipmentException>(() => has.Execute(new ActionContext
-            {
-                BlockIndex = 2,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            }));
+            Assert.Throws<DuplicateEquipmentException>(
+                () => has.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 2,
+                        PreviousState = _initialState,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
 
             has.Equipments = new List<Guid>
             {
@@ -118,13 +120,14 @@ namespace Lib9c.Tests.Action.Scenario
             };
 
             // equip grimoire because grimoireIgnoreSheet is empty
-            var nextState = has.Execute(new ActionContext
-            {
-                BlockIndex = 3,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var nextState = has.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 3,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
 
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
@@ -155,13 +158,14 @@ namespace Lib9c.Tests.Action.Scenario
                 RuneInfos = new List<RuneSlotInfo>(),
             };
 
-            var nextState = raid.Execute(new ActionContext
-            {
-                BlockIndex = 5045201,
-                PreviousState = prevState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var nextState = raid.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 5045201,
+                    PreviousState = prevState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
         }
 
@@ -195,12 +199,13 @@ namespace Lib9c.Tests.Action.Scenario
                     },
                     runeInfos = new List<RuneSlotInfo>(),
                 };
-                var nextState = join.Execute(new ActionContext
-                {
-                    BlockIndex = 1,
-                    Signer = _agentAddress,
-                    PreviousState = prevState,
-                });
+                var nextState = join.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1,
+                        Signer = _agentAddress,
+                        PreviousState = prevState,
+                    });
                 var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
                 var serializedArenaAvatarState = (List)nextState.GetLegacyState(arenaAvatarStateAdr);
                 var arenaAvatarState = new ArenaAvatarState(serializedArenaAvatarState);
@@ -228,13 +233,14 @@ namespace Lib9c.Tests.Action.Scenario
                     runeInfos = new List<RuneSlotInfo>(),
                 };
 
-                var nextState = battle.Execute(new ActionContext
-                {
-                    Signer = _agentAddress,
-                    PreviousState = prevState,
-                    BlockIndex = 2,
-                    RandomSeed = 0,
-                });
+                var nextState = battle.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = prevState,
+                        BlockIndex = 2,
+                        RandomSeed = 0,
+                    });
                 var avatarState = prevState.GetAvatarState(avatarAddress);
                 var enemyAvatarState = prevState.GetAvatarState(enemyAvatarAddress);
                 var simulator = new ArenaSimulator(new TestRandom(), 10);
@@ -291,12 +297,13 @@ namespace Lib9c.Tests.Action.Scenario
                     _grimoire.ItemId,
                 },
             };
-            var nextState = grinding.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                PreviousState = _initialState,
-                BlockIndex = 1L,
-            });
+            var nextState = grinding.Execute(
+                new ActionContext
+                {
+                    Signer = _agentAddress,
+                    PreviousState = _initialState,
+                    BlockIndex = 1L,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.False(nextAvatarState.inventory.TryGetNonFungibleItem(_grimoire.ItemId, out _));
@@ -336,12 +343,14 @@ namespace Lib9c.Tests.Action.Scenario
                 ChargeAp = false,
             };
             // Because Grimoire is not ITradableItem.
-            Assert.Throws<ItemDoesNotExistException>(() => register.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                PreviousState = previousState,
-                BlockIndex = 0L,
-            }));
+            Assert.Throws<ItemDoesNotExistException>(
+                () => register.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = previousState,
+                        BlockIndex = 0L,
+                    }));
         }
 
         private void Assert_Player(AvatarState avatarState, IWorld state, Address avatarAddress, Address itemSlotStateAddress)

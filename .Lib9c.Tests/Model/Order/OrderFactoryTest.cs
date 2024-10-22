@@ -94,8 +94,9 @@ namespace Lib9c.Tests.Model.Order
         [InlineData(ItemSubType.NormalMaterial)]
         public void Create_Throw_InvalidItemTypeException(ItemSubType itemSubType)
         {
-            Assert.Throws<InvalidItemTypeException>(() =>
-                OrderFactory.Create(default, default, default, default, default, default, itemSubType, 1));
+            Assert.Throws<InvalidItemTypeException>(
+                () =>
+                    OrderFactory.Create(default, default, default, default, default, default, itemSubType, 1));
         }
 
         [Theory]

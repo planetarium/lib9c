@@ -198,9 +198,10 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                equipment.Exp = _tableSheets.EnhancementCostSheetV3.OrderedList.First(r =>
-                    r.ItemSubType == equipment.ItemSubType && r.Grade == equipment.Grade &&
-                    r.Level == equipment.level).Exp;
+                equipment.Exp = _tableSheets.EnhancementCostSheetV3.OrderedList.First(
+                    r =>
+                        r.ItemSubType == equipment.ItemSubType && r.Grade == equipment.Grade &&
+                        r.Level == equipment.level).Exp;
             }
 
             var startExp = equipment.Exp;
@@ -211,9 +212,10 @@ namespace Lib9c.Tests.Action
 
             _avatarState.inventory.AddItem(equipment, 1);
 
-            var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(r =>
-                r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
-                r.Level == startLevel);
+            var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(
+                r =>
+                    r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
+                    r.Level == startLevel);
             var expectedExpIncrement = 0L;
             var materialIds = new List<Guid>();
             var duplicatedGuid = Guid.NewGuid();
@@ -229,9 +231,10 @@ namespace Lib9c.Tests.Action
                 }
                 else
                 {
-                    material.Exp = _tableSheets.EnhancementCostSheetV3.OrderedList.First(r =>
-                        r.ItemSubType == material.ItemSubType && r.Grade == material.Grade &&
-                        r.Level == material.level).Exp;
+                    material.Exp = _tableSheets.EnhancementCostSheetV3.OrderedList.First(
+                        r =>
+                            r.ItemSubType == material.ItemSubType && r.Grade == material.Grade &&
+                            r.Level == material.level).Exp;
                 }
 
                 if (!(duplicated && i > 0))
@@ -284,13 +287,14 @@ namespace Lib9c.Tests.Action
                 slotIndex = 0,
             };
 
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = _initialState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = _initialState,
+                    Signer = _agentAddress,
+                    BlockIndex = 1,
+                    RandomSeed = 0,
+                });
 
             var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
             var slotState = allSlotState.GetSlot(0);
@@ -332,8 +336,9 @@ namespace Lib9c.Tests.Action
                 for (var i = startLevel + 1; i <= level; i++)
                 {
                     var currentRow = _tableSheets.EnhancementCostSheetV3.OrderedList
-                        .First(x =>
-                            x.Grade == 1 && x.ItemSubType == equipment.ItemSubType && x.Level == i);
+                        .First(
+                            x =>
+                                x.Grade == 1 && x.ItemSubType == equipment.ItemSubType && x.Level == i);
 
                     baseMinAtk *= currentRow.BaseStatGrowthMin.NormalizeFromTenThousandths() + 1;
                     baseMaxAtk *= currentRow.BaseStatGrowthMax.NormalizeFromTenThousandths() + 1;
@@ -406,9 +411,10 @@ namespace Lib9c.Tests.Action
 
             _avatarState.inventory.AddItem(equipment, 1);
 
-            var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(r =>
-                r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
-                r.Level == startLevel);
+            var startRow = _tableSheets.EnhancementCostSheetV3.OrderedList.FirstOrDefault(
+                r =>
+                    r.Grade == equipment.Grade && r.ItemSubType == equipment.ItemSubType &&
+                    r.Level == startLevel);
             var expectedExpIncrement = 0L;
             var materialIds = new List<Guid>();
             for (var i = 0; i < materialCount; i++)
@@ -423,7 +429,8 @@ namespace Lib9c.Tests.Action
             }
 
             _avatarState.inventory.AddItem(
-                ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]), 3);
+                ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]),
+                3);
 
             var hammerExp = _tableSheets.EnhancementCostSheetV3.GetHammerExp(hammerId) * 3;
 
@@ -468,13 +475,14 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            var nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = _initialState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = _initialState,
+                    Signer = _agentAddress,
+                    BlockIndex = 1,
+                    RandomSeed = 0,
+                });
 
             var allSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
             var slotState = allSlotState.GetSlot(0);
@@ -515,8 +523,9 @@ namespace Lib9c.Tests.Action
                 for (var i = startLevel + 1; i <= level; i++)
                 {
                     var currentRow = _tableSheets.EnhancementCostSheetV3.OrderedList
-                        .First(x =>
-                            x.Grade == 1 && x.ItemSubType == equipment.ItemSubType && x.Level == i);
+                        .First(
+                            x =>
+                                x.Grade == 1 && x.ItemSubType == equipment.ItemSubType && x.Level == i);
 
                     baseMinAtk *= currentRow.BaseStatGrowthMin.NormalizeFromTenThousandths() + 1;
                     baseMaxAtk *= currentRow.BaseStatGrowthMax.NormalizeFromTenThousandths() + 1;

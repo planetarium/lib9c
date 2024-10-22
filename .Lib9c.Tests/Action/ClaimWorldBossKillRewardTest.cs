@@ -30,15 +30,18 @@ namespace Lib9c.Tests.Action
             IWorld state = new World(MockUtil.MockModernWorldState);
 
             var runeWeightSheet = new RuneWeightSheet();
-            runeWeightSheet.Set(@"id,boss_id,rank,rune_id,weight
+            runeWeightSheet.Set(
+                @"id,boss_id,rank,rune_id,weight
 1,900001,0,10001,100
 ");
             var killRewardSheet = new WorldBossKillRewardSheet();
-            killRewardSheet.Set(@"id,boss_id,rank,rune_min,rune_max,crystal
+            killRewardSheet.Set(
+                @"id,boss_id,rank,rune_min,rune_max,crystal
 1,900001,0,1,1,100
 ");
             var worldBossListSheet = new WorldBossListSheet();
-            worldBossListSheet.Set(@"id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count
+            worldBossListSheet.Set(
+                @"id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count
 1,900001,0,100,300,200,100,10
 ");
             var worldBossKillRewardRecordAddress = Addresses.GetWorldBossKillRewardRecordAddress(avatarAddress, 1);
@@ -84,13 +87,14 @@ namespace Lib9c.Tests.Action
             if (exc is null)
             {
                 var randomSeed = 0;
-                var nextState = action.Execute(new ActionContext
-                {
-                    BlockIndex = blockIndex,
-                    Signer = agentAddress,
-                    PreviousState = state,
-                    RandomSeed = randomSeed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        Signer = agentAddress,
+                        PreviousState = state,
+                        RandomSeed = randomSeed,
+                    });
 
                 var runeCurrency = RuneHelper.ToCurrency(tableSheets.RuneSheet[10001]);
                 Assert.Equal(1 * runeCurrency, nextState.GetBalance(avatarAddress, runeCurrency));
@@ -131,13 +135,16 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    BlockIndex = blockIndex,
-                    Signer = default,
-                    PreviousState = state,
-                    RandomSeed = 0,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            BlockIndex = blockIndex,
+                            Signer = default,
+                            PreviousState = state,
+                            RandomSeed = 0,
+                        }));
             }
         }
     }
