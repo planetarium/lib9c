@@ -81,6 +81,7 @@ namespace Lib9c.Tests.TableData
             var rewards = row.GetRewards(tableSheets.RuneSheet, tableSheets.MaterialItemSheet);
 
             Assert.Equal(expected, rewards.Count);
+            Assert.All(rewards, fav => Assert.True(fav.Sign > 0));
         }
     }
 }
