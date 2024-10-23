@@ -37,7 +37,6 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            GasTracer.UseGas(1);
             var states = context.PreviousState;
             states = TransferMead(context, states);
             states = GenesisGoldDistribution(context, states);
@@ -284,13 +283,16 @@ namespace Nekoyume.Action
         public IWorld MinerReward(IActionContext ctx, IWorld states)
         {
             Currency currency = Currencies.Mead;
-            var defaultReward = currency * 5;
             var usedGas = states.GetBalance(Addresses.UsedMeadPool, currency);
+            var defaultReward = currency * 5;
             var halfOfUsedGas = usedGas.DivRem(2).Quotient;
             var gasToBurn = usedGas - halfOfUsedGas;
             var miningReward = halfOfUsedGas + defaultReward;
-            states = states.BurnAsset(ctx, Addresses.UsedMeadPool, gasToBurn);
             states = states.MintAsset(ctx, Addresses.UsedMeadPool, defaultReward);
+            if (gasToBurn.Sign > 0)
+            {
+                states = states.BurnAsset(ctx, Addresses.UsedMeadPool, gasToBurn);
+            }
             states = states.TransferAsset(
                 ctx,
                 Addresses.UsedMeadPool,

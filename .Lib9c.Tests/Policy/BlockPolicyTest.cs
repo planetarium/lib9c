@@ -98,7 +98,7 @@ namespace Lib9c.Tests
                     new PrivateKey[] { adminPrivateKey }));
 
             Assert.Equal(
-                1 * Currencies.Mead,
+                (1 + 5) * Currencies.Mead,
                 blockChain
                     .GetWorldState()
                     .GetBalance(adminAddress, Currencies.Mead));
@@ -266,7 +266,7 @@ namespace Lib9c.Tests
         }
 
         [Fact]
-        public void EarnMiningGoldWhenSuccessMining()
+        public void EarnMiningMeadWhenSuccessMining()
         {
             var adminPrivateKey = new PrivateKey();
             var adminAddress = adminPrivateKey.Address;
@@ -355,13 +355,15 @@ namespace Lib9c.Tests
             var actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, rewardCurrency);
-            var expectedBalance = mintAmount + new FungibleAssetValue(rewardCurrency, 1, 450000000000000000);
+            var expectedBalance = mintAmount + rewardCurrency * (5 + 5);
             Assert.Equal(expectedBalance, actualBalance);
 
             // After claimed, mead have to be used?
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new ClaimRewardValidator(adminAddress), }
+                new ActionBase[] { new ClaimRewardValidator(adminAddress), },
+                maxGasPrice: Currencies.Mead * 1,
+                gasLimit: 1
             );
 
             block = blockChain.ProposeBlock(adminPrivateKey, commit);
@@ -376,7 +378,7 @@ namespace Lib9c.Tests
             actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, rewardCurrency);
-            expectedBalance = mintAmount + new FungibleAssetValue(rewardCurrency, 20, 0);
+            expectedBalance = mintAmount + rewardCurrency * (5 + 5 + 5) + (rewardCurrency * 1).DivRem(2).Quotient - rewardCurrency * 1;
             Assert.Equal(expectedBalance, actualBalance);
         }
 
