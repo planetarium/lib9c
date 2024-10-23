@@ -133,12 +133,12 @@ namespace Nekoyume.Action
             // Validate Work
             Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
             {
-                typeof(SummonSheet),
+                typeof(CostumeSummonSheet),
                 typeof(CostumeItemSheet),
                 typeof(MaterialItemSheet),
             });
 
-            var summonSheet = sheets.GetSheet<SummonSheet>();
+            var summonSheet = sheets.GetSheet<CostumeSummonSheet>();
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
 
             var summonRow = summonSheet.OrderedList.FirstOrDefault(row => row.GroupId == GroupId);

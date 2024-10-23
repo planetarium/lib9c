@@ -178,7 +178,7 @@ namespace Nekoyume.Action
             // Validate Work
             Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
             {
-                typeof(SummonSheet),
+                typeof(EquipmentSummonSheet),
                 typeof(EquipmentItemRecipeSheet),
                 typeof(EquipmentItemSheet),
                 typeof(MaterialItemSheet),
@@ -187,14 +187,14 @@ namespace Nekoyume.Action
                 typeof(SkillSheet),
             });
 
-            var summonSheet = sheets.GetSheet<SummonSheet>();
+            var summonSheet = sheets.GetSheet<EquipmentSummonSheet>();
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
 
             var summonRow = summonSheet.OrderedList.FirstOrDefault(row => row.GroupId == GroupId);
             if (summonRow is null)
             {
                 throw new RowNotInTableException(
-                    $"{addressesHex} Failed to get {GroupId} in AuraSummonSheet");
+                    $"{addressesHex} Failed to get {GroupId} in EquipmentSummonSheet");
             }
 
             // Use materials
