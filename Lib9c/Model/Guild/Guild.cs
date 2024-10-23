@@ -27,7 +27,7 @@ namespace Nekoyume.Model.Guild
             GuildRepository repository)
             : base(
                   address: address,
-                  accountAddress: Addresses.Guild,
+                  accountAddress: repository.DelegateeAccountAddress,
                   delegationCurrency: Currencies.GuildGold,
                   rewardCurrency: rewardCurrency,
                   delegationPoolAddress: address,

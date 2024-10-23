@@ -83,7 +83,7 @@ namespace Nekoyume.Delegation
             IDelegatee delegatee, FungibleAssetValue fav, long height)
             => Delegate((T)delegatee, fav, height);
 
-        public void Undelegate(
+        public virtual void Undelegate(
             T delegatee, BigInteger share, long height)
         {
             if (share.Sign <= 0)
@@ -127,7 +127,7 @@ namespace Nekoyume.Delegation
             => Undelegate((T)delegatee, share, height);
 
 
-        public void Redelegate(
+        public virtual void Redelegate(
             T srcDelegatee, T dstDelegatee, BigInteger share, long height)
         {
             if (share.Sign <= 0)
