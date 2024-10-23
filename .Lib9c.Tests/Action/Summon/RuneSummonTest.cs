@@ -98,8 +98,8 @@ namespace Lib9c.Tests.Action.Summon
             var random = new TestRandom(seed);
             var state = _initialState;
             state = state.SetLegacyState(
-                Addresses.TableSheet.Derive(nameof(SummonSheet)),
-                _tableSheets.SummonSheet.Serialize()
+                Addresses.TableSheet.Derive(nameof(RuneSummonSheet)),
+                _tableSheets.RuneSummonSheet.Serialize()
             );
 
             if (!(materialId is null))
@@ -108,7 +108,7 @@ namespace Lib9c.Tests.Action.Summon
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                    materialCount * _tableSheets.RuneSummonSheet[groupId].CostMaterialCount);
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
@@ -132,7 +132,7 @@ namespace Lib9c.Tests.Action.Summon
                 var nextState = action.Execute(ctx);
                 var result = RuneSummon.SimulateSummon(
                     _tableSheets.RuneSheet,
-                    _tableSheets.SummonSheet[groupId],
+                    _tableSheets.RuneSummonSheet[groupId],
                     summonCount,
                     new TestRandom(seed)
                 );
@@ -206,10 +206,6 @@ namespace Lib9c.Tests.Action.Summon
                 new object[]
                 {
                     20001, 101, 600201, 22, 1,  typeof(InvalidSummonCountException),
-                },
-                new object[]
-                {
-                    10002, 1, 600201, 1, 1, typeof(SheetRowNotFoundException),
                 },
             };
 

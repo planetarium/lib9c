@@ -98,8 +98,8 @@
             var random = new TestRandom(seed);
             var state = _initialState;
             state = state.SetLegacyState(
-                Addresses.TableSheet.Derive(nameof(SummonSheet)),
-                _tableSheets.SummonSheet.Serialize()
+                Addresses.TableSheet.Derive(nameof(CostumeSummonSheet)),
+                _tableSheets.CostumeSummonSheet.Serialize()
             );
 
             if (!(materialId is null))
@@ -108,7 +108,7 @@
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                    materialCount * _tableSheets.CostumeSummonSheet[groupId].CostMaterialCount);
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
@@ -133,7 +133,7 @@
                 var result = CostumeSummon.SimulateSummon(
                     string.Empty,
                     _tableSheets.CostumeItemSheet,
-                    _tableSheets.SummonSheet[groupId],
+                    _tableSheets.CostumeSummonSheet[groupId],
                     summonCount,
                     new TestRandom(seed)
                 );
