@@ -283,22 +283,19 @@ namespace Nekoyume.Action
 
         public IWorld MinerReward(IActionContext ctx, IWorld states)
         {
-            if (ctx.MaxGasPrice is { Sign: > 0 } realGasPrice)
-            {
-                Currency currency = Currencies.Mead;
-                var defaultReward = currency * 5;
-                var usedGas = realGasPrice * GasTracer.GasUsed;
-                var halfOfUsedGas = usedGas.DivRem(2).Quotient;
-                var gasToBurn = usedGas - halfOfUsedGas;
-                var miningReward = halfOfUsedGas + defaultReward;
-                states = states.BurnAsset(ctx, Addresses.RewardPool, gasToBurn);
-                states = states.MintAsset(ctx, Addresses.RewardPool, defaultReward);
-                states = states.TransferAsset(
-                    ctx,
-                    Addresses.RewardPool,
-                    ctx.Miner,
-                    miningReward);
-            }
+            Currency currency = Currencies.Mead;
+            var defaultReward = currency * 5;
+            var usedGas = states.GetBalance(Addresses.UsedMeadPool, currency);
+            var halfOfUsedGas = usedGas.DivRem(2).Quotient;
+            var gasToBurn = usedGas - halfOfUsedGas;
+            var miningReward = halfOfUsedGas + defaultReward;
+            states = states.BurnAsset(ctx, Addresses.UsedMeadPool, gasToBurn);
+            states = states.MintAsset(ctx, Addresses.UsedMeadPool, defaultReward);
+            states = states.TransferAsset(
+                ctx,
+                Addresses.UsedMeadPool,
+                ctx.Miner,
+                miningReward);
 
             return states;
         }

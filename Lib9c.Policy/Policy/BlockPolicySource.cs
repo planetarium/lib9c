@@ -150,8 +150,12 @@ namespace Nekoyume.Blockchain.Policy
                         new RewardGold(),
                         new ReleaseValidatorUnbondings(),
                     }.ToImmutableArray(),
-                    beginTxActions: ImmutableArray<IAction>.Empty,
-                    endTxActions: ImmutableArray<IAction>.Empty),
+                    beginTxActions: new IAction[] {
+                        new Mortgage(),
+                    }.ToImmutableArray(),
+                    endTxActions: new IAction[] {
+                        new Reward(), new Refund(),
+                    }.ToImmutableArray()),
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
@@ -169,7 +173,7 @@ namespace Nekoyume.Blockchain.Policy
             Transaction transaction)
         {
             // Avoid NRE when genesis block appended
-            long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
+            long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1 : 0;
 
             if (transaction.Actions?.Count > 1)
             {
