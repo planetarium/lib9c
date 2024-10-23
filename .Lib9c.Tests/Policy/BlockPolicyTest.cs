@@ -357,7 +357,7 @@ namespace Lib9c.Tests
             // After claimed, mead have to be used?
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new ClaimRewardValidator(adminAddress), }
+                new ActionBase[] { new ClaimRewardValidatorSelf(), }
             );
 
             block = blockChain.ProposeBlock(adminPrivateKey, commit);
