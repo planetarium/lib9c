@@ -61,5 +61,7 @@ namespace Nekoyume.Delegation
         void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
 
         void TransferAsset(Address sender, Address recipient, FungibleAssetValue value);
+
+        void UpdateWorld(IWorld world);
     }
 }
