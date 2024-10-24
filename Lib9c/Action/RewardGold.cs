@@ -37,7 +37,6 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            GasTracer.UseGas(1);
             var states = context.PreviousState;
             states = TransferMead(context, states);
             states = GenesisGoldDistribution(context, states);
@@ -65,7 +64,7 @@ namespace Nekoyume.Action
             Currency goldCurrency = states.GetGoldCurrency();
             Address fund = GoldCurrencyState.Address;
             FungibleAssetValue fundValue = states.GetBalance(fund, goldCurrency);
-            foreach(GoldDistribution distribution in goldDistributions)
+            foreach (GoldDistribution distribution in goldDistributions)
             {
                 BigInteger amount = distribution.GetAmount(index);
                 FungibleAssetValue fav = goldCurrency * amount;
@@ -74,7 +73,7 @@ namespace Nekoyume.Action
                 // We should divide by 100 for only mainnet distributions.
                 // See also: https://github.com/planetarium/lib9c/pull/170#issuecomment-713380172
                 var testAddresses = new HashSet<Address>(
-                    new []
+                    new[]
                     {
                         new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9"),
                         new Address("Fb90278C67f9b266eA309E6AE8463042f5461449"),
@@ -98,7 +97,7 @@ namespace Nekoyume.Action
         public IWorld WeeklyArenaRankingBoard(IActionContext ctx, IWorld states)
         {
             var gameConfigState = states.GetGameConfigState();
-            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var index = Math.Max((int)ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weekly = states.GetWeeklyArenaState(index);
             var nextIndex = index + 1;
             var nextWeekly = states.GetWeeklyArenaState(nextIndex);
@@ -138,9 +137,9 @@ namespace Nekoyume.Action
         public IWorld PrepareNextArena(IActionContext ctx, IWorld states)
         {
             var gameConfigState = states.GetGameConfigState();
-            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var index = Math.Max((int)ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) states.GetLegacyState(weeklyAddress);
+            var rawWeekly = (Dictionary)states.GetLegacyState(weeklyAddress);
             var nextIndex = index + 1;
             var nextWeekly = states.GetWeeklyArenaState(nextIndex);
             if (nextWeekly is null)
@@ -153,7 +152,7 @@ namespace Nekoyume.Action
             if (ctx.BlockIndex % gameConfigState.WeeklyArenaInterval == 0 && index > 0)
             {
                 var prevWeeklyAddress = WeeklyArenaState.DeriveAddress(index - 1);
-                var rawPrevWeekly = (Dictionary) states.GetLegacyState(prevWeeklyAddress);
+                var rawPrevWeekly = (Dictionary)states.GetLegacyState(prevWeeklyAddress);
                 if (!rawPrevWeekly["ended"].ToBoolean())
                 {
                     rawPrevWeekly = rawPrevWeekly.SetItem("ended", true.Serialize());
@@ -243,9 +242,9 @@ namespace Nekoyume.Action
         public IWorld ResetChallengeCount(IActionContext ctx, IWorld states)
         {
             var gameConfigState = states.GetGameConfigState();
-            var index = Math.Max((int) ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
+            var index = Math.Max((int)ctx.BlockIndex / gameConfigState.WeeklyArenaInterval, 0);
             var weeklyAddress = WeeklyArenaState.DeriveAddress(index);
-            var rawWeekly = (Dictionary) states.GetLegacyState(weeklyAddress);
+            var rawWeekly = (Dictionary)states.GetLegacyState(weeklyAddress);
             var resetIndex = rawWeekly["resetIndex"].ToLong();
 
             if (ctx.BlockIndex - resetIndex >= gameConfigState.DailyArenaInterval)
@@ -283,27 +282,22 @@ namespace Nekoyume.Action
 
         public IWorld MinerReward(IActionContext ctx, IWorld states)
         {
-            // 마이닝 보상
-            // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
-            // Currency currency = states.GetGoldCurrency();
             Currency currency = Currencies.Mead;
-            FungibleAssetValue defaultMiningReward = currency * 10;
-            var countOfHalfLife = (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
-            FungibleAssetValue miningReward =
-                defaultMiningReward.DivRem(countOfHalfLife, out FungibleAssetValue _);
-
-            // var balance = states.GetBalance(GoldCurrencyState.Address, currency);
-            // if (miningReward >= FungibleAssetValue.Parse(currency, "1.25") && balance >= miningReward)
-            // {
-            //     states = states.TransferAsset(
-            //         ctx,
-            //         GoldCurrencyState.Address,
-            //         Addresses.RewardPool,
-            //         miningReward
-            //     );
-            // }
-
-            states = states.MintAsset(ctx, Addresses.RewardPool, miningReward);
+            var usedGas = states.GetBalance(Addresses.GasPool, currency);
+            var defaultReward = currency * 5;
+            var halfOfUsedGas = usedGas.DivRem(2).Quotient;
+            var gasToBurn = usedGas - halfOfUsedGas;
+            var miningReward = halfOfUsedGas + defaultReward;
+            states = states.MintAsset(ctx, Addresses.GasPool, defaultReward);
+            if (gasToBurn.Sign > 0)
+            {
+                states = states.BurnAsset(ctx, Addresses.GasPool, gasToBurn);
+            }
+            states = states.TransferAsset(
+                ctx,
+                Addresses.GasPool,
+                ctx.Miner,
+                miningReward);
 
             return states;
         }
