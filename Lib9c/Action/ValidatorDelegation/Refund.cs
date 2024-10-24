@@ -37,7 +37,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             // Need to check if this matches GasTracer.GasAvailable?
-            var remaining = world.GetBalance(Addresses.MeadPool, realGasPrice.Currency);
+            var remaining = world.GetBalance(Addresses.MortgagePool, realGasPrice.Currency);
 
             if (remaining.Sign <= 0)
             {
@@ -46,7 +46,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             return world.TransferAsset(
                 context,
-                Addresses.MeadPool,
+                Addresses.MortgagePool,
                 context.Signer,
                 remaining);
         }

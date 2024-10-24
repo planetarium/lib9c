@@ -50,7 +50,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             return state.TransferAsset(
                 context,
                 context.Signer,
-                Addresses.MeadPool,
+                Addresses.MortgagePool,
                 realGasPrice * gasLimit);
         }
     }

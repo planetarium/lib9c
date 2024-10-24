@@ -43,8 +43,8 @@ namespace Nekoyume.Action.ValidatorDelegation
             var reward = realGasPrice * GasTracer.GasUsed;
             return world.TransferAsset(
                 context,
-                Addresses.MeadPool,
-                Addresses.UsedMeadPool,
+                Addresses.MortgagePool,
+                Addresses.GasPool,
                 reward);
         }
     }
