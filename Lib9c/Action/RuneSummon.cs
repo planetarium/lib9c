@@ -61,12 +61,12 @@ namespace Nekoyume.Action
             // Validate Work
             Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
             {
-                typeof(SummonSheet),
+                typeof(RuneSummonSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneSheet),
             });
 
-            var summonSheet = sheets.GetSheet<SummonSheet>();
+            var summonSheet = sheets.GetSheet<RuneSummonSheet>();
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var runeSheet = sheets.GetSheet<RuneSheet>();
 
@@ -74,7 +74,7 @@ namespace Nekoyume.Action
             if (summonRow is null)
             {
                 throw new RowNotInTableException(
-                    $"{addressesHex} Failed to get {GroupId} in SummonSheet");
+                    $"{addressesHex} Failed to get {GroupId} in RuneSummonSheet");
             }
 
             // Use materials

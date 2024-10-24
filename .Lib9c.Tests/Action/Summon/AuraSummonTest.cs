@@ -93,15 +93,15 @@ namespace Lib9c.Tests.Action.Summon
             var sheets = TableSheetsImporter.ImportSheets();
             if (version == "V1")
             {
-                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V1;
+                sheets[nameof(EquipmentSummonSheet)] = SummonSheetFixtures.V1;
             }
             else
             {
-                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V2;
+                sheets[nameof(EquipmentSummonSheet)] = SummonSheetFixtures.V2;
             }
 
             _tableSheets = new TableSheets(sheets);
-            var sheet = _tableSheets.SummonSheet;
+            var sheet = _tableSheets.EquipmentSummonSheet;
 
             var targetRow = sheet.OrderedList.First(r => r.GroupId == groupId);
 
@@ -176,8 +176,6 @@ namespace Lib9c.Tests.Action.Summon
         [InlineData("V1", 10001, 101, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
         // 15 recipes
         [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
-        // 15 recipes
-        [InlineData("V3", 20001, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
         public void Execute(
             string version,
             int groupId,
@@ -198,7 +196,7 @@ namespace Lib9c.Tests.Action.Summon
                 "V3" => SummonSheetFixtures.V3.Serialize(),
                 _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
             };
-            state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(SummonSheet)), sheet);
+            state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(EquipmentSummonSheet)), sheet);
 
             if (!(materialId is null))
             {
@@ -206,7 +204,7 @@ namespace Lib9c.Tests.Action.Summon
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                    materialCount * _tableSheets.EquipmentSummonSheet[groupId].CostMaterialCount);
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
