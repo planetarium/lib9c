@@ -121,6 +121,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 203010,203007,DEF Down (Custom Item),100,10,Enemy,DEF,Percentage,-16,true,
 203011,203007,DEF Down (Custom Item),100,10,Enemy,DEF,Percentage,-13,true,
 203012,203007,DEF Down (Custom Item),100,10,Enemy,DEF,Percentage,-11,true,
+203013,203013,DEF Down (Fenrir Rune),100,10,Enemy,DEF,Percentage,-25,true,
 204001,204000,치명 감소,100,10,Enemy,CRI,Percentage,-25,true,
 204002,204002,Frenzied CRI(Enemy) Lv1,100,20,Enemies,CRI,Percentage,-50,false,
 204003,204002,Frenzied CRI(Enemy) Lv2_3,100,20,Enemies,CRI,Percentage,-500,false,
@@ -230,7 +231,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 701000,701000,DRV (미사용),100,0,Self,DRV,Add,0,true,
 702000,701000,DRR (Rune),100,0,Self,DRR,Add,0,true,
 702001,702001,DRR (커스텀 장비),100,12,Self,DRR,Add,0,true,
-703000,703000,CDMG (Rune),100,0,Self,CDMG,Add,0,true,
+703000,703000,CDMG (Saehrimnir SKill Rune 1),100,0,Self,CDMG,Add,0,true,
 703001,703001,CDMG 증가 (커스텀 장비),100,10,Self,CDMG,Percentage,500,true,
 703002,703001,CDMG 증가 (커스텀 장비),100,10,Self,CDMG,Percentage,400,true,
 703003,703001,CDMG 증가 (커스텀 장비),100,10,Self,CDMG,Percentage,320,true,
@@ -241,6 +242,8 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 703008,703002,CDMG 감소 (커스텀 장비),100,10,Enemies,CDMG,Percentage,480,true,
 703009,703002,CDMG 감소 (커스텀 장비),100,10,Enemies,CDMG,Percentage,384,true,
 703010,703002,CDMG 감소 (커스텀 장비),100,10,Enemies,CDMG,Percentage,307,true,
+703011,703011,CDMG (Saehrimnir SKill Rune 2),100,0,Self,CDMG,Add,0,true,
+703012,703012,ATK Down  (Saehrimnir SKill Rune 2),100,10,Enemy,ATK,Percentage,-25,true,
 709000,709000,Frostbite 1 (Aura),100,5,Enemy,SPD,Percentage,-3,true,5
 709001,709000,Frostbite 2 (Aura),100,5,Enemy,SPD,Percentage,-7,true,5
 709002,709000,Frostbite 3 (Aura),100,5,Enemy,SPD,Percentage,-10,true,5
