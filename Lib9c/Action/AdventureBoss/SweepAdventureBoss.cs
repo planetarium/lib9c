@@ -92,7 +92,7 @@ namespace Nekoyume.Action.AdventureBoss
                 );
             }
 
-            var avatarState = states.GetAvatarState(AvatarAddress);
+            var avatarState = states.GetAvatarState(AvatarAddress, true, false, false);
             if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
