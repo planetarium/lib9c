@@ -60,6 +60,9 @@ namespace Nekoyume
         public static readonly Address ExploreBoard          = new("0000000000000000000000000000000000000102");
         public static readonly Address ExplorerList          = new("0000000000000000000000000000000000000103");
 
+        public static readonly Address MortgagePool = new Address("0000000000000000000000000000000000100000");
+        public static readonly Address GasPool = new Address("0000000000000000000000000000000000100001");
+
         #region Guild
 
         /// <summary>
