@@ -26,8 +26,6 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public override IWorld Execute(IActionContext context)
         {
-            GasTracer.UseGas(0L);
-
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
             var unbondingSet = repository.GetUnbondingSet();
