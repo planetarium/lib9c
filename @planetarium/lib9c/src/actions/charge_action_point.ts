@@ -1,5 +1,9 @@
 import type { Address } from "@planetarium/account";
-import { BencodexDictionary, Dictionary, type Value } from "@planetarium/bencodex";
+import {
+  BencodexDictionary,
+  type Dictionary,
+  type Value,
+} from "@planetarium/bencodex";
 import { GameAction, type GameActionArgs } from "./common.js";
 
 /**
@@ -33,5 +37,5 @@ export class ChargeActionPoint extends GameAction {
     return new BencodexDictionary([
       ["avatarAddress", this.avatarAddress.toBytes()],
     ]);
-}
+  }
 }
