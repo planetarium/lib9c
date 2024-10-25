@@ -12,15 +12,15 @@ namespace Nekoyume.Model.Guild
             : base(
                   world: world,
                   actionContext: actionContext,
-                  delegateeAccountAddress: Addresses.Guild,
-                  delegatorAccountAddress: Addresses.GuildParticipant,
+                  delegateeAccountAddress: Addresses.ValidatorDelegatee,
+                  delegatorAccountAddress: Addresses.ValidatorDelegator,
                   delegateeMetadataAccountAddress: Addresses.GuildMetadata,
-                  delegatorMetadataAccountAddress: Addresses.GuildParticipantMetadata,
-                  bondAccountAddress: Addresses.GuildBond,
-                  unbondLockInAccountAddress: Addresses.GuildUnbondLockIn,
-                  rebondGraceAccountAddress: Addresses.GuildRebondGrace,
-                  unbondingSetAccountAddress: Addresses.GuildUnbondingSet,
-                  lumpSumRewardRecordAccountAddress: Addresses.GuildLumpSumRewardsRecord)
+                  delegatorMetadataAccountAddress: Addresses.ValidatorDelegatorMetadata,
+                  bondAccountAddress: Addresses.ValidatorBond,
+                  unbondLockInAccountAddress: Addresses.ValidatorUnbondLockIn,
+                  rebondGraceAccountAddress: Addresses.ValidatorRebondGrace,
+                  unbondingSetAccountAddress: Addresses.ValidatorUnbondingSet,
+                  lumpSumRewardRecordAccountAddress: Addresses.ValidatorLumpSumRewardsRecord)
         {
         }
 
@@ -48,7 +48,7 @@ namespace Nekoyume.Model.Guild
             }
             catch (FailedLoadStateException)
             {
-                    return new GuildValidatorDelegator(address, address, this);
+                return new GuildValidatorDelegator(address, address, this);
             }
         }
 

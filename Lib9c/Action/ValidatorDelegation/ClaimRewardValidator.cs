@@ -2,7 +2,6 @@ using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Crypto;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
@@ -16,29 +15,19 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public ClaimRewardValidator() { }
 
-        public ClaimRewardValidator(Address validatorDelegatee)
-        {
-            ValidatorDelegatee = validatorDelegatee;
-        }
-
-        public Address ValidatorDelegatee { get; private set; }
-
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
-            .Add("values", List.Empty
-                .Add(ValidatorDelegatee.Bencoded));
+            .Add("values", Null.Value);
 
         public override void LoadPlainValue(IValue plainValue)
         {
             var root = (Dictionary)plainValue;
             if (plainValue is not Dictionary ||
                 !root.TryGetValue((Text)"values", out var rawValues) ||
-                rawValues is not List values)
+                rawValues is not Null)
             {
                 throw new InvalidCastException();
-            }
-
-            ValidatorDelegatee = new Address(values[0]);
+            };
         }
 
         public override IWorld Execute(IActionContext context)
@@ -62,7 +51,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var guildValidatorRepository = new GuildValidatorRepository(world, context);
             var guildValidatorDelegator = guildValidatorRepository.GetGuildValidatorDelegator(context.Signer);
-            var guildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(ValidatorDelegatee);
+            var guildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(guild.ValidatorAddress);
             guildValidatorDelegator.ClaimReward(guildValidatorDelegatee, context.BlockIndex);
 
             return guildValidatorRepository.World;

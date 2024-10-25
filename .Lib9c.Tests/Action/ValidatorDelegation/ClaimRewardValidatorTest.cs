@@ -288,7 +288,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
                 Signer = delegatorKeys[i].Address,
                 LastCommit = lastCommit,
             };
-            world = new ClaimRewardValidator(validatorKey.Address).Execute(actionContext);
+            world = new ClaimRewardValidator().Execute(actionContext);
         }
 
         // Then
@@ -317,7 +317,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         foreach (var key in guildParticipantKeys)
         {
             Assert.Throws<InvalidOperationException>(
-                () => new ClaimRewardValidator(validatorKey.Address).Execute(new ActionContext
+                () => new ClaimRewardValidator().Execute(new ActionContext
                 {
                     PreviousState = world,
                     BlockIndex = height++,

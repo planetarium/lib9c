@@ -1,8 +1,8 @@
 #nullable enable
-using Lib9c;
-using Libplanet.Crypto;
 using System;
+using Libplanet.Crypto;
 using Nekoyume.Delegation;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
@@ -16,14 +16,15 @@ namespace Nekoyume.Model.Guild
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
-                  delegationCurrency: Currencies.GuildGold,
-                  rewardCurrency: Currencies.Mead,
-                  delegationPoolAddress: address,
+                  delegationCurrency: ValidatorDelegatee.ValidatorDelegationCurrency,
+                  rewardCurrency: ValidatorDelegatee.ValidatorRewardCurrency,
+                  delegationPoolAddress: ValidatorDelegatee.UnbondedPoolAddress,
+                  rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
-                  unbondingPeriod: 75600L,
-                  maxUnbondLockInEntries: 10,
-                  maxRebondGraceEntries: 10,
+                  unbondingPeriod: ValidatorDelegatee.ValidatorUnbondingPeriod,
+                  maxUnbondLockInEntries: ValidatorDelegatee.ValidatorMaxUnbondLockInEntries,
+                  maxRebondGraceEntries: ValidatorDelegatee.ValidatorMaxRebondGraceEntries,
                   repository: repository)
         {
         }

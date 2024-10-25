@@ -4,13 +4,8 @@ namespace Lib9c.Tests.Action.Guild
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action.Guild;
     using Nekoyume.Model.Guild;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -40,7 +35,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
             world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
             var unbanGuildMember = new UnbanGuildMember(targetGuildMemberAddress);
@@ -71,7 +66,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress);
+            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
             world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
             var repository = new GuildRepository(world, new ActionContext());
@@ -105,7 +100,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
             world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
             var repository = new GuildRepository(world, new ActionContext());
