@@ -37,7 +37,6 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            GasTracer.UseGas(1);
             var states = context.PreviousState;
             states = TransferMead(context, states);
             states = GenesisGoldDistribution(context, states);
@@ -283,27 +282,19 @@ namespace Nekoyume.Action
 
         public IWorld MinerReward(IActionContext ctx, IWorld states)
         {
-            // 마이닝 보상
-            // https://www.notion.so/planetarium/Mining-Reward-b7024ef463c24ebca40a2623027d497d
-            // Currency currency = states.GetGoldCurrency();
             Currency currency = Currencies.Mead;
-            FungibleAssetValue defaultMiningReward = currency * 10;
-            var countOfHalfLife = (int)Math.Pow(2, Convert.ToInt64((ctx.BlockIndex - 1) / 12614400));
-            FungibleAssetValue miningReward =
-                defaultMiningReward.DivRem(countOfHalfLife, out FungibleAssetValue _);
-
-            // var balance = states.GetBalance(GoldCurrencyState.Address, currency);
-            // if (miningReward >= FungibleAssetValue.Parse(currency, "1.25") && balance >= miningReward)
-            // {
-            //     states = states.TransferAsset(
-            //         ctx,
-            //         GoldCurrencyState.Address,
-            //         Addresses.RewardPool,
-            //         miningReward
-            //     );
-            // }
-
-            states = states.MintAsset(ctx, Addresses.RewardPool, miningReward);
+            var usedGas = states.GetBalance(Addresses.GasPool, currency);
+            var defaultReward = currency * 5;
+            var halfOfUsedGas = usedGas.DivRem(2).Quotient;
+            var gasToBurn = usedGas - halfOfUsedGas;
+            var miningReward = halfOfUsedGas + defaultReward;
+            states = states.MintAsset(ctx, Addresses.GasPool, defaultReward);
+            if (gasToBurn.Sign > 0)
+            {
+                states = states.BurnAsset(ctx, Addresses.GasPool, gasToBurn);
+            }
+            states = states.TransferAsset(
+                ctx, Addresses.GasPool, Addresses.RewardPool, miningReward);
 
             return states;
         }
