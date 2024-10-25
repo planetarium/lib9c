@@ -5,7 +5,9 @@ using Bencodex.Types;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
+using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
@@ -23,7 +25,7 @@ namespace Nekoyume.Model.Guild
             : base(
                   address: address,
                   accountAddress: Addresses.GuildParticipant,
-                  delegationPoolAddress: address,
+                  delegationPoolAddress: StakeState.DeriveAddress(address),
                   rewardAddress: address,
                   repository: repository)
         {
@@ -71,21 +73,19 @@ namespace Nekoyume.Model.Guild
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            if (delegatee.Tombstoned)
-            {
-                throw new InvalidOperationException("Delegatee is tombstoned.");
-            }
+            delegatee.Bond(this, fav, height);
 
-            var guildValidatorRepository = new GuildValidatorRepository(
-                Repository.World, Repository.ActionContext);
-            var guildValidatorDelegatee = guildValidatorRepository.GetDelegatee(delegatee.ValidatorAddress);
-            var guildValidatorDelegator = guildValidatorRepository.GetDelegator(delegatee.Address);
-
+            var guildValidatorRepository = new GuildValidatorRepository(Repository.World, Repository.ActionContext);
+            var guildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(delegatee.ValidatorAddress);
+            var guildValidatorDelegator = guildValidatorRepository.GetGuildValidatorDelegator(delegatee.Address);
             guildValidatorDelegatee.Bond(guildValidatorDelegator, fav, height);
             Repository.UpdateWorld(guildValidatorRepository.World);
-            Metadata.AddDelegatee(delegatee.Address);
-            Repository.TransferAsset(DelegationPoolAddress, delegatee.DelegationPoolAddress, fav);
-            Repository.SetDelegator(this);
+
+            var validatorRepository = new ValidatorRepository(Repository.World, Repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(delegatee.ValidatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(Address, delegatee.Address);
+            validatorDelegator.Delegate(validatorDelegatee, fav, height);
+            Repository.UpdateWorld(validatorRepository.World);
         }
 
         public override void Undelegate(Guild delegatee, BigInteger share, long height)
@@ -102,33 +102,19 @@ namespace Nekoyume.Model.Guild
                     nameof(height), height, "Height must be positive.");
             }
 
-            UnbondLockIn unbondLockIn = Repository.GetUnbondLockIn(delegatee, Address);
+            FungibleAssetValue fav = delegatee.Unbond(this, share, height);
 
-            if (unbondLockIn.IsFull)
-            {
-                throw new InvalidOperationException("Undelegation is full.");
-            }
-
-            var guildValidatorRepository = new GuildValidatorRepository(
-                Repository.World, Repository.ActionContext);
-            var guildValidatorDelegatee = guildValidatorRepository.GetDelegatee(delegatee.ValidatorAddress);
-            var guildValidatorDelegator = guildValidatorRepository.GetDelegator(delegatee.Address);
-            FungibleAssetValue fav = guildValidatorDelegatee.Unbond(guildValidatorDelegator, share, height);
+            var guildValidatorRepository = new GuildValidatorRepository(Repository.World, Repository.ActionContext);
+            var guildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(delegatee.ValidatorAddress);
+            var guildValidatorDelegator = guildValidatorRepository.GetGuildValidatorDelegator(delegatee.Address);
+            guildValidatorDelegatee.Unbond(guildValidatorDelegator, guildValidatorDelegatee.ShareFromFAV(fav), height);
             Repository.UpdateWorld(guildValidatorRepository.World);
-            unbondLockIn = unbondLockIn.LockIn(
-                fav, height, height + delegatee.UnbondingPeriod);
 
-            if (!delegatee.Delegators.Contains(Address))
-            {
-                Metadata.RemoveDelegatee(delegatee.Address);
-            }
-
-            delegatee.AddUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
-
-            Repository.SetUnbondLockIn(unbondLockIn);
-            Repository.SetUnbondingSet(
-                Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
-            Repository.SetDelegator(this);
+            var validatorRepository = new ValidatorRepository(Repository.World, Repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(delegatee.ValidatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(Address, delegatee.Address);
+            validatorDelegator.Undelegate(validatorDelegatee, validatorDelegatee.ShareFromFAV(fav), height);
+            Repository.UpdateWorld(validatorRepository.World);
         }
 
         public override void Redelegate(
@@ -146,42 +132,28 @@ namespace Nekoyume.Model.Guild
                     nameof(height), height, "Height must be positive.");
             }
 
-            if (dstDelegatee.Tombstoned)
-            {
-                throw new InvalidOperationException("Destination delegatee is tombstoned.");
-            }
+            FungibleAssetValue fav = srcDelegatee.Unbond(this, share, height);
+            dstDelegatee.Bond(this, fav, height);
 
             var guildValidatorRepository = new GuildValidatorRepository(
                 Repository.World, Repository.ActionContext);
-            var srcGuildValidatorDelegatee = guildValidatorRepository.GetDelegatee(srcDelegatee.ValidatorAddress);
-            var srcGuildValidatorDelegator = guildValidatorRepository.GetDelegator(srcDelegatee.Address);
-            var dstGuildValidatorDelegatee = guildValidatorRepository.GetDelegatee(dstDelegatee.ValidatorAddress);
-            var dstGuildValidatorDelegator = guildValidatorRepository.GetDelegator(dstDelegatee.Address);
-
-            FungibleAssetValue fav = srcGuildValidatorDelegatee.Unbond(
-                srcGuildValidatorDelegator, share, height);
-            dstGuildValidatorDelegatee.Bond(
-                dstGuildValidatorDelegator, fav, height);
+            var srcGuildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(srcDelegatee.ValidatorAddress);
+            var srcGuildValidatorDelegator = guildValidatorRepository.GetGuildValidatorDelegator(srcDelegatee.Address);
+            var dstGuildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(dstDelegatee.ValidatorAddress);
+            var dstGuildValidatorDelegator = guildValidatorRepository.GetGuildValidatorDelegator(dstDelegatee.Address);
+            srcGuildValidatorDelegatee.Unbond(srcGuildValidatorDelegator, share, height);
+            dstGuildValidatorDelegatee.Bond(dstGuildValidatorDelegator, fav, height);
             Repository.UpdateWorld(guildValidatorRepository.World);
-            RebondGrace srcRebondGrace = Repository.GetRebondGrace(srcDelegatee, Address).Grace(
-                dstDelegatee.Address,
-                fav,
-                height,
-                height + srcDelegatee.UnbondingPeriod);
 
-            if (!srcDelegatee.Delegators.Contains(Address))
-            {
-                Metadata.RemoveDelegatee(srcDelegatee.Address);
-            }
-
-            Metadata.AddDelegatee(dstDelegatee.Address);
-
-            srcDelegatee.AddUnbondingRef(UnbondingFactory.ToReference(srcRebondGrace));
-
-            Repository.SetRebondGrace(srcRebondGrace);
-            Repository.SetUnbondingSet(
-                Repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
-            Repository.SetDelegator(this);
+            var validatorRepository = new ValidatorRepository(
+                Repository.World, Repository.ActionContext);
+            var srcValidatorDelegatee = validatorRepository.GetValidatorDelegatee(srcDelegatee.ValidatorAddress);
+            var srcValidatorDelegator = validatorRepository.GetValidatorDelegator(Address, srcDelegatee.Address);
+            var dstValidatorDelegatee = validatorRepository.GetValidatorDelegatee(dstDelegatee.ValidatorAddress);
+            var dstValidatorDelegator = validatorRepository.GetValidatorDelegator(Address, dstDelegatee.Address);
+            srcValidatorDelegatee.Unbond(srcValidatorDelegator, share, height);
+            dstValidatorDelegatee.Bond(dstValidatorDelegator, fav, height);
+            Repository.UpdateWorld(validatorRepository.World);
         }
 
         public bool Equals(GuildParticipant other)

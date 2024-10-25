@@ -1,8 +1,7 @@
 #nullable enable
+using System;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
-using Nekoyume.ValidatorDelegation;
-using System;
 
 namespace Nekoyume.Model.Guild
 {

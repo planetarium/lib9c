@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress);
+            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
 
             var actionContext = new ActionContext
             {
@@ -90,7 +90,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMintAsset(world, StakeState.DeriveAddress(guildMasterAddress), GG * 100);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, guildAddress, guildParticipantAddress);
+            world = EnsureToJoinGuild(world, guildAddress, guildParticipantAddress, 1L);
 
             var actionContext = new ActionContext
             {
@@ -137,7 +137,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
             world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-            world = EnsureToJoinGuild(world, guildAddress, bannedAddress);
+            world = EnsureToJoinGuild(world, guildAddress, bannedAddress, 1L);
             world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, bannedAddress);
 
             var actionContext = new ActionContext

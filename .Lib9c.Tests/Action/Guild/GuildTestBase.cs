@@ -65,6 +65,7 @@ namespace Lib9c.Tests.Action.Guild
             var actionContext = new ActionContext
             {
                 Signer = guildMasterAddress,
+                BlockIndex = 0L,
             };
             var repository = new GuildRepository(world, actionContext);
             repository.MakeGuild(guildAddress, validatorAddress);
@@ -74,14 +75,18 @@ namespace Lib9c.Tests.Action.Guild
         protected static IWorld EnsureToJoinGuild(
             IWorld world,
             GuildAddress guildAddress,
-            AgentAddress agentAddress)
+            AgentAddress guildParticipantAddress,
+            long blockHeight)
         {
             var actionContext = new ActionContext
             {
-                Signer = agentAddress,
+                PreviousState = world,
+                BlockIndex = blockHeight,
+                Signer = guildParticipantAddress,
             };
+
             var repository = new GuildRepository(world, actionContext);
-            repository.JoinGuild(guildAddress, agentAddress);
+            repository.JoinGuild(guildAddress, guildParticipantAddress);
             return repository.World;
         }
 

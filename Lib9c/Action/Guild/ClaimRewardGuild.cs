@@ -2,7 +2,6 @@ using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Crypto;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
@@ -16,29 +15,19 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public ClaimRewardGuild() { }
 
-        public ClaimRewardGuild(Address guildAddress)
-        {
-            GuildAddress = guildAddress;
-        }
-
-        public Address GuildAddress { get; private set; }
-
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
-            .Add("values", List.Empty
-                .Add(GuildAddress.Bencoded));
+            .Add("values", Null.Value);
 
         public override void LoadPlainValue(IValue plainValue)
         {
             var root = (Dictionary)plainValue;
             if (plainValue is not Dictionary ||
                 !root.TryGetValue((Text)"values", out var rawValues) ||
-                rawValues is not List values)
+                rawValues is not Null)
             {
                 throw new InvalidCastException();
             }
-
-            GuildAddress = new Address(values[0]);
         }
 
         public override IWorld Execute(IActionContext context)
