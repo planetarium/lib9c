@@ -48,6 +48,8 @@ namespace Nekoyume
         public static readonly Address DailyReward           = new Address("0000000000000000000000000000000000000020");
         public static readonly Address ActionPoint           = new Address("0000000000000000000000000000000000000021");
         public static readonly Address RuneState             = new Address("0000000000000000000000000000000000000022");
+        public static readonly Address MortgagePool          = new Address("0000000000000000000000000000000000100000");
+        public static readonly Address GasPool               = new Address("0000000000000000000000000000000000100001");
 
         // Adventure Boss
         public static readonly Address AdventureBoss         = new Address("0000000000000000000000000000000000000100");
