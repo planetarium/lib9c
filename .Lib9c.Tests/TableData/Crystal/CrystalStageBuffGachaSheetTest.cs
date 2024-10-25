@@ -18,7 +18,8 @@
         public void Set()
         {
             var sheet = new CrystalStageBuffGachaSheet();
-            sheet.Set(@"stage_id,max_star,normal_cost,advanced_cost
+            sheet.Set(
+                @"stage_id,max_star,normal_cost,advanced_cost
 1,5,10,30");
 
             Assert.Single(sheet.Values);

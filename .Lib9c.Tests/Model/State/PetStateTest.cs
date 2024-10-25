@@ -42,8 +42,9 @@ namespace Lib9c.Tests.Model.State
             Assert.Equal(initialLevel, state.Level);
             if (shouldThrow)
             {
-                Assert.Throws<System.InvalidOperationException>(() =>
-                    state.LevelUp());
+                Assert.Throws<System.InvalidOperationException>(
+                    () =>
+                        state.LevelUp());
             }
             else
             {

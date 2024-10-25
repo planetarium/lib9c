@@ -19,10 +19,11 @@ namespace Lib9c.Tests.Model.State
             var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
-            weaponRow.Set(new[]
-            {
-                "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
-            });
+            weaponRow.Set(
+                new[]
+                {
+                    "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
+                });
             var itemUsable = new Weapon(
                 weaponRow,
                 Guid.NewGuid(),
@@ -55,10 +56,11 @@ namespace Lib9c.Tests.Model.State
             var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
-            weaponRow.Set(new[]
-            {
-                "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
-            });
+            weaponRow.Set(
+                new[]
+                {
+                    "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
+                });
             var itemUsable = new Weapon(
                 weaponRow,
                 Guid.NewGuid(),
@@ -89,10 +91,11 @@ namespace Lib9c.Tests.Model.State
             var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
-            weaponRow.Set(new[]
-            {
-                "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
-            });
+            weaponRow.Set(
+                new[]
+                {
+                    "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
+                });
             var itemUsable = new Weapon(
                 weaponRow,
                 Guid.NewGuid(),
@@ -121,10 +124,11 @@ namespace Lib9c.Tests.Model.State
             var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
-            weaponRow.Set(new[]
-            {
-                "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
-            });
+            weaponRow.Set(
+                new[]
+                {
+                    "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
+                });
             var itemUsable = new Weapon(
                 weaponRow,
                 Guid.NewGuid(),
@@ -145,8 +149,9 @@ namespace Lib9c.Tests.Model.State
 
             Assert.Equal(0, shopState.Products.Count);
 
-            Assert.Throws<FailedToUnregisterInShopStateException>(() =>
-                shopState.Unregister(shopItem));
+            Assert.Throws<FailedToUnregisterInShopStateException>(
+                () =>
+                    shopState.Unregister(shopItem));
         }
 
         [Fact]
@@ -157,10 +162,11 @@ namespace Lib9c.Tests.Model.State
             var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
-            weaponRow.Set(new[]
-            {
-                "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
-            });
+            weaponRow.Set(
+                new[]
+                {
+                    "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
+                });
             var itemUsable = new Weapon(
                 weaponRow,
                 Guid.NewGuid(),
@@ -178,15 +184,17 @@ namespace Lib9c.Tests.Model.State
 
             shopState.Register(shopItem);
 
-            Assert.True(shopState.TryUnregister(
-                shopItem.ProductId,
-                out var unregisteredItem));
+            Assert.True(
+                shopState.TryUnregister(
+                    shopItem.ProductId,
+                    out var unregisteredItem));
             Assert.Equal(shopItem, unregisteredItem);
 
             Assert.Equal(0, shopState.Products.Count);
 
-            Assert.Throws<FailedToUnregisterInShopStateException>(() =>
-                shopState.Unregister(shopItem));
+            Assert.Throws<FailedToUnregisterInShopStateException>(
+                () =>
+                    shopState.Unregister(shopItem));
         }
 
         [Fact]
@@ -197,10 +205,11 @@ namespace Lib9c.Tests.Model.State
             var avatarAddress = new PrivateKey().Address;
             var productId = Guid.NewGuid();
             var weaponRow = new EquipmentItemSheet.Row();
-            weaponRow.Set(new[]
-            {
-                "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
-            });
+            weaponRow.Set(
+                new[]
+                {
+                    "10100000", "Weapon", "0", "Normal", "0", "ATK", "1", "2", "10100000",
+                });
             var itemUsable = new Weapon(
                 weaponRow,
                 Guid.NewGuid(),

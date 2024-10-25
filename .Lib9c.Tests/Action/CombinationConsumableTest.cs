@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Action
                 _tableSheets.WorldSheet,
                 GameConfig.RequireClearedStageLevel.CombinationConsumableAction);
 
-            IWorld previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var previousState = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new CombinationConsumable
             {
@@ -103,13 +103,14 @@ namespace Lib9c.Tests.Action
                 slotIndex = 0,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = previousState,
-                Signer = _agentAddress,
-                BlockIndex = 1,
-                RandomSeed = _random.Seed,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = previousState,
+                    Signer = _agentAddress,
+                    BlockIndex = 1,
+                    RandomSeed = _random.Seed,
+                });
 
             var allCombinationSlotState = nextState.GetAllCombinationSlotState(_avatarAddress);
             var slotState = allCombinationSlotState.GetSlot(0);

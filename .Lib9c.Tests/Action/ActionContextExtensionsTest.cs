@@ -74,7 +74,7 @@ namespace Lib9c.Tests.Action
                     Currency.Legacy("BTC", 2, new Address("47d082a115c63e7b58b1532d20e631538eafadde"))),
                 false,
             };
-            #pragma warning restore CS0618
+#pragma warning restore CS0618
         }
 
         public static IEnumerable<object[]> IsPreviewNetTestcases()
@@ -156,20 +156,23 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Since()
         {
-            Assert.True(new ActionContext
-            {
-                BlockIndex = 1001,
-            }.Since(1000));
+            Assert.True(
+                new ActionContext
+                {
+                    BlockIndex = 1001,
+                }.Since(1000));
 
-            Assert.True(new ActionContext
-            {
-                BlockIndex = 0,
-            }.Since(0));
+            Assert.True(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                }.Since(0));
 
-            Assert.False(new ActionContext
-            {
-                BlockIndex = 0,
-            }.Since(1));
+            Assert.False(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                }.Since(1));
         }
     }
 }

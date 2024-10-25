@@ -52,11 +52,11 @@ namespace Lib9c.Tests
                     if (majorUnit.IsZero)
                     {
                         foreach (var minorUnit in new[]
-                                 {
-                                     BigInteger.Zero,
-                                     maxMinorUnit * BigInteger.One,
-                                     maxMinorUnit * BigInteger.MinusOne,
-                                 })
+                            {
+                                BigInteger.Zero,
+                                maxMinorUnit * BigInteger.One,
+                                maxMinorUnit * BigInteger.MinusOne,
+                            })
                         {
                             yield return new object[]
                             {
@@ -67,10 +67,10 @@ namespace Lib9c.Tests
                     else
                     {
                         foreach (var minorUnit in new[]
-                                 {
-                                     BigInteger.Zero,
-                                     maxMinorUnit * BigInteger.One,
-                                 })
+                            {
+                                BigInteger.Zero,
+                                maxMinorUnit * BigInteger.One,
+                            })
                         {
                             yield return new object[]
                             {
@@ -131,8 +131,10 @@ namespace Lib9c.Tests
             Assert.Equal(sheet.Count, currencies.Length);
             foreach (var currency in currencies)
             {
-                Assert.NotNull(sheet.OrderedList!.FirstOrDefault(row =>
-                    row.Ticker == currency.Ticker));
+                Assert.NotNull(
+                    sheet.OrderedList!.FirstOrDefault(
+                        row =>
+                            row.Ticker == currency.Ticker));
             }
         }
 
@@ -191,8 +193,10 @@ namespace Lib9c.Tests
             Assert.Equal(sheet.Count, currencies.Length);
             foreach (var currency in currencies)
             {
-                Assert.NotNull(sheet.OrderedList!.FirstOrDefault(row =>
-                    row.SoulStoneTicker == currency.Ticker));
+                Assert.NotNull(
+                    sheet.OrderedList!.FirstOrDefault(
+                        row =>
+                            row.SoulStoneTicker == currency.Ticker));
             }
         }
 
@@ -210,7 +214,7 @@ namespace Lib9c.Tests
             Assert.Equal(agentAddress, Currencies.PickAddress(Currencies.Crystal, agentAddress, avatarAddress));
             Assert.Equal(agentAddress, Currencies.PickAddress(Currencies.Garage, agentAddress, avatarAddress));
             Assert.Equal(agentAddress, Currencies.PickAddress(Currencies.Mead, agentAddress, avatarAddress));
-            Assert.Equal(agentAddress, Currencies.PickAddress(Currency.Legacy("NCG", decimalPlaces: 2, minter: new PrivateKey().Address), agentAddress, avatarAddress));
+            Assert.Equal(agentAddress, Currencies.PickAddress(Currency.Legacy("NCG", 2, new PrivateKey().Address), agentAddress, avatarAddress));
             Assert.Equal(avatarAddress, Currencies.PickAddress(Currencies.DailyRewardRune, agentAddress, avatarAddress));
         }
     }

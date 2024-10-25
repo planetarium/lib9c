@@ -357,7 +357,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.EquipmentItemSetEffectSheet);
 
             Assert.Empty(player.eventMap);
-            for (int i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 var requiredExp = _tableSheets.CharacterLevelSheet[level].ExpNeed;
                 player.GetExp3(requiredExp);
@@ -404,7 +404,7 @@ namespace Lib9c.Tests.Model
             Assert.Empty(player.eventMap);
             Assert.Empty(simulator.Log);
             long requiredExp = 0;
-            for (int i = player.Level; i < nextLevel; ++i)
+            for (var i = player.Level; i < nextLevel; ++i)
             {
                 requiredExp += _tableSheets.CharacterLevelSheet[i + 1].ExpNeed;
             }
@@ -503,7 +503,7 @@ namespace Lib9c.Tests.Model
             var log = simulator.Log;
             var logCount = log.Count;
             var logList = log.ToList();
-            for (int i = 0; i < logCount; i++)
+            for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
                 if (currLog is Tick)
@@ -555,7 +555,7 @@ namespace Lib9c.Tests.Model
                 _tableSheets.BuffLinkSheet
             );
             var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
-            skill.CustomField = new SkillCustomField { BuffDuration = 2 };
+            skill.CustomField = new SkillCustomField { BuffDuration = 2, };
             var player = simulator.Player;
             var enemy = new Enemy(player, _tableSheets.CharacterSheet.Values.First(), 1);
             player.Targets.Add(enemy);
@@ -576,7 +576,7 @@ namespace Lib9c.Tests.Model
             var log = simulator.Log;
             var logCount = log.Count;
             var logList = log.ToList();
-            for (int i = 0; i < logCount; i++)
+            for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
                 if (currLog is Tick)
@@ -657,7 +657,8 @@ namespace Lib9c.Tests.Model
             // force add buff 'Vampiric'
             // 705000 is ActionBuff id of Vampiric
             var vampiric = (Vampiric)BuffFactory.GetCustomActionBuff(
-                new SkillCustomField { BuffDuration = duration, BuffValue = percent }, actionBuffSheet[705000]);
+                new SkillCustomField { BuffDuration = duration, BuffValue = percent, },
+                actionBuffSheet[705000]);
             player.AddBuff(vampiric);
             var row = actionBuffSheet.Values.First();
             var bleed = BuffFactory.GetActionBuff(enemy.Stats, row);
@@ -668,7 +669,7 @@ namespace Lib9c.Tests.Model
             var log = simulator.Log;
             var logCount = log.Count;
             var logList = log.ToList();
-            for (int i = 0; i < logCount; i++)
+            for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
                 if (currLog is Nekoyume.Model.BattleStatus.NormalAttack)
@@ -705,8 +706,9 @@ namespace Lib9c.Tests.Model
         [Fact]
         public void StatsLayerTest()
         {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
-                r.Stat.StatType == StatType.ATK);
+            var row = _tableSheets.EquipmentItemSheet.Values.First(
+                r =>
+                    r.Stat.StatType == StatType.ATK);
             var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
             equipment.equipped = true;
             _avatarState.inventory.AddItem(equipment);
@@ -717,8 +719,9 @@ namespace Lib9c.Tests.Model
             // costume.equipped = true;
             // _avatarState.inventory.AddItem(costume);
             var foodRow =
-                _tableSheets.ConsumableItemSheet.Values.First(r =>
-                    r.Stats.Any(s => s.StatType == StatType.ATK));
+                _tableSheets.ConsumableItemSheet.Values.First(
+                    r =>
+                        r.Stats.Any(s => s.StatType == StatType.ATK));
             var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
             _avatarState.inventory.AddItem(food);
             var runeId = 10002;
@@ -791,7 +794,7 @@ namespace Lib9c.Tests.Model
                 }
             }
 
-            StatBuff stageAtkBuff = statBuffs.Single(s => s.GetModifier().StatType == StatType.ATK);
+            var stageAtkBuff = statBuffs.Single(s => s.GetModifier().StatType == StatType.ATK);
             var stageModifier = stageAtkBuff.GetModifier();
             var stageBuffAtk = (long)stageModifier.GetModifiedValue(collectionLayerAtk);
             // StageBuffStats 1101(50%)
@@ -800,9 +803,10 @@ namespace Lib9c.Tests.Model
             // Assert.Equal(3304, player.ATK);
 
             // Update skill buff stats
-            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
-                r.StatType == StatType.ATK &&
-                r.OperationType == StatModifier.OperationType.Percentage);
+            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(
+                r =>
+                    r.StatType == StatType.ATK &&
+                    r.OperationType == StatModifier.OperationType.Percentage);
             var percentageBuff = new StatBuff(percentageBuffRow);
             statBuffs.Add(percentageBuff);
             var percentageModifier = percentageBuff.GetModifier();
@@ -830,8 +834,9 @@ namespace Lib9c.Tests.Model
         [Fact]
         public void IncreaseHpForArena()
         {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r =>
-                r.Stat.StatType == StatType.HP);
+            var row = _tableSheets.EquipmentItemSheet.Values.First(
+                r =>
+                    r.Stat.StatType == StatType.HP);
             var equipment = (Equipment)ItemFactory.CreateItem(_tableSheets.ItemSheet[row.Id], new TestRandom());
             equipment.equipped = true;
             _avatarState.inventory.AddItem(equipment);
@@ -842,8 +847,9 @@ namespace Lib9c.Tests.Model
             costume.equipped = true;
             _avatarState.inventory.AddItem(costume);
             var foodRow =
-                _tableSheets.ConsumableItemSheet.Values.First(r =>
-                    r.Stats.Any(s => s.StatType == StatType.HP));
+                _tableSheets.ConsumableItemSheet.Values.First(
+                    r =>
+                        r.Stats.Any(s => s.StatType == StatType.HP));
             var food = (Consumable)ItemFactory.CreateItem(foodRow, _random);
             _avatarState.inventory.AddItem(food);
 
@@ -860,10 +866,11 @@ namespace Lib9c.Tests.Model
             var equipmentLayerHp = player.HP;
 
             // Update consumable stats
-            player.Use(new List<Guid>
-            {
-                food.ItemId,
-            });
+            player.Use(
+                new List<Guid>
+                {
+                    food.ItemId,
+                });
             Assert.Equal(equipmentLayerHp + food.Stats.Where(s => s.StatType == StatType.HP).Sum(s => s.BaseValueAsLong), player.HP);
             // ConsumableStats 29
             // Assert.Equal(359, player.HP);
@@ -915,9 +922,10 @@ namespace Lib9c.Tests.Model
             var arenaHp = player.HP;
 
             var statBuffs = new List<StatBuff>();
-            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(r =>
-                r.StatType == StatType.HP &&
-                r.OperationType == StatModifier.OperationType.Percentage);
+            var percentageBuffRow = _tableSheets.StatBuffSheet.Values.First(
+                r =>
+                    r.StatType == StatType.HP &&
+                    r.OperationType == StatModifier.OperationType.Percentage);
             var percentageBuff = new StatBuff(percentageBuffRow);
             statBuffs.Add(percentageBuff);
             var percentageModifier = percentageBuff.GetModifier();
@@ -979,7 +987,7 @@ namespace Lib9c.Tests.Model
             // increase def by ice shield buff
             Assert.True(character.DEF > def);
             enemy.InitAI();
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
                 enemy.Tick();
                 e = log.Last();

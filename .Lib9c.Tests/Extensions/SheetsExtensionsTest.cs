@@ -76,10 +76,11 @@ namespace Lib9c.Tests.Extensions
             var iSheetType = typeof(ISheet);
             var sheetNameAndFilesTemp = sheetNameAndFiles;
             sheetTypes = Assembly.GetAssembly(typeof(ISheet))?.GetTypes()
-                .Where(type =>
-                    iSheetType.IsAssignableFrom(type) &&
-                    !type.IsAbstract &&
-                    sheetNameAndFilesTemp.ContainsKey(type.Name))
+                .Where(
+                    type =>
+                        iSheetType.IsAssignableFrom(type) &&
+                        !type.IsAbstract &&
+                        sheetNameAndFilesTemp.ContainsKey(type.Name))
                 .ToArray();
             Assert.NotNull(sheetTypes);
             Assert.NotEmpty(sheetTypes);

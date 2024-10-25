@@ -74,7 +74,7 @@ namespace Lib9c.Tests.Model.State
             var state = GetDefaultGameConfigState();
             Assert.Equal(3, state.HourglassPerBlock);
             var row = new GameConfigSheet.Row();
-            row.Set(new[] { "hourglass_per_block", "5" });
+            row.Set(new[] { "hourglass_per_block", "5", });
             state.Update(row);
             Assert.Equal(5, state.HourglassPerBlock);
         }

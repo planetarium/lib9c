@@ -178,12 +178,13 @@ namespace Lib9c.Tests.Action.Scenario
             long blockIndex)
         {
             var stake2 = new Stake2(stakingAmount);
-            return stake2.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = agentAddr,
-                BlockIndex = blockIndex,
-            });
+            return stake2.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = agentAddr,
+                    BlockIndex = blockIndex,
+                });
         }
 
         private static IWorld Stake3(
@@ -193,12 +194,13 @@ namespace Lib9c.Tests.Action.Scenario
             long blockIndex)
         {
             var stake3 = new Stake(stakingAmount);
-            return stake3.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = agentAddr,
-                BlockIndex = blockIndex,
-            });
+            return stake3.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = agentAddr,
+                    BlockIndex = blockIndex,
+                });
         }
 
         private static IWorld ClaimStakeReward9(
@@ -208,12 +210,13 @@ namespace Lib9c.Tests.Action.Scenario
             long blockIndex)
         {
             var claimStakingReward9 = new ClaimStakeReward(avatarAddr);
-            return claimStakingReward9.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = agentAddr,
-                BlockIndex = blockIndex,
-            });
+            return claimStakingReward9.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = agentAddr,
+                    BlockIndex = blockIndex,
+                });
         }
 
         private static void ValidateStakedState(

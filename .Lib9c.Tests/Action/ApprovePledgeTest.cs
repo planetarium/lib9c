@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Action
             var address = new PrivateKey().Address;
             var patron = new PrivateKey().Address;
             var contractAddress = address.Derive(nameof(RequestPledge));
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     contractAddress,
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
@@ -35,11 +35,12 @@ namespace Lib9c.Tests.Action
             {
                 PatronAddress = patron,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = address,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = address,
+                    PreviousState = states,
+                });
 
             var contract = Assert.IsType<List>(nextState.GetLegacyState(contractAddress));
             Assert.Equal(patron, contract[0].ToAddress());
@@ -57,7 +58,7 @@ namespace Lib9c.Tests.Action
             var patron = MeadConfig.PatronAddress;
             var contractAddress = address.Derive(nameof(RequestPledge));
             var guildAddress = AddressUtil.CreateGuildAddress();
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     contractAddress,
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
@@ -68,11 +69,12 @@ namespace Lib9c.Tests.Action
             {
                 PatronAddress = patron,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = address,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = address,
+                    PreviousState = states,
+                });
 
             var contract = Assert.IsType<List>(nextState.GetLegacyState(contractAddress));
             Assert.Equal(patron, contract[0].ToAddress());
@@ -103,17 +105,20 @@ namespace Lib9c.Tests.Action
                 contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
             }
 
-            IWorld states = new World(MockUtil.MockModernWorldState).SetLegacyState(contractAddress, contract);
+            var states = new World(MockUtil.MockModernWorldState).SetLegacyState(contractAddress, contract);
 
             var action = new ApprovePledge
             {
                 PatronAddress = patron,
             };
-            Assert.Throws(exc, () => action.Execute(new ActionContext
-            {
-                Signer = address,
-                PreviousState = states,
-            }));
+            Assert.Throws(
+                exc,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = address,
+                        PreviousState = states,
+                    }));
         }
     }
 }

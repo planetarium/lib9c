@@ -20,44 +20,46 @@ namespace Lib9c.Tests.Action.Coupons
         [Fact]
         public void Execute()
         {
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     AdminState.Address,
                     new AdminState(CouponsFixture.AgentAddress1, 1)
                         .Serialize());
             IRandom random = new TestRandom();
 
-            Assert.Throws<PolicyExpiredException>(() =>
-                new IssueCoupons(
-                        ImmutableDictionary<RewardSet, uint>.Empty,
-                        CouponsFixture.AgentAddress1)
-                    .Execute(
-                        new ActionContext
-                        {
-                            PreviousState = state,
-                            RandomSeed = random.Seed,
-                            BlockIndex = long.MaxValue,
-                            Signer = CouponsFixture.AgentAddress1,
-                        }));
+            Assert.Throws<PolicyExpiredException>(
+                () =>
+                    new IssueCoupons(
+                            ImmutableDictionary<RewardSet, uint>.Empty,
+                            CouponsFixture.AgentAddress1)
+                        .Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                RandomSeed = random.Seed,
+                                BlockIndex = long.MaxValue,
+                                Signer = CouponsFixture.AgentAddress1,
+                            }));
 
-            Assert.Throws<PermissionDeniedException>(() =>
-                new IssueCoupons(
-                        ImmutableDictionary<RewardSet, uint>.Empty,
-                        CouponsFixture.AgentAddress1)
-                    .Execute(
-                        new ActionContext
-                        {
-                            PreviousState = state,
-                            RandomSeed = random.Seed,
-                            BlockIndex = 0,
-                            Signer = CouponsFixture.AgentAddress2,
-                        }));
+            Assert.Throws<PermissionDeniedException>(
+                () =>
+                    new IssueCoupons(
+                            ImmutableDictionary<RewardSet, uint>.Empty,
+                            CouponsFixture.AgentAddress1)
+                        .Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                RandomSeed = random.Seed,
+                                BlockIndex = 0,
+                                Signer = CouponsFixture.AgentAddress2,
+                            }));
 
             Assert.Equal(
                 ImmutableDictionary<Guid, Coupon>.Empty,
                 new IssueCoupons(
-                    ImmutableDictionary<RewardSet, uint>.Empty,
-                    CouponsFixture.AgentAddress1)
+                        ImmutableDictionary<RewardSet, uint>.Empty,
+                        CouponsFixture.AgentAddress1)
                     .Execute(
                         new ActionContext
                         {
@@ -99,20 +101,32 @@ namespace Lib9c.Tests.Action.Coupons
             var agent2CouponWallet = state.GetCouponWallet(CouponsFixture.AgentAddress2);
 
             Assert.Equal(3, agent1CouponWallet.Count);
-            Assert.Equal(1, agent1CouponWallet.Count(
-                item => item.Value.Rewards.Equals(CouponsFixture.RewardSet1)));
-            Assert.Equal(2, agent1CouponWallet.Count(
-                item => item.Value.Rewards.Equals(CouponsFixture.RewardSet2)));
-            Assert.Equal(0, agent1CouponWallet.Count(
-                item => item.Value.Rewards.Equals(CouponsFixture.RewardSet3)));
+            Assert.Equal(
+                1,
+                agent1CouponWallet.Count(
+                    item => item.Value.Rewards.Equals(CouponsFixture.RewardSet1)));
+            Assert.Equal(
+                2,
+                agent1CouponWallet.Count(
+                    item => item.Value.Rewards.Equals(CouponsFixture.RewardSet2)));
+            Assert.Equal(
+                0,
+                agent1CouponWallet.Count(
+                    item => item.Value.Rewards.Equals(CouponsFixture.RewardSet3)));
 
             Assert.Equal(3, agent1CouponWallet.Count);
-            Assert.Equal(0, agent2CouponWallet.Count(
-                item => item.Value.Rewards.Equals(CouponsFixture.RewardSet1)));
-            Assert.Equal(0, agent2CouponWallet.Count(
-                item => item.Value.Rewards.Equals(CouponsFixture.RewardSet2)));
-            Assert.Equal(3, agent2CouponWallet.Count(
-                item => item.Value.Rewards.Equals(CouponsFixture.RewardSet3)));
+            Assert.Equal(
+                0,
+                agent2CouponWallet.Count(
+                    item => item.Value.Rewards.Equals(CouponsFixture.RewardSet1)));
+            Assert.Equal(
+                0,
+                agent2CouponWallet.Count(
+                    item => item.Value.Rewards.Equals(CouponsFixture.RewardSet2)));
+            Assert.Equal(
+                3,
+                agent2CouponWallet.Count(
+                    item => item.Value.Rewards.Equals(CouponsFixture.RewardSet3)));
         }
 
         [Fact]
@@ -131,12 +145,14 @@ namespace Lib9c.Tests.Action.Coupons
                         .Add(
                             "rewards",
                             Bencodex.Types.List.Empty
-                                .Add(Bencodex.Types.Dictionary.Empty
-                                    .Add("rewardSet", CouponsFixture.RewardSet1.Serialize())
-                                    .Add("quantity", 2))
-                                .Add(Bencodex.Types.Dictionary.Empty
-                                    .Add("rewardSet", CouponsFixture.RewardSet2.Serialize())
-                                    .Add("quantity", 1)))
+                                .Add(
+                                    Bencodex.Types.Dictionary.Empty
+                                        .Add("rewardSet", CouponsFixture.RewardSet1.Serialize())
+                                        .Add("quantity", 2))
+                                .Add(
+                                    Bencodex.Types.Dictionary.Empty
+                                        .Add("rewardSet", CouponsFixture.RewardSet2.Serialize())
+                                        .Add("quantity", 1)))
                         .Select(kv => new KeyValuePair<IKey, IValue>((Text)kv.Key, kv.Value))),
                 ((Dictionary)((Dictionary)action.PlainValue)["values"]).Remove((Text)"id"));
         }
@@ -155,20 +171,24 @@ namespace Lib9c.Tests.Action.Coupons
             actual.LoadPlainValue(
                 Dictionary.Empty
                     .Add("type_id", "issue_coupons")
-                    .Add("values", new Bencodex.Types.Dictionary(
-                        ImmutableDictionary<string, IValue>.Empty
-                            .Add("recipient", new Binary(CouponsFixture.AgentAddress1.ByteArray))
-                            .Add(
-                                "rewards",
-                                Bencodex.Types.List.Empty
-                                    .Add(Bencodex.Types.Dictionary.Empty
-                                        .Add("rewardSet", CouponsFixture.RewardSet1.Serialize())
-                                        .Add("quantity", 2))
-                                    .Add(Bencodex.Types.Dictionary.Empty
-                                        .Add("rewardSet", CouponsFixture.RewardSet2.Serialize())
-                                        .Add("quantity", 1)))
-                            .Select(kv => new KeyValuePair<IKey, IValue>((Text)kv.Key, kv.Value)))
-                    .SetItem("id", new Guid("6E69DC55-A0D0-435A-A787-C62356CBE517").Serialize())));
+                    .Add(
+                        "values",
+                        new Bencodex.Types.Dictionary(
+                                ImmutableDictionary<string, IValue>.Empty
+                                    .Add("recipient", new Binary(CouponsFixture.AgentAddress1.ByteArray))
+                                    .Add(
+                                        "rewards",
+                                        Bencodex.Types.List.Empty
+                                            .Add(
+                                                Bencodex.Types.Dictionary.Empty
+                                                    .Add("rewardSet", CouponsFixture.RewardSet1.Serialize())
+                                                    .Add("quantity", 2))
+                                            .Add(
+                                                Bencodex.Types.Dictionary.Empty
+                                                    .Add("rewardSet", CouponsFixture.RewardSet2.Serialize())
+                                                    .Add("quantity", 1)))
+                                    .Select(kv => new KeyValuePair<IKey, IValue>((Text)kv.Key, kv.Value)))
+                            .SetItem("id", new Guid("6E69DC55-A0D0-435A-A787-C62356CBE517").Serialize())));
 
             Assert.Equal(expected.Rewards, actual.Rewards);
             Assert.Equal(expected.Recipient, actual.Recipient);

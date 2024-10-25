@@ -86,10 +86,12 @@ namespace Lib9c.Tests.Model.Skill.Arena
             challenger = new ArenaCharacter(simulator, myDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
             enemy = new ArenaCharacter(simulator, enemyDigest, arenaSheets, simulator.HpModifier, new List<StatModifier>());
 
-            challenger.AddBuff(new Focus(
-                _tableSheets.ActionBuffSheet.OrderedList.First(s =>
-                    s.ActionBuffType == ActionBuffType.Focus)
-            ));
+            challenger.AddBuff(
+                new Focus(
+                    _tableSheets.ActionBuffSheet.OrderedList.First(
+                        s =>
+                            s.ActionBuffType == ActionBuffType.Focus)
+                ));
             Assert.Single(challenger.ActionBuffs);
 
             skill = new ArenaNormalAttack(skillRow, 100, 100, 0, StatType.NONE);

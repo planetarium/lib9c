@@ -12,11 +12,12 @@ namespace Lib9c.Tests.Model
         [Fact]
         public void Serialize()
         {
-            var reward = new QuestReward(new Dictionary<int, int>()
-            {
-                [2] = 1,
-                [1] = 1,
-            });
+            var reward = new QuestReward(
+                new Dictionary<int, int>()
+                {
+                    [2] = 1,
+                    [1] = 1,
+                });
 
             var expected = new[]
             {

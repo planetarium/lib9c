@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action.Coupons
         {
             IRandom random = new TestRandom();
             var sheets = TableSheetsImporter.ImportSheets();
-            IWorld state = new World(MockUtil.MockModernWorldState)
+            var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(sheets[nameof(GameConfigSheet)]).Serialize()
@@ -44,38 +44,38 @@ namespace Lib9c.Tests.Action.Coupons
                 .Derive("avatar-states-0");
 
             var agent1Avatar0State = CreateAvatar.CreateAvatarState(
-                    "agent1avatar0",
-                    agent1Avatar0Address,
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress1,
-                        BlockIndex = 0,
-                    },
-                    state.GetSheet<MaterialItemSheet>(),
-                    default);
+                "agent1avatar0",
+                agent1Avatar0Address,
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = CouponsFixture.AgentAddress1,
+                    BlockIndex = 0,
+                },
+                state.GetSheet<MaterialItemSheet>(),
+                default);
             var agent1Avatar1State = CreateAvatar.CreateAvatarState(
-                    "agent1avatar1",
-                    agent1Avatar1Address,
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress1,
-                        BlockIndex = 0,
-                    },
-                    state.GetSheet<MaterialItemSheet>(),
-                    default);
+                "agent1avatar1",
+                agent1Avatar1Address,
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = CouponsFixture.AgentAddress1,
+                    BlockIndex = 0,
+                },
+                state.GetSheet<MaterialItemSheet>(),
+                default);
             var agent2Avatar0State = CreateAvatar.CreateAvatarState(
-                    "agent2avatar0",
-                    agent2Avatar0Address,
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress2,
-                        BlockIndex = 0,
-                    },
-                    state.GetSheet<MaterialItemSheet>(),
-                    default);
+                "agent2avatar0",
+                agent2Avatar0Address,
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = CouponsFixture.AgentAddress2,
+                    BlockIndex = 0,
+                },
+                state.GetSheet<MaterialItemSheet>(),
+                default);
 
             state = state
                 .SetAvatarState(agent1Avatar0Address, agent1Avatar0State)
@@ -86,15 +86,15 @@ namespace Lib9c.Tests.Action.Coupons
             Assert.Equal(
                 state,
                 new RedeemCoupon(
-                    new Guid("AEB63B38-1850-4003-B549-19D37B37AC89"),
-                    agent1Avatar0Address)
+                        new Guid("AEB63B38-1850-4003-B549-19D37B37AC89"),
+                        agent1Avatar0Address)
                     .Execute(
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress1,
-                        RandomSeed = random.Seed,
-                    }));
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = CouponsFixture.AgentAddress1,
+                            RandomSeed = random.Seed,
+                        }));
 
             var agent1CouponWallet = state.GetCouponWallet(CouponsFixture.AgentAddress1);
             var agent2CouponWallet = state.GetCouponWallet(CouponsFixture.AgentAddress2);
@@ -273,7 +273,8 @@ namespace Lib9c.Tests.Action.Coupons
                     });
             actual = state.GetAvatarState(agent1Avatar0Address);
             var aggregateRewardSet = CouponsFixture.RewardSet1.Aggregate(
-                CouponsFixture.RewardSet2, (rewardSet, kv) =>
+                CouponsFixture.RewardSet2,
+                (rewardSet, kv) =>
                 {
                     if (rewardSet.TryGetValue(kv.Key, out var val))
                     {

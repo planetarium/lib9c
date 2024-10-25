@@ -13,8 +13,9 @@ namespace Lib9c.Tests.Model.Item
         public NecklaceTest()
         {
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _necklaceRow = tableSheets.EquipmentItemSheet.OrderedList.FirstOrDefault(row =>
-                row.ItemSubType == ItemSubType.Necklace);
+            _necklaceRow = tableSheets.EquipmentItemSheet.OrderedList.FirstOrDefault(
+                row =>
+                    row.ItemSubType == ItemSubType.Necklace);
         }
 
         [Fact]

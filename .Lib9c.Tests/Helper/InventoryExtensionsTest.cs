@@ -40,8 +40,9 @@
         {
             var avatarAddress = new PrivateKey().Address;
             var inventory = new Inventory();
-            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.ApStone);
+            var row = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.ApStone);
             if (materialExist)
             {
                 var apStone = ItemFactory.CreateMaterial(row);
@@ -63,7 +64,8 @@
             else
             {
                 Assert.Throws(
-                    exc, () => inventory.UseActionPoint(ap, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L)
+                    exc,
+                    () => inventory.UseActionPoint(ap, requiredAp, chargeAp, _tableSheets.MaterialItemSheet, 0L)
                 );
             }
         }
