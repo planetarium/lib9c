@@ -19,6 +19,7 @@ namespace Nekoyume.Delegation
             Currency delegationCurrency,
             Currency rewardCurrency,
             Address delegationPoolAddress,
+            Address rewardPoolAddress,
             Address rewardRemainderPoolAddress,
             Address slashedPoolAddress,
             long unbondingPeriod,
@@ -32,6 +33,7 @@ namespace Nekoyume.Delegation
                       delegationCurrency,
                       rewardCurrency,
                       delegationPoolAddress,
+                      rewardPoolAddress,
                       rewardRemainderPoolAddress,
                       slashedPoolAddress,
                       unbondingPeriod,
@@ -76,6 +78,8 @@ namespace Nekoyume.Delegation
 
         public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
+        public Address RewardPoolAddress => Metadata.RewardPoolAddress;
+
         public Address RewardRemainderPoolAddress => Metadata.RewardRemainderPoolAddress;
 
         public Address SlashedPoolAddress => Metadata.SlashedPoolAddress;
@@ -85,8 +89,6 @@ namespace Nekoyume.Delegation
         public int MaxUnbondLockInEntries => Metadata.MaxUnbondLockInEntries;
 
         public int MaxRebondGraceEntries => Metadata.MaxRebondGraceEntries;
-
-        public Address RewardPoolAddress => Metadata.RewardPoolAddress;
 
         public ImmutableSortedSet<Address> Delegators => Metadata.Delegators;
 
@@ -255,7 +257,12 @@ namespace Nekoyume.Delegation
                     if (linkedStartHeight is long startHeightFromHigher
                         && startHeightFromHigher != startHeight)
                     {
-                        throw new ArgumentException("lump sum reward record was started.");
+                        throw new ArgumentException("Fetched wrong lump sum reward record.");
+                    }
+
+                    if (!record.Delegators.Contains(delegator.Address))
+                    {
+                        continue;
                     }
 
                     FungibleAssetValue reward = record.RewardsDuringPeriod(share);
@@ -287,7 +294,11 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            bond = bond.UpdateLastDistributeHeight(height);
+            if (bond.LastDistributeHeight != height)
+            {
+                bond = bond.UpdateLastDistributeHeight(height);
+            }
+
             Repository.SetBond(bond);
         }
 

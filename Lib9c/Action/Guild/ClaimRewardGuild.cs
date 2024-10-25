@@ -9,11 +9,11 @@ using Nekoyume.TypedAddress;
 namespace Nekoyume.Action.ValidatorDelegation
 {
     [ActionType(TypeIdentifier)]
-    public sealed class ClaimRewardValidator : ActionBase
+    public sealed class ClaimRewardGuild : ActionBase
     {
-        public const string TypeIdentifier = "claim_reward_validator";
+        public const string TypeIdentifier = "claim_reward_guild";
 
-        public ClaimRewardValidator() { }
+        public ClaimRewardGuild() { }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
@@ -27,7 +27,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 rawValues is not Null)
             {
                 throw new InvalidCastException();
-            };
+            }
         }
 
         public override IWorld Execute(IActionContext context)
@@ -37,24 +37,18 @@ namespace Nekoyume.Action.ValidatorDelegation
             var world = context.PreviousState;
             var guildRepository = new GuildRepository(world, context);
 
+            var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
             if (!(guildRepository.GetJoinedGuild(new AgentAddress(context.Signer))
                 is GuildAddress guildAddress))
             {
-                throw new InvalidOperationException("Signer does not joined guild.");
+                throw new InvalidOperationException("Signer does not joind guild.");
             }
 
             var guild = guildRepository.GetGuild(guildAddress);
-            if (context.Signer != guild.GuildMasterAddress)
-            {
-                throw new InvalidOperationException("Signer is not a guild master.");
-            }
 
-            var guildValidatorRepository = new GuildValidatorRepository(world, context);
-            var guildValidatorDelegator = guildValidatorRepository.GetGuildValidatorDelegator(context.Signer);
-            var guildValidatorDelegatee = guildValidatorRepository.GetGuildValidatorDelegatee(guild.ValidatorAddress);
-            guildValidatorDelegator.ClaimReward(guildValidatorDelegatee, context.BlockIndex);
+            guildParticipant.ClaimReward(guild, context.BlockIndex);
 
-            return guildValidatorRepository.World;
+            return guildRepository.World;
         }
     }
 }

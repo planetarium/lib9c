@@ -28,6 +28,7 @@ namespace Nekoyume.ValidatorDelegation
                   delegationCurrency: ValidatorDelegationCurrency,
                   rewardCurrency: ValidatorRewardCurrency,
                   delegationPoolAddress: UnbondedPoolAddress,
+                  rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
                   unbondingPeriod: ValidatorUnbondingPeriod,

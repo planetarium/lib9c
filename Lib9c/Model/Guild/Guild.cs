@@ -27,10 +27,11 @@ namespace Nekoyume.Model.Guild
             GuildRepository repository)
             : base(
                   address: address,
-                  accountAddress: Addresses.Guild,
+                  accountAddress: repository.DelegateeAccountAddress,
                   delegationCurrency: Currencies.GuildGold,
                   rewardCurrency: rewardCurrency,
-                  delegationPoolAddress: address,
+                  delegationPoolAddress: DelegationAddress.DelegationPoolAddress(address, repository.DelegateeAccountAddress),
+                  rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
                   unbondingPeriod: 0L,
