@@ -1,5 +1,5 @@
 [project]
-name = "lib9c_python"
+name = "lib9c"
 version = "0.1.0"
 description = "A Python library for managing integrations and dependencies in the /integrations/python directory"
 authors = [
@@ -28,4 +28,4 @@ dev-dependencies = []
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/lib9c_python"]
+packages = ["src/lib9c"]
