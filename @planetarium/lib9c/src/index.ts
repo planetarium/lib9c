@@ -51,6 +51,7 @@ export {
 } from "./models/currencies.js";
 export { HashDigest, type AlgorithmNames } from "./models/hashdigest.js";
 export { ODIN_GENESIS_HASH, HEIMDALL_GENESIS_HASH } from "./models/networks.js";
+export { RuneSlotInfo } from "./models/rune_slot_info.js";
 
 export {
   CreateAvatar,

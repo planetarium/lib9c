@@ -1,9 +1,6 @@
 import type { Address } from "@planetarium/account";
-import {
-  BencodexDictionary,
-  type Dictionary,
-  type Value,
-} from "@planetarium/bencodex";
+import { BencodexDictionary, type Dictionary } from "@planetarium/bencodex";
+import type { RuneSlotInfo } from "../models/rune_slot_info.js";
 import { GameAction, type GameActionArgs } from "./common.js";
 
 export type JoinArenaArgs = {
@@ -14,27 +11,6 @@ export type JoinArenaArgs = {
   equipments: Array<Uint8Array>;
   runeInfos: Array<RuneSlotInfo>;
 } & GameActionArgs;
-
-export class RuneSlotInfo {
-  public readonly slotIndex: bigint;
-  public readonly runeId: bigint;
-
-  constructor(slotIndex: bigint, runeId: bigint) {
-    this.slotIndex = slotIndex;
-    this.runeId = runeId;
-  }
-
-  public serialize(): Value[] {
-    return [this.slotIndex.toString(), this.runeId.toString()];
-  }
-
-  static fromSerialized(data: {
-    slotIndex: string;
-    runeId: string;
-  }): RuneSlotInfo {
-    return new RuneSlotInfo(BigInt(data.slotIndex), BigInt(data.runeId));
-  }
-}
 
 export class JoinArena extends GameAction {
   protected readonly type_id: string = "join_arena4";
