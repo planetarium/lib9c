@@ -1,6 +1,5 @@
 import { describe } from "vitest";
-import { RuneSlotInfo } from "../../src/actions/join_arena.js";
-import { JoinArena, uuidToGuidBytes } from "../../src/index.js";
+import { JoinArena, uuidToGuidBytes, RuneSlotInfo } from "../../src/index.js";
 import { runTests } from "./common.js";
 import { avatarAddress } from "./fixtures.js";
 
