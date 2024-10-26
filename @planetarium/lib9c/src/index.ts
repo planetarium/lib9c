@@ -7,6 +7,10 @@ export {
   ChargeActionPoint,
   type ChargeActionPointArgs,
 } from "./actions/charge_action_point.js";
+export {
+  JoinArena,
+  type JoinArenaArgs,
+} from "./actions/join_arena.js";
 export { DailyReward, type DailyRewardArgs } from "./actions/daily_reward.js";
 export {
   TransferAsset,
