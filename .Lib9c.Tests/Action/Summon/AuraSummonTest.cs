@@ -206,9 +206,13 @@ namespace Lib9c.Tests.Action.Summon
             {
                 var materialSheet = _tableSheets.MaterialItemSheet;
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
-                _avatarState.inventory.AddItem(
-                    ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                if (materialCount > 0)
+                {
+                    _avatarState.inventory.AddItem(
+                        ItemFactory.CreateItem(material, random),
+                        materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                }
+
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
