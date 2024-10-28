@@ -352,7 +352,11 @@ namespace Lib9c.Tests.Action
                 slotStateUnlockStage);
 
             var row = _tableSheets.MaterialItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Hourglass);
-            avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), materialCount);
+            if (materialCount > 0)
+            {
+                avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), materialCount);
+            }
+
             if (tradableCount > 0)
             {
                 var material = ItemFactory.CreateTradableMaterial(row);

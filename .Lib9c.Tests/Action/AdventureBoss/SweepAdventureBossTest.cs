@@ -142,7 +142,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var apPotion = ItemFactory.CreateMaterial(materialRow);
 
             var inventory = state.GetInventoryV2(TesterAvatarAddress);
-            inventory.AddItem(apPotion, initialPotion);
+            if (initialPotion > 0)
+            {
+                inventory.AddItem(apPotion, initialPotion);
+            }
+
             state = state.SetInventory(TesterAvatarAddress, inventory);
 
             // Open season

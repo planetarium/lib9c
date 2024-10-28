@@ -46,6 +46,6 @@ jobs:
   jsr:
     uses: planetarium/.github/.github/workflows/publish_jsr.yaml@bfb34283b538003768d19bff9ea05bcbd709d643
     with:
-      workspace_directory: "@planetarium"
-      working_directory: "@planetarium/lib9c"
+      workspace_directory: "integrations/javascript/@planetarium"
+      working_directory: "integrations/javascript/@planetarium/lib9c"
       pnpm_version: "9"

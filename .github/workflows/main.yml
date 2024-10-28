@@ -90,15 +90,15 @@ jobs:
           version: 9
           run_install: |
             recursive: true
-            cwd: "@planetarium"
+            cwd: "integrations/javascript/@planetarium"
       - name: Build Lib9c.Tools
         run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
       - run: pnpm -r build
-        working-directory: "@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium/lib9c"
       - run: pnpm -r fmt:ci
-        working-directory: "@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium/lib9c"
       - run: pnpm -r test
-        working-directory: "@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium/lib9c"
 
   release:
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
