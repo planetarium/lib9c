@@ -601,10 +601,12 @@ public class ValidatorDelegationTestBase
         return FungibleAssetValue.Parse(currency, text);
     }
 
-    protected static FungibleAssetValue GetRandomCash(Random random, FungibleAssetValue fav, int maxDivisor = 100)
+    protected static FungibleAssetValue GetRandomCash(
+        Random random, FungibleAssetValue fav, int minDivisor = 1, int maxDivisor = 100)
     {
-        Assert.True(maxDivisor > 0 && maxDivisor <= 100);
-        var denominator = random.Next(maxDivisor) + 1;
+        Assert.True(minDivisor > 0);
+        Assert.True(maxDivisor > minDivisor && maxDivisor <= 100);
+        var denominator = random.Next(minDivisor, maxDivisor + 1);
         var cash = fav.DivRem(denominator, out var remainder);
         if (cash.Sign < 0 || cash > fav)
         {
