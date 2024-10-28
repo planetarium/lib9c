@@ -1,0 +1,4 @@
+# See https://dotnet.github.io/docfx/docs/table-of-contents.html
+- name: Documentation
+  href: documentation/toc.yml
+  expanded: true

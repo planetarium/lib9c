@@ -108,13 +108,13 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 900,
-                        MaxCp = 1000,
+                        MinCp = 78811,
+                        MaxCp = 118133,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                10, null,
+                21600, null,
             };
 
             // Random Icon
@@ -129,13 +129,13 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 900,
-                        MaxCp = 1000,
+                        MinCp = 196780,
+                        MaxCp = 236104,
                         ItemSubType = ItemSubType.Weapon,
-                        ElementalType = ElementalType.Wind,
+                        ElementalType = ElementalType.Water,
                     },
                 },
-                10, null, 8,
+                21600, null, 17,
             };
 
             // Move to next group with additional cost
@@ -150,13 +150,13 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 900,
-                        MaxCp = 1000,
+                        MinCp = 78811,
+                        MaxCp = 118133,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                10, null,
+                21600, null,
             };
             yield return new object?[]
             {
@@ -169,13 +169,13 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 9000,
-                        MaxCp = 10000,
+                        MinCp = 127372,
+                        MaxCp = 166695,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                12, null,
+                21600 * 2, null,
             };
             yield return new object?[]
             {
@@ -188,13 +188,13 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 90000,
-                        MaxCp = 100000,
+                        MinCp = 231654,
+                        MaxCp = 270976,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                15, null,
+                21600 * 8, null,
             };
 
             // Multiple slots
@@ -210,20 +210,20 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 900,
-                        MaxCp = 1000,
+                        MinCp = 78811,
+                        MaxCp = 118133,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                     new ()
                     {
-                        MinCp = 800,
-                        MaxCp = 900,
+                        MinCp = 196780,
+                        MaxCp = 236104,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                10, null,
+                21600, null,
             };
             yield return new object?[]
             {
@@ -236,20 +236,20 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 900,
-                        MaxCp = 1000,
+                        MinCp = 78811,
+                        MaxCp = 118133,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                     new ()
                     {
-                        MinCp = 800,
-                        MaxCp = 900,
+                        MinCp = 196780,
+                        MaxCp = 236104,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                 },
-                10, null,
+                21600, null,
             };
             yield return new object?[]
             {
@@ -264,34 +264,34 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 500,
-                        MaxCp = 600,
+                        MinCp = 39487,
+                        MaxCp = 78810,
                         ItemSubType = ItemSubType.Weapon,
-                        ElementalType = ElementalType.Water,
+                        ElementalType = ElementalType.Normal,
                     },
                     new ()
                     {
-                        MinCp = 300,
-                        MaxCp = 400,
+                        MinCp = 78811,
+                        MaxCp = 118133,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
                     new ()
                     {
-                        MinCp = 100,
-                        MaxCp = 200,
+                        MinCp = 39487,
+                        MaxCp = 78810,
                         ItemSubType = ItemSubType.Weapon,
-                        ElementalType = ElementalType.Water,
+                        ElementalType = ElementalType.Wind,
                     },
                     new ()
                     {
-                        MinCp = 900,
-                        MaxCp = 1000,
+                        MinCp = 39487,
+                        MaxCp = 78810,
                         ItemSubType = ItemSubType.Weapon,
-                        ElementalType = ElementalType.Normal,
+                        ElementalType = ElementalType.Fire,
                     },
                 },
-                10, null, 4,
+                21600, null, 22,
             };
         }
 
@@ -321,7 +321,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             {
                 new List<CustomCraftData>
                 {
-                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10131001, },
+                    new () { RecipeId = 1, SlotIndex = 0, IconId = 10140000, },
                 },
                 true, 0, false, new List<TestResult>(), 0, typeof(NotEnoughRelationshipException),
             };
@@ -496,7 +496,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                     var slotState = resultState.GetAllCombinationSlotState(_avatarAddress)
                         .GetSlot(craftData.SlotIndex);
-                    Assert.Equal(currentBlockIndex + additionalBlock, slotState.UnlockBlockIndex);
+                    Assert.Equal(currentBlockIndex + additionalBlock, slotState.WorkCompleteBlockIndex);
 
                     var itemSubType = _tableSheets.CustomEquipmentCraftRecipeSheet.Values
                         .First(row => row.Id == craftData.RecipeId).ItemSubType;

@@ -243,7 +243,7 @@ namespace Lib9c.Tests.Action.Garages
                     SenderAgentAddr,
                     fungibleId);
                 var previousStatesWithNullGarageState =
-                    _previousStates.SetLegacyState(garageAddr, Null.Value);
+                    _previousStates.RemoveLegacyState(garageAddr);
                 Assert.Throws<StateNullException>(() => Execute(
                     SenderAgentAddr,
                     0,

@@ -1,5 +1,5 @@
 slot_id,crystal_price,golden_dust_price,ruby_dust_price,ncg_price
-4,30,0,0,0
-5,0,30,0,0
-6,0,0,30,0
-7,0,0,0,30
+4,20000000,0,0,0
+5,0,1000,0,0
+6,0,0,500,0
+7,0,0,0,200

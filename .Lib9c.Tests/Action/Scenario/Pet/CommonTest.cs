@@ -11,7 +11,6 @@ namespace Lib9c.Tests.Action.Scenario.Pet
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
-    using static Lib9c.SerializeKeys;
 
     public class CommonTest
     {

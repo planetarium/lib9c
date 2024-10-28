@@ -208,7 +208,7 @@ namespace Lib9c.Tests.Action
                 BlockIndex = StakeState.LockupInterval,
             });
 
-            Assert.Equal(Null.Value, states.GetLegacyState(stakeState.address));
+            Assert.Null(states.GetLegacyState(stakeState.address));
             Assert.Equal(_currency * 0, states.GetBalance(stakeState.address, _currency));
             Assert.Equal(_currency * 100, states.GetBalance(_signerAddress, _currency));
         }

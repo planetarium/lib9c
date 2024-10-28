@@ -164,15 +164,17 @@ namespace Nekoyume.Battle
                 try
                 {
                     var data = itemSelector.Select(1).First();
-                    if (materialItemSheet.TryGetValue(data.ItemId, out var itemData))
+                    if (materialItemSheet.TryGetValue(data.ItemId, out var materialRow))
                     {
                         var count = random.Next(data.Min, data.Max + 1);
                         for (var i = 0; i < count; i++)
                         {
-                            var item = ItemFactory.CreateMaterial(itemData);
+                            var material = materialRow.ItemSubType is ItemSubType.Circle
+                                ? ItemFactory.CreateTradableMaterial(materialRow)
+                                : ItemFactory.CreateMaterial(materialRow);
                             if (reward.Count < maxCount)
                             {
-                                reward.Add(item);
+                                reward.Add(material);
                             }
                             else
                             {

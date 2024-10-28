@@ -25,6 +25,7 @@ namespace Nekoyume.TableData
             public long AdditionalTicketPrice { get; }
             public int MaxPurchaseCount { get; }
             public int MaxPurchaseCountWithInterval { get; }
+            public int MedalId { get; }
 
             public RoundData(int championshipId,
                 int round,
@@ -36,7 +37,8 @@ namespace Nekoyume.TableData
                 long ticketPrice,
                 long additionalTicketPrice,
                 int maxPurchaseCount,
-                int maxPurchaseCountWithInterval)
+                int maxPurchaseCountWithInterval,
+                int medalId = 0)
             {
                 ChampionshipId = championshipId;
                 Round = round;
@@ -49,6 +51,7 @@ namespace Nekoyume.TableData
                 AdditionalTicketPrice = additionalTicketPrice;
                 MaxPurchaseCount = maxPurchaseCount;
                 MaxPurchaseCountWithInterval = maxPurchaseCountWithInterval;
+                MedalId = medalId;
             }
 
             public bool IsTheRoundOpened(long blockIndex)
@@ -79,10 +82,16 @@ namespace Nekoyume.TableData
                 var additionalTicketPrice = ParseLong(fields[8]);
                 var maxPurchaseCount = 0;
                 var maxPurchaseCountWithInterval = 0;
+                var medalId = 0;
                 if (fields.Count > 9)
                 {
                     maxPurchaseCount = ParseInt(fields[9]);
                     maxPurchaseCountWithInterval = ParseInt(fields[10]);
+                }
+
+                if (fields.Count > 11)
+                {
+                    medalId = ParseInt(fields[11]);
                 }
 
                 Round = new List<RoundData>
@@ -97,7 +106,8 @@ namespace Nekoyume.TableData
                         ticketPrice,
                         additionalTicketPrice,
                         maxPurchaseCount,
-                        maxPurchaseCountWithInterval)
+                        maxPurchaseCountWithInterval,
+                        medalId)
                 };
             }
 

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c;
 using Libplanet.Types.Assets;
 using Nekoyume.Helper;
+using Nekoyume.Model.Item;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
@@ -32,6 +34,7 @@ namespace Nekoyume.TableData
             public int RateMax;
             public List<RuneInfo> Runes;
             public int Crystal;
+            public List<(int itemId, int quantity)> Materials;
             public override int Key => Id;
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -45,22 +48,50 @@ namespace Nekoyume.TableData
                 for (int i = 0; i < 3; i++)
                 {
                     var offset = i * 2;
-                    Runes.Add(new RuneInfo(ParseInt(fields[6 + offset]), ParseInt(fields[7 + offset])));
+                    var id = TryParseInt(fields[6 + offset], out var value) ? value : 0;
+                    var quantity = TryParseInt(fields[7 + offset], out value) ? value : 0;
+                    if (id != 0 && quantity > 0)
+                    {
+                        Runes.Add(new RuneInfo(id, quantity));
+                    }
                 }
                 Crystal = ParseInt(fields[12]);
+
+                if (fields.Count > 13)
+                {
+                    Materials = new List<(int, int)>();
+                    for (int i = 0; i < 2; i++)
+                    {
+                        var offset = i * 2;
+                        var id = TryParseInt(fields[13 + offset], out var value) ? value : 0;
+                        var quantity = TryParseInt(fields[14 + offset], out value) ? value : 0;
+                        if (id != 0 && quantity > 0)
+                        {
+                            Materials.Add((id, quantity));
+                        }
+                    }
+                }
             }
 
-            public List<FungibleAssetValue> GetRewards(RuneSheet runeSheet)
+            public List<FungibleAssetValue> GetRewards(
+                RuneSheet runeSheet,
+                MaterialItemSheet materialSheet)
             {
                 var result = new List<FungibleAssetValue>
                 {
                     Crystal * CrystalCalculator.CRYSTAL
                 };
-                result.AddRange(Runes
-                    .Where(runeInfo => runeInfo.RuneQty > 0)
-                    .Select(runeInfo =>
-                        RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId],
-                            runeInfo.RuneQty)));
+                result.AddRange(Runes.Select(runeInfo =>
+                    RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId], runeInfo.RuneQty)));
+
+                foreach (var (itemId, quantity) in Materials)
+                {
+                    var isTradable = materialSheet[itemId].ItemSubType
+                        is ItemSubType.Circle or ItemSubType.Scroll;
+                    var currency = Currencies.GetItemCurrency(itemId, isTradable);
+                    result.Add(currency * quantity);
+                }
+
                 return result;
             }
         }

@@ -2,8 +2,10 @@ name: publish docs
 
 on:
   push:
-    branches:
-      - main
+    branches-ignore:
+      - v*
+    tags-ignore:
+      - v*
 
 jobs:
   publish-docs:
@@ -17,6 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-tags: true
       - name: Dotnet Setup
         uses: actions/setup-dotnet@v4
         with:
@@ -24,11 +27,40 @@ jobs:
 
       - run: dotnet restore
       - run: dotnet tool restore
-      - run: docfx docs/docfx.json
+      - run: dotnet docfx docs/docfx.json
 
+      - name: update index.html
+        run: |
+          set -ev
+
+          if [[ "${{ github.ref_name }}" =~ ^v ]]; then
+            echo "Prevent tags started with 'v'" >&2
+            exit
+          fi
+
+          mkdir -p /tmp/gh-pages-root
+          latest_version=$(git tag --sort -v:refname | grep -E -i '^[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+          if [[ "$latest_version" = "${{ github.ref_name }}" ]]; then
+            index=$(cat docs/_site/index.html)
+            {
+              echo -n "${index%</title>*}</title>"
+              echo "<meta http-equiv=\"refresh\" content=\"0;${{ github.ref_name }}/\">"
+              echo "<base href=\"${{ github.ref_name }}/\">"
+              echo -n "${index#*</title>}"
+            } > /tmp/gh-pages-root/index.html
+          fi
+        if: github.ref_type == 'tag'
       - name: deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_site/
-          destination_dir: docs
+          destination_dir: ${{ github.ref_name }}
+      - name: deploy (index.html)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: /tmp/gh-pages-root
+          destination_dir: .
+          keep_files: true
+        if: github.ref_type == 'tag'

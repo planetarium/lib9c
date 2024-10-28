@@ -7,8 +7,10 @@ id,group,_name,chance,duration,target_type,buff_type,elemental_type,atk_power_ra
 704001,704000,기절,100,0,Enemies,Stun,Normal,0
 705000,705000,흡혈,100,0,Self,Vampiric,Normal,0
 706000,706000,집중,100,10,Self,Focus,Normal,0
+706001,706001,집중 (커스텀 장비),100,10,Self,Focus,Normal,0
 707000,707000,디버프 회피율,45,12,Self,Dispel,Normal,0
 707001,707001,디버프 회피율 (Rune),55,0,Self,Dispel,Normal,0
+707002,707002,디버프 회피율 (커스텀 장비),40,10,Self,Dispel,Normal,0
 708000,708000,얼음 방패 (유니크 아우라),100,10,Self,IceShield,Normal,0
 708001,708000,얼음 방패 (레전더리 아우라),100,10,Self,IceShield,Normal,0
 708002,708000,얼음 방패 (신성 아우라),100,10,Self,IceShield,Normal,0

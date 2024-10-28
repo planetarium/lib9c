@@ -54,30 +54,22 @@ namespace Nekoyume.Arena
                 { ArenaType.Championship, (200, -100) }
             };
 
-        public static int GetMedalItemId(int championshipId, int round) =>
-            700_000 + (championshipId * 100) + round;
-
-        public static Material GetMedal(
-            int championshipId,
-            int round,
-            MaterialItemSheet materialItemSheet)
-        {
-            var itemId = GetMedalItemId(championshipId, round);
-            var medal = ItemFactory.CreateMaterial(materialItemSheet, itemId);
-            return medal;
-        }
-
         public static int GetMedalTotalCount(ArenaSheet.Row row, AvatarState avatarState)
         {
             var count = 0;
             foreach (var data in row.Round)
             {
+                var itemId = data.MedalId;
+                if (data.MedalId == 0)
+                {
+                    continue;
+                }
+
                 if (!data.ArenaType.Equals(ArenaType.Season))
                 {
                     continue;
                 }
 
-                var itemId = GetMedalItemId(data.ChampionshipId, data.Round);
                 if (avatarState.inventory.TryGetItem(itemId, out var item))
                 {
                     count += item.count;

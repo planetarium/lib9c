@@ -29,7 +29,9 @@
           "toc.yml",
           "*.md",
           "articles/**.md",
-          "articles/**/toc.yml"
+          "articles/**/toc.yml",
+          "contributing/**.md",
+          "contributing/**/toc.yml"
         ],
         "exclude": [
           "README.md"
