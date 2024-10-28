@@ -102,8 +102,8 @@ namespace Nekoyume.Action
             Log.Debug("{AddressesHex}CreateAvatar exec started", addressesHex);
             AgentState existingAgentState = states.GetAgentState(signer);
             var agentState = existingAgentState ?? new AgentState(signer);
-            var avatarState = states.GetAvatarState(avatarAddress);
-            if (avatarState is not null)
+            var checkAvatarState = states.GetAvatarState(avatarAddress, false, false, false);
+            if (checkAvatarState is not null)
             {
                 throw new InvalidAddressException($"{addressesHex}Aborted as there is already an avatar at {avatarAddress}.");
             }
@@ -130,8 +130,7 @@ namespace Nekoyume.Action
             // Avoid NullReferenceException in test
             var materialItemSheet = ctx.PreviousState.GetSheet<MaterialItemSheet>();
 
-            avatarState = CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
-
+            var avatarState = CreateAvatarState(name, avatarAddress, ctx, materialItemSheet, default);
             if (hair < 0) hair = 0;
             if (lens < 0) lens = 0;
             if (ear < 0) ear = 0;
