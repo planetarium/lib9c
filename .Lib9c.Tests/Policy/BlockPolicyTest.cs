@@ -262,7 +262,7 @@ namespace Lib9c.Tests
         }
 
         [Fact]
-        public void EarnMiningGoldWhenSuccessMining()
+        public void EarnMiningMeadWhenSuccessMining()
         {
             var adminPrivateKey = new PrivateKey();
             var adminAddress = adminPrivateKey.Address;
@@ -343,21 +343,27 @@ namespace Lib9c.Tests
                 block,
                 blockChain.GetNextWorldState().GetValidatorSet(),
                 new PrivateKey[] { adminPrivateKey });
-            // First Reward : Proposer base reward 10 * 0.01, proposer bonus reward 10 * 0.04, Commission 9.5 * 0.1
-            // Total 0.5 + 0.95 = 1.45
+            // First Reward : Proposer base reward 5 * 0.01, proposer bonus reward 5 * 0.04, Commission 4.75 * 0.1
+            // Total 10 + 0.05 + 0.2 + 0.475 = 10.725
             blockChain.Append(block, commit);
 
             var rewardCurrency = ValidatorDelegatee.ValidatorRewardCurrency;
             var actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, rewardCurrency);
-            var expectedBalance = mintAmount + new FungibleAssetValue(rewardCurrency, 1, 450000000000000000);
+            var expectedBalance = mintAmount + new FungibleAssetValue(rewardCurrency, 0, 725000000000000000);
             Assert.Equal(expectedBalance, actualBalance);
+
+            var ssss = blockChain
+                .GetNextWorldState()
+                .GetBalance(Addresses.RewardPool, rewardCurrency);
 
             // After claimed, mead have to be used?
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new ClaimRewardValidatorSelf(), }
+                new ActionBase[] { new ClaimRewardValidatorSelf(), },
+                gasLimit: 1,
+                maxGasPrice: Currencies.Mead * 1
             );
 
             block = blockChain.ProposeBlock(adminPrivateKey, commit);
@@ -367,12 +373,33 @@ namespace Lib9c.Tests
                 blockChain.GetNextWorldState().GetValidatorSet(),
                 new PrivateKey[] { adminPrivateKey });
             // First + Second Reward : Total reward of two blocks : 10 * 2 = 20
+            // Base reward: 0.05 + 0.2 + 0.475 = 0.725
+            // Total reward: 4.275 + 4.275 (two blocks)
+            // Used gas: 1
+            // Total 10.725 + 0.725 + 4.275 + 4.275 - 1 = 19
             blockChain.Append(block, commit);
 
             actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, rewardCurrency);
-            expectedBalance = mintAmount + new FungibleAssetValue(rewardCurrency, 20, 0);
+            expectedBalance = rewardCurrency * 19;
+            Assert.Equal(expectedBalance, actualBalance);
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            // Mining reward: 5 + 1 / 2 = 5.5
+            // Proposer base reward 5.5 * 0.01, proposer bonus reward 5.5 * 0.04, Commission (5.5 - 0.275) * 0.1
+            // Base reward: (5.5 * 0.01 + 5.5 * 0.04) + (5.5 - 0.275) * 0.1 = 0.7975
+            // Total 19 + 0.7975 = 19.7975
+            blockChain.Append(block, commit);
+            actualBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(adminAddress, rewardCurrency);
+            expectedBalance = new FungibleAssetValue(rewardCurrency, 19, 797500000000000000);
             Assert.Equal(expectedBalance, actualBalance);
         }
 
