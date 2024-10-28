@@ -594,7 +594,7 @@ public class ValidatorDelegationTestBase
         var decimalPart = Enumerable.Range(0, decimalLength)
             .Aggregate(string.Empty, (s, i) => s + random.Next(10));
         var integerPart = Enumerable.Range(0, integerLength)
-            .Aggregate(string.Empty, (s, i) => s + (integerLength > 1 ? random.Next(10) : random.Next(1, 10)));
+            .Aggregate(string.Empty, (s, i) => s + (i != 0 ? random.Next(10) : random.Next(1, 10)));
         var isDecimalZero = decimalLength == 0 || decimalPart.All(c => c == '0');
         var text = isDecimalZero is false ? $"{integerPart}.{decimalPart}" : integerPart;
 
