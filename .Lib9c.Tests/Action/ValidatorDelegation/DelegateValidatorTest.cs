@@ -2,13 +2,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.Model.Stake;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
@@ -97,6 +95,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
     [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
+    [InlineData(559431555)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -259,7 +258,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         public ValidatorInfo(Random random)
         {
             Balance = GetRandomFAV(DelegationCurrency, random);
-            Cash = GetRandomCash(random, Balance, 99);
+            Cash = GetRandomCash(random, Balance, minDivisor: 2);
             CashToDelegate = GetRandomCash(random, Balance - Cash);
         }
 

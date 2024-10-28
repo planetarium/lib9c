@@ -131,6 +131,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
+    [InlineData(707058493)]
     public void Execute_Theory_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
