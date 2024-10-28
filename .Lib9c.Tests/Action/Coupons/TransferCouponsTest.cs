@@ -35,49 +35,62 @@ namespace Lib9c.Tests.Action.Coupons
                         .Add(CouponsFixture.Guid3, coupon3));
 
             // can't transfer a nonexistent coupon
-            Assert.Throws<FailedLoadStateException>(() => new TransferCoupons(
-                    ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty.Add(
-                            new Guid("97529656-CB7F-45C6-8466-A072DD2DBFBD"))))
-                .Execute(
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress1,
-                    }));
+            Assert.Throws<FailedLoadStateException>(
+                () => new TransferCoupons(
+                        ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
+                            .Add(
+                                CouponsFixture.AgentAddress2,
+                                ImmutableHashSet<Guid>.Empty.Add(
+                                    new Guid("97529656-CB7F-45C6-8466-A072DD2DBFBD"))))
+                    .Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = CouponsFixture.AgentAddress1,
+                        }));
 
             // can't transfer coupon that's not mine
-            Assert.Throws<FailedLoadStateException>(() => new TransferCoupons(
-                    ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress1, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
-                .Execute(
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress2,
-                    }));
+            Assert.Throws<FailedLoadStateException>(
+                () => new TransferCoupons(
+                        ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
+                            .Add(
+                                CouponsFixture.AgentAddress1,
+                                ImmutableHashSet<Guid>.Empty
+                                    .Add(CouponsFixture.Guid1)))
+                    .Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = CouponsFixture.AgentAddress2,
+                        }));
 
             // can't transfer a coupon to two different people
-            Assert.Throws<FailedLoadStateException>(() => new TransferCoupons(
-                    ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1))
-                        .Add(CouponsFixture.AgentAddress3, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
-                .Execute(
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress1,
-                    }));
+            Assert.Throws<FailedLoadStateException>(
+                () => new TransferCoupons(
+                        ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
+                            .Add(
+                                CouponsFixture.AgentAddress2,
+                                ImmutableHashSet<Guid>.Empty
+                                    .Add(CouponsFixture.Guid1))
+                            .Add(
+                                CouponsFixture.AgentAddress3,
+                                ImmutableHashSet<Guid>.Empty
+                                    .Add(CouponsFixture.Guid1)))
+                    .Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = CouponsFixture.AgentAddress1,
+                        }));
 
             // transfer to self
             var expected = state.GetCouponWallet(CouponsFixture.AgentAddress1);
             state = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress1, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
+                        .Add(
+                            CouponsFixture.AgentAddress1,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid1)))
                 .Execute(
                     new ActionContext
                     {
@@ -102,8 +115,10 @@ namespace Lib9c.Tests.Action.Coupons
             expected = state.GetCouponWallet(CouponsFixture.AgentAddress1);
             state = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
+                        .Add(
+                            CouponsFixture.AgentAddress2,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid1)))
                 .Execute(
                     new ActionContext
                     {
@@ -119,16 +134,19 @@ namespace Lib9c.Tests.Action.Coupons
                 state.GetCouponWallet(CouponsFixture.AgentAddress2));
 
             // can't transfer a coupon twice
-            Assert.Throws<FailedLoadStateException>(() => new TransferCoupons(
-                    ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)))
-                .Execute(
-                    new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = CouponsFixture.AgentAddress1,
-                    }));
+            Assert.Throws<FailedLoadStateException>(
+                () => new TransferCoupons(
+                        ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
+                            .Add(
+                                CouponsFixture.AgentAddress2,
+                                ImmutableHashSet<Guid>.Empty
+                                    .Add(CouponsFixture.Guid1)))
+                    .Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = CouponsFixture.AgentAddress1,
+                        }));
 
             // multiple transfer
             state = state
@@ -147,11 +165,15 @@ namespace Lib9c.Tests.Action.Coupons
 
             state = new TransferCoupons(
                     ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                        .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid1)
-                            .Add(CouponsFixture.Guid2))
-                        .Add(CouponsFixture.AgentAddress3, ImmutableHashSet<Guid>.Empty
-                            .Add(CouponsFixture.Guid3)))
+                        .Add(
+                            CouponsFixture.AgentAddress2,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid1)
+                                .Add(CouponsFixture.Guid2))
+                        .Add(
+                            CouponsFixture.AgentAddress3,
+                            ImmutableHashSet<Guid>.Empty
+                                .Add(CouponsFixture.Guid3)))
                 .Execute(
                     new ActionContext
                     {
@@ -177,11 +199,15 @@ namespace Lib9c.Tests.Action.Coupons
         {
             var action = new TransferCoupons(
                 ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                    .Add(CouponsFixture.AgentAddress1, ImmutableHashSet<Guid>.Empty
-                        .Add(CouponsFixture.Guid1))
-                    .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                        .Add(CouponsFixture.Guid3)
-                        .Add(CouponsFixture.Guid2))
+                    .Add(
+                        CouponsFixture.AgentAddress1,
+                        ImmutableHashSet<Guid>.Empty
+                            .Add(CouponsFixture.Guid1))
+                    .Add(
+                        CouponsFixture.AgentAddress2,
+                        ImmutableHashSet<Guid>.Empty
+                            .Add(CouponsFixture.Guid3)
+                            .Add(CouponsFixture.Guid2))
                     .Add(CouponsFixture.AgentAddress3, ImmutableHashSet<Guid>.Empty));
 
             var expected = new Bencodex.Types.Dictionary(
@@ -212,36 +238,43 @@ namespace Lib9c.Tests.Action.Coupons
         {
             var expected = new TransferCoupons(
                 ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty
-                    .Add(CouponsFixture.AgentAddress1, ImmutableHashSet<Guid>.Empty
-                        .Add(CouponsFixture.Guid1))
-                    .Add(CouponsFixture.AgentAddress2, ImmutableHashSet<Guid>.Empty
-                        .Add(CouponsFixture.Guid3)
-                        .Add(CouponsFixture.Guid2))
+                    .Add(
+                        CouponsFixture.AgentAddress1,
+                        ImmutableHashSet<Guid>.Empty
+                            .Add(CouponsFixture.Guid1))
+                    .Add(
+                        CouponsFixture.AgentAddress2,
+                        ImmutableHashSet<Guid>.Empty
+                            .Add(CouponsFixture.Guid3)
+                            .Add(CouponsFixture.Guid2))
                     .Add(CouponsFixture.AgentAddress3, ImmutableHashSet<Guid>.Empty));
 
             var actual =
                 new TransferCoupons(ImmutableDictionary<Address, IImmutableSet<Guid>>.Empty);
 
-            actual.LoadPlainValue(Dictionary.Empty
-                .Add("type_id", "transfer_coupons")
-                .Add("values", new Bencodex.Types.Dictionary(
-                    ImmutableDictionary<string, IValue>.Empty
-                        .Add(
-                            "couponsPerRecipient",
-                            Bencodex.Types.Dictionary.Empty
-                                .Add(
-                                    (Bencodex.Types.Binary)CouponsFixture.AgentAddress1.ByteArray,
-                                    Bencodex.Types.List.Empty
-                                .Add(CouponsFixture.Guid1.ToByteArray()))
-                                .Add(
-                                    (Bencodex.Types.Binary)CouponsFixture.AgentAddress2.ByteArray,
-                                    Bencodex.Types.List.Empty
-                                        .Add(CouponsFixture.Guid2.ToByteArray())
-                                        .Add(CouponsFixture.Guid3.ToByteArray()))
-                                .Add(
-                                    (Bencodex.Types.Binary)CouponsFixture.AgentAddress3.ByteArray,
-                                    Bencodex.Types.List.Empty)))
-                    .SetItem("id", new Guid("AE3FA099-B97C-480F-9E3A-4E1FEF1EA783").Serialize())));
+            actual.LoadPlainValue(
+                Dictionary.Empty
+                    .Add("type_id", "transfer_coupons")
+                    .Add(
+                        "values",
+                        new Bencodex.Types.Dictionary(
+                                ImmutableDictionary<string, IValue>.Empty
+                                    .Add(
+                                        "couponsPerRecipient",
+                                        Bencodex.Types.Dictionary.Empty
+                                            .Add(
+                                                (Bencodex.Types.Binary)CouponsFixture.AgentAddress1.ByteArray,
+                                                Bencodex.Types.List.Empty
+                                                    .Add(CouponsFixture.Guid1.ToByteArray()))
+                                            .Add(
+                                                (Bencodex.Types.Binary)CouponsFixture.AgentAddress2.ByteArray,
+                                                Bencodex.Types.List.Empty
+                                                    .Add(CouponsFixture.Guid2.ToByteArray())
+                                                    .Add(CouponsFixture.Guid3.ToByteArray()))
+                                            .Add(
+                                                (Bencodex.Types.Binary)CouponsFixture.AgentAddress3.ByteArray,
+                                                Bencodex.Types.List.Empty)))
+                            .SetItem("id", new Guid("AE3FA099-B97C-480F-9E3A-4E1FEF1EA783").Serialize())));
             Assert.Equal(expected.CouponsPerRecipient, actual.CouponsPerRecipient);
         }
     }

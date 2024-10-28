@@ -20,9 +20,12 @@ namespace Lib9c.Tests.Model
         }
 
         [Fact]
-        public void SerializeExceptions() => ExceptionTest.AssertException(
-            new UpdateListVersionException("test"),
-            new UpdateListQuestsCountException("test"));
+        public void SerializeExceptions()
+        {
+            ExceptionTest.AssertException(
+                new UpdateListVersionException("test"),
+                new UpdateListQuestsCountException("test"));
+        }
 
         [Fact]
         public void GetEnumerator()
@@ -194,13 +197,14 @@ namespace Lib9c.Tests.Model
             );
 
             Assert.Equal(1, questList.ListVersion);
-            Assert.Throws<UpdateListVersionException>(() =>
-                questList.UpdateListV1(
-                    listVersion,
-                    _tableSheets.QuestSheet,
-                    _tableSheets.QuestRewardSheet,
-                    _tableSheets.QuestItemRewardSheet,
-                    _tableSheets.EquipmentItemRecipeSheet));
+            Assert.Throws<UpdateListVersionException>(
+                () =>
+                    questList.UpdateListV1(
+                        listVersion,
+                        _tableSheets.QuestSheet,
+                        _tableSheets.QuestRewardSheet,
+                        _tableSheets.QuestItemRewardSheet,
+                        _tableSheets.EquipmentItemRecipeSheet));
         }
 
         [Fact]
@@ -215,13 +219,14 @@ namespace Lib9c.Tests.Model
             );
 
             Assert.Equal(1, questList.ListVersion);
-            Assert.Throws<UpdateListQuestsCountException>(() =>
-                questList.UpdateListV1(
-                    2,
-                    _tableSheets.QuestSheet,
-                    _tableSheets.QuestRewardSheet,
-                    _tableSheets.QuestItemRewardSheet,
-                    _tableSheets.EquipmentItemRecipeSheet));
+            Assert.Throws<UpdateListQuestsCountException>(
+                () =>
+                    questList.UpdateListV1(
+                        2,
+                        _tableSheets.QuestSheet,
+                        _tableSheets.QuestRewardSheet,
+                        _tableSheets.QuestItemRewardSheet,
+                        _tableSheets.EquipmentItemRecipeSheet));
         }
 
         [Fact]

@@ -13,20 +13,21 @@ namespace Lib9c.Tests.Action.Guild
 
     public class MakeGuildTest
     {
-        public static IEnumerable<object[]> TestCases => new[]
-        {
-            new object[]
+        public static IEnumerable<object[]> TestCases =>
+            new[]
             {
-                AddressUtil.CreateAgentAddress(),
-                // TODO: Update to false when Guild features are enabled.
-                true,
-            },
-            new object[]
-            {
-                GuildConfig.PlanetariumGuildOwner,
-                false,
-            },
-        };
+                new object[]
+                {
+                    AddressUtil.CreateAgentAddress(),
+                    // TODO: Update to false when Guild features are enabled.
+                    true,
+                },
+                new object[]
+                {
+                    GuildConfig.PlanetariumGuildOwner,
+                    false,
+                },
+            };
 
         [Fact]
         public void Serialization()
@@ -47,19 +48,22 @@ namespace Lib9c.Tests.Action.Guild
 
             if (fail)
             {
-                Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                }));
+                Assert.Throws<InvalidOperationException>(
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = world,
+                            Signer = guildMasterAddress,
+                        }));
             }
             else
             {
-                world = action.Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                });
+                world = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMasterAddress,
+                    });
 
                 var guildAddress = world.GetJoinedGuild(guildMasterAddress);
                 Assert.NotNull(guildAddress);

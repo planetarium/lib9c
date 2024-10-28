@@ -180,8 +180,9 @@ namespace Lib9c.Tests.TableData
 
             var lastRound = _arenaSheet.OrderedList[^1].Round[^1];
             blockIndex = lastRound.EndBlockIndex + 1;
-            Assert.Throws<InvalidOperationException>(() =>
-                _arenaSheet.GetRowByBlockIndex(blockIndex));
+            Assert.Throws<InvalidOperationException>(
+                () =>
+                    _arenaSheet.GetRowByBlockIndex(blockIndex));
         }
 
         [Fact]
@@ -205,8 +206,9 @@ namespace Lib9c.Tests.TableData
 
             var lastRound = _arenaSheet.OrderedList[^1].Round[^1];
             blockIndex = lastRound.EndBlockIndex + 1;
-            Assert.Throws<RoundNotFoundException>(() =>
-                _arenaSheet.GetRoundByBlockIndex(blockIndex));
+            Assert.Throws<RoundNotFoundException>(
+                () =>
+                    _arenaSheet.GetRoundByBlockIndex(blockIndex));
         }
     }
 }

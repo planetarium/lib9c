@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Model.State
                 }
             );
 
-            Dictionary serialized = (Dictionary)credits.Serialize();
+            var serialized = (Dictionary)credits.Serialize();
             var deserialized = new CreditsState(serialized);
 
             Assert.Equal(credits.Names, deserialized.Names);

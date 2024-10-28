@@ -63,10 +63,12 @@ namespace Lib9c.Tests.Action
             var act = new MintAssets(r, null);
             var expected = Dictionary.Empty
                 .Add("type_id", MintAssets.TypeIdentifier)
-                .Add("values", List.Empty
-                    .Add(Null.Value)
-                    .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
-                    .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add(Null.Value)
+                        .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
+                        .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
             Assert.Equal(
                 expected,
                 act.PlainValue
@@ -75,10 +77,12 @@ namespace Lib9c.Tests.Action
             var act2 = new MintAssets(r, "memo");
             var expected2 = Dictionary.Empty
                 .Add("type_id", MintAssets.TypeIdentifier)
-                .Add("values", List.Empty
-                    .Add((Text)"memo")
-                    .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
-                    .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add((Text)"memo")
+                        .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
+                        .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
             Assert.Equal(
                 expected2,
                 act2.PlainValue
@@ -90,10 +94,12 @@ namespace Lib9c.Tests.Action
         {
             var pv = Dictionary.Empty
                 .Add("type_id", "mint_assets")
-                .Add("values", List.Empty
-                    .Add(default(Null))
-                    .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
-                    .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add(default(Null))
+                        .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
+                        .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
             var act = new MintAssets();
             act.LoadPlainValue(pv);
 
@@ -107,10 +113,12 @@ namespace Lib9c.Tests.Action
 
             var pv2 = Dictionary.Empty
                 .Add("type_id", "mint_assets")
-                .Add("values", List.Empty
-                    .Add((Text)"memo")
-                    .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
-                    .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add((Text)"memo")
+                        .Add(new List(default(Address).Bencoded, (_ncgCurrency * 100).Serialize(), default(Null)))
+                        .Add(new List(new Address("0x47d082a115c63e7b58b1532d20e631538eafadde").Bencoded, (_ncgCurrency * 1000).Serialize(), default(Null))));
             var act2 = new MintAssets();
             act2.LoadPlainValue(pv2);
             Assert.Equal("memo", act2.Memo);
@@ -127,7 +135,7 @@ namespace Lib9c.Tests.Action
                 },
                 null
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = _prevState,
@@ -149,8 +157,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_FungibleItemValue()
         {
-            IWorld prevState = GenerateAvatar(_prevState, out Address avatarAddress);
-            HashDigest<SHA256> fungibleId = HashDigest<SHA256>.FromString(
+            var prevState = GenerateAvatar(_prevState, out var avatarAddress);
+            var fungibleId = HashDigest<SHA256>.FromString(
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
 
@@ -165,7 +173,7 @@ namespace Lib9c.Tests.Action
                 },
                 "Execute_With_FungibleItemValue"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -180,15 +188,15 @@ namespace Lib9c.Tests.Action
             var avatarState = nextState.GetAvatarState(avatarAddress);
             Assert.Single(avatarState.mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
-            Assert.Equal(new[] { (fungibleId, 42) }, mail.FungibleIdAndCounts);
+            Assert.Equal(new[] { (fungibleId, 42), }, mail.FungibleIdAndCounts);
             Assert.Equal(action.Memo, mail.Memo);
         }
 
         [Fact]
         public void Execute_With_Mixed()
         {
-            IWorld prevState = GenerateAvatar(_prevState, out Address avatarAddress);
-            HashDigest<SHA256> fungibleId = HashDigest<SHA256>.FromString(
+            var prevState = GenerateAvatar(_prevState, out var avatarAddress);
+            var fungibleId = HashDigest<SHA256>.FromString(
                 "7f5d25371e58c0f3d5a33511450f73c2e0fa4fac32a92e1cbe64d3bf2fef6328"
             );
 
@@ -209,7 +217,7 @@ namespace Lib9c.Tests.Action
                 },
                 "Execute_With_FungibleItemValue"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -224,8 +232,8 @@ namespace Lib9c.Tests.Action
             var avatarState = nextState.GetAvatarState(avatarAddress);
             Assert.Single(avatarState.mailBox);
             var mail = Assert.IsType<UnloadFromMyGaragesRecipientMail>(avatarState.mailBox.First());
-            Assert.Equal(new[] { (fungibleId, 42) }, mail.FungibleIdAndCounts);
-            Assert.Equal(new[] { (avatarAddress, Currencies.StakeRune * 123) }, mail.FungibleAssetValues);
+            Assert.Equal(new[] { (fungibleId, 42), }, mail.FungibleIdAndCounts);
+            Assert.Equal(new[] { (avatarAddress, Currencies.StakeRune * 123), }, mail.FungibleAssetValues);
             Assert.Equal(action.Memo, mail.Memo);
         }
 
@@ -252,7 +260,7 @@ namespace Lib9c.Tests.Action
             );
 
             // Allows minters
-            foreach (Address m in _minters)
+            foreach (var m in _minters)
             {
                 _ = action.Execute(
                     new ActionContext()
@@ -265,28 +273,30 @@ namespace Lib9c.Tests.Action
             }
 
             // Denies others
-            Assert.Throws<InvalidMinterException>(() => action.Execute(
-                new ActionContext()
-                {
-                    PreviousState = _prevState,
-                    Signer = default,
-                    BlockIndex = 1,
-                }
-            ));
+            Assert.Throws<InvalidMinterException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = _prevState,
+                        Signer = default,
+                        BlockIndex = 1,
+                    }
+                ));
         }
 
         [Fact]
         public void Execute_Crystal()
         {
-            var tx = Transaction.Deserialize(Convert.FromBase64String(
-                "ZDE6UzcxOjBFAiEAhzt5mDMzPwi6y+W+DJ53T4TKwt6YMaFTi38rKYqf7ZMCICV36ngA3Gi+rXkdG5hCUtlLXjAz8H2IKMNaCdCy/N90MTphbGR1Nzp0eXBlX2lkdTExOm1pbnRfYXNzZXRzdTY6dmFsdWVzbHU3Mzp7ImlhcCI6IHsiZ19za3UiOiAiZ19wa2dfYmxhY2tmcmlkYXkwMSIsICJhX3NrdSI6ICJhX3BrZ19ibGFja2ZyaWRheTAxIn19bDIwOgNS/yy36WH9ZHgDqZJiTdhQeCGFbGR1MTM6ZGVjaW1hbFBsYWNlczE6EnU3Om1pbnRlcnNudTY6dGlja2VydTc6Q1JZU1RBTGVpMjUwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGVlbmVsMjA6H3yZ4KY1m33Wn0P0t+LAvTf5oidubDMyOjmR4E3YCNwLwksh9a23vxmXMS+HANrxM0vzSTbooIE6aTMwMDAwZWVlbDIwOh98meCmNZt91p9D9LfiwL03+aInbmwzMjr4+vksnA0OjgZpQ2Hqh7/IspqK6N6TBEuYRwpXY27Q4Gk0MDBlZWVlZWUxOmczMjpyn6JpWGSKNbU+jjkF0R7FOxtJKb9fSZiErtffYW9ZEzE6bGk0ZTE6bWxkdTEzOmRlY2ltYWxQbGFjZXMxOhJ1NzptaW50ZXJzbnU2OnRpY2tlcnU0Ok1lYWRlaTEwMDAwMDAwMDAwMDAwMDAwMDBlZTE6bmkxMTU3N2UxOnA2NToEq54xog2Nv1BCv8Js6dntmg4yrXh6HlqjroGI+lFDhhU1rMcTLNjnTUwfC5T4Q1deOt1piNPMsfVNfFn7lTXXiTE6czIwOhwq6XOAz7T3MgSeRU9tmiXUlnxvMTp0dTI3OjIyMDEtMDEtMzFUMjM6NTk6NTkuOTk5MDAwWjE6dWxlZQ=="));
+            var tx = Transaction.Deserialize(
+                Convert.FromBase64String(
+                    "ZDE6UzcxOjBFAiEAhzt5mDMzPwi6y+W+DJ53T4TKwt6YMaFTi38rKYqf7ZMCICV36ngA3Gi+rXkdG5hCUtlLXjAz8H2IKMNaCdCy/N90MTphbGR1Nzp0eXBlX2lkdTExOm1pbnRfYXNzZXRzdTY6dmFsdWVzbHU3Mzp7ImlhcCI6IHsiZ19za3UiOiAiZ19wa2dfYmxhY2tmcmlkYXkwMSIsICJhX3NrdSI6ICJhX3BrZ19ibGFja2ZyaWRheTAxIn19bDIwOgNS/yy36WH9ZHgDqZJiTdhQeCGFbGR1MTM6ZGVjaW1hbFBsYWNlczE6EnU3Om1pbnRlcnNudTY6dGlja2VydTc6Q1JZU1RBTGVpMjUwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMGVlbmVsMjA6H3yZ4KY1m33Wn0P0t+LAvTf5oidubDMyOjmR4E3YCNwLwksh9a23vxmXMS+HANrxM0vzSTbooIE6aTMwMDAwZWVlbDIwOh98meCmNZt91p9D9LfiwL03+aInbmwzMjr4+vksnA0OjgZpQ2Hqh7/IspqK6N6TBEuYRwpXY27Q4Gk0MDBlZWVlZWUxOmczMjpyn6JpWGSKNbU+jjkF0R7FOxtJKb9fSZiErtffYW9ZEzE6bGk0ZTE6bWxkdTEzOmRlY2ltYWxQbGFjZXMxOhJ1NzptaW50ZXJzbnU2OnRpY2tlcnU0Ok1lYWRlaTEwMDAwMDAwMDAwMDAwMDAwMDBlZTE6bmkxMTU3N2UxOnA2NToEq54xog2Nv1BCv8Js6dntmg4yrXh6HlqjroGI+lFDhhU1rMcTLNjnTUwfC5T4Q1deOt1piNPMsfVNfFn7lTXXiTE6czIwOhwq6XOAz7T3MgSeRU9tmiXUlnxvMTp0dTI3OjIyMDEtMDEtMzFUMjM6NTk6NTkuOTk5MDAwWjE6dWxlZQ=="));
             var a = tx.Actions.First();
             var action = new MintAssets();
             action.LoadPlainValue(a);
             var address = action.MintSpecs!.First().Recipient;
             var avatarAddress = action.MintSpecs.Last().Recipient;
-            IWorld prevState = GenerateAvatar(_prevState, address, avatarAddress);
-            IWorld nextState = action.Execute(
+            var prevState = GenerateAvatar(_prevState, address, avatarAddress);
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,

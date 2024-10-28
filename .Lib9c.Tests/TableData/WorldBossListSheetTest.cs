@@ -51,8 +51,9 @@ namespace Lib9c.Tests.TableData
 
             Assert.Equal(1, sheet.FindPreviousRaidIdByBlockIndex(150));
             Assert.Equal(2, sheet.FindPreviousRaidIdByBlockIndex(350));
-            Assert.Throws<InvalidOperationException>(() =>
-                sheet.FindPreviousRaidIdByBlockIndex(100));
+            Assert.Throws<InvalidOperationException>(
+                () =>
+                    sheet.FindPreviousRaidIdByBlockIndex(100));
         }
     }
 }

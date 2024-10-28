@@ -43,9 +43,9 @@ namespace Lib9c.Tests.Model.Order
         [Fact]
         public void Serialize()
         {
-            Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
-            Guid itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
+            var itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var order = OrderFactory.CreateNonFungibleOrder(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 orderId,
@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Model.Order
             Assert.Equal(itemId, order.TradableId);
             Assert.Equal(ItemSubType.Weapon, order.ItemSubType);
 
-            Dictionary serialized = (Dictionary)order.Serialize();
+            var serialized = (Dictionary)order.Serialize();
 
             Assert.Equal(order, new NonFungibleOrder(serialized));
         }
@@ -72,13 +72,13 @@ namespace Lib9c.Tests.Model.Order
         [Fact]
         public void Serialize_DotNet_Api()
         {
-            Guid orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
-            Guid itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var orderId = new Guid("6d460c1a-755d-48e4-ad67-65d5f519dbc8");
+            var itemId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            Currency currency = Currency.Legacy("NCG", 2, null);
+            var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 Addresses.Admin,
                 Addresses.Blacksmith,
                 orderId,
@@ -122,11 +122,11 @@ namespace Lib9c.Tests.Model.Order
         )
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = requiredBlockIndex;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 agentAddress,
                 avatarAddress,
                 orderId,
@@ -158,10 +158,10 @@ namespace Lib9c.Tests.Model.Order
         public void Sell(ItemSubType itemSubType, bool add, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -184,7 +184,7 @@ namespace Lib9c.Tests.Model.Order
 
             if (exc is null)
             {
-                ITradableItem result = order.Sell2(_avatarState);
+                var result = order.Sell2(_avatarState);
                 Assert.Equal(order.ExpiredBlockIndex, result.RequiredBlockIndex);
                 if (result is IEquippableItem equippableItem1)
                 {
@@ -209,10 +209,10 @@ namespace Lib9c.Tests.Model.Order
         public void Sell2(ItemSubType itemSubType, bool add, bool isLock, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -244,14 +244,14 @@ namespace Lib9c.Tests.Model.Order
 
             if (exc is null)
             {
-                ITradableItem result = order.Sell(_avatarState);
+                var result = order.Sell(_avatarState);
                 Assert.Equal(order.ExpiredBlockIndex, result.RequiredBlockIndex);
                 if (result is IEquippableItem equippableItem1)
                 {
                     Assert.False(equippableItem1.Equipped);
                 }
 
-                Assert.True(_avatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out Inventory.Item inventoryItem));
+                Assert.True(_avatarState.inventory.TryGetLockedItem(new OrderLock(orderId), out var inventoryItem));
                 Assert.Equal(result, (ITradableItem)inventoryItem.item);
             }
             else
@@ -268,11 +268,11 @@ namespace Lib9c.Tests.Model.Order
         public void Digest(ItemSubType itemSubType, bool add, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -289,9 +289,9 @@ namespace Lib9c.Tests.Model.Order
 
             if (exc is null)
             {
-                int cp = tradableItem is INonFungibleItem nonFungibleItem ? CPHelper.GetCP(nonFungibleItem, _tableSheets.CostumeStatSheet) : 0;
+                var cp = tradableItem is INonFungibleItem nonFungibleItem ? CPHelper.GetCP(nonFungibleItem, _tableSheets.CostumeStatSheet) : 0;
                 Assert.True(cp > 0);
-                OrderDigest digest = order.Digest2(_avatarState, _tableSheets.CostumeStatSheet);
+                var digest = order.Digest2(_avatarState, _tableSheets.CostumeStatSheet);
 
                 Assert.Equal(orderId, digest.OrderId);
                 Assert.Equal(order.StartedBlockIndex, digest.StartedBlockIndex);
@@ -325,14 +325,14 @@ namespace Lib9c.Tests.Model.Order
         )
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
             var agentAddress = useAgentAddress ? _avatarState.agentAddress : default;
             var avatarAddress = useAvatarAddress ? _avatarState.address : default;
             var tradableId = useTradableId ? tradableItem.TradableId : default;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 agentAddress,
                 avatarAddress,
                 orderId,
@@ -374,14 +374,14 @@ namespace Lib9c.Tests.Model.Order
         )
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
             var agentAddress = useAgentAddress ? _avatarState.agentAddress : default;
             var avatarAddress = useAvatarAddress ? _avatarState.address : default;
             var tradableId = useTradableId ? tradableItem.TradableId : default;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 agentAddress,
                 avatarAddress,
                 orderId,
@@ -417,11 +417,11 @@ namespace Lib9c.Tests.Model.Order
         public void Cancel(ItemSubType itemSubType, long blockIndex, bool add, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -447,7 +447,7 @@ namespace Lib9c.Tests.Model.Order
                 );
                 Assert.Equal(order.ExpiredBlockIndex, nonFungibleItem.RequiredBlockIndex);
 
-                ITradableItem result = order.Cancel2(_avatarState, blockIndex);
+                var result = order.Cancel2(_avatarState, blockIndex);
 
                 Assert.Equal(blockIndex, result.RequiredBlockIndex);
                 Assert.Equal(itemSubType, result.ItemSubType);
@@ -473,11 +473,11 @@ namespace Lib9c.Tests.Model.Order
         public void Cancel2(ItemSubType itemSubType, long blockIndex, bool isLock, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == itemSubType);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -498,12 +498,12 @@ namespace Lib9c.Tests.Model.Order
             {
                 var orderLock = new OrderLock(orderId);
                 Assert.True(
-                    _avatarState.inventory.TryGetLockedItem(orderLock, out Inventory.Item inventoryItem)
+                    _avatarState.inventory.TryGetLockedItem(orderLock, out var inventoryItem)
                 );
                 var nonFungibleItem = (INonFungibleItem)inventoryItem.item;
                 Assert.Equal(order.ExpiredBlockIndex, nonFungibleItem.RequiredBlockIndex);
 
-                ITradableItem result = order.Cancel(_avatarState, blockIndex);
+                var result = order.Cancel(_avatarState, blockIndex);
 
                 Assert.Equal(blockIndex, result.RequiredBlockIndex);
                 Assert.Equal(itemSubType, result.ItemSubType);
@@ -545,13 +545,13 @@ namespace Lib9c.Tests.Model.Order
         )
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Weapon);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
             var agentAddress = useAgentAddress ? _avatarState.agentAddress : default;
             var avatarAddress = useAvatarAddress ? _avatarState.address : default;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 agentAddress,
                 avatarAddress,
                 orderId,
@@ -560,15 +560,15 @@ namespace Lib9c.Tests.Model.Order
                 1,
                 equalItemSubtype ? ItemSubType.Weapon : ItemSubType.Armor
             );
-            FungibleAssetValue price = usePrice ? order.Price : _currency * 0;
-            Guid tradableId = useTradableId ? tradableItem.TradableId : default;
+            var price = usePrice ? order.Price : _currency * 0;
+            var tradableId = useTradableId ? tradableItem.TradableId : default;
             if (add)
             {
                 _avatarState.inventory.AddNonFungibleItem(item);
                 order.Sell2(_avatarState);
             }
 
-            long blockIndex = expire ? order.ExpiredBlockIndex + 1 : order.ExpiredBlockIndex;
+            var blockIndex = expire ? order.ExpiredBlockIndex + 1 : order.ExpiredBlockIndex;
 
             Assert.Equal(expected, order.ValidateTransfer2(_avatarState, tradableId, price, blockIndex));
         }
@@ -595,13 +595,13 @@ namespace Lib9c.Tests.Model.Order
         )
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Weapon);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
             var agentAddress = useAgentAddress ? _avatarState.agentAddress : default;
             var avatarAddress = useAvatarAddress ? _avatarState.address : default;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 agentAddress,
                 avatarAddress,
                 orderId,
@@ -610,15 +610,15 @@ namespace Lib9c.Tests.Model.Order
                 1,
                 equalItemSubtype ? ItemSubType.Weapon : ItemSubType.Armor
             );
-            FungibleAssetValue price = usePrice ? order.Price : _currency * 0;
-            Guid tradableId = useTradableId ? tradableItem.TradableId : default;
+            var price = usePrice ? order.Price : _currency * 0;
+            var tradableId = useTradableId ? tradableItem.TradableId : default;
             if (add)
             {
                 _avatarState.inventory.AddNonFungibleItem(item);
                 order.Sell(_avatarState);
             }
 
-            long blockIndex = expire ? order.ExpiredBlockIndex + 1 : order.ExpiredBlockIndex;
+            var blockIndex = expire ? order.ExpiredBlockIndex + 1 : order.ExpiredBlockIndex;
 
             Assert.Equal(expected, order.ValidateTransfer(_avatarState, tradableId, price, blockIndex));
         }
@@ -629,11 +629,11 @@ namespace Lib9c.Tests.Model.Order
         public void Transfer(bool add, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Weapon);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -677,11 +677,11 @@ namespace Lib9c.Tests.Model.Order
         public void Transfer2(bool add, Type exc)
         {
             var row = _tableSheets.ItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Weapon);
-            ItemBase item = ItemFactory.CreateItem(row, new TestRandom());
-            Guid orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
-            ITradableItem tradableItem = (ITradableItem)item;
+            var item = ItemFactory.CreateItem(row, new TestRandom());
+            var orderId = new Guid("15396359-04db-68d5-f24a-d89c18665900");
+            var tradableItem = (ITradableItem)item;
             tradableItem.RequiredBlockIndex = 1;
-            NonFungibleOrder order = OrderFactory.CreateNonFungibleOrder(
+            var order = OrderFactory.CreateNonFungibleOrder(
                 _avatarState.agentAddress,
                 _avatarState.address,
                 orderId,
@@ -720,97 +720,100 @@ namespace Lib9c.Tests.Model.Order
         }
 
 #pragma warning disable SA1204
-        public static IEnumerable<object[]> ValidateMemberData() => new List<object[]>
+        public static IEnumerable<object[]> ValidateMemberData()
         {
-            new object[]
+            return new List<object[]>
             {
-                1,
-                0,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                true,
-                ItemSubType.Weapon,
-                ItemSubType.Weapon,
-                null,
-            },
-            new object[]
-            {
-                1,
-                0,
-                default,
-                default,
-                false,
-                ItemSubType.Weapon,
-                ItemSubType.Weapon,
-                typeof(InvalidAddressException),
-            },
-            new object[]
-            {
-                0,
-                0,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                false,
-                ItemSubType.Food,
-                ItemSubType.Food,
-                typeof(InvalidItemCountException),
-            },
-            new object[]
-            {
-                -1,
-                0,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                false,
-                ItemSubType.Food,
-                ItemSubType.Food,
-                typeof(InvalidItemCountException),
-            },
-            new object[]
-            {
-                2,
-                0,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                false,
-                ItemSubType.FullCostume,
-                ItemSubType.FullCostume,
-                typeof(InvalidItemCountException),
-            },
-            new object[]
-            {
-                1,
-                0,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                false,
-                ItemSubType.Weapon,
-                ItemSubType.Weapon,
-                typeof(ItemDoesNotExistException),
-            },
-            new object[]
-            {
-                1,
-                0,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                true,
-                ItemSubType.Weapon,
-                ItemSubType.Food,
-                typeof(InvalidItemTypeException),
-            },
-            new object[]
-            {
-                1,
-                100,
-                Addresses.Admin,
-                Addresses.Blacksmith,
-                true,
-                ItemSubType.Weapon,
-                ItemSubType.Weapon,
-                typeof(RequiredBlockIndexException),
-            },
-        };
+                new object[]
+                {
+                    1,
+                    0,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    true,
+                    ItemSubType.Weapon,
+                    ItemSubType.Weapon,
+                    null,
+                },
+                new object[]
+                {
+                    1,
+                    0,
+                    default,
+                    default,
+                    false,
+                    ItemSubType.Weapon,
+                    ItemSubType.Weapon,
+                    typeof(InvalidAddressException),
+                },
+                new object[]
+                {
+                    0,
+                    0,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    false,
+                    ItemSubType.Food,
+                    ItemSubType.Food,
+                    typeof(InvalidItemCountException),
+                },
+                new object[]
+                {
+                    -1,
+                    0,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    false,
+                    ItemSubType.Food,
+                    ItemSubType.Food,
+                    typeof(InvalidItemCountException),
+                },
+                new object[]
+                {
+                    2,
+                    0,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    false,
+                    ItemSubType.FullCostume,
+                    ItemSubType.FullCostume,
+                    typeof(InvalidItemCountException),
+                },
+                new object[]
+                {
+                    1,
+                    0,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    false,
+                    ItemSubType.Weapon,
+                    ItemSubType.Weapon,
+                    typeof(ItemDoesNotExistException),
+                },
+                new object[]
+                {
+                    1,
+                    0,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    true,
+                    ItemSubType.Weapon,
+                    ItemSubType.Food,
+                    typeof(InvalidItemTypeException),
+                },
+                new object[]
+                {
+                    1,
+                    100,
+                    Addresses.Admin,
+                    Addresses.Blacksmith,
+                    true,
+                    ItemSubType.Weapon,
+                    ItemSubType.Weapon,
+                    typeof(RequiredBlockIndexException),
+                },
+            };
+        }
 #pragma warning restore SA1204
     }
 }

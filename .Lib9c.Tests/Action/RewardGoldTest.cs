@@ -45,9 +45,9 @@ namespace Lib9c.Tests.Action
         {
             var sheets = TableSheetsImporter.ImportSheets();
             sheets[nameof(CharacterSheet)] = string.Join(
-                    Environment.NewLine,
-                    "id,_name,size_type,elemental_type,hp,atk,def,cri,hit,spd,lv_hp,lv_atk,lv_def,lv_cri,lv_hit,lv_spd,attack_range,run_speed",
-                    "100010,전사,S,0,300,20,10,10,90,70,12,0.8,0.4,0,3.6,2.8,2,3");
+                Environment.NewLine,
+                "id,_name,size_type,elemental_type,hp,atk,def,cri,hit,spd,lv_hp,lv_atk,lv_def,lv_cri,lv_hit,lv_spd,attack_range,run_speed",
+                "100010,전사,S,0,300,20,10,10,90,70,12,0.8,0.4,0,3.6,2.8,2,3");
 
             var privateKey = new PrivateKey();
             var agentAddress = privateKey.PublicKey.Address;
@@ -97,9 +97,10 @@ namespace Lib9c.Tests.Action
                 ArenaScoreHelper.GetScoreV4);
             var gameConfigState = new GameConfigState();
             gameConfigState.Set(_tableSheets.GameConfigSheet);
-            IWorld state = new World(_baseState
-                .SetLegacyState(weekly.address, weekly.Serialize())
-                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize()));
+            IWorld state = new World(
+                _baseState
+                    .SetLegacyState(weekly.address, weekly.Serialize())
+                    .SetLegacyState(gameConfigState.address, gameConfigState.Serialize()));
             var blockIndex = 0;
 
             if (resetCount)
@@ -113,9 +114,10 @@ namespace Lib9c.Tests.Action
                 blockIndex = gameConfigState.WeeklyArenaInterval;
                 // Avoid NRE in test case.
                 var nextWeekly = new WeeklyArenaState(1);
-                state = new World(state
-                    .SetLegacyState(weekly.address, weekly.Serialize())
-                    .SetLegacyState(nextWeekly.address, nextWeekly.Serialize()));
+                state = new World(
+                    state
+                        .SetLegacyState(weekly.address, weekly.Serialize())
+                        .SetLegacyState(nextWeekly.address, nextWeekly.Serialize()));
             }
 
             Assert.False(weekly.Ended);
@@ -192,8 +194,8 @@ namespace Lib9c.Tests.Action
             var prevWeekly = new WeeklyArenaState(prevWeeklyIndex);
             var avatarAddress = _avatarState.address;
             var inactiveAvatarAddress = _avatarState2.address;
-            bool afterUpdate = prevWeeklyIndex >= 68;
-            bool filterInactive = blockIndex >= 3_976_000L;
+            var afterUpdate = prevWeeklyIndex >= 68;
+            var filterInactive = blockIndex >= 3_976_000L;
             if (!afterUpdate)
             {
                 prevWeekly.Set(_avatarState, _tableSheets.CharacterSheet);
@@ -293,7 +295,7 @@ namespace Lib9c.Tests.Action
                 )
             );
 
-            List<Address> addressList = rawList.ToList(StateExtensions.ToAddress);
+            var addressList = rawList.ToList(StateExtensions.ToAddress);
 
             Assert.Contains(avatarAddress, addressList);
             Assert.Equal(!filterInactive, addressList.Contains(inactiveAvatarAddress));
@@ -368,7 +370,7 @@ namespace Lib9c.Tests.Action
 
             var updatedWeekly = nextState.GetWeeklyArenaState(migratedWeekly.address);
             var info = new ArenaInfo(rawInfo);
-            List<Address> addressList = rawList.ToList(StateExtensions.ToAddress);
+            var addressList = rawList.ToList(StateExtensions.ToAddress);
 
             Assert.Empty(updatedWeekly.Map);
             Assert.Equal(blockIndex, updatedWeekly.ResetIndex);
@@ -381,11 +383,11 @@ namespace Lib9c.Tests.Action
         {
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            Currency currency = Currency.Legacy("NCG", 2, null);
+            var currency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
-            Address fund = GoldCurrencyState.Address;
-            Address address1 = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
-            Address address2 = new Address("Fb90278C67f9b266eA309E6AE8463042f5461449");
+            var fund = GoldCurrencyState.Address;
+            var address1 = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
+            var address2 = new Address("Fb90278C67f9b266eA309E6AE8463042f5461449");
             var action = new RewardGold();
 
             var ctx = new ActionContext()
@@ -440,10 +442,7 @@ namespace Lib9c.Tests.Action
             // Fund 잔액을 초과해서 송금하는 경우
             // EndBlock이 긴 순서대로 송금을 진행하기 때문에, 100이 송금 성공하고 10억이 송금 실패한다.
             ctx.BlockIndex = 2;
-            Assert.Throws<InsufficientBalanceException>(() =>
-            {
-                delta = action.GenesisGoldDistribution(ctx, _baseState);
-            });
+            Assert.Throws<InsufficientBalanceException>(() => { delta = action.GenesisGoldDistribution(ctx, _baseState); });
             Assert.Equal(currency * 99999999900, delta.GetBalance(fund, currency));
             Assert.Equal(currency * 100, delta.GetBalance(address1, currency));
             Assert.Equal(currency * 0, delta.GetBalance(address2, currency));
@@ -452,8 +451,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void MiningReward()
         {
-            Address miner = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
-            Currency currency = _baseState.GetGoldCurrency();
+            var miner = new Address("F9A15F870701268Bd7bBeA6502eB15F4997f32f9");
+            var currency = _baseState.GetGoldCurrency();
             var ctx = new ActionContext()
             {
                 BlockIndex = 0,
@@ -466,7 +465,7 @@ namespace Lib9c.Tests.Action
             void AssertMinerReward(int blockIndex, string expected)
             {
                 ctx.BlockIndex = blockIndex;
-                IWorld delta = action.MinerReward(ctx, _baseState);
+                var delta = action.MinerReward(ctx, _baseState);
                 Assert.Equal(FungibleAssetValue.Parse(currency, expected), delta.GetBalance(miner, currency));
             }
 
@@ -511,12 +510,12 @@ namespace Lib9c.Tests.Action
                                 null,
                                 DateTimeOffset.UtcNow,
                                 new TxActionList(new List<IValue>()),
-                                maxGasPrice: Currencies.Mead * 4,
-                                gasLimit: 4),
+                                Currencies.Mead * 4,
+                                4),
                             new TxSigningMetadata(agentKey.PublicKey, 0)),
                         agentKey)),
             };
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
                 .MintAsset(context, patronAddress, patronMead * Currencies.Mead)
                 .TransferAsset(context, patronAddress, agentAddress, 1 * Currencies.Mead)
                 .SetLegacyState(contractAddress, List.Empty.Add(patronAddress.Serialize()).Add(true.Serialize()).Add(balance.Serialize()))
@@ -538,14 +537,14 @@ namespace Lib9c.Tests.Action
             gameConfigState.Set(_tableSheets.GameConfigSheet);
 
             var currency = Currency.Legacy("NCG", 2, null);
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(currency, 0).Serialize())
                 .SetLegacyState(weekly.address, weekly.Serialize())
                 .SetLegacyState(Addresses.GoldDistribution, new List())
                 .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
             var action = new RewardGold();
 
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     BlockIndex = 42,

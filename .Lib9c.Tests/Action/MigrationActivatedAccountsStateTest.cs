@@ -16,7 +16,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
+            var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
             var admin = new Address("8d9f76aF8Dc5A812aCeA15d8bf56E2F790F47fd7");
             var state = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(AdminState.Address, new AdminState(admin, 100).Serialize())
@@ -24,12 +24,13 @@ namespace Lib9c.Tests.Action
 
             var action = new MigrationActivatedAccountsState();
 
-            IWorld nextState = action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = admin,
-                BlockIndex = 1,
-            });
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = state,
+                    Signer = admin,
+                    BlockIndex = 1,
+                });
 
             var nextAccountsState = new ActivatedAccountsState(
                 (Dictionary)nextState.GetLegacyState(ActivatedAccountsState.Address)

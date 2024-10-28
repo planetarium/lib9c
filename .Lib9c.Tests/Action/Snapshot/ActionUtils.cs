@@ -10,8 +10,8 @@ namespace Lib9c.Tests.Action.Snapshot
         public static IValue GetActionTypeId<T>()
             where T : IAction
         {
-            Type attrType = typeof(ActionTypeAttribute);
-            Type actionType = typeof(T);
+            var attrType = typeof(ActionTypeAttribute);
+            var actionType = typeof(T);
             return actionType.GetCustomAttribute<ActionTypeAttribute>() is { } attr
                 ? attr.TypeIdentifier
                 : throw new ArgumentException(

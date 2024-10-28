@@ -93,7 +93,7 @@ namespace Lib9c.Tests.Action
 
             var testRandom = new TestRandom();
             var itemRow = _tableSheets.EquipmentItemSheet.Values.First(r => r.Grade == 1);
-            for (int i = 0; i < equipmentCount; i++)
+            for (var i = 0; i < equipmentCount; i++)
             {
                 var equipment = (Equipment)ItemFactory.CreateItemUsable(itemRow, testRandom.GenerateRandomGuid(), 1, itemLevel);
                 equipment.equipped = equipped;
@@ -201,8 +201,9 @@ namespace Lib9c.Tests.Action
 
             if (chargeAp && apStoneExist)
             {
-                var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                    r.ItemSubType == ItemSubType.ApStone);
+                var row = _tableSheets.MaterialItemSheet.Values.First(
+                    r =>
+                        r.ItemSubType == ItemSubType.ApStone);
                 var apStone = ItemFactory.CreateMaterial(row);
                 _avatarState.inventory.AddItem(apStone);
             }
@@ -217,8 +218,10 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () =>
-                    Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet));
+                Assert.Throws(
+                    exc,
+                    () =>
+                        Execute(state, _agentAddress, _avatarAddress, 1, chargeAp, _random, totalAsset, totalRewardCount, _tableSheets.MaterialItemSheet));
             }
         }
 
@@ -241,8 +244,9 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            Assert.Throws<InvalidItemCountException>(() =>
-                Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
+            Assert.Throws<InvalidItemCountException>(
+                () =>
+                    Execute(state, _agentAddress, _avatarAddress, equipmentCount, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -269,8 +273,9 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
             }
 
-            Assert.Throws<FailedLoadStateException>(() =>
-                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -303,8 +308,10 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(0 * _crystalCurrency, state.GetBalance(_avatarAddress, _crystalCurrency));
 
-            Assert.Throws(exc, () =>
-                Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
+            Assert.Throws(
+                exc,
+                () =>
+                    Execute(state, _agentAddress, _avatarAddress, 1, false, _random, 0, 0, _tableSheets.MaterialItemSheet));
         }
 
         [Theory]
@@ -352,7 +359,7 @@ namespace Lib9c.Tests.Action
         {
             var testRandom = new TestRandom();
             var equipmentIds = new List<Guid>();
-            for (int i = 0; i < equipmentCount; i++)
+            for (var i = 0; i < equipmentCount; i++)
             {
                 equipmentIds.Add(testRandom.GenerateRandomGuid());
             }
@@ -366,17 +373,18 @@ namespace Lib9c.Tests.Action
                 ChargeAp = chargeAp,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = prevStates,
-                Signer = agentAddress,
-                BlockIndex = 1,
-                RandomSeed = random.Seed,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevStates,
+                    Signer = agentAddress,
+                    BlockIndex = 1,
+                    RandomSeed = random.Seed,
+                });
 
             var crystalCurrency = Currencies.Crystal; // CrystalCurrencyState.Address;
             var nextAvatarState = nextState.GetAvatarState(avatarAddress);
-            FungibleAssetValue asset = totalAsset * crystalCurrency;
+            var asset = totalAsset * crystalCurrency;
 
             Assert.Equal(asset, nextState.GetBalance(agentAddress, crystalCurrency));
             Assert.False(nextAvatarState.inventory.HasNonFungibleItem(default));
@@ -396,11 +404,11 @@ namespace Lib9c.Tests.Action
 
         private class CalculateMaterialRewardData : IEnumerable<object[]>
         {
-            private readonly List<object[]> _data = new List<object[]>
+            private readonly List<object[]> _data = new ()
             {
                 new object[]
                 {
-                    new[] { 10110000, 10120000, 10140000 },
+                    new[] { 10110000, 10120000, 10140000, },
                     new Dictionary<int, int>
                     {
                         { 306040, 2 },
@@ -410,7 +418,7 @@ namespace Lib9c.Tests.Action
                 },
                 new object[]
                 {
-                    new[] { 10110000, 10111000, 10112000, 10113000 },
+                    new[] { 10110000, 10111000, 10112000, 10113000, },
                     new Dictionary<int, int>
                     {
                         { 306040, 8 },
@@ -418,24 +426,30 @@ namespace Lib9c.Tests.Action
                 },
                 new object[]
                 {
-                    new[] { 10750008, 10760000, 20160000, 20160003 },
+                    new[] { 10750008, 10760000, 20160000, 20160003, },
                     new Dictionary<int, int>
                     {
-                        { 306085, 15 },  // 5 + 10 + 0 + 0
-                        { 600401, 12 },  // 0 + 0 + 2 + 10
-                        { 600402, 23 },  // 0 + 0 + 3 + 20
+                        { 306085, 15 }, // 5 + 10 + 0 + 0
+                        { 600401, 12 }, // 0 + 0 + 2 + 10
+                        { 600402, 23 }, // 0 + 0 + 3 + 20
                     },
                 },
                 new object[]
                 {
-                    new[] { 10100000 },
+                    new[] { 10100000, },
                     new Dictionary<int, int>(),
                 },
             };
 
-            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
 
-            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
         }
     }
 }

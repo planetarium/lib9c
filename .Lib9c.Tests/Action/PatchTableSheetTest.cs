@@ -50,11 +50,12 @@ namespace Lib9c.Tests.Action
                 TableName = nameof(WorldSheet),
                 TableCsv = worldSheetCsvColumnLine,
             };
-            var nextState = patchTableSheetAction.Execute(new ActionContext
-            {
-                BlockIndex = 0,
-                PreviousState = _initialState,
-            });
+            var nextState = patchTableSheetAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                    PreviousState = _initialState,
+                });
 
             var nextWorldSheetCsv = nextState.GetSheetCsv<WorldSheet>();
             Assert.Single(nextWorldSheetCsv.Split('\n'));
@@ -68,11 +69,12 @@ namespace Lib9c.Tests.Action
                 TableName = nameof(WorldSheet),
                 TableCsv = worldSheetCsv,
             };
-            nextState = patchTableSheetAction.Execute(new ActionContext
-            {
-                BlockIndex = 0,
-                PreviousState = _initialState,
-            });
+            nextState = patchTableSheetAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                    PreviousState = _initialState,
+                });
 
             nextWorldSheet = nextState.GetSheet<WorldSheet>();
             Assert.Equal(worldSheetRowCount, nextWorldSheet.Count);
@@ -126,30 +128,32 @@ namespace Lib9c.Tests.Action
                 TableCsv = "New Value",
             };
 
-            PolicyExpiredException exc1 = Assert.Throws<PolicyExpiredException>(() =>
-            {
-                action.Execute(
-                    new ActionContext()
-                    {
-                        BlockIndex = 101,
-                        PreviousState = state,
-                        Signer = adminAddress,
-                    }
-                );
-            });
+            var exc1 = Assert.Throws<PolicyExpiredException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            BlockIndex = 101,
+                            PreviousState = state,
+                            Signer = adminAddress,
+                        }
+                    );
+                });
             Assert.Equal(101, exc1.BlockIndex);
 
-            PermissionDeniedException exc2 = Assert.Throws<PermissionDeniedException>(() =>
-            {
-                action.Execute(
-                    new ActionContext()
-                    {
-                        BlockIndex = 5,
-                        PreviousState = state,
-                        Signer = new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"),
-                    }
-                );
-            });
+            var exc2 = Assert.Throws<PermissionDeniedException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            BlockIndex = 5,
+                            PreviousState = state,
+                            Signer = new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"),
+                        }
+                    );
+                });
             Assert.Equal(new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"), exc2.Signer);
         }
 
