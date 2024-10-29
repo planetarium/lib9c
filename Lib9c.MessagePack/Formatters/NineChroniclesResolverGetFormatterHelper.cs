@@ -13,7 +13,7 @@ namespace Lib9c.Formatters
     public static class NineChroniclesResolverGetFormatterHelper
     {
         // If type is concrete type, use type-formatter map
-        private static readonly Dictionary<Type, object> FormatterMap = new()
+        private static readonly Dictionary<Type, object> FormatterMap = new Dictionary<Type, object>()
         {
             {typeof(Address), new AddressFormatter()},
             {typeof(Exception), new ExceptionFormatter<Exception>()},
