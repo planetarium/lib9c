@@ -7,12 +7,22 @@ namespace Nekoyume.Action
     [Serializable]
     public class InvalidTransferRecipientException : Exception
     {
+        public Address Sender { get; }
+        public Address Recipient { get; }
+
+        public InvalidTransferRecipientException() {}
+
         public InvalidTransferRecipientException(
             Address sender,
             Address recipient)
         {
             Sender = sender;
             Recipient = recipient;
+        }
+
+        public InvalidTransferRecipientException(string msg) : base(msg)
+        {
+
         }
 
         public InvalidTransferRecipientException(
@@ -30,8 +40,5 @@ namespace Nekoyume.Action
             info.AddValue(nameof(Recipient), Recipient);
         }
 
-        public Address Sender { get; }
-
-        public Address Recipient { get; }
     }
 }
