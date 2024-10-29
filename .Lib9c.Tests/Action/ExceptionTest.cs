@@ -87,6 +87,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(EmptyRewardException))]
         [InlineData(typeof(UnsupportedStateException))]
         [InlineData(typeof(AlreadyJoinedArenaException))]
+        [InlineData(typeof(MedalIdNotFoundException))]
         public void Exception_Serializable(Type excType)
         {
             if (Activator.CreateInstance(excType, "for testing") is Exception exc)
