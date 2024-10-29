@@ -14,20 +14,17 @@ namespace Nekoyume.Action
             PendingAddress = pendingAddress;
         }
 
-        public PendingActivationDoesNotExistsException(
-            SerializationInfo info, StreamingContext context
-        ) : base(info, context)
+        public PendingActivationDoesNotExistsException(string message) : base(message)
         {
-            PendingAddress = (Address)info.GetValue(
-                nameof(PendingAddress),
-                typeof(Address)
-            );
         }
 
-        public override void GetObjectData(
-            SerializationInfo info,
-            StreamingContext context
-        )
+        public PendingActivationDoesNotExistsException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
+        {
+            PendingAddress = (Address)info.GetValue(nameof(PendingAddress), typeof(Address));
+        }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             info.AddValue(nameof(PendingAddress), PendingAddress);
