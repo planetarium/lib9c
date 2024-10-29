@@ -9,3 +9,9 @@ id,_memo,currency_ticker,fungible_id,garage_cost_per_unit,item_id
 8,ruby dust(600202),,08f566bb43570aad34c1790901f824dd5609db880afebd5382fcec054203d92a,0.1,600202
 9,emerald dust(600203),,69542db48e868a9df1469bb3c48fd024c767cb362c7471c41151e3498e01e8be,0.01,600203
 10,adventureboss cri runestone,RUNESTONE_CRI,,0.1,
+11,scroll(600401),,8ff7180f0f532784ea938c8d53247306fb33d4d04add0f0a7e77b651dbe01843,0.1,600401
+12,thor godlen seed runestone,RUNESTONE_GOLDENTHOR,,0.1,
+13,blackcat soulstone,SOULSTONE_1001,,0.1,
+14,donguri soulstone,SOULSTONE_1002,,0.1,
+15,valkyrie soulstone,SOULSTONE_1003,,0.1,
+16,fenrir soulstone,SOULSTONE_1004,,0.1,
