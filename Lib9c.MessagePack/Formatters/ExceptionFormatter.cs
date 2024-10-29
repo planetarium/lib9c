@@ -55,11 +55,11 @@ namespace Lib9c.Formatters
             for (int i = 0; i < count; i++)
             {
                 var name = reader.ReadString();
-                if (name == null)
+                if (string.IsNullOrWhiteSpace(name))
                 {
                     throw new MessagePackSerializationException("Exception Name is missing.");
                 }
-                
+
                 if (name == "ExceptionType")
                 {
                     typeName = reader.ReadString();
@@ -67,31 +67,31 @@ namespace Lib9c.Formatters
                 else
                 {
                     var readType = reader.ReadString();
-                    if (readType == null)
+                    if (string.IsNullOrWhiteSpace(readType))
                     {
                         throw new MessagePackSerializationException("Exception type information is missing.");
                     }
-                    
-                    var type  = Type.GetType(readType);
+
+                    var type = Type.GetType(readType);
                     if (type == null)
                     {
-                        throw new MessagePackSerializationException("Exception type information is missing.");
+                        throw new MessagePackSerializationException($"Exception type cannot be found for '{readType}'.");
                     }
-                    
+
                     var value = MessagePackSerializer.Deserialize(type, ref reader, options);
                     info.AddValue(name, value);
                 }
             }
 
-            if (typeName == null)
+            if (string.IsNullOrWhiteSpace(typeName))
             {
-                throw new MessagePackSerializationException("Exception type information is missing.");
+                throw new MessagePackSerializationException("Exception exception type name is missing.");
             }
 
             var exceptionType = Type.GetType(typeName);
             if (exceptionType == null)
             {
-                throw new MessagePackSerializationException($"Exception type '{typeName}' not found.");
+                throw new MessagePackSerializationException($"Exception exception type cannot be found for '{typeName}'.");
             }
 
             var ctor = exceptionType.GetConstructor(
