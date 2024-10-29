@@ -1,19 +1,16 @@
 namespace Lib9c.Tests.Action
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Lib9c.Formatters;
     using Libplanet.Crypto;
     using MessagePack;
     using MessagePack.Resolvers;
     using Nekoyume.Action;
-    using Nekoyume.Action.Exceptions;
-    using Nekoyume.Action.Exceptions.AdventureBoss;
-    using Nekoyume.Action.Exceptions.Arena;
-    using Nekoyume.Exceptions;
     using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class ExceptionTest
@@ -28,65 +25,26 @@ namespace Lib9c.Tests.Action
             MessagePackSerializer.DefaultOptions = options;
         }
 
+        public static IEnumerable<object[]> GetExceptions()
+        {
+            var t = typeof(Exception);
+            var exceptions = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(e => e.GetTypes())
+                .Where(e =>
+                    e.Namespace is not null &&
+                    e.Namespace.Contains("Nekoyume") &&
+                    !e.IsAbstract &&
+                    e.IsClass &&
+                    e.IsAssignableTo(t))
+                .ToArray();
+            foreach (var e in exceptions)
+            {
+                yield return new object[] { e, };
+            }
+        }
+
         [Theory]
-        [InlineData(typeof(InvalidTradableIdException))]
-        [InlineData(typeof(AlreadyReceivedException))]
-        [InlineData(typeof(ArenaNotEndedException))]
-        [InlineData(typeof(AvatarIndexAlreadyUsedException))]
-        [InlineData(typeof(FailedLoadStateException))]
-        [InlineData(typeof(InvalidNamePatternException))]
-        [InlineData(typeof(CombinationSlotResultNullException))]
-        [InlineData(typeof(CombinationSlotUnlockException))]
-        [InlineData(typeof(NotEnoughMaterialException))]
-        [InlineData(typeof(InvalidPriceException))]
-        [InlineData(typeof(ItemDoesNotExistException))]
-        [InlineData(typeof(EquipmentLevelExceededException))]
-        [InlineData(typeof(DuplicateMaterialException))]
-        [InlineData(typeof(InvalidMaterialException))]
-        [InlineData(typeof(ConsumableSlotOutOfRangeException))]
-        [InlineData(typeof(ConsumableSlotUnlockException))]
-        [InlineData(typeof(InvalidItemTypeException))]
-        [InlineData(typeof(InvalidRedeemCodeException))]
-        [InlineData(typeof(DuplicateRedeemException))]
-        [InlineData(typeof(SheetRowValidateException))]
-        [InlineData(typeof(ShopItemExpiredException))]
-        [InlineData(typeof(InvalidMonsterCollectionRoundException))]
-        [InlineData(typeof(MonsterCollectionExpiredException))]
-        [InlineData(typeof(InvalidLevelException))]
-        [InlineData(typeof(ActionPointExceededException))]
-        [InlineData(typeof(InvalidItemCountException))]
-        [InlineData(typeof(DuplicateOrderIdException))]
-        [InlineData(typeof(OrderIdDoesNotExistException))]
-        [InlineData(typeof(ActionObsoletedException))]
-        [InlineData(typeof(FailedLoadSheetException))]
-        [InlineData(typeof(InvalidEquipmentException))]
-        [InlineData(typeof(AlreadyRecipeUnlockedException))]
-        [InlineData(typeof(InvalidRecipeIdException))]
-        [InlineData(typeof(AlreadyWorldUnlockedException))]
-        [InlineData(typeof(InvalidActionFieldException))]
-        [InlineData(typeof(NotEnoughEventDungeonTicketsException))]
-        [InlineData(typeof(InvalidClaimException))]
-        [InlineData(typeof(RequiredBlockIntervalException))]
-        [InlineData(typeof(ActionUnavailableException))]
-        [InlineData(typeof(InvalidTransferCurrencyException))]
-        [InlineData(typeof(InvalidCurrencyException))]
-        [InlineData(typeof(InvalidProductTypeException))]
-        [InlineData(typeof(ProductNotFoundException))]
-        [InlineData(typeof(AlreadyContractedException))]
-        [InlineData(typeof(ItemNotFoundException))]
-        [InlineData(typeof(NotEnoughItemException))]
-        [InlineData(typeof(StateNullException))]
-        [InlineData(typeof(AlreadyClaimedException))]
-        [InlineData(typeof(ClaimExpiredException))]
-        [InlineData(typeof(InsufficientStakingException))]
-        [InlineData(typeof(InvalidAdventureBossSeasonException))]
-        [InlineData(typeof(InvalidBountyException))]
-        [InlineData(typeof(MaxInvestmentCountExceededException))]
-        [InlineData(typeof(PreviousBountyException))]
-        [InlineData(typeof(SeasonInProgressException))]
-        [InlineData(typeof(EmptyRewardException))]
-        [InlineData(typeof(UnsupportedStateException))]
-        [InlineData(typeof(AlreadyJoinedArenaException))]
+        [MemberData(nameof(GetExceptions))]
         public void Exception_Serializable(Type excType)
         {
             if (Activator.CreateInstance(excType, "for testing") is Exception exc)
