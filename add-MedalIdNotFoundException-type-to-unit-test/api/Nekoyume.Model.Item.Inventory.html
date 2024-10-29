@@ -1,0 +1,2411 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Inventory | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Inventory | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/add-MedalIdNotFoundException-type-to-unit-test/apiSpec/new?filename=Nekoyume_Model_Item_Inventory.md&amp;value=---%0Auid%3A%20Nekoyume.Model.Item.Inventory%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.Item.Inventory">
+
+
+
+  <h1 id="Nekoyume_Model_Item_Inventory" data-uid="Nekoyume.Model.Item.Inventory" class="text-break">
+Class Inventory  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.Item.html">Item</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class Inventory : IState, ICloneable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Inventory</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.State.IState.html">IState</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.icloneable">ICloneable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.InventoryExtensions.html#Nekoyume_Helper_InventoryExtensions_GetEquippedFullCostumeOrArmorId_Nekoyume_Model_Item_Inventory_">InventoryExtensions.GetEquippedFullCostumeOrArmorId(Inventory)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.InventoryExtensions.html#Nekoyume_Helper_InventoryExtensions_UseActionPoint_Nekoyume_Model_Item_Inventory_System_Int64_System_Int32_System_Boolean_Nekoyume_TableData_MaterialItemSheet_System_Int64_">InventoryExtensions.UseActionPoint(Inventory, long, int, bool, MaterialItemSheet, long)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_Item_Inventory__ctor_" data-uid="Nekoyume.Model.Item.Inventory.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory__ctor" data-uid="Nekoyume.Model.Item.Inventory.#ctor">
+  Inventory()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Inventory()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory__ctor_" data-uid="Nekoyume.Model.Item.Inventory.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory__ctor_Bencodex_Types_List_" data-uid="Nekoyume.Model.Item.Inventory.#ctor(Bencodex.Types.List)">
+  Inventory(List)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Inventory(List serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">List</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Consumables_" data-uid="Nekoyume.Model.Item.Inventory.Consumables*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Consumables" data-uid="Nekoyume.Model.Item.Inventory.Consumables">
+  Consumables
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;Consumable&gt; Consumables { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Consumable.html">Consumable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Costumes_" data-uid="Nekoyume.Model.Item.Inventory.Costumes*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Costumes" data-uid="Nekoyume.Model.Item.Inventory.Costumes">
+  Costumes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;Costume&gt; Costumes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Equipments_" data-uid="Nekoyume.Model.Item.Inventory.Equipments*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Equipments" data-uid="Nekoyume.Model.Item.Inventory.Equipments">
+  Equipments
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;Equipment&gt; Equipments { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Items_" data-uid="Nekoyume.Model.Item.Inventory.Items*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Items" data-uid="Nekoyume.Model.Item.Inventory.Items">
+  Items
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;Inventory.Item&gt; Items { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Materials_" data-uid="Nekoyume.Model.Item.Inventory.Materials*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Materials" data-uid="Nekoyume.Model.Item.Inventory.Materials">
+  Materials
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;Material&gt; Materials { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Material.html">Material</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_Item_Inventory_AddFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_AddFungibleItem_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
+  AddFungibleItem(ItemBase, int, ILock)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Inventory.Item AddFungibleItem(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_AddFungibleItem2_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem2*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_AddFungibleItem2_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem2(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
+  AddFungibleItem2(ItemBase, int, ILock)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use AddFungibleItem&quot;)]
+public Inventory.Item AddFungibleItem2(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_AddItem_" data-uid="Nekoyume.Model.Item.Inventory.AddItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_AddItem_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddItem(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
+  AddItem(ItemBase, int, ILock)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KeyValuePair&lt;int, int&gt; AddItem(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_AddItem2_" data-uid="Nekoyume.Model.Item.Inventory.AddItem2*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_AddItem2_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddItem2(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
+  AddItem2(ItemBase, int, ILock)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use AddItem&quot;)]
+public KeyValuePair&lt;int, int&gt; AddItem2(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_AddNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.AddNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_AddNonFungibleItem_Nekoyume_Model_Item_ItemBase_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddNonFungibleItem(Nekoyume.Model.Item.ItemBase,Nekoyume.Model.Item.ILock)">
+  AddNonFungibleItem(ItemBase, ILock)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Inventory.Item AddNonFungibleItem(ItemBase itemBase, ILock iLock = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_AddTradableFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.AddTradableFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_AddTradableFungibleItem_Nekoyume_Model_Item_ITradableFungibleItem_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.AddTradableFungibleItem(Nekoyume.Model.Item.ITradableFungibleItem,System.Int32)">
+  AddTradableFungibleItem(ITradableFungibleItem, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L290"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add tradable fungible item.
+If there is same item which is not locked, add count to it.
+The same item is item which has same item sheet id, fungible id, tradable id and
+same required block index.
+If there is no same item, add new item.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Inventory.Item AddTradableFungibleItem(ITradableFungibleItem tradableFungibleItem, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableFungibleItem</code> <a class="xref" href="Nekoyume.Model.Item.ITradableFungibleItem.html">ITradableFungibleItem</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd></dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Clone_" data-uid="Nekoyume.Model.Item.Inventory.Clone*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Clone" data-uid="Nekoyume.Model.Item.Inventory.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Equals_" data-uid="Nekoyume.Model.Item.Inventory.Equals*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Equals_Nekoyume_Model_Item_Inventory_" data-uid="Nekoyume.Model.Item.Inventory.Equals(Nekoyume.Model.Item.Inventory)">
+  Equals(Inventory)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool Equals(Inventory other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Equals_" data-uid="Nekoyume.Model.Item.Inventory.Equals*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Equals_System_Object_" data-uid="Nekoyume.Model.Item.Inventory.Equals(System.Object)">
+  Equals(object)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_FilterConsumables_" data-uid="Nekoyume.Model.Item.Inventory.FilterConsumables*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_FilterConsumables_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.FilterConsumables(System.Int32,System.Int64)">
+  FilterConsumables(int, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L518"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Consumable&gt; FilterConsumables(int id, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Consumable.html">Consumable</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_GetHashCode_" data-uid="Nekoyume.Model.Item.Inventory.GetHashCode*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_GetHashCode" data-uid="Nekoyume.Model.Item.Inventory.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A hash code for the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_HasFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.HasFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_HasFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int64,System.Int32)">
+  HasFungibleItem(HashDigest&lt;SHA256&gt;, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1010"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasFungibleItem(HashDigest&lt;SHA256&gt; fungibleId, long blockIndex, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_HasItem_" data-uid="Nekoyume.Model.Item.Inventory.HasItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_HasItem_System_Int32_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasItem(System.Int32,System.Int32)">
+  HasItem(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1005"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasItem(int rowId, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rowId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_HasNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.HasNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_HasNonFungibleItem_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.HasNonFungibleItem(System.Guid)">
+  HasNonFungibleItem(Guid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1033"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasNonFungibleItem(Guid nonFungibleId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nonFungibleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_HasTradableFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.HasTradableFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_HasTradableFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Nullable_System_Int64__System_Nullable_System_Int64__System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasTradableFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Nullable{System.Int64},System.Nullable{System.Int64},System.Int32)">
+  HasTradableFungibleItem(HashDigest&lt;SHA256&gt;, long?, long?, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1045"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasTradableFungibleItem(HashDigest&lt;SHA256&gt; fungibleId, long? requiredBlockIndex, long? blockIndex, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_HasTradableItem_" data-uid="Nekoyume.Model.Item.Inventory.HasTradableItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_HasTradableItem_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasTradableItem(System.Guid,System.Int64,System.Int32)">
+  HasTradableItem(Guid, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1038"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasTradableItem(Guid tradableId, long blockIndex, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_IsMaterialRemovable_" data-uid="Nekoyume.Model.Item.Inventory.IsMaterialRemovable*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_IsMaterialRemovable_Nekoyume_Model_Item_Inventory_Item_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.IsMaterialRemovable(Nekoyume.Model.Item.Inventory.Item,System.Int32)">
+  IsMaterialRemovable(Item, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L450"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the given item is non-tradable material and can be removed from the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsMaterialRemovable(Inventory.Item item, int id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd><p>The item to check for removal.</p>
+</dd>
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The ID of the material to remove.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Returns a boolean indicating whether the item is removable.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_IsMaterialRemovable_" data-uid="Nekoyume.Model.Item.Inventory.IsMaterialRemovable*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_IsMaterialRemovable_Nekoyume_Model_Item_Inventory_Item_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.IsMaterialRemovable(Nekoyume.Model.Item.Inventory.Item,System.Int32,System.Int64)">
+  IsMaterialRemovable(Item, int, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L423"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the given item is material and can be removed from the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsMaterialRemovable(Inventory.Item item, int id, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd><p>The item to check for removal.</p>
+</dd>
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The ID of the material to remove.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block index.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Returns a boolean indicating whether the item is removable.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_LockByReferringToDigestList_" data-uid="Nekoyume.Model.Item.Inventory.LockByReferringToDigestList*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_LockByReferringToDigestList_Lib9c_Model_Order_OrderDigestListState_System_Guid_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.LockByReferringToDigestList(Lib9c.Model.Order.OrderDigestListState,System.Guid,System.Int64)">
+  LockByReferringToDigestList(OrderDigestListState, Guid, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1223"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void LockByReferringToDigestList(OrderDigestListState digestList, Guid tradableId, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>digestList</code> <a class="xref" href="Lib9c.Model.Order.OrderDigestListState.html">OrderDigestListState</a></dt>
+    <dd></dd>
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_ReconfigureFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.ReconfigureFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_ReconfigureFungibleItem_Lib9c_Model_Order_OrderDigestListState_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.ReconfigureFungibleItem(Lib9c.Model.Order.OrderDigestListState,System.Guid)">
+  ReconfigureFungibleItem(OrderDigestListState, Guid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1173"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReconfigureFungibleItem(OrderDigestListState digestList, Guid tradableId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>digestList</code> <a class="xref" href="Lib9c.Model.Order.OrderDigestListState.html">OrderDigestListState</a></dt>
+    <dd></dd>
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveConsumable_" data-uid="Nekoyume.Model.Item.Inventory.RemoveConsumable*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveConsumable_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveConsumable(System.Int32,System.Int64,System.Int32)">
+  RemoveConsumable(int, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L530"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveConsumable(int id, long blockIndex, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int64_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int64,System.Int32,System.Boolean)">
+  RemoveFungibleItem(HashDigest&lt;SHA256&gt;, long, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L335"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveFungibleItem(HashDigest&lt;SHA256&gt; fungibleId, long blockIndex, int count = 1, bool onlyTradableItem = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>onlyTradableItem</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem_Nekoyume_Model_Item_IFungibleItem_System_Int64_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem(Nekoyume.Model.Item.IFungibleItem,System.Int64,System.Int32,System.Boolean)">
+  RemoveFungibleItem(IFungibleItem, long, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L328"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveFungibleItem(IFungibleItem fungibleItem, long blockIndex, int count = 1, bool onlyTradableItem = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleItem</code> <a class="xref" href="Nekoyume.Model.Item.IFungibleItem.html">IFungibleItem</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>onlyTradableItem</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem2_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem2*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem2_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem2(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int32,System.Boolean)">
+  RemoveFungibleItem2(HashDigest&lt;SHA256&gt;, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L558"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use RemoveFungibleItem&quot;)]
+public bool RemoveFungibleItem2(HashDigest&lt;SHA256&gt; fungibleId, int count = 1, bool onlyTradableItem = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>onlyTradableItem</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem2_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem2*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem2_Nekoyume_Model_Item_IFungibleItem_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem2(Nekoyume.Model.Item.IFungibleItem,System.Int32,System.Boolean)">
+  RemoveFungibleItem2(IFungibleItem, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L551"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use RemoveFungibleItem&quot;)]
+public bool RemoveFungibleItem2(IFungibleItem fungibleItem, int count = 1, bool onlyTradableItem = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleItem</code> <a class="xref" href="Nekoyume.Model.Item.IFungibleItem.html">IFungibleItem</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>onlyTradableItem</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveItem_Nekoyume_Model_Item_Inventory_Item_" data-uid="Nekoyume.Model.Item.Inventory.RemoveItem(Nekoyume.Model.Item.Inventory.Item)">
+  RemoveItem(Item)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L996"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveItem(Inventory.Item item)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>item</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveMaterial_" data-uid="Nekoyume.Model.Item.Inventory.RemoveMaterial*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveMaterial_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveMaterial(System.Int32,System.Int64,System.Int32)">
+  RemoveMaterial(int, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L477"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Remove a material from the inventory. contains tradable materials.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveMaterial(int id, long blockIndex, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The ID of the material item to remove.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block index.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of materials to remove. Default value is 1.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the material is successfully removed, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem_Nekoyume_Model_Item_INonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem(Nekoyume.Model.Item.INonFungibleItem)">
+  RemoveNonFungibleItem(INonFungibleItem)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L604"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveNonFungibleItem(INonFungibleItem nonFungibleItem)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nonFungibleItem</code> <a class="xref" href="Nekoyume.Model.Item.INonFungibleItem.html">INonFungibleItem</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem(System.Guid)">
+  RemoveNonFungibleItem(Guid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L607"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveNonFungibleItem(Guid nonFungibleId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nonFungibleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem2_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem2*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem2_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem2(System.Guid)">
+  RemoveNonFungibleItem2(Guid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L610"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use RemoveNonFungibleItem(Guid nonFungibleId)&quot;)]
+public bool RemoveNonFungibleItem2(Guid nonFungibleId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nonFungibleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveNonTradableMaterial_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonTradableMaterial*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonTradableMaterial_System_Int32_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonTradableMaterial(System.Int32,System.Int32)">
+  RemoveNonTradableMaterial(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L732"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Remove a non-tradable material from the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveNonTradableMaterial(int id, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The ID of the material item to remove.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of materials to remove. Default value is 1.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the material is successfully removed, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveTradableFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Nullable_System_Int64__System_Nullable_System_Int64__System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Nullable{System.Int64},System.Nullable{System.Int64},System.Int32)">
+  RemoveTradableFungibleItem(HashDigest&lt;SHA256&gt;, long?, long?, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L781"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Remove tradable item from inventory.
+Use the requiredBlockIndex when you want to remove the item that
+has same requiredBlockIndex.
+Use the blockIndex when you want to remove the item that has requiredBlockIndex
+less than or equal to blockIndex.
+Do not use both requiredBlockIndex and blockIndex at the same time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveTradableFungibleItem(HashDigest&lt;SHA256&gt; fungibleId, long? requiredBlockIndex, long? blockIndex, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveTradableItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableItem_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItem(System.Guid,System.Int64,System.Int32)">
+  RemoveTradableItem(Guid, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L654"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveTradableItem(Guid tradableId, long blockIndex, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveTradableItemV1_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItemV1*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableItemV1_Nekoyume_Model_Item_ITradableItem_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItemV1(Nekoyume.Model.Item.ITradableItem,System.Int32)">
+  RemoveTradableItemV1(ITradableItem, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L627"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use RemoveTradableItem()&quot;)]
+public bool RemoveTradableItemV1(ITradableItem tradableItem, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableItem</code> <a class="xref" href="Nekoyume.Model.Item.ITradableItem.html">ITradableItem</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveTradableItemV1_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItemV1*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableItemV1_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItemV1(System.Guid,System.Int64,System.Int32)">
+  RemoveTradableItemV1(Guid, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L631"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use RemoveTradableItem()&quot;)]
+public bool RemoveTradableItemV1(Guid tradableId, long blockIndex, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_RemoveTradableMaterial_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableMaterial*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableMaterial_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableMaterial(System.Int32,System.Int64,System.Int32)">
+  RemoveTradableMaterial(int, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L688"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Remove a tradable material from the inventory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RemoveTradableMaterial(int materialId, long blockIndex, int count = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>materialId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The ID of the material item to remove.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block index.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of materials to remove. Default value is 1.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the material is successfully removed, false otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_SellItem_" data-uid="Nekoyume.Model.Item.Inventory.SellItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_SellItem_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.SellItem(System.Guid,System.Int64,System.Int32)">
+  SellItem(Guid, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1073"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ITradableItem SellItem(Guid tradableId, long blockIndex, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.ITradableItem.html">ITradableItem</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_Serialize_" data-uid="Nekoyume.Model.Item.Inventory.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_Serialize" data-uid="Nekoyume.Model.Item.Inventory.Serialize">
+  Serialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IValue Serialize()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetCostume_" data-uid="Nekoyume.Model.Item.Inventory.TryGetCostume*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetCostume_System_Int32_Nekoyume_Model_Item_Costume__" data-uid="Nekoyume.Model.Item.Inventory.TryGetCostume(System.Int32,Nekoyume.Model.Item.Costume@)">
+  TryGetCostume(int, out Costume)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L823"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use public bool TryGetNonFungibleItem&lt;T&gt;(Guid itemId, out T outNonFungibleItem)&quot;)]
+public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rowId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>outCostume</code> <a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetFungibleItems_" data-uid="Nekoyume.Model.Item.Inventory.TryGetFungibleItems*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetFungibleItems_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Collections_Generic_List_Nekoyume_Model_Item_Inventory_Item___" data-uid="Nekoyume.Model.Item.Inventory.TryGetFungibleItems(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Collections.Generic.List{Nekoyume.Model.Item.Inventory.Item}@)">
+  TryGetFungibleItems(HashDigest&lt;SHA256&gt;, out List&lt;Item&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L848"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetFungibleItems(HashDigest&lt;SHA256&gt; fungibleId, out List&lt;Inventory.Item&gt; outItems)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>outItems</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetItem_" data-uid="Nekoyume.Model.Item.Inventory.TryGetItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetItem_System_Int32_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetItem(System.Int32,Nekoyume.Model.Item.Inventory.Item@)">
+  TryGetItem(int, out Item)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L842"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetItem(int rowId, out Inventory.Item outItem)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rowId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>outItem</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetLockedItem_" data-uid="Nekoyume.Model.Item.Inventory.TryGetLockedItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetLockedItem_Nekoyume_Model_Item_ILock_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetLockedItem(Nekoyume.Model.Item.ILock,Nekoyume.Model.Item.Inventory.Item@)">
+  TryGetLockedItem(ILock, out Item)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L990"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetLockedItem(ILock iLock, out Inventory.Item outItem)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+    <dt><code>outItem</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem_System_Guid_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem(System.Guid,Nekoyume.Model.Item.Inventory.Item@)">
+  TryGetNonFungibleItem(Guid, out Item)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L863"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetNonFungibleItem(Guid nonFungibleId, out Inventory.Item outItem)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nonFungibleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>outItem</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem__1_System_Guid___0__System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem``1(System.Guid,``0@,System.Int64)">
+  TryGetNonFungibleItem&lt;T&gt;(Guid, out T, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L894"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tries to get a non-fungible item from the inventory with the specified item ID.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetNonFungibleItem&lt;T&gt;(Guid itemId, out T outNonFungibleItem, long blockIndex = 9223372036854775807) where T : INonFungibleItem</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>The ID of the non-fungible item to retrieve.</p>
+</dd>
+    <dt><code>outNonFungibleItem</code> <span class="xref">T</span></dt>
+    <dd><p>When this method returns, contains the non-fungible item with the specified ID, if found; otherwise, the default value for the type.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block index for the non-fungible item to be considered valid. Defaults to <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64.maxvalue">MaxValue</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if a non-fungible item with the specified ID is found in the inventory; otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of non-fungible item to retrieve.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem__1___0___0__" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem``1(``0,``0@)">
+  TryGetNonFungibleItem&lt;T&gt;(T, out T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L882"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetNonFungibleItem&lt;T&gt;(T nonFungibleItem, out T outNonFungibleItem) where T : INonFungibleItem</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nonFungibleItem</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>outNonFungibleItem</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetTradableFungibleItems_" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableFungibleItems*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetTradableFungibleItems_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Nullable_System_Int64__System_Nullable_System_Int64__System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_Inventory_Item___" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableFungibleItems(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Nullable{System.Int64},System.Nullable{System.Int64},System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.Inventory.Item}@)">
+  TryGetTradableFungibleItems(HashDigest&lt;SHA256&gt;, long?, long?, out IEnumerable&lt;Item&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L965"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get ITradableFungibleItem from the inventory.
+This method check the item is not locked,
+and the item's required block index is less than or equal to the given block index.
+Do not use both requiredBlockIndex and blockIndex at the same time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetTradableFungibleItems(HashDigest&lt;SHA256&gt; fungibleId, long? requiredBlockIndex, long? blockIndex, out IEnumerable&lt;Inventory.Item&gt; outItems)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+    <dt><code>outItems</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetTradableItem_" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetTradableItem_System_Guid_System_Int64_System_Int32_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableItem(System.Guid,System.Int64,System.Int32,Nekoyume.Model.Item.Inventory.Item@)">
+  TryGetTradableItem(Guid, long, int, out Item)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L947"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetTradableItem(Guid tradeId, long blockIndex, int count, out Inventory.Item outItem)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>outItem</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_TryGetTradableItems_" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableItems*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_TryGetTradableItems_System_Guid_System_Int64_System_Int32_System_Collections_Generic_List_Nekoyume_Model_Item_Inventory_Item___" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableItems(System.Guid,System.Int64,System.Int32,System.Collections.Generic.List{Nekoyume.Model.Item.Inventory.Item}@)">
+  TryGetTradableItems(Guid, long, int, out List&lt;Item&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L916"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetTradableItems(Guid tradeId, long blockIndex, int count, out List&lt;Inventory.Item&gt; outItem)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>outItem</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_UnlockInvalidSlot_" data-uid="Nekoyume.Model.Item.Inventory.UnlockInvalidSlot*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_UnlockInvalidSlot_Lib9c_Model_Order_OrderDigestListState_Libplanet_Crypto_Address_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Item.Inventory.UnlockInvalidSlot(Lib9c.Model.Order.OrderDigestListState,Libplanet.Crypto.Address,Libplanet.Crypto.Address)">
+  UnlockInvalidSlot(OrderDigestListState, Address, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UnlockInvalidSlot(OrderDigestListState digestListState, Address agentAddress, Address avatarAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>digestListState</code> <a class="xref" href="Lib9c.Model.Order.OrderDigestListState.html">OrderDigestListState</a></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Item_Inventory_UpdateTradableItem_" data-uid="Nekoyume.Model.Item.Inventory.UpdateTradableItem*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Inventory_UpdateTradableItem_System_Guid_System_Int64_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.UpdateTradableItem(System.Guid,System.Int64,System.Int32,System.Int64)">
+  UpdateTradableItem(Guid, long, int, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L1103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ITradableItem UpdateTradableItem(Guid tradableId, long blockIndex, int count, long requiredBlockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>tradableId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.ITradableItem.html">ITradableItem</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/add-MedalIdNotFoundException-type-to-unit-test/Lib9c/Model/Item/Inventory.cs/#L15" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
