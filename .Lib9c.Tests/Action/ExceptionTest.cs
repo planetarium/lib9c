@@ -89,7 +89,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(AlreadyJoinedArenaException))]
         public void Exception_Serializable(Type excType)
         {
-            // TODO: parameter로 값을 받는게 아니라 여기서 Assembly를 찾아서 생성자를 찾아서 생성하도록 수정해야 합니다
             if (Activator.CreateInstance(excType, "for testing") is Exception exc)
             {
                 AssertException(excType, exc);
@@ -109,7 +108,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(Libplanet.Action.State.InsufficientBalanceException))]
         public void Libplanet_Exception_Serializable(Type excType)
         {
-            // TODO: parameter로 값을 받는게 아니라 여기서 Assembly를 찾아서 생성자를 찾아서 생성하도록 수정해야 합니다
+            // TODO: 테스트 받는 방식 수정
             var customAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
             var customFav = new Libplanet.Types.Assets.FungibleAssetValue(Currencies.Crystal);
             if (Activator.CreateInstance(excType, "for testing", customAddress, customFav) is Exception exc)
