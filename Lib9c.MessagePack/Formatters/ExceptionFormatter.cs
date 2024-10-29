@@ -72,9 +72,9 @@ namespace Lib9c.Formatters
                         throw new MessagePackSerializationException("Exception type information is missing.");
                     }
 
-                    var type = Type.GetType(readType);
+                    var type = GetType(readType);
                     if (type == null)
-                    {
+                    {           
                         throw new MessagePackSerializationException($"Exception type cannot be found for '{readType}'.");
                     }
 
@@ -136,6 +136,26 @@ namespace Lib9c.Formatters
             }
 
             return exception;
+        }
+        
+        private Type? GetType(string typeName)
+        {
+            var type = Type.GetType(typeName);
+            if (type != null)
+            {
+                return type;
+            }
+
+            foreach (var assembly in NineChroniclesResolverGetFormatterHelper.GetAssemblies())
+            {
+                type = assembly.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            return null;
         }
     }
 }
