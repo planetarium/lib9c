@@ -10,11 +10,17 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Exceptions;
+using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
+using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Stake;
+using Nekoyume.ValidatorDelegation;
+using Org.BouncyCastle.Asn1.Esf;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -124,7 +130,7 @@ namespace Nekoyume.Action
                     context,
                     states,
                     stakeStateAddress,
-                    stakedBalance: null,
+                    stakedBalance: currency * 0,
                     targetStakeBalance,
                     latestStakeContract);
                 Log.Debug(
@@ -140,16 +146,6 @@ namespace Nekoyume.Action
                 throw new StakeExistingClaimableException();
             }
 
-            // NOTE: When the staking state is locked up.
-            if (stakeStateV2.CancellableBlockIndex > context.BlockIndex)
-            {
-                // NOTE: Cannot re-contract with less balance.
-                if (targetStakeBalance < stakedBalance)
-                {
-                    throw new RequiredBlockIndexException();
-                }
-            }
-
             if (stakeStateV2.StateVersion == 2)
             {
                 if (!StakeStateUtils.TryMigrateV2ToV3(context, states, stakeStateAddress, stakeStateV2, out var result))
@@ -158,13 +154,6 @@ namespace Nekoyume.Action
                 }
 
                 states = result.Value.world;
-            }
-
-            // NOTE: Withdraw staking.
-            if (Amount == 0)
-            {
-                return Refund(context, states, stakeStateAddress, context.Signer, stakedBalance)
-                    .SetLegacyState(stakeStateAddress, Null.Value);
             }
 
             // NOTE: Contract a new staking.
@@ -186,36 +175,45 @@ namespace Nekoyume.Action
             IActionContext context,
             IWorld state,
             Address stakeStateAddr,
-            FungibleAssetValue? stakedBalance,
+            FungibleAssetValue stakedBalance,
             FungibleAssetValue targetStakeBalance,
             Contract latestStakeContract)
         {
-            var newStakeState = new StakeState(latestStakeContract, context.BlockIndex);
+            var stakeStateValue = new StakeState(latestStakeContract, context.BlockIndex).Serialize();
+            var additionalBalance = targetStakeBalance - stakedBalance;
+            var height = context.BlockIndex;
 
-            if (stakedBalance.HasValue)
+            if (additionalBalance.Sign > 0)
             {
-                state = Refund(context, state, stakeStateAddr, context.Signer, stakedBalance.Value);
+                var gg = GetGuildCoinFromNCG(additionalBalance);
+                var guildRepository = new GuildRepository(state, context);
+                var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
+                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                guildRepository.UpdateWorld(
+                    state.TransferAsset(context, context.Signer, stakeStateAddr, additionalBalance)
+                        .MintAsset(context, stakeStateAddr, gg));
+
+                guildParticipant.Delegate(guild, gg, height);
+                state = guildRepository.World;
+            }
+            else if (additionalBalance.Sign < 0)
+            {
+                var gg = GetGuildCoinFromNCG(-additionalBalance);
+                var guildRepository = new GuildRepository(state, context);
+                var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
+                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                var share = guild.ShareFromFAV(gg);
+                guildParticipant.Undelegate(guild, share, height);
+                state = guildRepository.World;
+                if ((stakedBalance + additionalBalance).Sign == 0)
+                {
+                    return state.MutateAccount(
+                        ReservedAddresses.LegacyAccount,
+                        state => state.RemoveState(stakeStateAddr));
+                }
             }
 
-            return state
-                .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
-                .MintAsset(context, stakeStateAddr, GetGuildCoinFromNCG(targetStakeBalance))
-                .SetLegacyState(stakeStateAddr, newStakeState.Serialize());
-        }
-
-        private static IWorld Refund(
-            IActionContext context, IWorld world, Address stakeStateAddress, Address signer,
-            FungibleAssetValue stakedBalance)
-        {
-            return world.BurnAsset(
-                context,
-                stakeStateAddress,
-                GetGuildCoinFromNCG(stakedBalance)
-            ).TransferAsset(
-                context,
-                stakeStateAddress,
-                signer,
-                stakedBalance);
+            return state.SetLegacyState(stakeStateAddr, stakeStateValue);
         }
 
         private static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)

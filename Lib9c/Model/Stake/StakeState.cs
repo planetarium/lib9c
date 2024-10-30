@@ -18,6 +18,7 @@ namespace Nekoyume.Model.Stake
         public readonly long StartedBlockIndex;
         public readonly long ReceivedBlockIndex;
 
+        [Obsolete("Not used because of guild system")]
         public long CancellableBlockIndex =>
             StartedBlockIndex + Contract.LockupInterval;
 
