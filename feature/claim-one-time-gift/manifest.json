@@ -362,10 +362,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.AlreadyClaimedGiftException.yml",
+      "source_relative_path": "api/Nekoyume.Action.AlreadyClaimedGiftsException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.AlreadyClaimedGiftException.html"
+          "relative_path": "api/Nekoyume.Action.AlreadyClaimedGiftsException.html"
         }
       },
       "version": ""
@@ -672,20 +672,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ClaimItems.yml",
+      "source_relative_path": "api/Nekoyume.Action.ClaimGifts.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.ClaimItems.html"
+          "relative_path": "api/Nekoyume.Action.ClaimGifts.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ClaimOneTimeGift.yml",
+      "source_relative_path": "api/Nekoyume.Action.ClaimItems.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.ClaimOneTimeGift.html"
+          "relative_path": "api/Nekoyume.Action.ClaimItems.html"
         }
       },
       "version": ""
@@ -742,10 +742,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ClaimableGiftDoesNotExistException.yml",
+      "source_relative_path": "api/Nekoyume.Action.ClaimableGiftsDoesNotExistException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.ClaimableGiftDoesNotExistException.html"
+          "relative_path": "api/Nekoyume.Action.ClaimableGiftsDoesNotExistException.html"
         }
       },
       "version": ""
@@ -8282,6 +8282,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.ClaimableGiftsSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.ClaimableGiftsSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.ClaimableGiftsSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.ClaimableGiftsSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.CollectQuestSheet.Row.yml",
       "output": {
         ".html": {
@@ -9616,26 +9636,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.MonsterQuestSheet.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.OneTimeGiftSheet.Row.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.OneTimeGiftSheet.Row.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.OneTimeGiftSheet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.OneTimeGiftSheet.html"
         }
       },
       "version": ""
