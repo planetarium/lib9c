@@ -117,7 +117,7 @@ namespace Nekoyume.Module.Guild
         //     return repository;
         // }
 
-        private static bool TryGetGuildParticipant(
+        public static bool TryGetGuildParticipant(
             this GuildRepository repository,
             AgentAddress agentAddress,
             [NotNullWhen(true)] out Model.Guild.GuildParticipant? guildParticipant)
