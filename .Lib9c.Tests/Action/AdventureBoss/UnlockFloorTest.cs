@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -99,6 +100,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
+
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
 
             state = Stake(state, WantedAddress);
             var materialSheet = state.GetSheet<MaterialItemSheet>();

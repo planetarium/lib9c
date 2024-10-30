@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -14,6 +15,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Exceptions;
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.TableData;
@@ -532,6 +534,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
                 amount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
             }
+
+            var validatorKey = new PrivateKey();
+            world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, 0L);
+            world = DelegationUtil.MakeGuild(world, AgentAddress, validatorKey, 0L);
 
             var action = new Stake(new BigInteger(amount));
             return action.Execute(new ActionContext

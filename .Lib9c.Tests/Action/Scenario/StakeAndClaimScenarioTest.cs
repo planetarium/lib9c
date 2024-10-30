@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Stake;
+    using Nekoyume.ValidatorDelegation;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -108,8 +109,14 @@ namespace Lib9c.Tests.Action.Scenario
                 LegacyStakeState.RewardInterval,
                 LegacyStakeState.LockupInterval);
 
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, _agentAddr, validatorKey, 0L);
+
             // Withdraw stake via stake3.
-            state = Stake3(state, _agentAddr, 0, stake2BlockIndex + LegacyStakeState.LockupInterval + 1);
+            state = Stake3(state, _agentAddr, 0, stake2BlockIndex);
+
+            state = DelegationUtil.EnsureStakeReleased(state, stake2BlockIndex + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             // Stake 50 NCG via stake3 before patching.
             const long firstStake3BlockIndex = stake2BlockIndex + LegacyStakeState.LockupInterval + 1;
