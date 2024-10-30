@@ -742,10 +742,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ClaimableGiftsDoesNotExistException.yml",
+      "source_relative_path": "api/Nekoyume.Action.ClaimableGiftsNotAvailableException.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.ClaimableGiftsDoesNotExistException.html"
+          "relative_path": "api/Nekoyume.Action.ClaimableGiftsNotAvailableException.html"
         }
       },
       "version": ""
@@ -7696,6 +7696,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Module.DailyRewardModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.GiftModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.GiftModule.html"
         }
       },
       "version": ""
