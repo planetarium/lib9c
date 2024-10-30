@@ -2,10 +2,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using Bencodex.Types;
 using Lib9c;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Guild.Migration;
 using Nekoyume.Model.Guild;
-using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 
@@ -27,6 +28,18 @@ namespace Nekoyume.Module.Guild
             GuildAddress guildAddress,
             AgentAddress target)
         {
+            if (repository.TryGetGuildParticipant(target, out _))
+            {
+                throw new ArgumentException("The signer already joined a guild.");
+            }
+
+            if (repository.GetGuildRejoinCooldown(target) is { } cooldown
+                && cooldown.Cooldown(repository.ActionContext.BlockIndex) > 0L)
+            {
+                throw new InvalidOperationException(
+                    $"The signer is in the rejoin cooldown period until block {cooldown.ReleaseHeight}");
+            }
+
             var guildParticipant = new GuildParticipant(target, guildAddress, repository);
             var guildGold = repository.GetBalance(guildParticipant.DelegationPoolAddress, Currencies.GuildGold);
             repository.SetGuildParticipant(guildParticipant);
@@ -101,21 +114,10 @@ namespace Nekoyume.Module.Guild
                 repository.Undelegate(agentAddress);
             }
 
+            repository.SetGuildRejoinCooldown(agentAddress, repository.ActionContext.BlockIndex);
+
             return repository;
         }
-
-        // public static GuildRepository RawLeaveGuild(this GuildRepository repository, AgentAddress target)
-        // {
-        //     if (!repository.TryGetGuildParticipant(target, out var guildParticipant))
-        //     {
-        //         throw new InvalidOperationException("It may not join any guild.");
-        //     }
-
-        //     repository.RemoveGuildParticipant(target);
-        //     repository.DecreaseGuildMemberCount(guildParticipant.GuildAddress);
-
-        //     return repository;
-        // }
 
         private static bool TryGetGuildParticipant(
             this GuildRepository repository,
@@ -134,12 +136,17 @@ namespace Nekoyume.Module.Guild
             }
         }
 
-        private static GuildRepository Delegate(
+        // TODO: Hide this method as private after migration.
+        public static GuildRepository Delegate(
             this GuildRepository repository,
             AgentAddress guildParticipantAddress,
             FungibleAssetValue fav)
         {
             var height = repository.ActionContext.BlockIndex;
+
+            // TODO: Remove below unnecessary height condition after migration.
+            height = Math.Max(height, GuildMigrationConfig.MigrateDelegationHeight);
+
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
             guildParticipant.Delegate(guild, fav, height);
@@ -200,5 +207,28 @@ namespace Nekoyume.Module.Guild
 
             return repository;
         }
+
+        private static GuildRepository SetGuildRejoinCooldown(
+            this GuildRepository repository,
+            AgentAddress guildParticipantAddress,
+            long height)
+        {
+            var guildRejoinCooldown = new GuildRejoinCooldown(guildParticipantAddress, height);
+            repository.UpdateWorld(
+                repository.World.SetAccount(
+                    Addresses.GuildRejoinCooldown,
+                    repository.World.GetAccount(Addresses.GuildRejoinCooldown)
+                        .SetState(guildParticipantAddress, guildRejoinCooldown.Bencoded)));
+            return repository;
+        }
+
+        private static GuildRejoinCooldown? GetGuildRejoinCooldown(
+            this GuildRepository repository,
+            AgentAddress guildParticipantAddress)
+            => repository.World
+                .GetAccount(Addresses.GuildRejoinCooldown)
+                .GetState(guildParticipantAddress) is Integer bencoded
+                    ? new GuildRejoinCooldown(guildParticipantAddress, bencoded)
+                    : null;
     }
 }

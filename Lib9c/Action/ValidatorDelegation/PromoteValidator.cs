@@ -7,6 +7,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Org.BouncyCastle.Bcpg.Sig;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -60,6 +61,13 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
+
+            // TODO: Remove this check when to deliver features to users.
+            if (context.Signer != ValidatorConfig.PlanetariumValidator)
+            {
+                throw new InvalidOperationException(
+                    $"This action is not allowed for {context.Signer}.");
+            }
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);

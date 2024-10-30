@@ -86,6 +86,12 @@ namespace Nekoyume
         public static readonly Address GuildParticipant = new("0000000000000000000000000000000000000203");
 
         /// <summary>
+        /// An address of an account having <see cref="Nekoyume.Model.Guild.GuildRejoinCooldown"/>
+        /// </summary>
+        public static readonly Address GuildRejoinCooldown =
+            new Address("0000000000000000000000000000000000000204");
+
+        /// <summary>
         /// Build an <see cref="Address"/> of an <see cref="Libplanet.Action.State.Account"/>,
         /// represented as `agentAddress` ↔ <see cref="Bencodex.Types.Boolean"/>, indicates whether
         /// the `agentAddress` is banned.
