@@ -6,8 +6,6 @@ using MessagePack.Formatters;
 
 namespace Lib9c.Formatters
 {
-    // FIXME: This class must be removed and replaced with other way for serialization.
-    // https://github.com/dotnet/designs/blob/main/accepted/2020/better-obsoletion/binaryformatter-obsoletion.md
     public class ExceptionFormatter<T> : IMessagePackFormatter<T?> where T : Exception
     {
         public void Serialize(ref MessagePackWriter writer, T? value,
