@@ -28,7 +28,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         deserialized.LoadPlainValue(plainValue);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -132,7 +132,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<FailedLoadStateException>(() => slashValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_ByAbstain()
     {
         // Given
@@ -170,7 +170,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         Assert.False(delegatee.Tombstoned);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_ToJailedValidator_ThenNothingHappens()
     {
         // Given

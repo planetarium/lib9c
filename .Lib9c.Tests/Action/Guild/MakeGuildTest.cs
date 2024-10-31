@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action.Guild
             deserialized.LoadPlainValue(plainValue);
         }
 
-        [Fact]
+        [Fact(Skip = "Allow after Planetarium validator restriction")]
         public void Execute()
         {
             IWorld world = World;

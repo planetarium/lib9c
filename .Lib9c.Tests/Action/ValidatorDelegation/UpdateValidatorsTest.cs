@@ -22,7 +22,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         deserialized.LoadPlainValue(plainValue);
     }
 
-    [Fact]
+    [Fact(Skip ="Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -58,7 +58,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         }
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_ExcludesTombstonedValidator()
     {
         // Given

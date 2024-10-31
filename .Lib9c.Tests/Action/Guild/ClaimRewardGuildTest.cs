@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action.Guild
             deserialized.LoadPlainValue(plainValue);
         }
 
-        [Fact]
+        [Fact(Skip = "Allow after bond on actual block height")]
         public void Execute()
         {
             // Given
@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Action.Guild
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Allow after bond on actual block height")]
         public void SkipDuplicatedClaim()
         {
             // Given

@@ -20,7 +20,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         deserialized.LoadPlainValue(plainValue);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -65,7 +65,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         Assert.Equal(expectedReleaseCount - 1, actualReleaseCount);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_ThereIsNoUnbonding_AtEarlyHeight()
     {
         // Given

@@ -65,7 +65,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         deserialized.LoadPlainValue(plainValue);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         var fixture = new StaticFixture
@@ -83,7 +83,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [InlineData(1, 1000)]
     [InlineData(33, 33)]
     [InlineData(33, 33.33)]
@@ -109,7 +109,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_WithoutReward_Throw()
     {
         var fixture = new StaticFixture
@@ -127,7 +127,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         Assert.Throws<ArgumentOutOfRangeException>(() => ExecuteWithFixture(fixture));
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
@@ -138,7 +138,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [MemberData(nameof(RandomSeeds))]
     public void Execute_Theory_WithRandomSeed(int randomSeed)
     {

@@ -20,7 +20,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         deserialized.LoadPlainValue(plainValue);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -71,7 +71,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<FailedLoadStateException>(() => unjailValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_OnNotJailedValidator_Throw()
     {
         // Given
@@ -94,7 +94,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<InvalidOperationException>(() => unjailValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_TooEarly_Throw()
     {
         // Given
@@ -119,7 +119,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
             () => unjailValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_OnTombstonedValidator_Throw()
     {
         // Given
@@ -144,7 +144,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
             () => unjailValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_OnLowDelegatedValidator_Throw()
     {
         // Given

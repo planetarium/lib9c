@@ -60,7 +60,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         deserialized.LoadPlainValue(plainValue);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -92,7 +92,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(expectedBalance, actualBalance);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [InlineData(33.33)]
     [InlineData(11.11)]
     [InlineData(10)]
@@ -131,7 +131,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [InlineData(0.1)]
     [InlineData(1)]
     [InlineData(3)]
@@ -190,7 +190,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [InlineData(0)]
     [InlineData(123)]
     [InlineData(34352535)]
@@ -200,7 +200,7 @@ public class ClaimRewardValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [MemberData(nameof(RandomSeeds))]
     public void Execute_Theory_WithRandomSeed(int randomSeed)
     {

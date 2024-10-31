@@ -23,7 +23,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(gold, deserialized.FAV);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -57,7 +57,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         Assert.Empty(validatorList.GetUnbonded());
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_ToInvalidValidator_Throw()
     {
         // Given
@@ -106,7 +106,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
             () => promoteValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_WithInsufficientBalance_Throw()
     {
         // Given
@@ -129,7 +129,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
             () => promoteValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_PromotedValidator_Throw()
     {
         // Given

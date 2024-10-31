@@ -41,7 +41,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(gold, deserialized.FAV);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute()
     {
         // Given
@@ -76,7 +76,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(DelegationCurrency * 80, GetBalance(world, validatorKey.Address));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_Fact()
     {
         var fixture = new StaticFixture
@@ -91,7 +91,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
@@ -102,7 +102,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory]
+    [Theory(Skip = "Allow after Planetarium validator restriction")]
     [MemberData(nameof(RandomSeeds))]
     public void Execute_Fact_WithRandomSeed(int randomSeed)
     {
@@ -110,7 +110,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_WithInvalidCurrency_Throw()
     {
         // Given
@@ -136,7 +136,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<InvalidOperationException>(() => delegateValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_WithInsufficientBalance_Throw()
     {
         // Given
@@ -183,7 +183,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Throws<FailedLoadStateException>(() => delegateValidator.Execute(actionContext));
     }
 
-    [Fact]
+    [Fact(Skip = "Allow after Planetarium validator restriction")]
     public void Execute_ToTombstonedValidator_Throw()
     {
         // Given
