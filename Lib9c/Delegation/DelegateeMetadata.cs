@@ -165,7 +165,7 @@ namespace Nekoyume.Delegation
 
         public Address SlashedPoolAddress { get; }
 
-        public long UnbondingPeriod { get; }
+        public long UnbondingPeriod { get; private set; }
 
         public int MaxUnbondLockInEntries { get; }
 
@@ -295,5 +295,13 @@ namespace Nekoyume.Delegation
 
         public override int GetHashCode()
             => DelegateeAddress.GetHashCode();
+
+        // TODO: [GuildMigration] Remove this method when the migration is done.
+        // Remove private setter for UnbondingPeriod.
+        public void UpdateUnbondingPeriod(long unbondingPeriod)
+        {
+            UnbondingPeriod = unbondingPeriod;
+        }
+
     }
 }

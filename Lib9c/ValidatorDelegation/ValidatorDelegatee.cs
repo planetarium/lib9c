@@ -89,7 +89,8 @@ namespace Nekoyume.ValidatorDelegation
 
         public static Currency ValidatorRewardCurrency => Currencies.Mead;
 
-        public static long ValidatorUnbondingPeriod => 10L;
+        // TODO: [MigrateGuild] Change unbonding period after migration.
+        public static long ValidatorUnbondingPeriod => 0L;
 
         public static int ValidatorMaxUnbondLockInEntries => 10;
 
