@@ -132,6 +132,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     [InlineData(1181126949)]
     [InlineData(793705868)]
     [InlineData(707058493)]
+    [InlineData(37149681)]
     public void Execute_Theory_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -301,12 +302,13 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             ValidatorsInfos = CreateArray(_random.Next(1, 200), i =>
             {
                 var balance = GetRandomFAV(DelegationCurrency, _random);
-                var flag = _random.Next() % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null;
+                var cash = GetRandomCash(_random, balance);
+                var flag = i == 0 || _random.Next() % 2 == 0 ? VoteFlag.PreCommit : VoteFlag.Null;
                 return new ValidatorInfo
                 {
                     Key = new PrivateKey(),
-                    Balance = balance,
-                    Cash = GetRandomCash(_random, balance),
+                    Balance = balance < MinimumDelegation ? MinimumDelegation : balance,
+                    Cash = cash < MinimumDelegation ? MinimumDelegation : cash,
                     VoteFlag = flag,
                 };
             });

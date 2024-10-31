@@ -45,11 +45,11 @@ public class ValidatorDelegationTestBase
     protected static BlockHash EmptyBlockHash { get; }
         = new BlockHash(CreateArray(BlockHash.Size, _ => (byte)0x01));
 
+    protected static FungibleAssetValue MinimumDelegation { get; } = DelegationCurrency * 10;
+
     protected PrivateKey AdminKey { get; } = new PrivateKey();
 
     protected IWorld World { get; }
-
-    protected FungibleAssetValue MinimumDelegation { get; } = DelegationCurrency * 10;
 
     protected static T[] CreateArray<T>(int length, Func<int, T> creator)
         => Enumerable.Range(0, length).Select(creator).ToArray();
