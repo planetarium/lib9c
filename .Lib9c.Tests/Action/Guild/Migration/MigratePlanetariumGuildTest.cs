@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Nekoyume.TypedAddress;
     using Xunit;
 
+    // TODO: Remove this test class after the migration is completed.
     public class MigratePlanetariumGuildTest : GuildTestBase
     {
         [Fact]

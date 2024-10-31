@@ -17,6 +17,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using Nekoyume.TypedAddress;
     using Xunit;
 
+    // TODO: Remove this test class after the migration is completed.
     public class MigrateDelegationTest : GuildTestBase
     {
         [Fact]
@@ -64,13 +65,27 @@ namespace Lib9c.Tests.Action.Guild.Migration
         {
             var legacyPlanetariumGuild = new LegacyGuild(GuildConfig.PlanetariumGuildOwner);
             var legacyPlanetariumGuildParticipant = new LegacyGuildParticipant(guildAddress);
+
             return world
                 .MutateAccount(
                     Addresses.Guild,
                     account => account.SetState(guildAddress, legacyPlanetariumGuild.Bencoded))
                 .MutateAccount(
                     Addresses.GuildParticipant,
-                    account => account.SetState(GuildConfig.PlanetariumGuildOwner, legacyPlanetariumGuildParticipant.Bencoded));
+                    account => account.SetState(GuildConfig.PlanetariumGuildOwner, legacyPlanetariumGuildParticipant.Bencoded))
+                .MutateAccount(
+                    Addresses.GuildMemberCounter,
+                    account =>
+                    {
+                        BigInteger count = account.GetState(guildAddress) switch
+                        {
+                            Integer i => i.Value,
+                            null => 0,
+                            _ => throw new InvalidCastException(),
+                        };
+
+                        return account.SetState(guildAddress, (Integer)(count + 1));
+                    });
         }
 
         private static IWorld EnsureJoinLegacyPlanetariumGuild(IWorld world, AgentAddress guildParticipantAddress)
