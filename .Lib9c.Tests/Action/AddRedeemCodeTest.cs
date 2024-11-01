@@ -24,30 +24,32 @@ namespace Lib9c.Tests.Action
                 redeemCsv = "New Value",
             };
 
-            PolicyExpiredException exc1 = Assert.Throws<PolicyExpiredException>(() =>
-            {
-                action.Execute(
-                    new ActionContext
-                    {
-                        BlockIndex = 101,
-                        PreviousState = state,
-                        Signer = adminAddress,
-                    }
-                );
-            });
+            var exc1 = Assert.Throws<PolicyExpiredException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext
+                        {
+                            BlockIndex = 101,
+                            PreviousState = state,
+                            Signer = adminAddress,
+                        }
+                    );
+                });
             Assert.Equal(101, exc1.BlockIndex);
 
-            PermissionDeniedException exc2 = Assert.Throws<PermissionDeniedException>(() =>
-            {
-                action.Execute(
-                    new ActionContext
-                    {
-                        BlockIndex = 5,
-                        PreviousState = state,
-                        Signer = new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"),
-                    }
-                );
-            });
+            var exc2 = Assert.Throws<PermissionDeniedException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext
+                        {
+                            BlockIndex = 5,
+                            PreviousState = state,
+                            Signer = new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"),
+                        }
+                    );
+                });
             Assert.Equal(new Address("019101FEec7ed4f918D396827E1277DEda1e20D4"), exc2.Signer);
         }
 
@@ -64,14 +66,15 @@ namespace Lib9c.Tests.Action
                 redeemCsv = csv,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = adminAddress,
-                BlockIndex = 0,
-                PreviousState = new World(MockUtil.MockModernWorldState)
-                    .SetLegacyState(Addresses.Admin, adminState.Serialize())
-                    .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = adminAddress,
+                    BlockIndex = 0,
+                    PreviousState = new World(MockUtil.MockModernWorldState)
+                        .SetLegacyState(Addresses.Admin, adminState.Serialize())
+                        .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(new RedeemCodeListSheet()).Serialize()),
+                });
 
             var sheet = new RedeemCodeListSheet();
             sheet.Set(csv);
@@ -91,18 +94,20 @@ namespace Lib9c.Tests.Action
             sheet.Set(csv);
 
             var state = new World(MockUtil.MockModernWorldState)
-                    .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
+                .SetLegacyState(Addresses.RedeemCode, new RedeemCodeState(sheet).Serialize());
 
             var action = new AddRedeemCode
             {
                 redeemCsv = csv,
             };
 
-            Assert.Throws<SheetRowValidateException>(() => action.Execute(new ActionContext
-                {
-                    BlockIndex = 0,
-                    PreviousState = state,
-                })
+            Assert.Throws<SheetRowValidateException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 0,
+                        PreviousState = state,
+                    })
             );
         }
     }

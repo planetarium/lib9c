@@ -181,7 +181,8 @@ namespace Lib9c.Tests.Fixtures.TableCSV
 176,10640001,303304,360,0,0,3000,335,104540011,,,1000000,Necklace
 177,10650001,303304,360,0,0,3000,335,104540011,,,1000000,Necklace";
 
-        public const string LegacyEnhancementCostSheetV2 = @"id,item_sub_type,grade,level,cost,success_ratio,great_success_ratio,fail_ratio,success_required_block_index,great_success_required_block_index,fail_required_block_index,base_stat_growth_min,base_stat_growth_max,extra_stat_growth_min,extra_stat_growth_max,extra_skill_damage_growth_min,extra_skill_damage_growth_max,extra_skill_chance_growth_min,extra_skill_chance_growth_max
+        public const string LegacyEnhancementCostSheetV2 =
+            @"id,item_sub_type,grade,level,cost,success_ratio,great_success_ratio,fail_ratio,success_required_block_index,great_success_required_block_index,fail_required_block_index,base_stat_growth_min,base_stat_growth_max,extra_stat_growth_min,extra_stat_growth_max,extra_skill_damage_growth_min,extra_skill_damage_growth_max,extra_skill_chance_growth_min,extra_skill_chance_growth_max
 1,Weapon,1,1,0,7500,2500,0,25,31,50,800,1200,0,0,0,0,0,0
 2,Weapon,1,2,0,7500,2500,0,62,77,50,800,1200,0,0,0,0,0,0
 3,Weapon,1,3,0,7500,2500,0,125,156,50,800,1200,0,0,0,0,0,0

@@ -175,6 +175,11 @@ namespace Nekoyume.Model.Item
 
         public KeyValuePair<int, int> AddItem(ItemBase itemBase, int count = 1, ILock iLock = null)
         {
+            if(count == 0)
+            {
+                throw new InvalidItemCountException();
+            }
+
             switch (itemBase.ItemType)
             {
                 case ItemType.Consumable:

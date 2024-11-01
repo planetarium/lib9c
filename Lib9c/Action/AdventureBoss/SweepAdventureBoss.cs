@@ -132,7 +132,7 @@ namespace Nekoyume.Action.AdventureBoss
             if (!inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex, requiredPotion))
             {
                 throw new NotEnoughMaterialException(
-                    $"{requiredPotion} AP potions needed. You only have {inventory.Items.First(item => item.item.ItemSubType == ItemSubType.ApStone).count}"
+                    $"{requiredPotion} AP potions needed. You only have {inventory.Items.FirstOrDefault(item => item.item.ItemSubType == ItemSubType.ApStone)?.count}"
                 );
             }
 

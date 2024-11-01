@@ -60,11 +60,20 @@ namespace Lib9c.Tests.Action
             _gasUsed += gas;
         }
 
-        public IRandom GetRandom() => _random ?? new TestRandom(RandomSeed);
+        public IRandom GetRandom()
+        {
+            return _random ?? new TestRandom(RandomSeed);
+        }
 
-        public long GasUsed() => _gasUsed;
+        public long GasUsed()
+        {
+            return _gasUsed;
+        }
 
-        public long GasLimit() => 0;
+        public long GasLimit()
+        {
+            return 0;
+        }
 
         // FIXME: Temporary measure to allow inheriting already mutated IRandom.
         public void SetRandom(IRandom random)

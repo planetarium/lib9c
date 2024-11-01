@@ -28,14 +28,17 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    false.Serialize(),  // Unapproved
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        false.Serialize(), // Unapproved
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
-            Assert.Throws<GuildMigrationFailedException>(() =>
-                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+            Assert.Throws<GuildMigrationFailedException>(
+                () =>
+                    GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
         }
 
         [Fact]
@@ -48,10 +51,12 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        true.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
             world = GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target);
@@ -72,8 +77,9 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 .JoinGuild(guildAddress, guildMasterAddress);
 
             Assert.Null(world.GetJoinedGuild(target));
-            Assert.Throws<GuildMigrationFailedException>(() =>
-                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+            Assert.Throws<GuildMigrationFailedException>(
+                () =>
+                    GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
         }
 
         [Fact]
@@ -82,14 +88,17 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var target = AddressUtil.CreateAgentAddress();
             var pledgeAddress = target.GetPledgeAddress();
             var world = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        true.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(target));
-            Assert.Throws<GuildMigrationFailedException>(() =>
-                GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
+            Assert.Throws<GuildMigrationFailedException>(
+                () =>
+                    GuildMigrationCtrl.MigratePlanetariumPledgeToGuild(world, target));
         }
     }
 }

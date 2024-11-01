@@ -38,8 +38,9 @@ namespace Lib9c.Tests.TableData.Stake
             var sb = new StringBuilder();
             sb.AppendLine("attr_name,value");
             sb.AppendLine(row);
-            Assert.Throws<SheetRowValidateException>(() =>
-                new StakePolicySheet().Set(sb.ToString()));
+            Assert.Throws<SheetRowValidateException>(
+                () =>
+                    new StakePolicySheet().Set(sb.ToString()));
         }
 
         [Fact]

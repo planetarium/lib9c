@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
         [InlineData(30)] // Lv.30 reduces 20%
         public void CombinationEquipmentTest(int? petLevel)
         {
-            int targetItemId = 10114000;
+            var targetItemId = 10114000;
             var random = new TestRandom();
 
             // Get Recipe
@@ -52,7 +52,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var expectedBlock = recipe.RequiredBlockIndex;
 
             // Get Materials and stages
-            List<EquipmentItemSubRecipeSheet.MaterialInfo> materialList =
+            var materialList =
                 recipe.GetAllMaterials(_tableSheets.EquipmentItemSubRecipeSheetV2).ToList();
             var stageList = List.Empty;
             for (var i = 1; i < recipe.UnlockStage + 1; i++)
@@ -105,13 +105,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 petId = _petId,
             };
 
-            stateV2 = action.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    RandomSeed = random.Seed,
+                });
 
             var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
             var slotState = allSlotState.GetSlot(0);

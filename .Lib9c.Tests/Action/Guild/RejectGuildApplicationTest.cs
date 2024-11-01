@@ -31,50 +31,56 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState)
+            var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .ApplyGuild(appliedMemberAddress, guildAddress);
 
             // These cases should fail because the member didn't apply the guild and
             // non-guild-master-addresses cannot reject the guild application.
             Assert.Throws<InvalidOperationException>(
-                () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = guildMasterAddress,
-                }));
+                () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMasterAddress,
+                    }));
             Assert.Throws<InvalidOperationException>(
-                () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = appliedMemberAddress,
-                }));
+                () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = appliedMemberAddress,
+                    }));
             Assert.Throws<InvalidOperationException>(
-                () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = nonAppliedMemberAddress,
-                }));
+                () => new RejectGuildApplication(nonAppliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = nonAppliedMemberAddress,
+                    }));
 
             // These cases should fail because non-guild-master-addresses cannot reject the guild application.
             Assert.Throws<InvalidOperationException>(
-                () => new RejectGuildApplication(appliedMemberAddress).Execute(new ActionContext
-                {
-                    PreviousState = world,
-                    Signer = appliedMemberAddress,
-                }));
+                () => new RejectGuildApplication(appliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = appliedMemberAddress,
+                    }));
             Assert.Throws<InvalidOperationException>(
-                () => new RejectGuildApplication(appliedMemberAddress).Execute(new ActionContext
+                () => new RejectGuildApplication(appliedMemberAddress).Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = nonAppliedMemberAddress,
+                    }));
+
+            world = new RejectGuildApplication(appliedMemberAddress).Execute(
+                new ActionContext
                 {
                     PreviousState = world,
-                    Signer = nonAppliedMemberAddress,
-                }));
-
-            world = new RejectGuildApplication(appliedMemberAddress).Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+                    Signer = guildMasterAddress,
+                });
 
             Assert.False(world.TryGetGuildApplication(appliedMemberAddress, out _));
             Assert.Null(world.GetJoinedGuild(appliedMemberAddress));

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Lib9c.Tests.Action;
+    using Nekoyume.Action;
     using Nekoyume.Model.Item;
     using Nekoyume.TableData;
     using Xunit;
@@ -34,6 +35,19 @@
         }
 
         // Add
+        [Fact]
+        public void AddItemZero()
+        {
+            var item = GetFirstConsumable();
+            var inventory = new Inventory();
+            Assert.Empty(inventory.Items);
+
+            Assert.Throws<InvalidItemCountException>(() =>
+            {
+                inventory.AddItem(item, 0);
+            });
+        }
+
         [Fact]
         public Inventory AddItem_Consumable()
         {
@@ -954,7 +968,7 @@
         {
             var row = TableSheets.ConsumableItemSheet.Values.First();
             var inventory = new Inventory();
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var consumable = ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 4 + i);
                 inventory.AddItem(consumable);

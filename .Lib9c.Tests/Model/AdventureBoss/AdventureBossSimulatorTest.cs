@@ -174,8 +174,9 @@ namespace Lib9c.Tests.Model.AdventureBoss
 
             if (simulate)
             {
-                var anotherActions = simulator.Log.events.Where(e =>
-                    e.GetType() != typeof(Breakthrough) && e.GetType() != typeof(SpawnPlayer));
+                var anotherActions = simulator.Log.events.Where(
+                    e =>
+                        e.GetType() != typeof(Breakthrough) && e.GetType() != typeof(SpawnPlayer));
                 Assert.NotEmpty(anotherActions);
                 Assert.NotEmpty(simulator.Log.OfType<StageBuff>());
             }

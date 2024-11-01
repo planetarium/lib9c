@@ -121,12 +121,13 @@ namespace Lib9c.Tests.Action
 
             if (excType is null)
             {
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = states,
-                    Signer = _agentAddress,
-                    RandomSeed = _random.Seed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _agentAddress,
+                        RandomSeed = _random.Seed,
+                    });
 
                 Assert.Equal(
                     nextState.GetBalance(_agentAddress, CrystalCalculator.CRYSTAL),
@@ -134,15 +135,18 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(excType, () =>
-                {
-                    action.Execute(new ActionContext
+                Assert.Throws(
+                    excType,
+                    () =>
                     {
-                        PreviousState = states,
-                        Signer = _agentAddress,
-                        RandomSeed = _random.Seed,
+                        action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = states,
+                                Signer = _agentAddress,
+                                RandomSeed = _random.Seed,
+                            });
                     });
-                });
             }
         }
 
@@ -179,12 +183,13 @@ namespace Lib9c.Tests.Action
                     AvatarAddress = _avatarAddress,
                     AdvancedGacha = advancedGacha,
                 };
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = states,
-                    Signer = _agentAddress,
-                    RandomSeed = _random.Seed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = states,
+                        Signer = _agentAddress,
+                        RandomSeed = _random.Seed,
+                    });
                 var newGachaState = new CrystalRandomSkillState(
                     gachaStateAddress,
                     (List)nextState.GetLegacyState(gachaStateAddress));

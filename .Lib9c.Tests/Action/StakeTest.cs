@@ -123,13 +123,14 @@ namespace Lib9c.Tests.Action
                 0);
             previousState = previousState
                 .SetLegacyState(monsterCollectionAddr, monsterCollectionState.Serialize());
-            Assert.Throws<MonsterCollectionExistingException>(() =>
-                Execute(
-                    0,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    0));
+            Assert.Throws<MonsterCollectionExistingException>(
+                () =>
+                    Execute(
+                        0,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        0));
         }
 
         [Theory]
@@ -137,13 +138,14 @@ namespace Lib9c.Tests.Action
         [InlineData(long.MinValue)]
         public void Execute_Throw_ArgumentOutOfRangeException_Via_Negative_Amount(long amount)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                Execute(
-                    0,
-                    _initialState,
-                    new TestRandom(),
-                    _agentAddr,
-                    amount));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    Execute(
+                        0,
+                        _initialState,
+                        new TestRandom(),
+                        _agentAddr,
+                        amount));
         }
 
         [Theory]
@@ -157,13 +159,14 @@ namespace Lib9c.Tests.Action
             var previousState = _initialState.SetLegacyState(
                 Addresses.GetSheetAddress(sheetName),
                 Null.Value);
-            Assert.Throws<StateNullException>(() =>
-                Execute(
-                    0,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    0));
+            Assert.Throws<StateNullException>(
+                () =>
+                    Execute(
+                        0,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        0));
         }
 
         [Theory]
@@ -172,13 +175,14 @@ namespace Lib9c.Tests.Action
         [InlineData(1)]
         public void Execute_Throw_ArgumentOutOfRangeException_Via_Minimum_Amount(long amount)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                Execute(
-                    0,
-                    _initialState,
-                    new TestRandom(),
-                    _agentAddr,
-                    amount));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () =>
+                    Execute(
+                        0,
+                        _initialState,
+                        new TestRandom(),
+                        _agentAddr,
+                        amount));
         }
 
         [Theory]
@@ -194,30 +198,32 @@ namespace Lib9c.Tests.Action
             if (balance > 0)
             {
                 previousState = _initialState.MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     _agentAddr,
                     _ncg * balance);
             }
 
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                Execute(
-                    0,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    amount));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () =>
+                    Execute(
+                        0,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        amount));
         }
 
         [Fact]
         public void Execute_Throw_StateNullException_Via_0_Amount()
         {
-            Assert.Throws<StateNullException>(() =>
-                Execute(
-                    0,
-                    _initialState,
-                    new TestRandom(),
-                    _agentAddr,
-                    0));
+            Assert.Throws<StateNullException>(
+                () =>
+                    Execute(
+                        0,
+                        _initialState,
+                        new TestRandom(),
+                        _agentAddr,
+                        0));
         }
 
         [Theory]
@@ -234,22 +240,23 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
+                stakeStateAddr,
+                previousStartedBlockIndex);
             Assert.True(stakeState.IsClaimable(blockIndex));
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            Assert.Throws<StakeExistingClaimableException>(() =>
-                Execute(
-                    blockIndex,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    previousAmount));
+            Assert.Throws<StakeExistingClaimableException>(
+                () =>
+                    Execute(
+                        blockIndex,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        previousAmount));
         }
 
         [Theory]
@@ -267,21 +274,22 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeStateV2(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex);
+                new Contract(_stakePolicySheet),
+                previousStartedBlockIndex);
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            Assert.Throws<StakeExistingClaimableException>(() =>
-                Execute(
-                    blockIndex,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    previousAmount));
+            Assert.Throws<StakeExistingClaimableException>(
+                () =>
+                    Execute(
+                        blockIndex,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        previousAmount));
         }
 
         [Theory]
@@ -302,24 +310,25 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
+                stakeStateAddr,
+                previousStartedBlockIndex);
             Assert.False(stakeState.IsCancellable(blockIndex));
             stakeState.Claim(blockIndex);
             Assert.False(stakeState.IsClaimable(blockIndex));
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            Assert.Throws<RequiredBlockIndexException>(() =>
-                Execute(
-                    blockIndex,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    reducedAmount));
+            Assert.Throws<RequiredBlockIndexException>(
+                () =>
+                    Execute(
+                        blockIndex,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        reducedAmount));
         }
 
         [Theory]
@@ -340,22 +349,23 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeStateV2(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex);
+                new Contract(_stakePolicySheet),
+                previousStartedBlockIndex,
+                blockIndex);
             var previousState = _initialState
                 .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
+                    new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            Assert.Throws<RequiredBlockIndexException>(() =>
-                Execute(
-                    blockIndex,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    reducedAmount));
+            Assert.Throws<RequiredBlockIndexException>(
+                () =>
+                    Execute(
+                        blockIndex,
+                        previousState,
+                        new TestRandom(),
+                        _agentAddr,
+                        reducedAmount));
         }
 
         [Theory]
@@ -365,7 +375,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Success_When_Staking_State_Null(long amount)
         {
             var previousState = _initialState.MintAsset(
-                new ActionContext { Signer = Addresses.Admin },
+                new ActionContext { Signer = Addresses.Admin, },
                 _agentAddr,
                 _ncg * amount);
             Execute(
@@ -402,8 +412,8 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
+                stakeStateAddr,
+                previousStartedBlockIndex);
             stakeState.Claim(blockIndex);
             var previousState = _initialState
                 .MintAsset(
@@ -451,9 +461,9 @@ namespace Lib9c.Tests.Action
         {
             var stakeStateAddr = StakeStateV2.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeStateV2(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex);
+                new Contract(_stakePolicySheet),
+                previousStartedBlockIndex,
+                blockIndex);
             var previousState = _initialState
                 .MintAsset(
                     new ActionContext(),
@@ -486,13 +496,14 @@ namespace Lib9c.Tests.Action
                 _ncg);
             var previousTotalBalance = previousBalance + previousStakeBalance;
             var action = new Stake(amount);
-            var nextState = action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousState,
-                RandomSeed = random.Seed,
-                Signer = signer,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = previousState,
+                    RandomSeed = random.Seed,
+                    Signer = signer,
+                });
 
             var amountNCG = _ncg * amount;
             var nextBalance = nextState.GetBalance(signer, _ncg);

@@ -8,8 +8,8 @@ namespace Lib9c.Tests.Model.Rune
     public class AllRuneStateTest
     {
         [Theory]
-        [InlineData(new[] { 10001 })]
-        [InlineData(new[] { 10001, 10002 })]
+        [InlineData(new[] { 10001, })]
+        [InlineData(new[] { 10001, 10002, })]
         public void Serialize(int[] runeIds)
         {
             var levelOffset = new TestRandom().Next(0, 100);
