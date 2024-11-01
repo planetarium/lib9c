@@ -1702,6 +1702,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.InitializeValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.InitializeValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.InvalidAddressException.yml",
       "output": {
         ".html": {
