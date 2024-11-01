@@ -10,7 +10,7 @@ using System.Numerics;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public sealed class ValidatorRepository : DelegationRepository
+    public sealed class ValidatorRepository : DelegationRepository<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>
     {
         private readonly Address validatorListAddress = Addresses.ValidatorList;
 
@@ -44,7 +44,7 @@ namespace Nekoyume.ValidatorDelegation
                     this)
                 : throw new FailedLoadStateException("Delegatee does not exist.");
 
-        public override IDelegatee GetDelegatee(Address address)
+        public override ValidatorDelegatee GetDelegatee(Address address)
             => GetValidatorDelegatee(address);
 
         public ValidatorDelegator GetValidatorDelegator(Address address, Address rewardAddress)
@@ -64,7 +64,7 @@ namespace Nekoyume.ValidatorDelegation
             }
         }
 
-        public override IDelegator GetDelegator(Address address)
+        public override ValidatorDelegator GetDelegator(Address address)
             => new ValidatorDelegator(address, this);
 
         public ValidatorList GetValidatorList()
@@ -82,16 +82,16 @@ namespace Nekoyume.ValidatorDelegation
             SetDelegateeMetadata(validatorDelegatee.Metadata);
         }
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetValidatorDelegatee((ValidatorDelegatee)delegatee);
+        public override void SetDelegatee(ValidatorDelegatee delegatee)
+            => SetValidatorDelegatee(delegatee);
 
         public void SetValidatorDelegator(ValidatorDelegator validatorDelegator)
         {
             SetDelegatorMetadata(validatorDelegator.Metadata);
         }
 
-        public override void SetDelegator(IDelegator delegator)
-            => SetValidatorDelegator((ValidatorDelegator)delegator);
+        public override void SetDelegator(ValidatorDelegator delegator)
+            => SetValidatorDelegator(delegator);
 
         public void SetValidatorList(ValidatorList validatorList)
         {

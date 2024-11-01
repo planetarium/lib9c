@@ -8,7 +8,11 @@ using Nekoyume.Action;
 
 namespace Nekoyume.Delegation
 {
-    public abstract class DelegationRepository : IDelegationRepository
+    public abstract class DelegationRepository<TRepository, TDelegatee, TDelegator>
+        : IDelegationRepository
+        where TRepository : DelegationRepository<TRepository, TDelegatee, TDelegator>
+        where TDelegatee : Delegatee<TRepository, TDelegatee, TDelegator>
+        where TDelegator : Delegator<TRepository, TDelegatee, TDelegator>
     {
         protected IWorld previousWorld;
         protected IAccount delegateeAccount;
@@ -88,13 +92,13 @@ namespace Nekoyume.Delegation
 
         private Address LumpSumRewardsRecordAccountAddress { get; }
 
-        public abstract IDelegatee GetDelegatee(Address address);
+        public abstract TDelegatee GetDelegatee(Address address);
 
-        public abstract IDelegator GetDelegator(Address address);
+        public abstract TDelegator GetDelegator(Address address);
 
-        public abstract void SetDelegatee(IDelegatee delegatee);
+        public abstract void SetDelegatee(TDelegatee delegatee);
 
-        public abstract void SetDelegator(IDelegator delegator);
+        public abstract void SetDelegator(TDelegator delegator);
 
         public DelegateeMetadata GetDelegateeMetadata(Address delegateeAddress)
         {
@@ -114,7 +118,7 @@ namespace Nekoyume.Delegation
                 : throw new FailedLoadStateException("DelegatorMetadata not found.");
         }
 
-        public Bond GetBond(IDelegatee delegatee, Address delegatorAddress)
+        public Bond GetBond(TDelegatee delegatee, Address delegatorAddress)
         {
             Address address = delegatee.BondAddress(delegatorAddress);
             IValue? value = bondAccount.GetState(address);
@@ -123,7 +127,7 @@ namespace Nekoyume.Delegation
                 : new Bond(address);
         }
 
-        public UnbondLockIn GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress)
+        public UnbondLockIn GetUnbondLockIn(TDelegatee delegatee, Address delegatorAddress)
         {
             Address address = delegatee.UnbondLockInAddress(delegatorAddress);
             IValue? value = unbondLockInAccount.GetState(address);
@@ -140,7 +144,7 @@ namespace Nekoyume.Delegation
                 : throw new FailedLoadStateException("UnbondLockIn not found.");
         }
 
-        public RebondGrace GetRebondGrace(IDelegatee delegatee, Address delegatorAddress)
+        public RebondGrace GetRebondGrace(TDelegatee delegatee, Address delegatorAddress)
         {
             Address address = delegatee.RebondGraceAddress(delegatorAddress);
             IValue? value = rebondGraceAccount.GetState(address);
@@ -162,7 +166,7 @@ namespace Nekoyume.Delegation
                 ? new UnbondingSet(bencoded, this)
                 : new UnbondingSet(this);
 
-        public LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
+        public LumpSumRewardsRecord? GetLumpSumRewardsRecord(TDelegatee delegatee, long height)
         {
             Address address = delegatee.LumpSumRewardsRecordAddress(height);
             IValue? value = lumpSumRewardsRecordAccount.GetState(address);
@@ -171,7 +175,7 @@ namespace Nekoyume.Delegation
                 : null;
         }
 
-        public LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee)
+        public LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(TDelegatee delegatee)
         {
             Address address = delegatee.CurrentLumpSumRewardsRecordAddress();
             IValue? value = lumpSumRewardsRecordAccount.GetState(address);
@@ -247,5 +251,32 @@ namespace Nekoyume.Delegation
             unbondingSetAccount = world.GetAccount(UnbondingSetAccountAddress);
             lumpSumRewardsRecordAccount = world.GetAccount(LumpSumRewardsRecordAccountAddress);
         }
+
+        IDelegatee IDelegationRepository.GetDelegatee(Address address)
+            => GetDelegatee(address);
+
+        IDelegator IDelegationRepository.GetDelegator(Address address)
+            => GetDelegator(address);
+
+        Bond IDelegationRepository.GetBond(IDelegatee delegatee, Address delegatorAddress)
+            => GetBond((TDelegatee)delegatee, delegatorAddress);
+
+        UnbondLockIn IDelegationRepository.GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress)
+        => GetUnbondLockIn((TDelegatee)delegatee, delegatorAddress);
+
+        RebondGrace IDelegationRepository.GetRebondGrace(IDelegatee delegatee, Address delegatorAddress)
+        => GetRebondGrace((TDelegatee)delegatee, delegatorAddress);
+
+        LumpSumRewardsRecord? IDelegationRepository.GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
+            => GetLumpSumRewardsRecord((TDelegatee)delegatee, height);
+
+        LumpSumRewardsRecord? IDelegationRepository.GetCurrentLumpSumRewardsRecord(IDelegatee delegatee)
+            => GetCurrentLumpSumRewardsRecord((TDelegatee)delegatee);
+
+        void IDelegationRepository.SetDelegatee(IDelegatee delegatee)
+            => SetDelegatee((TDelegatee)delegatee);
+
+        void IDelegationRepository.SetDelegator(IDelegator delegator)
+            => SetDelegator((TDelegator)delegator);
     }
 }

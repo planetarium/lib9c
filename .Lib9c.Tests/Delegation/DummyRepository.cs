@@ -7,7 +7,8 @@ namespace Nekoyume.Delegation
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
 
-    public class DummyRepository : DelegationRepository
+    public class DummyRepository
+        : DelegationRepository<DummyRepository, DummyDelegatee, DummyDelegator>
     {
         public DummyRepository(IWorld world, IActionContext context)
             : base(
@@ -49,10 +50,10 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetDelegateeMetadata(((DummyDelegatee)delegatee).Metadata);
+        public override void SetDelegatee(DummyDelegatee delegatee)
+            => SetDelegateeMetadata(delegatee.Metadata);
 
-        public override void SetDelegator(IDelegator delegator)
-            => SetDelegatorMetadata(((DummyDelegator)delegator).Metadata);
+        public override void SetDelegator(DummyDelegator delegator)
+            => SetDelegatorMetadata(delegator.Metadata);
     }
 }

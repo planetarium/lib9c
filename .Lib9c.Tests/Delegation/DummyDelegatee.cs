@@ -2,9 +2,9 @@ using Lib9c.Tests.Delegation;
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
 
-public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
+public sealed class DummyDelegatee : Delegatee<DummyRepository, DummyDelegatee, DummyDelegator>
 {
-    public DummyDelegatee(Address address, IDelegationRepository repository)
+    public DummyDelegatee(Address address, DummyRepository repository)
         : base(address, repository)
     {
     }

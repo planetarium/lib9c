@@ -6,7 +6,8 @@ using Nekoyume.Delegation;
 
 namespace Nekoyume.Model.Guild
 {
-    public class GuildValidatorRepository : DelegationRepository
+    public class GuildValidatorRepository
+        : DelegationRepository<GuildValidatorRepository, GuildValidatorDelegatee, GuildValidatorDelegator>
     {
         public GuildValidatorRepository(IWorld world, IActionContext actionContext)
             : base(
@@ -36,9 +37,8 @@ namespace Nekoyume.Model.Guild
             }
         }
 
-        public override IDelegatee GetDelegatee(Address address)
+        public override GuildValidatorDelegatee GetDelegatee(Address address)
             => GetGuildValidatorDelegatee(address);
-
 
         public GuildValidatorDelegator GetGuildValidatorDelegator(Address address)
         {
@@ -52,7 +52,7 @@ namespace Nekoyume.Model.Guild
             }
         }
 
-        public override IDelegator GetDelegator(Address address)
+        public override GuildValidatorDelegator GetDelegator(Address address)
             => GetGuildValidatorDelegator(address);
 
         public void SetGuildValidatorDelegatee(GuildValidatorDelegatee guildValidatorDelegatee)
@@ -60,15 +60,15 @@ namespace Nekoyume.Model.Guild
             SetDelegateeMetadata(guildValidatorDelegatee.Metadata);
         }
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetGuildValidatorDelegatee(delegatee as GuildValidatorDelegatee);
+        public override void SetDelegatee(GuildValidatorDelegatee delegatee)
+            => SetGuildValidatorDelegatee(delegatee);
 
         public void SetGuildValidatorDelegator(GuildValidatorDelegator guildValidatorDelegator)
         {
             SetDelegatorMetadata(guildValidatorDelegator.Metadata);
         }
 
-        public override void SetDelegator(IDelegator delegator)
-            => SetGuildValidatorDelegator(delegator as GuildValidatorDelegator);
+        public override void SetDelegator(GuildValidatorDelegator delegator)
+            => SetGuildValidatorDelegator(delegator);
     }
 }

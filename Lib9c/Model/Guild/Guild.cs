@@ -10,7 +10,8 @@ using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild
 {
-    public class Guild : Delegatee<GuildParticipant, Guild>, IBencodable, IEquatable<Guild>
+    public class Guild : Delegatee<GuildRepository, Guild, GuildParticipant>,
+        IBencodable, IEquatable<Guild>
     {
         private const string StateTypeName = "guild";
         private const long StateVersion = 1;

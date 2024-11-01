@@ -11,7 +11,8 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
-    public class GuildParticipant : Delegator<Guild, GuildParticipant>, IBencodable, IEquatable<GuildParticipant>
+    public class GuildParticipant : Delegator<GuildRepository, Guild, GuildParticipant>,
+        IBencodable, IEquatable<GuildParticipant>
     {
         private const string StateTypeName = "guild_participant";
         private const long StateVersion = 1;
