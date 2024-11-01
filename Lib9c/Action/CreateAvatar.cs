@@ -155,6 +155,7 @@ namespace Nekoyume.Action
         {
             var existingAgentState = states.GetAgentState(signer);
             var agentState = existingAgentState ?? new AgentState(signer);
+            // check has avatar in avatarAddress, see InvalidAddressException in this method
             var avatarState = states.GetAvatarState(avatarAddress, false, false, false);
             if (avatarState is not null)
             {
