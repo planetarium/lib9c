@@ -58,7 +58,7 @@ namespace Nekoyume.Delegation
             Repository = repository;
         }
 
-        public event EventHandler<long>? DelegationChanged;
+        public event EventHandler<DelegationChangedEventArgs>? DelegationChanged;
 
         public DelegateeMetadata Metadata { get; }
 
@@ -145,7 +145,7 @@ namespace Nekoyume.Delegation
             Repository.SetBond(bond);
             StartNewRewardPeriod(height);
             Repository.SetDelegateeMetadata(Metadata);
-            DelegationChanged?.Invoke(this, height);
+            OnDelegationChanged(new DelegationChangedEventArgs(height));
 
             return share;
         }
@@ -173,7 +173,7 @@ namespace Nekoyume.Delegation
             Repository.SetBond(bond);
             StartNewRewardPeriod(height);
             Repository.SetDelegateeMetadata(Metadata);
-            DelegationChanged?.Invoke(this, height);
+            OnDelegationChanged(new DelegationChangedEventArgs(height));
 
             return fav;
         }
@@ -310,7 +310,7 @@ namespace Nekoyume.Delegation
 
             Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
             Repository.SetDelegateeMetadata(Metadata);
-            DelegationChanged?.Invoke(this, height);
+            OnDelegationChanged(new DelegationChangedEventArgs(height));
         }
 
         BigInteger IDelegatee.Bond(Address delegatorAddress, FungibleAssetValue fav, long height)
@@ -330,6 +330,11 @@ namespace Nekoyume.Delegation
 
         public void RemoveUnbondingRef(UnbondingRef reference)
             => Metadata.RemoveUnbondingRef(reference);
+
+        protected virtual void OnDelegationChanged(DelegationChangedEventArgs e)
+        {
+            DelegationChanged?.Invoke(this, e);
+        }
 
         private void StartNewRewardPeriod(long height)
         {

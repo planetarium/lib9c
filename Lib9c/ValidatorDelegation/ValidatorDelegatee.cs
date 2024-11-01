@@ -52,9 +52,6 @@ namespace Nekoyume.ValidatorDelegation
             IsBonded = false;
             CommissionPercentage = commissionPercentage;
             CommissionPercentageLastUpdateHeight = creationHeight;
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
 
         public ValidatorDelegatee(
@@ -83,14 +80,7 @@ namespace Nekoyume.ValidatorDelegation
             Tombstoned = (Bencodex.Types.Boolean)bencoded[4];
             CommissionPercentage = (Integer)bencoded[5];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[6];
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
-
-        public event EventHandler? Enjailed;
-
-        public event EventHandler? Unjailed;
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
@@ -153,7 +143,7 @@ namespace Nekoyume.ValidatorDelegation
             JailedUntil = releaseHeight;
             Jailed = true;
             Repository.SetDelegatee(this);
-            Enjailed?.Invoke(this, EventArgs.Empty);
+            Repository.SetValidatorList(Repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
         }
 
         public void Unjail(long height)
@@ -183,7 +173,7 @@ namespace Nekoyume.ValidatorDelegation
             JailedUntil = -1L;
             Jailed = false;
             Repository.SetDelegatee(this);
-            Unjailed?.Invoke(this, EventArgs.Empty);
+            Repository.SetValidatorList(Repository.GetValidatorList().SetValidator(Validator));
         }
 
         public void Tombstone()
@@ -258,43 +248,6 @@ namespace Nekoyume.ValidatorDelegation
             CommissionPercentageLastUpdateHeight = height;
         }
 
-        public void OnDelegationChanged(object? sender, long height)
-        {
-            ValidatorRepository repository = Repository;
-
-            if (Jailed)
-            {
-                return;
-            }
-
-            if (Validator.Power.IsZero)
-            {
-                repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
-            }
-            else
-            {
-                repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
-            }
-
-            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
-            if (MinSelfDelegation > selfDelegation && !Jailed)
-            {
-                Jail(height);
-            }
-        }
-
-        public void OnEnjailed(object? sender, EventArgs e)
-        {
-            ValidatorRepository repository = Repository;
-            repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
-        }
-
-        public void OnUnjailed(object? sender, EventArgs e)
-        {
-            ValidatorRepository repository = Repository;
-            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
-        }
-
         public bool Equals(ValidatorDelegatee? other)
             => other is ValidatorDelegatee validatorDelegatee
             && Metadata.Equals(validatorDelegatee.Metadata)
@@ -324,5 +277,45 @@ namespace Nekoyume.ValidatorDelegation
             ImmutableArray.Create<byte>(
                 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55));
+
+        protected override void OnDelegationChanged(DelegationChangedEventArgs e)
+        {
+            base.OnDelegationChanged(e);
+
+            ValidatorRepository repository = Repository;
+            var height = e.Height;
+
+            if (Jailed)
+            {
+                return;
+            }
+
+            if (Validator.Power.IsZero)
+            {
+                repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+            }
+            else
+            {
+                repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+            }
+
+            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
+            if (MinSelfDelegation > selfDelegation && !Jailed)
+            {
+                Jail(height);
+            }
+        }
+
+        private void OnEnjailed()
+        {
+            ValidatorRepository repository = Repository;
+            repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+        }
+
+        private void OnUnjailed()
+        {
+            ValidatorRepository repository = Repository;
+            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+        }
     }
 }
