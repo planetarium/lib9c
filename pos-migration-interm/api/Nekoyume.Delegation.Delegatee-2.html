@@ -1,0 +1,1729 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Delegatee&lt;T, TSelf&gt; | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Delegatee&lt;T, TSelf&gt; | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/pos-migration-interm/apiSpec/new?filename=Nekoyume_Delegation_Delegatee_2.md&amp;value=---%0Auid%3A%20Nekoyume.Delegation.Delegatee%602%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Delegation.Delegatee`2">
+
+
+
+  <h1 id="Nekoyume_Delegation_Delegatee_2" data-uid="Nekoyume.Delegation.Delegatee`2" class="text-break">
+Class Delegatee&lt;T, TSelf&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Delegation.html">Delegation</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Delegatee&lt;T, TSelf&gt; : IDelegatee where T : Delegator&lt;TSelf, T&gt; where TSelf : Delegatee&lt;T, TSelf&gt;</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+    <dt><code>TSelf</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Delegatee&lt;T, TSelf&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Delegation.IDelegatee.html">IDelegatee</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></div>
+      <div><a class="xref" href="Nekoyume.Model.Guild.GuildValidatorDelegatee.html">GuildValidatorDelegatee</a></div>
+      <div><a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorDelegatee.html">ValidatorDelegatee</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2__ctor_" data-uid="Nekoyume.Delegation.Delegatee`2.#ctor*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2__ctor_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Types_Assets_Currency_Libplanet_Types_Assets_Currency_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Crypto_Address_System_Int64_System_Int32_System_Int32_Nekoyume_Delegation_IDelegationRepository_" data-uid="Nekoyume.Delegation.Delegatee`2.#ctor(Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Types.Assets.Currency,Libplanet.Types.Assets.Currency,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Crypto.Address,System.Int64,System.Int32,System.Int32,Nekoyume.Delegation.IDelegationRepository)">
+  Delegatee(Address, Address, Currency, Currency, Address, Address, Address, Address, long, int, int, IDelegationRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Delegatee(Address address, Address accountAddress, Currency delegationCurrency, Currency rewardCurrency, Address delegationPoolAddress, Address rewardPoolAddress, Address rewardRemainderPoolAddress, Address slashedPoolAddress, long unbondingPeriod, int maxUnbondLockInEntries, int maxRebondGraceEntries, IDelegationRepository repository)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>accountAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>delegationCurrency</code> <span class="xref">Currency</span></dt>
+    <dd></dd>
+    <dt><code>rewardCurrency</code> <span class="xref">Currency</span></dt>
+    <dd></dd>
+    <dt><code>delegationPoolAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>rewardPoolAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>rewardRemainderPoolAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>slashedPoolAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>unbondingPeriod</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>maxUnbondLockInEntries</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>maxRebondGraceEntries</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Delegation.IDelegationRepository.html">IDelegationRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2__ctor_" data-uid="Nekoyume.Delegation.Delegatee`2.#ctor*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2__ctor_Libplanet_Crypto_Address_Nekoyume_Delegation_IDelegationRepository_" data-uid="Nekoyume.Delegation.Delegatee`2.#ctor(Libplanet.Crypto.Address,Nekoyume.Delegation.IDelegationRepository)">
+  Delegatee(Address, IDelegationRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Delegatee(Address address, IDelegationRepository repository)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Delegation.IDelegationRepository.html">IDelegationRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_AccountAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.AccountAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_AccountAddress" data-uid="Nekoyume.Delegation.Delegatee`2.AccountAddress">
+  AccountAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address AccountAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Address_" data-uid="Nekoyume.Delegation.Delegatee`2.Address*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Address" data-uid="Nekoyume.Delegation.Delegatee`2.Address">
+  Address
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address Address { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_DelegationCurrency_" data-uid="Nekoyume.Delegation.Delegatee`2.DelegationCurrency*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_DelegationCurrency" data-uid="Nekoyume.Delegation.Delegatee`2.DelegationCurrency">
+  DelegationCurrency
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Currency DelegationCurrency { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Currency</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_DelegationPoolAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.DelegationPoolAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_DelegationPoolAddress" data-uid="Nekoyume.Delegation.Delegatee`2.DelegationPoolAddress">
+  DelegationPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address DelegationPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Delegators_" data-uid="Nekoyume.Delegation.Delegatee`2.Delegators*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Delegators" data-uid="Nekoyume.Delegation.Delegatee`2.Delegators">
+  Delegators
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImmutableSortedSet&lt;Address&gt; Delegators { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablesortedset-1">ImmutableSortedSet</a>&lt;<span class="xref">Address</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Jailed_" data-uid="Nekoyume.Delegation.Delegatee`2.Jailed*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Jailed" data-uid="Nekoyume.Delegation.Delegatee`2.Jailed">
+  Jailed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Jailed { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_JailedUntil_" data-uid="Nekoyume.Delegation.Delegatee`2.JailedUntil*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_JailedUntil" data-uid="Nekoyume.Delegation.Delegatee`2.JailedUntil">
+  JailedUntil
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long JailedUntil { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_MaxRebondGraceEntries_" data-uid="Nekoyume.Delegation.Delegatee`2.MaxRebondGraceEntries*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_MaxRebondGraceEntries" data-uid="Nekoyume.Delegation.Delegatee`2.MaxRebondGraceEntries">
+  MaxRebondGraceEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MaxRebondGraceEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_MaxUnbondLockInEntries_" data-uid="Nekoyume.Delegation.Delegatee`2.MaxUnbondLockInEntries*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_MaxUnbondLockInEntries" data-uid="Nekoyume.Delegation.Delegatee`2.MaxUnbondLockInEntries">
+  MaxUnbondLockInEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int MaxUnbondLockInEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Metadata_" data-uid="Nekoyume.Delegation.Delegatee`2.Metadata*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Metadata" data-uid="Nekoyume.Delegation.Delegatee`2.Metadata">
+  Metadata
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DelegateeMetadata Metadata { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html">DelegateeMetadata</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_MetadataAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.MetadataAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_MetadataAddress" data-uid="Nekoyume.Delegation.Delegatee`2.MetadataAddress">
+  MetadataAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address MetadataAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_MetadataBencoded_" data-uid="Nekoyume.Delegation.Delegatee`2.MetadataBencoded*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_MetadataBencoded" data-uid="Nekoyume.Delegation.Delegatee`2.MetadataBencoded">
+  MetadataBencoded
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List MetadataBencoded { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">List</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Repository_" data-uid="Nekoyume.Delegation.Delegatee`2.Repository*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Repository" data-uid="Nekoyume.Delegation.Delegatee`2.Repository">
+  Repository
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDelegationRepository Repository { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Delegation.IDelegationRepository.html">IDelegationRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_RewardCurrency_" data-uid="Nekoyume.Delegation.Delegatee`2.RewardCurrency*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_RewardCurrency" data-uid="Nekoyume.Delegation.Delegatee`2.RewardCurrency">
+  RewardCurrency
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Currency RewardCurrency { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Currency</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_RewardPoolAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.RewardPoolAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_RewardPoolAddress" data-uid="Nekoyume.Delegation.Delegatee`2.RewardPoolAddress">
+  RewardPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address RewardPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_RewardRemainderPoolAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.RewardRemainderPoolAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_RewardRemainderPoolAddress" data-uid="Nekoyume.Delegation.Delegatee`2.RewardRemainderPoolAddress">
+  RewardRemainderPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address RewardRemainderPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_SlashedPoolAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.SlashedPoolAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_SlashedPoolAddress" data-uid="Nekoyume.Delegation.Delegatee`2.SlashedPoolAddress">
+  SlashedPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address SlashedPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Tombstoned_" data-uid="Nekoyume.Delegation.Delegatee`2.Tombstoned*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Tombstoned" data-uid="Nekoyume.Delegation.Delegatee`2.Tombstoned">
+  Tombstoned
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Tombstoned { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_TotalDelegated_" data-uid="Nekoyume.Delegation.Delegatee`2.TotalDelegated*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_TotalDelegated" data-uid="Nekoyume.Delegation.Delegatee`2.TotalDelegated">
+  TotalDelegated
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue TotalDelegated { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_TotalShares_" data-uid="Nekoyume.Delegation.Delegatee`2.TotalShares*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_TotalShares" data-uid="Nekoyume.Delegation.Delegatee`2.TotalShares">
+  TotalShares
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigInteger TotalShares { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_UnbondingPeriod_" data-uid="Nekoyume.Delegation.Delegatee`2.UnbondingPeriod*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_UnbondingPeriod" data-uid="Nekoyume.Delegation.Delegatee`2.UnbondingPeriod">
+  UnbondingPeriod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long UnbondingPeriod { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_AddUnbondingRef_" data-uid="Nekoyume.Delegation.Delegatee`2.AddUnbondingRef*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_AddUnbondingRef_Nekoyume_Delegation_UnbondingRef_" data-uid="Nekoyume.Delegation.Delegatee`2.AddUnbondingRef(Nekoyume.Delegation.UnbondingRef)">
+  AddUnbondingRef(UnbondingRef)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L380"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddUnbondingRef(UnbondingRef reference)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reference</code> <a class="xref" href="Nekoyume.Delegation.UnbondingRef.html">UnbondingRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Bond_" data-uid="Nekoyume.Delegation.Delegatee`2.Bond*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Bond_Nekoyume_Delegation_IDelegator_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Bond(Nekoyume.Delegation.IDelegator,Libplanet.Types.Assets.FungibleAssetValue,System.Int64)">
+  Bond(IDelegator, FungibleAssetValue, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigInteger Bond(IDelegator delegator, FungibleAssetValue fav, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <a class="xref" href="Nekoyume.Delegation.IDelegator.html">IDelegator</a></dt>
+    <dd></dd>
+    <dt><code>fav</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Bond_" data-uid="Nekoyume.Delegation.Delegatee`2.Bond*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Bond__0_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Bond(`0,Libplanet.Types.Assets.FungibleAssetValue,System.Int64)">
+  Bond(T, FungibleAssetValue, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual BigInteger Bond(T delegator, FungibleAssetValue fav, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>fav</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_BondAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.BondAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_BondAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.Delegatee`2.BondAddress(Libplanet.Crypto.Address)">
+  BondAddress(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address BondAddress(Address delegatorAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegatorAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_CollectRewards_" data-uid="Nekoyume.Delegation.Delegatee`2.CollectRewards*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_CollectRewards_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.CollectRewards(System.Int64)">
+  CollectRewards(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CollectRewards(long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_CurrentLumpSumRewardsRecordAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.CurrentLumpSumRewardsRecordAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_CurrentLumpSumRewardsRecordAddress" data-uid="Nekoyume.Delegation.Delegatee`2.CurrentLumpSumRewardsRecordAddress">
+  CurrentLumpSumRewardsRecordAddress()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address CurrentLumpSumRewardsRecordAddress()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_DistributeReward_" data-uid="Nekoyume.Delegation.Delegatee`2.DistributeReward*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_DistributeReward_Nekoyume_Delegation_IDelegator_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.DistributeReward(Nekoyume.Delegation.IDelegator,System.Int64)">
+  DistributeReward(IDelegator, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DistributeReward(IDelegator delegator, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <a class="xref" href="Nekoyume.Delegation.IDelegator.html">IDelegator</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_DistributeReward_" data-uid="Nekoyume.Delegation.Delegatee`2.DistributeReward*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_DistributeReward__0_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.DistributeReward(`0,System.Int64)">
+  DistributeReward(T, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L239"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DistributeReward(T delegator, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_FAVFromShare_" data-uid="Nekoyume.Delegation.Delegatee`2.FAVFromShare*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_FAVFromShare_System_Numerics_BigInteger_" data-uid="Nekoyume.Delegation.Delegatee`2.FAVFromShare(System.Numerics.BigInteger)">
+  FAVFromShare(BigInteger)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue FAVFromShare(BigInteger share)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Jail_" data-uid="Nekoyume.Delegation.Delegatee`2.Jail*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Jail_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Jail(System.Int64)">
+  Jail(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Jail(long releaseHeight)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>releaseHeight</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_LumpSumRewardsRecordAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.LumpSumRewardsRecordAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_LumpSumRewardsRecordAddress_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.LumpSumRewardsRecordAddress(System.Int64)">
+  LumpSumRewardsRecordAddress(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address LumpSumRewardsRecordAddress(long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_RebondGraceAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.RebondGraceAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_RebondGraceAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.Delegatee`2.RebondGraceAddress(Libplanet.Crypto.Address)">
+  RebondGraceAddress(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address RebondGraceAddress(Address delegatorAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegatorAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_RemoveUnbondingRef_" data-uid="Nekoyume.Delegation.Delegatee`2.RemoveUnbondingRef*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_RemoveUnbondingRef_Nekoyume_Delegation_UnbondingRef_" data-uid="Nekoyume.Delegation.Delegatee`2.RemoveUnbondingRef(Nekoyume.Delegation.UnbondingRef)">
+  RemoveUnbondingRef(UnbondingRef)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L383"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveUnbondingRef(UnbondingRef reference)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reference</code> <a class="xref" href="Nekoyume.Delegation.UnbondingRef.html">UnbondingRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_ShareFromFAV_" data-uid="Nekoyume.Delegation.Delegatee`2.ShareFromFAV*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_ShareFromFAV_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Delegation.Delegatee`2.ShareFromFAV(Libplanet.Types.Assets.FungibleAssetValue)">
+  ShareFromFAV(FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigInteger ShareFromFAV(FungibleAssetValue fav)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fav</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Slash_" data-uid="Nekoyume.Delegation.Delegatee`2.Slash*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Slash(System.Numerics.BigInteger,System.Int64,System.Int64)">
+  Slash(BigInteger, long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L328"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Slash(BigInteger slashFactor, long infractionHeight, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>slashFactor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>infractionHeight</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Tombstone_" data-uid="Nekoyume.Delegation.Delegatee`2.Tombstone*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Tombstone" data-uid="Nekoyume.Delegation.Delegatee`2.Tombstone">
+  Tombstone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L153"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Tombstone()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Unbond_" data-uid="Nekoyume.Delegation.Delegatee`2.Unbond*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Unbond_Nekoyume_Delegation_IDelegator_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Unbond(Nekoyume.Delegation.IDelegator,System.Numerics.BigInteger,System.Int64)">
+  Unbond(IDelegator, BigInteger, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue Unbond(IDelegator delegator, BigInteger share, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <a class="xref" href="Nekoyume.Delegation.IDelegator.html">IDelegator</a></dt>
+    <dd></dd>
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Unbond_" data-uid="Nekoyume.Delegation.Delegatee`2.Unbond*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Unbond__0_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Unbond(`0,System.Numerics.BigInteger,System.Int64)">
+  Unbond(T, BigInteger, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_UnbondLockInAddress_" data-uid="Nekoyume.Delegation.Delegatee`2.UnbondLockInAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_UnbondLockInAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.Delegatee`2.UnbondLockInAddress(Libplanet.Crypto.Address)">
+  UnbondLockInAddress(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address UnbondLockInAddress(Address delegatorAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegatorAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_Delegatee_2_Unjail_" data-uid="Nekoyume.Delegation.Delegatee`2.Unjail*"></a>
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Unjail_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`2.Unjail(System.Int64)">
+  Unjail(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Unjail(long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_DelegationChanged" data-uid="Nekoyume.Delegation.Delegatee`2.DelegationChanged">
+  DelegationChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;long&gt;? DelegationChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Enjailed" data-uid="Nekoyume.Delegation.Delegatee`2.Enjailed">
+  Enjailed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler? Enjailed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Delegation_Delegatee_2_Unjailed" data-uid="Nekoyume.Delegation.Delegatee`2.Unjailed">
+  Unjailed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler? Unjailed</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/pos-migration-interm/Lib9c/Delegation/Delegatee.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
