@@ -81,10 +81,6 @@ namespace Nekoyume.Delegation
             Repository.SetDelegator((TDelegator)this);
         }
 
-        void IDelegator.Delegate(
-            IDelegatee delegatee, FungibleAssetValue fav, long height)
-            => Delegate((TDelegatee)delegatee, fav, height);
-
         public virtual void Undelegate(
             TDelegatee delegatee, BigInteger share, long height)
         {
@@ -123,11 +119,6 @@ namespace Nekoyume.Delegation
                 Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
             Repository.SetDelegator((TDelegator)this);
         }
-
-        void IDelegator.Undelegate(
-            IDelegatee delegatee, BigInteger share, long height)
-            => Undelegate((TDelegatee)delegatee, share, height);
-
 
         public virtual void Redelegate(
             TDelegatee srcDelegatee, TDelegatee dstDelegatee, BigInteger share, long height)
@@ -174,10 +165,6 @@ namespace Nekoyume.Delegation
             Repository.SetDelegator((TDelegator)this);
         }
 
-        void IDelegator.Redelegate(
-            IDelegatee srcDelegatee, IDelegatee dstDelegatee, BigInteger share, long height)
-            => Redelegate((TDelegatee)srcDelegatee, (TDelegatee)dstDelegatee, share, height);
-
         public void CancelUndelegate(
             TDelegatee delegatee, FungibleAssetValue fav, long height)
         {
@@ -215,10 +202,6 @@ namespace Nekoyume.Delegation
             Repository.SetDelegator((TDelegator)this);
         }
 
-        void IDelegator.CancelUndelegate(
-            IDelegatee delegatee, FungibleAssetValue fav, long height)
-            => CancelUndelegate((TDelegatee)delegatee, fav, height);
-
         public void ClaimReward(
             TDelegatee delegatee, long height)
         {
@@ -226,7 +209,25 @@ namespace Nekoyume.Delegation
             Repository.SetDelegator((TDelegator)this);
         }
 
-        void IDelegator.ClaimReward(IDelegatee delegatee, long height)
-            => ClaimReward((TDelegatee)delegatee, height);
+        void IDelegator.Delegate(Address delegateeAddress, FungibleAssetValue fav, long height)
+            => Delegate(Repository.GetDelegatee(delegateeAddress), fav, height);
+
+        void IDelegator.Undelegate(Address delegateeAddress, BigInteger share, long height)
+            => Undelegate(Repository.GetDelegatee(delegateeAddress), share, height);
+
+        void IDelegator.Redelegate(
+            Address srcDelegateeAddress, Address dstDelegateeAddress, BigInteger share, long height)
+            => Redelegate(
+                Repository.GetDelegatee(srcDelegateeAddress),
+                Repository.GetDelegatee(dstDelegateeAddress),
+                share,
+                height);
+
+        void IDelegator.CancelUndelegate(
+            Address delegateeAddress, FungibleAssetValue fav, long height)
+            => CancelUndelegate(Repository.GetDelegatee(delegateeAddress), fav, height);
+
+        void IDelegator.ClaimReward(Address delegateeAddress, long height)
+            => ClaimReward(Repository.GetDelegatee(delegateeAddress), height);
     }
 }

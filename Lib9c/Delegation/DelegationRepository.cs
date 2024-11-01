@@ -258,25 +258,25 @@ namespace Nekoyume.Delegation
         IDelegator IDelegationRepository.GetDelegator(Address address)
             => GetDelegator(address);
 
-        Bond IDelegationRepository.GetBond(IDelegatee delegatee, Address delegatorAddress)
-            => GetBond((TDelegatee)delegatee, delegatorAddress);
-
-        UnbondLockIn IDelegationRepository.GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress)
-        => GetUnbondLockIn((TDelegatee)delegatee, delegatorAddress);
-
-        RebondGrace IDelegationRepository.GetRebondGrace(IDelegatee delegatee, Address delegatorAddress)
-        => GetRebondGrace((TDelegatee)delegatee, delegatorAddress);
-
-        LumpSumRewardsRecord? IDelegationRepository.GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
-            => GetLumpSumRewardsRecord((TDelegatee)delegatee, height);
-
-        LumpSumRewardsRecord? IDelegationRepository.GetCurrentLumpSumRewardsRecord(IDelegatee delegatee)
-            => GetCurrentLumpSumRewardsRecord((TDelegatee)delegatee);
-
         void IDelegationRepository.SetDelegatee(IDelegatee delegatee)
             => SetDelegatee((TDelegatee)delegatee);
 
         void IDelegationRepository.SetDelegator(IDelegator delegator)
             => SetDelegator((TDelegator)delegator);
+
+        Bond IDelegationRepository.GetBond(Address delegateeAddress, Address delegatorAddress)
+            => GetBond(GetDelegatee(delegateeAddress), delegatorAddress);
+
+        UnbondLockIn IDelegationRepository.GetUnbondLockIn(Address delegateeAddress, Address delegatorAddress)
+            => GetUnbondLockIn(GetDelegatee(delegateeAddress), delegatorAddress);
+
+        RebondGrace IDelegationRepository.GetRebondGrace(Address delegateeAddress, Address delegatorAddress)
+            => GetRebondGrace(GetDelegatee(delegateeAddress), delegatorAddress);
+
+        LumpSumRewardsRecord? IDelegationRepository.GetLumpSumRewardsRecord(Address delegateeAddress, long height)
+            => GetLumpSumRewardsRecord(GetDelegatee(delegateeAddress), height);
+
+        LumpSumRewardsRecord? IDelegationRepository.GetCurrentLumpSumRewardsRecord(Address delegateeAddress)
+            => GetCurrentLumpSumRewardsRecord(GetDelegatee(delegateeAddress));
     }
 }
