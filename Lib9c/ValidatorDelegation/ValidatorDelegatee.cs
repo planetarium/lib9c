@@ -52,9 +52,6 @@ namespace Nekoyume.ValidatorDelegation
             IsBonded = false;
             CommissionPercentage = commissionPercentage;
             CommissionPercentageLastUpdateHeight = creationHeight;
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
 
         public ValidatorDelegatee(
@@ -80,9 +77,6 @@ namespace Nekoyume.ValidatorDelegation
             IsBonded = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
@@ -196,43 +190,6 @@ namespace Nekoyume.ValidatorDelegation
             base.Unjail(height);
         }
 
-        public void OnDelegationChanged(object? sender, long height)
-        {
-            ValidatorRepository repository = Repository;
-
-            if (Jailed)
-            {
-                return;
-            }
-
-            if (Validator.Power.IsZero)
-            {
-                repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
-            }
-            else
-            {
-                repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
-            }
-
-            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
-            if (MinSelfDelegation > selfDelegation && !Jailed)
-            {
-                Jail(height);
-            }
-        }
-
-        public void OnEnjailed(object? sender, EventArgs e)
-        {
-            ValidatorRepository repository = Repository;
-            repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
-        }
-
-        public void OnUnjailed(object? sender, EventArgs e)
-        {
-            ValidatorRepository repository = Repository;
-            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
-        }
-
         public bool Equals(ValidatorDelegatee? other)
             => other is ValidatorDelegatee validatorDelegatee
             && Metadata.Equals(validatorDelegatee.Metadata)
@@ -259,5 +216,47 @@ namespace Nekoyume.ValidatorDelegation
             ImmutableArray.Create<byte>(
                 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55));
+
+        protected override void OnDelegationChanged(DelegationChangedEventArgs e)
+        {
+            base.OnDelegationChanged(e);
+
+            ValidatorRepository repository = Repository;
+            var height = e.Height;
+
+            if (Jailed)
+            {
+                return;
+            }
+
+            if (Validator.Power.IsZero)
+            {
+                repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+            }
+            else
+            {
+                repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+            }
+
+            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
+            if (MinSelfDelegation > selfDelegation && !Jailed)
+            {
+                Jail(height);
+            }
+        }
+
+        protected override void OnEnjailed(EventArgs e)
+        {
+            base.OnEnjailed(e);
+            ValidatorRepository repository = Repository;
+            repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+        }
+
+        protected override void OnUnjailed(EventArgs e)
+        {
+            base.OnUnjailed(e);
+            ValidatorRepository repository = Repository;
+            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+        }
     }
 }

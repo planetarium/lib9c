@@ -58,7 +58,7 @@ namespace Nekoyume.Delegation
             Repository = repository;
         }
 
-        public event EventHandler<long>? DelegationChanged;
+        public event EventHandler<DelegationChangedEventArgs>? DelegationChanged;
 
         public event EventHandler? Enjailed;
 
@@ -126,7 +126,7 @@ namespace Nekoyume.Delegation
             Metadata.JailedUntil = releaseHeight;
             Metadata.Jailed = true;
             Repository.SetDelegateeMetadata(Metadata);
-            Enjailed?.Invoke(this, EventArgs.Empty);
+            OnEnjailed(EventArgs.Empty);
         }
 
         public void Unjail(long height)
@@ -149,7 +149,7 @@ namespace Nekoyume.Delegation
             Metadata.JailedUntil = -1L;
             Metadata.Jailed = false;
             Repository.SetDelegateeMetadata(Metadata);
-            Unjailed?.Invoke(this, EventArgs.Empty);
+            OnUnjailed(EventArgs.Empty);
         }
 
         public void Tombstone()
@@ -199,7 +199,7 @@ namespace Nekoyume.Delegation
             Repository.SetBond(bond);
             StartNewRewardPeriod(height);
             Repository.SetDelegateeMetadata(Metadata);
-            DelegationChanged?.Invoke(this, height);
+            OnDelegationChanged(new DelegationChangedEventArgs(height));
 
             return share;
         }
@@ -227,7 +227,7 @@ namespace Nekoyume.Delegation
             Repository.SetBond(bond);
             StartNewRewardPeriod(height);
             Repository.SetDelegateeMetadata(Metadata);
-            DelegationChanged?.Invoke(this, height);
+            OnDelegationChanged(new DelegationChangedEventArgs(height));
 
             return fav;
         }
@@ -364,7 +364,7 @@ namespace Nekoyume.Delegation
 
             Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
             Repository.SetDelegateeMetadata(Metadata);
-            DelegationChanged?.Invoke(this, height);
+            OnDelegationChanged(new DelegationChangedEventArgs(height));
         }
 
         BigInteger IDelegatee.Bond(Address delegatorAddress, FungibleAssetValue fav, long height)
@@ -384,6 +384,21 @@ namespace Nekoyume.Delegation
 
         public void RemoveUnbondingRef(UnbondingRef reference)
             => Metadata.RemoveUnbondingRef(reference);
+
+        protected virtual void OnDelegationChanged(DelegationChangedEventArgs e)
+        {
+            DelegationChanged?.Invoke(this, e);
+        }
+
+        protected virtual void OnEnjailed(EventArgs e)
+        {
+            Enjailed?.Invoke(this, e);
+        }
+
+        protected virtual void OnUnjailed(EventArgs e)
+        {
+            Unjailed?.Invoke(this, e);
+        }
 
         private void StartNewRewardPeriod(long height)
         {
