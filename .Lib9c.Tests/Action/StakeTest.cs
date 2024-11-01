@@ -11,11 +11,15 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Exceptions;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.ValidatorDelegation;
     using Nekoyume.TableData.Stake;
+    using Nekoyume.ValidatorDelegation;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -286,247 +290,101 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-        // NOTE: LockupInterval of StakePolicySheetFixtures.V2 is 201,600.
-        [InlineData(0, 50 + 1, 201_600 - 1, 50)]
-        [InlineData(
-            long.MaxValue - 201_600,
-            50 + 1,
-            long.MaxValue - 1,
-            50)]
-        public void
-            Execute_Throw_RequiredBlockIndexException_Via_Reduced_Amount_When_Lucked_Up_With_StakeState(
-                long previousStartedBlockIndex,
-                long previousAmount,
-                long blockIndex,
-                long reducedAmount)
-        {
-            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
-            var stakeState = new LegacyStakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
-            Assert.False(stakeState.IsCancellable(blockIndex));
-            stakeState.Claim(blockIndex);
-            Assert.False(stakeState.IsClaimable(blockIndex));
-            var previousState = _initialState
-                .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
-                    stakeStateAddr,
-                    _ncg * previousAmount)
-                .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            Assert.Throws<RequiredBlockIndexException>(() =>
-                Execute(
-                    blockIndex,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    reducedAmount));
-        }
-
-        [Theory]
-        // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-        // NOTE: LockupInterval of StakePolicySheetFixtures.V2 is 201,600.
-        [InlineData(0, 50 + 1, 201_600 - 1, 50)]
-        [InlineData(
-            long.MaxValue - 201_600,
-            50 + 1,
-            long.MaxValue - 1,
-            50)]
-        public void
-            Execute_Throw_RequiredBlockIndexException_Via_Reduced_Amount_When_Locked_Up_With_StakeStateV2(
-                long previousStartedBlockIndex,
-                long previousAmount,
-                long blockIndex,
-                long reducedAmount)
-        {
-            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeState(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex);
-            var previousState = _initialState
-                .MintAsset(
-                    new ActionContext { Signer = Addresses.Admin },
-                    stakeStateAddr,
-                    _ncg * previousAmount)
-                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            Assert.Throws<RequiredBlockIndexException>(() =>
-                Execute(
-                    blockIndex,
-                    previousState,
-                    new TestRandom(),
-                    _agentAddr,
-                    reducedAmount));
-        }
-
-        [Theory]
-        // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
         [InlineData(50)]
         [InlineData(long.MaxValue)]
         public void Execute_Success_When_Staking_State_Null(long amount)
         {
-            var previousState = _initialState.MintAsset(
+            var world = _initialState.MintAsset(
                 new ActionContext { Signer = Addresses.Admin },
                 _agentAddr,
                 _ncg * amount);
+            var height = 0L;
+
+            var validatorKey = new PrivateKey();
+            world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height++);
+            world = DelegationUtil.MakeGuild(world, _agentAddr, validatorKey.Address, height++);
+
             Execute(
                 0,
-                previousState,
-                new TestRandom(),
-                _agentAddr,
-                amount);
-        }
-
-        [Theory]
-        // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-        // NOTE: non claimable, locked up, same amount.
-        [InlineData(0, 50, 0, 50)]
-        [InlineData(0, 50, LegacyStakeState.LockupInterval - 1, 50)]
-        [InlineData(0, long.MaxValue, 0, long.MaxValue)]
-        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval - 1, long.MaxValue)]
-        // NOTE: non claimable, locked up, increased amount.
-        [InlineData(0, 50, 0, 500)]
-        [InlineData(0, 50, LegacyStakeState.LockupInterval - 1, 500)]
-        // NOTE: non claimable, unlocked, same amount.
-        [InlineData(0, 50, LegacyStakeState.LockupInterval, 50)]
-        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval, long.MaxValue)]
-        // NOTE: non claimable, unlocked, increased amount.
-        [InlineData(0, 50, LegacyStakeState.LockupInterval, 500)]
-        // NOTE: non claimable, unlocked, decreased amount.
-        [InlineData(0, 50, LegacyStakeState.LockupInterval, 0)]
-        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval, 50)]
-        public void Execute_Success_When_Exist_StakeState(
-            long previousStartedBlockIndex,
-            long previousAmount,
-            long blockIndex,
-            long amount)
-        {
-            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
-            var stakeState = new LegacyStakeState(
-                address: stakeStateAddr,
-                startedBlockIndex: previousStartedBlockIndex);
-            stakeState.Claim(blockIndex);
-            var previousState = _initialState
-                .MintAsset(
-                    new ActionContext(),
-                    _agentAddr,
-                    _ncg * Math.Max(previousAmount, amount))
-                .TransferAsset(
-                    new ActionContext(),
-                    _agentAddr,
-                    stakeStateAddr,
-                    _ncg * previousAmount)
-                .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            var nextState = Execute(
-                blockIndex,
-                previousState,
+                world,
                 new TestRandom(),
                 _agentAddr,
                 amount);
 
-            if (amount == 0)
-            {
-                return;
-            }
-
-            Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState newStakeState));
-            Assert.Equal(3, newStakeState.StateVersion);
+            world = DelegationUtil.EnsureStakeReleased(
+                world, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
         }
 
         [Theory]
-        // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
-        // NOTE: LockupInterval of StakePolicySheetFixtures.V2 is 201,600.
-        // NOTE: non claimable, locked up, same amount.
-        [InlineData(0, 50, 0, 50)]
-        [InlineData(0, 50, 201_599, 50)]
-        [InlineData(0, long.MaxValue, 0, long.MaxValue)]
-        [InlineData(0, long.MaxValue, 201_599, long.MaxValue)]
-        // NOTE: non claimable, locked up, increased amount.
-        [InlineData(0, 50, 0, 500)]
-        [InlineData(0, 50, 201_599, 500)]
-        // NOTE: non claimable, unlocked, same amount.
-        [InlineData(0, 50, 201_600, 50)]
-        [InlineData(0, long.MaxValue, 201_600, long.MaxValue)]
-        // NOTE: non claimable, unlocked, increased amount.
-        [InlineData(0, 50, 201_600, 500)]
-        // NOTE: non claimable, unlocked, decreased amount.
-        [InlineData(0, 50, 201_600, 0)]
-        [InlineData(0, long.MaxValue, LegacyStakeState.LockupInterval, 50)]
-        public void Execute_Success_When_Exist_StakeStateV2(
-            long previousStartedBlockIndex,
+        // NOTE: non
+        [InlineData(50, 50)]
+        [InlineData(long.MaxValue, long.MaxValue)]
+        // NOTE: delegate
+        [InlineData(0, 500)]
+        [InlineData(50, 100)]
+        [InlineData(0, long.MaxValue)]
+        // NOTE: undelegate
+        [InlineData(50, 0)]
+        [InlineData(long.MaxValue, 0)]
+        [InlineData(long.MaxValue, 500)]
+        public void Execute_Success_When_Exist_StakeStateV3(
             long previousAmount,
-            long blockIndex,
             long amount)
         {
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeStateV2 = new StakeState(
                 contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: previousStartedBlockIndex,
-                receivedBlockIndex: blockIndex,
-                stateVersion: 2);
-            var previousState = _initialState
-                .MintAsset(
-                    new ActionContext(),
-                    _agentAddr,
-                    _ncg * Math.Max(previousAmount, amount))
-                .TransferAsset(
-                    new ActionContext(),
-                    _agentAddr,
-                    stakeStateAddr,
-                    _ncg * previousAmount)
-                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            var nextState = Execute(
-                blockIndex,
-                previousState,
-                new TestRandom(),
-                _agentAddr,
-                amount);
-
-            if (amount == 0)
-            {
-                return;
-            }
-
-            Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState stakeState));
-            Assert.Equal(3, stakeState.StateVersion);
-        }
-
-        [Fact]
-        public void Execute_Success_When_Exist_StakeStateV3()
-        {
-            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeState(
-                contract: new Contract(_stakePolicySheet),
-                startedBlockIndex: 0,
-                receivedBlockIndex: 0,
+                startedBlockIndex: 0L,
                 stateVersion: 3);
+            var world = _initialState;
+            var height = 0L;
 
-            var previousState = _initialState
-                .MintAsset(
-                    new ActionContext(),
-                    _agentAddr,
-                    _ncg * 100)
-                .TransferAsset(
-                    new ActionContext(),
-                    _agentAddr,
-                    stakeStateAddr,
-                    _ncg * 50)
-                .MintAsset(new ActionContext(), stakeStateAddr, Currencies.GuildGold * 50)
-                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-
-            var action = new Stake(100);
-            var nextState = action.Execute(new ActionContext
+            var validatorKey = new PrivateKey();
+            world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height);
+            world = DelegationUtil.MakeGuild(world, _agentAddr, validatorKey.Address, height);
+            if (previousAmount > 0)
             {
-                BlockIndex = 0,
-                Signer = _agentAddr,
-                PreviousState = previousState,
-            });
+                var ncgToStake = _ncg * previousAmount;
+                var gg = FungibleAssetValue.Parse(Currencies.GuildGold, ncgToStake.GetQuantityString(true));
+                world = DelegationUtil.MintGuildGold(world, _agentAddr, gg, height);
+                world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
+                world = world.TransferAsset(
+                    new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
 
-            Assert.Equal(
-                Currencies.GuildGold * 100,
-                nextState.GetBalance(stakeStateAddr, Currencies.GuildGold));
-            Assert.Equal(
-                _ncg * 100,
-                nextState.GetBalance(stakeStateAddr, _ncg));
+                var guildRepository = new GuildRepository(world, new ActionContext { Signer = _agentAddr });
+                var guildParticipant = guildRepository.GetGuildParticipant(_agentAddr);
+                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                guildParticipant.Delegate(guild, gg, height++);
+                world = guildRepository.World;
+            }
+
+            world = world.SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
+
+            if (amount - previousAmount > 0)
+            {
+                var ncgToStake = _ncg * (amount - previousAmount);
+                world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
+            }
+
+            var nextState = Execute(
+                height,
+                world,
+                new TestRandom(),
+                _agentAddr,
+                amount);
+
+            if (amount > 0)
+            {
+                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState stakeState));
+                Assert.Equal(3, stakeState.StateVersion);
+            }
+
+            world = DelegationUtil.EnsureStakeReleased(
+                nextState, height + LegacyStakeState.LockupInterval);
+
+            var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
+            var actualBalance = world.GetBalance(_agentAddr, _ncg);
+            Assert.Equal(expectedBalance, actualBalance);
         }
 
         private IWorld Execute(
@@ -536,11 +394,6 @@ namespace Lib9c.Tests.Action
             Address signer,
             long amount)
         {
-            var previousBalance = previousState.GetBalance(signer, _ncg);
-            var previousStakeBalance = previousState.GetBalance(
-                LegacyStakeState.DeriveAddress(signer),
-                _ncg);
-            var previousTotalBalance = previousBalance + previousStakeBalance;
             var action = new Stake(amount);
             var nextState = action.Execute(new ActionContext
             {
@@ -550,18 +403,15 @@ namespace Lib9c.Tests.Action
                 Signer = signer,
             });
 
-            var stakeStateAddress = LegacyStakeState.DeriveAddress(signer);
+            var guildRepository = new GuildRepository(nextState, new ActionContext());
+            var guildParticipant = guildRepository.GetGuildParticipant(signer);
+            var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
 
+            var bond = guildRepository.GetBond(guild, signer);
             var amountNCG = _ncg * amount;
-            var nextBalance = nextState.GetBalance(signer, _ncg);
-            var nextStakeBalance = nextState.GetBalance(
-                stakeStateAddress,
-                _ncg);
-            Assert.Equal(previousTotalBalance - amountNCG, nextBalance);
-            Assert.Equal(amountNCG, nextStakeBalance);
-            Assert.Equal(
-                Currencies.GuildGold * amount,
-                nextState.GetBalance(stakeStateAddress, Currencies.GuildGold));
+            var expectedGG = DelegationUtil.GetGuildCoinFromNCG(amountNCG);
+            var expectedShare = guild.ShareFromFAV(expectedGG);
+            Assert.Equal(expectedShare, bond.Share);
 
             if (amount == 0)
             {
@@ -584,9 +434,6 @@ namespace Lib9c.Tests.Action
                     stakeStateV2.Contract.LockupInterval);
                 Assert.Equal(blockIndex, stakeStateV2.StartedBlockIndex);
                 Assert.Equal(0, stakeStateV2.ReceivedBlockIndex);
-                Assert.Equal(
-                    blockIndex + stakeStateV2.Contract.LockupInterval,
-                    stakeStateV2.CancellableBlockIndex);
                 Assert.Equal(blockIndex, stakeStateV2.ClaimedBlockIndex);
                 Assert.Equal(
                     blockIndex + stakeStateV2.Contract.RewardInterval,

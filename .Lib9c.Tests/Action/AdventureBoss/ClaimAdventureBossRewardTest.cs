@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -386,6 +387,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+
+            state = DelegationUtil.MakeGuild(state, TesterAddress, validatorKey, 0L);
             state = Stake(state, TesterAddress);
 
             // Wanted
@@ -404,6 +409,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
             if (anotherWanted)
             {
+                state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
                 state = Stake(state, WantedAddress);
                 state = new Wanted
                 {
@@ -470,6 +476,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
+
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, TesterAddress, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
 
             state = Stake(state, TesterAddress);
             state = Stake(state, WantedAddress);
@@ -563,6 +574,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
+
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
 
             state = Stake(state, WantedAddress);
 
@@ -737,6 +752,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, TesterAddress, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, ExplorerAddress, validatorKey, 0L);
+
             state = Stake(state, TesterAddress);
             state = Stake(state, WantedAddress);
             state = Stake(state, ExplorerAddress);
@@ -865,6 +886,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, TesterAddress, validatorKey, 0L);
+
             state = Stake(state, TesterAddress);
 
             // Wanted
@@ -933,6 +958,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
+
+            var validatorKey = new PrivateKey();
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, TesterAddress, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, ExplorerAddress, validatorKey, 0L);
 
             state = Stake(state, TesterAddress);
             state = Stake(state, WantedAddress);
