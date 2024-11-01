@@ -17,6 +17,7 @@ namespace Nekoyume.Action.Guild.Migration
     /// <summary>
     /// An action to migrate guild delegation.
     /// </summary>
+    [ActionType(TypeIdentifier)]
     public class MigrateDelegation : ActionBase
     {
         public const string TypeIdentifier = "migrate_delegation";

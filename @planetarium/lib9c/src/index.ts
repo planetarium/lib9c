@@ -53,7 +53,11 @@ export {
   type ApprovePledgeArgs,
 } from "./actions/approve_pledge.js";
 export {
-  MigratePledgeToGuild,
-  type MigratePledgeToGuildArgs,
-} from "./actions/migrate_pledge_to_guild.js";
-export { MakeGuild } from "./actions/make_guild.js";
+  MakeGuild,
+  type MakeGuildArgs,
+} from "./actions/make_guild.js";
+export { MigratePlanetariumGuild } from "./actions/migrate_planetarium_guild.js";
+export {
+  MigrateDelegation,
+  type MigrateDelegationArgs,
+} from "./actions/migrate_delegation.js";

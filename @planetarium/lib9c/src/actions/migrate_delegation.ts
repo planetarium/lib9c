@@ -2,16 +2,16 @@ import type { Address } from "@planetarium/account";
 import { BencodexDictionary, type Value } from "@planetarium/bencodex";
 import { PolymorphicAction } from "./common.js";
 
-export type MigratePledgeToGuildArgs = {
+export type MigrateDelegationArgs = {
   target: Address;
 };
 
-export class MigratePledgeToGuild extends PolymorphicAction {
-  protected readonly type_id: string = "migrate_pledge_to_guild";
+export class MigrateDelegation extends PolymorphicAction {
+  protected readonly type_id: string = "migrate_delegation";
 
   private readonly target: Address;
 
-  constructor({ target }: MigratePledgeToGuildArgs) {
+  constructor({ target }: MigrateDelegationArgs) {
     super();
 
     this.target = target;
