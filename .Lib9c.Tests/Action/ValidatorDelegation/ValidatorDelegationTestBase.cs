@@ -399,13 +399,13 @@ public class ValidatorDelegationTestBase
             throw new ArgumentOutOfRangeException(nameof(blockHeight));
         }
 
-        if (commissionPercentage < ValidatorDelegatee.MinCommissionPercentage
-            || commissionPercentage > ValidatorDelegatee.MaxCommissionPercentage)
+        if (commissionPercentage < ValidatorSettings.MinCommissionPercentage
+            || commissionPercentage > ValidatorSettings.MaxCommissionPercentage)
         {
             throw new ArgumentOutOfRangeException(nameof(commissionPercentage));
         }
 
-        var cooldown = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
+        var cooldown = ValidatorSettings.CommissionPercentageUpdateCooldown;
         var repository = new ValidatorRepository(world, new ActionContext());
         var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
         var currentCommission = delegatee.CommissionPercentage;
@@ -539,11 +539,11 @@ public class ValidatorDelegationTestBase
         => (gold * percentage).DivRem(100).Quotient;
 
     protected static FungibleAssetValue CalculatePropserReward(FungibleAssetValue reward)
-        => (reward * ValidatorDelegatee.BaseProposerRewardPercentage).DivRem(100).Quotient;
+        => (reward * ValidatorSettings.BaseProposerRewardPercentage).DivRem(100).Quotient;
 
     protected static FungibleAssetValue CalculateBonusPropserReward(
         BigInteger preCommitPower, BigInteger totalPower, FungibleAssetValue reward)
-        => (reward * preCommitPower * ValidatorDelegatee.BonusProposerRewardPercentage)
+        => (reward * preCommitPower * ValidatorSettings.BonusProposerRewardPercentage)
             .DivRem(totalPower * 100).Quotient;
 
     protected static FungibleAssetValue CalculateBonusPropserReward(

@@ -49,7 +49,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         {
             PreviousState = world,
             Signer = validatorKey.Address,
-            BlockIndex = height + ValidatorDelegatee.ValidatorUnbondingPeriod,
+            BlockIndex = height + ValidatorSettings.ValidatorUnbondingPeriod,
         };
         world = releaseValidatorUnbondings.Execute(actionContext);
 

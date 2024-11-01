@@ -18,7 +18,7 @@ namespace Nekoyume.Action.ValidatorDelegation
         public PromoteValidator() { }
 
         public PromoteValidator(PublicKey publicKey, FungibleAssetValue fav)
-            : this(publicKey, fav, ValidatorDelegatee.DefaultCommissionPercentage)
+            : this(publicKey, fav, ValidatorSettings.DefaultCommissionPercentage)
         {
         }
 

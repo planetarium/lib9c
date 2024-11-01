@@ -15,10 +15,10 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
         /// in ConstantTest.cs file.
         /// </summary>
         private static readonly int MaxCommissionPercentage
-            = (int)ValidatorDelegatee.MaxCommissionPercentage;
+            = (int)ValidatorSettings.MaxCommissionPercentage;
 
         private static readonly long CommissionPercentageChangeCooldown
-            = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
+            = ValidatorSettings.CommissionPercentageUpdateCooldown;
 
         public static IEnumerable<object[]> RandomCommisionPercentage => new List<object[]>
         {

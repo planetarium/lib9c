@@ -28,7 +28,7 @@ namespace Nekoyume.Action.ValidatorDelegation
         {
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            var rewardCurrency = ValidatorDelegatee.ValidatorRewardCurrency;
+            var rewardCurrency = ValidatorSettings.ValidatorRewardCurrency;
             var proposerInfo = repository.GetProposerInfo();
 
             if (context.LastCommit is BlockCommit lastCommit)
@@ -101,10 +101,10 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             var baseProposerReward
-                = (blockReward * ValidatorDelegatee.BaseProposerRewardPercentage)
+                = (blockReward * ValidatorSettings.BaseProposerRewardPercentage)
                 .DivRem(100).Quotient;
             var bonusProposerReward
-                = (blockReward * votePowerNumerator * ValidatorDelegatee.BonusProposerRewardPercentage)
+                = (blockReward * votePowerNumerator * ValidatorSettings.BonusProposerRewardPercentage)
                 .DivRem(votePowerDenominator * 100).Quotient;
             FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
 

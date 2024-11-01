@@ -351,7 +351,7 @@ namespace Lib9c.Tests
             // Total 10 + 0.05 + 0.2 + 0.475 = 10.725
             blockChain.Append(block, commit);
 
-            var rewardCurrency = ValidatorDelegatee.ValidatorRewardCurrency;
+            var rewardCurrency = ValidatorSettings.ValidatorRewardCurrency;
             var actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, rewardCurrency);
