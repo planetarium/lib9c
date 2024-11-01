@@ -9,6 +9,7 @@ using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Module.ValidatorDelegation;
 
 namespace Nekoyume.Module.Guild
 {
@@ -48,6 +49,12 @@ namespace Nekoyume.Module.Guild
             if (repository.TryGetGuild(guildAddress, out _))
             {
                 throw new InvalidOperationException("Duplicated guild address. Please retry.");
+            }
+
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            if (!validatorRepository.TryGetValidatorDelegatee(validatorAddress, out _))
+            {
+                throw new InvalidOperationException("The validator does not exist.");
             }
 
             var guild = new Model.Guild.Guild(
