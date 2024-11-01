@@ -9,8 +9,8 @@ public class ConstantTest
     [Fact(Skip = "Allow after positive unbonding period")]
     public void StaticPropertyTest()
     {
-        Assert.True(ValidatorDelegatee.ValidatorUnbondingPeriod > 0);
-        Assert.True(ValidatorDelegatee.MaxCommissionPercentage < int.MaxValue);
-        Assert.True(ValidatorDelegatee.MaxCommissionPercentage >= 0);
+        Assert.True(ValidatorSettings.ValidatorUnbondingPeriod > 0);
+        Assert.True(ValidatorSettings.MaxCommissionPercentage < int.MaxValue);
+        Assert.True(ValidatorSettings.MaxCommissionPercentage >= 0);
     }
 }

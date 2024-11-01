@@ -17,15 +17,15 @@ namespace Nekoyume.Model.Guild
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
-                  delegationCurrency: ValidatorDelegatee.ValidatorDelegationCurrency,
-                  rewardCurrency: ValidatorDelegatee.ValidatorRewardCurrency,
-                  delegationPoolAddress: ValidatorDelegatee.UnbondedPoolAddress,
+                  delegationCurrency: ValidatorSettings.ValidatorDelegationCurrency,
+                  rewardCurrency: ValidatorSettings.ValidatorRewardCurrency,
+                  delegationPoolAddress: ValidatorSettings.UnbondedPoolAddress,
                   rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
-                  unbondingPeriod: ValidatorDelegatee.ValidatorUnbondingPeriod,
-                  maxUnbondLockInEntries: ValidatorDelegatee.ValidatorMaxUnbondLockInEntries,
-                  maxRebondGraceEntries: ValidatorDelegatee.ValidatorMaxRebondGraceEntries,
+                  unbondingPeriod: ValidatorSettings.ValidatorUnbondingPeriod,
+                  maxUnbondLockInEntries: ValidatorSettings.ValidatorMaxUnbondLockInEntries,
+                  maxRebondGraceEntries: ValidatorSettings.ValidatorMaxRebondGraceEntries,
                   repository: repository)
         {
         }

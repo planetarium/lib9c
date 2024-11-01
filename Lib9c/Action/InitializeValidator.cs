@@ -79,7 +79,7 @@ namespace Nekoyume.Action
                 var validatorDelegatee = new ValidatorDelegatee(
                     validator.OperatorAddress,
                     validator.PublicKey,
-                    ValidatorDelegatee.DefaultCommissionPercentage,
+                    ValidatorSettings.DefaultCommissionPercentage,
                     context.BlockIndex,
                     repository);
                 var delegationFAV = FungibleAssetValue.FromRawValue(

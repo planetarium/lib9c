@@ -1,14 +1,13 @@
 #nullable enable
 using System;
-using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
-using Lib9c;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.Delegation;
+using static Nekoyume.ValidatorDelegation.ValidatorSettings;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -81,31 +80,6 @@ namespace Nekoyume.ValidatorDelegation
             CommissionPercentage = (Integer)bencoded[5];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[6];
         }
-
-        public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
-
-        public static Currency ValidatorRewardCurrency => Currencies.Mead;
-
-        // TODO: [MigrateGuild] Change unbonding period after migration.
-        public static long ValidatorUnbondingPeriod => 0L;
-
-        public static int ValidatorMaxUnbondLockInEntries => 10;
-
-        public static int ValidatorMaxRebondGraceEntries => 10;
-
-        public static BigInteger BaseProposerRewardPercentage => 1;
-
-        public static BigInteger BonusProposerRewardPercentage => 4;
-
-        public static BigInteger DefaultCommissionPercentage => 10;
-
-        public static BigInteger MinCommissionPercentage => 0;
-
-        public static BigInteger MaxCommissionPercentage => 20;
-
-        public static long CommissionPercentageUpdateCooldown => 100;
-
-        public static BigInteger CommissionPercentageMaxChange => 1;
 
         public BigInteger CommissionPercentage { get; private set; }
 
@@ -267,16 +241,6 @@ namespace Nekoyume.ValidatorDelegation
 
         public override int GetHashCode()
             => HashCode.Combine(Address, AccountAddress);
-
-        public static Address BondedPoolAddress => new Address(
-            ImmutableArray.Create<byte>(
-                0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x42));
-
-        public static Address UnbondedPoolAddress => new Address(
-            ImmutableArray.Create<byte>(
-                0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55));
 
         protected override void OnDelegationChanged(DelegationChangedEventArgs e)
         {
