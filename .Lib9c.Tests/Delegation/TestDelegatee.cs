@@ -3,7 +3,7 @@ namespace Lib9c.Tests.Delegation
     using Libplanet.Crypto;
     using Nekoyume.Delegation;
 
-    public sealed class TestDelegatee : Delegatee<TestDelegator, TestDelegatee>
+    public sealed class TestDelegatee : Delegatee<TestRepository, TestDelegatee, TestDelegator>
     {
         public TestDelegatee(Address address, TestRepository repository)
             : base(address, repository)

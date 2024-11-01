@@ -6,7 +6,8 @@ using Nekoyume.Delegation;
 namespace Nekoyume.Model.Guild
 {
     public class GuildValidatorDelegator
-        : Delegator<GuildValidatorDelegatee, GuildValidatorDelegator>, IEquatable<GuildValidatorDelegator>
+        : Delegator<GuildValidatorRepository, GuildValidatorDelegatee, GuildValidatorDelegator>,
+        IEquatable<GuildValidatorDelegator>
     {
         public GuildValidatorDelegator(
             Address address,

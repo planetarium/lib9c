@@ -8,7 +8,7 @@ using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Model.Guild
 {
-    public class GuildRepository : DelegationRepository
+    public class GuildRepository : DelegationRepository<GuildRepository, Guild, GuildParticipant>
     {
         public GuildRepository(IWorld world, IActionContext actionContext)
             : base(
@@ -34,7 +34,7 @@ namespace Nekoyume.Model.Guild
                     this)
                 : throw new FailedLoadStateException("Guild does not exist.");
 
-        public override IDelegatee GetDelegatee(Address address)
+        public override Guild GetDelegatee(Address address)
             => GetGuild(address);
 
 
@@ -46,7 +46,7 @@ namespace Nekoyume.Model.Guild
                     this)
                 : throw new FailedLoadStateException("Delegator does not exist.");
 
-        public override IDelegator GetDelegator(Address address)
+        public override GuildParticipant GetDelegator(Address address)
             => GetGuildParticipant(address);
 
         public void SetGuild(Guild guild)
@@ -56,8 +56,8 @@ namespace Nekoyume.Model.Guild
             SetDelegateeMetadata(guild.Metadata);
         }
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetGuild(delegatee as Guild);
+        public override void SetDelegatee(Guild delegatee)
+            => SetGuild(delegatee);
 
         public void SetGuildParticipant(GuildParticipant guildParticipant)
         {
@@ -66,8 +66,8 @@ namespace Nekoyume.Model.Guild
             SetDelegatorMetadata(guildParticipant.Metadata);
         }
 
-        public override void SetDelegator(IDelegator delegator)
-            => SetGuildParticipant(delegator as GuildParticipant);
+        public override void SetDelegator(GuildParticipant delegator)
+            => SetGuildParticipant(delegator);
 
         public void RemoveGuildParticipant(Address guildParticipantAddress)
         {

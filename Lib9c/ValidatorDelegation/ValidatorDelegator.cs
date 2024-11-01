@@ -5,7 +5,7 @@ using Nekoyume.Delegation;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public sealed class ValidatorDelegator : Delegator<ValidatorDelegatee, ValidatorDelegator>, IEquatable<ValidatorDelegator>
+    public sealed class ValidatorDelegator : Delegator<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>, IEquatable<ValidatorDelegator>
     {
         public ValidatorDelegator(
             Address address,
