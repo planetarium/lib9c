@@ -150,9 +150,6 @@ namespace Nekoyume.Delegation
             return share;
         }
 
-        BigInteger IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, long height)
-            => Bond((TDelegator)delegator, fav, height);
-
         public FungibleAssetValue Unbond(TDelegator delegator, BigInteger share, long height)
         {
             DistributeReward(delegator, height);
@@ -180,9 +177,6 @@ namespace Nekoyume.Delegation
 
             return fav;
         }
-
-        FungibleAssetValue IDelegatee.Unbond(IDelegator delegator, BigInteger share, long height)
-            => Unbond((TDelegator)delegator, share, height);
 
         public void DistributeReward(TDelegator delegator, long height)
         {
@@ -249,9 +243,6 @@ namespace Nekoyume.Delegation
 
             Repository.SetBond(bond);
         }
-
-        void IDelegatee.DistributeReward(IDelegator delegator, long height)
-            => DistributeReward((TDelegator)delegator, height);
 
         public void CollectRewards(long height)
         {
@@ -321,6 +312,15 @@ namespace Nekoyume.Delegation
             Repository.SetDelegateeMetadata(Metadata);
             DelegationChanged?.Invoke(this, height);
         }
+
+        BigInteger IDelegatee.Bond(Address delegatorAddress, FungibleAssetValue fav, long height)
+            => Bond(Repository.GetDelegator(delegatorAddress), fav, height);
+
+        FungibleAssetValue IDelegatee.Unbond(Address delegatorAddress, BigInteger share, long height)
+            => Unbond(Repository.GetDelegator(delegatorAddress), share, height);
+
+        void IDelegatee.DistributeReward(Address delegatorAddress, long height)
+            => DistributeReward(Repository.GetDelegator(delegatorAddress), height);
 
         void IDelegatee.Slash(BigInteger slashFactor, long infractionHeight, long height)
             => Slash(slashFactor, infractionHeight, height);

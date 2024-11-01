@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Numerics;
-using Bencodex;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
@@ -40,11 +39,11 @@ namespace Nekoyume.Delegation
 
         FungibleAssetValue FAVFromShare(BigInteger share);
 
-        BigInteger Bond(IDelegator delegator, FungibleAssetValue fav, long height);
+        BigInteger Bond(Address delegatorAddress, FungibleAssetValue fav, long height);
 
-        FungibleAssetValue Unbond(IDelegator delegator, BigInteger share, long height);
+        FungibleAssetValue Unbond(Address delegatorAddress, BigInteger share, long height);
 
-        void DistributeReward(IDelegator delegator, long height);
+        void DistributeReward(Address delegatorAddress, long height);
 
         void CollectRewards(long height);
 

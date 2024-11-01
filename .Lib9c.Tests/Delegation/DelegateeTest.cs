@@ -105,7 +105,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void CannotBondInvalidDelegator()
         {
-            IDelegatee testDelegatee = _fixture.TestDelegatee1;
+            var testDelegatee = _fixture.TestDelegatee1;
             var testDelegator = _fixture.TestDelegator1;
             var dummyDelegator = _fixture.DummyDelegator1;
 
@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Delegation
         [Fact]
         public void CannotUnbondInvalidDelegator()
         {
-            IDelegatee delegatee = _fixture.TestDelegatee1;
+            var delegatee = _fixture.TestDelegatee1;
             Assert.Throws<InvalidCastException>(
                 () => delegatee.Unbond(
                     _fixture.DummyDelegator1, BigInteger.One, 10L));

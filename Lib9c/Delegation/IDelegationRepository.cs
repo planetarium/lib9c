@@ -24,21 +24,21 @@ namespace Nekoyume.Delegation
 
         DelegatorMetadata GetDelegatorMetadata(Address delegatorAddress);
 
-        Bond GetBond(IDelegatee delegatee, Address delegatorAddress);
+        Bond GetBond(Address delegateeAddress, Address delegatorAddress);
 
-        UnbondLockIn GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress);
+        UnbondLockIn GetUnbondLockIn(Address delegateeAddress, Address delegatorAddress);
 
         UnbondLockIn GetUnlimitedUnbondLockIn(Address address);
 
-        RebondGrace GetRebondGrace(IDelegatee delegatee, Address delegatorAddress);
+        RebondGrace GetRebondGrace(Address delegateeAddress, Address delegatorAddress);
 
         RebondGrace GetUnlimitedRebondGrace(Address address);
 
         UnbondingSet GetUnbondingSet();
 
-        LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height);
+        LumpSumRewardsRecord? GetLumpSumRewardsRecord(Address delegateeAddress, long height);
 
-        LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee);
+        LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(Address delegateeAddress);
 
         FungibleAssetValue GetBalance(Address address, Currency currency);
 

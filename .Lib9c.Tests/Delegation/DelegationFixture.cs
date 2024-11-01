@@ -64,7 +64,7 @@ namespace Lib9c.Tests.Delegation
         public static FungibleAssetValue TotalRewardsOfRecords(IDelegatee delegatee, IDelegationRepository repo)
         {
             var reward = delegatee.RewardCurrency * 0;
-            var record = repo.GetCurrentLumpSumRewardsRecord(delegatee);
+            var record = repo.GetCurrentLumpSumRewardsRecord(delegatee.Address);
             while (true)
             {
                 reward += repo.World.GetBalance(record.Address, delegatee.RewardCurrency);
@@ -74,7 +74,7 @@ namespace Lib9c.Tests.Delegation
                     break;
                 }
 
-                record = repo.GetLumpSumRewardsRecord(delegatee, record.LastStartHeight.Value);
+                record = repo.GetLumpSumRewardsRecord(delegatee.Address, record.LastStartHeight.Value);
             }
 
             return reward;

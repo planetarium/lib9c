@@ -176,7 +176,7 @@ namespace Nekoyume.Delegation
             {
                 var delegatee = _repository!.GetDelegatee(address);
                 var delegator = _repository!.GetDelegator(DelegatorAddress);
-                delegatee.Unbond(delegator, delegatee.ShareFromFAV(slashedEach), height);
+                delegatee.Unbond(DelegatorAddress, delegatee.ShareFromFAV(slashedEach), height);
                 slashedFAV = slashedFAV.HasValue ? slashedFAV + slashedEach : slashedEach;
             }
 

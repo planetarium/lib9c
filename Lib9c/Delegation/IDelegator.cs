@@ -20,28 +20,28 @@ namespace Nekoyume.Delegation
         ImmutableSortedSet<Address> Delegatees { get; }
 
         void Delegate(
-            IDelegatee delegatee,
+            Address delegateeAddress,
             FungibleAssetValue fav,
             long height);
 
         void Undelegate(
-            IDelegatee delegatee,
+            Address delegateeAddress,
             BigInteger share,
             long height);
 
         void Redelegate(
-            IDelegatee srcDelegatee,
-            IDelegatee dstDelegatee,
+            Address srcDelegateeAddress,
+            Address dstDelegateeAddress,
             BigInteger share,
             long height);
 
         void CancelUndelegate(
-            IDelegatee delegatee,
+            Address delegateeAddress,
             FungibleAssetValue fav,
             long height);
 
         void ClaimReward(
-            IDelegatee delegatee,
+            Address delegateeAddress,
             long height);
     }
 }
