@@ -63,7 +63,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             // TODO: Remove this check when to deliver features to users.
-            if (context.Signer != ValidatorConfig.PlanetariumValidator)
+            if (context.Signer != ValidatorConfig.PlanetariumValidatorAddress)
             {
                 throw new InvalidOperationException(
                     $"This action is not allowed for {context.Signer}.");
