@@ -57,6 +57,28 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        /// <summary>
+        /// Libplanet Exception을 수정하기 위한 임시 테스트 코드입니다
+        /// TODO: Libplanet Exception을 수정하고 테스트 코드 케이스를 추가해야 합니다
+        /// </summary>
+        /// <param name="excType">예외타입.</param>
+        [Theory]
+        [InlineData(typeof(Libplanet.Action.State.InsufficientBalanceException))]
+        public void Libplanet_Exception_Serializable(Type excType)
+        {
+            // TODO: 테스트 받는 방식 수정
+            var customAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
+            var customFav = new Libplanet.Types.Assets.FungibleAssetValue(Currencies.Crystal);
+            if (Activator.CreateInstance(excType, "for testing", customAddress, customFav) is Exception exc)
+            {
+                AssertException(excType, exc);
+            }
+            else
+            {
+                throw new InvalidCastException();
+            }
+        }
+
         [Fact(Skip = "FIXME: Cannot serialize AdminState with MessagePackSerializer")]
         public void AdminPermissionExceptionSerializable()
         {

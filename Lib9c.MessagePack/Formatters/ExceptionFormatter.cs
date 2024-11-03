@@ -6,8 +6,6 @@ using MessagePack.Formatters;
 
 namespace Lib9c.Formatters
 {
-    // FIXME: This class must be removed and replaced with other way for serialization.
-    // https://github.com/dotnet/designs/blob/main/accepted/2020/better-obsoletion/binaryformatter-obsoletion.md
     public class ExceptionFormatter<T> : IMessagePackFormatter<T?> where T : Exception
     {
         public void Serialize(ref MessagePackWriter writer, T? value,
@@ -55,11 +53,11 @@ namespace Lib9c.Formatters
             for (int i = 0; i < count; i++)
             {
                 var name = reader.ReadString();
-                if (name == null)
+                if (string.IsNullOrWhiteSpace(name))
                 {
                     throw new MessagePackSerializationException("Exception Name is missing.");
                 }
-                
+
                 if (name == "ExceptionType")
                 {
                     typeName = reader.ReadString();
@@ -67,31 +65,31 @@ namespace Lib9c.Formatters
                 else
                 {
                     var readType = reader.ReadString();
-                    if (readType == null)
+                    if (string.IsNullOrWhiteSpace(readType))
                     {
                         throw new MessagePackSerializationException("Exception type information is missing.");
                     }
-                    
-                    var type  = Type.GetType(readType);
+
+                    var type = GetType(readType);
                     if (type == null)
-                    {
-                        throw new MessagePackSerializationException("Exception type information is missing.");
+                    {           
+                        throw new MessagePackSerializationException($"Exception type cannot be found for '{readType}'.");
                     }
-                    
+
                     var value = MessagePackSerializer.Deserialize(type, ref reader, options);
                     info.AddValue(name, value);
                 }
             }
 
-            if (typeName == null)
+            if (string.IsNullOrWhiteSpace(typeName))
             {
-                throw new MessagePackSerializationException("Exception type information is missing.");
+                throw new MessagePackSerializationException("Exception exception type name is missing.");
             }
 
             var exceptionType = Type.GetType(typeName);
             if (exceptionType == null)
             {
-                throw new MessagePackSerializationException($"Exception type '{typeName}' not found.");
+                throw new MessagePackSerializationException($"Exception exception type cannot be found for '{typeName}'.");
             }
 
             var ctor = exceptionType.GetConstructor(
@@ -136,6 +134,26 @@ namespace Lib9c.Formatters
             }
 
             return exception;
+        }
+        
+        private Type? GetType(string typeName)
+        {
+            var type = Type.GetType(typeName);
+            if (type != null)
+            {
+                return type;
+            }
+
+            foreach (var assembly in NineChroniclesResolverGetFormatterHelper.GetAssemblies())
+            {
+                type = assembly.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            return null;
         }
     }
 }
