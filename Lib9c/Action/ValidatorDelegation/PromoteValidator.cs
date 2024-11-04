@@ -58,16 +58,22 @@ namespace Nekoyume.Action.ValidatorDelegation
             CommissionPercentage = (Integer)values[2];
         }
 
+        // TODO: Remove this with ExecutePublic when to deliver features to users.
         public override IWorld Execute(IActionContext context)
         {
-            GasTracer.UseGas(1);
-
-            // TODO: Remove this check when to deliver features to users.
+            var world = ExecutePublic(context);
             if (context.Signer != ValidatorConfig.PlanetariumValidatorAddress)
             {
                 throw new InvalidOperationException(
                     $"This action is not allowed for {context.Signer}.");
             }
+
+            return world;
+        }
+
+        public IWorld ExecutePublic(IActionContext context)
+        {
+            GasTracer.UseGas(1);
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);

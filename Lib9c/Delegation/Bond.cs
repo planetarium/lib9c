@@ -107,13 +107,14 @@ namespace Nekoyume.Delegation
 
         internal Bond UpdateLastDistributeHeight(long height)
         {
-            if (LastDistributeHeight.HasValue && LastDistributeHeight >= height)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(height),
-                    height,
-                    "height must be greater than the last distribute height.");
-            }
+            // TODO: [GuildMigration] Revive below check after migration
+            // if (LastDistributeHeight.HasValue && LastDistributeHeight >= height)
+            // {
+            //     throw new ArgumentOutOfRangeException(
+            //         nameof(height),
+            //         height,
+            //         "height must be greater than the last distribute height.");
+            // }
 
             return new Bond(Address, Share, height);
         }

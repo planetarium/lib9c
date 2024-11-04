@@ -186,25 +186,41 @@ namespace Nekoyume.Action
             if (additionalBalance.Sign > 0)
             {
                 var gg = GetGuildCoinFromNCG(additionalBalance);
-                var guildRepository = new GuildRepository(state, context);
-                var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
-                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                guildRepository.UpdateWorld(
-                    state.TransferAsset(context, context.Signer, stakeStateAddr, additionalBalance)
-                        .MintAsset(context, stakeStateAddr, gg));
+                state = state
+                    .TransferAsset(context, context.Signer, stakeStateAddr, additionalBalance)
+                    .MintAsset(context, stakeStateAddr, gg);
 
-                guildParticipant.Delegate(guild, gg, height);
-                state = guildRepository.World;
+                try
+                {
+                    var guildRepository = new GuildRepository(state, context);
+                    var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
+                    var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    guildParticipant.Delegate(guild, gg, height);
+                    state = guildRepository.World;
+                }
+                catch (FailedLoadStateException)
+                {
+                }
+                
             }
             else if (additionalBalance.Sign < 0)
             {
                 var gg = GetGuildCoinFromNCG(-additionalBalance);
-                var guildRepository = new GuildRepository(state, context);
-                var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
-                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                var share = guild.ShareFromFAV(gg);
-                guildParticipant.Undelegate(guild, share, height);
-                state = guildRepository.World;
+
+                try
+                {
+                    var guildRepository = new GuildRepository(state, context);
+                    var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
+                    var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    var share = guild.ShareFromFAV(gg);
+                    guildParticipant.Undelegate(guild, share, height);
+                    state = guildRepository.World;
+                }
+                catch (FailedLoadStateException)
+                {
+                    // TODO: Create self unbonding
+                }
+
                 if ((stakedBalance + additionalBalance).Sign == 0)
                 {
                     return state.MutateAccount(

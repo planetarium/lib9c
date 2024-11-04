@@ -44,7 +44,21 @@ namespace Nekoyume.Action.Guild
             ValidatorAddress = new Address(rawValidatorAddress);
         }
 
+        // TODO: Replace this with ExecutePublic when to deliver features to users.
         public override IWorld Execute(IActionContext context)
+        {
+            var world = ExecutePublic(context);
+
+            if (context.Signer != GuildConfig.PlanetariumGuildOwner)
+            {
+                throw new InvalidOperationException(
+                    $"This action is not allowed for {context.Signer}.");
+            }
+
+            return world;
+        }
+
+        public IWorld ExecutePublic(IActionContext context)
         {
             GasTracer.UseGas(1);
 
@@ -54,13 +68,6 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var guildAddress = new GuildAddress(random.GenerateAddress());
             var validatorAddress = ValidatorAddress;
-
-            // TODO: Remove this check when to deliver features to users.
-            if (context.Signer != GuildConfig.PlanetariumGuildOwner)
-            {
-                throw new InvalidOperationException(
-                    $"This action is not allowed for {context.Signer}.");
-            }
 
             repository.MakeGuild(guildAddress, validatorAddress);
             return repository.World;
