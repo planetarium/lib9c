@@ -43,7 +43,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(share, deserialized.Share);
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute()
     {
         // Given
@@ -82,7 +82,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(BigInteger.Zero, actualBond.Share);
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_Theory()
     {
         var fixture = new StaticFixture
@@ -98,7 +98,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory(Skip = "Allow after Planetarium validator restriction")]
+    [Theory]
     [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
@@ -109,7 +109,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         ExecuteWithFixture(fixture);
     }
 
-    [Theory(Skip = "Allow after Planetarium validator restriction")]
+    [Theory]
     [MemberData(nameof(RandomSeeds))]
     public void Execute_Theory_WithRandomSeed(int randomSeed)
     {
@@ -141,7 +141,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             () => undelegateValidator.Execute(actionContext));
     }
 
-    [Theory(Skip = "Allow after Planetarium validator restriction")]
+    [Theory]
     [InlineData(0)]
     [InlineData(-1)]
     public void Execute_WithNotPositiveShare_Throw(long share)
@@ -168,7 +168,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             () => undelegateValidator.Execute(actionContext));
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_FromJailedValidator()
     {
         // Given
@@ -201,7 +201,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_FromTombstonedValidator()
     {
         // Given
@@ -234,7 +234,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_JailsValidatorWhenUndelegationCausesLowDelegation()
     {
         // Given

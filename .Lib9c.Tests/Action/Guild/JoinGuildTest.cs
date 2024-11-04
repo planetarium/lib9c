@@ -34,14 +34,15 @@ namespace Lib9c.Tests.Action.Guild
             IWorld world = World;
             world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
             world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = DelegationUtil.MakeGuild(world, guildMasterAddress, validatorKey.Address, 0L);
 
-            var repository = new GuildRepository(world, new ActionContext
+            world = new JoinGuild(guildAddress).Execute(new ActionContext
             {
-                Signer = guildMasterAddress,
+                PreviousState = world,
+                Signer = agentAddress,
             });
-            repository.MakeGuild(guildAddress, guildMasterAddress);
-            repository.JoinGuild(guildAddress, agentAddress);
 
+            var repository = new GuildRepository(world, new ActionContext { });
             var guildParticipant = repository.GetGuildParticipant(agentAddress);
 
             Assert.Equal(agentAddress, guildParticipant.Address);

@@ -23,7 +23,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         Assert.Equal(gold, deserialized.FAV);
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute()
     {
         // Given
@@ -41,7 +41,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
             BlockIndex = height++,
         };
         var promoteValidator = new PromoteValidator(validatorKey.PublicKey, gold);
-        world = promoteValidator.Execute(actionContext);
+        world = promoteValidator.ExecutePublic(actionContext);
 
         // Then
         var repository = new ValidatorRepository(world, actionContext);
@@ -57,7 +57,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         Assert.Empty(validatorList.GetUnbonded());
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_ToInvalidValidator_Throw()
     {
         // Given
@@ -79,7 +79,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
 
         // Then
         Assert.Throws<ArgumentException>(
-            () => promoteValidator.Execute(actionContext));
+            () => promoteValidator.ExecutePublic(actionContext));
     }
 
     [Fact]
@@ -103,10 +103,10 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
 
         // Then
         Assert.Throws<InvalidOperationException>(
-            () => promoteValidator.Execute(actionContext));
+            () => promoteValidator.ExecutePublic(actionContext));
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_WithInsufficientBalance_Throw()
     {
         // Given
@@ -126,10 +126,10 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
 
         // Then
         Assert.Throws<InsufficientBalanceException>(
-            () => promoteValidator.Execute(actionContext));
+            () => promoteValidator.ExecutePublic(actionContext));
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_PromotedValidator_Throw()
     {
         // Given
@@ -151,6 +151,6 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
 
         // Then
         Assert.Throws<InvalidOperationException>(
-            () => promoteValidator.Execute(actionContext));
+            () => promoteValidator.ExecutePublic(actionContext));
     }
 }

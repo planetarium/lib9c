@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -69,13 +70,16 @@ namespace Lib9c.Tests.Action
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
                 );
 
+            states = DelegationUtil.EnsureValidatorPromotionReady(
+                states, ValidatorConfig.PlanetariumValidatorPublicKey, 0L);
+
             states = new GuildRepository(
                 states,
                 new ActionContext
                 {
                     Signer = GuildConfig.PlanetariumGuildOwner,
                 })
-                .MakeGuild(guildAddress, GuildConfig.PlanetariumGuildOwner).World;
+                .MakeGuild(guildAddress, ValidatorConfig.PlanetariumValidatorAddress).World;
 
             var action = new ApprovePledge
             {

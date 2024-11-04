@@ -13,10 +13,6 @@ namespace Lib9c.Tests.Util
     public static class DelegationUtil
     {
         public static IWorld MintGuildGold(
-            IWorld world, PrivateKey privateKey, FungibleAssetValue amount, long blockHeight)
-            => MintGuildGold(world, privateKey.Address, amount, blockHeight);
-
-        public static IWorld MintGuildGold(
             IWorld world, Address address, FungibleAssetValue amount, long blockHeight)
         {
             if (!amount.Currency.Equals(Currencies.GuildGold))
@@ -38,11 +34,10 @@ namespace Lib9c.Tests.Util
 
         public static IWorld PromoteValidator(
             IWorld world,
-            PrivateKey validatorKey,
+            PublicKey validatorPublicKey,
             FungibleAssetValue amount,
             long blockHeight)
         {
-            var validatorPublicKey = validatorKey.PublicKey;
             var promoteValidator = new PromoteValidator(validatorPublicKey, amount);
 
             var actionContext = new ActionContext
@@ -51,12 +46,8 @@ namespace Lib9c.Tests.Util
                 Signer = validatorPublicKey.Address,
                 BlockIndex = blockHeight,
             };
-            return promoteValidator.Execute(actionContext);
+            return promoteValidator.ExecutePublic(actionContext);
         }
-
-        public static IWorld MakeGuild(
-            IWorld world, Address guildMasterAddress, PrivateKey validatorKey, long blockHeight)
-            => MakeGuild(world, guildMasterAddress, validatorKey.Address, blockHeight);
 
         public static IWorld MakeGuild(
             IWorld world, Address guildMasterAddress, Address validatorAddress, long blockHeight)
@@ -74,7 +65,7 @@ namespace Lib9c.Tests.Util
                 RandomSeed = Random.Shared.Next(),
             };
             var makeGuild = new MakeGuild(validatorAddress);
-            return makeGuild.Execute(actionContext);
+            return makeGuild.ExecutePublic(actionContext);
         }
 
         public static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)
@@ -83,10 +74,10 @@ namespace Lib9c.Tests.Util
         }
 
         public static IWorld EnsureValidatorPromotionReady(
-            IWorld world, PrivateKey validatorKey, long blockHeight)
+            IWorld world, PublicKey validatorPublicKey, long blockHeight)
         {
-            world = MintGuildGold(world, validatorKey, Currencies.GuildGold * 10, blockHeight);
-            world = PromoteValidator(world, validatorKey, Currencies.GuildGold * 10, blockHeight);
+            world = MintGuildGold(world, validatorPublicKey.Address, Currencies.GuildGold * 10, blockHeight);
+            world = PromoteValidator(world, validatorPublicKey, Currencies.GuildGold * 10, blockHeight);
             return world;
         }
 

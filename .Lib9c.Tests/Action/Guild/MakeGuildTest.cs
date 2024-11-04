@@ -43,7 +43,7 @@ namespace Lib9c.Tests.Action.Guild
             deserialized.LoadPlainValue(plainValue);
         }
 
-        [Fact(Skip = "Allow after Planetarium validator restriction")]
+        [Fact]
         public void Execute()
         {
             IWorld world = World;
@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Action.Guild
             world = EnsureToCreateValidator(world, validatorPrivateKey.PublicKey);
             var action = new MakeGuild(validatorPrivateKey.Address);
 
-            world = action.Execute(new ActionContext
+            world = action.ExecutePublic(new ActionContext
             {
                 PreviousState = world,
                 Signer = guildMasterAddress,

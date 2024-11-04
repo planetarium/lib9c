@@ -109,9 +109,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var validatorKey = new PrivateKey();
+            var validatorKey = new PrivateKey().PublicKey;
             state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
-            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey.Address, 0L);
 
             state = Stake(state, WantedAddress);
             var materialSheet = state.GetSheet<MaterialItemSheet>();

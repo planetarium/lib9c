@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Action
                 _ncg * amount);
             var height = 0L;
 
-            var validatorKey = new PrivateKey();
+            var validatorKey = new PrivateKey().PublicKey;
             world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height++);
             world = DelegationUtil.MakeGuild(world, _agentAddr, validatorKey.Address, height++);
 
@@ -339,7 +339,7 @@ namespace Lib9c.Tests.Action
             var world = _initialState;
             var height = 0L;
 
-            var validatorKey = new PrivateKey();
+            var validatorKey = new PrivateKey().PublicKey;
             world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height);
             world = DelegationUtil.MakeGuild(world, _agentAddr, validatorKey.Address, height);
             if (previousAmount > 0)

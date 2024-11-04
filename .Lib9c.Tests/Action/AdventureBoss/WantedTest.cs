@@ -576,9 +576,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 amount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
             }
 
-            var validatorKey = new PrivateKey();
+            var validatorKey = new PrivateKey().PublicKey;
             world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, 0L);
-            world = DelegationUtil.MakeGuild(world, AgentAddress, validatorKey, 0L);
+            world = DelegationUtil.MakeGuild(world, AgentAddress, validatorKey.Address, 0L);
 
             var action = new Stake(new BigInteger(amount));
             return action.Execute(new ActionContext

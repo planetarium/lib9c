@@ -133,7 +133,7 @@ public class ValidatorDelegationTestBase
             Signer = validatorPublicKey.Address,
             BlockIndex = blockHeight,
         };
-        return promoteValidator.Execute(actionContext);
+        return promoteValidator.ExecutePublic(actionContext);
     }
 
     protected static IWorld EnsureUnbondingValidator(
@@ -192,7 +192,7 @@ public class ValidatorDelegationTestBase
             RandomSeed = seed,
         };
         var makeGuild = new MakeGuild(validatorAddress);
-        return makeGuild.Execute(actionContext);
+        return makeGuild.ExecutePublic(actionContext);
     }
 
     protected static IWorld EnsureJoinGuild(

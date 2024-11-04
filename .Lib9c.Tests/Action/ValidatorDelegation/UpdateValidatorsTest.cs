@@ -58,7 +58,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         }
     }
 
-    [Fact(Skip = "Allow after Planetarium validator restriction")]
+    [Fact]
     public void Execute_ExcludesTombstonedValidator()
     {
         // Given

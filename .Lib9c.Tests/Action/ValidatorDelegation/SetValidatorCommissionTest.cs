@@ -60,7 +60,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             Assert.Equal(commissionPercentage, deserialized.CommissionPercentage);
         }
 
-        [Fact(Skip = "Allow after Planetarium validator restriction")]
+        [Fact]
         public void Execute()
         {
             // Given
@@ -90,7 +90,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             Assert.Equal(11, actualPercentage);
         }
 
-        [Theory(Skip = "Allow after Planetarium validator restriction")]
+        [Theory]
         [InlineData(9, 10)]
         [InlineData(9, 8)]
         [InlineData(0, 1)]
@@ -127,7 +127,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             Assert.Equal(newCommissionPercentage, actualPercentage);
         }
 
-        [Theory(Skip = "Allow after Planetarium validator restriction")]
+        [Theory]
         [MemberData(nameof(RandomInvalidCommisionPercentage))]
         public void Execute_Theory_WithValueGreaterThanMaximum_Throw(int commissionPercentage)
         {
@@ -156,7 +156,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 () => setValidatorCommission.Execute(actionContext));
         }
 
-        [Theory(Skip = "Allow after Planetarium validator restriction")]
+        [Theory]
         [InlineData(-1)]
         [InlineData(-2)]
         public void Execute_Theory_WithNegative_Throw(int commissionPercentage)
@@ -186,7 +186,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 () => setValidatorCommission.Execute(actionContext));
         }
 
-        [Theory(Skip = "Allow after Planetarium validator restriction")]
+        [Theory]
         [MemberData(nameof(InvalidCommisionPercentageCooldown))]
         public void Execute_Theory_WithInvalidValue_Throw(int cooldown)
         {
@@ -214,7 +214,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 () => setValidatorCommission.Execute(actionContext));
         }
 
-        [Theory(Skip = "Allow after Planetarium validator restriction")]
+        [Theory]
         [MemberData(nameof(ValidCommisionPercentagePeriod))]
         public void Execute_Theory_WitValue(int period)
         {
