@@ -33,7 +33,8 @@ namespace Nekoyume.Action
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue(nameof(Pending), new Codec().Encode(Pending.Serialize()));
+            var pendingData = Pending is null ? null : new Codec().Encode(Pending.Serialize());
+            info.AddValue(nameof(Pending), pendingData);
             info.AddValue(nameof(Signature), Signature);
         }
     }

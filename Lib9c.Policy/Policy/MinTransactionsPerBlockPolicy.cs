@@ -33,5 +33,6 @@ namespace Nekoyume.Blockchain.Policy
                 ));
 
         public static IVariableSubPolicy<int> Heimdall => Default;
+        public static IVariableSubPolicy<int> Thor => Default;
     }
 }
