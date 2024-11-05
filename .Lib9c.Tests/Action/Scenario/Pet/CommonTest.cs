@@ -47,7 +47,7 @@ namespace Lib9c.Tests.Action.Scenario.Pet
             var recipe = _tableSheets.EquipmentItemRecipeSheet.Values.First(
                 recipe => recipe.ResultEquipmentId == itemId
             );
-            List<EquipmentItemSubRecipeSheet.MaterialInfo> materialList =
+            var materialList =
                 recipe.GetAllMaterials(_tableSheets.EquipmentItemSubRecipeSheetV2).ToList();
             var stageList = List.Empty;
             for (var i = 0; i < recipe.UnlockStage; i++)
@@ -90,13 +90,14 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 subRecipeId = recipe.SubRecipeIds?[0],
                 petId = petId,
             };
-            stateV2 = action1.Execute(new ActionContext
-            {
-                PreviousState = stateV2,
-                Signer = _agentAddr,
-                BlockIndex = 0L,
-                RandomSeed = random.Seed,
-            });
+            stateV2 = action1.Execute(
+                new ActionContext
+                {
+                    PreviousState = stateV2,
+                    Signer = _agentAddr,
+                    BlockIndex = 0L,
+                    RandomSeed = random.Seed,
+                });
 
             // Combination2: Raises error
             var action2 = new CombinationEquipment
@@ -107,14 +108,15 @@ namespace Lib9c.Tests.Action.Scenario.Pet
                 subRecipeId = recipe.SubRecipeIds?[0],
                 petId = petId,
             };
-            Assert.Throws<PetIsLockedException>(() => action2.Execute(
-                new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = 1L,
-                    RandomSeed = random.Seed,
-                })
+            Assert.Throws<PetIsLockedException>(
+                () => action2.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = 1L,
+                        RandomSeed = random.Seed,
+                    })
             );
         }
     }

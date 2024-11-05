@@ -48,7 +48,12 @@ namespace Nekoyume.TableData
                 for (int i = 0; i < 3; i++)
                 {
                     var offset = i * 2;
-                    Runes.Add(new RuneInfo(ParseInt(fields[6 + offset]), ParseInt(fields[7 + offset])));
+                    var id = TryParseInt(fields[6 + offset], out var value) ? value : 0;
+                    var quantity = TryParseInt(fields[7 + offset], out value) ? value : 0;
+                    if (id != 0 && quantity > 0)
+                    {
+                        Runes.Add(new RuneInfo(id, quantity));
+                    }
                 }
                 Crystal = ParseInt(fields[12]);
 
@@ -58,8 +63,12 @@ namespace Nekoyume.TableData
                     for (int i = 0; i < 2; i++)
                     {
                         var offset = i * 2;
-                        Materials.Add(
-                            (ParseInt(fields[13 + offset]), ParseInt(fields[14 + offset])));
+                        var id = TryParseInt(fields[13 + offset], out var value) ? value : 0;
+                        var quantity = TryParseInt(fields[14 + offset], out value) ? value : 0;
+                        if (id != 0 && quantity > 0)
+                        {
+                            Materials.Add((id, quantity));
+                        }
                     }
                 }
             }
@@ -72,11 +81,8 @@ namespace Nekoyume.TableData
                 {
                     Crystal * CrystalCalculator.CRYSTAL
                 };
-                result.AddRange(Runes
-                    .Where(runeInfo => runeInfo.RuneQty > 0)
-                    .Select(runeInfo =>
-                        RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId],
-                            runeInfo.RuneQty)));
+                result.AddRange(Runes.Select(runeInfo =>
+                    RuneHelper.ToFungibleAssetValue(runeSheet[runeInfo.RuneId], runeInfo.RuneQty)));
 
                 foreach (var (itemId, quantity) in Materials)
                 {

@@ -154,7 +154,7 @@ namespace Lib9c.Tests.Action.Summon
             800201,
             10,
             0,
-            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
+            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000, },
             null
         )]
         [InlineData(
@@ -164,7 +164,7 @@ namespace Lib9c.Tests.Action.Summon
             600201,
             10,
             0,
-            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001 },
+            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001, },
             null
         )]
         // fail by invalid group
@@ -194,7 +194,7 @@ namespace Lib9c.Tests.Action.Summon
                 "V1" => SummonSheetFixtures.V1.Serialize(),
                 "V2" => SummonSheetFixtures.V2.Serialize(),
                 "V3" => SummonSheetFixtures.V3.Serialize(),
-                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null),
             };
             state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(EquipmentSummonSheet)), sheet);
 
@@ -233,8 +233,9 @@ namespace Lib9c.Tests.Action.Summon
                 var checkedEquipments = new List<Guid>();
                 foreach (var equipmentId in expectedEquipmentId)
                 {
-                    var resultEquipment = equipments.First(e =>
-                        e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
+                    var resultEquipment = equipments.First(
+                        e =>
+                            e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
                     );
 
                     checkedEquipments.Add(resultEquipment.ItemId);
@@ -250,16 +251,19 @@ namespace Lib9c.Tests.Action.Summon
             else
             {
                 // Failure
-                Assert.Throws(expectedExc, () =>
-                {
-                    action.Execute(new ActionContext
+                Assert.Throws(
+                    expectedExc,
+                    () =>
                     {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        BlockIndex = 1,
-                        RandomSeed = random.Seed,
+                        action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                BlockIndex = 1,
+                                RandomSeed = random.Seed,
+                            });
                     });
-                });
             }
         }
     }

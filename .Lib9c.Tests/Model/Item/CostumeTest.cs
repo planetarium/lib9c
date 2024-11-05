@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Model.Item
         {
             // Check RequiredBlockIndex 0 case;
             var costume = new Costume(_costumeRow, Guid.NewGuid());
-            Dictionary serialized = (Dictionary)costume.Serialize();
+            var serialized = (Dictionary)costume.Serialize();
             Assert.False(serialized.ContainsKey(RequiredBlockIndexKey));
             Assert.Equal(costume, new Costume(serialized));
 
@@ -94,7 +94,7 @@ namespace Lib9c.Tests.Model.Item
             var costume = new Costume(_costumeRow, Guid.NewGuid());
             Assert.Equal(0, costume.RequiredBlockIndex);
 
-            Dictionary serialized = (Dictionary)costume.Serialize();
+            var serialized = (Dictionary)costume.Serialize();
             serialized = serialized.SetItem(RequiredBlockIndexKey, "-1");
             Assert.Throws<ArgumentOutOfRangeException>(() => new Costume(serialized));
         }

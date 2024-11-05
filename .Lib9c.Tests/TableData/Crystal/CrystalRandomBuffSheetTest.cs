@@ -18,7 +18,8 @@ namespace Lib9c.Tests.TableData.Crystal
         public void Set()
         {
             var sheet = new CrystalRandomBuffSheet();
-            sheet.Set(@"id,rank,skill_id,ratio
+            sheet.Set(
+                @"id,rank,skill_id,ratio
 1,SS,400000,0.11");
 
             Assert.Single(sheet.Values);

@@ -1,0 +1,31 @@
+[project]
+name = "lib9c"
+version = "0.1.0"
+description = "A Python library for managing integrations and dependencies in the /integrations/python directory"
+authors = [
+    { name = "forwardyoung", email = "chahwayoung214@gmail.com" }
+]
+keywords = ["lib9c", "planetarium"]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python"
+]
+dependencies = []
+readme = "README.md"
+requires-python = ">= 3.8"
+license = { text = "MIT" }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lib9c"]

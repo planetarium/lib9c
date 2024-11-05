@@ -73,16 +73,17 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet,
                 copyCharacter,
-                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+                gameConfigState.ShatterStrikeMaxDamage
             );
             var player = new Player(avatarState, simulator);
             var enemyRow = _tableSheets.CharacterSheet.OrderedList
                 .FirstOrDefault(e => e.Id > 200000);
-            enemyRow.Set(new[]
-            {
-                "201000", "XS", "2", enemyHp.ToString(), "16", "6", "4", "90", "15", "3.2", "0.64",
-                "0.24", "0", "3.6", "0.6", "0.8", "1.2",
-            });
+            enemyRow.Set(
+                new[]
+                {
+                    "201000", "XS", "2", enemyHp.ToString(), "16", "6", "4", "90", "15", "3.2", "0.64",
+                    "0.24", "0", "3.6", "0.6", "0.8", "1.2",
+                });
             Assert.NotNull(enemyRow);
 
             var enemy = new Enemy(player, enemyRow, 1);
@@ -153,16 +154,17 @@ shatter_strike_max_damage,1";
                 _tableSheets.DeBuffLimitSheet,
                 _tableSheets.BuffLinkSheet,
                 copyCharacter,
-                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+                gameConfigState.ShatterStrikeMaxDamage
             );
             var player = new Player(avatarState, simulator);
             var enemyRow = _tableSheets.CharacterSheet.OrderedList
                 .FirstOrDefault(e => e.Id > 200000);
-            enemyRow.Set(new[]
-            {
-                "201000", "XS", "2", "100", "16", "0", "4", "90", "15", "3.2", "0.64",
-                "0.24", "0", "3.6", "0.6", "0.8", "1.2",
-            });
+            enemyRow.Set(
+                new[]
+                {
+                    "201000", "XS", "2", "100", "16", "0", "4", "90", "15", "3.2", "0.64",
+                    "0.24", "0", "3.6", "0.6", "0.8", "1.2",
+                });
             Assert.NotNull(enemyRow);
 
             var enemy = new Enemy(player, enemyRow, 1);

@@ -99,15 +99,17 @@ namespace Lib9c.Tests.Action
             var previousAvatarState = previousStates.GetAvatarState(_avatarAddress);
 
             var recipeSheet = previousStates.GetSheet<EventConsumableItemRecipeSheet>();
-            Assert.True(recipeSheet.TryGetValue(
-                eventConsumableItemRecipeId,
-                out var recipeRow));
+            Assert.True(
+                recipeSheet.TryGetValue(
+                    eventConsumableItemRecipeId,
+                    out var recipeRow));
             var materialItemSheet = previousStates.GetSheet<MaterialItemSheet>();
             foreach (var materialInfo in recipeRow.Materials)
             {
-                Assert.True(materialItemSheet.TryGetValue(
-                    materialInfo.Id,
-                    out var materialRow));
+                Assert.True(
+                    materialItemSheet.TryGetValue(
+                        materialInfo.Id,
+                        out var materialRow));
                 var material =
                     ItemFactory.CreateItem(materialRow, new TestRandom());
                 previousAvatarState.inventory.AddItem(material, materialInfo.Count);
@@ -136,13 +138,14 @@ namespace Lib9c.Tests.Action
                 SlotIndex = slotIndex,
             };
 
-            var nextStates = action.Execute(new ActionContext
-            {
-                PreviousState = previousStates,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = blockIndex,
-            });
+            var nextStates = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = previousStates,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = blockIndex,
+                });
 
             var allCombinationSlotState = nextStates.GetAllCombinationSlotState(_avatarAddress);
             var slotState = allCombinationSlotState.GetSlot(slotIndex);

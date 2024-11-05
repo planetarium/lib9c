@@ -39,11 +39,12 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
         public CustomEquipmentCraftTest()
         {
             _agentAddress = new PrivateKey().Address;
-            _avatarAddress = _agentAddress.Derive(string.Format(
-                CultureInfo.InvariantCulture,
-                CreateAvatar.DeriveFormat,
-                0
-            ));
+            _avatarAddress = _agentAddress.Derive(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    CreateAvatar.DeriveFormat,
+                    0
+                ));
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
             _agentState = new AgentState(_agentAddress)
@@ -55,7 +56,11 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             };
 
             _avatarState = AvatarState.Create(
-                _avatarAddress, _agentAddress, 0, _tableSheets.GetAvatarSheets(), default
+                _avatarAddress,
+                _agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
             );
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
@@ -74,11 +79,12 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
             for (var i = 0; i < 4; i++)
             {
-                var slotAddress = _avatarAddress.Derive(string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    i
-                ));
+                var slotAddress = _avatarAddress.Derive(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        CombinationSlotState.DeriveFormat,
+                        i
+                    ));
                 var combinationSlotState = new CombinationSlotState(slotAddress, 0);
                 _initialState = _initialState
                     .SetLegacyState(slotAddress, combinationSlotState.Serialize());
@@ -364,7 +370,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             state = state.SetRelationship(_avatarAddress, initialRelationship);
 
             var gameConfig = state.GetGameConfigState();
-            var materialList = new List<int> { ScrollItemId, CircleItemId };
+            var materialList = new List<int> { ScrollItemId, CircleItemId, };
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
@@ -388,8 +394,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     var circleRow = materialSheet[CircleItemId];
                     var circle = ItemFactory.CreateMaterial(circleRow);
                     var circleAmount = (decimal)recipeRow.CircleAmount
-                                       * relationshipRow.CostMultiplier
-                                       / 10000m;
+                        * relationshipRow.CostMultiplier
+                        / 10000m;
                     if (craftData.IconId != 0)
                     {
                         circleAmount *=
@@ -398,8 +404,9 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
                     _avatarState.inventory.AddItem(circle, (int)Math.Floor(circleAmount));
 
-                    var nextRow = relationshipSheet.Values.FirstOrDefault(row =>
-                        row.Relationship == initialRelationship + 1);
+                    var nextRow = relationshipSheet.Values.FirstOrDefault(
+                        row =>
+                            row.Relationship == initialRelationship + 1);
                     if (nextRow is not null)
                     {
                         if (nextRow.GoldAmount > 0)
@@ -429,16 +436,19 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
             if (slotOccupied)
             {
                 // Lock slot.
-                var slotAddress = _avatarAddress.Derive(string.Format(
-                    CultureInfo.InvariantCulture,
-                    CombinationSlotState.DeriveFormat,
-                    0
-                ));
+                var slotAddress = _avatarAddress.Derive(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        CombinationSlotState.DeriveFormat,
+                        0
+                    ));
                 state = state.SetLegacyState(
                     slotAddress,
                     new CombinationSlotState(
                             ((Dictionary)new CombinationSlotState(slotAddress, 0).Serialize())
-                            .SetItem("unlockBlockIndex", 10.Serialize()
+                            .SetItem(
+                                "unlockBlockIndex",
+                                10.Serialize()
                             )
                         )
                         .Serialize()
@@ -453,23 +463,27 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
             if (exc is not null)
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    BlockIndex = currentBlockIndex,
-                    Signer = _agentAddress,
-                    RandomSeed = seed,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            BlockIndex = currentBlockIndex,
+                            Signer = _agentAddress,
+                            RandomSeed = seed,
+                        }));
             }
             else
             {
-                var resultState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    BlockIndex = currentBlockIndex,
-                    Signer = _agentAddress,
-                    RandomSeed = seed,
-                });
+                var resultState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        BlockIndex = currentBlockIndex,
+                        Signer = _agentAddress,
+                        RandomSeed = seed,
+                    });
 
                 // Test
                 var gold = resultState.GetGoldCurrency();
@@ -504,8 +518,9 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         _tableSheets.CustomEquipmentCraftRelationshipSheet.OrderedList!
                             .Last(row => row.Relationship <= initialRelationship)
                             .GetItemId(itemSubType);
-                    var equipment = inventory.Equipments.First(e =>
-                        e.ItemId == slotState.Result.itemUsable.ItemId);
+                    var equipment = inventory.Equipments.First(
+                        e =>
+                            e.ItemId == slotState.Result.itemUsable.ItemId);
                     Assert.Equal(expectedEquipmentId, equipment.Id);
                     Assert.True(equipment.ByCustomCraft);
 
@@ -520,7 +535,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         Assert.Contains(craftData.IconId, iconIdList);
                     }
 
-                    var cp = equipment.StatsMap.GetAdditionalStats(ignoreZero: true).Sum(
+                    var cp = equipment.StatsMap.GetAdditionalStats(true).Sum(
                         stat => CPHelper.GetStatCP(stat.statType, stat.additionalValue)
                     );
                     // CP > Stat convert can drop sub-1 values and vise versa.

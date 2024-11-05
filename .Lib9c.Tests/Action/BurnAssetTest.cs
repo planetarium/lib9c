@@ -24,10 +24,11 @@ namespace Lib9c.Tests.Action
                 MockWorldState.CreateModern()
                     .SetBalance(_signer, Currencies.Crystal * 100)
                     .SetBalance(
-                        _signer.Derive(string.Format(
-                            CultureInfo.InvariantCulture,
-                            CreateAvatar.DeriveFormat,
-                            1)),
+                        _signer.Derive(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                CreateAvatar.DeriveFormat,
+                                1)),
                         Currencies.DailyRewardRune * 20));
         }
 
@@ -55,10 +56,12 @@ namespace Lib9c.Tests.Action
                 new KeyValuePair<IKey, IValue>[]
                 {
                     new (
-                        (Text)"type_id", (Text)"burn_asset"
+                        (Text)"type_id",
+                        (Text)"burn_asset"
                     ),
                     new (
-                        (Text)"values", new List(
+                        (Text)"values",
+                        new List(
                             _signer.Bencoded,
                             (Currencies.Crystal * 100).Serialize(),
                             (Text)"memo"
@@ -77,10 +80,12 @@ namespace Lib9c.Tests.Action
                 new KeyValuePair<IKey, IValue>[]
                 {
                     new (
-                        (Text)"type_id", (Text)"burn_asset"
+                        (Text)"type_id",
+                        (Text)"burn_asset"
                     ),
                     new (
-                        (Text)"values", new List(
+                        (Text)"values",
+                        new List(
                             _signer.Bencoded,
                             (Currencies.Crystal * 100).Serialize(),
                             (Text)"memo"
@@ -102,10 +107,12 @@ namespace Lib9c.Tests.Action
                 new KeyValuePair<IKey, IValue>[]
                 {
                     new (
-                        (Text)"type_id", (Text)"burn_asset"
+                        (Text)"type_id",
+                        (Text)"burn_asset"
                     ),
                     new (
-                        (Text)"values", new List(
+                        (Text)"values",
+                        new List(
                             _signer.Bencoded,
                             (Currencies.Crystal * 100).Serialize(),
                             (Text)"very long memo".PadRight(100, ' ')
@@ -122,14 +129,14 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute()
         {
-            IWorld prevState = _prevState;
+            var prevState = _prevState;
 
             var action = new BurnAsset(
                 _signer,
                 Currencies.Crystal * 42,
                 "42"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -147,8 +154,8 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_AvatarAddress()
         {
-            IWorld prevState = _prevState;
-            Address avatarAddress = _signer.Derive(
+            var prevState = _prevState;
+            var avatarAddress = _signer.Derive(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     CreateAvatar.DeriveFormat,
@@ -161,7 +168,7 @@ namespace Lib9c.Tests.Action
                 Currencies.DailyRewardRune * 10,
                 "10"
             );
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = prevState,
@@ -179,47 +186,49 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_InsufficientBalanceException()
         {
-            IWorld prevState = _prevState;
+            var prevState = _prevState;
 
             var action = new BurnAsset(
                 _signer,
                 Currencies.Crystal * 1000,
                 "1000"
             );
-            Assert.Throws<InsufficientBalanceException>(() =>
-            {
-                action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = prevState,
-                        Signer = _signer,
-                        BlockIndex = 1,
-                    }
-                );
-            });
+            Assert.Throws<InsufficientBalanceException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _signer,
+                            BlockIndex = 1,
+                        }
+                    );
+                });
         }
 
         [Fact]
         public void Execute_Throws_InvalidActionFieldException()
         {
-            IWorld prevState = _prevState;
+            var prevState = _prevState;
 
             var action = new BurnAsset(
                 default, // Wrong address
                 Currencies.Crystal * 1000,
                 "42"
             );
-            Assert.Throws<InvalidActionFieldException>(() =>
-            {
-                action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = prevState,
-                        Signer = _signer,
-                        BlockIndex = 1,
-                    }
-                );
-            });
+            Assert.Throws<InvalidActionFieldException>(
+                () =>
+                {
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = prevState,
+                            Signer = _signer,
+                            BlockIndex = 1,
+                        }
+                    );
+                });
         }
     }
 }

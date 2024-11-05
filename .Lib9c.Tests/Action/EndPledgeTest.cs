@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action
             var patron = new PrivateKey().Address;
             var agent = new PrivateKey().Address;
             var context = new ActionContext();
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(agent.GetPledgeAddress(), List.Empty.Add(patron.Serialize()).Add(true.Serialize()));
             var mead = Currencies.Mead;
             if (balance > 0)
@@ -32,11 +32,12 @@ namespace Lib9c.Tests.Action
             {
                 AgentAddress = agent,
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                Signer = patron,
-                PreviousState = states,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = patron,
+                    PreviousState = states,
+                });
             Assert.Null(nextState.GetLegacyState(agent.GetPledgeAddress()));
             Assert.Equal(mead * 0, nextState.GetBalance(agent, mead));
             if (balance > 0)
@@ -50,21 +51,24 @@ namespace Lib9c.Tests.Action
         [InlineData(false, true, typeof(FailedLoadStateException))]
         public void Execute_Throw_Exception(bool invalidSigner, bool invalidAgent, Type exc)
         {
-            Address patron = new PrivateKey().Address;
-            Address agent = new PrivateKey().Address;
-            List contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
-            IWorld states = new World(MockUtil.MockModernWorldState).SetLegacyState(agent.GetPledgeAddress(), contract);
+            var patron = new PrivateKey().Address;
+            var agent = new PrivateKey().Address;
+            var contract = List.Empty.Add(patron.Serialize()).Add(true.Serialize());
+            var states = new World(MockUtil.MockModernWorldState).SetLegacyState(agent.GetPledgeAddress(), contract);
 
             var action = new EndPledge
             {
                 AgentAddress = invalidAgent ? new PrivateKey().Address : agent,
             };
 
-            Assert.Throws(exc, () => action.Execute(new ActionContext
-            {
-                Signer = invalidSigner ? new PrivateKey().Address : patron,
-                PreviousState = states,
-            }));
+            Assert.Throws(
+                exc,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = invalidSigner ? new PrivateKey().Address : patron,
+                        PreviousState = states,
+                    }));
         }
     }
 }

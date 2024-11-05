@@ -146,13 +146,14 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            var nexState = registerProduct.Execute(new ActionContext
-            {
-                PreviousState = prevState,
-                BlockIndex = 1L,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            var nexState = registerProduct.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevState,
+                    BlockIndex = 1L,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
             Assert.Equal(
                 0 * RuneHelper.StakeRune,
                 nexState.GetBalance(_avatarAddress, RuneHelper.StakeRune)
@@ -186,20 +187,22 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            Assert.Throws<ProductNotFoundException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = nexState,
-                BlockIndex = 2L,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ProductNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = nexState,
+                        BlockIndex = 2L,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var productInfos = new List<IProductInfo>();
-            for (int i = 0; i < CancelProductRegistration.Capacity + 1; i++)
+            for (var i = 0; i < CancelProductRegistration.Capacity + 1; i++)
             {
                 productInfos.Add(new ItemProductInfo());
             }
@@ -239,7 +242,7 @@ namespace Lib9c.Tests.Action
                 case ProductType.Fungible:
                 case ProductType.NonFungible:
                 {
-                    ITradableItem tradableItem = productType == ProductType.Fungible
+                    var tradableItem = productType == ProductType.Fungible
                         ? ItemFactory.CreateTradableMaterial(_tableSheets.MaterialItemSheet.First)
                         : (ITradableItem)ItemFactory.CreateItemUsable(_tableSheets.EquipmentItemSheet.First, Guid.NewGuid(), 0L);
                     product = new ItemProduct

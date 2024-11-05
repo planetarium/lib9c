@@ -50,9 +50,9 @@ namespace Lib9c.Tests.Action.Scenario
             var skillRow = _tableSheets.SkillSheet[210011];
             var skill = SkillFactory.Get(skillRow, 0, 100, 0, StatType.NONE);
             _aura.Skills.Add(skill);
-            var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
+            var addresses = new[] { _avatarAddress, _enemyAvatarAddress, };
             _initialState = new World(MockUtil.MockModernWorldState);
-            for (int i = 0; i < addresses.Length; i++)
+            for (var i = 0; i < addresses.Length; i++)
             {
                 var avatarAddress = addresses[i];
                 agentState.avatarAddresses.Add(i, avatarAddress);
@@ -68,7 +68,7 @@ namespace Lib9c.Tests.Action.Scenario
                     .SetActionPoint(avatarAddress, DailyReward.ActionPointMax);
             }
 
-            _currency = Currency.Legacy("NCG", 2, minters: null);
+            _currency = Currency.Legacy("NCG", 2, null);
             _initialState = _initialState
                 .SetAgentState(_agentAddress, agentState)
                 .SetLegacyState(
@@ -104,13 +104,15 @@ namespace Lib9c.Tests.Action.Scenario
                 RuneInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<DuplicateEquipmentException>(() => has.Execute(new ActionContext
-            {
-                BlockIndex = 2,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            }));
+            Assert.Throws<DuplicateEquipmentException>(
+                () => has.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 2,
+                        PreviousState = _initialState,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
 
             has.Equipments = new List<Guid>
             {
@@ -118,13 +120,14 @@ namespace Lib9c.Tests.Action.Scenario
             };
 
             // equip aura because auraIgnoreSheet is empty
-            var nextState = has.Execute(new ActionContext
-            {
-                BlockIndex = 3,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var nextState = has.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 3,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
 
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
@@ -136,7 +139,7 @@ namespace Lib9c.Tests.Action.Scenario
             var itemSlotStateAddress = ItemSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
             Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
-            for (int i = 0; i < 50; i++)
+            for (var i = 0; i < 50; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
@@ -155,13 +158,14 @@ namespace Lib9c.Tests.Action.Scenario
                 RuneInfos = new List<RuneSlotInfo>(),
             };
 
-            var nextState = raid.Execute(new ActionContext
-            {
-                BlockIndex = 5045201,
-                PreviousState = prevState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var nextState = raid.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 5045201,
+                    PreviousState = prevState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
             Assert_Player(avatarState, nextState, _avatarAddress, itemSlotStateAddress);
         }
 
@@ -169,14 +173,14 @@ namespace Lib9c.Tests.Action.Scenario
         public void Arena()
         {
             var prevState = _initialState;
-            var addresses = new[] { _avatarAddress, _enemyAvatarAddress };
+            var addresses = new[] { _avatarAddress, _enemyAvatarAddress, };
             foreach (var avatarAddress in addresses)
             {
                 var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.Arena);
                 Assert.Null(_initialState.GetLegacyState(itemSlotStateAddress));
 
                 var avatarState = prevState.GetAvatarState(avatarAddress);
-                for (int i = 0; i < 50; i++)
+                for (var i = 0; i < 50; i++)
                 {
                     avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                 }
@@ -195,12 +199,13 @@ namespace Lib9c.Tests.Action.Scenario
                     },
                     runeInfos = new List<RuneSlotInfo>(),
                 };
-                var nextState = join.Execute(new ActionContext
-                {
-                    BlockIndex = 1,
-                    Signer = _agentAddress,
-                    PreviousState = prevState,
-                });
+                var nextState = join.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1,
+                        Signer = _agentAddress,
+                        PreviousState = prevState,
+                    });
                 var arenaAvatarStateAdr = ArenaAvatarState.DeriveAddress(avatarAddress);
                 var serializedArenaAvatarState = (List)nextState.GetLegacyState(arenaAvatarStateAdr);
                 var arenaAvatarState = new ArenaAvatarState(serializedArenaAvatarState);
@@ -228,13 +233,14 @@ namespace Lib9c.Tests.Action.Scenario
                     runeInfos = new List<RuneSlotInfo>(),
                 };
 
-                var nextState = battle.Execute(new ActionContext
-                {
-                    Signer = _agentAddress,
-                    PreviousState = prevState,
-                    BlockIndex = 2,
-                    RandomSeed = 0,
-                });
+                var nextState = battle.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = prevState,
+                        BlockIndex = 2,
+                        RandomSeed = 0,
+                    });
                 var avatarState = prevState.GetAvatarState(avatarAddress);
                 var enemyAvatarState = prevState.GetAvatarState(enemyAvatarAddress);
                 var simulator = new ArenaSimulator(new TestRandom(), 10);
@@ -266,7 +272,7 @@ namespace Lib9c.Tests.Action.Scenario
                 // Check player, enemy equip aura
                 foreach (var spawn in log.OfType<ArenaSpawnCharacter>())
                 {
-                    ArenaCharacter character = spawn.Character;
+                    var character = spawn.Character;
                     Assert.Equal(400, character.HIT);
                     Assert.Equal(11, character.CRI);
                 }
@@ -290,12 +296,13 @@ namespace Lib9c.Tests.Action.Scenario
                     _aura.ItemId,
                 },
             };
-            var nextState = grinding.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                PreviousState = _initialState,
-                BlockIndex = 1L,
-            });
+            var nextState = grinding.Execute(
+                new ActionContext
+                {
+                    Signer = _agentAddress,
+                    PreviousState = _initialState,
+                    BlockIndex = 1L,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.False(nextAvatarState.inventory.TryGetNonFungibleItem(_aura.ItemId, out _));
@@ -311,7 +318,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.NotNull(aura);
             Assert.IsAssignableFrom<Equipment>(aura);
             Assert.Null(aura as ITradableItem);
-            for (int i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
+            for (var i = 0; i < GameConfig.RequireClearedStageLevel.ActionsInShop; i++)
             {
                 avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
             }
@@ -335,12 +342,14 @@ namespace Lib9c.Tests.Action.Scenario
                 ChargeAp = false,
             };
             // Because Aura is not ITradableItem.
-            Assert.Throws<ItemDoesNotExistException>(() => register.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                PreviousState = previousState,
-                BlockIndex = 0L,
-            }));
+            Assert.Throws<ItemDoesNotExistException>(
+                () => register.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = previousState,
+                        BlockIndex = 0L,
+                    }));
         }
 
         private void Assert_Player(AvatarState avatarState, IWorld state, Address avatarAddress, Address itemSlotStateAddress)
@@ -351,7 +360,7 @@ namespace Lib9c.Tests.Action.Scenario
             Assert_ItemSlot(state, itemSlotStateAddress);
             var player = new Player(avatarState, _tableSheets.GetSimulatorSheets());
             var equippedPlayer = new Player(nextAvatarState, _tableSheets.GetSimulatorSheets());
-            int diffLevel = equippedPlayer.Level - player.Level;
+            var diffLevel = equippedPlayer.Level - player.Level;
             var row = _tableSheets.CharacterSheet[player.CharacterId];
             Assert.Null(player.aura);
             Assert.NotNull(equippedPlayer.aura);

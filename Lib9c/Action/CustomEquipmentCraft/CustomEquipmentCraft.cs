@@ -247,6 +247,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                             totalCp * option.Ratio / optionRow.TotalOptionRatio,
                             avatarState.level)
                     );
+                    equipment.optionCountFromCombination++;
                 }
 
                 // Set skill
@@ -258,6 +259,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
                     random
                 );
                 equipment.Skills.Add(skill);
+                equipment.optionCountFromCombination++;
 
                 // Add equipment
                 avatarState.inventory.AddItem(equipment);

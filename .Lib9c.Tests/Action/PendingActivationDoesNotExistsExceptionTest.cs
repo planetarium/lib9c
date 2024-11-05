@@ -14,13 +14,14 @@ namespace Lib9c.Tests.Action
             var formatter = new BinaryFormatter();
             using var ms = new MemoryStream();
             var exc = new PendingActivationDoesNotExistsException(
-                new Address(new byte[]
-                {
-                    0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x01,
-                })
+                new Address(
+                    new byte[]
+                    {
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00, 0x00, 0x01,
+                    })
             );
 
             formatter.Serialize(ms, exc);
