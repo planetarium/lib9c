@@ -198,7 +198,7 @@ namespace Lib9c.Tests.Action.Summon
             };
             state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(EquipmentSummonSheet)), sheet);
 
-            if (!(materialId is null))
+            if (!(materialId is null) && materialCount > 0)
             {
                 var materialSheet = _tableSheets.MaterialItemSheet;
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);

@@ -102,7 +102,7 @@
                 _tableSheets.CostumeSummonSheet.Serialize()
             );
 
-            if (!(materialId is null))
+            if (!(materialId is null) && materialCount > 0)
             {
                 var materialSheet = _tableSheets.MaterialItemSheet;
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
