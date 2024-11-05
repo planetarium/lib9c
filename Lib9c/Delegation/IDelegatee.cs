@@ -36,12 +36,6 @@ namespace Nekoyume.Delegation
 
         BigInteger TotalShares { get; }
 
-        bool Jailed { get; }
-
-        long JailedUntil { get; }
-
-        bool Tombstoned { get; }
-
         BigInteger ShareFromFAV(FungibleAssetValue fav);
 
         FungibleAssetValue FAVFromShare(BigInteger share);
@@ -55,12 +49,6 @@ namespace Nekoyume.Delegation
         void CollectRewards(long height);
 
         void Slash(BigInteger slashFactor, long infractionHeight, long height);
-
-        void Jail(long releaseHeight);
-
-        void Unjail(long height);
-
-        void Tombstone();
 
         Address BondAddress(Address delegatorAddress);
 

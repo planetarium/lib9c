@@ -58,10 +58,6 @@ namespace Nekoyume.Delegation
 
         public event EventHandler<long>? DelegationChanged;
 
-        public event EventHandler? Enjailed;
-
-        public event EventHandler? Unjailed;
-
         public DelegateeMetadata Metadata { get; }
 
         public IDelegationRepository Repository { get; }
@@ -96,12 +92,6 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares => Metadata.TotalShares;
 
-        public bool Jailed => Metadata.Jailed;
-
-        public long JailedUntil => Metadata.JailedUntil;
-
-        public bool Tombstoned => Metadata.Tombstoned;
-
         public List MetadataBencoded => Metadata.Bencoded;
 
         public BigInteger ShareFromFAV(FungibleAssetValue fav)
@@ -118,44 +108,6 @@ namespace Nekoyume.Delegation
 
         public void DistributeReward(IDelegator delegator, long height)
             => DistributeReward((T)delegator, height);
-
-        public void Jail(long releaseHeight)
-        {
-            Metadata.JailedUntil = releaseHeight;
-            Metadata.Jailed = true;
-            Repository.SetDelegateeMetadata(Metadata);
-            Enjailed?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void Unjail(long height)
-        {
-            if (!Jailed)
-            {
-                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
-            }
-
-            if (Tombstoned)
-            {
-                throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
-            }
-
-            if (JailedUntil >= height)
-            {
-                throw new InvalidOperationException("Cannot unjail before jailed until.");
-            }
-
-            Metadata.JailedUntil = -1L;
-            Metadata.Jailed = false;
-            Repository.SetDelegateeMetadata(Metadata);
-            Unjailed?.Invoke(this, EventArgs.Empty);
-        }
-
-        public void Tombstone()
-        {
-            Jail(long.MaxValue);
-            Metadata.Tombstoned = true;
-            Repository.SetDelegateeMetadata(Metadata);
-        }
 
         public Address BondAddress(Address delegatorAddress)
             => Metadata.BondAddress(delegatorAddress);
@@ -180,12 +132,6 @@ namespace Nekoyume.Delegation
             {
                 throw new InvalidOperationException(
                     "Cannot bond with invalid currency.");
-            }
-
-            if (Tombstoned)
-            {
-                throw new InvalidOperationException(
-                    "Cannot bond to tombstoned delegatee.");
             }
 
             Bond bond = Repository.GetBond(this, delegator.Address);

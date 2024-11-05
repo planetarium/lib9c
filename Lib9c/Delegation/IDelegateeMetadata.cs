@@ -38,12 +38,6 @@ namespace Nekoyume.Delegation
 
         BigInteger TotalShares { get; }
 
-        bool Jailed { get; }
-
-        long JailedUntil { get; }
-
-        bool Tombstoned { get; }
-
         BigInteger ShareFromFAV(FungibleAssetValue fav);
 
         FungibleAssetValue FAVFromShare(BigInteger share);

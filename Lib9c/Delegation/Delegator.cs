@@ -68,11 +68,6 @@ namespace Nekoyume.Delegation
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            if (delegatee.Tombstoned)
-            {
-                throw new InvalidOperationException("Delegatee is tombstoned.");
-            }
-
             delegatee.Bond(this, fav, height);
             Metadata.AddDelegatee(delegatee.Address);
             Repository.TransferAsset(DelegationPoolAddress, delegatee.DelegationPoolAddress, fav);
@@ -140,11 +135,6 @@ namespace Nekoyume.Delegation
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(height), height, "Height must be positive.");
-            }
-
-            if (dstDelegatee.Tombstoned)
-            {
-                throw new InvalidOperationException("Destination delegatee is tombstoned.");
             }
 
             FungibleAssetValue fav = srcDelegatee.Unbond(

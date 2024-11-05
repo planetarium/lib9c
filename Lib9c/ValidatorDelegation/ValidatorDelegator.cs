@@ -1,6 +1,8 @@
 #nullable enable
 using System;
+using System.Numerics;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Delegation;
 
 namespace Nekoyume.ValidatorDelegation
@@ -28,6 +30,26 @@ namespace Nekoyume.ValidatorDelegation
                   address: address,
                   repository: repository)
         {
+        }
+
+        public override void Delegate(ValidatorDelegatee delegatee, FungibleAssetValue fav, long height)
+        {
+            if (delegatee.Tombstoned)
+            {
+                throw new InvalidOperationException("Delegatee is tombstoned.");
+            }
+
+            base.Delegate(delegatee, fav, height);
+        }
+
+        public override void Redelegate(ValidatorDelegatee srcDelegatee, ValidatorDelegatee dstDelegatee, BigInteger share, long height)
+        {
+            if (dstDelegatee.Tombstoned)
+            {
+                throw new InvalidOperationException("Destination delegatee is tombstoned.");
+            }
+
+            base.Redelegate(srcDelegatee, dstDelegatee, share, height);
         }
 
         public bool Equals(ValidatorDelegator? other)
