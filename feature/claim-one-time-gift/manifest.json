@@ -852,6 +852,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.CostumeSummon.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.CostumeSummon.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Coupons.IssueCoupons.yml",
       "output": {
         ".html": {
@@ -3946,6 +3956,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Helper.RuneHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SummonHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SummonHelper.html"
         }
       },
       "version": ""
@@ -10516,6 +10536,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.StatBuffSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Summon.CostumeSummonSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Summon.CostumeSummonSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Summon.EquipmentSummonSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Summon.EquipmentSummonSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Summon.RuneSummonSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Summon.RuneSummonSheet.html"
         }
       },
       "version": ""
