@@ -3897,7 +3897,7 @@
   "api/Nekoyume.Planet.html": {
     "href": "api/Nekoyume.Planet.html",
     "title": "Enum Planet | Lib9c",
-    "keywords": "Enum Planet Namespace Nekoyume Assembly Lib9c.dll public enum Planet : byte Extension Methods StateExtensions.Serialize(Enum) Fields Heimdall = 1 HeimdallInternal = 4 Idun = 2 Odin = 0 OdinInternal = 3"
+    "keywords": "Enum Planet Namespace Nekoyume Assembly Lib9c.dll public enum Planet : byte Extension Methods StateExtensions.Serialize(Enum) Fields Heimdall = 1 HeimdallInternal = 5 Idun = 2 Odin = 0 OdinInternal = 4 Thor = 3 ThorInternal = 6"
   },
   "api/Nekoyume.PlanetExtension.html": {
     "href": "api/Nekoyume.PlanetExtension.html",
