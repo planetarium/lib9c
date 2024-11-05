@@ -35,7 +35,6 @@ namespace Lib9c.Formatters
                 throw new InvalidOperationException();
             }
 
-            var currency = new Currency(new Codec().Decode(bytes));
             return new Currency(new Codec().Decode(bytes));
         }
     }
