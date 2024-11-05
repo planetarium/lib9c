@@ -13,6 +13,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -33,7 +34,6 @@ namespace Nekoyume.Action
         public const string SummonCountKey = "sc";
         public int SummonCount;
 
-        private const int SummonLimit = 10;
         public const int RuneQuantity = 10;
 
         public override IWorld Execute(IActionContext context)
@@ -51,22 +51,22 @@ namespace Nekoyume.Action
                     $"{addressesHex} Aborted as the avatar state of the signer was failed to load.");
             }
 
-            if (SummonCount <= 0 || SummonCount > SummonLimit)
+            if (!SummonHelper.CheckSummonCountIsValid(SummonCount))
             {
                 throw new InvalidSummonCountException(
-                    $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use between 1 and 10"
+                    $"{addressesHex} Given summonCount {SummonCount} is not valid. Please use 1 or 10 or 100"
                 );
             }
 
             // Validate Work
             Dictionary<Type, (Address, ISheet)> sheets = states.GetSheets(sheetTypes: new[]
             {
-                typeof(SummonSheet),
+                typeof(RuneSummonSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneSheet),
             });
 
-            var summonSheet = sheets.GetSheet<SummonSheet>();
+            var summonSheet = sheets.GetSheet<RuneSummonSheet>();
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var runeSheet = sheets.GetSheet<RuneSheet>();
 
@@ -74,7 +74,7 @@ namespace Nekoyume.Action
             if (summonRow is null)
             {
                 throw new RowNotInTableException(
-                    $"{addressesHex} Failed to get {GroupId} in SummonSheet");
+                    $"{addressesHex} Failed to get {GroupId} in RuneSummonSheet");
             }
 
             // Use materials
@@ -154,12 +154,6 @@ namespace Nekoyume.Action
             IWorld states
         )
         {
-            // Ten plus one
-            if (summonCount == 10)
-            {
-                summonCount += 1;
-            }
-
             var result = SimulateSummon(runeSheet, summonRow, summonCount, random);
 #pragma warning disable LAA1002
             foreach (var pair in result)
@@ -178,25 +172,12 @@ namespace Nekoyume.Action
             IRandom random
         )
         {
-            // Ten plus one
-            if (summonCount == 10)
-            {
-                summonCount += 1;
-            }
+            summonCount = SummonHelper.CalculateSummonCount(summonCount);
 
             var result = new Dictionary<Currency, int>();
             for (var i = 0; i < summonCount; i++)
             {
-                var recipeId = 0;
-                var targetRatio = random.Next(1, summonRow.TotalRatio() + 1);
-                for (var j = 1; j <= SummonSheet.Row.MaxRecipeCount; j++)
-                {
-                    if (targetRatio <= summonRow.CumulativeRatio(j))
-                    {
-                        recipeId = summonRow.Recipes[j - 1].Item1;
-                        break;
-                    }
-                }
+                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
 
                 // Validate RecipeId
                 var runeRow = runeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
