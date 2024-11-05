@@ -83,7 +83,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                         context, stakeStateAddress, address, ncg);
                 }
             }
-            else
+            else if (!IsValidator(world, context, address))
             {
                 var stakeStateAddress = StakeState.DeriveAddress(address);
                 var gg = world.GetBalance(stakeStateAddress, Currencies.GuildGold);
@@ -97,6 +97,20 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             return world;
+        }
+
+        private static bool IsValidator(IWorld world, IActionContext context, Address address)
+        {
+            var repository = new ValidatorRepository(world, context);
+            try
+            {
+                repository.GetValidatorDelegatee(address);
+                return true;
+            }
+            catch (FailedLoadStateException)
+            {
+                return false;
+            }
         }
 
         private static (FungibleAssetValue Gold, FungibleAssetValue Remainder)
