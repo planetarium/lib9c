@@ -17,8 +17,10 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
     using Nekoyume.Module.ValidatorDelegation;
     using Nekoyume.TableData.Stake;
+    using Nekoyume.TypedAddress;
     using Nekoyume.ValidatorDelegation;
     using Serilog;
     using Xunit;
@@ -325,6 +327,7 @@ namespace Lib9c.Tests.Action
         [InlineData(0, long.MaxValue)]
         // NOTE: undelegate
         [InlineData(50, 0)]
+        [InlineData(75, 50)]
         [InlineData(long.MaxValue, 0)]
         [InlineData(long.MaxValue, 500)]
         public void Execute_Success_When_Exist_StakeStateV3(
@@ -387,6 +390,72 @@ namespace Lib9c.Tests.Action
             Assert.Equal(expectedBalance, actualBalance);
         }
 
+        [Theory]
+        // NOTE: non
+        [InlineData(50, 50)]
+        [InlineData(long.MaxValue, long.MaxValue)]
+        // NOTE: delegate
+        [InlineData(0, 500)]
+        [InlineData(50, 100)]
+        [InlineData(0, long.MaxValue)]
+        // NOTE: undelegate
+        [InlineData(50, 0)]
+        [InlineData(75, 50)]
+        [InlineData(long.MaxValue, 0)]
+        [InlineData(long.MaxValue, 500)]
+        public void Execute_Success_When_Exist_StakeStateV3_Without_Guild(
+            long previousAmount,
+            long amount)
+        {
+            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
+            var stakeStateV2 = new StakeState(
+                contract: new Contract(_stakePolicySheet),
+                startedBlockIndex: 0L,
+                stateVersion: 3);
+            var world = _initialState;
+            var height = 0L;
+
+            if (previousAmount > 0)
+            {
+                var ncgToStake = _ncg * previousAmount;
+                var gg = FungibleAssetValue.Parse(Currencies.GuildGold, ncgToStake.GetQuantityString(true));
+                world = DelegationUtil.MintGuildGold(world, _agentAddr, gg, height);
+                world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
+                world = world.TransferAsset(
+                    new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
+                world = world.TransferAsset(
+                    new ActionContext(), stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
+            }
+
+            world = world.SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
+
+            if (amount - previousAmount > 0)
+            {
+                var ncgToStake = _ncg * (amount - previousAmount);
+                world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
+            }
+
+            var nextState = Execute(
+                height,
+                world,
+                new TestRandom(),
+                _agentAddr,
+                amount);
+
+            if (amount > 0)
+            {
+                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState stakeState));
+                Assert.Equal(3, stakeState.StateVersion);
+            }
+
+            world = DelegationUtil.EnsureStakeReleased(
+                nextState, height + LegacyStakeState.LockupInterval);
+
+            var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
+            var actualBalance = world.GetBalance(_agentAddr, _ncg);
+            Assert.Equal(expectedBalance, actualBalance);
+        }
+
         private IWorld Execute(
             long blockIndex,
             IWorld previousState,
@@ -404,14 +473,15 @@ namespace Lib9c.Tests.Action
             });
 
             var guildRepository = new GuildRepository(nextState, new ActionContext());
-            var guildParticipant = guildRepository.GetGuildParticipant(signer);
-            var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-
-            var bond = guildRepository.GetBond(guild, signer);
-            var amountNCG = _ncg * amount;
-            var expectedGG = DelegationUtil.GetGuildCoinFromNCG(amountNCG);
-            var expectedShare = guild.ShareFromFAV(expectedGG);
-            Assert.Equal(expectedShare, bond.Share);
+            if (guildRepository.TryGetGuildParticipant(new AgentAddress(signer), out var guildParticipant))
+            {
+                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                var bond = guildRepository.GetBond(guild, signer);
+                var amountNCG = _ncg * amount;
+                var expectedGG = DelegationUtil.GetGuildCoinFromNCG(amountNCG);
+                var expectedShare = guild.ShareFromFAV(expectedGG);
+                Assert.Equal(expectedShare, bond.Share);
+            }
 
             if (amount == 0)
             {
