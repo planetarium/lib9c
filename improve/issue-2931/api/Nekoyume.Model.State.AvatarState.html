@@ -1,0 +1,2736 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class AvatarState | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class AvatarState | Lib9c ">
+      
+      <meta name="description" content="Agent가 포함하는 각 Avatar의 상태 모델이다.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/improve/issue-2931/apiSpec/new?filename=Nekoyume_Model_State_AvatarState.md&amp;value=---%0Auid%3A%20Nekoyume.Model.State.AvatarState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.State.AvatarState">
+
+
+
+  <h1 id="Nekoyume_Model_State_AvatarState" data-uid="Nekoyume.Model.State.AvatarState" class="text-break">
+Class AvatarState  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.State.html">State</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Agent가 포함하는 각 Avatar의 상태 모델이다.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class AvatarState : State, IState, ICloneable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Model.State.State.html">State</a></div>
+      <div><span class="xref">AvatarState</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.State.IState.html">IState</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.icloneable">ICloneable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_address">State.address</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_SerializeBase">State.SerializeBase()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_SerializeV2Base">State.SerializeV2Base()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_SerializeListBase">State.SerializeListBase()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExp_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterLevelSheet_System_Int32_System_Int32_">AvatarStateExtensions.GetLevelAndExp(AvatarState, CharacterLevelSheet, int, int)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExpV1_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterLevelSheet_System_Int32_System_Int32_">AvatarStateExtensions.GetLevelAndExpV1(AvatarState, CharacterLevelSheet, int, int)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_UpdateExp_Nekoyume_Model_State_AvatarState_System_Int32_System_Int64_">AvatarStateExtensions.UpdateExp(AvatarState, int, long)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_UpdateInventory_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__">AvatarStateExtensions.UpdateInventory(AvatarState, List&lt;ItemBase&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_UpdateMonsterMap_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_StageWaveSheet_System_Int32_">AvatarStateExtensions.UpdateMonsterMap(AvatarState, StageWaveSheet, int)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_ValidEquipmentAndCostume_Nekoyume_Model_State_AvatarState_System_Collections_Generic_IEnumerable_System_Guid__System_Collections_Generic_List_System_Guid__Nekoyume_TableData_ItemRequirementSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_System_Int64_System_String_">AvatarStateExtensions.ValidEquipmentAndCostume(AvatarState, IEnumerable&lt;Guid&gt;, List&lt;Guid&gt;, ItemRequirementSheet, EquipmentItemRecipeSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, long, string)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Helper.AvatarStateExtensions.html#Nekoyume_Helper_AvatarStateExtensions_ValidEquipmentAndCostumeV2_Nekoyume_Model_State_AvatarState_System_Collections_Generic_IEnumerable_System_Guid__System_Collections_Generic_List_System_Guid__Nekoyume_TableData_ItemRequirementSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_System_Int64_System_String_Nekoyume_Model_State_GameConfigState_">AvatarStateExtensions.ValidEquipmentAndCostumeV2(AvatarState, IEnumerable&lt;Guid&gt;, List&lt;Guid&gt;, ItemRequirementSheet, EquipmentItemRecipeSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, long, string, GameConfigState)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_State_AvatarState__ctor_" data-uid="Nekoyume.Model.State.AvatarState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.State.AvatarState.#ctor(Bencodex.Types.Dictionary)">
+  AvatarState(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AvatarState(Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState__ctor_" data-uid="Nekoyume.Model.State.AvatarState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState__ctor_Bencodex_Types_List_" data-uid="Nekoyume.Model.State.AvatarState.#ctor(Bencodex.Types.List)">
+  AvatarState(List)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AvatarState(List serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">List</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState__ctor_" data-uid="Nekoyume.Model.State.AvatarState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState__ctor_Libplanet_Crypto_Address_Libplanet_Crypto_Address_System_Int64_Nekoyume_Model_Quest_QuestList_Nekoyume_Model_WorldInformation_Libplanet_Crypto_Address_System_String_" data-uid="Nekoyume.Model.State.AvatarState.#ctor(Libplanet.Crypto.Address,Libplanet.Crypto.Address,System.Int64,Nekoyume.Model.Quest.QuestList,Nekoyume.Model.WorldInformation,Libplanet.Crypto.Address,System.String)">
+  AvatarState(Address, Address, long, QuestList, WorldInformation, Address, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AvatarState(Address address, Address agentAddress, long blockIndex, QuestList questList, WorldInformation worldInformation, Address rankingMapAddress, string name = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>questList</code> <a class="xref" href="Nekoyume.Model.Quest.QuestList.html">QuestList</a></dt>
+    <dd></dd>
+    <dt><code>worldInformation</code> <a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a></dt>
+    <dd></dd>
+    <dt><code>rankingMapAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState__ctor_" data-uid="Nekoyume.Model.State.AvatarState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState__ctor_Nekoyume_Model_State_AvatarState_" data-uid="Nekoyume.Model.State.AvatarState.#ctor(Nekoyume.Model.State.AvatarState)">
+  AvatarState(AvatarState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AvatarState(AvatarState avatarState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_CombinationSlotCapacity" data-uid="Nekoyume.Model.State.AvatarState.CombinationSlotCapacity">
+  CombinationSlotCapacity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int CombinationSlotCapacity = 8</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_CurrentVersion" data-uid="Nekoyume.Model.State.AvatarState.CurrentVersion">
+  CurrentVersion
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int CurrentVersion = 2</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_DefaultCombinationSlotCount" data-uid="Nekoyume.Model.State.AvatarState.DefaultCombinationSlotCount">
+  DefaultCombinationSlotCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int DefaultCombinationSlotCount = 4</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_RankingMapAddress" data-uid="Nekoyume.Model.State.AvatarState.RankingMapAddress">
+  RankingMapAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;don&#39;t use this field.&quot;)]
+public readonly Address RankingMapAddress</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_actionPoint" data-uid="Nekoyume.Model.State.AvatarState.actionPoint">
+  actionPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int actionPoint</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_agentAddress" data-uid="Nekoyume.Model.State.AvatarState.agentAddress">
+  agentAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address agentAddress</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_blockIndex" data-uid="Nekoyume.Model.State.AvatarState.blockIndex">
+  blockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long blockIndex</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_characterId" data-uid="Nekoyume.Model.State.AvatarState.characterId">
+  characterId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int characterId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_combinationSlotAddresses" data-uid="Nekoyume.Model.State.AvatarState.combinationSlotAddresses">
+  combinationSlotAddresses
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;don&#39;t use this field, use AllCombinationSlotState instead.&quot;)]
+public List&lt;Address&gt; combinationSlotAddresses</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">Address</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_dailyRewardReceivedIndex" data-uid="Nekoyume.Model.State.AvatarState.dailyRewardReceivedIndex">
+  dailyRewardReceivedIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long dailyRewardReceivedIndex</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ear" data-uid="Nekoyume.Model.State.AvatarState.ear">
+  ear
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ear</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_eventMap" data-uid="Nekoyume.Model.State.AvatarState.eventMap">
+  eventMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap eventMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_exp" data-uid="Nekoyume.Model.State.AvatarState.exp">
+  exp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long exp</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_hair" data-uid="Nekoyume.Model.State.AvatarState.hair">
+  hair
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int hair</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_inventory" data-uid="Nekoyume.Model.State.AvatarState.inventory">
+  inventory
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Inventory inventory</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_itemMap" data-uid="Nekoyume.Model.State.AvatarState.itemMap">
+  itemMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap itemMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_lens" data-uid="Nekoyume.Model.State.AvatarState.lens">
+  lens
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int lens</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_level" data-uid="Nekoyume.Model.State.AvatarState.level">
+  level
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int level</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_mailBox" data-uid="Nekoyume.Model.State.AvatarState.mailBox">
+  mailBox
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MailBox mailBox</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Mail.MailBox.html">MailBox</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_monsterMap" data-uid="Nekoyume.Model.State.AvatarState.monsterMap">
+  monsterMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap monsterMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_name" data-uid="Nekoyume.Model.State.AvatarState.name">
+  name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string name</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_questList" data-uid="Nekoyume.Model.State.AvatarState.questList">
+  questList
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public QuestList questList</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Quest.QuestList.html">QuestList</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_stageMap" data-uid="Nekoyume.Model.State.AvatarState.stageMap">
+  stageMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap stageMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_tail" data-uid="Nekoyume.Model.State.AvatarState.tail">
+  tail
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int tail</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_updatedAt" data-uid="Nekoyume.Model.State.AvatarState.updatedAt">
+  updatedAt
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long updatedAt</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_State_AvatarState_worldInformation" data-uid="Nekoyume.Model.State.AvatarState.worldInformation">
+  worldInformation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorldInformation worldInformation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_State_AvatarState_NameWithHash_" data-uid="Nekoyume.Model.State.AvatarState.NameWithHash*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_NameWithHash" data-uid="Nekoyume.Model.State.AvatarState.NameWithHash">
+  NameWithHash
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string NameWithHash { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Nonce_" data-uid="Nekoyume.Model.State.AvatarState.Nonce*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Nonce" data-uid="Nekoyume.Model.State.AvatarState.Nonce">
+  Nonce
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Nonce { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Version_" data-uid="Nekoyume.Model.State.AvatarState.Version*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Version" data-uid="Nekoyume.Model.State.AvatarState.Version">
+  Version
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Version { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Apply_" data-uid="Nekoyume.Model.State.AvatarState.Apply*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Apply_Nekoyume_Model_Player_System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.Apply(Nekoyume.Model.Player,System.Int64)">
+  Apply(Player, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Apply(Player player, long index)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>player</code> <a class="xref" href="Nekoyume.Model.Player.html">Player</a></dt>
+    <dd></dd>
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Clone_" data-uid="Nekoyume.Model.State.AvatarState.Clone*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Clone" data-uid="Nekoyume.Model.State.AvatarState.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L333"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Create_" data-uid="Nekoyume.Model.State.AvatarState.Create*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Create_Libplanet_Crypto_Address_Libplanet_Crypto_Address_System_Int64_Nekoyume_TableData_AvatarSheets_Libplanet_Crypto_Address_System_String_" data-uid="Nekoyume.Model.State.AvatarState.Create(Libplanet.Crypto.Address,Libplanet.Crypto.Address,System.Int64,Nekoyume.TableData.AvatarSheets,Libplanet.Crypto.Address,System.String)">
+  Create(Address, Address, long, AvatarSheets, Address, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AvatarState Create(Address address, Address agentAddress, long blockIndex, AvatarSheets avatarSheets, Address rankingMapAddress, string name = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>avatarSheets</code> <a class="xref" href="Nekoyume.TableData.AvatarSheets.html">AvatarSheets</a></dt>
+    <dd></dd>
+    <dt><code>rankingMapAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_CreateAvatarAddress_" data-uid="Nekoyume.Model.State.AvatarState.CreateAvatarAddress*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_CreateAvatarAddress" data-uid="Nekoyume.Model.State.AvatarState.CreateAvatarAddress">
+  CreateAvatarAddress()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address CreateAvatarAddress()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Customize_" data-uid="Nekoyume.Model.State.AvatarState.Customize*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Customize_System_Int32_System_Int32_System_Int32_System_Int32_" data-uid="Nekoyume.Model.State.AvatarState.Customize(System.Int32,System.Int32,System.Int32,System.Int32)">
+  Customize(int, int, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Customize(int hair, int lens, int ear, int tail)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>hair</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>lens</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>ear</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>tail</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_EquipCostumes_" data-uid="Nekoyume.Model.State.AvatarState.EquipCostumes*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_EquipCostumes_System_Collections_Generic_HashSet_System_Int32__" data-uid="Nekoyume.Model.State.AvatarState.EquipCostumes(System.Collections.Generic.HashSet{System.Int32})">
+  EquipCostumes(HashSet&lt;int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EquipCostumes(HashSet&lt;int&gt; costumeIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumeIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_EquipEquipments_" data-uid="Nekoyume.Model.State.AvatarState.EquipEquipments*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_EquipEquipments_System_Collections_Generic_List_System_Guid__" data-uid="Nekoyume.Model.State.AvatarState.EquipEquipments(System.Collections.Generic.List{System.Guid})">
+  EquipEquipments(List&lt;Guid&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EquipEquipments(List&lt;Guid&gt; equipmentIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipmentIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_EquipItems_" data-uid="Nekoyume.Model.State.AvatarState.EquipItems*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_EquipItems_System_Collections_Generic_IEnumerable_System_Guid__" data-uid="Nekoyume.Model.State.AvatarState.EquipItems(System.Collections.Generic.IEnumerable{System.Guid})">
+  EquipItems(IEnumerable&lt;Guid&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EquipItems(IEnumerable&lt;Guid&gt; itemIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_GetArmorId_" data-uid="Nekoyume.Model.State.AvatarState.GetArmorId*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_GetArmorId" data-uid="Nekoyume.Model.State.AvatarState.GetArmorId">
+  GetArmorId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L606"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetArmorId()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_GetNonFungibleItems_" data-uid="Nekoyume.Model.State.AvatarState.GetNonFungibleItems*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_GetNonFungibleItems__1_System_Collections_Generic_List_System_Guid__" data-uid="Nekoyume.Model.State.AvatarState.GetNonFungibleItems``1(System.Collections.Generic.List{System.Guid})">
+  GetNonFungibleItems&lt;T&gt;(List&lt;Guid&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1244"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;T&gt; GetNonFungibleItems&lt;T&gt;(List&lt;Guid&gt; itemIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_GetPortraitId_" data-uid="Nekoyume.Model.State.AvatarState.GetPortraitId*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_GetPortraitId" data-uid="Nekoyume.Model.State.AvatarState.GetPortraitId">
+  GetPortraitId()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L612"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetPortraitId()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_GetRandomSeed_" data-uid="Nekoyume.Model.State.AvatarState.GetRandomSeed*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_GetRandomSeed" data-uid="Nekoyume.Model.State.AvatarState.GetRandomSeed">
+  GetRandomSeed()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1236"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetRandomSeed()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Serialize_" data-uid="Nekoyume.Model.State.AvatarState.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Serialize" data-uid="Nekoyume.Model.State.AvatarState.Serialize">
+  Serialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1264"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IValue Serialize()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_SerializeList_" data-uid="Nekoyume.Model.State.AvatarState.SerializeList*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_SerializeList" data-uid="Nekoyume.Model.State.AvatarState.SerializeList">
+  SerializeList()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IValue SerializeList()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Update_" data-uid="Nekoyume.Model.State.AvatarState.Update*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Update_Nekoyume_Battle_IStageSimulator_" data-uid="Nekoyume.Model.State.AvatarState.Update(Nekoyume.Battle.IStageSimulator)">
+  Update(IStageSimulator)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L287"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Update(IStageSimulator stageSimulator)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stageSimulator</code> <a class="xref" href="Nekoyume.Battle.IStageSimulator.html">IStageSimulator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Update_" data-uid="Nekoyume.Model.State.AvatarState.Update*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Update_Nekoyume_Model_Mail_Mail_" data-uid="Nekoyume.Model.State.AvatarState.Update(Nekoyume.Model.Mail.Mail)">
+  Update(Mail)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Update(Mail mail)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>mail</code> <a class="xref" href="Nekoyume.Model.Mail.Mail.html">Mail</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Update2_" data-uid="Nekoyume.Model.State.AvatarState.Update2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Update2_Nekoyume_Model_Mail_Mail_" data-uid="Nekoyume.Model.State.AvatarState.Update2(Nekoyume.Model.Mail.Mail)">
+  Update2(Mail)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update&quot;)]
+public void Update2(Mail mail)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>mail</code> <a class="xref" href="Nekoyume.Model.Mail.Mail.html">Mail</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_Update3_" data-uid="Nekoyume.Model.State.AvatarState.Update3*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_Update3_Nekoyume_Model_Mail_Mail_" data-uid="Nekoyume.Model.State.AvatarState.Update3(Nekoyume.Model.Mail.Mail)">
+  Update3(Mail)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Update&quot;)]
+public void Update3(Mail mail)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>mail</code> <a class="xref" href="Nekoyume.Model.Mail.Mail.html">Mail</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromAddCostume_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddCostume*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromAddCostume_Nekoyume_Model_Item_Costume_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddCostume(Nekoyume.Model.Item.Costume)">
+  UpdateFromAddCostume(Costume)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L526"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromAddCostume(Costume costume)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costume</code> <a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem_Nekoyume_Model_Item_ItemBase_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem(Nekoyume.Model.Item.ItemBase,System.Int32,System.Boolean)">
+  UpdateFromAddItem(ItemBase, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L497"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromAddItem(ItemBase itemUsable, int count, bool canceled)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemUsable</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>canceled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem_Nekoyume_Model_Item_ItemUsable_System_Boolean_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem(Nekoyume.Model.Item.ItemUsable,System.Boolean)">
+  UpdateFromAddItem(ItemUsable, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L466"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromAddItem(ItemUsable itemUsable, bool canceled)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemUsable</code> <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html">ItemUsable</a></dt>
+    <dd></dd>
+    <dt><code>canceled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem2_Nekoyume_Model_Item_ItemBase_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem2(Nekoyume.Model.Item.ItemBase,System.Int32,System.Boolean)">
+  UpdateFromAddItem2(ItemBase, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L511"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use UpdateFromAddItem&quot;)]
+public void UpdateFromAddItem2(ItemBase itemUsable, int count, bool canceled)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemUsable</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>canceled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromAddItem2_Nekoyume_Model_Item_ItemUsable_System_Boolean_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromAddItem2(Nekoyume.Model.Item.ItemUsable,System.Boolean)">
+  UpdateFromAddItem2(ItemUsable, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L481"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use UpdateFromAddItem&quot;)]
+public void UpdateFromAddItem2(ItemUsable itemUsable, bool canceled)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemUsable</code> <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html">ItemUsable</a></dt>
+    <dd></dd>
+    <dt><code>canceled</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromCombination_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromCombination*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromCombination_Nekoyume_Model_Item_ItemUsable_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromCombination(Nekoyume.Model.Item.ItemUsable)">
+  UpdateFromCombination(ItemUsable)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L426"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromCombination(ItemUsable itemUsable)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemUsable</code> <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html">ItemUsable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromCombination2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromCombination2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromCombination2_Nekoyume_Model_Item_ItemUsable_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromCombination2(Nekoyume.Model.Item.ItemUsable)">
+  UpdateFromCombination2(ItemUsable)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L436"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromCombination2(ItemUsable itemUsable)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemUsable</code> <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html">ItemUsable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromItemEnhancement_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromItemEnhancement*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromItemEnhancement_Nekoyume_Model_Item_Equipment_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromItemEnhancement(Nekoyume.Model.Item.Equipment)">
+  UpdateFromItemEnhancement(Equipment)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L446"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromItemEnhancement(Equipment equipment)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipment</code> <a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromItemEnhancement2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromItemEnhancement2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromItemEnhancement2_Nekoyume_Model_Item_Equipment_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromItemEnhancement2(Nekoyume.Model.Item.Equipment)">
+  UpdateFromItemEnhancement2(Equipment)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L456"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromItemEnhancement2(Equipment equipment)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipment</code> <a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromQuestReward_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromQuestReward*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromQuestReward_Nekoyume_Model_Quest_Quest_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromQuestReward(Nekoyume.Model.Quest.Quest,Nekoyume.TableData.MaterialItemSheet)">
+  UpdateFromQuestReward(Quest, MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L532"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromQuestReward(Quest quest, MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>quest</code> <a class="xref" href="Nekoyume.Model.Quest.Quest.html">Quest</a></dt>
+    <dd></dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromQuestReward2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromQuestReward2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromQuestReward2_Nekoyume_Model_Quest_Quest_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromQuestReward2(Nekoyume.Model.Quest.Quest,Nekoyume.TableData.MaterialItemSheet)">
+  UpdateFromQuestReward2(Quest, MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L550"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use UpdateFromQuestReward&quot;)]
+public void UpdateFromQuestReward2(Quest quest, MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>quest</code> <a class="xref" href="Nekoyume.Model.Quest.Quest.html">Quest</a></dt>
+    <dd></dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromRapidCombination_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromRapidCombination*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromRapidCombination_Nekoyume_Action_CombinationConsumable5_ResultModel_System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromRapidCombination(Nekoyume.Action.CombinationConsumable5.ResultModel,System.Int64)">
+  UpdateFromRapidCombination(ResultModel, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L398"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromRapidCombination(CombinationConsumable5.ResultModel result, long requiredIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>result</code> <a class="xref" href="Nekoyume.Action.CombinationConsumable5.html">CombinationConsumable5</a>.<a class="xref" href="Nekoyume.Action.CombinationConsumable5.ResultModel.html">ResultModel</a></dt>
+    <dd></dd>
+    <dt><code>requiredIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateFromRapidCombinationV2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromRapidCombinationV2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateFromRapidCombinationV2_Nekoyume_Action_RapidCombination5_ResultModel_System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.UpdateFromRapidCombinationV2(Nekoyume.Action.RapidCombination5.ResultModel,System.Int64)">
+  UpdateFromRapidCombinationV2(ResultModel, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L410"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateFromRapidCombinationV2(RapidCombination5.ResultModel result, long requiredIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>result</code> <a class="xref" href="Nekoyume.Action.RapidCombination5.html">RapidCombination5</a>.<a class="xref" href="Nekoyume.Action.RapidCombination5.ResultModel.html">ResultModel</a></dt>
+    <dd></dd>
+    <dt><code>requiredIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateGeneralQuest_" data-uid="Nekoyume.Model.State.AvatarState.UpdateGeneralQuest*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateGeneralQuest_System_Collections_Generic_IEnumerable_Nekoyume_Model_Quest_QuestEventType__" data-uid="Nekoyume.Model.State.AvatarState.UpdateGeneralQuest(System.Collections.Generic.IEnumerable{Nekoyume.Model.Quest.QuestEventType})">
+  UpdateGeneralQuest(IEnumerable&lt;QuestEventType&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L378"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateGeneralQuest(IEnumerable&lt;QuestEventType&gt; types)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>types</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Quest.QuestEventType.html">QuestEventType</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateQuestRewards_" data-uid="Nekoyume.Model.State.AvatarState.UpdateQuestRewards*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateQuestRewards_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Model.State.AvatarState.UpdateQuestRewards(Nekoyume.TableData.MaterialItemSheet)">
+  UpdateQuestRewards(MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L569"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateQuestRewards(MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateQuestRewards2_" data-uid="Nekoyume.Model.State.AvatarState.UpdateQuestRewards2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateQuestRewards2_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Model.State.AvatarState.UpdateQuestRewards2(Nekoyume.TableData.MaterialItemSheet)">
+  UpdateQuestRewards2(MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L586"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use UpdateQuestRewards&quot;)]
+public void UpdateQuestRewards2(MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_UpdateTemp_" data-uid="Nekoyume.Model.State.AvatarState.UpdateTemp*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_UpdateTemp_Nekoyume_Model_Mail_Mail_System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.UpdateTemp(Nekoyume.Model.Mail.Mail,System.Int64)">
+  UpdateTemp(Mail, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L363"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;No longer in use.&quot;)]
+public void UpdateTemp(Mail mail, long currentBlockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>mail</code> <a class="xref" href="Nekoyume.Model.Mail.Mail.html">Mail</a></dt>
+    <dd></dd>
+    <dt><code>currentBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateConsumable_" data-uid="Nekoyume.Model.State.AvatarState.ValidateConsumable*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateConsumable_System_Collections_Generic_List_System_Guid__System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.ValidateConsumable(System.Collections.Generic.List{System.Guid},System.Int64)">
+  ValidateConsumable(List&lt;Guid&gt;, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L837"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;int&gt; ValidateConsumable(List&lt;Guid&gt; consumableIds, long currentBlockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>consumableIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>currentBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateConsumableV2_" data-uid="Nekoyume.Model.State.AvatarState.ValidateConsumableV2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateConsumableV2_System_Collections_Generic_List_System_Guid__System_Int64_Nekoyume_Model_State_GameConfigState_" data-uid="Nekoyume.Model.State.AvatarState.ValidateConsumableV2(System.Collections.Generic.List{System.Guid},System.Int64,Nekoyume.Model.State.GameConfigState)">
+  ValidateConsumableV2(List&lt;Guid&gt;, long, GameConfigState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L889"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;int&gt; ValidateConsumableV2(List&lt;Guid&gt; consumableIds, long currentBlockIndex, GameConfigState gameConfigState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>consumableIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>currentBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>gameConfigState</code> <a class="xref" href="Nekoyume.Model.State.GameConfigState.html">GameConfigState</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateCostume_" data-uid="Nekoyume.Model.State.AvatarState.ValidateCostume*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateCostume_System_Collections_Generic_HashSet_System_Int32__" data-uid="Nekoyume.Model.State.AvatarState.ValidateCostume(System.Collections.Generic.HashSet{System.Int32})">
+  ValidateCostume(HashSet&lt;int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1054"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ValidateCostume(HashSet&lt;int&gt; costumeIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumeIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateCostume_" data-uid="Nekoyume.Model.State.AvatarState.ValidateCostume*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateCostume_System_Collections_Generic_IEnumerable_System_Guid__" data-uid="Nekoyume.Model.State.AvatarState.ValidateCostume(System.Collections.Generic.IEnumerable{System.Guid})">
+  ValidateCostume(IEnumerable&lt;Guid&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L944"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;int&gt; ValidateCostume(IEnumerable&lt;Guid&gt; costumeIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumeIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateCostumeV2_" data-uid="Nekoyume.Model.State.AvatarState.ValidateCostumeV2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateCostumeV2_System_Collections_Generic_IEnumerable_System_Guid__Nekoyume_Model_State_GameConfigState_" data-uid="Nekoyume.Model.State.AvatarState.ValidateCostumeV2(System.Collections.Generic.IEnumerable{System.Guid},Nekoyume.Model.State.GameConfigState)">
+  ValidateCostumeV2(IEnumerable&lt;Guid&gt;, GameConfigState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L999"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Costume&gt; ValidateCostumeV2(IEnumerable&lt;Guid&gt; costumeIds, GameConfigState gameConfigState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumeIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>gameConfigState</code> <a class="xref" href="Nekoyume.Model.State.GameConfigState.html">GameConfigState</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateEquipments_" data-uid="Nekoyume.Model.State.AvatarState.ValidateEquipments*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateEquipments_System_Collections_Generic_List_System_Guid__System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.ValidateEquipments(System.Collections.Generic.List{System.Guid},System.Int64)">
+  ValidateEquipments(List&lt;Guid&gt;, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L618"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ValidateEquipments(List&lt;Guid&gt; equipmentIds, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipmentIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateEquipmentsV2_" data-uid="Nekoyume.Model.State.AvatarState.ValidateEquipmentsV2*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateEquipmentsV2_System_Collections_Generic_List_System_Guid__System_Int64_" data-uid="Nekoyume.Model.State.AvatarState.ValidateEquipmentsV2(System.Collections.Generic.List{System.Guid},System.Int64)">
+  ValidateEquipmentsV2(List&lt;Guid&gt;, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L668"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Equipment&gt; ValidateEquipmentsV2(List&lt;Guid&gt; equipmentIds, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipmentIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateEquipmentsV3_" data-uid="Nekoyume.Model.State.AvatarState.ValidateEquipmentsV3*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateEquipmentsV3_System_Collections_Generic_List_System_Guid__System_Int64_Nekoyume_Model_State_GameConfigState_" data-uid="Nekoyume.Model.State.AvatarState.ValidateEquipmentsV3(System.Collections.Generic.List{System.Guid},System.Int64,Nekoyume.Model.State.GameConfigState)">
+  ValidateEquipmentsV3(List&lt;Guid&gt;, long, GameConfigState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L750"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Equipment&gt; ValidateEquipmentsV3(List&lt;Guid&gt; equipmentIds, long blockIndex, GameConfigState gameConfigState)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipmentIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>gameConfigState</code> <a class="xref" href="Nekoyume.Model.State.GameConfigState.html">GameConfigState</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_AvatarState_ValidateItemRequirement_" data-uid="Nekoyume.Model.State.AvatarState.ValidateItemRequirement*"></a>
+
+  <h3 id="Nekoyume_Model_State_AvatarState_ValidateItemRequirement_System_Collections_Generic_List_System_Int32__System_Collections_Generic_List_Nekoyume_Model_Item_Equipment__Nekoyume_TableData_ItemRequirementSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_System_String_" data-uid="Nekoyume.Model.State.AvatarState.ValidateItemRequirement(System.Collections.Generic.List{System.Int32},System.Collections.Generic.List{Nekoyume.Model.Item.Equipment},Nekoyume.TableData.ItemRequirementSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,System.String)">
+  ValidateItemRequirement(List&lt;int&gt;, List&lt;Equipment&gt;, ItemRequirementSheet, EquipmentItemRecipeSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L1105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ValidateItemRequirement(List&lt;int&gt; itemIds, List&lt;Equipment&gt; equipments, ItemRequirementSheet requirementSheet, EquipmentItemRecipeSheet recipeSheet, EquipmentItemSubRecipeSheetV2 subRecipeSheet, EquipmentItemOptionSheet itemOptionSheet, string addressesHex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>equipments</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>requirementSheet</code> <a class="xref" href="Nekoyume.TableData.ItemRequirementSheet.html">ItemRequirementSheet</a></dt>
+    <dd></dd>
+    <dt><code>recipeSheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemRecipeSheet.html">EquipmentItemRecipeSheet</a></dt>
+    <dd></dd>
+    <dt><code>subRecipeSheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemSubRecipeSheetV2.html">EquipmentItemSubRecipeSheetV2</a></dt>
+    <dd></dd>
+    <dt><code>itemOptionSheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemOptionSheet.html">EquipmentItemOptionSheet</a></dt>
+    <dd></dd>
+    <dt><code>addressesHex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Model/State/AvatarState.cs/#L23" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

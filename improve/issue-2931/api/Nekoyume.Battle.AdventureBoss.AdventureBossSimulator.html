@@ -1,0 +1,751 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class AdventureBossSimulator | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class AdventureBossSimulator | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/improve/issue-2931/apiSpec/new?filename=Nekoyume_Battle_AdventureBoss_AdventureBossSimulator.md&amp;value=---%0Auid%3A%20Nekoyume.Battle.AdventureBoss.AdventureBossSimulator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator">
+
+
+
+  <h1 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator" class="text-break">
+Class AdventureBossSimulator  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Battle.html">Battle</a>.<a class="xref" href="Nekoyume.Battle.AdventureBoss.html">AdventureBoss</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AdventureBossSimulator : Simulator, IStageSimulator, ISimulator</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Battle.Simulator.html">Simulator</a></div>
+      <div><span class="xref">AdventureBossSimulator</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Battle.IStageSimulator.html">IStageSimulator</a></div>
+      <div><a class="xref" href="Nekoyume.Battle.ISimulator.html">ISimulator</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Random">Simulator.Random</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Log">Simulator.Log</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Player">Simulator.Player</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Result">Simulator.Result</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Characters">Simulator.Characters</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_TurnPriority">Simulator.TurnPriority</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_MaterialItemSheet">Simulator.MaterialItemSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SkillSheet">Simulator.SkillSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SkillBuffSheet">Simulator.SkillBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_StatBuffSheet">Simulator.StatBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SkillActionBuffSheet">Simulator.SkillActionBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_ActionBuffSheet">Simulator.ActionBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_CharacterSheet">Simulator.CharacterSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_CharacterLevelSheet">Simulator.CharacterLevelSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_EquipmentItemSetEffectSheet">Simulator.EquipmentItemSetEffectSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_DeBuffLimitSheet">Simulator.DeBuffLimitSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_BuffLinkSheet">Simulator.BuffLinkSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_ShatterStrikeMaxDamage">Simulator.ShatterStrikeMaxDamage</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_MaxTurn">Simulator.MaxTurn</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_TurnNumber">Simulator.TurnNumber</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_WaveNumber">Simulator.WaveNumber</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_WaveTurn">Simulator.WaveTurn</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_LogEvent">Simulator.LogEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SetReward_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_StageSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_">Simulator.SetReward(WeightedSelector&lt;StageSheet.RewardData&gt;, int, IRandom, MaterialItemSheet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SetRewardV2_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_StageSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_">Simulator.SetRewardV2(WeightedSelector&lt;StageSheet.RewardData&gt;, int, IRandom, MaterialItemSheet)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator__ctor_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.#ctor*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator__ctor_System_Int32_System_Int32_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_SimulatorSheets_System_Boolean_System_Int64_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.#ctor(System.Int32,System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,Nekoyume.TableData.SimulatorSheets,System.Boolean,System.Int64)">
+  AdventureBossSimulator(int, int, IRandom, AvatarState, SimulatorSheets, bool, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AdventureBossSimulator(int bossId, int floorId, IRandom random, AvatarState avatarState, SimulatorSheets simulatorSheets, bool logEvent = true, long shatterStrikeMaxDamage = 400000)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bossId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>floorId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>simulatorSheets</code> <a class="xref" href="Nekoyume.TableData.SimulatorSheets.html">SimulatorSheets</a></dt>
+    <dd></dd>
+    <dt><code>logEvent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>shatterStrikeMaxDamage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator__ctor_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.#ctor*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator__ctor_System_Int32_System_Int32_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_Nekoyume_TableData_AdventureBoss_AdventureBossFloorSheet_Row_Nekoyume_TableData_AdventureBoss_AdventureBossFloorWaveSheet_Row_Nekoyume_TableData_SimulatorSheets_Nekoyume_TableData_EnemySkillSheet_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_DeBuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_System_Int64_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.#ctor(System.Int32,System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.Row,Nekoyume.TableData.AdventureBoss.AdventureBossFloorWaveSheet.Row,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.DeBuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64)">
+  AdventureBossSimulator(int, int, IRandom, AvatarState, List&lt;Guid&gt;, AllRuneState, RuneSlotState, Row, Row, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List&lt;ItemBase&gt;, List&lt;StatModifier&gt;, DeBuffLimitSheet, BuffLinkSheet, bool, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AdventureBossSimulator(int bossId, int floorId, IRandom random, AvatarState avatarState, List&lt;Guid&gt; foods, AllRuneState runeStates, RuneSlotState runeSlotState, AdventureBossFloorSheet.Row floorRow, AdventureBossFloorWaveSheet.Row floorWaveRow, SimulatorSheets simulatorSheets, EnemySkillSheet enemySkillSheet, CostumeStatSheet costumeStatSheet, List&lt;ItemBase&gt; waveRewards, List&lt;StatModifier&gt; collectionModifiers, DeBuffLimitSheet deBuffLimitSheet, BuffLinkSheet buffLinkSheet, bool logEvent = true, long shatterStrikeMaxDamage = 400000)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bossId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>floorId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>foods</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>runeStates</code> <a class="xref" href="Nekoyume.Model.State.AllRuneState.html">AllRuneState</a></dt>
+    <dd></dd>
+    <dt><code>runeSlotState</code> <a class="xref" href="Nekoyume.Model.State.RuneSlotState.html">RuneSlotState</a></dt>
+    <dd></dd>
+    <dt><code>floorRow</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.html">AdventureBossFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>floorWaveRow</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorWaveSheet.html">AdventureBossFloorWaveSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorWaveSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>simulatorSheets</code> <a class="xref" href="Nekoyume.TableData.SimulatorSheets.html">SimulatorSheets</a></dt>
+    <dd></dd>
+    <dt><code>enemySkillSheet</code> <a class="xref" href="Nekoyume.TableData.EnemySkillSheet.html">EnemySkillSheet</a></dt>
+    <dd></dd>
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+    <dt><code>waveRewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>collectionModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>deBuffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.DeBuffLimitSheet.html">DeBuffLimitSheet</a></dt>
+    <dd></dd>
+    <dt><code>buffLinkSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLinkSheet.html">BuffLinkSheet</a></dt>
+    <dd></dd>
+    <dt><code>logEvent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>shatterStrikeMaxDamage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_BossId_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.BossId*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_BossId" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.BossId">
+  BossId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int BossId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_EnemySkillSheet_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.EnemySkillSheet*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_EnemySkillSheet" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.EnemySkillSheet">
+  EnemySkillSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EnemySkillSheet EnemySkillSheet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.EnemySkillSheet.html">EnemySkillSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_FloorId_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.FloorId*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_FloorId" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.FloorId">
+  FloorId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int FloorId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_ItemMap_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.ItemMap*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_ItemMap" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.ItemMap">
+  ItemMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap ItemMap { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_Reward_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.Reward*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_Reward" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.Reward">
+  Reward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IEnumerable&lt;ItemBase&gt; Reward { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_StageId_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.StageId*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_StageId" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.StageId">
+  StageId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int StageId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_AddBreakthrough_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.AddBreakthrough*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_AddBreakthrough_System_Collections_Generic_List_System_Int32__Nekoyume_TableData_AdventureBoss_AdventureBossFloorWaveSheet_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.AddBreakthrough(System.Collections.Generic.List{System.Int32},Nekoyume.TableData.AdventureBoss.AdventureBossFloorWaveSheet)">
+  AddBreakthrough(List&lt;int&gt;, AdventureBossFloorWaveSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddBreakthrough(List&lt;int&gt; floorIdList, AdventureBossFloorWaveSheet adventureBossFloorWaveSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>floorIdList</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>adventureBossFloorWaveSheet</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorWaveSheet.html">AdventureBossFloorWaveSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_GetWaveRewards_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.GetWaveRewards*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_GetWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_AdventureBoss_AdventureBossFloorSheet_Row_Nekoyume_TableData_MaterialItemSheet_System_Int32_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32)">
+  GetWaveRewards(IRandom, Row, MaterialItemSheet, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; GetWaveRewards(IRandom random, AdventureBossFloorSheet.Row floorRow, MaterialItemSheet materialItemSheet, int playCount = 1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+    <dt><code>floorRow</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.html">AdventureBossFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+    <dt><code>playCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_SetItemSelector_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.SetItemSelector*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_SetItemSelector_Nekoyume_TableData_AdventureBoss_AdventureBossFloorSheet_Row_Libplanet_Action_IRandom_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.SetItemSelector(Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.Row,Libplanet.Action.IRandom)">
+  SetItemSelector(Row, IRandom)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static WeightedSelector&lt;AdventureBossFloorSheet.RewardData&gt; SetItemSelector(AdventureBossFloorSheet.Row floorRow, IRandom random)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>floorRow</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.html">AdventureBossFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Battle.WeightedSelector-1.html">WeightedSelector</a>&lt;<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.html">AdventureBossFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.RewardData.html">RewardData</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_SetReward_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.SetReward*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_SetReward_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_AdventureBoss_AdventureBossFloorSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.SetReward(Nekoyume.Battle.WeightedSelector{Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.RewardData},System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.MaterialItemSheet)">
+  SetReward(WeightedSelector&lt;RewardData&gt;, int, IRandom, MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L307"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; SetReward(WeightedSelector&lt;AdventureBossFloorSheet.RewardData&gt; itemSelector, int maxCount, IRandom random, MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemSelector</code> <a class="xref" href="Nekoyume.Battle.WeightedSelector-1.html">WeightedSelector</a>&lt;<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.html">AdventureBossFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossFloorSheet.RewardData.html">RewardData</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>maxCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_Simulate_" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.Simulate*"></a>
+
+  <h3 id="Nekoyume_Battle_AdventureBoss_AdventureBossSimulator_Simulate" data-uid="Nekoyume.Battle.AdventureBoss.AdventureBossSimulator.Simulate">
+  Simulate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Player Simulate()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Player.html">Player</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/improve/issue-2931/Lib9c/Battle/AdventureBoss/AdventureBossSimulator.cs/#L23" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
