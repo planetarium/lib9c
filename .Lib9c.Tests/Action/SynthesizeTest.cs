@@ -108,7 +108,7 @@ public class SynthesizeTest
         Assert.True(firstItem.ItemSubType == itemSubTypes[0]);
 
         var subType = firstItem.ItemSubType;
-        var exceptedGrade = Grade.Normal;
+        var expectedGrade = Grade.Normal;
         var resultGrade = (Grade)firstItem.Grade;
         switch (subType)
         {
@@ -120,7 +120,7 @@ public class SynthesizeTest
                 }
 
                 resultGrade = (Grade)costume.Grade;
-                exceptedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
+                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
                 break;
             case ItemSubType.Aura:
             case ItemSubType.Grimoire:
@@ -130,13 +130,13 @@ public class SynthesizeTest
                 }
 
                 resultGrade = (Grade)itemUsable.Grade;
-                exceptedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
+                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
                 break;
         }
 
         // TODO: if success, grade should be exceptedGrade, but sometimes it is not.
-        // Assert.Equal(exceptedGrade, resultGrade);
-        Assert.True(exceptedGrade == resultGrade || resultGrade == grade);
+        // Assert.Equal(expectedGrade, resultGrade);
+        Assert.True(expectedGrade == resultGrade || resultGrade == grade);
     }
 
     [Theory]
@@ -205,7 +205,7 @@ public class SynthesizeTest
             case ItemSubType.Grimoire:
                 return GetFirstGrimoire(grade);
             default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                throw new ArgumentOutOfRangeException(nameof(type), type, "Invalid ItemSubType");
         }
     }
 
