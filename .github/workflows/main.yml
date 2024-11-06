@@ -20,8 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Check if .Libplanet refers to a tagged commit
       if: |
         github.event_name == 'push' && (
@@ -58,8 +56,6 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.400
@@ -79,8 +75,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
@@ -105,8 +99,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Check if a new tag refers a merge commit
       if: github.ref_type == 'tag'
       run: |

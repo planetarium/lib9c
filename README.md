@@ -44,7 +44,6 @@ and [Lib9c/TableCSV](Lib9c/TableCSV).
 ## Dependencies
 
 - .Net >= 6.0
-- [Libplanet](https://github.com/planetarium/libplanet.git) as a submodule
 
 ## Contribution
 
