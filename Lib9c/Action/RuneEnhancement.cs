@@ -152,27 +152,22 @@ namespace Nekoyume.Action
             runeState.LevelUp(levelUpResult.LevelUpCount);
             states = states.SetRuneState(AvatarAddress, allRuneState);
 
-            var arenaSheet = sheets.GetSheet<ArenaSheet>();
-            var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress =
-                ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-
             // Burn costs
             if (levelUpResult.NcgCost > 0)
             {
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress,
+                states = states.TransferAsset(context, context.Signer, Addresses.RewardPool,
                     levelUpResult.NcgCost * ncgCurrency);
             }
 
             if (levelUpResult.CrystalCost > 0)
             {
-                states = states.TransferAsset(context, context.Signer, feeStoreAddress,
+                states = states.TransferAsset(context, context.Signer, Addresses.RewardPool,
                     levelUpResult.CrystalCost * crystalCurrency);
             }
 
             if (levelUpResult.RuneCost > 0)
             {
-                states = states.TransferAsset(context, AvatarAddress, feeStoreAddress,
+                states = states.TransferAsset(context, AvatarAddress, Addresses.RewardPool,
                     levelUpResult.RuneCost * runeCurrency);
             }
 

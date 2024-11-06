@@ -145,8 +145,7 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context, context.Signer, arenaAdr, fee);
+                states = states.TransferAsset(context, context.Signer, Addresses.RewardPool, fee);
             }
 
             // check medal

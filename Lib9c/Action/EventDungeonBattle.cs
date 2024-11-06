@@ -279,7 +279,7 @@ namespace Nekoyume.Action
                     states = states.TransferAsset(
                         context,
                         context.Signer,
-                        Addresses.EventDungeon,
+                        Addresses.RewardPool,
                         cost);
                 }
 

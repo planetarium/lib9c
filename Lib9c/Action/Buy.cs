@@ -249,13 +249,10 @@ namespace Nekoyume.Action
                 var taxedPrice = order.Price - tax;
 
                 // Transfer tax.
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
                 states = states.TransferAsset(
                     context,
                     context.Signer,
-                    feeStoreAddress,
+                    Addresses.RewardPool,
                     tax);
 
                 // Transfer seller.

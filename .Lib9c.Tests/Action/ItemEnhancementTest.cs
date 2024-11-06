@@ -311,13 +311,9 @@ namespace Lib9c.Tests.Action
                 nextState.GetBalance(_agentAddress, _currency)
             );
 
-            var arenaSheet = _tableSheets.ArenaSheet;
-            var arenaData = arenaSheet.GetRoundByBlockIndex(1);
-            var feeStoreAddress =
-                ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             Assert.Equal(
                 expectedCost * _currency,
-                nextState.GetBalance(feeStoreAddress, _currency)
+                nextState.GetBalance(Addresses.RewardPool, _currency)
             );
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 

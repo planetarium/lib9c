@@ -318,8 +318,6 @@ namespace Nekoyume.Action
             }
             else
             {
-                var arenaAddr =
-                    ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
                 var goldCurrency = states.GetGoldCurrency();
                 var ticketBalance =
                     ArenaHelper.GetTicketPrice(roundData, myArenaInformation, goldCurrency);
@@ -332,7 +330,7 @@ namespace Nekoyume.Action
 
                 purchasedCountDuringInterval++;
                 states = states
-                    .TransferAsset(context, context.Signer, arenaAddr, ticketBalance)
+                    .TransferAsset(context, context.Signer, Addresses.RewardPool, ticketBalance)
                     .SetLegacyState(purchasedCountAddr, purchasedCountDuringInterval);
             }
 
