@@ -6,6 +6,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using MessagePack.Formatters;
 using Nekoyume.Action;
+using Nekoyume.Model.State;
 
 namespace Lib9c.Formatters
 {
@@ -22,6 +23,7 @@ namespace Lib9c.Formatters
             {typeof(Dictionary), new BencodexFormatter<Dictionary>()},
             {typeof(IValue), new BencodexFormatter<IValue>()},
             {typeof(ActionBase), new NCActionFormatter()},
+            {typeof(Currency), new CurrencyFormatter()},
             // add more your own custom serializers.
         };
 
