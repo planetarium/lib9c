@@ -224,7 +224,7 @@ namespace Nekoyume.Action
                     var repository = new ValidatorRepository(state, context);
                     var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, delegatorAddress);
                     var unbondLockIn = new UnbondLockIn(
-                        unbondLockInAddress, 1, delegateeAddress, delegatorAddress, null);
+                        unbondLockInAddress, 2, delegateeAddress, delegatorAddress, null);
                     unbondLockIn = unbondLockIn.LockIn(
                         gg, height, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
                     repository.SetUnbondLockIn(unbondLockIn);
