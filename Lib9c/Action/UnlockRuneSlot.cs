@@ -78,9 +78,6 @@ namespace Nekoyume.Action
             }
 
             var gameConfigState = states.GetGameConfigState();
-            var arenaSheet = sheets.GetSheet<ArenaSheet>();
-            var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             int cost;
             Currency currency;
             switch (slot.RuneSlotType)
@@ -107,7 +104,7 @@ namespace Nekoyume.Action
             raidSlotState.Unlock(SlotIndex);
 
             return states
-                .TransferAsset(context, context.Signer, feeStoreAddress, cost * currency)
+                .TransferAsset(context, context.Signer, Addresses.RewardPool, cost * currency)
                 .SetLegacyState(adventureSlotStateAddress, adventureSlotState.Serialize())
                 .SetLegacyState(arenaSlotStateAddress, arenaSlotState.Serialize())
                 .SetLegacyState(raidSlotStateAddress, raidSlotState.Serialize());

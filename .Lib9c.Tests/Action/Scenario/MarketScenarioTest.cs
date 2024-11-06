@@ -307,8 +307,6 @@ namespace Lib9c.Tests.Action.Scenario
             var latestState = action3.Execute(ctx);
 
             var buyerAvatarState = latestState.GetAvatarState(_buyerAvatarAddress);
-            var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
-            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var totalTax = 0 * _currency;
             foreach (var group in action3.ProductInfos.GroupBy(p => p.AgentAddress))
             {
@@ -349,7 +347,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             Assert.True(totalTax > 0 * _currency);
             Assert.Equal(0 * _currency, latestState.GetBalance(_buyerAgentAddress, _currency));
-            Assert.Equal(totalTax, latestState.GetBalance(feeStoreAddress, _currency));
+            Assert.Equal(totalTax, latestState.GetBalance(Addresses.RewardPool, _currency));
         }
 
         [Fact]
@@ -1083,8 +1081,6 @@ namespace Lib9c.Tests.Action.Scenario
             });
 
             var buyerAvatarState = tradedState.GetAvatarState(_buyerAvatarAddress);
-            var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(3L);
-            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var totalTax = 0 * _currency;
             foreach (var group in buyAction.ProductInfos.GroupBy(p => p.AgentAddress))
             {
@@ -1125,7 +1121,7 @@ namespace Lib9c.Tests.Action.Scenario
 
             Assert.True(totalTax > 0 * _currency);
             Assert.Equal(0 * _currency, tradedState.GetBalance(_buyerAgentAddress, _currency));
-            Assert.Equal(totalTax, tradedState.GetBalance(feeStoreAddress, _currency));
+            Assert.Equal(totalTax, tradedState.GetBalance(Addresses.RewardPool, _currency));
         }
     }
 }

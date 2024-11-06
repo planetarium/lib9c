@@ -90,15 +90,10 @@ namespace Nekoyume.Action
             // Transfer Cost NCG first for fast-fail
             if (summonRow.CostNcg > 0L)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress =
-                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-
                 states = states.TransferAsset(
                     context,
                     context.Signer,
-                    feeStoreAddress,
+                    Addresses.RewardPool,
                     states.GetGoldCurrency() * summonRow.CostNcg * SummonCount
                 );
             }

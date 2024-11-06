@@ -85,7 +85,7 @@ namespace Nekoyume.Action
             {
                 throw new FailedLoadStateException($"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             if (!avatarState.worldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(
                     out var world))
             {
@@ -162,8 +162,7 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context, context.Signer, arenaAdr, fee);
+                states = states.TransferAsset(context, context.Signer, Addresses.RewardPool, fee);
             }
 
             // check medal

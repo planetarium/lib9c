@@ -290,10 +290,7 @@ namespace Nekoyume.Action
             var requiredNcg = row.Cost;
             if (requiredNcg > 0)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                states = states.TransferAsset(ctx, ctx.Signer, feeStoreAddress, states.GetGoldCurrency() * requiredNcg);
+                states = states.TransferAsset(ctx, ctx.Signer, Addresses.RewardPool, states.GetGoldCurrency() * requiredNcg);
             }
 
             // Unequip items

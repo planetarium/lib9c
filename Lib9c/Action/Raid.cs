@@ -148,11 +148,7 @@ namespace Nekoyume.Action
                         throw new ExceedTicketPurchaseLimitException("");
                     }
                     var goldCurrency = states.GetGoldCurrency();
-                    var arenaSheet = states.GetSheet<ArenaSheet>();
-                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                    var feeAddress =
-                        ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                    states = states.TransferAsset(context, context.Signer, feeAddress,
+                    states = states.TransferAsset(context, context.Signer, Addresses.RewardPool,
                         WorldBossHelper.CalculateTicketPrice(row, raiderState, goldCurrency));
                     raiderState.PurchaseCount++;
                 }

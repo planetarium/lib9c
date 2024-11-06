@@ -383,14 +383,10 @@ namespace Nekoyume.Action
             // Transfer Required NCG
             if (costNcg > 0L)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-
                 states = states.TransferAsset(
                     context,
                     context.Signer,
-                    feeStoreAddress,
+                    Addresses.RewardPool,
                     states.GetGoldCurrency() * costNcg
                 );
             }

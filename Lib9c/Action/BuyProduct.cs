@@ -169,9 +169,6 @@ namespace Nekoyume.Action
             buyerAvatarState.UpdateQuestRewards(materialSheet);
 
             // Transfer tax.
-            var arenaSheet = states.GetSheet<ArenaSheet>();
-            var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             var tax = product.Price.DivRem(100, out _) * Action.Buy.TaxRate;
             var taxedPrice = product.Price - tax;
 
@@ -183,7 +180,7 @@ namespace Nekoyume.Action
                 .SetLegacyState(productsStateAddress, productsState.Serialize())
                 .SetAvatarState(sellerAvatarAddress, sellerAvatarState)
                 .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
-                .TransferAsset(context, context.Signer, feeStoreAddress, tax)
+                .TransferAsset(context, context.Signer, Addresses.RewardPool, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
 
             return states;
@@ -300,13 +297,10 @@ namespace Nekoyume.Action
             var taxedPrice = order.Price - tax;
 
             // Transfer tax.
-            var arenaSheet = states.GetSheet<ArenaSheet>();
-            var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-            var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             states = states.TransferAsset(
                 context,
                 context.Signer,
-                feeStoreAddress,
+                Addresses.RewardPool,
                 tax);
 
             // Transfer seller.
