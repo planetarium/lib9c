@@ -11,11 +11,14 @@ using Libplanet.Crypto;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    using Sheets = Dictionary<Type, (Address, ISheet)>;
+    
     /// <summary>
     /// Synthesize action is a type of action that synthesizes items.
     /// TODO: Implement Synthesize action.
@@ -79,11 +82,18 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
 
-            // TODO - Use Sheets
-
+            // Use Sheets
+            Sheets sheets = context.PreviousState.GetSheets(sheetTypes: new[]
+            {
+                typeof(CostumeItemSheet),
+                typeof(EquipmentItemSheet),
+            });
+            
             // TODO - TransferAsset (NCG)
 
             // Select id to equipment
+            var sourceGrade = Grade.Normal; // TODO: change to set
+            
             var materialEquipments = new List<Equipment>();
             var materialCostumes = new List<Costume>();
             foreach (var materialId in MaterialIds)
@@ -100,11 +110,13 @@ namespace Nekoyume.Action
                 if (materialEquipment != null)
                 {
                     materialEquipments.Add(materialEquipment);
+                    sourceGrade = (Grade)materialEquipment.Grade;
                 }
 
                 if (materialCostume != null)
                 {
                     materialCostumes.Add(materialCostume);
+                    sourceGrade = (Grade)materialCostume.Grade;
                 }
             }
 
@@ -130,81 +142,68 @@ namespace Nekoyume.Action
             }
 
             // clone random item
-            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(context, _cachedItemSubType.Value));
+            // TODO: Add items to inventory
+            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(sourceGrade, sheets, context, _cachedItemSubType.Value));
 
             return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
-        // TODO: Use Sheet
-        private ItemBase GetSynthesizedItem(IActionContext context, ItemSubType itemSubTypeValue)
+        // TODO: Use Sheet, grade의 set화
+        private ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IActionContext context, ItemSubType itemSubTypeValue)
         {
-            // TODO: 기획 상세에 따라 구현, 현재는 임의 아이템 생성
             switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
-                    return GetRandomFullCostume(context);
+                    return GetRandomCostume(grade, itemSubTypeValue, sheets, context);
                 case ItemSubType.Title:
-                    return GetRandomTitle(context);
+                    return GetRandomCostume(grade, itemSubTypeValue, sheets, context);
                 case ItemSubType.Aura:
-                    return GetRandomAura(context);
+                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, context);
                 case ItemSubType.Grimoire:
-                    return GetRandomGrimoire(context);
+                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, context);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private ItemBase GetRandomFullCostume(IActionContext context)
+        private ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, Sheets sheets, IActionContext context)
         {
-            return GetRandomCostume(context, 40100000, 30);
-        }
-
-        private ItemBase GetRandomTitle(IActionContext context)
-        {
-            return GetRandomCostume(context, 49900001, 21);
-        }
-
-        private ItemBase GetRandomAura(IActionContext context)
-        {
-            // TODO: 시트 로드 최적화, 테스트 코드라 냅둠
-            Dictionary<Type, (Address, ISheet)> sheets = context.PreviousState.GetSheets(sheetTypes: new[]
-            {
-                typeof(EquipmentItemSheet),
-            });
-            var sheet = sheets.GetSheet<EquipmentItemSheet>();
-
-            var row = sheet.Values.FirstOrDefault(r => r.ItemSubType == ItemSubType.Aura);
-            return ItemFactory.CreateItem(row, context.GetRandom());
-        }
-
-        private ItemBase GetRandomGrimoire(IActionContext context)
-        {
-            // TODO: 시트 로드 최적화, 테스트 코드라 냅둠
-            Dictionary<Type, (Address, ISheet)> sheets = context.PreviousState.GetSheets(sheetTypes: new[]
-            {
-                typeof(EquipmentItemSheet),
-            });
-            var sheet = sheets.GetSheet<EquipmentItemSheet>();
-
-            var row = sheet.Values.FirstOrDefault(r => r.ItemSubType == ItemSubType.Grimoire);
-            return ItemFactory.CreateItem(row, context.GetRandom());
-        }
-
-        private ItemBase GetRandomCostume(IActionContext context, int keyBase, int keyUpperBound)
-        {
-            var random   = context.GetRandom();
-            var randomId = keyBase + random.Next(0, keyUpperBound);
-
-            // TODO: 시트 로드 최적화, 테스트 코드라 냅둠
-            Dictionary<Type, (Address, ISheet)> sheets = context.PreviousState.GetSheets(sheetTypes: new[]
-            {
-                typeof(CostumeItemSheet),
-            });
             var sheet = sheets.GetSheet<CostumeItemSheet>();
+            var random = context.GetRandom();
+            var synthesizeResultPool = GetSynthesizeResultPool(
+                new List<Grade>() { grade, },
+                itemSubType,
+                sheet
+            );
+
+            // TODO: add weight
+            var randomId = synthesizeResultPool[random.Next(synthesizeResultPool.Count)];
             if (!sheet.TryGetValue(randomId, out var costumeRow))
             {
                 throw new SheetRowNotFoundException(
                     $"Aborted as the costume row ({randomId}) was failed to load in {nameof(CostumeItemSheet)}", randomId
+                );
+            }
+
+            return ItemFactory.CreateItem(costumeRow, context.GetRandom());
+        }
+
+        private ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, Sheets sheets, IActionContext context)
+        {
+            var sheet = sheets.GetSheet<EquipmentItemSheet>();
+            var random = context.GetRandom();
+            var synthesizeResultPool = GetSynthesizeResultPool(
+                new List<Grade>() { grade, },
+                itemSubType,
+                sheet
+            );
+
+            // TODO: add weight
+            var randomId = synthesizeResultPool[random.Next(synthesizeResultPool.Count)];
+            if (!sheet.TryGetValue(randomId, out var costumeRow))
+            {
+                throw new SheetRowNotFoundException(
+                    $"Aborted as the equipment row ({randomId}) was failed to load in {nameof(EquipmentItemSheet)}", randomId
                 );
             }
 
@@ -298,5 +297,89 @@ namespace Nekoyume.Action
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
         }
+
+#region Helper
+        
+        /// <summary>
+        /// Returns a list of items that may come out as a result of that synthesis.
+        /// </summary>
+        /// <param name="sourceGrades">grades of material items</param>
+        /// <param name="subType">excepted FullCostume,Title</param>
+        /// <param name="sheet">CostumeItemSheet to use</param>
+        /// <returns>list of items key(int)</returns>
+        public static List<int> GetSynthesizeResultPool(List<Grade> sourceGrades, ItemSubType subType, CostumeItemSheet sheet)
+        {
+            return sheet.Values
+                .Where(r => r.ItemSubType == subType)
+                .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
+                .Select(r => r.Id)
+                .ToList();
+        }
+        
+        /// <summary>
+        /// Returns a list of items that may come out as a result of that synthesis.
+        /// </summary>
+        /// <param name="sourceGrades">grades of material items</param>
+        /// <param name="subType">excepted Grimoire,Aura</param>
+        /// <param name="sheet">EquipmentItemSheet to use</param>
+        /// <returns>list of items key(int)</returns>
+        public static List<int> GetSynthesizeResultPool(List<Grade> sourceGrades, ItemSubType subType, EquipmentItemSheet sheet)
+        {
+            return sheet.Values
+                .Where(r => r.ItemSubType == subType)
+                .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
+                .Select(r => r.Id)
+                .ToList();
+        }
+        
+        public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, CostumeItemSheet sheet)
+        {
+            var targetGrade = GetTargetGrade(grade);
+            var hasGrade = sheet.Values
+                .Any(r => r.ItemSubType == subType && r.Grade == (int)targetGrade);
+
+            return hasGrade ? targetGrade : grade;
+        }
+        
+        public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, EquipmentItemSheet sheet)
+        {
+            var targetGrade = GetTargetGrade(grade);
+            var hasGrade = sheet.Values
+                .Any(r => r.ItemSubType == subType && r.Grade == (int)targetGrade);
+
+            return hasGrade ? targetGrade : grade;
+        }
+        
+        private static Grade GetTargetGrade(Grade grade) => grade switch
+        {
+            Grade.Normal => Grade.Rare,
+            Grade.Rare => Grade.Epic,
+            Grade.Epic => Grade.Unique,
+            Grade.Unique => Grade.Legendary,
+            Grade.Legendary => Grade.Divinity,
+            Grade.Divinity => Grade.Divinity,
+            _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, null),
+        };
+
+        // TODO: move to ItemExtensions
+        public static List<Guid> GetItemGuid(ItemBase itemBase) => itemBase switch
+        {
+            Costume costume => new List<Guid> { costume.ItemId, },
+            ItemUsable itemUsable => new List<Guid> { itemUsable.ItemId, },
+            _ => throw new ArgumentException($"Unexpected item type: {itemBase.GetType()}", nameof(itemBase)),
+        };
+        
+        public static List<Guid> GetItemGuids(IEnumerable<ItemBase> itemBases) => itemBases.Select(
+            i =>
+            {
+                return i switch
+                {
+                    Costume costume => costume.ItemId,
+                    ItemUsable itemUsable => itemUsable.ItemId,
+                    _ => throw new ArgumentException($"Unexpected item type: {i.GetType()}", nameof(i)),
+                };
+            }).ToList();
+        
+#endregion Helper
     }
 }
