@@ -36,11 +36,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Libplanet" Version="5.3.2-alpha.1">
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="Libplanet.Analyzers" Version="5.3.2-alpha.1">
+    <PackageReference Include="Libplanet.Analyzers" Version="$(LibplanetVersion)">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <OutputItemType>Analyzer</OutputItemType>
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->

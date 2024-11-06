@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Libplanet" Version="5.3.2-alpha.1" />
-    <PackageReference Include="Libplanet.RocksDBStore" Version="5.3.2-alpha.1" />
-    <PackageReference Include="Libplanet.Stun" Version="5.3.2-alpha.1" />
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
+    <PackageReference Include="Libplanet.RocksDBStore" Version="$(LibplanetVersion)" />
+    <PackageReference Include="Libplanet.Stun" Version="$(LibplanetVersion)" />
     <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
     <ProjectReference Include="..\Lib9c.Policy\Lib9c.Policy.csproj" />
   </ItemGroup>

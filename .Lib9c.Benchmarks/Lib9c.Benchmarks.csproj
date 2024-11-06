@@ -13,10 +13,10 @@
 
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-      <PackageReference Include="Libplanet" Version="5.3.2-alpha.1" />
-      <PackageReference Include="Libplanet.RocksDBStore" Version="5.3.2-alpha.1" />
-      <PackageReference Include="Libplanet.Crypto.Secp256k1" Version="5.3.2-alpha.1" />
-      <PackageReference Include="Libplanet.Mocks" Version="5.3.2-alpha.1" />
+      <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
+      <PackageReference Include="Libplanet.RocksDBStore" Version="$(LibplanetVersion)" />
+      <PackageReference Include="Libplanet.Crypto.Secp256k1" Version="$(LibplanetVersion)" />
+      <PackageReference Include="Libplanet.Mocks" Version="$(LibplanetVersion)" />
     </ItemGroup>
 
     <ItemGroup>

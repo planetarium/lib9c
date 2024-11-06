@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
-    <PackageReference Include="Libplanet.Net" Version="5.3.2-alpha.1" />
+    <PackageReference Include="Libplanet.Net" Version="$(LibplanetVersion)" />
   </ItemGroup>
 
 </Project>
