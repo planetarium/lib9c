@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\.Libplanet\src\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
+      <PackageReference Include="Libplanet.RocksDBStore" Version="5.3.2-alpha.1" />
       <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
       <ProjectReference Include="..\Lib9c.DevExtensions\Lib9c.DevExtensions.csproj" />
     </ItemGroup>

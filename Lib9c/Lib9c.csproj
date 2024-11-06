@@ -36,15 +36,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj">
+    <PackageReference Include="Libplanet" Version="5.3.2-alpha.1">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="..\.Libplanet\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
+    </PackageReference>
+    <PackageReference Include="Libplanet.Analyzers" Version="5.3.2-alpha.1">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <OutputItemType>Analyzer</OutputItemType>
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
-    </ProjectReference>
+    </PackageReference>
     <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
   </ItemGroup>
 

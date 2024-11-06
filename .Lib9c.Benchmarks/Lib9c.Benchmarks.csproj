@@ -13,16 +13,16 @@
 
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+      <PackageReference Include="Libplanet" Version="5.3.2-alpha.1" />
+      <PackageReference Include="Libplanet.RocksDBStore" Version="5.3.2-alpha.1" />
+      <PackageReference Include="Libplanet.Crypto.Secp256k1" Version="5.3.2-alpha.1" />
+      <PackageReference Include="Libplanet.Mocks" Version="5.3.2-alpha.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\.Lib9c.Tests\Lib9c.Tests.csproj" />
-      <ProjectReference Include="..\.Libplanet\src\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
-      <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj" />
       <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
       <ProjectReference Include="..\Lib9c.Policy\Lib9c.Policy.csproj" />
-      <ProjectReference Include="..\Libplanet.Crypto.Secp256k1\Libplanet.Crypto.Secp256k1.csproj" />
-      <ProjectReference Include="..\.Libplanet\test\Libplanet.Mocks\Libplanet.Mocks.csproj" />
     </ItemGroup>
 
     <ItemGroup>
