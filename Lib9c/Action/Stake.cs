@@ -222,7 +222,7 @@ namespace Nekoyume.Action
                     var delegateeAddress = Addresses.NonValidatorDelegatee;
                     var delegatorAddress = context.Signer;
                     var repository = new ValidatorRepository(state, context);
-                    var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, delegatorAddress);
+                    var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, repository.DelegateeAccountAddress, delegatorAddress);
                     var unbondLockIn = new UnbondLockIn(
                         unbondLockInAddress, 2, delegateeAddress, delegatorAddress, null);
                     unbondLockIn = unbondLockIn.LockIn(
