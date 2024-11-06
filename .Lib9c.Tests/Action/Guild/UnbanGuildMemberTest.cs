@@ -39,18 +39,22 @@ namespace Lib9c.Tests.Action.Guild
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // GuildMember tries to ban other guild member.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMemberAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMemberAddress,
+                    }));
 
             // GuildMember tries to ban itself.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = targetGuildMemberAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = targetGuildMemberAddress,
+                    }));
         }
 
         [Fact]
@@ -69,11 +73,12 @@ namespace Lib9c.Tests.Action.Guild
             Assert.True(world.IsBanned(guildAddress, targetGuildMemberAddress));
             Assert.Null(world.GetJoinedGuild(targetGuildMemberAddress));
 
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             Assert.False(world.IsBanned(guildAddress, targetGuildMemberAddress));
             Assert.Null(world.GetJoinedGuild(targetGuildMemberAddress));

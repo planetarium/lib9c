@@ -22,11 +22,12 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
         [Fact]
         public void RunAsPolicyActionOnly()
         {
-            Assert.Throws<InvalidOperationException>(() => new AutoJoinGuild().Execute(
-                new ActionContext
-                {
-                    IsPolicyAction = false,
-                }));
+            Assert.Throws<InvalidOperationException>(
+                () => new AutoJoinGuild().Execute(
+                    new ActionContext
+                    {
+                        IsPolicyAction = false,
+                    }));
         }
 
         [Fact]
@@ -39,19 +40,22 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
             var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .JoinGuild(guildAddress, guildMasterAddress)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        true.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(agentAddress));
             var action = new AutoJoinGuild();
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                IsPolicyAction = true,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                    IsPolicyAction = true,
+                });
 
             var joinedGuildAddress = Assert.IsType<GuildAddress>(world.GetJoinedGuild(agentAddress));
             Assert.True(world.TryGetGuild(joinedGuildAddress, out var guild));
@@ -70,12 +74,13 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
 
             Assert.Null(world.GetJoinedGuild(agentAddress));
             var action = new AutoJoinGuild();
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                IsPolicyAction = true,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                    IsPolicyAction = true,
+                });
 
             Assert.Null(world.GetJoinedGuild(agentAddress));
         }
@@ -86,19 +91,22 @@ namespace Lib9c.Tests.PolicyAction.Tx.Begin
             var agentAddress = AddressUtil.CreateAgentAddress();
             var pledgeAddress = agentAddress.GetPledgeAddress();
             var world = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(pledgeAddress, new List(
-                    MeadConfig.PatronAddress.Serialize(),
-                    true.Serialize(),
-                    RequestPledge.DefaultRefillMead.Serialize()));
+                .SetLegacyState(
+                    pledgeAddress,
+                    new List(
+                        MeadConfig.PatronAddress.Serialize(),
+                        true.Serialize(),
+                        RequestPledge.DefaultRefillMead.Serialize()));
 
             Assert.Null(world.GetJoinedGuild(agentAddress));
             var action = new AutoJoinGuild();
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                IsPolicyAction = true,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                    IsPolicyAction = true,
+                });
 
             Assert.Null(world.GetJoinedGuild(agentAddress));
         }

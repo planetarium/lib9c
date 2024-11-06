@@ -96,8 +96,8 @@ namespace Lib9c.Tests.Action
             var ncgCurrency = state.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeTicker = tableSheets.RuneSheet.Values.First(r => r.Id == runeId).Ticker;
-            var runeCurrency = Currency.Legacy(runeTicker, 0, minters: null);
-            var r = new TestRandom(seed: 1);
+            var runeCurrency = Currency.Legacy(runeTicker, 0, null);
+            var r = new TestRandom(1);
 
             state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
             state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
@@ -214,8 +214,8 @@ namespace Lib9c.Tests.Action
             var ncgCurrency = state.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeTicker = tableSheets.RuneSheet.Values.First(r => r.Id == runeId).Ticker;
-            var runeCurrency = Currency.Legacy(runeTicker, 0, minters: null);
-            var r = new TestRandom(seed: 1);
+            var runeCurrency = Currency.Legacy(runeTicker, 0, null);
+            var r = new TestRandom(1);
 
             state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
             state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
@@ -308,14 +308,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 1,
             };
 
-            Assert.Throws<RuneCostNotFoundException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<RuneCostNotFoundException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -374,14 +376,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 1,
             };
 
-            Assert.Throws<RuneCostDataNotFoundException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<RuneCostDataNotFoundException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Theory]
@@ -446,7 +450,7 @@ namespace Lib9c.Tests.Action
 
             var ncgCurrency = state.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
-            var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, minters: null);
+            var runeCurrency = Currency.Legacy(runeRow.Ticker, 0, null);
 
             if (ncg && cost.NcgQuantity > 0)
             {
@@ -492,14 +496,16 @@ namespace Lib9c.Tests.Action
                 return;
             }
 
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -547,14 +553,16 @@ namespace Lib9c.Tests.Action
                 TryCount = 0,
             };
 
-            Assert.Throws<TryCountIsZeroException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<TryCountIsZeroException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Fact]
@@ -598,36 +606,38 @@ namespace Lib9c.Tests.Action
                 TryCount = 0,
             };
 
-            Assert.Throws<FailedLoadStateException>(() =>
-                action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = agentAddress,
-                    RandomSeed = 0,
-                    BlockIndex = blockIndex,
-                }));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = agentAddress,
+                            RandomSeed = 0,
+                            BlockIndex = blockIndex,
+                        }));
         }
 
         [Theory]
         // Rune upgrade
-        [InlineData(new[] { 1 }, 9, false, 30414)]
-        [InlineData(new[] { 9 }, 1, false, 30414)]
-        [InlineData(new[] { 7 }, 3, false, 30414)]
-        [InlineData(new[] { 4, 4 }, 2, false, 30598)]
-        [InlineData(new[] { 4, 5 }, 1, false, 30644)]
+        [InlineData(new[] { 1, }, 9, false, 30414)]
+        [InlineData(new[] { 9, }, 1, false, 30414)]
+        [InlineData(new[] { 7, }, 3, false, 30414)]
+        [InlineData(new[] { 4, 4, }, 2, false, 30598)]
+        [InlineData(new[] { 4, 5, }, 1, false, 30644)]
         // Crete new rune
         [InlineData(new int[] { }, 1, true, 30000)]
         [InlineData(new int[] { }, 10, true, 30414)]
-        [InlineData(new[] { 1 }, 9, true, 30414)]
-        [InlineData(new[] { 9 }, 1, true, 30414)]
-        [InlineData(new[] { 7 }, 3, true, 30414)]
-        [InlineData(new[] { 4, 4 }, 2, true, 30598)]
-        [InlineData(new[] { 4, 5 }, 1, true, 30644)]
+        [InlineData(new[] { 1, }, 9, true, 30414)]
+        [InlineData(new[] { 9, }, 1, true, 30414)]
+        [InlineData(new[] { 7, }, 3, true, 30414)]
+        [InlineData(new[] { 4, 4, }, 2, true, 30598)]
+        [InlineData(new[] { 4, 5, }, 1, true, 30644)]
         public void RuneBonus(int[] prevRuneLevels, int tryCount, bool createNewRune, int expectedRuneLevelBonus)
         {
             // Data
             const int testRuneId = 30001;
-            var prevRuneIds = new[] { 10001, 10002, 10003 };
+            var prevRuneIds = new[] { 10001, 10002, 10003, };
             const int initialNcg = 10_000;
             const int initialCrystal = 1_000_000;
             const int initialRune = 1_000;
@@ -685,7 +695,7 @@ namespace Lib9c.Tests.Action
             var ncgCurrency = state.GetGoldCurrency();
             var crystalCurrency = CrystalCalculator.CRYSTAL;
             var runeTicker = tableSheets.RuneSheet.Values.First(r => r.Id == testRuneId).Ticker;
-            var runeCurrency = Currency.Legacy(runeTicker, 0, minters: null);
+            var runeCurrency = Currency.Legacy(runeTicker, 0, null);
             state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
             state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
             state = state.MintAsset(context, avatarAddress, runeCurrency * initialRune);

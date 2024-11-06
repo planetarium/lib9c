@@ -56,8 +56,8 @@ namespace Lib9c.Tests
         }
 
         [Theory]
-        [InlineData(new[] { 2 }, 500)]
-        [InlineData(new[] { 2, 3 }, 3000)]
+        [InlineData(new[] { 2, }, 500)]
+        [InlineData(new[] { 2, 3, }, 3000)]
         public void CalculateWorldUnlockCost(IEnumerable<int> worldIds, int expected)
         {
             Assert.Equal(expected * CrystalCalculator.CRYSTAL, CrystalCalculator.CalculateWorldUnlockCost(worldIds, _worldUnlockSheet));
@@ -114,11 +114,12 @@ namespace Lib9c.Tests
             var bps = bpsExist
                 ? new CrystalCostState(default, bpsCrystal * CrystalCalculator.CRYSTAL)
                 : null;
-            var row = _tableSheets.CrystalFluctuationSheet.Values.First(r =>
-                r.Type == CrystalFluctuationSheet.ServiceType.Combination);
+            var row = _tableSheets.CrystalFluctuationSheet.Values.First(
+                r =>
+                    r.Type == CrystalFluctuationSheet.ServiceType.Combination);
             Assert.Equal(
                 expected * CrystalCalculator.CRYSTAL,
-                CrystalCalculator.CalculateCombinationCost(crystal, row, prevWeeklyCostState: ps, bps)
+                CrystalCalculator.CalculateCombinationCost(crystal, row, ps, bps)
             );
         }
 
@@ -156,7 +157,7 @@ namespace Lib9c.Tests
 
         private class CalculateCrystalData : IEnumerable<object[]>
         {
-            private readonly List<object[]> _data = new List<object[]>
+            private readonly List<object[]> _data = new ()
             {
                 // 1 + ((2^0 - 1) * 1) = 1
                 // enchant level 2
@@ -259,9 +260,15 @@ namespace Lib9c.Tests
                 },
             };
 
-            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
 
-            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
         }
     }
 }

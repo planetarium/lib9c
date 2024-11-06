@@ -22,7 +22,7 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
                 100,
                 new List<CustomEquipmentCraftOptionSheet.SubStat>
                 {
-                    new () { StatType = StatType.ATK, Ratio = 100 },
+                    new () { StatType = StatType.ATK, Ratio = 100, },
                 },
             };
 
@@ -35,8 +35,8 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
                 100,
                 new List<CustomEquipmentCraftOptionSheet.SubStat>
                 {
-                    new () { StatType = StatType.ATK, Ratio = 50 },
-                    new () { StatType = StatType.HIT, Ratio = 50 },
+                    new () { StatType = StatType.ATK, Ratio = 50, },
+                    new () { StatType = StatType.HIT, Ratio = 50, },
                 },
             };
 
@@ -49,7 +49,7 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
                 100,
                 new List<CustomEquipmentCraftOptionSheet.SubStat>
                 {
-                    new () { StatType = StatType.DEF, Ratio = 100 },
+                    new () { StatType = StatType.DEF, Ratio = 100, },
                 },
             };
         }

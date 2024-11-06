@@ -22,9 +22,10 @@ namespace Lib9c.Tests.Helper
         {
             var row = _petCostSheet.First!;
             var petId = row.PetId;
-            var cost = row.Cost.FirstOrDefault(cost =>
-                cost.NcgQuantity > 0 ||
-                cost.SoulStoneQuantity > 0);
+            var cost = row.Cost.FirstOrDefault(
+                cost =>
+                    cost.NcgQuantity > 0 ||
+                    cost.SoulStoneQuantity > 0);
             Assert.NotNull(cost);
             PetHelper.CalculateEnhancementCost(
                 _petCostSheet,
@@ -36,12 +37,13 @@ namespace Lib9c.Tests.Helper
         [Fact]
         public void CalculateEnhancementCost_Throw_ArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-                PetHelper.CalculateEnhancementCost(
-                    null,
-                    0,
-                    0,
-                    1));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    PetHelper.CalculateEnhancementCost(
+                        null,
+                        0,
+                        0,
+                        1));
         }
 
         [Theory]
@@ -55,28 +57,31 @@ namespace Lib9c.Tests.Helper
             int targetLevel)
         {
             petId ??= _petCostSheet.First!.PetId;
-            Assert.Throws<ArgumentException>(() =>
-                PetHelper.CalculateEnhancementCost(
-                    _petCostSheet,
-                    petId.Value,
-                    currentLevel,
-                    targetLevel));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    PetHelper.CalculateEnhancementCost(
+                        _petCostSheet,
+                        petId.Value,
+                        currentLevel,
+                        targetLevel));
         }
 
         [Fact]
         public void CalculateEnhancementCost_Throw_ArgumentException_Undefined_PetLevel()
         {
             var row = _petCostSheet.First!;
-            var cost = row.Cost.LastOrDefault(e =>
-                e.NcgQuantity > 0 ||
-                e.SoulStoneQuantity > 0);
+            var cost = row.Cost.LastOrDefault(
+                e =>
+                    e.NcgQuantity > 0 ||
+                    e.SoulStoneQuantity > 0);
             Assert.NotNull(cost);
-            Assert.Throws<ArgumentException>(() =>
-                PetHelper.CalculateEnhancementCost(
-                    _petCostSheet,
-                    row.PetId,
-                    cost.Level,
-                    cost.Level + 1));
+            Assert.Throws<ArgumentException>(
+                () =>
+                    PetHelper.CalculateEnhancementCost(
+                        _petCostSheet,
+                        row.PetId,
+                        cost.Level,
+                        cost.Level + 1));
         }
     }
 }

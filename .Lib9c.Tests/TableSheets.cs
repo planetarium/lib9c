@@ -163,11 +163,7 @@ namespace Lib9c.Tests
 
         public CrystalEquipmentGrindingSheet CrystalEquipmentGrindingSheet { get; private set; }
 
-        public CrystalMonsterCollectionMultiplierSheet CrystalMonsterCollectionMultiplierSheet
-        {
-            get;
-            private set;
-        }
+        public CrystalMonsterCollectionMultiplierSheet CrystalMonsterCollectionMultiplierSheet { get; private set; }
 
         public CrystalMaterialCostSheet CrystalMaterialCostSheet { get; private set; }
 
@@ -193,11 +189,7 @@ namespace Lib9c.Tests
 
         public EventMaterialItemRecipeSheet EventMaterialItemRecipeSheet { get; private set; }
 
-        public StakeActionPointCoefficientSheet StakeActionPointCoefficientSheet
-        {
-            get;
-            private set;
-        }
+        public StakeActionPointCoefficientSheet StakeActionPointCoefficientSheet { get; private set; }
 
         public WorldBossListSheet WorldBossListSheet { get; private set; }
 
@@ -245,7 +237,11 @@ namespace Lib9c.Tests
 
         public LoadIntoMyGaragesCostSheet LoadIntoMyGaragesCostSheet { get; private set; }
 
-        public SummonSheet SummonSheet { get; private set; }
+        public EquipmentSummonSheet EquipmentSummonSheet { get; private set; }
+
+        public RuneSummonSheet RuneSummonSheet { get; private set; }
+
+        public CostumeSummonSheet CostumeSummonSheet { get; private set; }
 
         public CreateAvatarItemSheet CreateAvatarItemSheet { get; set; }
 
@@ -264,38 +260,22 @@ namespace Lib9c.Tests
 
         public AdventureBossFloorWaveSheet AdventureBossFloorWaveSheet { get; private set; }
 
-        public AdventureBossNcgRewardRatioSheet AdventureBossNcgRewardRatioSheet
-        {
-            get;
-            private set;
-        }
+        public AdventureBossNcgRewardRatioSheet AdventureBossNcgRewardRatioSheet { get; private set; }
 
-        public AdventureBossFloorFirstRewardSheet AdventureBossFloorFirstRewardSheet
-        {
-            get;
-            private set;
-        }
+        public AdventureBossFloorFirstRewardSheet AdventureBossFloorFirstRewardSheet { get; private set; }
 
         /* Adventure Boss */
 
         // Custom Craft
         public CustomEquipmentCraftRecipeSheet CustomEquipmentCraftRecipeSheet { get; private set; }
 
-        public CustomEquipmentCraftRelationshipSheet CustomEquipmentCraftRelationshipSheet
-        {
-            get;
-            private set;
-        }
+        public CustomEquipmentCraftRelationshipSheet CustomEquipmentCraftRelationshipSheet { get; private set; }
 
         public CustomEquipmentCraftIconSheet CustomEquipmentCraftIconSheet { get; private set; }
 
         public CustomEquipmentCraftOptionSheet CustomEquipmentCraftOptionSheet { get; private set; }
 
-        public CustomEquipmentCraftRecipeSkillSheet CustomEquipmentCraftRecipeSkillSheet
-        {
-            get;
-            private set;
-        }
+        public CustomEquipmentCraftRecipeSkillSheet CustomEquipmentCraftRecipeSkillSheet { get; private set; }
 
         /* Custom Craft */
 

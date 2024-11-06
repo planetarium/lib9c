@@ -26,15 +26,15 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
-            Dictionary serialized = (Dictionary)monsterCollectionState.Serialize();
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
+            var serialized = (Dictionary)monsterCollectionState.Serialize();
             Assert.Equal(serialized, new MonsterCollectionState0(serialized).Serialize());
         }
 
         [Fact]
         public void Serialize_DotNet_API()
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
             var formatter = new BinaryFormatter();
             using var ms = new MemoryStream();
             formatter.Serialize(ms, monsterCollectionState);
@@ -48,15 +48,15 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void SerializeV2()
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000);
-            Dictionary serialized = (Dictionary)monsterCollectionState.SerializeV2();
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000);
+            var serialized = (Dictionary)monsterCollectionState.SerializeV2();
             Assert.Equal(serialized, new MonsterCollectionState0(serialized).SerializeV2());
         }
 
         [Fact]
         public void SerializeV2_DotNet_API()
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000);
             var formatter = new BinaryFormatter();
             using var ms = new MemoryStream();
             formatter.Serialize(ms, monsterCollectionState);
@@ -74,15 +74,15 @@ namespace Lib9c.Tests.Model.State
         [InlineData(3)]
         public void Update(long rewardLevel)
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
             Assert.Equal(1, monsterCollectionState.Level);
             Assert.Equal(10000, monsterCollectionState.StartedBlockIndex);
             Assert.Equal(MonsterCollectionState0.RewardInterval * 4 + 10000, monsterCollectionState.ExpiredBlockIndex);
 
             monsterCollectionState.Update(2, rewardLevel, _tableSheets.MonsterCollectionRewardSheet);
             Assert.Equal(2, monsterCollectionState.Level);
-            List<MonsterCollectionRewardSheet.RewardInfo> rewards = _tableSheets.MonsterCollectionRewardSheet[2].Rewards;
-            for (long i = rewardLevel; i < 4; i++)
+            var rewards = _tableSheets.MonsterCollectionRewardSheet[2].Rewards;
+            for (var i = rewardLevel; i < 4; i++)
             {
                 Assert.Equal(rewards, monsterCollectionState.RewardLevelMap[i + 1]);
             }
@@ -91,12 +91,12 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void UpdateRewardMap()
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
             Assert.Empty(monsterCollectionState.RewardMap);
 
             Address avatarAddress = default;
-            List<MonsterCollectionRewardSheet.RewardInfo> rewards = _tableSheets.MonsterCollectionRewardSheet[1].Rewards;
-            MonsterCollectionResult result = new MonsterCollectionResult(Guid.NewGuid(), avatarAddress, rewards);
+            var rewards = _tableSheets.MonsterCollectionRewardSheet[1].Rewards;
+            var result = new MonsterCollectionResult(Guid.NewGuid(), avatarAddress, rewards);
             monsterCollectionState.UpdateRewardMap(1, result, 14000);
             Assert.Single(monsterCollectionState.RewardMap);
             Assert.Equal(result, monsterCollectionState.RewardMap[1]);
@@ -109,19 +109,19 @@ namespace Lib9c.Tests.Model.State
         [InlineData(5)]
         public void UpdateRewardMap_Throw_ArgumentOutOfRangeException(long rewardLevel)
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
 
-            List<MonsterCollectionRewardSheet.RewardInfo> rewards = _tableSheets.MonsterCollectionRewardSheet[1].Rewards;
-            MonsterCollectionResult result = new MonsterCollectionResult(Guid.NewGuid(), _address, rewards);
+            var rewards = _tableSheets.MonsterCollectionRewardSheet[1].Rewards;
+            var result = new MonsterCollectionResult(Guid.NewGuid(), _address, rewards);
             Assert.Throws<ArgumentOutOfRangeException>(() => monsterCollectionState.UpdateRewardMap(rewardLevel, result, 0));
         }
 
         [Fact]
         public void UpdateRewardMap_Throw_AlreadyReceivedException()
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
-            List<MonsterCollectionRewardSheet.RewardInfo> rewards = _tableSheets.MonsterCollectionRewardSheet[1].Rewards;
-            MonsterCollectionResult result = new MonsterCollectionResult(Guid.NewGuid(), default, rewards);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 10000, _tableSheets.MonsterCollectionRewardSheet);
+            var rewards = _tableSheets.MonsterCollectionRewardSheet[1].Rewards;
+            var result = new MonsterCollectionResult(Guid.NewGuid(), default, rewards);
             monsterCollectionState.UpdateRewardMap(1, result, 14000);
             Assert.Throws<AlreadyReceivedException>(() => monsterCollectionState.UpdateRewardMap(1, result, 0));
         }
@@ -136,8 +136,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(5, 4)]
         public void GetRewardLevel(int interval, long expected)
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 0, _tableSheets.MonsterCollectionRewardSheet);
-            long blockIndex = MonsterCollectionState0.RewardInterval * interval;
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 0, _tableSheets.MonsterCollectionRewardSheet);
+            var blockIndex = MonsterCollectionState0.RewardInterval * interval;
             Assert.Equal(expected, monsterCollectionState.GetRewardLevel(blockIndex));
         }
 
@@ -148,8 +148,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(MonsterCollectionState0.RewardInterval, 0, MonsterCollectionState0.RewardInterval * 1.5, false)]
         public void CanReceive(long startedBlockIndex, long receivedBlockIndex, long blockIndex, bool expected)
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, startedBlockIndex, _tableSheets.MonsterCollectionRewardSheet);
-            Dictionary serialized = (Dictionary)monsterCollectionState.Serialize();
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, startedBlockIndex, _tableSheets.MonsterCollectionRewardSheet);
+            var serialized = (Dictionary)monsterCollectionState.Serialize();
             serialized = serialized.SetItem(ReceivedBlockIndexKey, receivedBlockIndex.Serialize());
             monsterCollectionState = new MonsterCollectionState0(serialized);
             Assert.Equal(receivedBlockIndex, monsterCollectionState.ReceivedBlockIndex);
@@ -163,7 +163,7 @@ namespace Lib9c.Tests.Model.State
         [InlineData(MonsterCollectionState0.LockUpInterval + 1, false)]
         public void IsLock(long blockIndex, bool expected)
         {
-            MonsterCollectionState0 monsterCollectionState = new MonsterCollectionState0(_address, 1, 0);
+            var monsterCollectionState = new MonsterCollectionState0(_address, 1, 0);
             Assert.Equal(expected, monsterCollectionState.IsLock(blockIndex));
         }
     }

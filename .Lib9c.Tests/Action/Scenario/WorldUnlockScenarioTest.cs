@@ -84,10 +84,11 @@ namespace Lib9c.Tests.Action.Scenario
             Assert.True(_tableSheets.WorldSheet.ContainsKey(worldIdToClear));
             Assert.True(_tableSheets.StageSheet.ContainsKey(stageIdToClear));
             Assert.True(_tableSheets.WorldSheet.ContainsKey(worldIdToUnlock));
-            Assert.False(_tableSheets.WorldUnlockSheet.TryGetUnlockedInformation(
-                worldIdToClear,
-                stageIdToClear,
-                out _));
+            Assert.False(
+                _tableSheets.WorldUnlockSheet.TryGetUnlockedInformation(
+                    worldIdToClear,
+                    stageIdToClear,
+                    out _));
 
             var avatarState = _initialState.GetAvatarState(_avatarAddress);
             avatarState.level = avatarLevel;
@@ -109,16 +110,17 @@ namespace Lib9c.Tests.Action.Scenario
                 StageId = stageIdToClear,
                 AvatarAddress = _avatarAddress,
                 Costumes = new List<Guid>(),
-                Equipments = new List<Guid> { doomfist.NonFungibleId },
+                Equipments = new List<Guid> { doomfist.NonFungibleId, },
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
             };
-            nextState = hackAndSlash.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            nextState = hackAndSlash.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             avatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(avatarState.worldInformation.IsStageCleared(stageIdToClear));
@@ -143,22 +145,24 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
                 TableName = nameof(WorldUnlockSheet),
                 TableCsv = tableCsv,
             };
-            nextState = patchTableSheet.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = AdminState.Address,
-                RandomSeed = 0,
-            });
+            nextState = patchTableSheet.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = AdminState.Address,
+                    RandomSeed = 0,
+                });
 
             var nextTableCsv = nextState.GetSheetCsv<WorldUnlockSheet>();
             Assert.Equal(nextTableCsv, tableCsv);
 
-            nextState = hackAndSlash.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            nextState = hackAndSlash.Execute(
+                new ActionContext
+                {
+                    PreviousState = nextState,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
 
             avatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.True(avatarState.worldInformation.IsWorldUnlocked(worldIdToUnlock));

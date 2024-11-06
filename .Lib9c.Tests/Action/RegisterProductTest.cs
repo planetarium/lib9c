@@ -23,10 +23,9 @@ namespace Lib9c.Tests.Action
 
     public class RegisterProductTest
     {
-        private static readonly Address AvatarAddress =
-            new Address("47d082a115c63e7b58b1532d20e631538eafadde");
+        private static readonly Address AvatarAddress = new ("47d082a115c63e7b58b1532d20e631538eafadde");
 
-        private static readonly Currency Gold = Currency.Legacy("NCG", 2, minters: null);
+        private static readonly Currency Gold = Currency.Legacy("NCG", 2, null);
 
         private readonly Address _agentAddress;
         private readonly AvatarState _avatarState;
@@ -268,13 +267,14 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            var nextState = action.Execute(new ActionContext
-            {
-                BlockIndex = 1L,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1L,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
 
             var nextAvatarState = nextState.GetAvatarState(AvatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
@@ -286,7 +286,7 @@ namespace Lib9c.Tests.Action
             var productsState =
                 new ProductsState((List)nextState.GetLegacyState(ProductsState.DeriveAddress(AvatarAddress)));
             var random = new TestRandom();
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 var guid = random.GenerateRandomGuid();
                 Assert.Contains(guid, productsState.ProductIds);
@@ -320,14 +320,17 @@ namespace Lib9c.Tests.Action
                     var action = new RegisterProduct
                     {
                         AvatarAddress = AvatarAddress,
-                        RegisterInfos = new[] { registerInfo },
+                        RegisterInfos = new[] { registerInfo, },
                     };
-                    Assert.Throws(validateMember.Exc, () => action.Execute(new ActionContext
-                    {
-                        PreviousState = _initialState,
-                        RandomSeed = 0,
-                        Signer = _agentAddress,
-                    }));
+                    Assert.Throws(
+                        validateMember.Exc,
+                        () => action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = _initialState,
+                                RandomSeed = 0,
+                                Signer = _agentAddress,
+                            }));
                 }
             }
         }
@@ -393,20 +396,22 @@ namespace Lib9c.Tests.Action
                 },
             };
 
-            Assert.Throws<ItemDoesNotExistException>(() => action.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                BlockIndex = blockIndex,
-                RandomSeed = 0,
-                PreviousState = _initialState,
-            }));
+            Assert.Throws<ItemDoesNotExistException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        BlockIndex = blockIndex,
+                        RandomSeed = 0,
+                        PreviousState = _initialState,
+                    }));
         }
 
         [Fact]
         public void Execute_Throw_ArgumentOutOfRangeException()
         {
             var registerInfos = new List<RegisterInfo>();
-            for (int i = 0; i < RegisterProduct.Capacity + 1; i++)
+            for (var i = 0; i < RegisterProduct.Capacity + 1; i++)
             {
                 registerInfos.Add(new RegisterInfo());
             }
@@ -445,13 +450,15 @@ namespace Lib9c.Tests.Action
                     },
                 },
             };
-            Assert.Throws<DuplicateOrderIdException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = 1L,
-                PreviousState = _initialState,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            }));
+            Assert.Throws<DuplicateOrderIdException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1L,
+                        PreviousState = _initialState,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
         }
 
         public class ValidateMember

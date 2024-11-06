@@ -10,7 +10,8 @@ namespace Lib9c.Tests.TableData.Event
         public void Set()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("id,result_consumable_item_id,result_consumable_item_count,material_item_count,material_item_id_1,material_item_id_2,material_item_id_3,material_item_id_4,material_item_id_5,material_item_id_6,material_item_id_7,material_item_id_8,material_item_id_9,material_item_id_10,material_item_id_11,material_item_id_12");
+            sb.AppendLine(
+                "id,result_consumable_item_id,result_consumable_item_count,material_item_count,material_item_id_1,material_item_id_2,material_item_id_3,material_item_id_4,material_item_id_5,material_item_id_6,material_item_id_7,material_item_id_8,material_item_id_9,material_item_id_10,material_item_id_11,material_item_id_12");
             sb.AppendLine("10020001,500000,3,15,700000,700001,700002,700102,700104,700106,700202,700204,,,,");
             var csv = sb.ToString();
 

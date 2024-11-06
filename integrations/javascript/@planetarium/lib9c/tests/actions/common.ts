@@ -23,6 +23,8 @@ export function runTests(name: string, cases: PolymorphicAction[]) {
           "..",
           "..",
           "..",
+          "..",
+          "..",
           ".Lib9c.Tools",
           "Lib9c.Tools.csproj",
         ),

@@ -55,9 +55,9 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         [Theory]
-        [InlineData(1, new[] { 10110000 })] // 검
-        [InlineData(1, new[] { 10110000, 10111000 })] // 검, 롱 소드(불)
-        [InlineData(1, new[] { 10110000, 10111000, 10114000 })] // 검, 롱 소드(불), 롱 소드(바람)
+        [InlineData(1, new[] { 10110000, })] // 검
+        [InlineData(1, new[] { 10110000, 10111000, })] // 검, 롱 소드(불)
+        [InlineData(1, new[] { 10110000, 10111000, 10114000, })] // 검, 롱 소드(불), 롱 소드(바람)
         public void CraftEquipmentTest(int randomSeed, int[] targetItemIdList)
         {
             // Disable all quests to prevent contamination by quest reward
@@ -73,15 +73,16 @@ namespace Lib9c.Tests.Action.Scenario
             ).ToList();
             Assert.Equal(targetItemIdList.Length, recipeList.Count);
 
-            List<EquipmentItemSubRecipeSheet.MaterialInfo> allMaterialList =
+            var allMaterialList =
                 new List<EquipmentItemSubRecipeSheet.MaterialInfo>();
             foreach (var recipe in recipeList)
             {
                 allMaterialList = allMaterialList
-                    .Concat(recipe.GetAllMaterials(
-                        _tableSheets.EquipmentItemSubRecipeSheetV2,
-                        CraftType.Normal
-                    ))
+                    .Concat(
+                        recipe.GetAllMaterials(
+                            _tableSheets.EquipmentItemSubRecipeSheetV2,
+                            CraftType.Normal
+                        ))
                     .ToList();
             }
 
@@ -89,7 +90,7 @@ namespace Lib9c.Tests.Action.Scenario
             var maxUnlockStage = recipeList.Aggregate(0, (e, c) => Math.Max(e, c.UnlockStage));
             var unlockRecipeIdsAddress = _avatarAddr.Derive("recipe_ids");
             var recipeIds = List.Empty;
-            for (int i = 1; i < maxUnlockStage + 1; i++)
+            for (var i = 1; i < maxUnlockStage + 1; i++)
             {
                 recipeIds = recipeIds.Add(i.Serialize());
             }
@@ -132,13 +133,14 @@ namespace Lib9c.Tests.Action.Scenario
                     subRecipeId = equipmentRecipe.SubRecipeIds?[0],
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = 0L,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = 0L,
+                        RandomSeed = randomSeed,
+                    });
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
                 var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlock
@@ -157,9 +159,9 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         [Theory]
-        [InlineData(1, new[] { 201000 })] // 참치캔
-        [InlineData(1, new[] { 201000, 201002 })] // 참치캔, 계란후라이
-        [InlineData(1, new[] { 201011, 201012, 201013 })] // 스테이크, 모둠스테이크, 전설의 스테이크
+        [InlineData(1, new[] { 201000, })] // 참치캔
+        [InlineData(1, new[] { 201000, 201002, })] // 참치캔, 계란후라이
+        [InlineData(1, new[] { 201011, 201012, 201013, })] // 스테이크, 모둠스테이크, 전설의 스테이크
         public void CraftConsumableTest(int randomSeed, int[] targetItemIdList)
         {
             // Disable all quests to prevent contamination by quest reward
@@ -216,13 +218,14 @@ namespace Lib9c.Tests.Action.Scenario
                     recipeId = recipe.Id,
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = 0L,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = 0L,
+                        RandomSeed = randomSeed,
+                    });
 
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
                 var slotState = allSlotState.GetSlot(i);
@@ -242,7 +245,7 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         [Theory]
-        [InlineData(1, 1001, new[] { 900101 })] // 2022 Summer Event, 몬스터펀치
+        [InlineData(1, 1001, new[] { 900101, })] // 2022 Summer Event, 몬스터펀치
         public void EventConsumableItemCraftTest(
             int randomSeed,
             int eventScheduleId,
@@ -298,13 +301,14 @@ namespace Lib9c.Tests.Action.Scenario
                     SlotIndex = i,
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = eventRow.StartBlockIndex,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = eventRow.StartBlockIndex,
+                        RandomSeed = randomSeed,
+                    });
                 var allSlotState = stateV2.GetAllCombinationSlotState(_avatarAddr);
                 var slotState = allSlotState.GetSlot(i);
                 // TEST: requiredBlockIndex
@@ -322,7 +326,7 @@ namespace Lib9c.Tests.Action.Scenario
         }
 
         [Theory]
-        [InlineData(1, 1002, new[] { 10020001 })] // Grand Finale, AP Stone
+        [InlineData(1, 1002, new[] { 10020001, })] // Grand Finale, AP Stone
         public void EventMaterialItemCraftsTest(
             int randomSeed,
             int eventScheduleId,
@@ -393,13 +397,14 @@ namespace Lib9c.Tests.Action.Scenario
                     MaterialsToUse = materialsToUse,
                 };
 
-                stateV2 = action.Execute(new ActionContext
-                {
-                    PreviousState = stateV2,
-                    Signer = _agentAddr,
-                    BlockIndex = eventRow.StartBlockIndex,
-                    RandomSeed = randomSeed,
-                });
+                stateV2 = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = stateV2,
+                        Signer = _agentAddr,
+                        BlockIndex = eventRow.StartBlockIndex,
+                        RandomSeed = randomSeed,
+                    });
                 var slotState = stateV2.GetCombinationSlotStateLegacy(_avatarAddr, i);
                 // TEST: requiredBlockIndex
                 Assert.Equal(recipe.RequiredBlockIndex, slotState.RequiredBlockIndex);

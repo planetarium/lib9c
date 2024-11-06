@@ -162,15 +162,17 @@ namespace Lib9c.Tests.Action
                 equipmentIds = new List<Guid>(),
             };
 
-            Assert.Throws<ActionObsoletedException>(() =>
-            {
-                action.Execute(new ActionContext
+            Assert.Throws<ActionObsoletedException>(
+                () =>
                 {
-                    PreviousState = previousState,
-                    Signer = _agent1Address,
-                    RandomSeed = 0,
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = previousState,
+                            Signer = _agent1Address,
+                            RandomSeed = 0,
+                        });
                 });
-            });
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Lib9c.Tests.TableData.CustomEquipmentCraft
 
             var row = sheet.Values.First();
 
-            var minCpList = new[] { 100, 200, 300, 400, 500, 600, 700, 800, 900 };
+            var minCpList = new[] { 100, 200, 300, 400, 500, 600, 700, 800, 900, };
             Assert.Equal(100, row.Relationship);
             Assert.Equal(1, row.CostMultiplier);
             Assert.Equal(1, row.RequiredBlockMultiplier);

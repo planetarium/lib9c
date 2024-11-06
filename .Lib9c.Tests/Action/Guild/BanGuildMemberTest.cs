@@ -51,11 +51,12 @@ namespace Lib9c.Tests.Action.Guild
             Assert.Equal(otherGuildAddress, world.GetJoinedGuild(otherGuildMemberAddress));
 
             var action = new BanGuildMember(guildMemberAddress);
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             // Guild
             Assert.False(world.IsBanned(guildAddress, guildMasterAddress));
@@ -69,11 +70,12 @@ namespace Lib9c.Tests.Action.Guild
             Assert.Equal(otherGuildAddress, world.GetJoinedGuild(otherGuildMemberAddress));
 
             action = new BanGuildMember(otherGuildMasterAddress);
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             // Guild
             Assert.False(world.IsBanned(guildAddress, guildMasterAddress));
@@ -87,11 +89,12 @@ namespace Lib9c.Tests.Action.Guild
             Assert.Equal(otherGuildAddress, world.GetJoinedGuild(otherGuildMemberAddress));
 
             action = new BanGuildMember(otherGuildMemberAddress);
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             // Guild
             Assert.False(world.IsBanned(guildAddress, guildMasterAddress));
@@ -106,11 +109,13 @@ namespace Lib9c.Tests.Action.Guild
 
             action = new BanGuildMember(guildMasterAddress);
             // GuildMaster cannot ban itself.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMasterAddress,
+                    }));
         }
 
         [Fact]
@@ -130,27 +135,33 @@ namespace Lib9c.Tests.Action.Guild
                 .JoinGuild(guildAddress, targetGuildMemberAddress);
 
             // GuildMember tries to ban other guild member.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMemberAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMemberAddress,
+                    }));
 
             // GuildMember tries to ban itself.
             action = new BanGuildMember(guildMemberAddress);
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMemberAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMemberAddress,
+                    }));
 
             action = new BanGuildMember(otherAddress);
             // GuildMember tries to ban other not joined to its guild.
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMemberAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = guildMemberAddress,
+                    }));
         }
 
         [Fact]
@@ -169,19 +180,23 @@ namespace Lib9c.Tests.Action.Guild
 
             // Other tries to ban GuildMember.
             var action = new BanGuildMember(targetGuildMemberAddress);
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = otherAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = otherAddress,
+                    }));
 
             // Other tries to ban GuildMaster.
             action = new BanGuildMember(guildMasterAddress);
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = otherAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = otherAddress,
+                    }));
         }
 
         [Fact]
@@ -191,17 +206,18 @@ namespace Lib9c.Tests.Action.Guild
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var agentAddress = AddressUtil.CreateAgentAddress();
 
-            IWorld world = new World(MockUtil.MockModernWorldState)
+            var world = new World(MockUtil.MockModernWorldState)
                 .MakeGuild(guildAddress, guildMasterAddress)
                 .ApplyGuild(agentAddress, guildAddress);
             Assert.True(world.TryGetGuildApplication(agentAddress, out _));
 
             var action = new BanGuildMember(agentAddress);
-            world = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = guildMasterAddress,
-            });
+            world = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = guildMasterAddress,
+                });
 
             Assert.True(world.IsBanned(guildAddress, agentAddress));
             Assert.False(world.TryGetGuildApplication(agentAddress, out _));
