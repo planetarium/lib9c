@@ -1,0 +1,13 @@
+<Project>
+    <PropertyGroup>
+        <LibplanetVersion>5.3.2-alpha.1</LibplanetVersion>
+
+        <!-- Fill with Libplanet's absolute path to debug with local Libplanet. -->
+        <LibplanetDirectory></LibplanetDirectory>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <UseLocalLibplanet Condition="Exists('$(LibplanetDirectory)')">true</UseLocalLibplanet>
+        <UseLocalLibplanet Condition=" '$(UseLocalLibplanet)' == '' ">false</UseLocalLibplanet>
+    </PropertyGroup>
+</Project>

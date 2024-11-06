@@ -36,6 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(UseLocalLibplanet)">
     <PackageReference Include="Libplanet" Version="$(LibplanetVersion)">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
@@ -45,7 +49,18 @@
       <OutputItemType>Analyzer</OutputItemType>
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
     </PackageReference>
-    <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(UseLocalLibplanet)">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csporj">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </ProjectReference>
+    <ProjectReference Include="$(LibplanetDirectory)\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Analyzer</OutputItemType>
+      <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
+    </ProjectReference>
   </ItemGroup>
 
 </Project>

@@ -13,9 +13,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Libplanet.RocksDBStore" Version="$(LibplanetVersion)" />
       <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
       <ProjectReference Include="..\Lib9c.DevExtensions\Lib9c.DevExtensions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="!'$(UseLocalLibplanet)'">
+      <PackageReference Include="Libplanet.RocksDBStore" Version="$(LibplanetVersion)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(UseLocalLibplanet)'">
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -6,8 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="!'$(UseLocalLibplanet)'">
     <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalLibplanet)'">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" />
   </ItemGroup>
 
 </Project>

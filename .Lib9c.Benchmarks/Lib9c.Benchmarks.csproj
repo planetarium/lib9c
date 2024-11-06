@@ -13,10 +13,20 @@
 
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    </ItemGroup>
+
+    <ItemGroup Condition="!'$(UseLocalLibplanet)'">
       <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
       <PackageReference Include="Libplanet.RocksDBStore" Version="$(LibplanetVersion)" />
       <PackageReference Include="Libplanet.Crypto.Secp256k1" Version="$(LibplanetVersion)" />
       <PackageReference Include="Libplanet.Mocks" Version="$(LibplanetVersion)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(UseLocalLibplanet)'">
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" Version="$(LibplanetVersion)" />
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.RocksDBStore\Libplanet.csproj" Version="$(LibplanetVersion)" />
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.Crypto.Secp256k1\Libplanet.Crypto.Secp256k1.csproj" Version="$(LibplanetVersion)" />
+      <ProjectReference Include="$(LibplanetDirectory)\test\Libplanet.Mocks\Libplanet.Mocks.csproj" Version="$(LibplanetVersion)" />
     </ItemGroup>
 
     <ItemGroup>

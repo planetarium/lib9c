@@ -9,10 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
-
     <PackageReference Include="Secp256k1.Net" Version="1.0.0-alpha" />
     <PackageReference Include="Secp256k1.Native" Version="0.1.24-alpha" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!'$(UseLocalLibplanet)'">
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalLibplanet)'">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" />
   </ItemGroup>
 
 </Project>
