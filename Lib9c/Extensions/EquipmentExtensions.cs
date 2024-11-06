@@ -259,23 +259,14 @@ namespace Nekoyume.Extensions
         }
 
         public static int GetRequirementLevel(this Equipment equipment,
-            ItemRequirementSheet requirementSheet,
-            EquipmentItemRecipeSheet recipeSheet,
-            EquipmentItemSubRecipeSheetV2 subRecipeSheet,
-            EquipmentItemOptionSheet itemOptionSheet)
+            ItemRequirementSheet requirementSheet)
         {
             if (!requirementSheet.TryGetValue(equipment.Id, out var row))
             {
                 throw new SheetRowNotFoundException(nameof(ItemRequirementSheet), equipment.Id);
             }
 
-            var isMadeWithMimisbrunnrRecipe = equipment.IsMadeWithMimisbrunnrRecipe(
-                recipeSheet,
-                subRecipeSheet,
-                itemOptionSheet
-            );
-
-            return isMadeWithMimisbrunnrRecipe ? row.MimisLevel : row.Level;
+            return row.Level;
         }
     }
 }

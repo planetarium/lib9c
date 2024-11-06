@@ -1136,9 +1136,7 @@ namespace Nekoyume.Model.State
                     subRecipeSheet,
                     itemOptionSheet
                 );
-                var requirementLevel = isMadeWithMimisbrunnrRecipe
-                    ? requirementRow.MimisLevel
-                    : requirementRow.Level;
+                var requirementLevel = requirementRow.Level;
                 if (level < requirementLevel)
                 {
                     throw new NotEnoughAvatarLevelException(equipment.Id, isMadeWithMimisbrunnrRecipe, requirementLevel, level);
