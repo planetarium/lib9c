@@ -10,11 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet\src\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
-    <ProjectReference Include="..\.Libplanet\src\Libplanet.Stun\Libplanet.Stun.csproj" />
-    <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj" />
     <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
     <ProjectReference Include="..\Lib9c.Policy\Lib9c.Policy.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!'$(UseLocalLibplanet)'">
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
+    <PackageReference Include="Libplanet.Stun" Version="$(LibplanetVersion)" />
+    <PackageReference Include="Libplanet.RocksDBStore" Version="$(LibplanetVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalLibplanet)'">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" />
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.Stun\Libplanet.Stun.csproj" />
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
