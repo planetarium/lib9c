@@ -22,13 +22,6 @@ pnpm build
 
 `@planetarium/lib9c` uses `Lib9c.Tools action analyze` command to check whether implemented actions make valid bencodex value. You should build the .NET project first. **If the .NET Lib9c project is changed, you must build `Lib9c.Tools` project again.**
 
-if you haven't pulled submodules, run this command first.
-
-```
-git submodule update --init --recursive
-```
-after
-
 ```
 dotnet build ../../.Lib9c.Tools/Lib9c.Tools.csproj
 ```
