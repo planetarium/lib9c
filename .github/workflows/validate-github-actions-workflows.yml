@@ -13,5 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
+          set -ev
           bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint
+          args=()
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            args+=("-ignore" "the runner of \".+\" action is too old to run on GitHub Actions.")
+          fi
+          ./actionlint "${args[@]}"
