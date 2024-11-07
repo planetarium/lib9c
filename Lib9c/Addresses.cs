@@ -226,6 +226,12 @@ namespace Nekoyume
         public static readonly Address CommunityPool
             = new Address("0000000000000000000000000000000000000312");
 
+        /// <summary>
+        /// An address for non validator.
+        /// </summary>
+        public static readonly Address NonValidatorDelegatee
+            = new Address("0000000000000000000000000000000000000313");
+
         #endregion
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);

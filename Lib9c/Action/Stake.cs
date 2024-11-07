@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Delegation;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
@@ -16,11 +17,10 @@ using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
-using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Stake;
+using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
-using Org.BouncyCastle.Asn1.Esf;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
@@ -182,6 +182,7 @@ namespace Nekoyume.Action
             var stakeStateValue = new StakeState(latestStakeContract, context.BlockIndex).Serialize();
             var additionalBalance = targetStakeBalance - stakedBalance;
             var height = context.BlockIndex;
+            var agentAddress = new AgentAddress(context.Signer);
 
             if (additionalBalance.Sign > 0)
             {
@@ -190,35 +191,46 @@ namespace Nekoyume.Action
                     .TransferAsset(context, context.Signer, stakeStateAddr, additionalBalance)
                     .MintAsset(context, stakeStateAddr, gg);
 
-                try
+                var guildRepository = new GuildRepository(state, context);
+                if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
-                    var guildRepository = new GuildRepository(state, context);
-                    var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                     guildParticipant.Delegate(guild, gg, height);
                     state = guildRepository.World;
                 }
-                catch (FailedLoadStateException)
+                else
                 {
+                    state = state
+                        .TransferAsset(context, stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
                 }
-                
+
             }
             else if (additionalBalance.Sign < 0)
             {
                 var gg = GetGuildCoinFromNCG(-additionalBalance);
 
-                try
+                var guildRepository = new GuildRepository(state, context);
+                if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
-                    var guildRepository = new GuildRepository(state, context);
-                    var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                     var share = guild.ShareFromFAV(gg);
                     guildParticipant.Undelegate(guild, share, height);
                     state = guildRepository.World;
                 }
-                catch (FailedLoadStateException)
+                else
                 {
-                    // TODO: Create self unbonding
+                    var delegateeAddress = Addresses.NonValidatorDelegatee;
+                    var delegatorAddress = context.Signer;
+                    var repository = new ValidatorRepository(state, context);
+                    var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, repository.DelegateeAccountAddress, delegatorAddress);
+                    var unbondLockIn = new UnbondLockIn(
+                        unbondLockInAddress, ValidatorDelegatee.ValidatorMaxUnbondLockInEntries, delegateeAddress, delegatorAddress, null);
+                    unbondLockIn = unbondLockIn.LockIn(
+                        gg, height, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                    repository.SetUnbondLockIn(unbondLockIn);
+                    repository.SetUnbondingSet(
+                        repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+                    state = repository.World;
                 }
 
                 if ((stakedBalance + additionalBalance).Sign == 0)

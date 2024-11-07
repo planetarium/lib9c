@@ -8,6 +8,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Model.Stake;
 
 namespace Nekoyume.Delegation
 {
@@ -160,7 +161,6 @@ namespace Nekoyume.Delegation
                         ? releasingFAV.Value + entriesFAV
                         : entriesFAV;
                     updatedEntries = updatedEntries.Remove(expireHeight);
-                    
                 }
                 else
                 {
@@ -170,12 +170,23 @@ namespace Nekoyume.Delegation
 
             if (releasingFAV.HasValue)
             {
-                var delegateeMetadata = _repository!.GetDelegateeMetadata(DelegateeAddress);
-                var delegatorMetadata = _repository.GetDelegatorMetadata(DelegatorAddress);
-                _repository!.TransferAsset(
-                    delegateeMetadata.DelegationPoolAddress,
-                    delegatorMetadata.DelegationPoolAddress,
-                    releasingFAV.Value);
+                if (DelegateeAddress != Addresses.NonValidatorDelegatee)
+                {
+                    var delegateeMetadata = _repository!.GetDelegateeMetadata(DelegateeAddress);
+                    var delegatorMetadata = _repository.GetDelegatorMetadata(DelegatorAddress);
+                    _repository!.TransferAsset(
+                        delegateeMetadata.DelegationPoolAddress,
+                        delegatorMetadata.DelegationPoolAddress,
+                        releasingFAV.Value);
+                }
+                else
+                {
+                    var stakeStateAddress = StakeState.DeriveAddress(DelegatorAddress);
+                    _repository!.TransferAsset(
+                        Addresses.NonValidatorDelegatee,
+                        stakeStateAddress,
+                        releasingFAV.Value);
+                }
             }
 
             return UpdateEntries(updatedEntries);
