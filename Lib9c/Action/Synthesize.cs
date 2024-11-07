@@ -18,7 +18,7 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     using Sheets = Dictionary<Type, (Address, ISheet)>;
-    
+
     /// <summary>
     /// Synthesize action is a type of action that synthesizes items.
     /// TODO: Implement Synthesize action.
@@ -88,12 +88,12 @@ namespace Nekoyume.Action
                 typeof(CostumeItemSheet),
                 typeof(EquipmentItemSheet),
             });
-            
+
             // TODO - TransferAsset (NCG)
 
             // Select id to equipment
             var sourceGrade = Grade.Normal; // TODO: change to set
-            
+
             var materialEquipments = new List<Equipment>();
             var materialCostumes = new List<Costume>();
             foreach (var materialId in MaterialIds)
@@ -143,33 +143,33 @@ namespace Nekoyume.Action
 
             // clone random item
             // TODO: Add items to inventory
-            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(sourceGrade, sheets, context, _cachedItemSubType.Value));
+            var random = context.GetRandom();
+            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(sourceGrade, sheets, random, _cachedItemSubType.Value));
 
             return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
         // TODO: Use Sheet, grade의 set화
-        private ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IActionContext context, ItemSubType itemSubTypeValue)
+        private ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IRandom random, ItemSubType itemSubTypeValue)
         {
             switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
-                    return GetRandomCostume(grade, itemSubTypeValue, sheets, context);
+                    return GetRandomCostume(grade, itemSubTypeValue, sheets, random);
                 case ItemSubType.Title:
-                    return GetRandomCostume(grade, itemSubTypeValue, sheets, context);
+                    return GetRandomCostume(grade, itemSubTypeValue, sheets, random);
                 case ItemSubType.Aura:
-                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, context);
+                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, random);
                 case ItemSubType.Grimoire:
-                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, context);
+                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, random);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, Sheets sheets, IActionContext context)
+        private ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
         {
             var sheet = sheets.GetSheet<CostumeItemSheet>();
-            var random = context.GetRandom();
             var synthesizeResultPool = GetSynthesizeResultPool(
                 new List<Grade>() { grade, },
                 itemSubType,
@@ -185,13 +185,12 @@ namespace Nekoyume.Action
                 );
             }
 
-            return ItemFactory.CreateItem(costumeRow, context.GetRandom());
+            return ItemFactory.CreateItem(costumeRow, random);
         }
 
-        private ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, Sheets sheets, IActionContext context)
+        private ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
         {
             var sheet = sheets.GetSheet<EquipmentItemSheet>();
-            var random = context.GetRandom();
             var synthesizeResultPool = GetSynthesizeResultPool(
                 new List<Grade>() { grade, },
                 itemSubType,
@@ -207,7 +206,7 @@ namespace Nekoyume.Action
                 );
             }
 
-            return ItemFactory.CreateItem(costumeRow, context.GetRandom());
+            return ItemFactory.CreateItem(costumeRow, random);
         }
 
         private Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, IActionContext context, string addressesHex)
@@ -299,7 +298,7 @@ namespace Nekoyume.Action
         }
 
 #region Helper
-        
+
         /// <summary>
         /// Returns a list of items that may come out as a result of that synthesis.
         /// </summary>
@@ -315,7 +314,7 @@ namespace Nekoyume.Action
                 .Select(r => r.Id)
                 .ToList();
         }
-        
+
         /// <summary>
         /// Returns a list of items that may come out as a result of that synthesis.
         /// </summary>
@@ -331,7 +330,7 @@ namespace Nekoyume.Action
                 .Select(r => r.Id)
                 .ToList();
         }
-        
+
         public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, CostumeItemSheet sheet)
         {
             var targetGrade = GetTargetGrade(grade);
@@ -340,7 +339,7 @@ namespace Nekoyume.Action
 
             return hasGrade ? targetGrade : grade;
         }
-        
+
         public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, EquipmentItemSheet sheet)
         {
             var targetGrade = GetTargetGrade(grade);
@@ -349,7 +348,7 @@ namespace Nekoyume.Action
 
             return hasGrade ? targetGrade : grade;
         }
-        
+
         private static Grade GetTargetGrade(Grade grade) => grade switch
         {
             Grade.Normal => Grade.Rare,
@@ -368,7 +367,7 @@ namespace Nekoyume.Action
             ItemUsable itemUsable => new List<Guid> { itemUsable.ItemId, },
             _ => throw new ArgumentException($"Unexpected item type: {itemBase.GetType()}", nameof(itemBase)),
         };
-        
+
         public static List<Guid> GetItemGuids(IEnumerable<ItemBase> itemBases) => itemBases.Select(
             i =>
             {
@@ -379,7 +378,7 @@ namespace Nekoyume.Action
                     _ => throw new ArgumentException($"Unexpected item type: {i.GetType()}", nameof(i)),
                 };
             }).ToList();
-        
+
 #endregion Helper
     }
 }
