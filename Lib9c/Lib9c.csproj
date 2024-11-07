@@ -52,7 +52,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(UseLocalLibplanet)">
-    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csporj">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>

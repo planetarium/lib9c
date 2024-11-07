@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseLocalLibplanet)'">
-    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.Net\Libplane.Net.csproj" />
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.Net\Libplanet.Net.csproj" />
   </ItemGroup>
 </Project>

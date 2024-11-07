@@ -23,10 +23,10 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(UseLocalLibplanet)'">
-      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" Version="$(LibplanetVersion)" />
-      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.RocksDBStore\Libplanet.csproj" Version="$(LibplanetVersion)" />
-      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.Crypto.Secp256k1\Libplanet.Crypto.Secp256k1.csproj" Version="$(LibplanetVersion)" />
-      <ProjectReference Include="$(LibplanetDirectory)\test\Libplanet.Mocks\Libplanet.Mocks.csproj" Version="$(LibplanetVersion)" />
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" />
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.RocksDBStore\Libplanet.RocksDBStore.csproj" />
+      <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet.Crypto.Secp256k1\Libplanet.Crypto.Secp256k1.csproj" />
+      <ProjectReference Include="$(LibplanetDirectory)\test\Libplanet.Mocks\Libplanet.Mocks.csproj" />
     </ItemGroup>
 
     <ItemGroup>
