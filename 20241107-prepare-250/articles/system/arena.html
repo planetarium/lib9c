@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Arena | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Arena | Lib9c ">
+      
+      
+      <link rel="icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/blob/20241107-prepare-250/docs/articles/system/arena.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="arena">Arena</h1>
+
+<p>Once you've developed your avatar through the <a href="adventure.html">Adventure</a>, you'll have access to Arena content where you can compete against other players. For more information, see the <a href="https://docs.nine-chronicles.com/introduction/intro/game-contents/arena-pvp-competition">official documentation</a>.</p>
+<h2 id="round">Round</h2>
+<p>The Arena operates in rounds. Each round lasts for a certain amount of block range and is of one of the following types: seasonal, offseason, or championship.</p>
+<ul>
+<li>Championship ID the round belongs to: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L17">Nekoyume.TableData.ArenaSheet.Row.ChampionshipId</a></li>
+<li>Round number within a championship ID: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L17">Nekoyume.TableData.ArenaSheet.Row.Round</a></li>
+<li>Type of the round: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L19">Nekoyume.TableData.ArenaSheet.Row.ArenaType</a></li>
+<li>Duration of the round:
+<ul>
+<li>Start: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L20">Nekoyume.TableData.ArenaSheet.Row.StartBlockIndex</a></li>
+<li>End: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L21">Nekoyume.TableData.ArenaSheet.Row.EndBlockIndex</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="join">Join</h2>
+<p>To join a round, use the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/JoinArena.cs">Nekoyume.Action.JoinArena</a> action.<br>
+Each round has a requirement or cost to join, which you can see in the table below.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"></th>
+<th style="text-align: center;">offseason</th>
+<th style="text-align: center;">season</th>
+<th style="text-align: center;">championship</th>
+<th style="text-align: center;">ref</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Conditions of entry</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;"><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L22">Nekoyume.TableData.ArenaSheet.Row.RequiredMedalCount</a></td>
+</tr>
+<tr>
+<td style="text-align: center;">Entry Fee</td>
+<td style="text-align: center;">X</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;">O</td>
+<td style="text-align: center;"><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L23">Nekoyume.TableData.ArenaSheet.Row.EntranceFee</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="conditions-of-entry">Conditions of Entry</h3>
+<p>All Championship rounds have their own medal items that must be collected in a certain amount to be eligible to participate in each Championship Round.</p>
+<h3 id="entry-fee">Entry Fee</h3>
+<p>To participate in Seasons and Championship rounds, players must pay an entry fee in crystals that is proportional to the level of the participating avatar.</p>
+<h3 id="states-join-states">States {#join-states}</h3>
+<p><strong>List of round participants</strong></p>
+<ul>
+<li>Account Address: <a href="https://github.com/planetarium/libplanet/blob/main/src/Libplanet.Action/State/ReservedAddresses.cs#L7">Libplanet.Action.State.ReservedAddresses.LegacyAccount</a></li>
+<li>State Address: This will have a separate address based on the Championship ID and round.
+<pre><code class="lang-cs">public Address GetArenaParticipantsAddress(int championshipId, int round)
+{
+    return ArenaParticipants.DeriveAddress(championshipId, round);
+}
+</code></pre>
+</li>
+<li>Type: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Arena/ArenaParticipants.cs">Nekoyume.Model.Arena.ArenaParticipants</a></li>
+</ul>
+<p><strong>Participant's round information</strong></p>
+<ul>
+<li>Account Address: <a href="https://github.com/planetarium/libplanet/blob/main/src/Libplanet.Action/State/ReservedAddresses.cs#L7">Libplanet.Action.State.ReservedAddresses.LegacyAccount</a></li>
+<li>State Address: This will have a separate address based on the Championship ID and round and your avatar's address.
+<pre><code class="lang-cs">public Address GetArenaInformation(Address avatarAddress, int championshipId, int round)
+{
+    ArenaInformation.DeriveAddress(avatarAddress, championshipId, round);
+}
+</code></pre>
+</li>
+<li>Type: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Arena/ArenaInformation.cs">Nekoyume.Model.Arena.ArenaInformation</a></li>
+</ul>
+<p><strong>Participant's score</strong></p>
+<ul>
+<li>Account Address: <a href="https://github.com/planetarium/libplanet/blob/main/src/Libplanet.Action/State/ReservedAddresses.cs#L7">Libplanet.Action.State.ReservedAddresses.LegacyAccount</a></li>
+<li>State Address: This will have a separate address based on the Championship ID and round and your avatar's address.
+<pre><code class="lang-cs">public Address GetArenaScore(Address avatarAddress, int championshipId, int round)
+{
+    ArenaScore.DeriveAddress(avatarAddress, championshipId, round);
+}
+</code></pre>
+</li>
+<li>Type: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Arena/ArenaScore.cs">Nekoyume.Model.Arena.ArenaScore</a></li>
+</ul>
+<h2 id="battlearenasimulator-battle">Battle(ArenaSimulator) {#battle}</h2>
+<p>The battle uses the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/BattleArena.cs">Nekoyume.Action.BattleArena</a> action and utilizes the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Arena/ArenaSimulator.cs">Nekoyume.Arena.ArenaSimulator</a> class to perform the battle.</p>
+<h3 id="tickets-battle-tickets">Tickets {#battle-tickets}</h3>
+<p>Arena tickets are required to fight battles. When you first join a round, you are automatically issued the maximum number of tickets. These tickets are issued anew to participants in that round at each round's ticket reset cycle.</p>
+<ul>
+<li>Ticket maximum: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Arena/ArenaInformation.cs#L16">Nekoyume.Model.Arena.ArenaInformation.MaxTicketCount</a></li>
+<li>Ticket reset interval: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/State/GameConfigState.cs#L20">Nekoyume.Model.State.GameConfigState.DailyArenaInterval</a></li>
+</ul>
+<p><strong>Buy Tickets</strong></p>
+<p>If you run out of tickets, you can purchase them directly to use in battle. There is a maximum amount and price of tickets that can be purchased within a round or ticket reset cycle.</p>
+<ul>
+<li>Maximum number of tickets you can purchase within a round: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L26">Nekoyume.TableData.ArenaSheet.RoundData.MaxPurchaseCount</a></li>
+<li>Maximum number of tickets you can purchase within a ticket reset cycle: <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/ArenaSheet.cs#L27">Nekoyume.TableData.ArenaSheet.RoundData.MaxPurchaseCountWithInterval</a></li>
+<li>Ticket purchase price: The purchase price of tickets is determined by a set price for each round and the number of tickets already purchased, as shown in the code below.
+<pre><code class="lang-cs">public FungibleAssetValue GetTicketPrice(
+    ArenaSheet.RoundData round,
+    int alreadyPurchasedCount)
+{
+    return GetTickgetPrice(
+        round.TicketPrice,
+        round.AdditionalTicketPrice,
+        alreadyPurchasedCount);
+}
+
+public FungibleAssetValue GetTicketPrice(
+    decimal price,
+    decimal additionalprice,
+    int alreadyPurchasedCount)
+{
+    return price.DivRem(100, out _) +
+        additionalprice.DivRem(100, out _) * alreadyPurchasedCount;
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="battle-target-limit">Battle Target Limit</h3>
+<p>In Arena, there is a limit to who you can battle. This is the score limit, see the code below.</p>
+<p><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/BattleArena.cs#L274">https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/BattleArena.cs#L274</a></p>
+<pre><code class="lang-cs:line-numbers=274">if (!ArenaHelper.ValidateScoreDifference(
+    ArenaHelper.ScoreLimits,
+    roundData.ArenaType,
+    myArenaScore.Score,
+    enemyArenaScore.Score))
+{
+    // ...
+}
+</code></pre>
+<p>In the code above, the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Arena/ArenaHelper.cs#L135">ArenaHelper.ValidateScoreDifference</a> method validates the difference between the player's and enemy's scores to determine if a battle is possible. It takes in <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Arena/ArenaHelper.cs#L50">ArenaHelper.ScoreLimits</a>, the arena type from the round data, and the player's and enemy's scores as arguments to determine if the score difference is within an acceptable range.</p>
+<p>The current score limits are shown in the table below.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">attacker score - defender Score</th>
+<th style="text-align: center;">offseason</th>
+<th style="text-align: center;">season</th>
+<th style="text-align: center;">championships</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">minimum score difference</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-100</td>
+<td style="text-align: center;">-100</td>
+<td>-100</td>
+</tr>
+<tr>
+<td style="text-align: center;">max score difference</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">200</td>
+<td style="text-align: center;">200</td>
+<td>200</td>
+</tr>
+</tbody>
+</table>
+<p>For example, when fighting in the Offseason round, you can challenge anyone to a fight with no score limit, while in the Season or Championship round, if your player avatar has a score of 2000, the opponent you can challenge must have a score between 1900 and 2200.</p>
+<h3 id="rulesdifferent-from-the-adventure-battle-rule">Rules(different from the Adventure) {#battle-rule}</h3>
+<p>Unlike the Adventure, Arena battles are fought between players(PvP). The basic battle rules are the same as for the Adventure, but see below for the differences.</p>
+<p><strong>Attack skill hits</strong>.</p>
+<p>Battles in the Arena follow different rules than in Adventure when determining whether an attack skill hits.</p>
+<ul>
+<li>See also: <a href="adventure.html#normal-attack-hits">Adventure &gt; Normal Attack Hits</a></li>
+<li>Determines the hit of all attack skills, not just <strong>normal attack</strong>.</li>
+<li>Does not take into account the level difference between attacker and defender.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Content</th>
+<th style="text-align: center;">Hit or Miss Coverage</th>
+<th style="text-align: center;">Variables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Arena</td>
+<td style="text-align: center;">All attack skills, including <strong>normal attack</strong></td>
+<td style="text-align: center;">HIT stat</td>
+</tr>
+<tr>
+<td style="text-align: center;">Adventure</td>
+<td style="text-align: center;"><strong>Normal Attack</strong></td>
+<td style="text-align: center;">Avatar Level, HIT Stat</td>
+</tr>
+</tbody>
+</table>
+<p>Below is the order in which hits are determined in the Arena.</p>
+<ul>
+<li>Get the hit status of an attack skill in the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Skill/Arena/ArenaAttackSkill.cs#L46">Nekoyume.Model.Skill.ArenaAttackSkill.ProcessDamage</a> method: <code>target.IsHit(caster)</code>.</li>
+<li>The <code>IsHit</code> method above points to <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Character/ArenaCharacter.cs#L930">Nekoyume.Model.ArenaCharacter.IsHit(ArenaCharacter)</a>.</li>
+<li>If we take a quick look at the logic of a hit in the Arena:
+<ul>
+<li>If the attacker is under the effect of a focus buff(<a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Buff/Focus.cs">Nekoyume.Model.Buff.Focus</a>), it will hit 100% of the time.
+<ul>
+<li>Otherwise, handle hits based on the result of the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Battle/HitHelper.cs#L46">Nekoyume.Battle.HitHelper.IsHitWithoutLevelCorrection</a> method.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="rewards">Rewards</h2>
+<p>Rewards in Arena battles are divided into base rewards and victory rewards.</p>
+<p><strong>Base Reward</strong></p>
+<p>Base Rewards are determined by Avatar's Arena Score and range in quantity and type based on Avatar's level.</p>
+<ul>
+<li>Rewards list:
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/WeeklyArenaRewardSheet.cs">Nekoyume.TableData.WeeklyArenaRewardSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/odin/tablesheet/WeeklyArenaRewardSheet">https://9c-board.nine-chronicles.dev/odin/tablesheet/WeeklyArenaRewardSheet</a></li>
+</ul>
+</li>
+<li>Number of rewards per Arena Score: Check out the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Arena/ArenaHelper.cs#L182">Nekoyume.Arena.ArenaHelper.GetRewardCount</a> method.
+| Score | 1000 | 1001~ | 1100~ | 1200~ | 1400~ | 1800~ |
+| :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Number of rewards | 1 | 2 | 3 | 4 | 5 | 6 |</li>
+</ul>
+<p><strong>Victory Rewards(Medals)</strong></p>
+<p>When you win an Arena battle, you receive one medal for the Championship that the round belongs to. For more information, see the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/BattleArena.cs#L446">Nekoyume.Action.BettleArena</a> action and the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Arena/ArenaHelper.cs#L60">Nekoyume.Arena.ArenaHelper.GetMedal</a> method.</p>
+<h2 id="score">Score</h2>
+<p>When you join a round, you start with a score of 1000 points(<a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Arena/ArenaScore.cs#L17">Nekoyume.Model.Arena.ArenaScore.ArenaScoreDefault</a>).<br>
+After that, the score changes through the battle, which is affected by the difference between the attacker's and defender's scores. For more information, see the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/BattleArena.cs#L454">Nekoyume.Action.BettleArena</a> action and the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Arena/ArenaHelper.cs#L160">Nekoyume.Arena.ArenaHelper.GetScores</a> method.</p>
+<h2 id="ranking">Ranking</h2>
+<p>The ranking is determined by the score in the arena. It's important to note that the ranking is not handled by the blockchain state, but by an external service.</p>
+<p><strong>Handle Ties</strong></p>
+<p>In Nine Chronicles' Arena Rankings, ties are broken by bundling them into a lower ranking. For example, if the highest score in a particular round is 2000 points and there are three ties, they will all be treated as third place.</p>
+<h2 id="actions">Actions</h2>
+<p>List of actions related to the arena:</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/JoinArena.cs">JoinArena</a>: An action to join a specific round in the Arena.</li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/BattleArena.cs">BattleArena</a>: An action in which you battle other avatars in a specific round of the Arena.</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/20241107-prepare-250/docs/articles/system/arena.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
