@@ -199,6 +199,8 @@ id,_name,item_sub_type,grade,elemental_type
 600201,Golden Dust,EquipmentMaterial,4,Normal
 600202,Ruby Dust,EquipmentMaterial,4,Normal
 600203,Emerald Dust,EquipmentMaterial,4,Normal
+600204,Star Dust,EquipmentMaterial,3,Normal
+600205,Great Star Dust,EquipmentMaterial,4,Normal
 600301,망치 노멀,EquipmentMaterial,1,Normal
 600302,망치 레어,EquipmentMaterial,2,Normal
 600303,망치 에픽,EquipmentMaterial,3,Normal
