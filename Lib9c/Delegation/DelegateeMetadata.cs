@@ -42,11 +42,8 @@ namespace Nekoyume.Delegation
                   ImmutableSortedSet<Address>.Empty,
                   delegationCurrency * 0,
                   BigInteger.Zero,
-                  false,
-                  -1L,
-                  false,
                   ImmutableSortedSet<UnbondingRef>.Empty)
-        {   
+        {
         }
 
         public DelegateeMetadata(
@@ -76,10 +73,7 @@ namespace Nekoyume.Delegation
                   ((List)bencoded[9]).Select(item => new Address(item)),
                   new FungibleAssetValue(bencoded[10]),
                   (Integer)bencoded[11],
-                  (Bencodex.Types.Boolean)bencoded[12],
-                  (Integer)bencoded[13],
-                  (Bencodex.Types.Boolean)bencoded[14],
-                  ((List)bencoded[15]).Select(item => new UnbondingRef(item)))
+                  ((List)bencoded[12]).Select(item => new UnbondingRef(item)))
         {
         }
 
@@ -98,9 +92,6 @@ namespace Nekoyume.Delegation
             IEnumerable<Address> delegators,
             FungibleAssetValue totalDelegated,
             BigInteger totalShares,
-            bool jailed,
-            long jailedUntil,
-            bool tombstoned,
             IEnumerable<UnbondingRef> unbondingRefs)
         {
             if (!totalDelegated.Currency.Equals(delegationCurrency))
@@ -138,9 +129,6 @@ namespace Nekoyume.Delegation
             Delegators = delegators.ToImmutableSortedSet();
             TotalDelegatedFAV = totalDelegated;
             TotalShares = totalShares;
-            Jailed = jailed;
-            JailedUntil = jailedUntil;
-            Tombstoned = tombstoned;
             UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
         }
 
@@ -177,12 +165,6 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; private set; }
 
-        public bool Jailed { get; internal set; }
-
-        public long JailedUntil { get; internal set; }
-
-        public bool Tombstoned { get; internal set; }
-
         public ImmutableSortedSet<UnbondingRef> UnbondingRefs { get; private set; }
 
         public List Bencoded => List.Empty
@@ -198,9 +180,6 @@ namespace Nekoyume.Delegation
             .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
             .Add(TotalDelegatedFAV.Serialize())
             .Add(TotalShares)
-            .Add(Jailed)
-            .Add(JailedUntil)
-            .Add(Tombstoned)
             .Add(new List(UnbondingRefs.Select(unbondingRef => unbondingRef.Bencoded)));
 
         IValue IBencodable.Bencoded => Bencoded;
@@ -290,7 +269,6 @@ namespace Nekoyume.Delegation
             && Delegators.SequenceEqual(delegatee.Delegators)
             && TotalDelegatedFAV.Equals(delegatee.TotalDelegatedFAV)
             && TotalShares.Equals(delegatee.TotalShares)
-            && Jailed == delegatee.Jailed
             && UnbondingRefs.SequenceEqual(delegatee.UnbondingRefs));
 
         public override int GetHashCode()

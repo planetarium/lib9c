@@ -78,12 +78,19 @@ namespace Nekoyume.ValidatorDelegation
         {
             PublicKey = new PublicKey(((Binary)bencoded[0]).ByteArray);
             IsBonded = (Bencodex.Types.Boolean)bencoded[1];
-            CommissionPercentage = (Integer)bencoded[2];
-            CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
+            Jailed = (Bencodex.Types.Boolean)bencoded[2];
+            JailedUntil = (Integer)bencoded[3];
+            Tombstoned = (Bencodex.Types.Boolean)bencoded[4];
+            CommissionPercentage = (Integer)bencoded[5];
+            CommissionPercentageLastUpdateHeight = (Integer)bencoded[6];
             DelegationChanged += OnDelegationChanged;
             Enjailed += OnEnjailed;
             Unjailed += OnUnjailed;
         }
+
+        public event EventHandler? Enjailed;
+
+        public event EventHandler? Unjailed;
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
@@ -117,6 +124,9 @@ namespace Nekoyume.ValidatorDelegation
         public List Bencoded => List.Empty
             .Add(PublicKey.Format(true))
             .Add(IsBonded)
+            .Add(Jailed)
+            .Add(JailedUntil)
+            .Add(Tombstoned)
             .Add(CommissionPercentage)
             .Add(CommissionPercentageLastUpdateHeight);
 
@@ -131,6 +141,68 @@ namespace Nekoyume.ValidatorDelegation
         public Validator Validator => new(PublicKey, Power);
 
         public FungibleAssetValue MinSelfDelegation => DelegationCurrency * 10;
+
+        public bool Jailed { get; private set; }
+
+        public long JailedUntil { get; private set; } = -1;
+
+        public bool Tombstoned { get; private set; }
+
+        public void Jail(long releaseHeight)
+        {
+            JailedUntil = releaseHeight;
+            Jailed = true;
+            Repository.SetDelegatee(this);
+            Enjailed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Unjail(long height)
+        {
+            if (!Jailed)
+            {
+                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
+            }
+
+            if (Tombstoned)
+            {
+                throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
+            }
+
+            if (JailedUntil >= height)
+            {
+                throw new InvalidOperationException("Cannot unjail before jailed until.");
+            }
+
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
+            if (MinSelfDelegation > selfDelegation)
+            {
+                throw new InvalidOperationException("The self-delegation is still below the minimum.");
+            }
+
+            JailedUntil = -1L;
+            Jailed = false;
+            Repository.SetDelegatee(this);
+            Unjailed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Tombstone()
+        {
+            Jail(long.MaxValue);
+            Tombstoned = true;
+            Repository.SetDelegatee(this);
+        }
+
+        public override BigInteger Bond(ValidatorDelegator delegator, FungibleAssetValue fav, long height)
+        {
+            if (Tombstoned)
+            {
+                throw new InvalidOperationException(
+                    "Cannot bond to tombstoned delegatee.");
+            }
+
+            return base.Bond(delegator, fav, height);
+        }
 
         public void AllocateReward(
             FungibleAssetValue rewardToAllocate,
@@ -185,17 +257,6 @@ namespace Nekoyume.ValidatorDelegation
             CommissionPercentage = percentage;
             CommissionPercentageLastUpdateHeight = height;
         }
-        public new void Unjail(long height)
-        {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
-            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
-            if (MinSelfDelegation > selfDelegation)
-            {
-                throw new InvalidOperationException("The self-delegation is still below the minimum.");
-            }
-
-            base.Unjail(height);
-        }
 
         public void OnDelegationChanged(object? sender, long height)
         {
@@ -239,6 +300,9 @@ namespace Nekoyume.ValidatorDelegation
             && Metadata.Equals(validatorDelegatee.Metadata)
             && PublicKey.Equals(validatorDelegatee.PublicKey)
             && IsBonded == validatorDelegatee.IsBonded
+            && Jailed == validatorDelegatee.Jailed
+            && JailedUntil == validatorDelegatee.JailedUntil
+            && Tombstoned == validatorDelegatee.Tombstoned
             && CommissionPercentage == validatorDelegatee.CommissionPercentage
             && CommissionPercentageLastUpdateHeight == validatorDelegatee.CommissionPercentageLastUpdateHeight;
 
