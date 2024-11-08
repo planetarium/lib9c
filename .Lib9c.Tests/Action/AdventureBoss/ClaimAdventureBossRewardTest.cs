@@ -334,7 +334,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     // 5NCG for explore raffle, 15NCG for 15% distribution
                     NcgReward = 20 * NCG,
-                    ItemReward = new Dictionary<int, int>
+                    ItemReward = new ()
                     {
                         { 600201, 248 },
                         { 600202, 18 },

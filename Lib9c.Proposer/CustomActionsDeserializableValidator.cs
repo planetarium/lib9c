@@ -19,14 +19,7 @@ namespace Nekoyume.Blockchain
 
         public bool Validate(ITransaction transaction)
         {
-            if (!(transaction.Actions is { } actions))
-            {
-                return true;
-            }
-            else
-            {
-                return actions.All(action => CanLoadAction(_nextBlockIndex, action));
-            }
+            return transaction.Actions is not { } actions || actions.All(action => CanLoadAction(_nextBlockIndex, action));
         }
 
         private bool CanLoadAction(long index, IValue value)
