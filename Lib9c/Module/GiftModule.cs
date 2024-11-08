@@ -13,14 +13,14 @@ namespace Nekoyume.Module
         {
             var account = state.GetAccountState(Addresses.ClaimedGiftIds);
             return account.GetState(avatarAddress) is List rawIds
-                ? rawIds.ToList(StateExtensions.ToInteger)
+                ? rawIds.ToList(serialized => (int)(Integer)serialized)
                 : new List<int>();
         }
 
         public static IWorld SetClaimedGifts(this IWorld world, Address avatarAddress, List<int> claimedGiftIds)
         {
             var account = world.GetAccount(Addresses.ClaimedGiftIds);
-            account = account.SetState(avatarAddress, claimedGiftIds.Aggregate(List.Empty, (current, giftId) => current.Add(giftId.Serialize())));
+            account = account.SetState(avatarAddress, claimedGiftIds.Aggregate(List.Empty, (current, giftId) => current.Add((Integer)giftId)));
             return world.SetAccount(Addresses.ClaimedGiftIds, account);
         }
     }
