@@ -276,10 +276,14 @@ namespace Nekoyume.Action
                     currency);
                 if (cost.Sign > 0)
                 {
+                    var arenaSheet = states.GetSheet<ArenaSheet>();
+                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                    var feeStoreAddress =
+                        Nekoyume.Arena.ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
                     states = states.TransferAsset(
                         context,
                         context.Signer,
-                        Addresses.EventDungeon,
+                        feeStoreAddress,
                         cost);
                 }
 
