@@ -65,7 +65,6 @@ jobs:
 
           sed -i -E 's|<TargetFramework>.*</TargetFramework>|<TargetFramework>net5.0</TargetFramework>|' Lib9c*/*.csproj
           sed -i -E 's|<ImplicitUsings>.*</ImplicitUsings>|<ImplicitUsings>disable</ImplicitUsings>|' Lib9c*/*.csproj Libplanet*/*.csproj
-          sed -i -E 's|\[MaybeNullWhen\(false\)] out TValue value|out TValue value|' Lib9c/TableData/Sheet.cs
           sed -i -E 's|public bool TryGetValue\(TKey key, out TValue value, bool throwException\)|public bool TryGetValue\(TKey key, out TValue? value, bool throwException\)|' Lib9c/TableData/Sheet.cs
       - name: build
         run: dotnet build --self-contained=false
