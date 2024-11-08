@@ -9,6 +9,7 @@
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
     <VersionPrefix>1.19.0</VersionPrefix>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

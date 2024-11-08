@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
+    <LangVersion>9</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
