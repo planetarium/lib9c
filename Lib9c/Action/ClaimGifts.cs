@@ -13,24 +13,25 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// An action to claim gifts using the Gift Id. <br/>
+    /// Refer <see cref="ClaimableGiftsSheet"/> to find gifts data.<br/>
+    /// It can only claim once at the specified block index.
+    /// </summary>
     [ActionType(ActionTypeText)]
     public class ClaimGifts : GameAction
     {
         private const string ActionTypeText = "claim_gifts";
 
+        /// <summary>
+        /// The address of the avatar claiming the gift.
+        /// </summary>
         public Address AvatarAddress;
+        /// <summary>
+        /// The ID of the gift to be claimed. This ID is used in the <see cref="ClaimableGiftsSheet"/>.
+        /// </summary>
         public int GiftId;
         private const string GiftIdKey = "gi";
-
-        public ClaimGifts(Address avatarAddress, int giftId)
-        {
-            AvatarAddress = avatarAddress;
-            GiftId = giftId;
-        }
-
-        public ClaimGifts()
-        {
-        }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             ImmutableDictionary<string, IValue>.Empty
@@ -43,6 +44,10 @@ namespace Nekoyume.Action
             GiftId = plainValue[GiftIdKey].ToInteger();
         }
 
+        /// <exception cref="FailedLoadStateException">Thrown when the inventory could not be loaded.</exception>
+        /// <exception cref="SheetRowNotFoundException">Thrown when the gift ID is not found in the <see cref="ClaimableGiftsSheet"/>.</exception>
+        /// <exception cref="ClaimableGiftsNotAvailableException">Thrown when the gift is not available at the current block index.</exception>
+        /// <exception cref="AlreadyClaimedGiftsException">Thrown when the gift has already been claimed.</exception>
         public override IWorld Execute(IActionContext context)
         {
             context.UseGas(1);
