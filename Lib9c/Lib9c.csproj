@@ -13,7 +13,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
