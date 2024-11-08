@@ -36,16 +36,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj">
+    <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(UseLocalLibplanet)">
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Libplanet.Analyzers" Version="$(LibplanetVersion)">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Analyzer</OutputItemType>
+      <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(UseLocalLibplanet)">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
-    <ProjectReference Include="..\.Libplanet\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
+    <ProjectReference Include="$(LibplanetDirectory)\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <OutputItemType>Analyzer</OutputItemType>
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
     </ProjectReference>
-    <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

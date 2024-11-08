@@ -111,3 +111,9 @@ This branch naming rule is not forced but highly recommended to recognize which 
 - date (e.g., YYYYMMDD)
 - revision (e.g., some digits)
 - related base version (e.g., v200210)
+
+### Work with your local [Libplanet]
+
+If you want to work with your local [Libplanet], you can fill `LibplanetDirectory` property in `Directory.Build.props` file.
+
+When making a pull request, please do not include the `LibplanetDirectory` change.

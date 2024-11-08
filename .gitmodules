@@ -1,3 +1,0 @@
-[submodule ".Libplanet"]
-	path = .Libplanet
-	url = https://github.com/planetarium/libplanet.git
