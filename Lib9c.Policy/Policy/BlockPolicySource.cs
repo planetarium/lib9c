@@ -86,6 +86,18 @@ namespace Nekoyume.Blockchain.Policy
                     maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Heimdall,
                     maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.HeimdallInternal
                 ),
+                Planet.Thor => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Thor,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Thor,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Thor,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.Thor
+                ),
+                Planet.ThorInternal => GetPolicy(
+                    maxTransactionsBytesPolicy: MaxTransactionsBytesPolicy.Thor,
+                    minTransactionsPerBlockPolicy: MinTransactionsPerBlockPolicy.Thor,
+                    maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy.Thor,
+                    maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy.ThorInternal
+                ),
                 _ => throw new ArgumentException(
                     $"Can't retrieve policy for given planet ({planet})",
                     nameof(planet)

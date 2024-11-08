@@ -23,11 +23,17 @@ namespace Nekoyume.Blockchain.Policy
         public static IVariableSubPolicy<int> Heimdall =>
             Default;
 
+        public static IVariableSubPolicy<int> Thor =>
+            Default;
+
         // Note: For internal testing.
         public static IVariableSubPolicy<int> OdinInternal =>
             Default;
 
         public static IVariableSubPolicy<int> HeimdallInternal =>
+            Default;
+
+        public static IVariableSubPolicy<int> ThorInternal =>
             Default;
     }
 }

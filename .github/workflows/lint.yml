@@ -9,3 +9,22 @@ jobs:
             - uses: actions/checkout@v4
             - name: Check typos
               uses: crate-ci/typos@v1.15.5
+
+    local-libplanet:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Check LibplanetDirectory is empty
+              run: grep -q '<LibplanetDirectory></LibplanetDirectory>' Directory.Build.props
+
+    no-submodules:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Check if there is submodule
+              run: |
+                set -ev
+                count=$(git submodule status | wc -l)
+                if [ "$count" -gt 0 ]; then
+                  exit 1
+                fi
