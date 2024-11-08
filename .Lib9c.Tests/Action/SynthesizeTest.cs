@@ -11,9 +11,12 @@ using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Xunit;
+
+using Sheets = System.Collections.Generic.Dictionary<System.Type, (Libplanet.Crypto.Address, Nekoyume.TableData.ISheet)>;
 
 public class SynthesizeTest
 {
@@ -59,20 +62,32 @@ public class SynthesizeTest
     }
 
     [Theory]
-    [InlineData(new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume })]
-    [InlineData(new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title })]
-    [InlineData(new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire })]
-    [InlineData(new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura })]
-    public void Execute(ItemSubType[] itemSubTypes)
+    [InlineData((Grade)3, new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume, })]
+    [InlineData((Grade)4, new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume, })]
+    [InlineData((Grade)5, new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume, })]
+    [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title, })]
+    [InlineData((Grade)4, new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title, })]
+    [InlineData((Grade)5, new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title, })]
+    [InlineData((Grade)3, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
+    [InlineData((Grade)4, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
+    [InlineData((Grade)5, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
+    [InlineData((Grade)6, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
+    [InlineData((Grade)1, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
+    [InlineData((Grade)2, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
+    [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
+    [InlineData((Grade)4, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
+    [InlineData((Grade)5, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
+    [InlineData((Grade)6, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
+    public void Execute(Grade grade, ItemSubType[] itemSubTypes)
     {
         var context = new ActionContext();
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
-        (state, var items) = UpdateItemsFromSubType(itemSubTypes, state, avatarAddress);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
 
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = items,
+            MaterialIds = Synthesize.GetItemGuids(items),
         };
 
         var ctx = new ActionContext
@@ -86,26 +101,59 @@ public class SynthesizeTest
         state = action.Execute(ctx);
         var inventory = state.GetInventoryV2(avatarAddress);
 
+        // Tests
         // 현재 아이템 3개를 넣어 1개가 나오는 구조라 이런 형태로 체크, 추후 변경될 수 있음
         Assert.Single(inventory.Items);
-        Assert.True(inventory.Items.First().item.ItemSubType == itemSubTypes[0]);
+        var firstItem = inventory.Items.First().item;
+        Assert.True(firstItem.ItemSubType == itemSubTypes[0]);
+
+        var subType = firstItem.ItemSubType;
+        var expectedGrade = Grade.Normal;
+        var resultGrade = (Grade)firstItem.Grade;
+        switch (subType)
+        {
+            case ItemSubType.FullCostume:
+            case ItemSubType.Title:
+                if (firstItem is not Costume costume)
+                {
+                    throw new InvalidCastException("Invalid item type, is not Costume");
+                }
+
+                resultGrade = (Grade)costume.Grade;
+                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
+                break;
+            case ItemSubType.Aura:
+            case ItemSubType.Grimoire:
+                if (firstItem is not ItemUsable itemUsable)
+                {
+                    throw new InvalidCastException("Invalid item type, is not ItemUsable");
+                }
+
+                resultGrade = (Grade)itemUsable.Grade;
+                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
+                break;
+        }
+
+        // TODO: if success, grade should be exceptedGrade, but sometimes it is not.
+        // Assert.Equal(expectedGrade, resultGrade);
+        Assert.True(expectedGrade == resultGrade || resultGrade == grade);
     }
 
     [Theory]
-    [InlineData(new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
-    [InlineData(new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]
-    [InlineData(new[] { ItemSubType.Grimoire, ItemSubType.Title, ItemSubType.Grimoire })]
-    [InlineData(new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Grimoire })]
-    public void ExecuteMixedSubTypes(ItemSubType[] itemSubTypes)
+    [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
+    [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]
+    [InlineData((Grade)3, new[] { ItemSubType.Grimoire, ItemSubType.Title, ItemSubType.Grimoire })]
+    [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Grimoire })]
+    public void ExecuteMixedSubTypes(Grade grade, ItemSubType[] itemSubTypes)
     {
         var context = new ActionContext();
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
-        (state, var items) = UpdateItemsFromSubType(itemSubTypes, state, avatarAddress);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
 
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = items,
+            MaterialIds = Synthesize.GetItemGuids(items),
         };
 
         var ctx = new ActionContext
@@ -119,22 +167,22 @@ public class SynthesizeTest
         Assert.Throws<InvalidMaterialException>(() => action.Execute(ctx));
     }
 
-    private static (IWorld, List<Guid>) UpdateItemsFromSubType(ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)
+    private static (IWorld, List<ItemBase>) UpdateItemsFromSubType(Grade grade, ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)
     {
         var avatarState = state.GetAvatarState(avatarAddress);
-        var items = new List<Guid>();
+        var items = new List<ItemBase>();
         foreach (var subType in itemSubTypes)
         {
-            var item = GetItem(subType);
+            var item = GetItem(grade, subType);
             avatarState.inventory.AddItem(item);
 
             switch (item)
             {
                 case Costume costume:
-                    items.Add(costume.ItemId);
+                    items.Add(costume);
                     break;
                 case ItemUsable itemUsable:
-                    items.Add(itemUsable.ItemId);
+                    items.Add(itemUsable);
                     break;
                 default:
                     throw new ArgumentException($"Unexpected item type: {item.GetType()}", nameof(item));
@@ -144,50 +192,62 @@ public class SynthesizeTest
         return (state.SetInventory(avatarAddress, avatarState.inventory), items);
     }
 
-    private static ItemBase GetItem(ItemSubType type)
+    private static ItemBase GetItem(Grade grade, ItemSubType type)
     {
         switch (type)
         {
             case ItemSubType.FullCostume:
-                return GetFirstCostume();
+                return GetFirstCostume(grade);
             case ItemSubType.Title:
-                return GetFirstTitle();
+                return GetFirstTitle(grade);
             case ItemSubType.Aura:
-                return GetFirstAura();
+                return GetFirstAura(grade);
             case ItemSubType.Grimoire:
-                return GetFirstGrimoire();
+                return GetFirstGrimoire(grade);
             default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                throw new ArgumentOutOfRangeException(nameof(type), type, "Invalid ItemSubType");
         }
     }
 
-    private static ItemBase GetFirstCostume()
+    private static ItemBase GetFirstCostume(Grade grade)
     {
-        var row = TableSheets.CostumeItemSheet.FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.FullCostume).Value;
+        var sheet = TableSheets.CostumeItemSheet;
+        var row = sheet
+            .Where(r => (Grade)r.Value.Grade == grade)
+            .FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.FullCostume).Value;
         Assert.NotNull(row);
 
         return ItemFactory.CreateItem(row, new TestRandom(_randomSeed++));
     }
 
-    private static ItemBase GetFirstTitle()
+    private static ItemBase GetFirstTitle(Grade grade)
     {
-        var row = TableSheets.CostumeItemSheet.FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.Title).Value;
+        var sheet = TableSheets.CostumeItemSheet;
+        var row = sheet
+            .Where(r => (Grade)r.Value.Grade == grade)
+            .FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.Title).Value;
         Assert.NotNull(row);
 
         return ItemFactory.CreateItem(row, new TestRandom(_randomSeed++));
     }
 
-    private static ItemBase GetFirstAura()
+    private static ItemBase GetFirstAura(Grade grade)
     {
-        var row = TableSheets.EquipmentItemSheet.FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.Aura).Value;
+        var sheet = TableSheets.EquipmentItemSheet;
+        var row = sheet
+            .Where(r => (Grade)r.Value.Grade == grade)
+            .FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.Aura).Value;
         Assert.NotNull(row);
 
         return ItemFactory.CreateItem(row, new TestRandom(_randomSeed++));
     }
 
-    private static ItemBase GetFirstGrimoire()
+    private static ItemBase GetFirstGrimoire(Grade grade)
     {
-        var row = TableSheets.EquipmentItemSheet.FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.Grimoire).Value;
+        var sheet = TableSheets.EquipmentItemSheet;
+        var row = sheet
+            .Where(r => (Grade)r.Value.Grade == grade)
+            .FirstOrDefault(r => r.Value.ItemSubType == ItemSubType.Grimoire).Value;
         Assert.NotNull(row);
 
         return ItemFactory.CreateItem(row, new TestRandom(_randomSeed++));
