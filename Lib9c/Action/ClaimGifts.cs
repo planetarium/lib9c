@@ -100,7 +100,10 @@ namespace Nekoyume.Action
             var itemSheet = sheets.GetItemSheet();
             foreach (var (itemId, quantity) in giftRow.Items)
             {
-                var item = ItemFactory.CreateItem(itemSheet[itemId], random);
+                var itemRow = itemSheet[itemId];
+                var item = itemRow is MaterialItemSheet.Row materialItemRow
+                    ? ItemFactory.CreateTradableMaterial(materialItemRow)
+                    : ItemFactory.CreateItem(itemRow, random);
                 if (item is INonFungibleItem)
                 {
                     foreach (var _ in Enumerable.Range(0, quantity))
