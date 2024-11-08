@@ -50,15 +50,13 @@ namespace Nekoyume.Action
             var random = context.GetRandom();
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
-            var avatarState = states.GetAvatarState(AvatarAddress,
-                getWorldInformation: false,
-                getQuestList: false);
-            if (avatarState is null)
+            var inventory = states.GetInventoryV2(AvatarAddress);
+            if (inventory is null)
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
                     addressesHex,
-                    typeof(AvatarState),
+                    typeof(Inventory),
                     AvatarAddress);
             }
 
@@ -102,12 +100,12 @@ namespace Nekoyume.Action
                 {
                     foreach (var _ in Enumerable.Range(0, quantity))
                     {
-                        avatarState.inventory.AddItem(item);
+                        inventory.AddItem(item);
                     }
                 }
                 else
                 {
-                    avatarState.inventory.AddItem(item, quantity);
+                    inventory.AddItem(item, quantity);
                 }
             }
 
@@ -115,7 +113,7 @@ namespace Nekoyume.Action
 
             return states
                 .SetClaimedGifts(AvatarAddress, claimedGiftIds)
-                .SetAvatarState(AvatarAddress, avatarState, setWorldInformation: false, setQuestList: false);
+                .SetInventory(AvatarAddress, inventory);
         }
     }
 }
