@@ -39,7 +39,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             return ValidatorsInfos
                 .Where(item => item.VoteFlag == VoteFlag.PreCommit)
                 .Where(item => validators.Any(v => v.PublicKey.Equals(item.Key.PublicKey)))
-                .Take(ValidatorList.MaxBondedSetSize)
+                .Take(ValidatorList.MaxActiveSetSize)
                 .First()
                 .Key;
         }
@@ -191,12 +191,12 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         world = EnsurePromotedValidators(world, validatorKeys, validatorCashes, height++);
         world = world.MintAsset(actionContext, Addresses.RewardPool, totalReward);
         var repository = new ValidatorRepository(world, actionContext);
-        var bondedSet = repository.GetValidatorList().GetBonded();
-        var proposerKey = fixture.GetProposerKey(bondedSet);
+        var activeSet = repository.GetValidatorList().ActiveSet();
+        var proposerKey = fixture.GetProposerKey(activeSet);
         world = EnsureProposer(world, proposerKey, height++);
 
         // Calculate expected values for comparison with actual values.
-        var votes = CreateVotes(validatorInfos, bondedSet, height - 1);
+        var votes = CreateVotes(validatorInfos, activeSet, height - 1);
         var expectedProposerReward
             = CalculatePropserReward(totalReward) + CalculateBonusPropserReward(votes, totalReward);
         var expectedValidatorsReward = totalReward - expectedProposerReward;

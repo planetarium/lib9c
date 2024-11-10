@@ -38,7 +38,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedValidators = expectedRepository.GetValidatorList()
-            .GetBonded().OrderBy(item => item.OperatorAddress).ToList();
+            .ActiveSet().OrderBy(item => item.OperatorAddress).ToList();
         actionContext = new ActionContext
         {
             BlockIndex = height,
@@ -75,7 +75,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedValidators = expectedRepository.GetValidatorList()
-            .GetBonded().OrderBy(item => item.OperatorAddress).ToList();
+            .ActiveSet().OrderBy(item => item.OperatorAddress).ToList();
         var updateValidators = new UpdateValidators();
         world = EnsureTombstonedValidator(world, validatorKeys[0], height);
         actionContext = new ActionContext
@@ -89,7 +89,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidators = actualRepository.GetValidatorList()
-            .GetBonded().OrderBy(item => item.OperatorAddress).ToList();
+            .ActiveSet().OrderBy(item => item.OperatorAddress).ToList();
         var tombstonedValidator = actualRepository.GetValidatorDelegatee(validatorKeys[0].Address);
 
         Assert.True(tombstonedValidator.Tombstoned);

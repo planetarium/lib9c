@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -21,13 +22,14 @@ namespace Nekoyume.ValidatorDelegation
             PublicKey publicKey,
             BigInteger commissionPercentage,
             long creationHeight,
+            IEnumerable<Currency> rewardCurrencies,
             ValidatorRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
                   delegationCurrency: ValidatorDelegationCurrency,
-                  rewardCurrency: ValidatorRewardCurrency,
-                  delegationPoolAddress: UnbondedPoolAddress,
+                  rewardCurrencies: rewardCurrencies,
+                  delegationPoolAddress: InactiveDelegationPoolAddress,
                   rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
@@ -49,7 +51,7 @@ namespace Nekoyume.ValidatorDelegation
             }
 
             PublicKey = publicKey;
-            IsBonded = false;
+            IsActive = false;
             CommissionPercentage = commissionPercentage;
             CommissionPercentageLastUpdateHeight = creationHeight;
             DelegationChanged += OnDelegationChanged;
@@ -77,7 +79,7 @@ namespace Nekoyume.ValidatorDelegation
                   repository: repository)
         {
             PublicKey = new PublicKey(((Binary)bencoded[0]).ByteArray);
-            IsBonded = (Bencodex.Types.Boolean)bencoded[1];
+            IsActive = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
             DelegationChanged += OnDelegationChanged;
@@ -116,7 +118,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public List Bencoded => List.Empty
             .Add(PublicKey.Format(true))
-            .Add(IsBonded)
+            .Add(IsActive)
             .Add(CommissionPercentage)
             .Add(CommissionPercentageLastUpdateHeight);
 
@@ -124,7 +126,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public PublicKey PublicKey { get; }
 
-        public bool IsBonded { get; private set; }
+        public bool IsActive { get; private set; }
 
         public BigInteger Power => TotalDelegated.RawValue;
 
@@ -197,6 +199,28 @@ namespace Nekoyume.ValidatorDelegation
             base.Unjail(height);
         }
 
+        public void Activate()
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            IsActive = true;
+            Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
+            repository.TransferAsset(
+                InactiveDelegationPoolAddress,
+                ActiveDelegationPoolAddress,
+                repository.GetBalance(InactiveDelegationPoolAddress, DelegationCurrency));
+        }
+
+        public void Deactivate()
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            IsActive = false;
+            Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
+            repository.TransferAsset(
+                ActiveDelegationPoolAddress,
+                InactiveDelegationPoolAddress,
+                repository.GetBalance(ActiveDelegationPoolAddress, DelegationCurrency));
+        }
+
         public void OnDelegationChanged(object? sender, long height)
         {
             ValidatorRepository repository = (ValidatorRepository)Repository;
@@ -238,7 +262,7 @@ namespace Nekoyume.ValidatorDelegation
             => other is ValidatorDelegatee validatorDelegatee
             && Metadata.Equals(validatorDelegatee.Metadata)
             && PublicKey.Equals(validatorDelegatee.PublicKey)
-            && IsBonded == validatorDelegatee.IsBonded
+            && IsActive == validatorDelegatee.IsActive
             && CommissionPercentage == validatorDelegatee.CommissionPercentage
             && CommissionPercentageLastUpdateHeight == validatorDelegatee.CommissionPercentageLastUpdateHeight;
 
@@ -251,14 +275,14 @@ namespace Nekoyume.ValidatorDelegation
         public override int GetHashCode()
             => HashCode.Combine(Address, AccountAddress);
 
-        public static Address BondedPoolAddress => new Address(
+        public static Address ActiveDelegationPoolAddress => new Address(
             ImmutableArray.Create<byte>(
                 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x42));
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x41));
 
-        public static Address UnbondedPoolAddress => new Address(
+        public static Address InactiveDelegationPoolAddress => new Address(
             ImmutableArray.Create<byte>(
                 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55));
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x49));
     }
 }

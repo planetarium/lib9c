@@ -158,7 +158,7 @@ namespace Nekoyume.Delegation
 
         public ImmutableHashSet<Currency> RewardCurrencies { get; }
 
-        public Address DelegationPoolAddress { get; }
+        public Address DelegationPoolAddress { get; internal set; }
 
         public Address RewardPoolAddress { get; }
 

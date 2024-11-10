@@ -1,7 +1,8 @@
+#nullable enable
+using System.Collections.Immutable;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
-using System.Collections.Immutable;
 
 namespace Nekoyume.ValidatorDelegation
 {

@@ -42,15 +42,15 @@ namespace Nekoyume.ValidatorDelegation
 
         public ImmutableList<Validator> Validators { get; }
 
-        public static int MaxBondedSetSize => 100;
+        public static int MaxActiveSetSize => 100;
 
         public List Bencoded => new List(Validators.Select(v => v.Bencoded));
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public List<Validator> GetBonded() => Validators.Take(MaxBondedSetSize).ToList();
+        public List<Validator> ActiveSet() => Validators.Take(MaxActiveSetSize).ToList();
 
-        public List<Validator> GetUnbonded() => Validators.Skip(MaxBondedSetSize).ToList();
+        public List<Validator> InActiveSet() => Validators.Skip(MaxActiveSetSize).ToList();
 
         public ValidatorList SetValidator(Validator validator)
             => RemoveValidator(validator.PublicKey).AddValidator(validator);
