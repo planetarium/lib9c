@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -18,7 +19,7 @@ namespace Nekoyume.Delegation
 
         Currency DelegationCurrency { get; }
 
-        Currency RewardCurrency { get; }
+        ImmutableHashSet<Currency> RewardCurrencies { get; }
 
         Address DelegationPoolAddress { get; }
 
