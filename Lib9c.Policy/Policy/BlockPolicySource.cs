@@ -135,6 +135,7 @@ namespace Nekoyume.Blockchain.Policy
                 policyActionsRegistry: new PolicyActionsRegistry(
                     beginBlockActions: new IAction[] {
                         new SlashValidator(),
+                        new AllocateGuildReward(),
                         new AllocateReward(),
                     }.ToImmutableArray(),
                     endBlockActions: new IAction[] {

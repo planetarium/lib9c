@@ -59,7 +59,6 @@ namespace Nekoyume.Action.Guild.Migration
                 guildAddress,
                 legacyGuild.GuildMasterAddress,
                 ValidatorConfig.PlanetariumValidatorAddress,
-                Currencies.GuildGold,
                 repository);
             repository.SetGuild(guild);
 

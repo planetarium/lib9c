@@ -6,9 +6,12 @@ using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
+using Libplanet.Types.Blocks;
+using Nekoyume.Module;
+using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
 using Nekoyume.ValidatorDelegation;
 using Nekoyume.Module.ValidatorDelegation;
-using Libplanet.Types.Blocks;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -27,116 +30,147 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
-            var rewardCurrency = ValidatorDelegatee.ValidatorRewardCurrency;
-            var proposerInfo = repository.GetProposerInfo();
+            var rewardCurrency = world.GetGoldCurrency();
+            var repository = new GuildRepository(world, context);
 
             if (context.LastCommit is BlockCommit lastCommit)
             {
-                DistributeProposerReward(
-                    repository,
-                    context,
-                    rewardCurrency,
-                    proposerInfo,
-                    lastCommit.Votes);
+                var validatorSetPower = lastCommit.Votes.Aggregate(
+                    BigInteger.Zero,
+                    (total, next)
+                        => total + (next.ValidatorPower ?? BigInteger.Zero));
 
-                DistributeValidatorReward(
-                    repository,
-                    context,
-                    rewardCurrency,
-                    lastCommit.Votes);
-            }
-
-            var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
-
-            if (communityFund.Sign > 0)
-            {
-                repository.TransferAsset(
-                    Addresses.RewardPool,
-                    Addresses.CommunityPool,
-                    communityFund);
+                DistributeValidator(repository, rewardCurrency, validatorSetPower, lastCommit.Votes);
+                var validatorRepository = new ValidatorRepository(repository.World, context);
+                DistributeGuild(validatorRepository, rewardCurrency, validatorSetPower, lastCommit.Votes);
+                repository.UpdateWorld(validatorRepository.World);
+                DistributeGuildParticipant(repository, rewardCurrency, validatorSetPower, lastCommit.Votes);
             }
 
             return repository.World;
         }
 
-        internal static void DistributeProposerReward(
-            ValidatorRepository repository,
-            IActionContext ctx,
+        private static void DistributeValidator(
+            GuildRepository repository,
             Currency rewardCurrency,
-            ProposerInfo proposerInfo,
+            BigInteger validatorSetPower,
             IEnumerable<Vote> lastVotes)
         {
-            FungibleAssetValue blockReward = repository.GetBalance(
-                Addresses.RewardPool, rewardCurrency);
+            FungibleAssetValue reward
+                = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
-            if (proposerInfo.BlockIndex != ctx.BlockIndex - 1)
+            if (reward.Sign <= 0)
             {
                 return;
             }
 
-            if (blockReward.Sign <= 0)
+            if (validatorSetPower == BigInteger.Zero)
             {
                 return;
             }
 
-            BigInteger votePowerNumerator
-                = lastVotes.Aggregate(
-                    BigInteger.Zero,
-                    (total, next)
-                        => total +
-                            (next.Flag == VoteFlag.PreCommit
-                                ? next.ValidatorPower ?? BigInteger.Zero
-                                : BigInteger.Zero));
+            var validatorReward = reward.DivRem(10).Quotient;
 
-            BigInteger votePowerDenominator
-                = lastVotes.Aggregate(
-                    BigInteger.Zero,
-                    (total, next)
-                        => total + (next.ValidatorPower ?? BigInteger.Zero));
-
-            if (votePowerDenominator == BigInteger.Zero)
+            foreach (Vote vote in lastVotes)
             {
-                return;
-            }
+                if (vote.Flag == VoteFlag.Null || vote.Flag == VoteFlag.Unknown)
+                {
+                    continue;
+                }
 
-            var baseProposerReward
-                = (blockReward * ValidatorDelegatee.BaseProposerRewardPercentage)
-                .DivRem(100).Quotient;
-            var bonusProposerReward
-                = (blockReward * votePowerNumerator * ValidatorDelegatee.BonusProposerRewardPercentage)
-                .DivRem(votePowerDenominator * 100).Quotient;
-            FungibleAssetValue proposerReward = baseProposerReward + bonusProposerReward;
+                BigInteger validatorPower = vote.ValidatorPower ?? BigInteger.Zero;
+                if (validatorPower == BigInteger.Zero)
+                {
+                    continue;
+                }
 
-            if (proposerReward.Sign > 0)
-            {
-                repository.TransferAsset(
-                    Addresses.RewardPool,
-                    proposerInfo.Proposer,
-                    proposerReward);
+                var validatorAddress = vote.ValidatorPublicKey.Address;
+                if (!repository.TryGetValidatorDelegateeForGuild(
+                    validatorAddress, out var validatorDelegatee))
+                {
+                    continue;
+                }
+
+
+                FungibleAssetValue rewardEach
+                    = (validatorReward * validatorPower).DivRem(validatorSetPower).Quotient;
+
+                if (rewardEach.Sign > 0)
+                {
+                    repository.TransferAsset(Addresses.RewardPool, validatorAddress, rewardEach);
+                }
             }
         }
 
-        internal static void DistributeValidatorReward(
+        private static void DistributeGuild(
             ValidatorRepository repository,
-            IActionContext ctx,
             Currency rewardCurrency,
+            BigInteger validatorSetPower,
             IEnumerable<Vote> lastVotes)
         {
-            long blockHeight = ctx.BlockIndex;
+            long blockHeight = repository.ActionContext.BlockIndex;
 
-            FungibleAssetValue rewardToAllocate
+            FungibleAssetValue reward
                 = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
-            if (rewardToAllocate.Sign <= 0)
+            if (reward.Sign <= 0)
             {
                 return;
             }
 
-            BigInteger validatorSetPower
-                = lastVotes.Aggregate(
-                    BigInteger.Zero,
-                    (total, next) => total + (next.ValidatorPower ?? BigInteger.Zero));
+            if (validatorSetPower == BigInteger.Zero)
+            {
+                return;
+            }
+
+            var guildReward = reward.DivRem(10).Quotient;
+
+            foreach (Vote vote in lastVotes)
+            {
+                if (vote.Flag == VoteFlag.Null || vote.Flag == VoteFlag.Unknown)
+                {
+                    continue;
+                }
+
+                BigInteger validatorPower = vote.ValidatorPower ?? BigInteger.Zero;
+                if (validatorPower == BigInteger.Zero)
+                {
+                    continue;
+                }
+
+                var validatorAddress = vote.ValidatorPublicKey.Address;
+                if (!repository.TryGetValidatorDelegatee(
+                    validatorAddress, out var validatorDelegatee))
+                {
+                    continue;
+                }
+
+
+                FungibleAssetValue rewardEach
+                    = (guildReward * validatorPower).DivRem(validatorSetPower).Quotient;
+
+                if (rewardEach.Sign > 0)
+                {
+                    repository.TransferAsset(
+                        Addresses.RewardPool, validatorDelegatee.RewardPoolAddress, rewardEach);
+                    validatorDelegatee.CollectRewards(blockHeight);
+                }
+            }
+        }
+
+        private static void DistributeGuildParticipant(
+            GuildRepository repository,
+            Currency rewardCurrency,
+            BigInteger validatorSetPower,
+            IEnumerable<Vote> lastVotes)
+        {
+            FungibleAssetValue reward
+                = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
+
+            if (reward.Sign <= 0)
+            {
+                return;
+            }
 
             if (validatorSetPower == BigInteger.Zero)
             {
@@ -150,25 +184,26 @@ namespace Nekoyume.Action.ValidatorDelegation
                     continue;
                 }
 
-                if (!repository.TryGetValidatorDelegatee(
-                    vote.ValidatorPublicKey.Address, out var validatorDelegatee))
-                {
-                    continue;
-                }
-
                 BigInteger validatorPower = vote.ValidatorPower ?? BigInteger.Zero;
-
                 if (validatorPower == BigInteger.Zero)
                 {
                     continue;
                 }
 
-                validatorDelegatee.AllocateReward(
-                    rewardToAllocate,
-                    validatorPower,
-                    validatorSetPower,
-                    Addresses.RewardPool,
-                    blockHeight);
+                var validatorAddress = vote.ValidatorPublicKey.Address;
+                if (!repository.TryGetValidatorDelegateeForGuild(
+                    validatorAddress, out var validatorDelegatee))
+                {
+                    continue;
+                }
+
+                FungibleAssetValue rewardEach
+                    = (reward * validatorPower).DivRem(validatorSetPower).Quotient;
+
+                if (rewardEach.Sign > 0)
+                {
+                    repository.TransferAsset(Addresses.RewardPool, validatorDelegatee.RewardPoolAddress, rewardEach);
+                }
             }
         }
     }

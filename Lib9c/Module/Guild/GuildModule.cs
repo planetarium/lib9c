@@ -1,15 +1,14 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Lib9c;
-using Libplanet.Action.State;
 using Libplanet.Action;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
-using Nekoyume.TypedAddress;
-using Libplanet.Crypto;
-using Nekoyume.ValidatorDelegation;
 using Nekoyume.Module.ValidatorDelegation;
+using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.Guild
 {
@@ -57,8 +56,7 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("The validator does not exist.");
             }
 
-            var guild = new Model.Guild.Guild(
-                guildAddress, signer, validatorAddress, repository.World.GetGoldCurrency(), repository);
+            var guild = new Model.Guild.Guild(guildAddress, signer, validatorAddress, repository);
             repository.SetGuild(guild);
             repository.JoinGuild(guildAddress, signer);
 
@@ -103,17 +101,6 @@ namespace Nekoyume.Module.Guild
                 repository.World.MutateAccount(
                     Addresses.Guild, account => account.RemoveState(guildAddress)));
             repository.RemoveBanList(guildAddress);
-
-            return repository;
-        }
-
-        public static GuildRepository CollectRewardGuild(
-            this GuildRepository repository,
-            GuildAddress guildAddress)
-        {
-            var guild = repository.GetGuild(guildAddress);
-            guild.CollectRewards(repository.ActionContext.BlockIndex);
-            repository.SetGuild(guild);
 
             return repository;
         }

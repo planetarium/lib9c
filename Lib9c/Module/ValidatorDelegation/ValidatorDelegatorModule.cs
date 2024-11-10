@@ -24,8 +24,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         {
             var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
-            var validatorDelegator = repository.GetValidatorDelegator(
-                delegatorAddress, rewardAddress);
+            var validatorDelegator = repository.GetValidatorDelegator(delegatorAddress);
             var validatorDelegatee = repository.GetValidatorDelegatee(validatorAddress);
             validatorDelegator.Delegate(validatorDelegatee, fav, context.BlockIndex);
 
@@ -46,8 +45,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         {
             var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
-            var validatorDelegator = repository.GetValidatorDelegator(
-                delegatorAddress, rewardAddress);
+            var validatorDelegator = repository.GetValidatorDelegator(delegatorAddress);
             var validatorDelegatee = repository.GetValidatorDelegatee(validatorAddress);
             validatorDelegator.Undelegate(validatorDelegatee, share, context.BlockIndex);
 
@@ -70,8 +68,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         {
             var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
-            var validatorDelegator = repository.GetValidatorDelegator(
-                delegatorAddress, rewardAddress);
+            var validatorDelegator = repository.GetValidatorDelegator(delegatorAddress);
             var srcValidatorDelegatee = repository.GetValidatorDelegatee(srcValidatorAddress);
             var dstValidatorDelegatee = repository.GetValidatorDelegatee(dstValidatorAddress);
             validatorDelegator.Redelegate(srcValidatorDelegatee, dstValidatorDelegatee, share, context.BlockIndex);
@@ -91,8 +88,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         {
             var context = repository.ActionContext;
             var delegatorAddress = context.Signer;
-            var validatorDelegator = repository.GetValidatorDelegator(
-                delegatorAddress, rewardAddress);
+            var validatorDelegator = repository.GetValidatorDelegator(delegatorAddress);
             var validatorDelegatee = repository.GetValidatorDelegatee(address);
 
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);
@@ -103,14 +99,11 @@ namespace Nekoyume.Module.ValidatorDelegation
         public static bool TryGetValidatorDelegator(
             this ValidatorRepository repository,
             Address address,
-            Address rewardAddress,
             [NotNullWhen(true)] out ValidatorDelegator? validatorDelegator)
         {
             try
             {
-                validatorDelegator = repository.GetValidatorDelegator(
-                    address,
-                    rewardAddress);
+                validatorDelegator = repository.GetValidatorDelegator(address);
                 return true;
             }
             catch

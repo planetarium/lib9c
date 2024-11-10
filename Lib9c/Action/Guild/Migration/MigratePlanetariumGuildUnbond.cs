@@ -3,6 +3,8 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
 using Nekoyume.Model.Guild;
+using Nekoyume.Model.State;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.Guild.Migration
 {
@@ -40,15 +42,23 @@ namespace Nekoyume.Action.Guild.Migration
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
-            var repository = new GuildRepository(world, context);
+            var guildRepository = new GuildRepository(world, context);
 
-            var guildAddress = repository.GetGuildParticipant(GuildConfig.PlanetariumGuildOwner).GuildAddress;
-            var guild = repository.GetGuild(guildAddress);
+            var guildAddress = guildRepository.GetGuildParticipant(GuildConfig.PlanetariumGuildOwner).GuildAddress;
+            var guild = guildRepository.GetGuild(guildAddress);
+            var validatorDelegateeForGuildParticipant
+                = guildRepository.GetValidatorDelegateeForGuildParticipant(guild.ValidatorAddress);
 
             // TODO: [GuildMigration] Replace below height when determined.
-            guild.Metadata.UpdateUnbondingPeriod(0L);
+            validatorDelegateeForGuildParticipant.Metadata.UpdateUnbondingPeriod(LegacyStakeState.LockupInterval);
+            guildRepository.SetValidatorDelegateeForGuildParticipant(validatorDelegateeForGuildParticipant);
 
-            repository.SetGuild(guild);
+            var repository = new ValidatorRepository(guildRepository);
+            var validatorDelegatee = repository.GetValidatorDelegatee(guild.ValidatorAddress);
+
+            // TODO: [GuildMigration] Replace below height when determined.
+            validatorDelegatee.Metadata.UpdateUnbondingPeriod(LegacyStakeState.LockupInterval);
+            repository.SetValidatorDelegatee(validatorDelegatee);
 
             return repository.World;
         }

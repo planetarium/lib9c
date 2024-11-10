@@ -2,19 +2,17 @@ using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Crypto;
+using Nekoyume.Model.Guild;
 using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Nekoyume.Action.Guild
 {
     [ActionType(TypeIdentifier)]
-    public sealed class ClaimRewardValidatorSelf : ActionBase
+    public sealed class ClaimGuildReward : ActionBase
     {
-        public const string TypeIdentifier = "claim_reward_validator_self";
+        public const string TypeIdentifier = "claim_guild_reward";
 
-        public ClaimRewardValidatorSelf() { }
-
-        public Address ValidatorDelegatee { get; private set; }
+        public ClaimGuildReward() { }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
@@ -28,7 +26,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 rawValues is not Null)
             {
                 throw new InvalidCastException();
-            }
+            };
         }
 
         public override IWorld Execute(IActionContext context)
@@ -36,9 +34,18 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
-            var validatorDelegatee = repository.GetValidatorDelegatee(context.Signer);
-            var validatorDelegator = repository.GetValidatorDelegator(context.Signer, context.Signer);
+            var guildRepository = new GuildRepository(world, context);
+
+            var guildParticipant = guildRepository.GetGuildParticipant(context.Signer);
+            var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+            if (context.Signer != guild.GuildMasterAddress)
+            {
+                throw new InvalidOperationException("Signer is not a guild master.");
+            }
+
+            var repository = new ValidatorRepository(guildRepository.World, guildRepository.ActionContext);
+            var validatorDelegatee = repository.GetValidatorDelegatee(guild.ValidatorAddress);
+            var validatorDelegator = repository.GetValidatorDelegator(guild.Address);
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);
 
             return repository.World;

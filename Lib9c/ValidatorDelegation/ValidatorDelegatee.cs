@@ -16,7 +16,6 @@ namespace Nekoyume.ValidatorDelegation
     public sealed class ValidatorDelegatee
         : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
     {
-        // TODO: After guild-PoS implemented, delegation currency have to be changed into guild gold.
         public ValidatorDelegatee(
             Address address,
             PublicKey publicKey,
@@ -89,14 +88,12 @@ namespace Nekoyume.ValidatorDelegation
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        public static Currency ValidatorRewardCurrency => Currencies.Mead;
-
         // TODO: [MigrateGuild] Change unbonding period after migration.
         public static long ValidatorUnbondingPeriod => 0L;
 
-        public static int ValidatorMaxUnbondLockInEntries => 10;
+        public static int ValidatorMaxUnbondLockInEntries => 2;
 
-        public static int ValidatorMaxRebondGraceEntries => 10;
+        public static int ValidatorMaxRebondGraceEntries => 2;
 
         public static BigInteger BaseProposerRewardPercentage => 1;
 
@@ -207,7 +204,7 @@ namespace Nekoyume.ValidatorDelegation
             repository.TransferAsset(
                 InactiveDelegationPoolAddress,
                 ActiveDelegationPoolAddress,
-                repository.GetBalance(InactiveDelegationPoolAddress, DelegationCurrency));
+                TotalDelegated);
         }
 
         public void Deactivate()
@@ -218,7 +215,7 @@ namespace Nekoyume.ValidatorDelegation
             repository.TransferAsset(
                 ActiveDelegationPoolAddress,
                 InactiveDelegationPoolAddress,
-                repository.GetBalance(ActiveDelegationPoolAddress, DelegationCurrency));
+                TotalDelegated);
         }
 
         public void OnDelegationChanged(object? sender, long height)

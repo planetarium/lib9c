@@ -74,7 +74,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             {
                 var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                 var stakeStateAddress = guildParticipant.DelegationPoolAddress;
-                var gg = world.GetBalance(stakeStateAddress, guild.DelegationCurrency);
+                var gg = world.GetBalance(stakeStateAddress, ValidatorDelegatee.ValidatorDelegationCurrency);
                 if (gg.Sign > 0)
                 {
                     var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);

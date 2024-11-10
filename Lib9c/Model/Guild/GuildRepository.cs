@@ -10,13 +10,18 @@ namespace Nekoyume.Model.Guild
 {
     public class GuildRepository : DelegationRepository
     {
+        public GuildRepository(IDelegationRepository repository)
+            : this(repository.World, repository.ActionContext)
+        {
+        }
+
         public GuildRepository(IWorld world, IActionContext actionContext)
             : base(
                   world: world,
                   actionContext: actionContext,
-                  delegateeAccountAddress: Addresses.Guild,
+                  delegateeAccountAddress: Addresses.ValidatorDelegateeForGuildParticipantMetadata,
                   delegatorAccountAddress: Addresses.GuildParticipant,
-                  delegateeMetadataAccountAddress: Addresses.GuildMetadata,
+                  delegateeMetadataAccountAddress: Addresses.ValidatorDelegateeForGuildParticipantMetadata,
                   delegatorMetadataAccountAddress: Addresses.GuildParticipantMetadata,
                   bondAccountAddress: Addresses.GuildBond,
                   unbondLockInAccountAddress: Addresses.GuildUnbondLockIn,
@@ -24,6 +29,49 @@ namespace Nekoyume.Model.Guild
                   unbondingSetAccountAddress: Addresses.GuildUnbondingSet,
                   lumpSumRewardRecordAccountAddress: Addresses.GuildLumpSumRewardsRecord)
         {
+        }
+
+        public ValidatorDelegateeForGuildParticipant GetValidatorDelegateeForGuildParticipant(Address address)
+            => delegateeAccount.GetState(address) is IValue bencoded
+                ? new ValidatorDelegateeForGuildParticipant(
+                    address,
+                    this)
+                : throw new FailedLoadStateException("Validator delegatee for guild participant does not exist.");
+
+        public override IDelegatee GetDelegatee(Address address)
+            => GetValidatorDelegateeForGuildParticipant(address);
+
+        public GuildParticipant GetGuildParticipant(Address address)
+            => delegatorAccount.GetState(address) is IValue bencoded
+                ? new GuildParticipant(
+                    new AgentAddress(address),
+                    bencoded,
+                    this)
+                : throw new FailedLoadStateException("Guild participant does not exist.");
+
+        public override IDelegator GetDelegator(Address address)
+            => GetGuildParticipant(address);
+
+        public void SetValidatorDelegateeForGuildParticipant(ValidatorDelegateeForGuildParticipant validatorDelegateeForGuild)
+        {
+            SetDelegateeMetadata(validatorDelegateeForGuild.Metadata);
+        }
+
+        public override void SetDelegatee(IDelegatee delegatee)
+            => SetValidatorDelegateeForGuildParticipant(delegatee as ValidatorDelegateeForGuildParticipant);
+
+        public void SetGuildParticipant(GuildParticipant guildParticipant)
+        {
+            delegatorAccount = delegatorAccount.SetState(
+                guildParticipant.Address, guildParticipant.Bencoded);
+            SetDelegatorMetadata(guildParticipant.Metadata);
+        }
+        public override void SetDelegator(IDelegator delegator)
+            => SetGuildParticipant(delegator as GuildParticipant);
+
+        public void RemoveGuildParticipant(Address guildParticipantAddress)
+        {
+            delegatorAccount = delegatorAccount.RemoveState(guildParticipantAddress);
         }
 
         public Guild GetGuild(Address address)
@@ -34,44 +82,10 @@ namespace Nekoyume.Model.Guild
                     this)
                 : throw new FailedLoadStateException("Guild does not exist.");
 
-        public override IDelegatee GetDelegatee(Address address)
-            => GetGuild(address);
-
-
-        public GuildParticipant GetGuildParticipant(Address address)
-            => delegatorAccount.GetState(address) is IValue bencoded
-                ? new GuildParticipant(
-                    new AgentAddress(address),
-                    bencoded,
-                    this)
-                : throw new FailedLoadStateException("Delegator does not exist.");
-
-        public override IDelegator GetDelegator(Address address)
-            => GetGuildParticipant(address);
-
         public void SetGuild(Guild guild)
         {
             delegateeAccount = delegateeAccount.SetState(
                 guild.Address, guild.Bencoded);
-            SetDelegateeMetadata(guild.Metadata);
-        }
-
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetGuild(delegatee as Guild);
-
-        public void SetGuildParticipant(GuildParticipant guildParticipant)
-        {
-            delegatorAccount = delegatorAccount.SetState(
-                guildParticipant.Address, guildParticipant.Bencoded);
-            SetDelegatorMetadata(guildParticipant.Metadata);
-        }
-
-        public override void SetDelegator(IDelegator delegator)
-            => SetGuildParticipant(delegator as GuildParticipant);
-
-        public void RemoveGuildParticipant(Address guildParticipantAddress)
-        {
-            delegatorAccount = delegatorAccount.RemoveState(guildParticipantAddress);
         }
     }
 }

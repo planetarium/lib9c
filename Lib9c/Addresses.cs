@@ -105,8 +105,8 @@ namespace Nekoyume
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
-        /// </summary>
-        public static readonly Address GuildMetadata
+        /// </summary> 
+        public static readonly Address ValidatorDelegateeForGuildParticipantMetadata
             = new Address("0000000000000000000000000000000000000210");
 
         /// <summary>

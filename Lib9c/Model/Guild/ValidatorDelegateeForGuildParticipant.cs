@@ -1,24 +1,26 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Delegation;
 using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
-    public class GuildValidatorDelegatee
-        : Delegatee<GuildValidatorDelegator, GuildValidatorDelegatee>, IEquatable<GuildValidatorDelegatee>
+    public class ValidatorDelegateeForGuildParticipant
+        : Delegatee<GuildParticipant, ValidatorDelegateeForGuildParticipant>, IEquatable<ValidatorDelegateeForGuildParticipant>
     {
-        public GuildValidatorDelegatee(
+        public ValidatorDelegateeForGuildParticipant(
             Address address,
-            Address delegationPoolAddress,
-            GuildValidatorRepository repository)
+            IEnumerable<Currency> rewardCurrencies,
+            GuildRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
                   delegationCurrency: ValidatorDelegatee.ValidatorDelegationCurrency,
-                  rewardCurrency: ValidatorDelegatee.ValidatorRewardCurrency,
-                  delegationPoolAddress: ValidatorDelegatee.UnbondedPoolAddress,
+                  rewardCurrencies: rewardCurrencies,
+                  delegationPoolAddress: ValidatorDelegatee.InactiveDelegationPoolAddress,
                   rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
@@ -29,16 +31,26 @@ namespace Nekoyume.Model.Guild
         {
         }
 
-        public GuildValidatorDelegatee(
+        public ValidatorDelegateeForGuildParticipant(
             Address address,
-            GuildValidatorRepository repository)
+            GuildRepository repository)
             : base(
                   address: address,
                   repository: repository)
         {
         }
 
-        public bool Equals(GuildValidatorDelegatee? other)
+        public void Activate()
+        {
+            Metadata.DelegationPoolAddress = ValidatorDelegatee.ActiveDelegationPoolAddress;
+        }
+
+        public void Deactivate()
+        {
+            Metadata.DelegationPoolAddress = ValidatorDelegatee.InactiveDelegationPoolAddress;
+        }
+
+        public bool Equals(ValidatorDelegateeForGuildParticipant? other)
             => Metadata.Equals(other?.Metadata);
     }
 }

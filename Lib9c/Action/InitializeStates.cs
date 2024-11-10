@@ -209,12 +209,13 @@ namespace Nekoyume.Action
                     validator.PublicKey,
                     ValidatorDelegatee.DefaultCommissionPercentage,
                     context.BlockIndex,
+                    new Currency[] { currencyState.Currency },
                     repository);
                 var delegationFAV = FungibleAssetValue.FromRawValue(
                     validatorDelegatee.DelegationCurrency, validator.Power);
                 var validatorOperatorAddress = validator.OperatorAddress;
                 var validatorDelegator = repository.GetValidatorDelegator(
-                    validatorOperatorAddress, validatorOperatorAddress);
+                    validatorOperatorAddress);
 
                 repository.SetValidatorDelegatee(validatorDelegatee);
                 repository.UpdateWorld(

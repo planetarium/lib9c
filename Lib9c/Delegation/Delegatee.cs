@@ -339,7 +339,17 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
+            var delegationBalance = Repository.GetBalance(DelegationPoolAddress, DelegationCurrency);
+            if (delegationBalance < slashed)
+            {
+                slashed = delegationBalance;
+            }
+
+            if (slashed > DelegationCurrency * 0)
+            {
+                Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
+            }
+
             Repository.SetDelegateeMetadata(Metadata);
             DelegationChanged?.Invoke(this, height);
         }

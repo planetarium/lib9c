@@ -5,18 +5,18 @@ using Nekoyume.Delegation;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public sealed class ValidatorDelegator : Delegator<ValidatorDelegatee, ValidatorDelegator>, IEquatable<ValidatorDelegator>
+    public sealed class ValidatorDelegator
+        : Delegator<ValidatorDelegatee, ValidatorDelegator>, IEquatable<ValidatorDelegator>
     {
         public ValidatorDelegator(
             Address address,
             Address delegationPoolAddress,
-            Address rewardAddress,
             ValidatorRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegatorAccountAddress,
                   delegationPoolAddress: delegationPoolAddress,
-                  rewardAddress: rewardAddress,
+                  rewardAddress: address,
                   repository: repository)
         {
         }

@@ -7,7 +7,8 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
-using Org.BouncyCastle.Bcpg.Sig;
+using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -76,12 +77,15 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
 
+            var repository = new ValidatorRepository(world, context);
             repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
             repository.DelegateValidator(context.Signer, FAV);
 
-            return repository.World;
+            var guildRepository = new GuildRepository(repository.World, context);
+            guildRepository.CreateValidatorDelegateeForGuildParticipant();
+
+            return guildRepository.World;
         }
     }
 }
