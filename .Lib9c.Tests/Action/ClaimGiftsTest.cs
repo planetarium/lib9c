@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Action
         public void Execute_Success(long blockIndex)
         {
             var agentAddress = new PrivateKey().Address;
-            var avatarAddress = new PrivateKey().Address;
+            var avatarAddress = Addresses.GetAvatarAddress(agentAddress, 0);
 
             var avatarState = AvatarState.Create(
                 avatarAddress,
@@ -66,7 +66,7 @@ namespace Lib9c.Tests.Action
         public void Execute_ClaimableGiftsNotAvailableException()
         {
             var agentAddress = new PrivateKey().Address;
-            var avatarAddress = new PrivateKey().Address;
+            var avatarAddress = Addresses.GetAvatarAddress(agentAddress, 0);
 
             var avatarState = AvatarState.Create(
                 avatarAddress,
@@ -107,7 +107,7 @@ namespace Lib9c.Tests.Action
         public void Execute_AlreadyClaimedGiftsException()
         {
             var agentAddress = new PrivateKey().Address;
-            var avatarAddress = new PrivateKey().Address;
+            var avatarAddress = Addresses.GetAvatarAddress(agentAddress, 0);
 
             var avatarState = AvatarState.Create(
                 avatarAddress,

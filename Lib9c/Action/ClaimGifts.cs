@@ -4,6 +4,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
@@ -54,6 +55,17 @@ namespace Nekoyume.Action
             var states = context.PreviousState;
             var random = context.GetRandom();
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
+
+            // NOTE: The `AvatarAddress` must contained in `Signer`'s `AgentState.avatarAddresses`.
+            if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
+            {
+                throw new InvalidActionFieldException(
+                    ActionTypeText,
+                    addressesHex,
+                    nameof(AvatarAddress),
+                    $"Signer({context.Signer}) is not contained in" +
+                    $" AvatarAddress({AvatarAddress}).");
+            }
 
             var inventory = states.GetInventoryV2(AvatarAddress);
             if (inventory is null)
