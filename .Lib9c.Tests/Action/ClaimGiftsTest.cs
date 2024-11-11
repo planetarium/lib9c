@@ -151,11 +151,7 @@ namespace Lib9c.Tests.Action
         {
             var prevClaimedGifts = _state.GetClaimedGifts(avatarAddress);
 
-            var action = new ClaimGifts
-            {
-                AvatarAddress = avatarAddress,
-                GiftId = giftId,
-            };
+            var action = new ClaimGifts(avatarAddress, giftId);
             var actionContext = new ActionContext
             {
                 PreviousState = previousState,

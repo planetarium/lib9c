@@ -27,12 +27,22 @@ namespace Nekoyume.Action
         /// <summary>
         /// The address of the avatar claiming the gift.
         /// </summary>
-        public Address AvatarAddress;
+        public Address AvatarAddress { get; private set; }
         /// <summary>
         /// The ID of the gift to be claimed. This ID is used in the <see cref="ClaimableGiftsSheet"/>.
         /// </summary>
-        public int GiftId;
+        public int GiftId { get; private set; }
         private const string GiftIdKey = "gi";
+
+        public ClaimGifts()
+        {
+        }
+
+        public ClaimGifts(Address avatarAddress, int giftId)
+        {
+            AvatarAddress = avatarAddress;
+            GiftId = giftId;
+        }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             ImmutableDictionary<string, IValue>.Empty
