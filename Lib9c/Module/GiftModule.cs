@@ -3,6 +3,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Extensions;
 using Nekoyume.Model.State;
 
 namespace Nekoyume.Module
@@ -19,9 +20,13 @@ namespace Nekoyume.Module
 
         public static IWorld SetClaimedGifts(this IWorld world, Address avatarAddress, List<int> claimedGiftIds)
         {
-            var account = world.GetAccount(Addresses.ClaimedGiftIds);
-            account = account.SetState(avatarAddress, claimedGiftIds.Aggregate(List.Empty, (current, giftId) => current.Add((Integer)giftId)));
-            return world.SetAccount(Addresses.ClaimedGiftIds, account);
+            return world.MutateAccount(
+                Addresses.ClaimedGiftIds,
+                account => account.SetState(
+                    avatarAddress,
+                    claimedGiftIds.Aggregate(List.Empty, (current, giftId) => current.Add((Integer)giftId))
+                )
+            );
         }
     }
 }
