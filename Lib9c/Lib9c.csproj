@@ -29,10 +29,10 @@
     </PackageReference>
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="CsvHelper" Version="15.0.5" />
-    <!-- Include System.Diagnostics.DiagnosticSource only if targeting netstandard2.1 -->
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
-    <!-- Include Pyroscope only if not targeting netstandard2.1 -->
-    <PackageReference Include="Pyroscope" Version="0.8.14" Condition="'$(TargetFramework)' != 'netstandard2.1'" />
+    <!-- Include System.Diagnostics.DiagnosticSource only if targeting net48 -->
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" Condition="'$(TargetFramework)' == 'net5.0'" />
+    <!-- Include Pyroscope only if not targeting net48 -->
+    <PackageReference Include="Pyroscope" Version="0.8.14" Condition="'$(TargetFramework)' != 'net5.0'" />
   </ItemGroup>
 
   <ItemGroup>
