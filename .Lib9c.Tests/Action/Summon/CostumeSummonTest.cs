@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.Action.Summon
+﻿namespace Lib9c.Tests.Action.Summon
 {
     using System;
     using System.Collections;
@@ -20,7 +20,7 @@ namespace Lib9c.Tests.Action.Summon
     using Xunit;
     using static SerializeKeys;
 
-    public class RuneSummonTest
+    public class CostumeSummonTest
     {
         private readonly Address _agentAddress;
         private readonly Address _avatarAddress;
@@ -29,7 +29,7 @@ namespace Lib9c.Tests.Action.Summon
         private TableSheets _tableSheets;
         private IWorld _initialState;
 
-        public RuneSummonTest()
+        public CostumeSummonTest()
         {
             var sheets = TableSheetsImporter.ImportSheets();
             _tableSheets = new TableSheets(sheets);
@@ -98,8 +98,8 @@ namespace Lib9c.Tests.Action.Summon
             var random = new TestRandom(seed);
             var state = _initialState;
             state = state.SetLegacyState(
-                Addresses.TableSheet.Derive(nameof(RuneSummonSheet)),
-                _tableSheets.RuneSummonSheet.Serialize()
+                Addresses.TableSheet.Derive(nameof(CostumeSummonSheet)),
+                _tableSheets.CostumeSummonSheet.Serialize()
             );
 
             if (!(materialId is null) && materialCount > 0)
@@ -108,11 +108,11 @@ namespace Lib9c.Tests.Action.Summon
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.RuneSummonSheet[groupId].CostMaterialCount);
+                    materialCount * _tableSheets.CostumeSummonSheet[groupId].CostMaterialCount);
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
-            var action = new RuneSummon
+            var action = new CostumeSummon
             {
                 AvatarAddress = _avatarAddress,
                 GroupId = groupId,
@@ -130,40 +130,36 @@ namespace Lib9c.Tests.Action.Summon
                 };
                 ctx.SetRandom(random);
                 var nextState = action.Execute(ctx);
-                var result = RuneSummon.SimulateSummon(
-                    _tableSheets.RuneSheet,
-                    _tableSheets.RuneSummonSheet[groupId],
+                var result = CostumeSummon.SimulateSummon(
+                    string.Empty,
+                    _tableSheets.CostumeItemSheet,
+                    _tableSheets.CostumeSummonSheet[groupId],
                     summonCount,
                     new TestRandom(seed)
                 );
-                foreach (var pair in result)
+                var inventory = nextState.GetAvatarState(_avatarAddress).inventory;
+                foreach (var costume in result)
                 {
-                    var currency = pair.Key;
-                    var prevBalance = state.GetBalance(_avatarAddress, currency);
-                    var balance = nextState.GetBalance(_avatarAddress, currency);
-                    Assert.Equal(currency * pair.Value, balance - prevBalance);
+                    inventory.TryGetNonFungibleItem(costume.ItemId, out Costume outItem);
+                    Assert.Equal(costume, outItem);
                 }
 
-                nextState.GetAvatarState(_avatarAddress).inventory
-                    .TryGetItem((int)materialId!, out var resultMaterial);
+                inventory.TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
             }
             else
             {
                 // Failure
-                Assert.Throws(
-                    expectedExc,
-                    () =>
+                Assert.Throws(expectedExc, () =>
+                {
+                    action.Execute(new ActionContext
                     {
-                        action.Execute(
-                            new ActionContext
-                            {
-                                PreviousState = state,
-                                Signer = _agentAddress,
-                                BlockIndex = 1,
-                                RandomSeed = random.Seed,
-                            });
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                        RandomSeed = random.Seed,
                     });
+                });
             }
         }
 
@@ -173,54 +169,52 @@ namespace Lib9c.Tests.Action.Summon
             {
                 new object[]
                 {
-                    20001, 1, 600201, 1, 1, null,
+                    50001, 1, 600202, 1, 1, null,
                 },
-                // Nine plus zero
                 new object[]
                 {
-                    20001,
-                    9,
-                    600201,
-                    9,
-                    0,
-                    typeof(InvalidSummonCountException),
+                    50001, 2, 600202, 2, 54, typeof(InvalidSummonCountException),
                 },
                 // Ten plus one
                 new object[]
                 {
-                    20001,
+                    50002,
                     10,
-                    600201,
+                    600202,
                     10,
+                    0,
+                    null,
+                },
+                // 100 + 10
+                new object[]
+                {
+                    50002,
+                    100,
+                    600202,
+                    100,
                     0,
                     null,
                 },
                 // fail by invalid group
                 new object[]
                 {
-                    100003, 1, null, 0, 0, typeof(RowNotInTableException),
+                    100003, 1, null, 0, 0,  typeof(RowNotInTableException),
                 },
                 // fail by not enough material
                 new object[]
                 {
-                    20001, 1, 600201, 0, 0, typeof(NotEnoughMaterialException),
+                    50002, 1, 600202, 0, 0,  typeof(NotEnoughMaterialException),
                 },
                 // Fail by exceeding summon limit
                 new object[]
                 {
-                    20001, 101, 600201, 22, 1,  typeof(InvalidSummonCountException),
+                    50002, 101, 600202, 22, 1,  typeof(InvalidSummonCountException),
                 },
             };
 
-            public IEnumerator<object[]> GetEnumerator()
-            {
-                return _data.GetEnumerator();
-            }
+            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _data.GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() => _data.GetEnumerator();
         }
     }
 }

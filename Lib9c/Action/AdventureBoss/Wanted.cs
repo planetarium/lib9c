@@ -107,7 +107,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             var requiredStakingAmount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
             
-            var avatarState = states.GetAvatarState(AvatarAddress);
+            var avatarState = states.GetAvatarState(AvatarAddress, false, false, false);
             if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);

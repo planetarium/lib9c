@@ -18,7 +18,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-tags: true
       - name: Dotnet Setup
         uses: actions/setup-dotnet@v4

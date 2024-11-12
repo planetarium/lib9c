@@ -5,7 +5,9 @@ namespace Nekoyume
         Odin,
         Heimdall,
         Idun,
+        Thor,
         OdinInternal,
         HeimdallInternal,
+        ThorInternal,
     }
 }
