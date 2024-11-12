@@ -458,7 +458,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 10035, 84 }, // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
+                    { 10036, 84 }, // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
@@ -732,7 +732,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 40 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 10035, 40 }, // (100 AP * 0.4 Exchange / 1 Ratio * 100% contribution) for season 3
+                    { 10036, 40 }, // (100 AP * 0.4 Exchange / 1 Ratio * 100% contribution) for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
