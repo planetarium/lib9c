@@ -71,4 +71,9 @@
     instead. -->
     <Rule Id="S4035" Action="None" />
   </Rules>
+
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
+        <Rule Id="CS1573" Action="Warning" />
+        <Rule Id="CS1591" Action="Warning" />
+  </Rules>
 </RuleSet>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS0162;CS8032;CS0618</NoWarn>
     <CodeAnalysisRuleSet>..\Lib9c.Common.ruleset</CodeAnalysisRuleSet>
     <OutputPath>.bin</OutputPath>
