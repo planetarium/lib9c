@@ -12,7 +12,7 @@ namespace Nekoyume.TableData
             public int Id;
             public long StartedBlockIndex;
             public long EndedBlockIndex;
-            public List<(int itemId, int quantity)> Items;
+            public List<(int itemId, int quantity, bool tradable)> Items;
 
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -20,7 +20,7 @@ namespace Nekoyume.TableData
                 StartedBlockIndex = ParseLong(fields[1]);
                 EndedBlockIndex = ParseLong(fields[2]);
 
-                Items = new List<(int, int)>();
+                Items = new List<(int, int, bool)>();
                 for (int i = 0; i < 5; i++)
                 {
                     var offset = i * 2;
@@ -30,7 +30,8 @@ namespace Nekoyume.TableData
                         continue;
                     }
 
-                    Items.Add((materialId, quantity));
+                    var tradable = ParseBool(fields[5 + offset], true);
+                    Items.Add((materialId, quantity, tradable));
                 }
             }
 

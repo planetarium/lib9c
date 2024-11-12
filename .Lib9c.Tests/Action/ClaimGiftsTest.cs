@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Xunit;
@@ -147,7 +148,7 @@ namespace Lib9c.Tests.Action
             Address agentAddress,
             int giftId,
             long blockIndex,
-            (int itemId, int quantity)[] expected)
+            (int itemId, int quantity, bool tradable)[] expected)
         {
             var prevClaimedGifts = _state.GetClaimedGifts(avatarAddress);
 
@@ -167,10 +168,11 @@ namespace Lib9c.Tests.Action
 
             // Check Inventory.
             var inventory = nextState.GetInventoryV2(avatarAddress);
-            foreach (var (itemId, quantity) in expected)
+            foreach (var (itemId, quantity, tradable) in expected)
             {
                 Assert.True(inventory.TryGetItem(itemId, out var inventoryItem));
                 Assert.Equal(quantity, inventoryItem.count);
+                Assert.Equal(tradable, inventoryItem.item is ITradableItem);
             }
 
             return nextState;

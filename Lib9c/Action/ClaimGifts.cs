@@ -120,22 +120,23 @@ namespace Nekoyume.Action
             }
 
             var itemSheet = sheets.GetItemSheet();
-            foreach (var (itemId, quantity) in giftRow.Items)
+            foreach (var (itemId, quantity, tradable) in giftRow.Items)
             {
                 var itemRow = itemSheet[itemId];
-                var item = itemRow is MaterialItemSheet.Row materialItemRow
-                    ? ItemFactory.CreateTradableMaterial(materialItemRow)
-                    : ItemFactory.CreateItem(itemRow, random);
-                if (item is INonFungibleItem)
+                if (itemRow is MaterialItemSheet.Row materialRow)
                 {
-                    foreach (var _ in Enumerable.Range(0, quantity))
-                    {
-                        inventory.AddItem(item);
-                    }
+                    var item = tradable
+                        ? ItemFactory.CreateTradableMaterial(materialRow)
+                        : ItemFactory.CreateMaterial(materialRow);
+                    inventory.AddItem(item, quantity);
                 }
                 else
                 {
-                    inventory.AddItem(item, quantity);
+                    foreach (var _ in Enumerable.Range(0, quantity))
+                    {
+                        var item = ItemFactory.CreateItem(itemRow, random);
+                        inventory.AddItem(item);
+                    }
                 }
             }
 
