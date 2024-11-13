@@ -1,15 +1,22 @@
 using Bencodex.Types;
 using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Nekoyume.Extensions;
 
 namespace Nekoyume.Action.Guild.Migration.LegacyModels
 {
     public static class MigrationModule
     {
+        /// <summary>
+        /// An address for delegation height migration.
+        /// </summary>
+        public static readonly Address DelegationMigrationHeight
+            = new Address("0000000000000000000000000000000000000000");
+
         public static long? GetDelegationMigrationHeight(this IWorldState worldState)
             => worldState
                 .GetAccountState(Addresses.Migration)
-                .GetState(Addresses.DelegationMigrationHeight) is Integer height
+                .GetState(DelegationMigrationHeight) is Integer height
                     ? height
                     : null;
 
@@ -18,7 +25,7 @@ namespace Nekoyume.Action.Guild.Migration.LegacyModels
                 .MutateAccount(
                     Addresses.Migration,
                     account => account.SetState(
-                        Addresses.DelegationMigrationHeight,
+                        DelegationMigrationHeight,
                         (Integer)height));
     }
 }

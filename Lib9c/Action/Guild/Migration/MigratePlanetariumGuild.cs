@@ -1,6 +1,5 @@
 using System;
 using Bencodex.Types;
-using Lib9c;
 using Libplanet.Action.State;
 using Libplanet.Action;
 using Nekoyume.Action.ValidatorDelegation;

@@ -242,12 +242,6 @@ namespace Nekoyume
         public static readonly Address Migration
             = new Address("0000000000000000000000000000000000000400");
 
-        /// <summary>
-        /// An address for delegation height migration.
-        /// </summary>
-        public static readonly Address DelegationMigrationHeight
-            = new Address("0000000000000000000000000000000000000000");
-
         #endregion
 
         public static Address GetSheetAddress<T>() where T : ISheet => GetSheetAddress(typeof(T).Name);

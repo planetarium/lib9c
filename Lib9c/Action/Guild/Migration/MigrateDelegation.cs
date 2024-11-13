@@ -10,6 +10,7 @@ using Nekoyume.Module.Guild;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Libplanet.Crypto;
 
 namespace Nekoyume.Action.Guild.Migration
 {
@@ -79,25 +80,63 @@ namespace Nekoyume.Action.Guild.Migration
                 world = result.Value.world;
             }
 
+
             // Migrate guild participant state from legacy to new
             var value = world.GetAccountState(Addresses.GuildParticipant).GetState(Target) as List;
-            var legacyGuildParticipant = new LegacyGuildParticipant(value);
-            var repository = new GuildRepository(world, context);
-            var guildParticipant = new GuildParticipant(
-                Target,
-                legacyGuildParticipant.GuildAddress,
-                repository);
-            repository.SetGuildParticipant(guildParticipant);
 
-            // Migrate delegation
-            var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            var guildGold = repository.GetBalance(guildParticipant.DelegationPoolAddress, Currencies.GuildGold);
-            if (guildGold.RawValue > 0)
+            var repository = new GuildRepository(world, context);
+            if (repository.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is not { } planetariumGuildAddress)
             {
-                repository.Delegate(guildParticipant.Address, guildGold);
+                throw new NullReferenceException("Planetarium guild is not found.");
             }
 
-            return repository.World;
+            if (!repository.TryGetGuild(planetariumGuildAddress, out var planetariumGuild))
+            {
+                throw new GuildMigrationFailedException("Planetarium guild is not found.");
+            }
+
+            if (planetariumGuild.GuildMasterAddress != GuildConfig.PlanetariumGuildOwner)
+            {
+                throw new GuildMigrationFailedException("Unexpected guild master.");
+            }
+
+            try
+            {
+                var legacyGuildParticipant = new LegacyGuildParticipant(value);
+                var guildParticipant = new GuildParticipant(
+                    Target,
+                    legacyGuildParticipant.GuildAddress,
+                    repository);
+                repository.SetGuildParticipant(guildParticipant);
+
+                // Migrate delegation
+                var guild = repository.GetGuild(guildParticipant.GuildAddress);
+                var guildGold = repository.GetBalance(guildParticipant.DelegationPoolAddress, Currencies.GuildGold);
+                if (guildGold.RawValue > 0)
+                {
+                    repository.Delegate(guildParticipant.Address, guildGold);
+                }
+
+                return repository.World;
+            }
+            catch (FailedLoadStateException)
+            {
+                var pledgeAddress = ((Address)Target).GetPledgeAddress();
+
+                // Patron contract structure:
+                // [0] = PatronAddress
+                // [1] = IsApproved
+                // [2] = Mead amount to refill.
+                if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 ||
+                    list[0] is not Binary || list[0].ToAddress() != MeadConfig.PatronAddress ||
+                    list[1] is not Bencodex.Types.Boolean approved || !approved)
+                {
+                    throw new GuildMigrationFailedException("Unexpected pledge structure.");
+                }
+
+                repository.JoinGuild(planetariumGuildAddress, Target);
+                return repository.World;
+            }
         }
     }
 }
