@@ -169,9 +169,9 @@ namespace Nekoyume.Delegation
                 LumpSumRewards,
                 LastStartHeight);
 
-        public ImmutableDictionary<Currency, FungibleAssetValue> RewardsDuringPeriod(BigInteger share)
+        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardsDuringPeriod(BigInteger share)
             => LumpSumRewards.Keys.Select(k => RewardsDuringPeriod(share, k))
-                .ToImmutableDictionary(f => f.Currency);
+                .ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
 
         public FungibleAssetValue RewardsDuringPeriod(BigInteger share, Currency currency)
             => LumpSumRewards.TryGetValue(currency, out var reward)

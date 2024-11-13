@@ -75,7 +75,7 @@ namespace Nekoyume.Delegation
 
         public Currency DelegationCurrency => Metadata.DelegationCurrency;
 
-        public ImmutableHashSet<Currency> RewardCurrencies => Metadata.RewardCurrencies;
+        public ImmutableSortedSet<Currency> RewardCurrencies => Metadata.RewardCurrencies;
 
         public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
@@ -455,7 +455,7 @@ namespace Nekoyume.Delegation
 
         private void TransferReward(T delegator, BigInteger share, LumpSumRewardsRecord record)
         {
-            ImmutableDictionary<Currency, FungibleAssetValue> reward = record.RewardsDuringPeriod(share);
+            ImmutableSortedDictionary<Currency, FungibleAssetValue> reward = record.RewardsDuringPeriod(share);
             foreach (var rewardEach in reward)
             {
                 if (rewardEach.Value.Sign > 0)

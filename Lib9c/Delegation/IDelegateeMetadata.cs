@@ -19,7 +19,7 @@ namespace Nekoyume.Delegation
 
         Currency DelegationCurrency { get; }
 
-        ImmutableHashSet<Currency> RewardCurrencies { get; }
+        ImmutableSortedSet<Currency> RewardCurrencies { get; }
 
         Address DelegationPoolAddress { get; }
 

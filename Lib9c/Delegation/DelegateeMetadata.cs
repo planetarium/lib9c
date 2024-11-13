@@ -128,7 +128,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
-            RewardCurrencies = rewardCurrencies.ToImmutableHashSet();
+            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
             DelegationPoolAddress = delegationPoolAddress;
             RewardPoolAddress = rewardPoolAddress;
             RewardRemainderPoolAddress = rewardRemainderPoolAddress;
@@ -156,7 +156,7 @@ namespace Nekoyume.Delegation
 
         public Currency DelegationCurrency { get; }
 
-        public ImmutableHashSet<Currency> RewardCurrencies { get; }
+        public ImmutableSortedSet<Currency> RewardCurrencies { get; }
 
         public Address DelegationPoolAddress { get; internal set; }
 
@@ -189,7 +189,7 @@ namespace Nekoyume.Delegation
         // TODO : Better serialization
         public List Bencoded => List.Empty
             .Add(DelegationCurrency.Serialize())
-            .Add(new List(RewardCurrencies.OrderBy(c => c, _currencyComparer).Select(c => c.Serialize())))
+            .Add(new List(RewardCurrencies.Select(c => c.Serialize())))
             .Add(DelegationPoolAddress.Bencoded)
             .Add(RewardPoolAddress.Bencoded)
             .Add(RewardRemainderPoolAddress.Bencoded)
