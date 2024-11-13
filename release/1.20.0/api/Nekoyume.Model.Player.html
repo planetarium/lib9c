@@ -1,0 +1,2156 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Player | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Player | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/release/1.20.0/apiSpec/new?filename=Nekoyume_Model_Player.md&amp;value=---%0Auid%3A%20Nekoyume.Model.Player%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.Player">
+
+
+
+  <h1 id="Nekoyume_Model_Player" data-uid="Nekoyume.Model.Player" class="text-break">
+Class Player  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class Player : CharacterBase, ICloneable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></div>
+      <div><span class="xref">Player</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.icloneable">ICloneable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.EnemyPlayer.html">EnemyPlayer</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_CriticalMultiplier">CharacterBase.CriticalMultiplier</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Id">CharacterBase.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Simulator">CharacterBase.Simulator</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_atkElementType">CharacterBase.atkElementType</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_attackRange">CharacterBase.attackRange</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_defElementType">CharacterBase.defElementType</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Skills">CharacterBase.Skills</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_BuffSkills">CharacterBase.BuffSkills</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Buffs">CharacterBase.Buffs</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_StatBuffs">CharacterBase.StatBuffs</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_ActionBuffs">CharacterBase.ActionBuffs</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Targets">CharacterBase.Targets</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_RowData">CharacterBase.RowData</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_CharacterId">CharacterBase.CharacterId</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_SizeType">CharacterBase.SizeType</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_RunSpeed">CharacterBase.RunSpeed</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Stats">CharacterBase.Stats</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Level">CharacterBase.Level</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_HP">CharacterBase.HP</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_AdditionalHP">CharacterBase.AdditionalHP</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_ATK">CharacterBase.ATK</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_DEF">CharacterBase.DEF</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_CRI">CharacterBase.CRI</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_HIT">CharacterBase.HIT</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_SPD">CharacterBase.SPD</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_DRV">CharacterBase.DRV</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_DRR">CharacterBase.DRR</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_CDMG">CharacterBase.CDMG</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_ArmorPenetration">CharacterBase.ArmorPenetration</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Thorn">CharacterBase.Thorn</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_CurrentHP">CharacterBase.CurrentHP</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_IsDead">CharacterBase.IsDead</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_AttackCount">CharacterBase.AttackCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_AttackCountMax">CharacterBase.AttackCountMax</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_usedSkill">CharacterBase.usedSkill</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_InitAI">CharacterBase.InitAI()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_InitAIV1">CharacterBase.InitAIV1()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_InitAIV2">CharacterBase.InitAIV2()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Tick">CharacterBase.Tick()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_AddBuff_Nekoyume_Model_Buff_Buff_System_Boolean_">CharacterBase.AddBuff(Buff, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_RemoveActionBuff_Nekoyume_Model_Buff_ActionBuff_">CharacterBase.RemoveActionBuff(ActionBuff)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_RemoveStatBuff_Nekoyume_Model_Buff_StatBuff_">CharacterBase.RemoveStatBuff(StatBuff)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_RemoveRecentStatBuff">CharacterBase.RemoveRecentStatBuff()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_ResetCurrentHP">CharacterBase.ResetCurrentHP()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_IsCritical_System_Boolean_">CharacterBase.IsCritical(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_IsHit_Nekoyume_Model_Elemental_ElementalResult_">CharacterBase.IsHit(ElementalResult)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_GetDamage_System_Int64_System_Boolean_">CharacterBase.GetDamage(long, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Die">CharacterBase.Die()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_Heal_System_Int64_">CharacterBase.Heal(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_SetSkill">CharacterBase.SetSkill()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_GetChance_System_Int32_">CharacterBase.GetChance(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_OnPreSkill">CharacterBase.OnPreSkill()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.CharacterBase.html#Nekoyume_Model_CharacterBase_OnPostSkill_Nekoyume_Model_BattleStatus_Skill_">CharacterBase.OnPostSkill(Skill)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_Player__ctor_" data-uid="Nekoyume.Model.Player.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Player__ctor_Nekoyume_Model_ArenaPlayerDigest_Nekoyume_TableData_ArenaSimulatorSheetsV1_" data-uid="Nekoyume.Model.Player.#ctor(Nekoyume.Model.ArenaPlayerDigest,Nekoyume.TableData.ArenaSimulatorSheetsV1)">
+  Player(ArenaPlayerDigest, ArenaSimulatorSheetsV1)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L192"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Player(ArenaPlayerDigest enemyArenaPlayerDigest, ArenaSimulatorSheetsV1 simulatorSheets)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enemyArenaPlayerDigest</code> <a class="xref" href="Nekoyume.Model.ArenaPlayerDigest.html">ArenaPlayerDigest</a></dt>
+    <dd></dd>
+    <dt><code>simulatorSheets</code> <a class="xref" href="Nekoyume.TableData.ArenaSimulatorSheetsV1.html">ArenaSimulatorSheetsV1</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player__ctor_" data-uid="Nekoyume.Model.Player.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Player__ctor_Nekoyume_Model_Player_" data-uid="Nekoyume.Model.Player.#ctor(Nekoyume.Model.Player)">
+  Player(Player)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L214"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Player(Player value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="Nekoyume.Model.Player.html">Player</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player__ctor_" data-uid="Nekoyume.Model.Player.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Player__ctor_Nekoyume_Model_State_AvatarState_Nekoyume_Battle_Simulator_" data-uid="Nekoyume.Model.Player.#ctor(Nekoyume.Model.State.AvatarState,Nekoyume.Battle.Simulator)">
+  Player(AvatarState, Simulator)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Player(AvatarState avatarState, Simulator simulator)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>simulator</code> <a class="xref" href="Nekoyume.Battle.Simulator.html">Simulator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player__ctor_" data-uid="Nekoyume.Model.Player.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Player__ctor_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterSheet_Nekoyume_TableData_CharacterLevelSheet_Nekoyume_TableData_EquipmentItemSetEffectSheet_" data-uid="Nekoyume.Model.Player.#ctor(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterSheet,Nekoyume.TableData.CharacterLevelSheet,Nekoyume.TableData.EquipmentItemSetEffectSheet)">
+  Player(AvatarState, CharacterSheet, CharacterLevelSheet, EquipmentItemSetEffectSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Player(AvatarState avatarState, CharacterSheet characterSheet, CharacterLevelSheet characterLevelSheet, EquipmentItemSetEffectSheet equipmentItemSetEffectSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>characterSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a></dt>
+    <dd></dd>
+    <dt><code>characterLevelSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterLevelSheet.html">CharacterLevelSheet</a></dt>
+    <dd></dd>
+    <dt><code>equipmentItemSetEffectSheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemSetEffectSheet.html">EquipmentItemSetEffectSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player__ctor_" data-uid="Nekoyume.Model.Player.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Player__ctor_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_SimulatorSheetsV1_" data-uid="Nekoyume.Model.Player.#ctor(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.SimulatorSheetsV1)">
+  Player(AvatarState, SimulatorSheetsV1)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Player(AvatarState avatarState, SimulatorSheetsV1 simulatorSheets)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>simulatorSheets</code> <a class="xref" href="Nekoyume.TableData.SimulatorSheetsV1.html">SimulatorSheetsV1</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player__ctor_" data-uid="Nekoyume.Model.Player.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Player__ctor_System_Int32_Nekoyume_TableData_CharacterSheet_Nekoyume_TableData_CharacterLevelSheet_Nekoyume_TableData_EquipmentItemSetEffectSheet_" data-uid="Nekoyume.Model.Player.#ctor(System.Int32,Nekoyume.TableData.CharacterSheet,Nekoyume.TableData.CharacterLevelSheet,Nekoyume.TableData.EquipmentItemSetEffectSheet)">
+  Player(int, CharacterSheet, CharacterLevelSheet, EquipmentItemSetEffectSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Player(int level, CharacterSheet characterSheet, CharacterLevelSheet characterLevelSheet, EquipmentItemSetEffectSheet equipmentItemSetEffectSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>characterSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a></dt>
+    <dd></dd>
+    <dt><code>characterLevelSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterLevelSheet.html">CharacterLevelSheet</a></dt>
+    <dd></dd>
+    <dt><code>equipmentItemSetEffectSheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemSetEffectSheet.html">EquipmentItemSetEffectSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Model_Player_Exp" data-uid="Nekoyume.Model.Player.Exp">
+  Exp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Player.ExpData Exp</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Player.html">Player</a>.<a class="xref" href="Nekoyume.Model.Player.ExpData.html">ExpData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_Grimoire" data-uid="Nekoyume.Model.Player.Grimoire">
+  Grimoire
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Grimoire Grimoire</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Grimoire.html">Grimoire</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_Inventory" data-uid="Nekoyume.Model.Player.Inventory">
+  Inventory
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Inventory Inventory</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_RuneSkillCooldownMap" data-uid="Nekoyume.Model.Player.RuneSkillCooldownMap">
+  RuneSkillCooldownMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Dictionary&lt;int, int&gt; RuneSkillCooldownMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_RuneSkills" data-uid="Nekoyume.Model.Player.RuneSkills">
+  RuneSkills
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Skills RuneSkills</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Skills.html">Skills</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_armor" data-uid="Nekoyume.Model.Player.armor">
+  armor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Armor armor</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Armor.html">Armor</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_aura" data-uid="Nekoyume.Model.Player.aura">
+  aura
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Aura aura</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Aura.html">Aura</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_belt" data-uid="Nekoyume.Model.Player.belt">
+  belt
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Belt belt</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Belt.html">Belt</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_characterLevelSheet" data-uid="Nekoyume.Model.Player.characterLevelSheet">
+  characterLevelSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterLevelSheet characterLevelSheet</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.CharacterLevelSheet.html">CharacterLevelSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_costumes" data-uid="Nekoyume.Model.Player.costumes">
+  costumes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected List&lt;Costume&gt; costumes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_earIndex" data-uid="Nekoyume.Model.Player.earIndex">
+  earIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int earIndex</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_equipments" data-uid="Nekoyume.Model.Player.equipments">
+  equipments
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected List&lt;Equipment&gt; equipments</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_eventMap" data-uid="Nekoyume.Model.Player.eventMap">
+  eventMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap eventMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_eventMapForBeforeV100310" data-uid="Nekoyume.Model.Player.eventMapForBeforeV100310">
+  eventMapForBeforeV100310
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap eventMapForBeforeV100310</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_hairIndex" data-uid="Nekoyume.Model.Player.hairIndex">
+  hairIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int hairIndex</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_lensIndex" data-uid="Nekoyume.Model.Player.lensIndex">
+  lensIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int lensIndex</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_monsterMap" data-uid="Nekoyume.Model.Player.monsterMap">
+  monsterMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap monsterMap</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_monsterMapForBeforeV100310" data-uid="Nekoyume.Model.Player.monsterMapForBeforeV100310">
+  monsterMapForBeforeV100310
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap monsterMapForBeforeV100310</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_necklace" data-uid="Nekoyume.Model.Player.necklace">
+  necklace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Necklace necklace</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Necklace.html">Necklace</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_ring" data-uid="Nekoyume.Model.Player.ring">
+  ring
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Ring ring</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Ring.html">Ring</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_tailIndex" data-uid="Nekoyume.Model.Player.tailIndex">
+  tailIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int tailIndex</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_weapon" data-uid="Nekoyume.Model.Player.weapon">
+  weapon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Weapon weapon</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.Weapon.html">Weapon</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_Player_worldInformation" data-uid="Nekoyume.Model.Player.worldInformation">
+  worldInformation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorldInformation worldInformation</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_Player_Costumes_" data-uid="Nekoyume.Model.Player.Costumes*"></a>
+
+  <h3 id="Nekoyume_Model_Player_Costumes" data-uid="Nekoyume.Model.Player.Costumes">
+  Costumes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;Costume&gt; Costumes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_Equipments_" data-uid="Nekoyume.Model.Player.Equipments*"></a>
+
+  <h3 id="Nekoyume_Model_Player_Equipments" data-uid="Nekoyume.Model.Player.Equipments">
+  Equipments
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;Equipment&gt; Equipments { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_Player_AddSkill_" data-uid="Nekoyume.Model.Player.AddSkill*"></a>
+
+  <h3 id="Nekoyume_Model_Player_AddSkill_Nekoyume_Model_Skill_Skill_" data-uid="Nekoyume.Model.Player.AddSkill(Nekoyume.Model.Skill.Skill)">
+  AddSkill(Skill)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L520"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddSkill(Skill skill)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>skill</code> <a class="xref" href="Nekoyume.Model.Skill.Skill.html">Skill</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_Clone_" data-uid="Nekoyume.Model.Player.Clone*"></a>
+
+  <h3 id="Nekoyume_Model_Player_Clone" data-uid="Nekoyume.Model.Player.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L714"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override object Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_ConfigureStats_" data-uid="Nekoyume.Model.Player.ConfigureStats*"></a>
+
+  <h3 id="Nekoyume_Model_Player_ConfigureStats_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_State_RuneState__Nekoyume_TableData_RuneOptionSheet_System_Int32_Nekoyume_TableData_SkillSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Player.ConfigureStats(Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.State.RuneState},Nekoyume.TableData.RuneOptionSheet,System.Int32,Nekoyume.TableData.SkillSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier})">
+  ConfigureStats(CostumeStatSheet, List&lt;RuneState&gt;, RuneOptionSheet, int, SkillSheet, List&lt;StatModifier&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L644"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ConfigureStats(CostumeStatSheet costumeStatSheet, List&lt;RuneState&gt; runeStates, RuneOptionSheet runeOptionSheet, int runeLevelBonus, SkillSheet skillSheet, List&lt;StatModifier&gt; collectionModifiers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+    <dt><code>runeStates</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.State.RuneState.html">RuneState</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>runeOptionSheet</code> <a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a></dt>
+    <dd></dd>
+    <dt><code>runeLevelBonus</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>skillSheet</code> <a class="xref" href="Nekoyume.TableData.SkillSheet.html">SkillSheet</a></dt>
+    <dd></dd>
+    <dt><code>collectionModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_EndTurn_" data-uid="Nekoyume.Model.Player.EndTurn*"></a>
+
+  <h3 id="Nekoyume_Model_Player_EndTurn" data-uid="Nekoyume.Model.Player.EndTurn">
+  EndTurn()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L719"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void EndTurn()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_GetExp_" data-uid="Nekoyume.Model.Player.GetExp*"></a>
+
+  <h3 id="Nekoyume_Model_Player_GetExp_System_Int64_System_Boolean_" data-uid="Nekoyume.Model.Player.GetExp(System.Int64,System.Boolean)">
+  GetExp(long, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L354"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetExp(long waveExp, bool log = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>waveExp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>log</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_GetExp2_" data-uid="Nekoyume.Model.Player.GetExp2*"></a>
+
+  <h3 id="Nekoyume_Model_Player_GetExp2_System_Int64_System_Boolean_" data-uid="Nekoyume.Model.Player.GetExp2(System.Int64,System.Boolean)">
+  GetExp2(long, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L384"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use GetExp&quot;)]
+public void GetExp2(long waveExp, bool log = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>waveExp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>log</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_GetExp3_" data-uid="Nekoyume.Model.Player.GetExp3*"></a>
+
+  <h3 id="Nekoyume_Model_Player_GetExp3_System_Int64_System_Boolean_" data-uid="Nekoyume.Model.Player.GetExp3(System.Int64,System.Boolean)">
+  GetExp3(long, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L409"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use GetExp&quot;)]
+public void GetExp3(long waveExp, bool log = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>waveExp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>log</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_GetRewards_" data-uid="Nekoyume.Model.Player.GetRewards*"></a>
+
+  <h3 id="Nekoyume_Model_Player_GetRewards_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__" data-uid="Nekoyume.Model.Player.GetRewards(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase})">
+  GetRewards(List&lt;ItemBase&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L441"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap GetRewards(List&lt;ItemBase&gt; items)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>items</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_GetRewards2_" data-uid="Nekoyume.Model.Player.GetRewards2*"></a>
+
+  <h3 id="Nekoyume_Model_Player_GetRewards2_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__" data-uid="Nekoyume.Model.Player.GetRewards2(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase})">
+  GetRewards2(List&lt;ItemBase&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L452"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use GetRewards&quot;)]
+public CollectionMap GetRewards2(List&lt;ItemBase&gt; items)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>items</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_IsHit_" data-uid="Nekoyume.Model.Player.IsHit*"></a>
+
+  <h3 id="Nekoyume_Model_Player_IsHit_Nekoyume_Model_CharacterBase_" data-uid="Nekoyume.Model.Player.IsHit(Nekoyume.Model.CharacterBase)">
+  IsHit(CharacterBase)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L241"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool IsHit(CharacterBase caster)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>caster</code> <a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_OnDead_" data-uid="Nekoyume.Model.Player.OnDead*"></a>
+
+  <h3 id="Nekoyume_Model_Player_OnDead" data-uid="Nekoyume.Model.Player.OnDead">
+  OnDead()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L277"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnDead()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_OverrideSkill_" data-uid="Nekoyume.Model.Player.OverrideSkill*"></a>
+
+  <h3 id="Nekoyume_Model_Player_OverrideSkill_Nekoyume_Model_Skill_Skill_" data-uid="Nekoyume.Model.Player.OverrideSkill(Nekoyume.Model.Skill.Skill)">
+  OverrideSkill(Skill)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L514"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OverrideSkill(Skill skill)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>skill</code> <a class="xref" href="Nekoyume.Model.Skill.Skill.html">Skill</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_ReduceSkillCooldown_" data-uid="Nekoyume.Model.Player.ReduceSkillCooldown*"></a>
+
+  <h3 id="Nekoyume_Model_Player_ReduceSkillCooldown" data-uid="Nekoyume.Model.Player.ReduceSkillCooldown">
+  ReduceSkillCooldown()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L558"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void ReduceSkillCooldown()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_RemoveTarget_" data-uid="Nekoyume.Model.Player.RemoveTarget*"></a>
+
+  <h3 id="Nekoyume_Model_Player_RemoveTarget_Nekoyume_Model_Enemy_" data-uid="Nekoyume.Model.Player.RemoveTarget(Nekoyume.Model.Enemy)">
+  RemoveTarget(Enemy)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveTarget(Enemy enemy)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enemy</code> <a class="xref" href="Nekoyume.Model.Enemy.html">Enemy</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_RemoveTarget_" data-uid="Nekoyume.Model.Player.RemoveTarget*"></a>
+
+  <h3 id="Nekoyume_Model_Player_RemoveTarget_Nekoyume_Model_EnemyPlayer_" data-uid="Nekoyume.Model.Player.RemoveTarget(Nekoyume.Model.EnemyPlayer)">
+  RemoveTarget(EnemyPlayer)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L271"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveTarget(EnemyPlayer enemy)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enemy</code> <a class="xref" href="Nekoyume.Model.EnemyPlayer.html">EnemyPlayer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SetCollections_" data-uid="Nekoyume.Model.Player.SetCollections*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SetCollections_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Player.SetCollections(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
+  SetCollections(IEnumerable&lt;StatModifier&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L638"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCollections(IEnumerable&lt;StatModifier&gt; statModifiers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>statModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SetCostumeStat_" data-uid="Nekoyume.Model.Player.SetCostumeStat*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SetCostumeStat_Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Model.Player.SetCostumeStat(Nekoyume.TableData.CostumeStatSheet)">
+  SetCostumeStat(CostumeStatSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L564"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCostumeStat(CostumeStatSheet costumeStatSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SetEquipmentStat_" data-uid="Nekoyume.Model.Player.SetEquipmentStat*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SetEquipmentStat_Nekoyume_TableData_EquipmentItemSetEffectSheet_" data-uid="Nekoyume.Model.Player.SetEquipmentStat(Nekoyume.TableData.EquipmentItemSetEffectSheet)">
+  SetEquipmentStat(EquipmentItemSetEffectSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void SetEquipmentStat(EquipmentItemSetEffectSheet sheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemSetEffectSheet.html">EquipmentItemSetEffectSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SetRuneSkills_" data-uid="Nekoyume.Model.Player.SetRuneSkills*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SetRuneSkills_System_Collections_Generic_List_Nekoyume_Model_State_RuneState__Nekoyume_TableData_RuneOptionSheet_Nekoyume_TableData_SkillSheet_" data-uid="Nekoyume.Model.Player.SetRuneSkills(System.Collections.Generic.List{Nekoyume.Model.State.RuneState},Nekoyume.TableData.RuneOptionSheet,Nekoyume.TableData.SkillSheet)">
+  SetRuneSkills(List&lt;RuneState&gt;, RuneOptionSheet, SkillSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L596"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the rune skills for the player.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetRuneSkills(List&lt;RuneState&gt; runes, RuneOptionSheet runeOptionSheet, SkillSheet skillSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>runes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.State.RuneState.html">RuneState</a>&gt;</dt>
+    <dd><p>The list of rune states.</p>
+</dd>
+    <dt><code>runeOptionSheet</code> <a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a></dt>
+    <dd><p>The rune option sheet.</p>
+</dd>
+    <dt><code>skillSheet</code> <a class="xref" href="Nekoyume.TableData.SkillSheet.html">SkillSheet</a></dt>
+    <dd><p>The skill sheet.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SetRuneStats_" data-uid="Nekoyume.Model.Player.SetRuneStats*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SetRuneStats_System_Collections_Generic_List_Nekoyume_Model_State_RuneState__Nekoyume_TableData_RuneOptionSheet_System_Int32_" data-uid="Nekoyume.Model.Player.SetRuneStats(System.Collections.Generic.List{Nekoyume.Model.State.RuneState},Nekoyume.TableData.RuneOptionSheet,System.Int32)">
+  SetRuneStats(List&lt;RuneState&gt;, RuneOptionSheet, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L576"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the rune stats for a player character.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetRuneStats(List&lt;RuneState&gt; runes, RuneOptionSheet runeOptionSheet, int runeLevelBonus)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>runes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.State.RuneState.html">RuneState</a>&gt;</dt>
+    <dd><p>The AllRuneState for the player character.</p>
+</dd>
+    <dt><code>runeOptionSheet</code> <a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a></dt>
+    <dd><p>The rune option sheet that contains information about rune options.</p>
+</dd>
+    <dt><code>runeLevelBonus</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The rune level bonus value from RuneLevelBonusSheet. This enhances equipped rune stats.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SetRuneV1_" data-uid="Nekoyume.Model.Player.SetRuneV1*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SetRuneV1_System_Collections_Generic_List_Nekoyume_Model_State_RuneState__Nekoyume_TableData_RuneOptionSheet_Nekoyume_TableData_SkillSheet_" data-uid="Nekoyume.Model.Player.SetRuneV1(System.Collections.Generic.List{Nekoyume.Model.State.RuneState},Nekoyume.TableData.RuneOptionSheet,Nekoyume.TableData.SkillSheet)">
+  SetRuneV1(List&lt;RuneState&gt;, RuneOptionSheet, SkillSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L660"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use SetRune&quot;)]
+public void SetRuneV1(List&lt;RuneState&gt; runes, RuneOptionSheet runeOptionSheet, SkillSheet skillSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>runes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.State.RuneState.html">RuneState</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>runeOptionSheet</code> <a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a></dt>
+    <dd></dd>
+    <dt><code>skillSheet</code> <a class="xref" href="Nekoyume.TableData.SkillSheet.html">SkillSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_Spawn_" data-uid="Nekoyume.Model.Player.Spawn*"></a>
+
+  <h3 id="Nekoyume_Model_Player_Spawn" data-uid="Nekoyume.Model.Player.Spawn">
+  Spawn()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L464"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Spawn()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SpawnV1_" data-uid="Nekoyume.Model.Player.SpawnV1*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SpawnV1" data-uid="Nekoyume.Model.Player.SpawnV1">
+  SpawnV1()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L474"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Spawn&quot;)]
+public virtual void SpawnV1()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_SpawnV2_" data-uid="Nekoyume.Model.Player.SpawnV2*"></a>
+
+  <h3 id="Nekoyume_Model_Player_SpawnV2" data-uid="Nekoyume.Model.Player.SpawnV2">
+  SpawnV2()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L482"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use Spawn&quot;)]
+public virtual void SpawnV2()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_Use_" data-uid="Nekoyume.Model.Player.Use*"></a>
+
+  <h3 id="Nekoyume_Model_Player_Use_System_Collections_Generic_List_System_Guid__" data-uid="Nekoyume.Model.Player.Use(System.Collections.Generic.List{System.Guid})">
+  Use(List&lt;Guid&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L490"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Use(List&lt;Guid&gt; consumableIds)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>consumableIds</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Player_UseSkill_" data-uid="Nekoyume.Model.Player.UseSkill*"></a>
+
+  <h3 id="Nekoyume_Model_Player_UseSkill" data-uid="Nekoyume.Model.Player.UseSkill">
+  UseSkill()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L525"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Skill UseSkill()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.BattleStatus.Skill.html">Skill</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Model/Character/Player.cs/#L18" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

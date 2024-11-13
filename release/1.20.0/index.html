@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Lib9c - A library for Nine Chronicles | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Lib9c - A library for Nine Chronicles | Lib9c ">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/blob/release/1.20.0/docs/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="lib9c---a-library-for-nine-chronicles">Lib9c - A library for Nine Chronicles</h1>
+
+<p><a href="https://bit.ly/3ZxysHz"><img src="https://img.shields.io/discord/539405872346955788?color=6278DA&amp;label=Planetarium&amp;logo=discord&amp;logoColor=white" alt="Planetarium Discord Invite"></a>
+<a href="https://bit.ly/4dhTLAa"><img src="https://img.shields.io/discord/928926944937013338?color=6278DA&amp;label=Planetarium-dev&amp;logo=discord&amp;logoColor=white" alt="Planetarium-Dev Discord Invite"></a></p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>If you're new to Nine Chronicles, try to visit our <strong>Developer Portal</strong>!</p>
+<p><a href="https://nine-chronicles.dev/">https://nine-chronicles.dev/</a></p>
+</div>
+<p>Lib9c is a library that contains key implementations
+of <a href="https://nine-chronicles.com">Nine Chronicles</a>, a decentralized RPG developed
+on <a href="https://libplanet.io">Libplanet</a>.
+Lib9c includes Nine Chronicle's key features like in-game decisions and data models, which can be
+used to implement game core capabilities.</p>
+<h2 id="key-features">Key Features</h2>
+<h3 id="model-data-storing-structure-aka-state">Model (Data storing structure, a.k.a. state)</h3>
+<p>Lib9c runs based on libplanet, blockchain, hence all the data are saved into chain as a <code>state</code>.
+You can find all models in <a href="../Lib9c/Model">Lib9c/Model</a>.
+Each model has its own structure and read/write with blockchain store through de/serialization.</p>
+<h3 id="action-core-game-logic-changes-state">Action (Core game logic changes state)</h3>
+<p>State can be created/updated by <code>action</code>s.
+In <a href="../Lib9c/Action">Lib9c/Action</a>, you can find all actions can be executed in the game Nine
+Chronicles.
+When someone do the action in game, action data is loaded on Libplanet transaction and be propagated
+through blockchain network.
+Then after the transaction is accepted by validators, this action is executed and related states are
+updated with action result.</p>
+<h3 id="data">Data</h3>
+<p>All game has its own game data such as item table, exp-level table, etc.
+Thus Nine Chronicles is a blockchain game, all the gme data also should be stored into blockchain.
+To achieve this, special models to handle data are present in <a href="../Lib9c/TableData">Lib9c/TableData</a>
+and <a href="../Lib9c/TableCSV">Lib9c/TableCSV</a>.
+<code>TableCSV</code> is actual CSV formed data and this can be handled in Lib9c using <code>TableData</code> state model.</p>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>.Net &gt;= 6.0</li>
+</ul>
+<h2 id="contribution">Contribution</h2>
+<p>Any contributions are welcome. Please check <a href="../CONTRIBUTING.md">here</a>.</p>
+<h2 id="license">License</h2>
+<p>Lib9c is under GNU GPL3 license. For details, Please check our <a href="../LICENSE">LICENSE</a>.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.20.0/docs/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
