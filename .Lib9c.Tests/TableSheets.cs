@@ -279,6 +279,8 @@ namespace Lib9c.Tests
 
         /* Custom Craft */
 
+        public ClaimableGiftsSheet ClaimableGiftsSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

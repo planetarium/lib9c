@@ -9,3 +9,64 @@ jobs:
             - uses: actions/checkout@v4
             - name: Check typos
               uses: crate-ci/typos@v1.15.5
+
+    local-libplanet:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Check LibplanetDirectory is empty
+              run: grep -q '<LibplanetDirectory></LibplanetDirectory>' Directory.Build.props
+
+    no-submodules:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Check if there is submodule
+              run: |
+                set -ev
+                count=$(git submodule status | wc -l)
+                if [ "$count" -gt 0 ]; then
+                  exit 1
+                fi
+
+    count-no-docs-on-baseref:
+        runs-on: ubuntu-latest
+        if: ${{ github.event_name == 'pull_request' }}
+        outputs:
+            count: ${{ steps.count-no-docs.outputs.count }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                ref: ${{ github.base_ref }}
+            - uses: actions/setup-dotnet@v4
+              with:
+                dotnet-version: 8.0.x
+            - id: count-no-docs
+              run: |
+                set -ev
+                count=$(dotnet build -p GenerateDocumentationFile=true -p 'DocumentationFile=docs.xml' -consoleloggerparameters:WarningsOnly | grep -c -E "CS(1573|1591)")
+                echo "count=$count" >> "$GITHUB_OUTPUT"
+    count-no-docs-on-headref:
+        runs-on: ubuntu-latest
+        if: ${{ github.event_name == 'pull_request' }}
+        outputs:
+            count: ${{ steps.count-no-docs.outputs.count }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-dotnet@v4
+              with:
+                dotnet-version: 8.0.x
+            - id: count-no-docs
+              run: |
+                set -ev
+                count=$(dotnet build -p GenerateDocumentationFile=true -p 'DocumentationFile=docs.xml' -consoleloggerparameters:WarningsOnly | grep -c -E "CS(1573|1591)")
+                echo "count=$count" >> "$GITHUB_OUTPUT"
+    check-items-without-docs-increased:
+        runs-on: ubuntu-latest
+        if: ${{ github.event_name == 'pull_request' }}
+        needs: [count-no-docs-on-headref, count-no-docs-on-baseref]
+        steps:
+            - run: '[ "$BASE_COUNT" -ge "$HEAD_COUNT" ]'
+        env:
+            BASE_COUNT: ${{ needs.count-no-docs-on-baseref.outputs.count }}
+            HEAD_COUNT: ${{ needs.count-no-docs-on-headref.outputs.count }}
