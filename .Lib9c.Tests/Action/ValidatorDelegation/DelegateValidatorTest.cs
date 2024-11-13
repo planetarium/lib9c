@@ -30,14 +30,12 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
     [Fact]
     public void Serialization()
     {
-        var address = new PrivateKey().Address;
         var gold = DelegationCurrency * 10;
-        var action = new DelegateValidator(address, gold);
+        var action = new DelegateValidator(gold);
         var plainValue = action.PlainValue;
 
         var deserialized = new DelegateValidator();
         deserialized.LoadPlainValue(plainValue);
-        Assert.Equal(address, deserialized.ValidatorDelegatee);
         Assert.Equal(gold, deserialized.FAV);
     }
 
@@ -55,7 +53,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 100, height++);
 
         // When
-        var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorGold);
+        var delegateValidator = new DelegateValidator(delegatorGold);
         var actionContext = new ActionContext
         {
             PreviousState = world,
@@ -130,7 +128,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             Signer = validatorKey.Address,
             BlockIndex = height++,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorDollar);
+        var delegateValidator = new DelegateValidator(delegatorDollar);
 
         // Then
         Assert.Throws<InvalidOperationException>(() => delegateValidator.Execute(actionContext));
@@ -156,7 +154,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             Signer = validatorKey.Address,
             BlockIndex = height++,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, DelegationCurrency * 11);
+        var delegateValidator = new DelegateValidator(DelegationCurrency * 11);
 
         // Then
         Assert.Throws<InsufficientBalanceException>(() => delegateValidator.Execute(actionContext));
@@ -177,7 +175,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             PreviousState = world,
             Signer = validatorKey.Address,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, DelegationCurrency * 10);
+        var delegateValidator = new DelegateValidator(DelegationCurrency * 10);
 
         // Then
         Assert.Throws<FailedLoadStateException>(() => delegateValidator.Execute(actionContext));
@@ -203,7 +201,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
             PreviousState = world,
             Signer = validatorKey.Address,
         };
-        var delegateValidator = new DelegateValidator(validatorKey.Address, delegatorGold);
+        var delegateValidator = new DelegateValidator(delegatorGold);
 
         // Then
         Assert.Throws<InvalidOperationException>(() => delegateValidator.Execute(actionContext));
@@ -228,7 +226,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
         var expectedValidatorBalance = validatorBalance - validatorCash - validatorCashToDelegate;
         var expectedPower = validatorCash.RawValue + validatorCashToDelegate.RawValue;
 
-        var delegateValidator = new DelegateValidator(validatorKey.Address, validatorCashToDelegate);
+        var delegateValidator = new DelegateValidator(validatorCashToDelegate);
         actionContext = new ActionContext
         {
             PreviousState = world,

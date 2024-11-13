@@ -1,5 +1,6 @@
 using Lib9c.Tests.Delegation;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Delegation;
 
 public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
@@ -13,8 +14,8 @@ public sealed class DummyDelegatee : Delegatee<DummyDelegator, DummyDelegatee>
         : base(
                 address,
                 accountAddress,
-                DelegationFixture.TestCurrency,
-                DelegationFixture.TestCurrency,
+                DelegationFixture.TestDelegationCurrency,
+                new Currency[] { DelegationFixture.TestRewardCurrency },
                 DelegationAddress.DelegationPoolAddress(address, accountAddress),
                 DelegationAddress.RewardPoolAddress(address, accountAddress),
                 DelegationFixture.FixedPoolAddress,

@@ -17,7 +17,7 @@ using Nekoyume.Model.State;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
-public class AllocateRewardTest : ValidatorDelegationTestBase
+public class AllocateGuildRewardTest : ValidatorDelegationTestBase
 {
     private interface IAllocateRewardFixture
     {
@@ -58,10 +58,10 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     [Fact]
     public void Serialization()
     {
-        var action = new AllocateReward();
+        var action = new AllocateGuildReward();
         var plainValue = action.PlainValue;
 
-        var deserialized = new AllocateReward();
+        var deserialized = new AllocateGuildReward();
         deserialized.LoadPlainValue(plainValue);
     }
 
@@ -70,7 +70,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = RewardCurrency * 1000,
+            TotalReward = GuildAllocateRewardCurrency * 1000,
             ValidatorsInfos = CreateArray(4, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
@@ -96,7 +96,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = FungibleAssetValue.Parse(RewardCurrency, $"{totalReward:R}"),
+            TotalReward = FungibleAssetValue.Parse(GuildAllocateRewardCurrency, $"{totalReward:R}"),
             ValidatorsInfos = CreateArray(validatorCount, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
@@ -114,7 +114,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
     {
         var fixture = new StaticFixture
         {
-            TotalReward = RewardCurrency * 0,
+            TotalReward = GuildAllocateRewardCurrency * 0,
             ValidatorsInfos = CreateArray(4, i => new ValidatorInfo
             {
                 Key = new PrivateKey(),
@@ -205,7 +205,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
 
         // When
         var lastCommit = new BlockCommit(height - 1, round: 0, votes[0].BlockHash, votes);
-        var allocateReward = new AllocateReward();
+        var allocateReward = new AllocateGuildReward();
         actionContext = new ActionContext
         {
             PreviousState = world,
@@ -220,8 +220,8 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             .OfType<BigInteger>()
             .Aggregate(BigInteger.Zero, (accum, next) => accum + next);
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualAllocatedReward = RewardCurrency * 0;
-        var actualCommunityFund = world.GetBalance(Addresses.CommunityPool, RewardCurrency);
+        var actualAllocatedReward = GuildAllocateRewardCurrency * 0;
+        var actualCommunityFund = world.GetBalance(Addresses.CommunityPool, GuildAllocateRewardCurrency);
         foreach (var (vote, index) in votes.Select((v, i) => (v, i)))
         {
             if (vote.ValidatorPower is not { } validatorPower)
@@ -233,14 +233,14 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
             var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorAddress);
             var validatorRewardAddress = actualDelegatee.CurrentLumpSumRewardsRecordAddress();
             var actualDelegationBalance = world.GetBalance(validatorAddress, DelegationCurrency);
-            var actualCommission = world.GetBalance(validatorAddress, RewardCurrency);
-            var actualUnclaimedReward = world.GetBalance(validatorRewardAddress, RewardCurrency);
+            var actualCommission = world.GetBalance(validatorAddress, GuildAllocateRewardCurrency);
+            var actualUnclaimedReward = world.GetBalance(validatorRewardAddress, GuildAllocateRewardCurrency);
             var isProposer = vote.ValidatorPublicKey.Equals(proposerKey.PublicKey);
 
             if (vote.Flag == VoteFlag.Null)
             {
-                Assert.Equal(RewardCurrency * 0, actualCommission);
-                Assert.Equal(RewardCurrency * 0, actualUnclaimedReward);
+                Assert.Equal(GuildAllocateRewardCurrency * 0, actualCommission);
+                Assert.Equal(GuildAllocateRewardCurrency * 0, actualUnclaimedReward);
                 Assert.False(isProposer);
                 continue;
             }
@@ -298,7 +298,7 @@ public class AllocateRewardTest : ValidatorDelegationTestBase
         public RandomFixture(int randomSeed)
         {
             _random = new Random(randomSeed);
-            TotalReward = GetRandomFAV(RewardCurrency, _random);
+            TotalReward = GetRandomFAV(GuildAllocateRewardCurrency, _random);
             ValidatorsInfos = CreateArray(_random.Next(1, 200), i =>
             {
                 var balance = GetRandomFAV(DelegationCurrency, _random);

@@ -476,10 +476,11 @@ namespace Lib9c.Tests.Action
             if (guildRepository.TryGetGuildParticipant(new AgentAddress(signer), out var guildParticipant))
             {
                 var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                var bond = guildRepository.GetBond(guild, signer);
+                var validator = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                var bond = guildRepository.GetBond(validator, signer);
                 var amountNCG = _ncg * amount;
                 var expectedGG = DelegationUtil.GetGuildCoinFromNCG(amountNCG);
-                var expectedShare = guild.ShareFromFAV(expectedGG);
+                var expectedShare = validator.ShareFromFAV(expectedGG);
                 Assert.Equal(expectedShare, bond.Share);
             }
 

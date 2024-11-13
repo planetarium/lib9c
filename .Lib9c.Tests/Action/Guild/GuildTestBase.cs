@@ -53,7 +53,10 @@ namespace Lib9c.Tests.Action.Guild
             var validatorRepository = new ValidatorRepository(world, actionContext);
             validatorRepository.CreateValidatorDelegatee(validatorPublicKey, commissionPercentage);
 
-            return validatorRepository.World;
+            var guildRepository = new GuildRepository(validatorRepository);
+            guildRepository.CreateGuildDelegatee(validatorAddress);
+
+            return guildRepository.World;
         }
 
         protected static IWorld EnsureToMakeGuild(

@@ -1,5 +1,7 @@
 namespace Lib9c.Tests.Delegation
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -11,7 +13,8 @@ namespace Lib9c.Tests.Delegation
 
     public class DelegationFixture
     {
-        public static readonly Currency TestCurrency = Currency.Uncapped("test-del", 5, null);
+        public static readonly Currency TestDelegationCurrency = Currency.Uncapped("test-del", 5, null);
+        public static readonly Currency TestRewardCurrency = Currency.Uncapped("test-reward", 5, null);
         public static readonly Address FixedPoolAddress = new Address("0x75b21EbC56e5dAc817A1128Fb05d45853183117c");
 
         public DelegationFixture()
@@ -61,13 +64,17 @@ namespace Lib9c.Tests.Delegation
 
         public DummyDelegator DummyDelegator1 { get; }
 
-        public static FungibleAssetValue TotalRewardsOfRecords(IDelegatee delegatee, IDelegationRepository repo)
+        public static FungibleAssetValue[] TotalRewardsOfRecords(IDelegatee delegatee, IDelegationRepository repo)
         {
-            var reward = delegatee.RewardCurrency * 0;
+            var rewards = delegatee.RewardCurrencies.Select(r => r * 0).ToArray();
             var record = repo.GetCurrentLumpSumRewardsRecord(delegatee);
+
             while (true)
             {
-                reward += repo.World.GetBalance(record.Address, delegatee.RewardCurrency);
+                foreach (var reward in rewards.Select((v, i) => (v, i)))
+                {
+                    rewards[reward.i] += repo.World.GetBalance(record.Address, reward.v.Currency);
+                }
 
                 if (record.LastStartHeight is null)
                 {
@@ -77,7 +84,7 @@ namespace Lib9c.Tests.Delegation
                 record = repo.GetLumpSumRewardsRecord(delegatee, record.LastStartHeight.Value);
             }
 
-            return reward;
+            return rewards;
         }
     }
 }

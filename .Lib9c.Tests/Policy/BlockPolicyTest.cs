@@ -347,7 +347,7 @@ namespace Lib9c.Tests
             // Total 10 + 0.05 + 0.2 + 0.475 = 10.725
             blockChain.Append(block, commit);
 
-            var rewardCurrency = ValidatorDelegatee.ValidatorRewardCurrency;
+            var rewardCurrency = Currencies.Mead;
             var actualBalance = blockChain
                 .GetNextWorldState()
                 .GetBalance(adminAddress, rewardCurrency);
@@ -361,7 +361,7 @@ namespace Lib9c.Tests
             // After claimed, mead have to be used?
             blockChain.MakeTransaction(
                 adminPrivateKey,
-                new ActionBase[] { new ClaimRewardValidatorSelf(), },
+                new ActionBase[] { new ClaimValidatorRewardSelf(), },
                 gasLimit: 1,
                 maxGasPrice: Currencies.Mead * 1
             );
