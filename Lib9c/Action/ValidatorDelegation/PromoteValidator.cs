@@ -78,12 +78,20 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
 
-            var repository = new ValidatorRepository(world, context);
-            repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
-            repository.DelegateValidator(context.Signer, FAV);
+            if (!PublicKey.Address.Equals(context.Signer))
+            {
+                throw new ArgumentException("The public key does not match the signer.");
+            }
 
-            var guildRepository = new GuildRepository(repository.World, context);
-            guildRepository.CreateValidatorDelegateeForGuildParticipant();
+            var repository = new ValidatorRepository(world, context);
+            var validatorDelegatee = repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            validatorDelegatee.Bond(validatorDelegator, FAV, context.BlockIndex);
+
+            var guildRepository = new GuildRepository(repository);
+            var guildDelegatee = guildRepository.CreateGuildDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            guildDelegator.Delegate(guildDelegatee, FAV, context.BlockIndex);
 
             return guildRepository.World;
         }

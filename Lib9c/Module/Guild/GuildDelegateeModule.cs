@@ -1,7 +1,6 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Lib9c;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Model.Guild;
@@ -11,16 +10,16 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Module.Guild
 {
-    public static class ValidatorDelegateeForGuildModule
+    public static class GuildDelegateeModule
     {
-        public static bool TryGetValidatorDelegateeForGuild(
+        public static bool TryGetGuildDelegatee(
             this GuildRepository repository,
             Address address,
-            [NotNullWhen(true)] out ValidatorDelegateeForGuildParticipant? validatorDelegateeForGuildParticipant)
+            [NotNullWhen(true)] out GuildDelegatee? validatorDelegateeForGuildParticipant)
         {
             try
             {
-                validatorDelegateeForGuildParticipant = repository.GetValidatorDelegateeForGuildParticipant(address);
+                validatorDelegateeForGuildParticipant = repository.GetGuildDelegatee(address);
                 return true;
             }
             catch
@@ -30,31 +29,29 @@ namespace Nekoyume.Module.Guild
             }
         }
 
-        public static GuildRepository CreateValidatorDelegateeForGuildParticipant(
-            this GuildRepository repository)
+        public static GuildDelegatee CreateGuildDelegatee(
+            this GuildRepository repository,
+            Address address)
         {
-            var context = repository.ActionContext;
-            var signer = context.Signer;
-
-            if (repository.TryGetValidatorDelegateeForGuild(context.Signer, out _))
+            if (repository.TryGetGuildDelegatee(address, out _))
             {
                 throw new InvalidOperationException("The signer already has a validator delegatee for guild.");
             }
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            if (!validatorRepository.TryGetValidatorDelegatee(context.Signer, out _))
+            if (!validatorRepository.TryGetValidatorDelegatee(address, out _))
             {
                 throw new InvalidOperationException("The signer does not have a validator delegatee.");
             }
 
-            var validatorDelegateeForGuildParticipant = new ValidatorDelegateeForGuildParticipant(
-                signer,
+            var guildDelegatee = new GuildDelegatee(
+                address,
                 new Currency[] { repository.World.GetGoldCurrency() },
                 repository);
 
-            repository.SetValidatorDelegateeForGuildParticipant(validatorDelegateeForGuildParticipant);
+            repository.SetGuildDelgatee(guildDelegatee);
 
-            return repository;
+            return guildDelegatee;
         }
     }
 }

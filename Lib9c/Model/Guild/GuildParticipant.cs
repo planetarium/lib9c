@@ -3,10 +3,9 @@ using System;
 using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
+using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
-using Nekoyume.Delegation;
-using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 
@@ -14,11 +13,10 @@ namespace Nekoyume.Model.Guild
 {
     // It Does not inherit from `Delegator`, since `Validator` related functionalities
     // will be moved to lower level library.
-    public class GuildParticipant
-        : Delegator<ValidatorDelegateeForGuildParticipant, GuildParticipant>, IBencodable, IEquatable<GuildParticipant>
+    public class GuildParticipant : IBencodable, IEquatable<GuildParticipant>
     {
         private const string StateTypeName = "guild_participant";
-        private const long StateVersion = 1;
+        private const long StateVersion = 2;
 
         public readonly GuildAddress GuildAddress;
 
@@ -26,21 +24,16 @@ namespace Nekoyume.Model.Guild
             AgentAddress address,
             GuildAddress guildAddress,
             GuildRepository repository)
-            : base(
-                  address: address,
-                  accountAddress: repository.DelegatorAccountAddress,
-                  delegationPoolAddress: StakeState.DeriveAddress(address),
-                  rewardAddress: address,
-                  repository: repository)
         {
+            Address = address;
             GuildAddress = guildAddress;
+            Repository = repository;
         }
 
         public GuildParticipant(
             AgentAddress address,
             IValue bencoded,
             GuildRepository repository)
-            : base(address: address, repository: repository)
         {
             if (bencoded is not List list)
             {
@@ -57,10 +50,25 @@ namespace Nekoyume.Model.Guild
                 throw new FailedLoadStateException("Un-deserializable state.");
             }
 
+            if (integer == 1)
+            {
+                throw new FailedLoadStateException("State version 1 is not supported.");
+            }
+
+            Address = address;
             GuildAddress = new GuildAddress(list[2]);
+            Repository = repository;
         }
 
-        public new AgentAddress Address => new AgentAddress(base.Address);
+        public AgentAddress Address { get; }
+
+        public Address DelegationPoolAddress
+            => Repository.GetGuildDelegator(Address).DelegationPoolAddress;
+
+        public Address RewardAddress
+            => Repository.GetGuildDelegator(Address).RewardAddress;
+
+        public GuildRepository Repository { get; }
 
         public List Bencoded => List.Empty
             .Add(StateTypeName)
@@ -71,18 +79,17 @@ namespace Nekoyume.Model.Guild
 
         public void Delegate(Guild guild, FungibleAssetValue fav, long height)
         {
-            var repository = (GuildRepository)Repository;
-
             if (fav.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            var validatorDelegateeForGuildParticipant = repository.GetValidatorDelegateeForGuildParticipant(guild.ValidatorAddress);
-            base.Delegate(validatorDelegateeForGuildParticipant, fav, height);
+            var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
+            var guildDelegator = Repository.GetGuildDelegator(Address);
+            guildDelegator.Delegate(guildDelegatee, fav, height);
 
-            var validatorRepository = new ValidatorRepository(Repository.World, Repository.ActionContext);
+            var validatorRepository = new ValidatorRepository(Repository);
             var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
             var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
             validatorDelegatee.Bond(validatorDelegator, fav, height);
@@ -92,8 +99,6 @@ namespace Nekoyume.Model.Guild
 
         public void Undelegate(Guild guild, BigInteger share, long height)
         {
-            var repository = (GuildRepository)Repository;
-
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -106,10 +111,11 @@ namespace Nekoyume.Model.Guild
                     nameof(height), height, "Height must be positive.");
             }
 
-            var validatorDelegateeForGuildParticipant = repository.GetValidatorDelegateeForGuildParticipant(guild.ValidatorAddress);
-            base.Undelegate(validatorDelegateeForGuildParticipant, share, height);
+            var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
+            var guildDelegator = Repository.GetGuildDelegator(Address);
+            guildDelegator.Undelegate(guildDelegatee, share, height);
 
-            var validatorRepository = new ValidatorRepository(Repository.World, Repository.ActionContext);
+            var validatorRepository = new ValidatorRepository(Repository);
             var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
             var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
             validatorDelegatee.Unbond(validatorDelegator, share, height);
@@ -120,8 +126,6 @@ namespace Nekoyume.Model.Guild
         public void Redelegate(
             Guild srcGuild, Guild dstGuild, BigInteger share, long height)
         {
-            var repository = (GuildRepository)Repository;
-
             if (share.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -134,11 +138,12 @@ namespace Nekoyume.Model.Guild
                     nameof(height), height, "Height must be positive.");
             }
 
-            var srcValidatorDelegateeForGuildParticipant = repository.GetValidatorDelegateeForGuildParticipant(srcGuild.ValidatorAddress);
-            var dstValidatorDelegateeForGuildParticipant = repository.GetValidatorDelegateeForGuildParticipant(dstGuild.ValidatorAddress);
-            base.Redelegate(srcValidatorDelegateeForGuildParticipant, dstValidatorDelegateeForGuildParticipant, share, height);
+            var srcGuildDelegatee = Repository.GetGuildDelegatee(srcGuild.ValidatorAddress);
+            var dstGuildDelegator = Repository.GetGuildDelegatee(dstGuild.ValidatorAddress);
+            var guildDelegator = Repository.GetGuildDelegator(Address);
+            guildDelegator.Redelegate(srcGuildDelegatee, dstGuildDelegator, share, height);
 
-            var validatorRepository = new ValidatorRepository(Repository.World, Repository.ActionContext);
+            var validatorRepository = new ValidatorRepository(Repository);
             var srcValidatorDelegatee = validatorRepository.GetValidatorDelegatee(srcGuild.ValidatorAddress);
             var srcValidatorDelegator = validatorRepository.GetValidatorDelegator(srcGuild.Address);
             var fav = srcValidatorDelegatee.Unbond(srcValidatorDelegator, share, height);
@@ -147,6 +152,13 @@ namespace Nekoyume.Model.Guild
             dstValidatorDelegatee.Bond(dstValidatorDelegator, fav, height);
 
             Repository.UpdateWorld(validatorRepository.World);
+        }
+
+        public void ClaimReward(Guild guild, long height)
+        {
+            var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
+            var guildDelegator = Repository.GetGuildDelegator(Address);
+            guildDelegator.ClaimReward(guildDelegatee, height);
         }
 
         public bool Equals(GuildParticipant? other)

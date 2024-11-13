@@ -1,7 +1,7 @@
-using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
@@ -10,10 +10,12 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.Model.State;
+using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
+using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
-using Nekoyume.Action.Guild;
-using Lib9c;
 
 namespace Nekoyume.Action
 {
@@ -200,32 +202,24 @@ namespace Nekoyume.Action
                 );
             }
 
-            var repository = new ValidatorRepository(states, context);
             var validatorSet = new ValidatorSet(ValidatorSet);
             foreach (var validator in validatorSet.Validators)
             {
-                var validatorDelegatee = new ValidatorDelegatee(
-                    validator.OperatorAddress,
-                    validator.PublicKey,
-                    ValidatorDelegatee.DefaultCommissionPercentage,
-                    context.BlockIndex,
-                    new Currency[] { currencyState.Currency },
-                    repository);
                 var delegationFAV = FungibleAssetValue.FromRawValue(
-                    validatorDelegatee.DelegationCurrency, validator.Power);
-                var validatorOperatorAddress = validator.OperatorAddress;
-                var validatorDelegator = repository.GetValidatorDelegator(
-                    validatorOperatorAddress);
+                    ValidatorDelegatee.ValidatorDelegationCurrency, validator.Power);
+                states = states.MintAsset(ctx, StakeState.DeriveAddress(validator.OperatorAddress), delegationFAV);
 
-                repository.SetValidatorDelegatee(validatorDelegatee);
-                repository.UpdateWorld(
-                    repository.World.MintAsset(
-                        repository.ActionContext,
-                        validatorDelegator.DelegationPoolAddress,
-                        delegationFAV));
-                validatorDelegator.Delegate(validatorDelegatee, delegationFAV, context.BlockIndex);
+                var validatorRepository = new ValidatorRepository(states, ctx);
+                var validatorDelegatee = validatorRepository.CreateValidatorDelegatee(
+                    validator.PublicKey, ValidatorDelegatee.DefaultCommissionPercentage);
+                var validatorDelegator = validatorRepository.GetValidatorDelegator(validator.OperatorAddress);
+                validatorDelegatee.Bond(validatorDelegator, delegationFAV, context.BlockIndex);
 
-                states = repository.World;
+                var guildRepository = new GuildRepository(validatorRepository);
+                var guildDelegatee = guildRepository.CreateGuildDelegatee(validator.OperatorAddress);
+                var guildDelegator = guildRepository.GetGuildDelegator(validator.OperatorAddress);
+                guildDelegator.Delegate(guildDelegatee, delegationFAV, context.BlockIndex);
+                states = guildRepository.World;
             }
 
             return states;

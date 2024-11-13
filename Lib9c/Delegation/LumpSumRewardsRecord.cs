@@ -144,18 +144,21 @@ namespace Nekoyume.Delegation
                 LastStartHeight);
 
         public LumpSumRewardsRecord AddLumpSumRewards(IEnumerable<FungibleAssetValue> rewards)
-            => rewards.Aggregate(this, (accum, next) => AddLumpSumRewards(next));
+            => rewards.Aggregate(this, (accum, next) => AddLumpSumRewards(accum, next));
 
         public LumpSumRewardsRecord AddLumpSumRewards(FungibleAssetValue rewards)
+            => AddLumpSumRewards(this, rewards);
+
+        public static LumpSumRewardsRecord AddLumpSumRewards(LumpSumRewardsRecord record, FungibleAssetValue rewards)
             => new LumpSumRewardsRecord(
-                Address,
-                StartHeight,
-                TotalShares,
-                Delegators,
-                LumpSumRewards.TryGetValue(rewards.Currency, out var cumulative)
-                    ? LumpSumRewards.SetItem(rewards.Currency, cumulative + rewards)
+                record.Address,
+                record.StartHeight,
+                record.TotalShares,
+                record.Delegators,
+                record.LumpSumRewards.TryGetValue(rewards.Currency, out var cumulative)
+                    ? record.LumpSumRewards.SetItem(rewards.Currency, cumulative + rewards)
                     : throw new ArgumentException($"Invalid reward currency: {rewards.Currency}"),
-                LastStartHeight);
+                record.LastStartHeight);
 
         public LumpSumRewardsRecord RemoveDelegator(Address delegator)
             => new LumpSumRewardsRecord(

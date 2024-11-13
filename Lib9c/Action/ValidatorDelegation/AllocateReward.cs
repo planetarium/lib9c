@@ -47,6 +47,16 @@ namespace Nekoyume.Action.ValidatorDelegation
                 DistributeGuildParticipant(repository, rewardCurrency, validatorSetPower, lastCommit.Votes);
             }
 
+            var communityFund = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
+
+            if (communityFund.Sign > 0)
+            {
+                repository.TransferAsset(
+                    Addresses.RewardPool,
+                    Addresses.CommunityPool,
+                    communityFund);
+            }
+
             return repository.World;
         }
 
@@ -70,7 +80,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             var validatorReward = reward.DivRem(10).Quotient;
-
+            var distributed = rewardCurrency * 0;
             foreach (Vote vote in lastVotes)
             {
                 if (vote.Flag == VoteFlag.Null || vote.Flag == VoteFlag.Unknown)
@@ -85,7 +95,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 }
 
                 var validatorAddress = vote.ValidatorPublicKey.Address;
-                if (!repository.TryGetValidatorDelegateeForGuild(
+                if (!repository.TryGetGuildDelegatee(
                     validatorAddress, out var validatorDelegatee))
                 {
                     continue;
@@ -98,7 +108,14 @@ namespace Nekoyume.Action.ValidatorDelegation
                 if (rewardEach.Sign > 0)
                 {
                     repository.TransferAsset(Addresses.RewardPool, validatorAddress, rewardEach);
+                    distributed += rewardEach;
                 }
+            }
+
+            var remainder = validatorReward - distributed;
+            if (remainder.Sign > 0)
+            {
+                repository.TransferAsset(Addresses.RewardPool, Addresses.CommunityPool, remainder);
             }
         }
 
@@ -124,6 +141,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             var guildReward = reward.DivRem(10).Quotient;
+            var distributed = rewardCurrency * 0;
 
             foreach (Vote vote in lastVotes)
             {
@@ -154,7 +172,14 @@ namespace Nekoyume.Action.ValidatorDelegation
                     repository.TransferAsset(
                         Addresses.RewardPool, validatorDelegatee.RewardPoolAddress, rewardEach);
                     validatorDelegatee.CollectRewards(blockHeight);
+                    distributed += rewardEach;
                 }
+            }
+
+            var remainder = guildReward - distributed;
+            if (remainder.Sign > 0)
+            {
+                repository.TransferAsset(Addresses.RewardPool, Addresses.CommunityPool, remainder);
             }
         }
 
@@ -164,6 +189,8 @@ namespace Nekoyume.Action.ValidatorDelegation
             BigInteger validatorSetPower,
             IEnumerable<Vote> lastVotes)
         {
+            long blockHeight = repository.ActionContext.BlockIndex;
+
             FungibleAssetValue reward
                 = repository.GetBalance(Addresses.RewardPool, rewardCurrency);
 
@@ -191,7 +218,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 }
 
                 var validatorAddress = vote.ValidatorPublicKey.Address;
-                if (!repository.TryGetValidatorDelegateeForGuild(
+                if (!repository.TryGetGuildDelegatee(
                     validatorAddress, out var validatorDelegatee))
                 {
                     continue;
@@ -203,6 +230,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 if (rewardEach.Sign > 0)
                 {
                     repository.TransferAsset(Addresses.RewardPool, validatorDelegatee.RewardPoolAddress, rewardEach);
+                    validatorDelegatee.CollectRewards(blockHeight);
                 }
             }
         }

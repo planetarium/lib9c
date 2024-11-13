@@ -5,13 +5,14 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
     public class Guild : IBencodable, IEquatable<Guild>
     {
         private const string StateTypeName = "guild";
-        private const long StateVersion = 1;
+        private const long StateVersion = 2;
 
         public readonly AgentAddress GuildMasterAddress;
 
@@ -26,6 +27,7 @@ namespace Nekoyume.Model.Guild
             Address = address;
             GuildMasterAddress = guildMasterAddress;
             ValidatorAddress = validatorAddress;
+            Repository = repository;
         }
 
         public Guild(
@@ -48,12 +50,20 @@ namespace Nekoyume.Model.Guild
                 throw new FailedLoadStateException("Un-deserializable state.");
             }
 
+            if (integer == 1)
+            {
+                throw new FailedLoadStateException("Does not support version 1.");
+            }
+
             Address = address;
             GuildMasterAddress = new AgentAddress(list[2]);
             ValidatorAddress = new AgentAddress(list[3]);
+            Repository = repository;
         }
 
         public GuildAddress Address { get; }
+
+        public GuildRepository Repository { get; }
 
         public List Bencoded => List.Empty
             .Add(StateTypeName)
@@ -62,6 +72,20 @@ namespace Nekoyume.Model.Guild
             .Add(ValidatorAddress.Bencoded);
 
         IValue IBencodable.Bencoded => Bencoded;
+
+        public void ClaimReward(Address validatorAddress, long height)
+        {
+            var guildDelegatee = Repository.GetGuildDelegatee(validatorAddress);
+            var guildDelegator = Repository.GetGuildDelegator(Address);
+            guildDelegator.ClaimReward(guildDelegatee, height);
+
+            var validatorRepository = new ValidatorRepository(Repository);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(Address);
+            validatorDelegator.ClaimReward(validatorDelegatee, height);
+
+            Repository.UpdateWorld(validatorRepository.World);
+        }
 
         public bool Equals(Guild? other)
         {

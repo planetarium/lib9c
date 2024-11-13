@@ -8,10 +8,10 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
-    public class ValidatorDelegateeForGuildParticipant
-        : Delegatee<GuildParticipant, ValidatorDelegateeForGuildParticipant>, IEquatable<ValidatorDelegateeForGuildParticipant>
+    public class GuildDelegatee
+        : Delegatee<GuildDelegator, GuildDelegatee>, IEquatable<GuildDelegatee>
     {
-        public ValidatorDelegateeForGuildParticipant(
+        public GuildDelegatee(
             Address address,
             IEnumerable<Currency> rewardCurrencies,
             GuildRepository repository)
@@ -31,7 +31,7 @@ namespace Nekoyume.Model.Guild
         {
         }
 
-        public ValidatorDelegateeForGuildParticipant(
+        public GuildDelegatee(
             Address address,
             GuildRepository repository)
             : base(
@@ -50,7 +50,7 @@ namespace Nekoyume.Model.Guild
             Metadata.DelegationPoolAddress = ValidatorDelegatee.InactiveDelegationPoolAddress;
         }
 
-        public bool Equals(ValidatorDelegateeForGuildParticipant? other)
+        public bool Equals(GuildDelegatee? other)
             => Metadata.Equals(other?.Metadata);
     }
 }

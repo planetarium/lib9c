@@ -4,6 +4,7 @@ using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -41,7 +42,12 @@ namespace Nekoyume.Action.ValidatorDelegation
             var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);
 
-            return repository.World;
+            var guildRepository = new GuildRepository(repository);
+            var guildDelegatee = guildRepository.GetGuildDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            guildDelegator.ClaimReward(guildDelegatee, context.BlockIndex);
+
+            return guildRepository.World;
         }
     }
 }

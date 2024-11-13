@@ -5,11 +5,18 @@ using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
 using Nekoyume.TypedAddress;
+using Nekoyume.Model.Stake;
 
 namespace Nekoyume.Model.Guild
 {
     public class GuildRepository : DelegationRepository
     {
+        private readonly Address guildAddress = Addresses.Guild;
+        private readonly Address guildParticipantAddress = Addresses.GuildParticipant;
+
+        private IAccount _guildAccount;
+        private IAccount _guildParticipantAccount;
+
         public GuildRepository(IDelegationRepository repository)
             : this(repository.World, repository.ActionContext)
         {
@@ -19,63 +26,65 @@ namespace Nekoyume.Model.Guild
             : base(
                   world: world,
                   actionContext: actionContext,
-                  delegateeAccountAddress: Addresses.ValidatorDelegateeForGuildParticipantMetadata,
-                  delegatorAccountAddress: Addresses.GuildParticipant,
-                  delegateeMetadataAccountAddress: Addresses.ValidatorDelegateeForGuildParticipantMetadata,
-                  delegatorMetadataAccountAddress: Addresses.GuildParticipantMetadata,
+                  delegateeAccountAddress: Addresses.GuildDelegateeMetadata,
+                  delegatorAccountAddress: Addresses.GuildDelegatorMetadata,
+                  delegateeMetadataAccountAddress: Addresses.GuildDelegateeMetadata,
+                  delegatorMetadataAccountAddress: Addresses.GuildDelegatorMetadata,
                   bondAccountAddress: Addresses.GuildBond,
                   unbondLockInAccountAddress: Addresses.GuildUnbondLockIn,
                   rebondGraceAccountAddress: Addresses.GuildRebondGrace,
                   unbondingSetAccountAddress: Addresses.GuildUnbondingSet,
                   lumpSumRewardRecordAccountAddress: Addresses.GuildLumpSumRewardsRecord)
         {
+            _guildAccount = world.GetAccount(guildAddress);
+            _guildParticipantAccount = world.GetAccount(guildParticipantAddress);
         }
 
-        public ValidatorDelegateeForGuildParticipant GetValidatorDelegateeForGuildParticipant(Address address)
-            => delegateeAccount.GetState(address) is IValue bencoded
-                ? new ValidatorDelegateeForGuildParticipant(
-                    address,
-                    this)
-                : throw new FailedLoadStateException("Validator delegatee for guild participant does not exist.");
+        public override IWorld World => base.World
+            .SetAccount(guildAddress, _guildAccount)
+            .SetAccount(guildParticipantAddress, _guildParticipantAccount);
+
+        public GuildDelegatee GetGuildDelegatee(Address address)
+            => new GuildDelegatee(address, this);
 
         public override IDelegatee GetDelegatee(Address address)
-            => GetValidatorDelegateeForGuildParticipant(address);
+            => GetGuildDelegatee(address);
 
-        public GuildParticipant GetGuildParticipant(Address address)
-            => delegatorAccount.GetState(address) is IValue bencoded
-                ? new GuildParticipant(
-                    new AgentAddress(address),
-                    bencoded,
-                    this)
-                : throw new FailedLoadStateException("Guild participant does not exist.");
-
-        public override IDelegator GetDelegator(Address address)
-            => GetGuildParticipant(address);
-
-        public void SetValidatorDelegateeForGuildParticipant(ValidatorDelegateeForGuildParticipant validatorDelegateeForGuild)
+        public GuildDelegator GetGuildDelegator(Address address)
         {
-            SetDelegateeMetadata(validatorDelegateeForGuild.Metadata);
+            try
+            {
+                return new GuildDelegator(address, this);
+            }
+            catch (FailedLoadStateException)
+            {
+                return new GuildDelegator(
+                    address,
+                    StakeState.DeriveAddress(address),
+                    this);
+            }
+        }
+        public override IDelegator GetDelegator(Address address)
+            => GetGuildDelegator(address);
+
+        public void SetGuildDelgatee(GuildDelegatee guildDelegatee)
+        {
+            SetDelegateeMetadata(guildDelegatee.Metadata);
         }
 
         public override void SetDelegatee(IDelegatee delegatee)
-            => SetValidatorDelegateeForGuildParticipant(delegatee as ValidatorDelegateeForGuildParticipant);
+            => SetGuildDelgatee(delegatee as GuildDelegatee);
 
-        public void SetGuildParticipant(GuildParticipant guildParticipant)
+        public void SetGuildDelegator(GuildDelegator guildDelegator)
         {
-            delegatorAccount = delegatorAccount.SetState(
-                guildParticipant.Address, guildParticipant.Bencoded);
-            SetDelegatorMetadata(guildParticipant.Metadata);
+            SetDelegatorMetadata(guildDelegator.Metadata);
         }
+
         public override void SetDelegator(IDelegator delegator)
-            => SetGuildParticipant(delegator as GuildParticipant);
-
-        public void RemoveGuildParticipant(Address guildParticipantAddress)
-        {
-            delegatorAccount = delegatorAccount.RemoveState(guildParticipantAddress);
-        }
+            => SetGuildDelegator(delegator as GuildDelegator);
 
         public Guild GetGuild(Address address)
-            => delegateeAccount.GetState(address) is IValue bencoded
+            => _guildAccount.GetState(address) is IValue bencoded
                 ? new Guild(
                     new GuildAddress(address),
                     bencoded,
@@ -84,8 +93,34 @@ namespace Nekoyume.Model.Guild
 
         public void SetGuild(Guild guild)
         {
-            delegateeAccount = delegateeAccount.SetState(
+            _guildAccount = _guildAccount.SetState(
                 guild.Address, guild.Bencoded);
+        }
+
+        public GuildParticipant GetGuildParticipant(Address address)
+            => _guildParticipantAccount.GetState(address) is IValue bencoded
+                ? new GuildParticipant(
+                    new AgentAddress(address),
+                    bencoded,
+                    this)
+                : throw new FailedLoadStateException("Guild participant does not exist.");
+
+        public void SetGuildParticipant(GuildParticipant guildParticipant)
+        {
+            _guildParticipantAccount = _guildParticipantAccount.SetState(
+                guildParticipant.Address, guildParticipant.Bencoded);
+        }
+
+        public void RemoveGuildParticipant(Address guildParticipantAddress)
+        {
+            _guildParticipantAccount = _guildParticipantAccount.RemoveState(guildParticipantAddress);
+        }
+
+        public override void UpdateWorld(IWorld world)
+        {
+            base.UpdateWorld(world);
+            _guildAccount = world.GetAccount(guildAddress);
+            _guildParticipantAccount = world.GetAccount(guildParticipantAddress);
         }
     }
 }

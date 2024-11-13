@@ -213,8 +213,8 @@ namespace Nekoyume.Action
                 if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                    var validatorDelegateeForGuildParticipant = guildRepository.GetValidatorDelegateeForGuildParticipant(guild.ValidatorAddress);
-                    var share = validatorDelegateeForGuildParticipant.ShareFromFAV(gg);
+                    var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                    var share = guildDelegatee.ShareFromFAV(gg);
                     guildParticipant.Undelegate(guild, share, height);
                     state = guildRepository.World;
                 }
@@ -222,7 +222,7 @@ namespace Nekoyume.Action
                 {
                     var delegateeAddress = Addresses.NonValidatorDelegatee;
                     var delegatorAddress = context.Signer;
-                    var repository = new ValidatorRepository(state, context);
+                    var repository = new GuildRepository(state, context);
                     var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, repository.DelegateeAccountAddress, delegatorAddress);
                     var unbondLockIn = new UnbondLockIn(
                         unbondLockInAddress, ValidatorDelegatee.ValidatorMaxUnbondLockInEntries, delegateeAddress, delegatorAddress, null);

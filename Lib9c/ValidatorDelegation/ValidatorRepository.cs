@@ -13,7 +13,7 @@ namespace Nekoyume.ValidatorDelegation
     {
         private readonly Address validatorListAddress = Addresses.ValidatorList;
 
-        private IAccount _validatorList;
+        private IAccount _validatorListAccount;
 
         public ValidatorRepository(IDelegationRepository repository)
             : this(repository.World, repository.ActionContext)
@@ -34,11 +34,11 @@ namespace Nekoyume.ValidatorDelegation
                   Addresses.ValidatorUnbondingSet,
                   Addresses.ValidatorLumpSumRewardsRecord)
         {
-            _validatorList = world.GetAccount(validatorListAddress);
+            _validatorListAccount = world.GetAccount(validatorListAddress);
         }
 
         public override IWorld World => base.World
-            .SetAccount(validatorListAddress, _validatorList);
+            .SetAccount(validatorListAddress, _validatorListAccount);
 
         public ValidatorDelegatee GetValidatorDelegatee(Address address)
             => delegateeAccount.GetState(address) is IValue bencoded
@@ -71,7 +71,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public ValidatorList GetValidatorList()
         {
-            IValue? value = _validatorList.GetState(ValidatorList.Address);
+            IValue? value = _validatorListAccount.GetState(ValidatorList.Address);
             return value is IValue bencoded
                 ? new ValidatorList(bencoded)
                 : new ValidatorList();
@@ -97,7 +97,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public void SetValidatorList(ValidatorList validatorList)
         {
-            _validatorList = _validatorList.SetState(
+            _validatorListAccount = _validatorListAccount.SetState(
                 ValidatorList.Address, validatorList.Bencoded);
         }
 
@@ -111,7 +111,7 @@ namespace Nekoyume.ValidatorDelegation
         public override void UpdateWorld(IWorld world)
         {
             base.UpdateWorld(world);
-            _validatorList = world.GetAccount(validatorListAddress);
+            _validatorListAccount = world.GetAccount(validatorListAddress);
         }
     }
 }

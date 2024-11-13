@@ -31,9 +31,9 @@ namespace Nekoyume.Action.ValidatorDelegation
                 validatorDelegatee.Deactivate();
                 repository.SetValidatorDelegatee(validatorDelegatee);
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var validatorDelegateeForGuildParticipant = guildRepository.GetValidatorDelegateeForGuildParticipant(deactivated.OperatorAddress);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(deactivated.OperatorAddress);
                 validatorDelegateeForGuildParticipant.Deactivate();
-                guildRepository.SetValidatorDelegateeForGuildParticipant(validatorDelegateeForGuildParticipant);
+                guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
                 repository.UpdateWorld(guildRepository.World);
             }
 
@@ -43,9 +43,9 @@ namespace Nekoyume.Action.ValidatorDelegation
                 validatorDelegatee.Activate();
                 repository.SetValidatorDelegatee(validatorDelegatee);
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var validatorDelegateeForGuildParticipant = guildRepository.GetValidatorDelegateeForGuildParticipant(activated.OperatorAddress);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(activated.OperatorAddress);
                 validatorDelegateeForGuildParticipant.Activate();
-                guildRepository.SetValidatorDelegateeForGuildParticipant(validatorDelegateeForGuildParticipant);
+                guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
                 repository.UpdateWorld(guildRepository.World);
             }
 

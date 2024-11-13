@@ -106,13 +106,13 @@ namespace Nekoyume
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
         /// </summary> 
-        public static readonly Address ValidatorDelegateeForGuildParticipantMetadata
+        public static readonly Address GuildDelegateeMetadata
             = new Address("0000000000000000000000000000000000000210");
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegatorMetadata"/>.
         /// </summary>
-        public static readonly Address GuildParticipantMetadata
+        public static readonly Address GuildDelegatorMetadata
             = new Address("0000000000000000000000000000000000000211");
 
         /// <summary>

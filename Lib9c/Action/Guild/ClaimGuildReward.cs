@@ -43,7 +43,7 @@ namespace Nekoyume.Action.Guild
                 throw new InvalidOperationException("Signer is not a guild master.");
             }
 
-            var repository = new ValidatorRepository(guildRepository.World, guildRepository.ActionContext);
+            var repository = new ValidatorRepository(guildRepository);
             var validatorDelegatee = repository.GetValidatorDelegatee(guild.ValidatorAddress);
             var validatorDelegator = repository.GetValidatorDelegator(guild.Address);
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);

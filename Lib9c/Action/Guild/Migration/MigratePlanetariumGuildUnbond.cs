@@ -47,11 +47,11 @@ namespace Nekoyume.Action.Guild.Migration
             var guildAddress = guildRepository.GetGuildParticipant(GuildConfig.PlanetariumGuildOwner).GuildAddress;
             var guild = guildRepository.GetGuild(guildAddress);
             var validatorDelegateeForGuildParticipant
-                = guildRepository.GetValidatorDelegateeForGuildParticipant(guild.ValidatorAddress);
+                = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
 
             // TODO: [GuildMigration] Replace below height when determined.
             validatorDelegateeForGuildParticipant.Metadata.UpdateUnbondingPeriod(LegacyStakeState.LockupInterval);
-            guildRepository.SetValidatorDelegateeForGuildParticipant(validatorDelegateeForGuildParticipant);
+            guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
 
             var repository = new ValidatorRepository(guildRepository);
             var validatorDelegatee = repository.GetValidatorDelegatee(guild.ValidatorAddress);

@@ -28,24 +28,18 @@ namespace Nekoyume.Module.ValidatorDelegation
             }
         }
 
-        public static ValidatorRepository CreateValidatorDelegatee(
+        public static ValidatorDelegatee CreateValidatorDelegatee(
             this ValidatorRepository repository, PublicKey publicKey, BigInteger commissionPercentage)
         {
             var context = repository.ActionContext;
-            var signer = context.Signer;
 
-            if (!publicKey.Address.Equals(signer))
-            {
-                throw new ArgumentException("The public key does not match the signer.");
-            }
-
-            if (repository.TryGetValidatorDelegatee(context.Signer, out _))
+            if (repository.TryGetValidatorDelegatee(publicKey.Address, out _))
             {
                 throw new InvalidOperationException("The signer already has a validator delegatee.");
             }
 
             var validatorDelegatee = new ValidatorDelegatee(
-                signer,
+                publicKey.Address,
                 publicKey,
                 commissionPercentage,
                 context.BlockIndex,
@@ -54,7 +48,7 @@ namespace Nekoyume.Module.ValidatorDelegation
 
             repository.SetValidatorDelegatee(validatorDelegatee);
 
-            return repository;
+            return validatorDelegatee;
         }
     }
 }
