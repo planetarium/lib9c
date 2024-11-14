@@ -202,10 +202,14 @@ namespace Nekoyume.ValidatorDelegation
             ValidatorRepository repository = (ValidatorRepository)Repository;
             IsActive = true;
             Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
-            repository.TransferAsset(
-                InactiveDelegationPoolAddress,
-                ActiveDelegationPoolAddress,
-                TotalDelegated);
+
+            if (TotalDelegated.Sign > 0)
+            {
+                repository.TransferAsset(
+                    InactiveDelegationPoolAddress,
+                    ActiveDelegationPoolAddress,
+                    TotalDelegated);
+            }
         }
 
         public void Deactivate()
@@ -213,10 +217,14 @@ namespace Nekoyume.ValidatorDelegation
             ValidatorRepository repository = (ValidatorRepository)Repository;
             IsActive = false;
             Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
-            repository.TransferAsset(
-                ActiveDelegationPoolAddress,
-                InactiveDelegationPoolAddress,
-                TotalDelegated);
+
+            if (TotalDelegated.Sign > 0)
+            {
+                repository.TransferAsset(
+                    ActiveDelegationPoolAddress,
+                    InactiveDelegationPoolAddress,
+                    TotalDelegated);
+            }
         }
 
         public void OnDelegationChanged(object? sender, long height)

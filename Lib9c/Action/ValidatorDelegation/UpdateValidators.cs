@@ -32,25 +32,27 @@ namespace Nekoyume.Action.ValidatorDelegation
             var repository = new ValidatorRepository(world, context);
             var validators = repository.GetValidatorList().ActiveSet();
 
-            foreach (var deactivated in prevValidators.Except(validators))
+            foreach (var deactivated in prevValidators.Select(v => v.OperatorAddress)
+                .Except(validators.Select(v => v.OperatorAddress)))
             {
-                var validatorDelegatee = repository.GetValidatorDelegatee(deactivated.OperatorAddress);
+                var validatorDelegatee = repository.GetValidatorDelegatee(deactivated);
                 validatorDelegatee.Deactivate();
                 repository.SetValidatorDelegatee(validatorDelegatee);
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(deactivated.OperatorAddress);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(deactivated);
                 validatorDelegateeForGuildParticipant.Deactivate();
                 guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
                 repository.UpdateWorld(guildRepository.World);
             }
 
-            foreach (var activated in validators.Except(prevValidators))
+            foreach (var activated in validators.Select(v => v.OperatorAddress)
+                .Except(prevValidators.Select(v => v.OperatorAddress)))
             {
-                var validatorDelegatee = repository.GetValidatorDelegatee(activated.OperatorAddress);
+                var validatorDelegatee = repository.GetValidatorDelegatee(activated);
                 validatorDelegatee.Activate();
                 repository.SetValidatorDelegatee(validatorDelegatee);
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(activated.OperatorAddress);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(activated);
                 validatorDelegateeForGuildParticipant.Activate();
                 guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
                 repository.UpdateWorld(guildRepository.World);
