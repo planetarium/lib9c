@@ -16,6 +16,7 @@ using Nekoyume.Module;
 using Nekoyume.Module.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action
 {
@@ -156,7 +157,8 @@ namespace Nekoyume.Action
                 .SetLegacyState(RedeemCodeState.Address, RedeemCode)
                 .SetLegacyState(ActivatedAccountsState.Address, ActivatedAccounts)
                 .SetLegacyState(GoldCurrencyState.Address, GoldCurrency)
-                .SetLegacyState(Addresses.GoldDistribution, GoldDistributions);
+                .SetLegacyState(Addresses.GoldDistribution, GoldDistributions)
+                .SetDelegationMigrationHeight(0);
 
             if (!(AdminAddressState is null))
             {
