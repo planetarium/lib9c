@@ -5,7 +5,6 @@ using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;

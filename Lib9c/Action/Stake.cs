@@ -23,6 +23,7 @@ using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Serilog;
 using static Lib9c.SerializeKeys;
+using static Nekoyume.Model.WorldInformation;
 
 namespace Nekoyume.Action
 {
@@ -146,6 +147,17 @@ namespace Nekoyume.Action
                 throw new StakeExistingClaimableException();
             }
 
+            // NOTE: When the staking state is locked up.
+            // TODO: Remove this condition after the migration is done.
+            if (stakeStateV2.CancellableBlockIndex > context.BlockIndex)
+            {
+                // NOTE: Cannot re-contract with less balance.
+                if (targetStakeBalance < stakedBalance)
+                {
+                    throw new RequiredBlockIndexException();
+                }
+            }
+
             if (stakeStateV2.StateVersion == 2)
             {
                 if (!StakeStateUtils.TryMigrateV2ToV3(context, states, stakeStateAddress, stakeStateV2, out var result))
@@ -210,29 +222,57 @@ namespace Nekoyume.Action
                 var gg = GetGuildCoinFromNCG(-additionalBalance);
 
                 var guildRepository = new GuildRepository(state, context);
+
+                // TODO : [GuildMigration] Remove below code when the migration is done.
                 if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                     var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
                     var share = guildDelegatee.ShareFromFAV(gg);
-                    guildParticipant.Undelegate(guild, share, height);
-                    state = guildRepository.World;
+
+                    var guildDelegator = guildRepository.GetGuildDelegator(agentAddress);
+                    guildDelegatee.Unbond(guildDelegator, share, height);
+
+                    var validatorRepository = new ValidatorRepository(guildRepository);
+                    var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+                    var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+                    validatorDelegatee.Unbond(validatorDelegator, share, height);
+
+                    state = validatorRepository.World;
+
+                    state = state.BurnAsset(context, guildDelegatee.DelegationPoolAddress, gg);
                 }
                 else
                 {
-                    var delegateeAddress = Addresses.NonValidatorDelegatee;
-                    var delegatorAddress = context.Signer;
-                    var repository = new GuildRepository(state, context);
-                    var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, repository.DelegateeAccountAddress, delegatorAddress);
-                    var unbondLockIn = new UnbondLockIn(
-                        unbondLockInAddress, ValidatorDelegatee.ValidatorMaxUnbondLockInEntries, delegateeAddress, delegatorAddress, null);
-                    unbondLockIn = unbondLockIn.LockIn(
-                        gg, height, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
-                    repository.SetUnbondLockIn(unbondLockIn);
-                    repository.SetUnbondingSet(
-                        repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
-                    state = repository.World;
+                    state = state.BurnAsset(context, Addresses.NonValidatorDelegatee, gg);
                 }
+
+                state = state.TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);
+
+                // TODO : [GuildMigration] Revive below code when the migration is done.
+                // if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
+                // {
+                //     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                //     var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                //     var share = guildDelegatee.ShareFromFAV(gg);
+                //     guildParticipant.Undelegate(guild, share, height);
+                //     state = guildRepository.World;
+                // }
+                // else
+                // {
+                //     var delegateeAddress = Addresses.NonValidatorDelegatee;
+                //     var delegatorAddress = context.Signer;
+                //     var repository = new GuildRepository(state, context);
+                //     var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, repository.DelegateeAccountAddress, delegatorAddress);
+                //     var unbondLockIn = new UnbondLockIn(
+                //         unbondLockInAddress, ValidatorDelegatee.ValidatorMaxUnbondLockInEntries, delegateeAddress, delegatorAddress, null);
+                //     unbondLockIn = unbondLockIn.LockIn(
+                //         gg, height, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                //     repository.SetUnbondLockIn(unbondLockIn);
+                //     repository.SetUnbondingSet(
+                //         repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+                //     state = repository.World;
+                // }
 
                 if ((stakedBalance + additionalBalance).Sign == 0)
                 {

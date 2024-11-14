@@ -5,6 +5,8 @@ using Libplanet.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.Model.Guild;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Lib9c;
+using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild.Migration
 {
@@ -47,7 +49,8 @@ namespace Nekoyume.Action.Guild.Migration
             var guildMasterValue = world
                 .GetAccountState(Addresses.GuildParticipant)
                 .GetState(GuildConfig.PlanetariumGuildOwner) as List;
-            var guildAddress = new LegacyGuildParticipant(guildMasterValue).GuildAddress;
+            var legacyGuildMaster = new LegacyGuildParticipant(guildMasterValue);
+            var guildAddress = legacyGuildMaster.GuildAddress;
 
             // MigratePlanetariumGuild
             var guildValue = world
@@ -60,6 +63,20 @@ namespace Nekoyume.Action.Guild.Migration
                 ValidatorConfig.PlanetariumValidatorAddress,
                 repository);
             repository.SetGuild(guild);
+
+            // MigratePlanetariumGuildMaster
+            var guildParticipant = new GuildParticipant(
+                GuildConfig.PlanetariumGuildOwner,
+                guildAddress,
+                repository);
+            repository.SetGuildParticipant(guildParticipant);
+
+            // Migrate delegation
+            var guildGold = repository.GetBalance(guildParticipant.DelegationPoolAddress, Currencies.GuildGold);
+            if (guildGold.RawValue > 0)
+            {
+                repository.Delegate(guildParticipant.Address, guildGold);
+            }
 
             return repository.World;
         }
