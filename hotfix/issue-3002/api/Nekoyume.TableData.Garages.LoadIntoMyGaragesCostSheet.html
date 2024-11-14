@@ -1,0 +1,662 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class LoadIntoMyGaragesCostSheet | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class LoadIntoMyGaragesCostSheet | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/hotfix/issue-3002/apiSpec/new?filename=Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet.md&amp;value=---%0Auid%3A%20Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet">
+
+
+
+  <h1 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet" class="text-break">
+Class LoadIntoMyGaragesCostSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.TableData.html">TableData</a>.<a class="xref" href="Nekoyume.TableData.Garages.html">Garages</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class LoadIntoMyGaragesCostSheet : Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;, IDictionary&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;, ICollection&lt;KeyValuePair&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;&gt;, IEnumerable, ISheet</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.TableData.Sheet-2.html">Sheet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.html">LoadIntoMyGaragesCostSheet</a>.<a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.Row.html">Row</a>&gt;</div>
+      <div><span class="xref">LoadIntoMyGaragesCostSheet</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.html">LoadIntoMyGaragesCostSheet</a>.<a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.Row.html">Row</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.html">LoadIntoMyGaragesCostSheet</a>.<a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.Row.html">Row</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.html">LoadIntoMyGaragesCostSheet</a>.<a class="xref" href="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.Row.html">Row</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="Nekoyume.TableData.ISheet.html">ISheet</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Name">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_OrderedList">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.OrderedList</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_First">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.First</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Last">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Last</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Keys">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Keys</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Values">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Values</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Count">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Count</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_IsReadOnly">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.IsReadOnly</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Item__0_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.this[int]</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Set_System_String_System_Boolean_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Set(string, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Set__1_Nekoyume_TableData_Sheet__0___0__System_Boolean_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Set&lt;T&gt;(Sheet&lt;int, T&gt;, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_GetEnumerator">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.GetEnumerator()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_TryGetValue__0__1__System_Boolean_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.TryGetValue(int, out LoadIntoMyGaragesCostSheet.Row, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_AddRow__0__1_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.AddRow(int, LoadIntoMyGaragesCostSheet.Row)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Add__0__1_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Add(int, LoadIntoMyGaragesCostSheet.Row)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_ContainsKey__0_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.ContainsKey(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Remove__0_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Remove(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_TryGetValue__0__1__">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.TryGetValue(int, out LoadIntoMyGaragesCostSheet.Row)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Add_System_Collections_Generic_KeyValuePair__0__1__">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Add(KeyValuePair&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Clear">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Clear()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Contains_System_Collections_Generic_KeyValuePair__0__1__">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Contains(KeyValuePair&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_CopyTo_System_Collections_Generic_KeyValuePair__0__1____System_Int32_">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.CopyTo(KeyValuePair&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;[], int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Remove_System_Collections_Generic_KeyValuePair__0__1__">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Remove(KeyValuePair&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.TableData.Sheet-2.html#Nekoyume_TableData_Sheet_2_Serialize">Sheet&lt;int, LoadIntoMyGaragesCostSheet.Row&gt;.Serialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet__ctor_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.#ctor*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet__ctor" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.#ctor">
+  LoadIntoMyGaragesCostSheet()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LoadIntoMyGaragesCostSheet()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int32_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int32)">
+  GetGarageCost(HashDigest&lt;SHA256&gt;, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue GetGarageCost(HashDigest&lt;SHA256&gt; fungibleId, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost(Libplanet.Types.Assets.FungibleAssetValue)">
+  GetGarageCost(FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue GetGarageCost(FungibleAssetValue fav)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fav</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_FungibleAssetValue__System_Collections_Generic_IEnumerable_System_ValueTuple_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int32___" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost(System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.FungibleAssetValue},System.Collections.Generic.IEnumerable{System.ValueTuple{Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int32}})">
+  GetGarageCost(IEnumerable&lt;FungibleAssetValue&gt;, IEnumerable&lt;(HashDigest&lt;SHA256&gt; fungibleId, int count)&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue GetGarageCost(IEnumerable&lt;FungibleAssetValue&gt; fungibleAssetValues, IEnumerable&lt;(HashDigest&lt;SHA256&gt; fungibleId, int count)&gt; fungibleIdAndCounts)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleAssetValues</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">FungibleAssetValue</span>&gt;</dt>
+    <dd></dd>
+    <dt><code>fungibleIdAndCounts</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-libplanet.common.hashdigest-system.security.cryptography.sha256-,system.int32-.fungibleid">fungibleId</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-libplanet.common.hashdigest-system.security.cryptography.sha256-,system.int32-.count">count</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_FungibleAssetValue__System_Collections_Generic_IEnumerable_System_ValueTuple_System_Int32_System_Int32_System_Boolean___" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost(System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.FungibleAssetValue},System.Collections.Generic.IEnumerable{System.ValueTuple{System.Int32,System.Int32,System.Boolean}})">
+  GetGarageCost(IEnumerable&lt;FungibleAssetValue&gt;, IEnumerable&lt;(int itemId, int count, bool tradable)&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue GetGarageCost(IEnumerable&lt;FungibleAssetValue&gt; fungibleAssetValues, IEnumerable&lt;(int itemId, int count, bool tradable)&gt; itemIdAndCounts)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleAssetValues</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">FungibleAssetValue</span>&gt;</dt>
+    <dd></dd>
+    <dt><code>itemIdAndCounts</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32,system.boolean-.itemid">itemId</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32,system.boolean-.count">count</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32,system.boolean-.tradable">tradable</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCost_System_Int32_System_Int32_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCost(System.Int32,System.Int32)">
+  GetGarageCost(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue GetGarageCost(int itemId, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCostPerUnit_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCostPerUnit*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCostPerUnit_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCostPerUnit(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256})">
+  GetGarageCostPerUnit(HashDigest&lt;SHA256&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public decimal GetGarageCostPerUnit(HashDigest&lt;SHA256&gt; fungibleId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCostPerUnit_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCostPerUnit*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCostPerUnit_System_Int32_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCostPerUnit(System.Int32)">
+  GetGarageCostPerUnit(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public decimal GetGarageCostPerUnit(int itemId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCostPerUnit_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCostPerUnit*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_GetGarageCostPerUnit_System_String_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.GetGarageCostPerUnit(System.String)">
+  GetGarageCostPerUnit(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public decimal GetGarageCostPerUnit(string currencyTicker)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>currencyTicker</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_HasCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.HasCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_HasCost_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.HasCost(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256})">
+  HasCost(HashDigest&lt;SHA256&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasCost(HashDigest&lt;SHA256&gt; fungibleId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_HasCost_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.HasCost*"></a>
+
+  <h3 id="Nekoyume_TableData_Garages_LoadIntoMyGaragesCostSheet_HasCost_System_String_" data-uid="Nekoyume.TableData.Garages.LoadIntoMyGaragesCostSheet.HasCost(System.String)">
+  HasCost(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasCost(string currencyTicker)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>currencyTicker</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/hotfix/issue-3002/Lib9c/TableData/Garages/LoadIntoMyGaragesCostSheet.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
