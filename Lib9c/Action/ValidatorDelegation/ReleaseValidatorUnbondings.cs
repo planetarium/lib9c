@@ -15,6 +15,7 @@ using Nekoyume.TypedAddress;
 using Nekoyume.Module;
 using Nekoyume.Model.Stake;
 using Lib9c;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -35,7 +36,13 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
+
+            if (world.GetDelegationMigrationHeight() is null)
+            {
+                return world;
+            }
+
+            var repository = new GuildRepository(world, context);
             var unbondingSet = repository.GetUnbondingSet();
             var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
 
@@ -74,7 +81,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             {
                 var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                 var stakeStateAddress = guildParticipant.DelegationPoolAddress;
-                var gg = world.GetBalance(stakeStateAddress, guild.DelegationCurrency);
+                var gg = world.GetBalance(stakeStateAddress, ValidatorDelegatee.ValidatorDelegationCurrency);
                 if (gg.Sign > 0)
                 {
                     var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);

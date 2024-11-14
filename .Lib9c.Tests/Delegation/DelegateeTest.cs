@@ -22,8 +22,11 @@ namespace Lib9c.Tests.Delegation
             var address = new Address("0xe8327129891e1A0B2E3F0bfa295777912295942a");
             var delegatee = new TestDelegatee(address, _fixture.TestRepository.DelegateeAccountAddress, _fixture.TestRepository);
             Assert.Equal(address, delegatee.Address);
-            Assert.Equal(DelegationFixture.TestCurrency, delegatee.DelegationCurrency);
+            Assert.Equal(DelegationFixture.TestDelegationCurrency, delegatee.DelegationCurrency);
+            Assert.Equal(new Currency[] { DelegationFixture.TestRewardCurrency }, delegatee.RewardCurrencies);
             Assert.Equal(3, delegatee.UnbondingPeriod);
+            Assert.Equal(5, delegatee.MaxUnbondLockInEntries);
+            Assert.Equal(5, delegatee.MaxRebondGraceEntries);
         }
 
         [Fact]
@@ -218,16 +221,28 @@ namespace Lib9c.Tests.Delegation
             var bondedShare1 = testDelegatee.Bond(testDelegator1, bonding1, 10L);
             var bondedShare2 = testDelegatee.Bond(testDelegator2, bonding2, 10L);
 
-            repo.MintAsset(testDelegatee.RewardPoolAddress, testDelegatee.RewardCurrency * 10);
+            foreach (var currency in testDelegatee.RewardCurrencies)
+            {
+                repo.MintAsset(testDelegatee.RewardPoolAddress, currency * 10);
+            }
+
             testDelegatee.CollectRewards(11L);
 
             testDelegatee.DistributeReward(testDelegator1, 11L);
-            var remainder = repo.GetBalance(DelegationFixture.FixedPoolAddress, testDelegatee.RewardCurrency);
-            Assert.Equal(testDelegatee.RewardCurrency * 0, remainder);
+
+            foreach (var currency in testDelegatee.RewardCurrencies)
+            {
+                var remainder = repo.GetBalance(DelegationFixture.FixedPoolAddress, currency);
+                Assert.Equal(currency * 0, remainder);
+            }
 
             testDelegatee.DistributeReward(testDelegator2, 11L);
-            remainder = repo.GetBalance(DelegationFixture.FixedPoolAddress, testDelegatee.RewardCurrency);
-            Assert.Equal(new FungibleAssetValue(testDelegatee.RewardCurrency, 0, 1), remainder);
+
+            foreach (var currency in testDelegatee.RewardCurrencies)
+            {
+                var remainder = repo.GetBalance(DelegationFixture.FixedPoolAddress, currency);
+                Assert.Equal(new FungibleAssetValue(currency, 0, 1), remainder);
+            }
         }
 
         [Fact]

@@ -14,12 +14,13 @@ namespace Nekoyume.Delegation
     public class DelegateeMetadata : IDelegateeMetadata
     {
         private Address? _address;
+        private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         public DelegateeMetadata(
             Address delegateeAddress,
             Address delegateeAccountAddress,
             Currency delegationCurrency,
-            Currency rewardCurrency,
+            IEnumerable<Currency> rewardCurrencies,
             Address delegationPoolAddress,
             Address rewardPoolAddress,
             Address rewardRemainderPoolAddress,
@@ -31,7 +32,7 @@ namespace Nekoyume.Delegation
                   delegateeAddress,
                   delegateeAccountAddress,
                   delegationCurrency,
-                  rewardCurrency,
+                  rewardCurrencies,
                   delegationPoolAddress,
                   rewardPoolAddress,
                   rewardRemainderPoolAddress,
@@ -65,7 +66,7 @@ namespace Nekoyume.Delegation
                   address,
                   accountAddress,
                   new Currency(bencoded[0]),
-                  new Currency(bencoded[1]),
+                  ((List)bencoded[1]).Select(v => new Currency(v)),
                   new Address(bencoded[2]),
                   new Address(bencoded[3]),
                   new Address(bencoded[4]),
@@ -87,7 +88,7 @@ namespace Nekoyume.Delegation
             Address delegateeAddress,
             Address delegateeAccountAddress,
             Currency delegationCurrency,
-            Currency rewardCurrency,
+            IEnumerable<Currency> rewardCurrencies,
             Address delegationPoolAddress,
             Address rewardPoolAddress,
             Address rewardRemainderPoolAddress,
@@ -127,7 +128,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
-            RewardCurrency = rewardCurrency;
+            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
             DelegationPoolAddress = delegationPoolAddress;
             RewardPoolAddress = rewardPoolAddress;
             RewardRemainderPoolAddress = rewardRemainderPoolAddress;
@@ -155,9 +156,9 @@ namespace Nekoyume.Delegation
 
         public Currency DelegationCurrency { get; }
 
-        public Currency RewardCurrency { get; }
+        public ImmutableSortedSet<Currency> RewardCurrencies { get; }
 
-        public Address DelegationPoolAddress { get; }
+        public Address DelegationPoolAddress { get; internal set; }
 
         public Address RewardPoolAddress { get; }
 
@@ -185,9 +186,10 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedSet<UnbondingRef> UnbondingRefs { get; private set; }
 
+        // TODO : Better serialization
         public List Bencoded => List.Empty
             .Add(DelegationCurrency.Serialize())
-            .Add(RewardCurrency.Serialize())
+            .Add(new List(RewardCurrencies.Select(c => c.Serialize())))
             .Add(DelegationPoolAddress.Bencoded)
             .Add(RewardPoolAddress.Bencoded)
             .Add(RewardRemainderPoolAddress.Bencoded)
@@ -280,7 +282,7 @@ namespace Nekoyume.Delegation
             && DelegateeAddress.Equals(delegatee.DelegateeAddress)
             && DelegateeAccountAddress.Equals(delegatee.DelegateeAccountAddress)
             && DelegationCurrency.Equals(delegatee.DelegationCurrency)
-            && RewardCurrency.Equals(delegatee.RewardCurrency)
+            && RewardCurrencies.SequenceEqual(delegatee.RewardCurrencies)
             && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
             && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
             && RewardRemainderPoolAddress.Equals(delegatee.RewardRemainderPoolAddress)

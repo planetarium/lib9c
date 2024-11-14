@@ -3,9 +3,8 @@ using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Crypto;
-using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -16,20 +15,16 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public UndelegateValidator() { }
 
-        public UndelegateValidator(Address validatorDelegatee, BigInteger share)
+        public UndelegateValidator(BigInteger share)
         {
-            ValidatorDelegatee = validatorDelegatee;
             Share = share;
         }
-
-        public Address ValidatorDelegatee { get; private set; }
 
         public BigInteger Share { get; private set; }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", List.Empty
-                .Add(ValidatorDelegatee.Bencoded)
                 .Add(Share));
 
         public override void LoadPlainValue(IValue plainValue)
@@ -42,27 +37,30 @@ namespace Nekoyume.Action.ValidatorDelegation
                 throw new InvalidCastException();
             }
 
-            ValidatorDelegatee = new Address(values[0]);
-            Share = (Integer)values[1];
+            Share = (Integer)values[0];
         }
 
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
 
-            if (context.Signer != ValidatorDelegatee)
+            if (Share.Sign <= 0)
             {
-                throw new InvalidAddressException(
-                    $"{nameof(context.Signer)}({context.Signer}) is " +
-                    $"not equal to {nameof(ValidatorDelegatee)}({ValidatorDelegatee})."
-                );
+                throw new ArgumentOutOfRangeException(
+                    nameof(Share), Share, "Share must be positive.");
             }
 
-            var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
-            repository.UndelegateValidator(ValidatorDelegatee, Share);
+            var guildRepository = new GuildRepository(context.PreviousState, context);
+            var guildDelegatee = guildRepository.GetGuildDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            guildDelegator.Undelegate(guildDelegatee, Share, context.BlockIndex);
 
-            return repository.World;
+            var validatorRepository = new ValidatorRepository(guildRepository);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(context.Signer);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(context.Signer);
+            validatorDelegatee.Unbond(validatorDelegator, Share, context.BlockIndex);
+
+            return validatorRepository.World;
         }
     }
 }

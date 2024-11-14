@@ -5,13 +5,13 @@ using Nekoyume.Delegation;
 
 namespace Nekoyume.Model.Guild
 {
-    public class GuildValidatorDelegator
-        : Delegator<GuildValidatorDelegatee, GuildValidatorDelegator>, IEquatable<GuildValidatorDelegator>
+    public class GuildDelegator
+        : Delegator<GuildDelegatee, GuildDelegator>, IEquatable<GuildDelegator>
     {
-        public GuildValidatorDelegator(
+        public GuildDelegator(
             Address address,
             Address delegationPoolAddress,
-            GuildValidatorRepository repository)
+            GuildRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegatorAccountAddress,
@@ -21,16 +21,14 @@ namespace Nekoyume.Model.Guild
         {
         }
 
-        public GuildValidatorDelegator(
+        public GuildDelegator(
             Address address,
-            GuildValidatorRepository repository)
-            : base(
-                  address: address,
-                  repository: repository)
+            GuildRepository repository)
+            : base(address: address, repository: repository)
         {
         }
 
-        public bool Equals(GuildValidatorDelegator? other)
+        public bool Equals(GuildDelegator? other)
             => Metadata.Equals(other?.Metadata);
     }
 }

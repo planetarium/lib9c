@@ -7,7 +7,8 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
-using Org.BouncyCastle.Bcpg.Sig;
+using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -62,11 +63,11 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = ExecutePublic(context);
-            if (context.Signer != ValidatorConfig.PlanetariumValidatorAddress)
-            {
-                throw new InvalidOperationException(
-                    $"This action is not allowed for {context.Signer}.");
-            }
+            // if (context.Signer != ValidatorConfig.PlanetariumValidatorAddress)
+            // {
+            //     throw new InvalidOperationException(
+            //         $"This action is not allowed for {context.Signer}.");
+            // }
 
             return world;
         }
@@ -76,12 +77,23 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+
+            if (!PublicKey.Address.Equals(context.Signer))
+            {
+                throw new ArgumentException("The public key does not match the signer.");
+            }
+
             var repository = new ValidatorRepository(world, context);
+            var validatorDelegatee = repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            validatorDelegatee.Bond(validatorDelegator, FAV, context.BlockIndex);
 
-            repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
-            repository.DelegateValidator(context.Signer, FAV);
+            var guildRepository = new GuildRepository(repository);
+            var guildDelegatee = guildRepository.CreateGuildDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            guildDelegator.Delegate(guildDelegatee, FAV, context.BlockIndex);
 
-            return repository.World;
+            return guildRepository.World;
         }
     }
 }

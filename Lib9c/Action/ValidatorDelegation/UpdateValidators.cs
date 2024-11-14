@@ -1,8 +1,11 @@
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Types.Consensus;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Model.Guild;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -19,10 +22,41 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
-            var validators = repository.GetValidatorList();
 
-            return world.SetValidatorSet(new ValidatorSet(validators.GetBonded()));
+            if (world.GetDelegationMigrationHeight() is null)
+            {
+                return world;
+            }
+
+            var prevValidators = world.GetValidatorSet().Validators;
+            var repository = new ValidatorRepository(world, context);
+            var validators = repository.GetValidatorList().ActiveSet();
+
+            foreach (var deactivated in prevValidators.Except(validators))
+            {
+                var validatorDelegatee = repository.GetValidatorDelegatee(deactivated.OperatorAddress);
+                validatorDelegatee.Deactivate();
+                repository.SetValidatorDelegatee(validatorDelegatee);
+                var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(deactivated.OperatorAddress);
+                validatorDelegateeForGuildParticipant.Deactivate();
+                guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
+                repository.UpdateWorld(guildRepository.World);
+            }
+
+            foreach (var activated in validators.Except(prevValidators))
+            {
+                var validatorDelegatee = repository.GetValidatorDelegatee(activated.OperatorAddress);
+                validatorDelegatee.Activate();
+                repository.SetValidatorDelegatee(validatorDelegatee);
+                var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(activated.OperatorAddress);
+                validatorDelegateeForGuildParticipant.Activate();
+                guildRepository.SetGuildDelgatee(validatorDelegateeForGuildParticipant);
+                repository.UpdateWorld(guildRepository.World);
+            }
+
+            return repository.World.SetValidatorSet(new ValidatorSet(validators));
         }
     }
 }

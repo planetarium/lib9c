@@ -2,9 +2,9 @@
 namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System.Numerics;
-using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
@@ -37,8 +37,8 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         world = EnsureUnbondingValidator(world, validatorKey.Address, share, height);
 
         // When
-        var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedRepository = new GuildRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetGuildDelegatee(validatorKey.Address);
         var expectedUnbondingSet = expectedRepository.GetUnbondingSet();
         var expectedReleaseCount = expectedUnbondingSet.UnbondingRefs.Count;
         var expectedDepositGold = expectedDelegatee.FAVFromShare(share);
@@ -80,7 +80,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         world = EnsureUnbondingValidator(world, validatorKey.Address, share, height);
 
         // When
-        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedRepository = new GuildRepository(world, actionContext);
         var expectedUnbondingSet = expectedRepository.GetUnbondingSet();
         var expectedReleaseCount = expectedUnbondingSet.UnbondingRefs.Count;
 
@@ -94,7 +94,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
         world = releaseValidatorUnbondings.Execute(actionContext);
 
         // Then
-        var actualRepository = new ValidatorRepository(world, actionContext);
+        var actualRepository = new GuildRepository(world, actionContext);
         var actualUnbondingSet = actualRepository.GetUnbondingSet();
         var actualReleaseCount = actualUnbondingSet.UnbondingRefs.Count;
 

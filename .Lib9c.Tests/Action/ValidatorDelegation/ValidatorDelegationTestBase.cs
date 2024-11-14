@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using Lib9c.Tests.Util;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
@@ -25,12 +24,19 @@ using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 public class ValidatorDelegationTestBase
 {
-    protected static readonly Currency GoldCurrency = Currency.Uncapped("NCG", 2, null);
-    protected static readonly Currency DelegationCurrency = Currencies.GuildGold;
-    protected static readonly Currency RewardCurrency = Currencies.Mead;
+    protected static readonly Currency NCG = Currency.Uncapped("NCG", 2, null);
+    protected static readonly Currency GuildGold = Currencies.GuildGold;
+    protected static readonly Currency Mead = Currencies.Mead;
+    protected static readonly Currency GoldCurrency = NCG;
+    protected static readonly Currency DelegationCurrency = GuildGold;
+    protected static readonly Currency[] GuildRewardCurrencies = new Currency[] { NCG, Mead };
+    protected static readonly Currency RewardCurrency = NCG;
+    protected static readonly Currency GuildAllocateRewardCurrency = Mead;
+    protected static readonly Currency AllocateRewardCurrency = NCG;
     protected static readonly Currency Dollar = Currency.Uncapped("dollar", 2, null);
     private static readonly int _maximumIntegerLength = 15;
 
@@ -39,7 +45,8 @@ public class ValidatorDelegationTestBase
         var world = new World(MockUtil.MockModernWorldState);
         var goldCurrencyState = new GoldCurrencyState(GoldCurrency);
         World = world
-            .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
+            .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
+            .SetDelegationMigrationHeight(0);
     }
 
     protected static BlockHash EmptyBlockHash { get; }
@@ -153,8 +160,7 @@ public class ValidatorDelegationTestBase
             BlockIndex = blockHeight,
             Signer = validatorAddress,
         };
-        var undelegateValidator = new UndelegateValidator(
-            validatorAddress, share);
+        var undelegateValidator = new UndelegateValidator(share);
         return undelegateValidator.Execute(actionContext);
     }
 
@@ -347,7 +353,11 @@ public class ValidatorDelegationTestBase
     }
 
     protected static IWorld EnsureRewardAllocatedValidator(
-        IWorld world, PrivateKey validatorKey, FungibleAssetValue reward, ref long blockHeight)
+        IWorld world,
+        PrivateKey validatorKey,
+        FungibleAssetValue guildReward,
+        FungibleAssetValue reward,
+        ref long blockHeight)
     {
         if (blockHeight < 0)
         {
@@ -371,11 +381,21 @@ public class ValidatorDelegationTestBase
             Signer = validatorKey.Address,
             LastCommit = lastCommit2,
         };
-        world = world.MintAsset(actionContext2, GoldCurrencyState.Address, reward);
-        world = world.TransferAsset(
-            actionContext2, GoldCurrencyState.Address, Addresses.RewardPool, reward);
+
+        world = world.MintAsset(actionContext2, Addresses.RewardPool, guildReward);
+
+        actionContext2 = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+            LastCommit = lastCommit2,
+        };
+
+        world = world.MintAsset(actionContext2, Addresses.RewardPool, reward);
 
         var lastCommit3 = CreateLastCommit(validatorKey, blockHeight - 1);
+
         var actionContext3 = new ActionContext
         {
             PreviousState = world,
@@ -383,6 +403,17 @@ public class ValidatorDelegationTestBase
             Signer = validatorKey.Address,
             LastCommit = lastCommit3,
         };
+
+        world = new AllocateGuildReward().Execute(actionContext3);
+
+        actionContext3 = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorKey.Address,
+            LastCommit = lastCommit3,
+        };
+
         world = new AllocateReward().Execute(actionContext3);
 
         return world;

@@ -105,14 +105,14 @@ namespace Nekoyume
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
-        /// </summary>
-        public static readonly Address GuildMetadata
+        /// </summary> 
+        public static readonly Address GuildDelegateeMetadata
             = new Address("0000000000000000000000000000000000000210");
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegatorMetadata"/>.
         /// </summary>
-        public static readonly Address GuildParticipantMetadata
+        public static readonly Address GuildDelegatorMetadata
             = new Address("0000000000000000000000000000000000000211");
 
         /// <summary>
@@ -231,6 +231,16 @@ namespace Nekoyume
         /// </summary>
         public static readonly Address NonValidatorDelegatee
             = new Address("0000000000000000000000000000000000000313");
+
+        #endregion
+
+        #region Migration
+
+        /// <summary>
+        /// An account address for migration.
+        /// </summary>
+        public static readonly Address Migration
+            = new Address("0000000000000000000000000000000000000400");
 
         #endregion
 

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Numerics;
-using Bencodex;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
@@ -16,7 +15,7 @@ namespace Nekoyume.Delegation
 
         Currency DelegationCurrency { get; }
 
-        Currency RewardCurrency { get; }
+        ImmutableSortedSet<Currency> RewardCurrencies { get; }
 
         Address DelegationPoolAddress { get; }
 

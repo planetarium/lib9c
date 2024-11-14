@@ -1,19 +1,18 @@
+#nullable enable
 using System;
 using Bencodex;
 using Bencodex.Types;
-using Lib9c;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
 using Nekoyume.Action;
-using Nekoyume.Delegation;
 using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
-    public class Guild : Delegatee<GuildParticipant, Guild>, IBencodable, IEquatable<Guild>
+    public class Guild : IBencodable, IEquatable<Guild>
     {
         private const string StateTypeName = "guild";
-        private const long StateVersion = 1;
+        private const long StateVersion = 2;
 
         public readonly AgentAddress GuildMasterAddress;
 
@@ -23,31 +22,18 @@ namespace Nekoyume.Model.Guild
             GuildAddress address,
             AgentAddress guildMasterAddress,
             Address validatorAddress,
-            Currency rewardCurrency,
             GuildRepository repository)
-            : base(
-                  address: address,
-                  accountAddress: repository.DelegateeAccountAddress,
-                  delegationCurrency: Currencies.GuildGold,
-                  rewardCurrency: rewardCurrency,
-                  delegationPoolAddress: DelegationAddress.DelegationPoolAddress(address, repository.DelegateeAccountAddress),
-                  rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
-                  rewardRemainderPoolAddress: Addresses.CommunityPool,
-                  slashedPoolAddress: Addresses.CommunityPool,
-                  unbondingPeriod: 0L,
-                  maxUnbondLockInEntries: 0,
-                  maxRebondGraceEntries: 0,
-                  repository: repository)
         {
-            ValidatorAddress = validatorAddress;
+            Address = address;
             GuildMasterAddress = guildMasterAddress;
+            ValidatorAddress = validatorAddress;
+            Repository = repository;
         }
 
         public Guild(
             GuildAddress address,
             IValue bencoded,
             GuildRepository repository)
-            : base(address: address, repository: repository)
         {
             if (bencoded is not List list)
             {
@@ -64,11 +50,20 @@ namespace Nekoyume.Model.Guild
                 throw new FailedLoadStateException("Un-deserializable state.");
             }
 
+            if (integer == 1)
+            {
+                throw new FailedLoadStateException("Does not support version 1.");
+            }
+
+            Address = address;
             GuildMasterAddress = new AgentAddress(list[2]);
             ValidatorAddress = new AgentAddress(list[3]);
+            Repository = repository;
         }
 
-        public new GuildAddress Address => new GuildAddress(base.Address);
+        public GuildAddress Address { get; }
+
+        public GuildRepository Repository { get; }
 
         public List Bencoded => List.Empty
             .Add(StateTypeName)
@@ -78,17 +73,30 @@ namespace Nekoyume.Model.Guild
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public bool Equals(Guild other)
+        public void ClaimReward(Address validatorAddress, long height)
+        {
+            var guildDelegatee = Repository.GetGuildDelegatee(validatorAddress);
+            var guildDelegator = Repository.GetGuildDelegator(Address);
+            guildDelegator.ClaimReward(guildDelegatee, height);
+
+            var validatorRepository = new ValidatorRepository(Repository);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(Address);
+            validatorDelegator.ClaimReward(validatorDelegatee, height);
+
+            Repository.UpdateWorld(validatorRepository.World);
+        }
+
+        public bool Equals(Guild? other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Address.Equals(other.Address)
                  && GuildMasterAddress.Equals(other.GuildMasterAddress)
-                 && ValidatorAddress.Equals(other.ValidatorAddress)
-                 && Metadata.Equals(other.Metadata);
+                 && ValidatorAddress.Equals(other.ValidatorAddress);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

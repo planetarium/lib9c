@@ -10,6 +10,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Mail;
@@ -18,6 +19,7 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
+using static Nekoyume.TableData.ArenaSheet;
 
 namespace Nekoyume.Action
 {
@@ -249,14 +251,18 @@ namespace Nekoyume.Action
                 var taxedPrice = order.Price - tax;
 
                 // Transfer tax.
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                states = states.TransferAsset(
-                    context,
-                    context.Signer,
-                    feeStoreAddress,
-                    tax);
+                var feeAddress = Addresses.RewardPool;
+                // TODO: [GuildMigration] Remove this after migration
+                if (states.GetDelegationMigrationHeight() is long migrationHeight
+                    && context.BlockIndex < migrationHeight)
+                {
+                    var arenaSheet = states.GetSheet<ArenaSheet>();
+                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                    feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                }
+
+                states = states
+                    .TransferAsset(context, context.Signer, feeAddress, tax);
 
                 // Transfer seller.
                 states = states.TransferAsset(

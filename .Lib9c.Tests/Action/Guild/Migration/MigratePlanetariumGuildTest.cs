@@ -21,6 +21,10 @@ namespace Lib9c.Tests.Action.Guild.Migration
         {
             var guildAddress = AddressUtil.CreateGuildAddress();
             var world = EnsureLegacyPlanetariumGuild(World, guildAddress);
+            var repo = new GuildRepository(world, new ActionContext());
+
+            Assert.Throws<FailedLoadStateException>(() => repo.GetGuild(guildAddress));
+            Assert.Throws<FailedLoadStateException>(() => repo.GetGuildParticipant(GuildConfig.PlanetariumGuildOwner));
 
             var action = new MigratePlanetariumGuild();
             var actionContext = new ActionContext
@@ -30,10 +34,10 @@ namespace Lib9c.Tests.Action.Guild.Migration
             };
             world = action.Execute(actionContext);
 
-            var repo = new GuildRepository(world, new ActionContext());
+            repo.UpdateWorld(world);
 
             var guild = repo.GetGuild(guildAddress);
-            Assert.Throws<FailedLoadStateException>(() => repo.GetGuildParticipant(GuildConfig.PlanetariumGuildOwner));
+            var guildOwner = repo.GetGuildParticipant(GuildConfig.PlanetariumGuildOwner);
         }
 
         private static IWorld EnsureLegacyPlanetariumGuild(IWorld world, GuildAddress guildAddress)

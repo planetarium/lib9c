@@ -5,7 +5,7 @@ using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
@@ -145,7 +145,10 @@ namespace Nekoyume.Module.Guild
             var height = repository.ActionContext.BlockIndex;
 
             // TODO: Remove below unnecessary height condition after migration.
-            height = Math.Max(height, GuildMigrationConfig.MigrateDelegationHeight);
+            if (repository.World.GetDelegationMigrationHeight() is long migrationHeight)
+            {
+                height = Math.Max(height, migrationHeight);
+            }
 
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
@@ -161,7 +164,10 @@ namespace Nekoyume.Module.Guild
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            var share = repository.GetBond(guild, guildParticipantAddress).Share;
+            var share = repository.GetBond(
+                new ValidatorRepository(repository.World, repository.ActionContext)
+                    .GetValidatorDelegatee(guild.ValidatorAddress),
+                guildParticipantAddress).Share;
             guildParticipant.Undelegate(guild, share, height);
 
             return repository;
@@ -188,22 +194,12 @@ namespace Nekoyume.Module.Guild
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            var share = repository.GetBond(guild, guildParticipantAddress).Share;
+            var share = repository.GetBond(
+                new ValidatorRepository(repository.World, repository.ActionContext)
+                    .GetValidatorDelegatee(guild.ValidatorAddress),
+                guildParticipantAddress).Share;
             var dstGuild = repository.GetGuild(dstGuildAddress);
             guildParticipant.Redelegate(guild, dstGuild, share, height);
-
-            return repository;
-        }
-
-        private static GuildRepository ClaimReward(
-            this GuildRepository repository,
-            AgentAddress guildParticipantAddress,
-            GuildAddress guildAddress,
-            long height)
-        {
-            var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
-            var guild = repository.GetGuild(guildAddress);
-            guildParticipant.ClaimReward(guild, height);
 
             return repository;
         }

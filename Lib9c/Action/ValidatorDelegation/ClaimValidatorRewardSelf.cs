@@ -4,15 +4,16 @@ using Libplanet.Action.State;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
     [ActionType(TypeIdentifier)]
-    public sealed class ClaimRewardValidatorSelf : ActionBase
+    public sealed class ClaimValidatorRewardSelf : ActionBase
     {
-        public const string TypeIdentifier = "claim_reward_validator_self";
+        public const string TypeIdentifier = "claim_validator_reward_self";
 
-        public ClaimRewardValidatorSelf() { }
+        public ClaimValidatorRewardSelf() { }
 
         public Address ValidatorDelegatee { get; private set; }
 
@@ -38,10 +39,15 @@ namespace Nekoyume.Action.ValidatorDelegation
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
             var validatorDelegatee = repository.GetValidatorDelegatee(context.Signer);
-            var validatorDelegator = repository.GetValidatorDelegator(context.Signer, context.Signer);
+            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);
 
-            return repository.World;
+            var guildRepository = new GuildRepository(repository);
+            var guildDelegatee = guildRepository.GetGuildDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            guildDelegator.ClaimReward(guildDelegatee, context.BlockIndex);
+
+            return guildRepository.World;
         }
     }
 }

@@ -2,9 +2,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action;
@@ -32,14 +30,12 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
     [Fact]
     public void Serialization()
     {
-        var address = new PrivateKey().Address;
         var share = BigInteger.One;
-        var action = new UndelegateValidator(address, share);
+        var action = new UndelegateValidator(share);
         var plainValue = action.PlainValue;
 
         var deserialized = new UndelegateValidator();
         deserialized.LoadPlainValue(plainValue);
-        Assert.Equal(address, deserialized.ValidatorDelegatee);
         Assert.Equal(share, deserialized.Share);
     }
 
@@ -59,7 +55,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
         var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
-        var undelegateValidator = new UndelegateValidator(validatorKey.Address, expectedBond.Share);
+        var undelegateValidator = new UndelegateValidator(expectedBond.Share);
         actionContext = new ActionContext
         {
             PreviousState = world,
@@ -134,7 +130,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             Signer = validatorKey.Address,
             BlockIndex = height++,
         };
-        var undelegateValidator = new UndelegateValidator(new PrivateKey().Address, 10);
+        var undelegateValidator = new UndelegateValidator(10);
 
         // Then
         Assert.Throws<InvalidAddressException>(
@@ -161,7 +157,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             Signer = validatorKey.Address,
             BlockIndex = height++,
         };
-        var undelegateValidator = new UndelegateValidator(validatorKey.Address, share);
+        var undelegateValidator = new UndelegateValidator(share);
 
         // Then
         Assert.Throws<ArgumentOutOfRangeException>(
@@ -190,7 +186,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
         var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
 
-        var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
+        var undelegateValidator = new UndelegateValidator(10);
         world = undelegateValidator.Execute(actionContext);
 
         // Then
@@ -223,7 +219,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
         var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
 
-        var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
+        var undelegateValidator = new UndelegateValidator(10);
         world = undelegateValidator.Execute(actionContext);
 
         // Then
@@ -252,7 +248,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
         var expectedJailed = expectedDelegatee.Jailed;
 
-        var undelegateValidator = new UndelegateValidator(validatorKey.Address, 10);
+        var undelegateValidator = new UndelegateValidator(10);
         actionContext = new ActionContext
         {
             PreviousState = world,
@@ -290,8 +286,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var expectedValidatorPower = expectedValidator.Power - fixture.ValidatorInfo.SubtractShare;
 
         var subtractShare = fixture.ValidatorInfo.SubtractShare;
-        var undelegateValidator = new UndelegateValidator(
-            validatorKey.Address, subtractShare);
+        var undelegateValidator = new UndelegateValidator(subtractShare);
         actionContext = new ActionContext
         {
             PreviousState = world,

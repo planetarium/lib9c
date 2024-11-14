@@ -99,13 +99,15 @@ namespace Lib9c.Tests.Util
                 throw new ArgumentOutOfRangeException(nameof(blockHeight));
             }
 
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                BlockIndex = blockHeight,
-            };
-            var releaseValidatorUnbondings = new ReleaseValidatorUnbondings();
-            return releaseValidatorUnbondings.Execute(actionContext);
+            // TODO : [GuildMigration] Revive below code when the migration is done.
+            // var actionContext = new ActionContext
+            // {
+            //     PreviousState = world,
+            //     BlockIndex = blockHeight,
+            // };
+            // var releaseValidatorUnbondings = new ReleaseValidatorUnbondings();
+            // return releaseValidatorUnbondings.Execute(actionContext);
+            return world;
         }
     }
 }

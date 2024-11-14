@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -9,25 +10,26 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.Delegation;
+using Nekoyume.Model.State;
 
 namespace Nekoyume.ValidatorDelegation
 {
     public sealed class ValidatorDelegatee
         : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
     {
-        // TODO: After guild-PoS implemented, delegation currency have to be changed into guild gold.
         public ValidatorDelegatee(
             Address address,
             PublicKey publicKey,
             BigInteger commissionPercentage,
             long creationHeight,
+            IEnumerable<Currency> rewardCurrencies,
             ValidatorRepository repository)
             : base(
                   address: address,
                   accountAddress: repository.DelegateeAccountAddress,
                   delegationCurrency: ValidatorDelegationCurrency,
-                  rewardCurrency: ValidatorRewardCurrency,
-                  delegationPoolAddress: UnbondedPoolAddress,
+                  rewardCurrencies: rewardCurrencies,
+                  delegationPoolAddress: InactiveDelegationPoolAddress,
                   rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
@@ -49,7 +51,7 @@ namespace Nekoyume.ValidatorDelegation
             }
 
             PublicKey = publicKey;
-            IsBonded = false;
+            IsActive = false;
             CommissionPercentage = commissionPercentage;
             CommissionPercentageLastUpdateHeight = creationHeight;
             DelegationChanged += OnDelegationChanged;
@@ -77,7 +79,7 @@ namespace Nekoyume.ValidatorDelegation
                   repository: repository)
         {
             PublicKey = new PublicKey(((Binary)bencoded[0]).ByteArray);
-            IsBonded = (Bencodex.Types.Boolean)bencoded[1];
+            IsActive = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
             DelegationChanged += OnDelegationChanged;
@@ -87,14 +89,12 @@ namespace Nekoyume.ValidatorDelegation
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        public static Currency ValidatorRewardCurrency => Currencies.Mead;
-
         // TODO: [MigrateGuild] Change unbonding period after migration.
-        public static long ValidatorUnbondingPeriod => 0L;
+        public static long ValidatorUnbondingPeriod => LegacyStakeState.LockupInterval;
 
-        public static int ValidatorMaxUnbondLockInEntries => 10;
+        public static int ValidatorMaxUnbondLockInEntries => 2;
 
-        public static int ValidatorMaxRebondGraceEntries => 10;
+        public static int ValidatorMaxRebondGraceEntries => 2;
 
         public static BigInteger BaseProposerRewardPercentage => 1;
 
@@ -116,7 +116,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public List Bencoded => List.Empty
             .Add(PublicKey.Format(true))
-            .Add(IsBonded)
+            .Add(IsActive)
             .Add(CommissionPercentage)
             .Add(CommissionPercentageLastUpdateHeight);
 
@@ -124,7 +124,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public PublicKey PublicKey { get; }
 
-        public bool IsBonded { get; private set; }
+        public bool IsActive { get; private set; }
 
         public BigInteger Power => TotalDelegated.RawValue;
 
@@ -197,6 +197,28 @@ namespace Nekoyume.ValidatorDelegation
             base.Unjail(height);
         }
 
+        public void Activate()
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            IsActive = true;
+            Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
+            repository.TransferAsset(
+                InactiveDelegationPoolAddress,
+                ActiveDelegationPoolAddress,
+                TotalDelegated);
+        }
+
+        public void Deactivate()
+        {
+            ValidatorRepository repository = (ValidatorRepository)Repository;
+            IsActive = false;
+            Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
+            repository.TransferAsset(
+                ActiveDelegationPoolAddress,
+                InactiveDelegationPoolAddress,
+                TotalDelegated);
+        }
+
         public void OnDelegationChanged(object? sender, long height)
         {
             ValidatorRepository repository = (ValidatorRepository)Repository;
@@ -238,7 +260,7 @@ namespace Nekoyume.ValidatorDelegation
             => other is ValidatorDelegatee validatorDelegatee
             && Metadata.Equals(validatorDelegatee.Metadata)
             && PublicKey.Equals(validatorDelegatee.PublicKey)
-            && IsBonded == validatorDelegatee.IsBonded
+            && IsActive == validatorDelegatee.IsActive
             && CommissionPercentage == validatorDelegatee.CommissionPercentage
             && CommissionPercentageLastUpdateHeight == validatorDelegatee.CommissionPercentageLastUpdateHeight;
 
@@ -251,14 +273,14 @@ namespace Nekoyume.ValidatorDelegation
         public override int GetHashCode()
             => HashCode.Combine(Address, AccountAddress);
 
-        public static Address BondedPoolAddress => new Address(
+        public static Address ActiveDelegationPoolAddress => new Address(
             ImmutableArray.Create<byte>(
                 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x42));
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x41));
 
-        public static Address UnbondedPoolAddress => new Address(
+        public static Address InactiveDelegationPoolAddress => new Address(
             ImmutableArray.Create<byte>(
                 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55));
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x49));
     }
 }

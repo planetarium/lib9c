@@ -1,12 +1,11 @@
 #nullable enable
+using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
-using Nekoyume.Model.Stake;
-using System.Numerics;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -14,7 +13,12 @@ namespace Nekoyume.ValidatorDelegation
     {
         private readonly Address validatorListAddress = Addresses.ValidatorList;
 
-        private IAccount _validatorList;
+        private IAccount _validatorListAccount;
+
+        public ValidatorRepository(IDelegationRepository repository)
+            : this(repository.World, repository.ActionContext)
+        {
+        }
 
         public ValidatorRepository(IWorld world, IActionContext actionContext)
             : base(
@@ -30,11 +34,11 @@ namespace Nekoyume.ValidatorDelegation
                   Addresses.ValidatorUnbondingSet,
                   Addresses.ValidatorLumpSumRewardsRecord)
         {
-            _validatorList = world.GetAccount(validatorListAddress);
+            _validatorListAccount = world.GetAccount(validatorListAddress);
         }
 
         public override IWorld World => base.World
-            .SetAccount(validatorListAddress, _validatorList);
+            .SetAccount(validatorListAddress, _validatorListAccount);
 
         public ValidatorDelegatee GetValidatorDelegatee(Address address)
             => delegateeAccount.GetState(address) is IValue bencoded
@@ -47,7 +51,7 @@ namespace Nekoyume.ValidatorDelegation
         public override IDelegatee GetDelegatee(Address address)
             => GetValidatorDelegatee(address);
 
-        public ValidatorDelegator GetValidatorDelegator(Address address, Address rewardAddress)
+        public ValidatorDelegator GetValidatorDelegator(Address address)
         {
             try
             {
@@ -55,11 +59,9 @@ namespace Nekoyume.ValidatorDelegation
             }
             catch (FailedLoadStateException)
             {
-                // TODO: delegationPoolAddress have to be changed after guild system is implemented.
                 return new ValidatorDelegator(
                     address,
-                    StakeState.DeriveAddress(address),
-                    rewardAddress,
+                    address,
                     this);
             }
         }
@@ -69,7 +71,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public ValidatorList GetValidatorList()
         {
-            IValue? value = _validatorList.GetState(ValidatorList.Address);
+            IValue? value = _validatorListAccount.GetState(ValidatorList.Address);
             return value is IValue bencoded
                 ? new ValidatorList(bencoded)
                 : new ValidatorList();
@@ -95,7 +97,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public void SetValidatorList(ValidatorList validatorList)
         {
-            _validatorList = _validatorList.SetState(
+            _validatorListAccount = _validatorListAccount.SetState(
                 ValidatorList.Address, validatorList.Bencoded);
         }
 
@@ -109,7 +111,7 @@ namespace Nekoyume.ValidatorDelegation
         public override void UpdateWorld(IWorld world)
         {
             base.UpdateWorld(world);
-            _validatorList = world.GetAccount(validatorListAddress);
+            _validatorListAccount = world.GetAccount(validatorListAddress);
         }
     }
 }

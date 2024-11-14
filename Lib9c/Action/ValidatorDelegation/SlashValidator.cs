@@ -1,13 +1,15 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet.Action.State;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
-using Nekoyume.ValidatorDelegation;
-using System.Linq;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -32,6 +34,12 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+
+            if (world.GetDelegationMigrationHeight() is null)
+            {
+                return world;
+            }
+
             var repository = new ValidatorRepository(world, context);
 
             var abstainHistory = repository.GetAbstainHistory();
@@ -46,6 +54,11 @@ namespace Nekoyume.Action.ValidatorDelegation
                 var validatorDelegatee = repository.GetValidatorDelegatee(abstain.Address);
                 validatorDelegatee.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
                 validatorDelegatee.Jail(context.BlockIndex + AbstainJailTime);
+
+                var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
+                var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(abstain.Address);
+                validatorDelegateeForGuildParticipant.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
+                repository.UpdateWorld(guildRepository.World);
             }
 
             foreach (var evidence in context.Evidence)
@@ -61,6 +74,11 @@ namespace Nekoyume.Action.ValidatorDelegation
                         var validatorDelegatee = repository.GetValidatorDelegatee(e.TargetAddress);
                         validatorDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
                         validatorDelegatee.Tombstone();
+
+                        var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
+                        var validatorDelegateeForGuildParticipant = guildRepository.GetGuildDelegatee(e.TargetAddress);
+                        validatorDelegateeForGuildParticipant.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
+                        repository.UpdateWorld(guildRepository.World);
                         break;
                     default:
                         break;

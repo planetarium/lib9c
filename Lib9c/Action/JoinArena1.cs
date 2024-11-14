@@ -7,6 +7,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -145,8 +146,15 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var arenaAdr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context, context.Signer, arenaAdr, fee);
+                var feeAddress = Addresses.RewardPool;
+                // TODO: [GuildMigration] Remove this after migration
+                if (states.GetDelegationMigrationHeight() is long migrationHeight
+                    && context.BlockIndex < migrationHeight)
+                {
+                    feeAddress = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
+                }
+
+                states = states.TransferAsset(context, context.Signer, feeAddress, fee);
             }
 
             // check medal

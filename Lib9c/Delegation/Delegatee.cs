@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -17,7 +18,7 @@ namespace Nekoyume.Delegation
             Address address,
             Address accountAddress,
             Currency delegationCurrency,
-            Currency rewardCurrency,
+            IEnumerable<Currency> rewardCurrencies,
             Address delegationPoolAddress,
             Address rewardPoolAddress,
             Address rewardRemainderPoolAddress,
@@ -31,7 +32,7 @@ namespace Nekoyume.Delegation
                       address,
                       accountAddress,
                       delegationCurrency,
-                      rewardCurrency,
+                      rewardCurrencies,
                       delegationPoolAddress,
                       rewardPoolAddress,
                       rewardRemainderPoolAddress,
@@ -74,7 +75,7 @@ namespace Nekoyume.Delegation
 
         public Currency DelegationCurrency => Metadata.DelegationCurrency;
 
-        public Currency RewardCurrency => Metadata.RewardCurrency;
+        public ImmutableSortedSet<Currency> RewardCurrencies => Metadata.RewardCurrencies;
 
         public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
 
@@ -243,54 +244,20 @@ namespace Nekoyume.Delegation
 
             if (!share.IsZero && bond.LastDistributeHeight.HasValue)
             {
-                IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords =
-                    GetLumpSumRewardsRecords(bond.LastDistributeHeight);
+                IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords
+                    = GetLumpSumRewardsRecords(bond.LastDistributeHeight);
 
-                long? linkedStartHeight = null;
                 foreach (LumpSumRewardsRecord record in lumpSumRewardsRecords)
                 {
-                    if (!(record.StartHeight is long startHeight))
-                    {
-                        throw new ArgumentException("lump sum reward record wasn't started.");
-                    }
-
-                    if (linkedStartHeight is long startHeightFromHigher
-                        && startHeightFromHigher != startHeight)
-                    {
-                        throw new ArgumentException("Fetched wrong lump sum reward record.");
-                    }
-
                     if (!record.Delegators.Contains(delegator.Address))
                     {
                         continue;
                     }
 
-                    FungibleAssetValue reward = record.RewardsDuringPeriod(share);
-                    if (reward.Sign > 0)
-                    {
-                        Repository.TransferAsset(record.Address, delegator.RewardAddress, reward);
-                    }
-
+                    TransferReward(delegator, share, record);
                     LumpSumRewardsRecord newRecord = record.RemoveDelegator(delegator.Address);
-
-                    if (newRecord.Delegators.IsEmpty)
-                    {
-                        FungibleAssetValue remainder = Repository.GetBalance(newRecord.Address, RewardCurrency);
-
-                        if (remainder.Sign > 0)
-                        {
-                            Repository.TransferAsset(newRecord.Address, RewardRemainderPoolAddress, remainder);
-                        }
-                    }
-
+                    TransferRemainders(newRecord);
                     Repository.SetLumpSumRewardsRecord(newRecord);
-
-                    linkedStartHeight = newRecord.LastStartHeight;
-
-                    if (linkedStartHeight == -1)
-                    {
-                        break;
-                    }
                 }
             }
 
@@ -307,21 +274,24 @@ namespace Nekoyume.Delegation
 
         public void CollectRewards(long height)
         {
-            FungibleAssetValue rewards = Repository.GetBalance(RewardPoolAddress, RewardCurrency);
+            var rewards = RewardCurrencies.Select(c => Repository.GetBalance(RewardPoolAddress, c));
             LumpSumRewardsRecord record = Repository.GetCurrentLumpSumRewardsRecord(this)
                 ?? new LumpSumRewardsRecord(
                     CurrentLumpSumRewardsRecordAddress(),
                     height,
                     TotalShares,
                     Delegators,
-                    RewardCurrency);
+                    RewardCurrencies);
             record = record.AddLumpSumRewards(rewards);
 
-            if (rewards.Sign > 0)
+            foreach (var rewardsEach in rewards)
             {
-                Repository.TransferAsset(RewardPoolAddress, record.Address, rewards);
+                if (rewardsEach.Sign > 0)
+                {
+                    Repository.TransferAsset(RewardPoolAddress, record.Address, rewardsEach);
+                }
             }
-
+            
             Repository.SetLumpSumRewardsRecord(record);
         }
 
@@ -369,7 +339,17 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
+            var delegationBalance = Repository.GetBalance(DelegationPoolAddress, DelegationCurrency);
+            if (delegationBalance < slashed)
+            {
+                slashed = delegationBalance;
+            }
+
+            if (slashed > DelegationCurrency * 0)
+            {
+                Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
+            }
+
             Repository.SetDelegateeMetadata(Metadata);
             DelegationChanged?.Invoke(this, height);
         }
@@ -382,6 +362,23 @@ namespace Nekoyume.Delegation
 
         public void RemoveUnbondingRef(UnbondingRef reference)
             => Metadata.RemoveUnbondingRef(reference);
+
+        public ImmutableDictionary<Currency, FungibleAssetValue> CalculateReward(
+            BigInteger share,
+            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords)
+        {
+            ImmutableDictionary<Currency, FungibleAssetValue> reward
+                = RewardCurrencies.ToImmutableDictionary(c => c, c => c * 0);
+
+            foreach (LumpSumRewardsRecord record in lumpSumRewardsRecords)
+            {
+                var rewardDuringPeriod = record.RewardsDuringPeriod(share);
+                reward = rewardDuringPeriod.Aggregate(reward, (acc, pair)
+                    => acc.SetItem(pair.Key, acc[pair.Key] + pair.Value));
+            }
+
+            return reward;
+        }
 
         private void StartNewRewardPeriod(long height)
         {
@@ -397,7 +394,7 @@ namespace Nekoyume.Delegation
                         currentRecord.StartHeight,
                         TotalShares,
                         Delegators,
-                        RewardCurrency,
+                        RewardCurrencies,
                         currentRecord.LastStartHeight);
 
                     Repository.SetLumpSumRewardsRecord(currentRecord);
@@ -405,12 +402,16 @@ namespace Nekoyume.Delegation
                 }
 
                 Address archiveAddress = LumpSumRewardsRecordAddress(lastRecord.StartHeight);
-                FungibleAssetValue reward = Repository.GetBalance(lastRecord.Address, RewardCurrency);
-                if (reward.Sign > 0)
-                {
-                    Repository.TransferAsset(lastRecord.Address, archiveAddress, reward);
-                }
 
+                foreach (var rewardCurrency in RewardCurrencies)
+                {
+                    FungibleAssetValue reward = Repository.GetBalance(lastRecord.Address, rewardCurrency);
+                    if (reward.Sign > 0)
+                    {
+                        Repository.TransferAsset(lastRecord.Address, archiveAddress, reward);
+                    }
+                }
+                
                 lastRecord = lastRecord.MoveAddress(archiveAddress);
                 Repository.SetLumpSumRewardsRecord(lastRecord);
             }
@@ -420,42 +421,10 @@ namespace Nekoyume.Delegation
                 height,
                 TotalShares,
                 Delegators,
-                RewardCurrency,
+                RewardCurrencies,
                 lastStartHeight);
 
             Repository.SetLumpSumRewardsRecord(newRecord);
-        }
-
-        private FungibleAssetValue CalculateReward(
-            BigInteger share,
-            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords)
-        {
-            FungibleAssetValue reward = RewardCurrency * 0;
-            long? linkedStartHeight = null;
-
-            foreach (LumpSumRewardsRecord record in lumpSumRewardsRecords)
-            {
-                if (!(record.StartHeight is long startHeight))
-                {
-                    throw new ArgumentException("lump sum reward record wasn't started.");
-                }
-
-                if (linkedStartHeight is long startHeightFromHigher
-                    && startHeightFromHigher != startHeight)
-                {
-                    throw new ArgumentException("lump sum reward record was started.");
-                }
-
-                reward += record.RewardsDuringPeriod(share);
-                linkedStartHeight = record.LastStartHeight;
-
-                if (linkedStartHeight == -1)
-                {
-                    break;
-                }
-            }
-
-            return reward;
         }
 
         private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
@@ -482,6 +451,36 @@ namespace Nekoyume.Delegation
             }
 
             return records;
+        }
+
+        private void TransferReward(T delegator, BigInteger share, LumpSumRewardsRecord record)
+        {
+            ImmutableSortedDictionary<Currency, FungibleAssetValue> reward = record.RewardsDuringPeriod(share);
+            foreach (var rewardEach in reward)
+            {
+                if (rewardEach.Value.Sign > 0)
+                {
+                    Repository.TransferAsset(record.Address, delegator.RewardAddress, rewardEach.Value);
+                }
+            }
+        }
+
+        private void TransferRemainders(LumpSumRewardsRecord record)
+        {
+            if (!record.Delegators.IsEmpty)
+            {
+                return;
+            }
+
+            foreach (var rewardCurrency in RewardCurrencies)
+            {
+                FungibleAssetValue remainder = Repository.GetBalance(record.Address, rewardCurrency);
+
+                if (remainder.Sign > 0)
+                {
+                    Repository.TransferAsset(record.Address, RewardRemainderPoolAddress, remainder);
+                }
+            }
         }
     }
 }

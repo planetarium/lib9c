@@ -2,10 +2,9 @@ using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -16,20 +15,16 @@ namespace Nekoyume.Action.ValidatorDelegation
 
         public DelegateValidator() { }
 
-        public DelegateValidator(Address validatorDelegatee, FungibleAssetValue fav)
+        public DelegateValidator(FungibleAssetValue fav)
         {
-            ValidatorDelegatee = validatorDelegatee;
             FAV = fav;
         }
-
-        public Address ValidatorDelegatee { get; private set; }
 
         public FungibleAssetValue FAV { get; private set; }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", List.Empty
-                .Add(ValidatorDelegatee.Bencoded)
                 .Add(FAV.Serialize()));
 
         public override void LoadPlainValue(IValue plainValue)
@@ -42,27 +37,30 @@ namespace Nekoyume.Action.ValidatorDelegation
                 throw new InvalidCastException();
             }
 
-            ValidatorDelegatee = new Address(values[0]);
-            FAV = new FungibleAssetValue(values[1]);
+            FAV = new FungibleAssetValue(values[0]);
         }
 
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
 
-            if (context.Signer != ValidatorDelegatee)
+            if (FAV.Sign <= 0)
             {
-                throw new InvalidAddressException(
-                    $"{nameof(context.Signer)}({context.Signer}) is " +
-                    $"not equal to {nameof(ValidatorDelegatee)}({ValidatorDelegatee})."
-                );
+                throw new ArgumentOutOfRangeException(
+                    nameof(FAV), FAV, "Fungible asset value must be positive.");
             }
 
-            var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
-            repository.DelegateValidator(ValidatorDelegatee, FAV);
+            var guildRepository = new GuildRepository(context.PreviousState, context);
+            var guildDelegatee = guildRepository.GetGuildDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            guildDelegator.Delegate(guildDelegatee, FAV, context.BlockIndex);
 
-            return repository.World;
+            var validatorRepository = new ValidatorRepository(guildRepository);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(context.Signer);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(context.Signer);
+            validatorDelegatee.Bond(validatorDelegator, FAV, context.BlockIndex);
+
+            return validatorRepository.World;
         }
     }
 }

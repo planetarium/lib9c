@@ -1,24 +1,33 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
 using Bencodex;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using System.Collections.Immutable;
 
 namespace Nekoyume.Delegation
 {
     public class LumpSumRewardsRecord : IBencodable, IEquatable<LumpSumRewardsRecord>
     {
+        private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
+
         public LumpSumRewardsRecord(
             Address address,
             long startHeight,
             BigInteger totalShares,
             ImmutableSortedSet<Address> delegators,
-            Currency currency)
-            : this(address, startHeight, totalShares, delegators, currency, null)
+            IEnumerable<Currency> currencies)
+            : this(
+                  address,
+                  startHeight,
+                  totalShares,
+                  delegators,
+                  currencies,
+                  null)
         {
         }
 
@@ -27,9 +36,15 @@ namespace Nekoyume.Delegation
             long startHeight,
             BigInteger totalShares,
             ImmutableSortedSet<Address> delegators,
-            Currency currency,
+            IEnumerable<Currency> currencies,
             long? lastStartHeight)
-            : this(address, startHeight, totalShares, delegators, currency * 0, lastStartHeight)
+            : this(
+                  address,
+                  startHeight,
+                  totalShares,
+                  delegators,
+                  currencies.Select(c => c * 0),
+                  lastStartHeight)
         {
         }
 
@@ -38,14 +53,20 @@ namespace Nekoyume.Delegation
             long startHeight,
             BigInteger totalShares,
             ImmutableSortedSet<Address> delegators,
-            FungibleAssetValue lumpSumRewards,
+            IEnumerable<FungibleAssetValue> lumpSumRewards,
             long? lastStartHeight)
         {
             Address = address;
             StartHeight = startHeight;
             TotalShares = totalShares;
             Delegators = delegators;
-            LumpSumRewards = lumpSumRewards;
+
+            if (!lumpSumRewards.Select(f => f.Currency).All(new HashSet<Currency>().Add))
+            {
+                throw new ArgumentException("Duplicated currency in lump sum rewards.");
+            }
+
+            LumpSumRewards = lumpSumRewards.ToImmutableDictionary(f => f.Currency, f => f);
             LastStartHeight = lastStartHeight;
         }
 
@@ -60,9 +81,25 @@ namespace Nekoyume.Delegation
                 (Integer)bencoded[0],
                 (Integer)bencoded[1],
                 ((List)bencoded[2]).Select(a => new Address(a)).ToImmutableSortedSet(),
-                new FungibleAssetValue(bencoded[3]),
+                ((List)bencoded[3]).Select(v => new FungibleAssetValue(v)),
                 (Integer?)bencoded.ElementAtOrDefault(4))
         {
+        }
+
+        private LumpSumRewardsRecord(
+            Address address,
+            long startHeight,
+            BigInteger totalShares,
+            ImmutableSortedSet<Address> delegators,
+            ImmutableDictionary<Currency, FungibleAssetValue> lumpSumRewards,
+            long? lastStartHeight)
+        {
+            Address = address;
+            StartHeight = startHeight;
+            TotalShares = totalShares;
+            Delegators = delegators;
+            LumpSumRewards = lumpSumRewards;
+            LastStartHeight = lastStartHeight;
         }
 
         public Address Address { get; }
@@ -71,7 +108,7 @@ namespace Nekoyume.Delegation
 
         public BigInteger TotalShares { get; }
 
-        public FungibleAssetValue LumpSumRewards { get; }
+        public ImmutableDictionary<Currency, FungibleAssetValue> LumpSumRewards { get; }
 
         public ImmutableSortedSet<Address> Delegators { get; }
 
@@ -85,7 +122,9 @@ namespace Nekoyume.Delegation
                     .Add(StartHeight)
                     .Add(TotalShares)
                     .Add(new List(Delegators.Select(a => a.Bencoded)))
-                    .Add(LumpSumRewards.Serialize());
+                    .Add(new List(LumpSumRewards
+                        .OrderBy(r => r.Key, _currencyComparer)
+                        .Select(r => r.Value.Serialize())));
 
                 return LastStartHeight is long lastStartHeight
                     ? bencoded.Add(lastStartHeight)
@@ -104,14 +143,22 @@ namespace Nekoyume.Delegation
                 LumpSumRewards,
                 LastStartHeight);
 
+        public LumpSumRewardsRecord AddLumpSumRewards(IEnumerable<FungibleAssetValue> rewards)
+            => rewards.Aggregate(this, (accum, next) => AddLumpSumRewards(accum, next));
+
         public LumpSumRewardsRecord AddLumpSumRewards(FungibleAssetValue rewards)
+            => AddLumpSumRewards(this, rewards);
+
+        public static LumpSumRewardsRecord AddLumpSumRewards(LumpSumRewardsRecord record, FungibleAssetValue rewards)
             => new LumpSumRewardsRecord(
-                Address,
-                StartHeight,
-                TotalShares,
-                Delegators,
-                LumpSumRewards + rewards,
-                LastStartHeight);
+                record.Address,
+                record.StartHeight,
+                record.TotalShares,
+                record.Delegators,
+                record.LumpSumRewards.TryGetValue(rewards.Currency, out var cumulative)
+                    ? record.LumpSumRewards.SetItem(rewards.Currency, cumulative + rewards)
+                    : throw new ArgumentException($"Invalid reward currency: {rewards.Currency}"),
+                record.LastStartHeight);
 
         public LumpSumRewardsRecord RemoveDelegator(Address delegator)
             => new LumpSumRewardsRecord(
@@ -122,8 +169,15 @@ namespace Nekoyume.Delegation
                 LumpSumRewards,
                 LastStartHeight);
 
-        public FungibleAssetValue RewardsDuringPeriod(BigInteger share)
-            => (LumpSumRewards * share).DivRem(TotalShares).Quotient;
+        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardsDuringPeriod(BigInteger share)
+            => LumpSumRewards.Keys.Select(k => RewardsDuringPeriod(share, k))
+                .ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
+
+        public FungibleAssetValue RewardsDuringPeriod(BigInteger share, Currency currency)
+            => LumpSumRewards.TryGetValue(currency, out var reward)
+                ? (reward * share).DivRem(TotalShares).Quotient
+                : throw new ArgumentException($"Invalid reward currency: {currency}");
+
 
         public override bool Equals(object? obj)
             => obj is LumpSumRewardsRecord other && Equals(other);

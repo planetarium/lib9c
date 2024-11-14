@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action.Scenario
             state = DelegationUtil.MakeGuild(state, _agentAddr, validatorKey.Address, 0L);
 
             // Withdraw stake via stake3.
-            state = Stake3(state, _agentAddr, 0, stake2BlockIndex);
+            state = Stake3(state, _agentAddr, 0, stake2BlockIndex + LegacyStakeState.LockupInterval + 1);
 
             state = DelegationUtil.EnsureStakeReleased(state, stake2BlockIndex + ValidatorDelegatee.ValidatorUnbondingPeriod);
 

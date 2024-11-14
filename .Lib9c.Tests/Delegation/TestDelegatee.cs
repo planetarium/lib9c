@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Delegation
 {
     using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
     using Nekoyume.Delegation;
 
     public sealed class TestDelegatee : Delegatee<TestDelegator, TestDelegatee>
@@ -14,8 +15,8 @@ namespace Lib9c.Tests.Delegation
             : base(
                   address,
                   accountAddress,
-                  DelegationFixture.TestCurrency,
-                  DelegationFixture.TestCurrency,
+                  DelegationFixture.TestDelegationCurrency,
+                  new Currency[] { DelegationFixture.TestRewardCurrency },
                   DelegationAddress.DelegationPoolAddress(address, accountAddress),
                   DelegationAddress.RewardPoolAddress(address, accountAddress),
                   DelegationFixture.FixedPoolAddress,
