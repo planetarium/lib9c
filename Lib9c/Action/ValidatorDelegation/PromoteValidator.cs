@@ -63,11 +63,11 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = ExecutePublic(context);
-            if (context.Signer != ValidatorConfig.PlanetariumValidatorAddress)
-            {
-                throw new InvalidOperationException(
-                    $"This action is not allowed for {context.Signer}.");
-            }
+            // if (context.Signer != ValidatorConfig.PlanetariumValidatorAddress)
+            // {
+            //     throw new InvalidOperationException(
+            //         $"This action is not allowed for {context.Signer}.");
+            // }
 
             return world;
         }
