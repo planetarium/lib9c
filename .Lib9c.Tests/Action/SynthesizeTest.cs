@@ -62,25 +62,27 @@ public class SynthesizeTest
     }
 
     [Theory]
-    [InlineData((Grade)3, new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume, })]
-    [InlineData((Grade)4, new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume, })]
-    [InlineData((Grade)5, new[] { ItemSubType.FullCostume, ItemSubType.FullCostume, ItemSubType.FullCostume, })]
-    [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title, })]
-    [InlineData((Grade)4, new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title, })]
-    [InlineData((Grade)5, new[] { ItemSubType.Title, ItemSubType.Title, ItemSubType.Title, })]
-    [InlineData((Grade)3, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
-    [InlineData((Grade)4, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
-    [InlineData((Grade)5, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
-    [InlineData((Grade)6, new[] { ItemSubType.Grimoire, ItemSubType.Grimoire, ItemSubType.Grimoire, })]
-    [InlineData((Grade)1, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
-    [InlineData((Grade)2, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
-    [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
-    [InlineData((Grade)4, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
-    [InlineData((Grade)5, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
-    [InlineData((Grade)6, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Aura, })]
-    public void Execute(Grade grade, ItemSubType[] itemSubTypes)
+    [InlineData((Grade)3, ItemSubType.FullCostume)]
+    [InlineData((Grade)4, ItemSubType.FullCostume)]
+    [InlineData((Grade)5, ItemSubType.FullCostume)]
+    [InlineData((Grade)3, ItemSubType.Title)]
+    [InlineData((Grade)4, ItemSubType.Title)]
+    [InlineData((Grade)5, ItemSubType.Title)]
+    [InlineData((Grade)3, ItemSubType.Grimoire)]
+    [InlineData((Grade)4, ItemSubType.Grimoire)]
+    [InlineData((Grade)5, ItemSubType.Grimoire)]
+    [InlineData((Grade)6, ItemSubType.Grimoire)]
+    [InlineData((Grade)1, ItemSubType.Aura)]
+    [InlineData((Grade)2, ItemSubType.Aura)]
+    [InlineData((Grade)3, ItemSubType.Aura)]
+    [InlineData((Grade)4, ItemSubType.Aura)]
+    [InlineData((Grade)5, ItemSubType.Aura)]
+    [InlineData((Grade)6, ItemSubType.Aura)]
+    public void ExecuteSingle(Grade grade, ItemSubType itemSubType)
     {
         var context = new ActionContext();
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(grade));
+
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
 
@@ -101,8 +103,7 @@ public class SynthesizeTest
         state = action.Execute(ctx);
         var inventory = state.GetInventoryV2(avatarAddress);
 
-        // Tests
-        // 현재 아이템 3개를 넣어 1개가 나오는 구조라 이런 형태로 체크, 추후 변경될 수 있음
+        // Tests - result inventory should have only one item in this case.
         Assert.Single(inventory.Items);
         var firstItem = inventory.Items.First().item;
         Assert.True(firstItem.ItemSubType == itemSubTypes[0]);
@@ -140,11 +141,52 @@ public class SynthesizeTest
     }
 
     [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(12)]
+    public void ExecuteMultipleSameType(int testCount)
+    {
+        var grade = Grade.Rare;
+        var itemSubType = ItemSubType.FullCostume;
+        var materialCount = GetSucceededMaterialCount(grade) * testCount;
+        var itemSubTypes = GetSubTypeArray(itemSubType, materialCount);
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+
+        var action = new Synthesize()
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = Synthesize.GetItemGuids(items),
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        state = action.Execute(ctx);
+        var inventory = state.GetInventoryV2(avatarAddress);
+
+        // Assert
+        Assert.Equal(testCount, inventory.Items.Count);
+        foreach (var item in inventory.Items.Select(i => i.item))
+        {
+            Assert.Equal(itemSubType, item.ItemSubType);
+            var expectedGrade = Synthesize.GetTargetGrade((int)grade);
+            Assert.True(item.Grade == expectedGrade || item.Grade == (int)grade);
+        }
+    }
+
+    [Theory]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
     [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]
     [InlineData((Grade)3, new[] { ItemSubType.Grimoire, ItemSubType.Title, ItemSubType.Grimoire })]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Grimoire })]
-    public void ExecuteMixedSubTypes(Grade grade, ItemSubType[] itemSubTypes)
+    public void ExecuteInvalidMaterial(Grade grade, ItemSubType[] itemSubTypes)
     {
         var context = new ActionContext();
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
@@ -251,5 +293,23 @@ public class SynthesizeTest
         Assert.NotNull(row);
 
         return ItemFactory.CreateItem(row, new TestRandom(_randomSeed++));
+    }
+
+    private static ItemSubType[] GetSubTypeArray(ItemSubType subtype, int count)
+    {
+        var subTypes = new ItemSubType[count];
+        for (var i = 0; i < count; i++)
+        {
+            subTypes[i] = subtype;
+        }
+
+        return subTypes;
+    }
+
+    private static int GetSucceededMaterialCount(Grade grade)
+    {
+        var synthesizeSheet = TableSheets.SynthesizeSheet;
+        var row = synthesizeSheet.Values.First(r => (Grade)r.GradeId == grade);
+        return row.RequiredCount;
     }
 }
