@@ -1,5 +1,5 @@
 grade_id,required_count,succeed_rate
-_value of successful_rate is between 0 and 1.
+_value of successful_rate is between 0 and 1. only the second decimal place
 1,25,0.5
 2,20,0.4
 3,15,0.3
