@@ -8222,6 +8222,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BuffLimitSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BuffLimitSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BuffLimitSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BuffLimitSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.BuffLinkSheet.Row.yml",
       "output": {
         ".html": {
@@ -8856,26 +8876,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.Row.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.Row.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.html"
         }
       },
       "version": ""
