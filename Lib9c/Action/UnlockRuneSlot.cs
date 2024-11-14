@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Model.EnumType;
@@ -103,8 +104,18 @@ namespace Nekoyume.Action
             arenaSlotState.Unlock(SlotIndex);
             raidSlotState.Unlock(SlotIndex);
 
+            var feeAddress = Addresses.RewardPool;
+            // TODO: [GuildMigration] Remove this after migration
+            if (states.GetDelegationMigrationHeight() is long migrationHeight
+                && context.BlockIndex < migrationHeight)
+            {
+                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+            }
+
             return states
-                .TransferAsset(context, context.Signer, Addresses.RewardPool, cost * currency)
+                .TransferAsset(context, context.Signer, feeAddress, cost * currency)
                 .SetLegacyState(adventureSlotStateAddress, adventureSlotState.Serialize())
                 .SetLegacyState(arenaSlotStateAddress, arenaSlotState.Serialize())
                 .SetLegacyState(raidSlotStateAddress, raidSlotState.Serialize());

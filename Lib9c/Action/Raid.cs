@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
@@ -149,7 +150,18 @@ namespace Nekoyume.Action
                         throw new ExceedTicketPurchaseLimitException("");
                     }
                     var goldCurrency = states.GetGoldCurrency();
-                    states = states.TransferAsset(context, context.Signer, Addresses.RewardPool,
+
+                    var feeAddress = Addresses.RewardPool;
+                    // TODO: [GuildMigration] Remove this after migration
+                    if (states.GetDelegationMigrationHeight() is long migrationHeight
+                        && context.BlockIndex < migrationHeight)
+                    {
+                        var arenaSheet = states.GetSheet<ArenaSheet>();
+                        var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                        feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                    }
+
+                    states = states.TransferAsset(context, context.Signer, feeAddress,
                         WorldBossHelper.CalculateTicketPrice(row, raiderState, goldCurrency));
                     raiderState.PurchaseCount++;
                 }

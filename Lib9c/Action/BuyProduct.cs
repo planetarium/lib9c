@@ -9,6 +9,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.EnumType;
@@ -174,12 +175,23 @@ namespace Nekoyume.Action
             // Receipt
             var receipt = new ProductReceipt(productId, sellerAvatarAddress, buyerAvatarState.address, product.Price,
                 context.BlockIndex);
+
+            var feeAddress = Addresses.RewardPool;
+            // TODO: [GuildMigration] Remove this after migration
+            if (states.GetDelegationMigrationHeight() is long migrationHeight
+                && context.BlockIndex < migrationHeight)
+            {
+                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+            }
+
             states = states
                 .RemoveLegacyState(productAddress)
                 .SetLegacyState(productsStateAddress, productsState.Serialize())
                 .SetAvatarState(sellerAvatarAddress, sellerAvatarState)
                 .SetLegacyState(ProductReceipt.DeriveAddress(productId), receipt.Serialize())
-                .TransferAsset(context, context.Signer, Addresses.RewardPool, tax)
+                .TransferAsset(context, context.Signer, feeAddress, tax)
                 .TransferAsset(context, context.Signer, sellerAgentAddress, taxedPrice);
 
             return states;
@@ -296,10 +308,20 @@ namespace Nekoyume.Action
             var taxedPrice = order.Price - tax;
 
             // Transfer tax.
+            var feeAddress = Addresses.RewardPool;
+            // TODO: [GuildMigration] Remove this after migration
+            if (states.GetDelegationMigrationHeight() is long migrationHeight
+                && context.BlockIndex < migrationHeight)
+            {
+                var arenaSheet = states.GetSheet<ArenaSheet>();
+                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+            }
+
             states = states.TransferAsset(
                 context,
                 context.Signer,
-                Addresses.RewardPool,
+                feeAddress,
                 tax);
 
             // Transfer seller.
