@@ -251,12 +251,6 @@ namespace Nekoyume.Action
                 var taxedPrice = order.Price - tax;
 
                 // Transfer tax.
-                states = states.TransferAsset(
-                    context,
-                    context.Signer,
-                    Addresses.RewardPool,
-                    tax);
-
                 var feeAddress = Addresses.RewardPool;
                 // TODO: [GuildMigration] Remove this after migration
                 if (states.GetDelegationMigrationHeight() is long migrationHeight
