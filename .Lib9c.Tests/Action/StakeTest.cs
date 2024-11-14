@@ -334,10 +334,13 @@ namespace Lib9c.Tests.Action
             long previousAmount,
             long amount)
         {
+            var interval = previousAmount < amount
+                ? LegacyStakeState.RewardInterval : LegacyStakeState.LockupInterval;
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeState(
+            var stakeState = new StakeState(
                 contract: new Contract(_stakePolicySheet),
                 startedBlockIndex: 0L,
+                receivedBlockIndex: interval,
                 stateVersion: 3);
             var world = _initialState;
             var height = 0L;
@@ -357,11 +360,11 @@ namespace Lib9c.Tests.Action
                 var guildRepository = new GuildRepository(world, new ActionContext { Signer = _agentAddr });
                 var guildParticipant = guildRepository.GetGuildParticipant(_agentAddr);
                 var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                guildParticipant.Delegate(guild, gg, height++);
+                guildParticipant.Delegate(guild, gg, height);
                 world = guildRepository.World;
             }
 
-            world = world.SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
+            world = world.SetLegacyState(stakeStateAddr, stakeState.Serialize());
 
             if (amount - previousAmount > 0)
             {
@@ -370,7 +373,7 @@ namespace Lib9c.Tests.Action
             }
 
             var nextState = Execute(
-                height,
+                height + interval,
                 world,
                 new TestRandom(),
                 _agentAddr,
@@ -378,8 +381,8 @@ namespace Lib9c.Tests.Action
 
             if (amount > 0)
             {
-                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState stakeState));
-                Assert.Equal(3, stakeState.StateVersion);
+                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState nextStakeState));
+                Assert.Equal(3, nextStakeState.StateVersion);
             }
 
             world = DelegationUtil.EnsureStakeReleased(
@@ -407,10 +410,13 @@ namespace Lib9c.Tests.Action
             long previousAmount,
             long amount)
         {
+            var interval = previousAmount < amount
+                ? LegacyStakeState.RewardInterval : LegacyStakeState.LockupInterval;
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
-            var stakeStateV2 = new StakeState(
+            var stakeState = new StakeState(
                 contract: new Contract(_stakePolicySheet),
                 startedBlockIndex: 0L,
+                receivedBlockIndex: interval,
                 stateVersion: 3);
             var world = _initialState;
             var height = 0L;
@@ -427,7 +433,7 @@ namespace Lib9c.Tests.Action
                     new ActionContext(), stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
             }
 
-            world = world.SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
+            world = world.SetLegacyState(stakeStateAddr, stakeState.Serialize());
 
             if (amount - previousAmount > 0)
             {
@@ -436,7 +442,7 @@ namespace Lib9c.Tests.Action
             }
 
             var nextState = Execute(
-                height,
+                height + interval,
                 world,
                 new TestRandom(),
                 _agentAddr,
@@ -444,8 +450,8 @@ namespace Lib9c.Tests.Action
 
             if (amount > 0)
             {
-                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState stakeState));
-                Assert.Equal(3, stakeState.StateVersion);
+                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState nextStakeState));
+                Assert.Equal(3, nextStakeState.StateVersion);
             }
 
             world = DelegationUtil.EnsureStakeReleased(
