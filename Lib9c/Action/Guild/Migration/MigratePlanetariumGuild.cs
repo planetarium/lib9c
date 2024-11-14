@@ -19,7 +19,6 @@ namespace Nekoyume.Action.Guild.Migration
     {
         public const string TypeIdentifier = "migrate_planetarium_guild";
 
-        [Obsolete("Don't call in code.", error: false)]
         public MigratePlanetariumGuild()
         {
         }

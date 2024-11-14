@@ -19,7 +19,6 @@ namespace Nekoyume.Action.Guild.Migration
 
         public long Height { get; private set; }
 
-        [Obsolete("Don't call in code.", error: false)]
         public MigrateDelegationHeight()
         {
         }
