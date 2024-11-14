@@ -265,7 +265,7 @@ namespace Lib9c.Tests.Action
                     raidSimulatorSheets,
                     _tableSheets.CostumeStatSheet,
                     new List<StatModifier>(),
-                    _tableSheets.DeBuffLimitSheet,
+                    _tableSheets.BuffLimitSheet,
                     _tableSheets.BuffLinkSheet
                 );
                 simulator.Simulate();
@@ -539,7 +539,7 @@ namespace Lib9c.Tests.Action
                 _tableSheets.GetRaidSimulatorSheets(),
                 _tableSheets.CostumeStatSheet,
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             simulator.Simulate();
