@@ -10,6 +10,7 @@ using Nekoyume.ValidatorDelegation;
 using Nekoyume.Module.ValidatorDelegation;
 using Libplanet.Types.Blocks;
 using Lib9c;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -28,6 +29,13 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+
+            if (world.GetDelegationMigrationHeight() is not { } migrationHeight
+                || context.BlockIndex < migrationHeight)
+            {
+                return world;
+            }
+
             var repository = new ValidatorRepository(world, context);
             var rewardCurrency = Currencies.Mead;
             var proposerInfo = repository.GetProposerInfo();

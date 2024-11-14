@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
@@ -33,6 +34,12 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+
+            if (world.GetDelegationMigrationHeight() is null)
+            {
+                return world;
+            }
+
             var repository = new ValidatorRepository(world, context);
 
             var abstainHistory = repository.GetAbstainHistory();

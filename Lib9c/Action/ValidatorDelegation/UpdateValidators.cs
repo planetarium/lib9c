@@ -5,6 +5,7 @@ using Libplanet.Action;
 using Libplanet.Types.Consensus;
 using Nekoyume.ValidatorDelegation;
 using Nekoyume.Model.Guild;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -21,6 +22,12 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+
+            if (world.GetDelegationMigrationHeight() is null)
+            {
+                return world;
+            }
+
             var prevValidators = world.GetValidatorSet().Validators;
             var repository = new ValidatorRepository(world, context);
             var validators = repository.GetValidatorList().ActiveSet();

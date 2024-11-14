@@ -15,6 +15,7 @@ using Nekoyume.TypedAddress;
 using Nekoyume.Module;
 using Nekoyume.Model.Stake;
 using Lib9c;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -35,6 +36,12 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+
+            if (world.GetDelegationMigrationHeight() is null)
+            {
+                return world;
+            }
+
             var repository = new GuildRepository(world, context);
             var unbondingSet = repository.GetUnbondingSet();
             var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
