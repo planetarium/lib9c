@@ -646,6 +646,10 @@ namespace Nekoyume.Model.Stat
             {
                 // pass
             }
+            catch (NullReferenceException)
+            {
+                // pass
+            }
 
             return modifier;
         }
