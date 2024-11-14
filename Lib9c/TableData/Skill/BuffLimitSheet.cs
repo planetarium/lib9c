@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
 using Nekoyume.Model.Stat;
-using Org.BouncyCastle.Tls;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
 {
-    public class DeBuffLimitSheet : Sheet<int, DeBuffLimitSheet.Row>
+    public class BuffLimitSheet : Sheet<int, BuffLimitSheet.Row>
     {
         public class Row : SheetRow<int>
         {
@@ -28,7 +26,7 @@ namespace Nekoyume.TableData
             }
         }
 
-        public DeBuffLimitSheet() : base(nameof(DeBuffLimitSheet))
+        public BuffLimitSheet() : base(nameof(BuffLimitSheet))
         {
         }
     }

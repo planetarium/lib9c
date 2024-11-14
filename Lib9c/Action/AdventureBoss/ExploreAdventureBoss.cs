@@ -142,7 +142,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(CollectionSheet),
                     typeof(EnemySkillSheet),
                     typeof(CostumeStatSheet),
-                    typeof(DeBuffLimitSheet),
+                    typeof(BuffLimitSheet),
                     typeof(BuffLinkSheet),
                     typeof(ItemRequirementSheet),
                     typeof(EquipmentItemRecipeSheet),
@@ -226,7 +226,7 @@ namespace Nekoyume.Action.AdventureBoss
             var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+            var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
             if (gameConfigState is null)
             {
@@ -290,7 +290,7 @@ namespace Nekoyume.Action.AdventureBoss
                     costumeStatSheet,
                     rewards,
                     collectionModifiers,
-                    deBuffLimitSheet,
+                    buffLimitSheet,
                     buffLinkSheet,
                     false,
                     gameConfigState.ShatterStrikeMaxDamage
