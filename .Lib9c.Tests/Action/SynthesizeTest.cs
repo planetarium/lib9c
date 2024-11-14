@@ -181,6 +181,9 @@ public class SynthesizeTest
         }
     }
 
+    // TODO: Add Simulator for test and client
+    // TODO: Exception Tests
+    // TODO: ExecuteMultiple
     [Theory]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
     [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]
