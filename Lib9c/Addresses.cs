@@ -60,6 +60,9 @@ namespace Nekoyume
         public static readonly Address ExploreBoard          = new("0000000000000000000000000000000000000102");
         public static readonly Address ExplorerList          = new("0000000000000000000000000000000000000103");
 
+        public static readonly Address MortgagePool = new Address("0000000000000000000000000000000000100000");
+        public static readonly Address GasPool = new Address("0000000000000000000000000000000000100001");
+
         #region Guild
 
         /// <summary>
@@ -83,6 +86,12 @@ namespace Nekoyume
         public static readonly Address GuildParticipant = new("0000000000000000000000000000000000000203");
 
         /// <summary>
+        /// An address of an account having <see cref="Nekoyume.Model.Guild.GuildRejoinCooldown"/>
+        /// </summary>
+        public static readonly Address GuildRejoinCooldown =
+            new Address("0000000000000000000000000000000000000204");
+
+        /// <summary>
         /// Build an <see cref="Address"/> of an <see cref="Libplanet.Action.State.Account"/>,
         /// represented as `agentAddress` ↔ <see cref="Bencodex.Types.Boolean"/>, indicates whether
         /// the `agentAddress` is banned.
@@ -93,6 +102,145 @@ namespace Nekoyume
             guildAddress.Derive("guild.banned");
 
         public static readonly Address EmptyAccountAddress = new("ffffffffffffffffffffffffffffffffffffffff");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
+        /// </summary> 
+        public static readonly Address GuildDelegateeMetadata
+            = new Address("0000000000000000000000000000000000000210");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegatorMetadata"/>.
+        /// </summary>
+        public static readonly Address GuildDelegatorMetadata
+            = new Address("0000000000000000000000000000000000000211");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.Bond"/>.
+        /// </summary>
+        public static readonly Address GuildBond
+            = new Address("0000000000000000000000000000000000000212");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondLockIn"/>.
+        /// </summary>
+        public static readonly Address GuildUnbondLockIn
+            = new Address("0000000000000000000000000000000000000213");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.RebondGrace"/>.
+        /// </summary>
+        public static readonly Address GuildRebondGrace
+            = new Address("0000000000000000000000000000000000000214");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.LumpSumRewardsRecord"/>.
+        /// </summary>
+        public static readonly Address GuildLumpSumRewardsRecord
+            = new Address("0000000000000000000000000000000000000215");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondingSet"/>.
+        /// </summary>
+        public static readonly Address GuildUnbondingSet
+            = new Address("0000000000000000000000000000000000000216");
+
+        #endregion
+
+        #region Validator
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.ValidatorDelegatee"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegatee
+            = new Address("0000000000000000000000000000000000000300");
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.ValidatorDelegator"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegator
+            = new Address("0000000000000000000000000000000000000301");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegateeMetadata
+            = new Address("0000000000000000000000000000000000000302");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.DelegatorMetadata"/>.
+        /// </summary>
+        public static readonly Address ValidatorDelegatorMetadata
+            = new Address("0000000000000000000000000000000000000303");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.Bond"/>.
+        /// </summary>
+        public static readonly Address ValidatorBond
+            = new Address("0000000000000000000000000000000000000304");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondLockIn"/>.
+        /// </summary>
+        public static readonly Address ValidatorUnbondLockIn
+            = new Address("0000000000000000000000000000000000000305");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.RebondGrace"/>.
+        /// </summary>
+        public static readonly Address ValidatorRebondGrace
+            = new Address("0000000000000000000000000000000000000306");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.LumpSumRewardsRecord"/>.
+        /// </summary>
+        public static readonly Address ValidatorLumpSumRewardsRecord
+            = new Address("0000000000000000000000000000000000000307");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.UnbondingSet"/>.
+        /// </summary>
+        public static readonly Address ValidatorUnbondingSet
+            = new Address("0000000000000000000000000000000000000308");
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.AbstainHistory"/>.
+        /// </summary>
+        public static readonly Address AbstainHistory
+            = new Address("0000000000000000000000000000000000000309");
+
+        /// <summary>
+        /// An address of an account having <see cref="ValidatorDelegation.ValidatorList"/>.
+        /// </summary>
+        public static readonly Address ValidatorList
+            = new Address("0000000000000000000000000000000000000310");
+
+        /// <summary>
+        /// An address for reward pool of validators.
+        /// </summary>
+        public static readonly Address RewardPool
+            = new Address("0000000000000000000000000000000000000311");
+
+        /// <summary>
+        /// An address for community fund.
+        /// </summary>
+        public static readonly Address CommunityPool
+            = new Address("0000000000000000000000000000000000000312");
+
+        /// <summary>
+        /// An address for non validator.
+        /// </summary>
+        public static readonly Address NonValidatorDelegatee
+            = new Address("0000000000000000000000000000000000000313");
+
+        #endregion
+
+        #region Migration
+
+        /// <summary>
+        /// An account address for migration.
+        /// </summary>
+        public static readonly Address Migration
+            = new Address("0000000000000000000000000000000000000400");
 
         #endregion
 

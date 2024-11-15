@@ -4,12 +4,12 @@ namespace Lib9c.Tests.Action.Guild
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Mocks;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Module.Guild;
     using Xunit;
 
-    public class UnbanGuildMemberTest
+    public class UnbanGuildMemberTest : GuildTestBase
     {
         [Fact]
         public void Serialization()
@@ -24,8 +24,37 @@ namespace Lib9c.Tests.Action.Guild
         }
 
         [Fact]
+        public void Execute()
+        {
+            var validatorKey = new PrivateKey();
+            var guildMasterAddress = AddressUtil.CreateAgentAddress();
+            var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
+            var guildAddress = AddressUtil.CreateGuildAddress();
+
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
+            world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
+
+            var unbanGuildMember = new UnbanGuildMember(targetGuildMemberAddress);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = guildMasterAddress,
+            };
+            world = unbanGuildMember.Execute(actionContext);
+
+            var repository = new GuildRepository(world, actionContext);
+            Assert.False(repository.IsBanned(guildAddress, targetGuildMemberAddress));
+            Assert.Null(repository.GetJoinedGuild(targetGuildMemberAddress));
+        }
+
+        [Fact]
         public void Unban_By_GuildMember()
         {
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var guildMemberAddress = AddressUtil.CreateAgentAddress();
             var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
@@ -33,22 +62,26 @@ namespace Lib9c.Tests.Action.Guild
 
             var action = new UnbanGuildMember(targetGuildMemberAddress);
 
-            IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .JoinGuild(guildAddress, guildMemberAddress)
-                .JoinGuild(guildAddress, targetGuildMemberAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
+            world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
+
+            var repository = new GuildRepository(world, new ActionContext());
 
             // GuildMember tries to ban other guild member.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMemberAddress,
             }));
 
             // GuildMember tries to ban itself.
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = targetGuildMemberAddress,
             }));
         }
@@ -56,27 +89,34 @@ namespace Lib9c.Tests.Action.Guild
         [Fact]
         public void Unban_By_GuildMaster()
         {
+            var validatorKey = new PrivateKey();
             var guildMasterAddress = AddressUtil.CreateAgentAddress();
             var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
             var guildAddress = AddressUtil.CreateGuildAddress();
 
             var action = new UnbanGuildMember(targetGuildMemberAddress);
 
-            IWorld world = new World(MockWorldState.CreateModern());
-            world = world.MakeGuild(guildAddress, guildMasterAddress)
-                .Ban(guildAddress, guildMasterAddress, targetGuildMemberAddress);
+            IWorld world = World;
+            world = EnsureToMintAsset(world, validatorKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+            world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+            world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
+            world = EnsureToBanGuildMember(world, guildAddress, guildMasterAddress, targetGuildMemberAddress);
 
-            Assert.True(world.IsBanned(guildAddress, targetGuildMemberAddress));
-            Assert.Null(world.GetJoinedGuild(targetGuildMemberAddress));
+            var repository = new GuildRepository(world, new ActionContext());
+
+            Assert.True(repository.IsBanned(guildAddress, targetGuildMemberAddress));
+            Assert.Null(repository.GetJoinedGuild(targetGuildMemberAddress));
 
             world = action.Execute(new ActionContext
             {
-                PreviousState = world,
+                PreviousState = repository.World,
                 Signer = guildMasterAddress,
             });
 
-            Assert.False(world.IsBanned(guildAddress, targetGuildMemberAddress));
-            Assert.Null(world.GetJoinedGuild(targetGuildMemberAddress));
+            repository.UpdateWorld(world);
+            Assert.False(repository.IsBanned(guildAddress, targetGuildMemberAddress));
+            Assert.Null(repository.GetJoinedGuild(targetGuildMemberAddress));
         }
     }
 }

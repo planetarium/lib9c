@@ -42,7 +42,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
 #if !LIB9C_DEV_EXTENSIONS && !UNITY_EDITOR
             if (context.Signer != Operator)

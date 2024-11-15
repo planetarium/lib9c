@@ -1,14 +1,22 @@
-using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
+using Libplanet.Types.Consensus;
+using Nekoyume.Model.State;
+using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
+using Nekoyume.Module;
+using Nekoyume.Module.Guild;
+using Nekoyume.Module.ValidatorDelegation;
+using Nekoyume.ValidatorDelegation;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action
 {
@@ -33,6 +41,7 @@ namespace Nekoyume.Action
     [ActionType("initialize_states")]
     public class InitializeStates : GameAction, IInitializeStatesV1
     {
+        public IValue ValidatorSet { get; set; } = Null.Value;
         public Dictionary Ranking { get; set; } = Dictionary.Empty;
         public Dictionary Shop { get; set; } = Dictionary.Empty;
         public Dictionary<string, string> TableSheets { get; set; }
@@ -75,6 +84,7 @@ namespace Nekoyume.Action
         }
 
         public InitializeStates(
+            ValidatorSet validatorSet,
             RankingState0 rankingState,
             ShopState shopState,
             Dictionary<string, string> tableSheets,
@@ -89,6 +99,7 @@ namespace Nekoyume.Action
             CreditsState creditsState = null,
             ISet<Address> assetMinters = null)
         {
+            ValidatorSet = validatorSet.Bencoded;
             Ranking = (Dictionary)rankingState.Serialize();
             Shop = (Dictionary)shopState.Serialize();
             TableSheets = tableSheets;
@@ -118,7 +129,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
             var weeklyArenaState = new WeeklyArenaState(0);
@@ -146,7 +157,8 @@ namespace Nekoyume.Action
                 .SetLegacyState(RedeemCodeState.Address, RedeemCode)
                 .SetLegacyState(ActivatedAccountsState.Address, ActivatedAccounts)
                 .SetLegacyState(GoldCurrencyState.Address, GoldCurrency)
-                .SetLegacyState(Addresses.GoldDistribution, GoldDistributions);
+                .SetLegacyState(Addresses.GoldDistribution, GoldDistributions)
+                .SetDelegationMigrationHeight(0);
 
             if (!(AdminAddressState is null))
             {
@@ -192,6 +204,26 @@ namespace Nekoyume.Action
                 );
             }
 
+            var validatorSet = new ValidatorSet(ValidatorSet);
+            foreach (var validator in validatorSet.Validators)
+            {
+                var delegationFAV = FungibleAssetValue.FromRawValue(
+                    ValidatorDelegatee.ValidatorDelegationCurrency, validator.Power);
+                states = states.MintAsset(ctx, StakeState.DeriveAddress(validator.OperatorAddress), delegationFAV);
+
+                var validatorRepository = new ValidatorRepository(states, ctx);
+                var validatorDelegatee = validatorRepository.CreateValidatorDelegatee(
+                    validator.PublicKey, ValidatorDelegatee.DefaultCommissionPercentage);
+                var validatorDelegator = validatorRepository.GetValidatorDelegator(validator.OperatorAddress);
+                validatorDelegatee.Bond(validatorDelegator, delegationFAV, context.BlockIndex);
+
+                var guildRepository = new GuildRepository(validatorRepository);
+                var guildDelegatee = guildRepository.CreateGuildDelegatee(validator.OperatorAddress);
+                var guildDelegator = guildRepository.GetGuildDelegator(validator.OperatorAddress);
+                guildDelegator.Delegate(guildDelegatee, delegationFAV, context.BlockIndex);
+                states = guildRepository.World;
+            }
+
             return states;
         }
 
@@ -200,6 +232,7 @@ namespace Nekoyume.Action
             get
             {
                 var rv = ImmutableDictionary<string, IValue>.Empty
+                .Add("validator_set", ValidatorSet)
                 .Add("ranking_state", Ranking)
                 .Add("shop_state", Shop)
                 .Add("table_sheets",
@@ -241,6 +274,7 @@ namespace Nekoyume.Action
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
+            ValidatorSet = plainValue["validator_set"];
             Ranking = (Dictionary) plainValue["ranking_state"];
             Shop = (Dictionary) plainValue["shop_state"];
             TableSheets = ((Dictionary) plainValue["table_sheets"])

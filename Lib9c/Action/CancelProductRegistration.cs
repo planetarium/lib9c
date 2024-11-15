@@ -29,7 +29,7 @@ namespace Nekoyume.Action
         public bool ChargeAp;
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
             if (!ProductInfos.Any())

@@ -69,9 +69,9 @@ namespace Lib9c.Tests.Action
             Address monsterCollectionAddress = MonsterCollectionState.DeriveAddress(_signer, 0);
             var monsterCollectionState = new MonsterCollectionState(
                 monsterCollectionAddress, 1, 0);
-            Address stakeStateAddress = StakeState.DeriveAddress(_signer);
+            Address stakeStateAddress = LegacyStakeState.DeriveAddress(_signer);
             var states = _state.SetLegacyState(
-                    stakeStateAddress, new StakeState(stakeStateAddress, 0).SerializeV2())
+                    stakeStateAddress, new LegacyStakeState(stakeStateAddress, 0).SerializeV2())
                 .SetLegacyState(monsterCollectionAddress, monsterCollectionState.Serialize());
             MigrateMonsterCollection action = new MigrateMonsterCollection(_avatarAddress);
             Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
@@ -138,7 +138,7 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             });
 
-            Assert.True(states.TryGetStakeState(_signer, out StakeState stakeState));
+            Assert.True(states.TryGetLegacyStakeState(_signer, out LegacyStakeState stakeState));
             Assert.Equal(
                 0 * currency,
                 states.GetBalance(monsterCollectionState.address, currency));

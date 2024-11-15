@@ -545,8 +545,8 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(itemRow);
             avatarState.inventory.AddItem(apStone);
 
-            var stakeStateAddress = StakeState.DeriveAddress(_agentAddress);
-            var stakeState = new StakeState(stakeStateAddress, 1);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(_agentAddress);
+            var stakeState = new LegacyStakeState(stakeStateAddress, 1);
             var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                 .FirstOrDefault(r => r.Level == stakingLevel)?.RequiredGold ?? 0;
             var context = new ActionContext();
@@ -695,8 +695,8 @@ namespace Lib9c.Tests.Action
             var apStone = ItemFactory.CreateTradableMaterial(itemRow);
             avatarState.inventory.AddItem(apStone);
 
-            var stakeStateAddress = StakeState.DeriveAddress(_agentAddress);
-            var stakeState = new StakeState(stakeStateAddress, 1);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(_agentAddress);
+            var stakeState = new LegacyStakeState(stakeStateAddress, 1);
             var requiredGold = _tableSheets.StakeRegularRewardSheet.OrderedRows
                 .FirstOrDefault(r => r.Level == stakingLevel)?.RequiredGold ?? 0;
             var context = new ActionContext();
