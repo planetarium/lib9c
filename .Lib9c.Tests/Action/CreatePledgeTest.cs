@@ -7,6 +7,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -75,20 +76,26 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(0 * mead, nextState.GetBalance(patronAddress, mead));
                 Assert.Equal(4 * mead, nextState.GetBalance(pledgedAddress, mead));
 
+                var repo = new GuildRepository(states, context);
                 var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
-                var guildAddress = nextState.GetJoinedGuild(planetariumGuildOwner);
+                var guildAddress = repo.GetJoinedGuild(planetariumGuildOwner);
                 Assert.NotNull(guildAddress);
-                Assert.True(nextState.TryGetGuild(guildAddress.Value, out var guild));
+                Assert.True(repo.TryGetGuild(guildAddress.Value, out var guild));
                 Assert.Equal(planetariumGuildOwner, guild.GuildMasterAddress);
                 if (!plPatron)
                 {
-                    Assert.Null(nextState.GetJoinedGuild(agentAddress));
+                    Assert.Null(repo.GetJoinedGuild(agentAddress));
                 }
                 else
                 {
-                    var joinedGuildAddress = Assert.IsType<Nekoyume.TypedAddress.GuildAddress>(nextState.GetJoinedGuild(agentAddress));
-                    Assert.True(nextState.TryGetGuild(joinedGuildAddress, out var joinedGuild));
-                    Assert.Equal(Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner, joinedGuild.GuildMasterAddress);
+                    var joinedGuildAddress =
+                        Assert.IsType<Nekoyume.TypedAddress.GuildAddress>(
+                            repo.GetJoinedGuild(agentAddress));
+                    Assert.True(repo.TryGetGuild(joinedGuildAddress, out var joinedGuild));
+                    Assert.Equal(
+                        Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner,
+                        joinedGuild.GuildMasterAddress
+                    );
                 }
             }
             else

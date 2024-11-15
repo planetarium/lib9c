@@ -387,10 +387,7 @@ namespace Lib9c.Tests.Action
                 {
                     Assert.Equal(0 * _goldCurrency, nextState.GetBalance(_agentAddress, _goldCurrency));
                     Assert.Equal(purchaseCount + 1, nextState.GetRaiderState(raiderAddress).PurchaseCount);
-                    var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(ctx.BlockIndex);
-                    var feeAddress =
-                        ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                    Assert.True(nextState.GetBalance(feeAddress, _goldCurrency) > 0 * _goldCurrency);
+                    Assert.True(nextState.GetBalance(Addresses.RewardPool, _goldCurrency) > 0 * _goldCurrency);
                 }
 
                 Assert.True(nextState.TryGetLegacyState(worldBossKillRewardRecordAddress, out List rawRewardInfo));

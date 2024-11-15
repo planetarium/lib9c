@@ -70,7 +70,7 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
 
             // Validate duplicated slot indices in action

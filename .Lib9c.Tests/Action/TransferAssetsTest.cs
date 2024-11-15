@@ -10,7 +10,6 @@ namespace Lib9c.Tests.Action
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Helper;
     using Nekoyume.Model;
@@ -391,77 +390,65 @@ namespace Lib9c.Tests.Action
                 _sender,
                 new List<(Address, FungibleAssetValue)>
                 {
-                    (StakeState.DeriveAddress(_recipient), _currency * 100),
+                    (LegacyStakeState.DeriveAddress(_recipient), _currency * 100),
                     (_recipient2, _currency * 100),
                 }
             );
             // 스테이킹 주소에 송금하려고 하면 실패합니다.
-            Assert.Throws<ArgumentException>(
-                "recipient",
-                () => action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = baseState
-                            .SetLegacyState(
-                                StakeState.DeriveAddress(_recipient),
-                                new StakeState(StakeState.DeriveAddress(_recipient), 0).SerializeV2()),
-                        Signer = _sender,
-                        BlockIndex = 1,
-                    }));
-            Assert.Throws<ArgumentException>(
-                "recipient",
-                () => action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = baseState
-                            .SetLegacyState(
-                                StakeState.DeriveAddress(_recipient),
-                                new StakeStateV2(
-                                    new Contract(
-                                        "StakeRegularFixedRewardSheet_V1",
-                                        "StakeRegularRewardSheet_V1",
-                                        50400,
-                                        201600),
-                                    0).Serialize()),
-                        Signer = _sender,
-                        BlockIndex = 1,
-                    }));
-            Assert.Throws<ArgumentException>(
-                "recipient",
-                () => action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = baseState
-                            .SetLegacyState(
-                                StakeState.DeriveAddress(_recipient),
-                                new MonsterCollectionState(
-                                        MonsterCollectionState.DeriveAddress(_sender, 0),
-                                        1,
-                                        0)
-                                    .Serialize()),
-                        Signer = _sender,
-                        BlockIndex = 1,
-                    }));
+            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            {
+                PreviousState = baseState
+                    .SetLegacyState(
+                        LegacyStakeState.DeriveAddress(_recipient),
+                        new LegacyStakeState(LegacyStakeState.DeriveAddress(_recipient), 0).SerializeV2()),
+                Signer = _sender,
+                BlockIndex = 1,
+            }));
+            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            {
+                PreviousState = baseState
+                    .SetLegacyState(
+                        LegacyStakeState.DeriveAddress(_recipient),
+                        new StakeState(
+                            new Contract(
+                                "StakeRegularFixedRewardSheet_V1",
+                                "StakeRegularRewardSheet_V1",
+                                50400,
+                                201600),
+                            0).Serialize()),
+                Signer = _sender,
+                BlockIndex = 1,
+            }));
+            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            {
+                PreviousState = baseState
+                    .SetLegacyState(
+                        LegacyStakeState.DeriveAddress(_recipient),
+                        new MonsterCollectionState(
+                                MonsterCollectionState.DeriveAddress(_sender, 0),
+                                1,
+                                0)
+                            .Serialize()),
+                Signer = _sender,
+                BlockIndex = 1,
+            }));
             var monsterCollectionRewardSheet = new MonsterCollectionRewardSheet();
             monsterCollectionRewardSheet.Set(
                 "level,required_gold,reward_id\n1,500,1\n2,1800,2\n3,7200,3\n4,54000,4\n5,270000,5\n6,480000,6\n7,1500000,7\n");
-            Assert.Throws<ArgumentException>(
-                "recipient",
-                () => action.Execute(
-                    new ActionContext()
-                    {
-                        PreviousState = baseState
-                            .SetLegacyState(
-                                StakeState.DeriveAddress(_recipient),
-                                new MonsterCollectionState0(
-                                        MonsterCollectionState.DeriveAddress(_sender, 0),
-                                        1,
-                                        0,
-                                        monsterCollectionRewardSheet)
-                                    .Serialize()),
-                        Signer = _sender,
-                        BlockIndex = 1,
-                    }));
+            Assert.Throws<ArgumentException>("recipient", () => action.Execute(new ActionContext()
+            {
+                PreviousState = baseState
+                    .SetLegacyState(
+                        LegacyStakeState.DeriveAddress(_recipient),
+                        new MonsterCollectionState0(
+                                MonsterCollectionState.DeriveAddress(_sender, 0),
+                                1,
+                                0,
+                                monsterCollectionRewardSheet)
+                            .Serialize()),
+                Signer = _sender,
+                BlockIndex = 1,
+            }));
         }
     }
 }

@@ -60,7 +60,7 @@ namespace Nekoyume.Action.AdventureBoss
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var states = context.PreviousState;
 

@@ -36,7 +36,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             Address signer = context.Signer;
             var state = context.PreviousState;
             var agentState = state.GetAgentState(signer);

@@ -22,7 +22,7 @@ namespace Lib9c.DevExtensions.Action.Stage
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var avatarState = states.GetAvatarState(AvatarAddress);
             if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))

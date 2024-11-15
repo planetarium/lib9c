@@ -8,6 +8,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
@@ -119,7 +120,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -276,15 +277,20 @@ namespace Nekoyume.Action
                     currency);
                 if (cost.Sign > 0)
                 {
-                    var arenaSheet = states.GetSheet<ArenaSheet>();
-                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                    var feeStoreAddress =
-                        Nekoyume.Arena.ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                    var feeAddress = Addresses.RewardPool;
+                    // TODO: [GuildMigration] Remove this after migration
+                    if (states.GetDelegationMigrationHeight() is long migrationHeight
+                        && context.BlockIndex < migrationHeight)
+                    {
+                        feeAddress = Addresses.EventDungeon;
+                    }
+
                     states = states.TransferAsset(
                         context,
                         context.Signer,
-                        feeStoreAddress,
-                        cost);
+                        feeAddress,
+                        cost
+                    );
                 }
 
                 // NOTE: The number of ticket purchases should be increased

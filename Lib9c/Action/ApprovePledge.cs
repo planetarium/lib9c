@@ -4,6 +4,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Guild;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
@@ -30,7 +31,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             Address signer = context.Signer;
             var states = context.PreviousState;
             var contractAddress = signer.GetPledgeAddress();
@@ -49,9 +50,11 @@ namespace Nekoyume.Action
                 throw new AlreadyContractedException($"{signer} already contracted.");
             }
 
-            if (PatronAddress == MeadConfig.PatronAddress && states.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is { } guildAddress)
+            var repository = new GuildRepository(states, context);
+            if (PatronAddress == MeadConfig.PatronAddress
+                && repository.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is { } guildAddress)
             {
-                states = states.JoinGuild(guildAddress, context.GetAgentAddress());
+                states = repository.JoinGuild(guildAddress, context.GetAgentAddress()).World;
             }
 
             return states.SetLegacyState(

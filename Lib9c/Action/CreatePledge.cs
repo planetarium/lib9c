@@ -5,6 +5,7 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 
@@ -54,7 +55,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             CheckPermission(context);
             var states = context.PreviousState;
             var mead = Mead * Currencies.Mead;
@@ -63,25 +64,28 @@ namespace Nekoyume.Action
                 .Add(true.Serialize())
                 .Add(Mead.Serialize());
             // migration for planetarium guild
+            var repository = new GuildRepository(states, context);
             var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
-            if (states.GetJoinedGuild(planetariumGuildOwner) is null)
+            if (repository.GetJoinedGuild(planetariumGuildOwner) is null)
             {
                 var random = context.GetRandom();
                 var guildAddress = new Nekoyume.TypedAddress.GuildAddress(random.GenerateAddress());
-                states = states.MakeGuild(guildAddress, new Nekoyume.TypedAddress.AgentAddress(planetariumGuildOwner));
+                repository = repository.MakeGuild(guildAddress, new Nekoyume.TypedAddress.AgentAddress(planetariumGuildOwner));
             }
             foreach (var (agentAddress, pledgeAddress) in AgentAddresses)
             {
-                if (PatronAddress == MeadConfig.PatronAddress && states.GetJoinedGuild(planetariumGuildOwner) is { } guildAddress)
+                if (PatronAddress == MeadConfig.PatronAddress && repository.GetJoinedGuild(planetariumGuildOwner) is { } guildAddress)
                 {
-                    states = states.JoinGuild(guildAddress, new Nekoyume.TypedAddress.AgentAddress(agentAddress));
+                    repository = repository.JoinGuild(guildAddress, new Nekoyume.TypedAddress.AgentAddress(agentAddress));
                 }
 
                 states = states
                     .TransferAsset(context, PatronAddress, agentAddress, mead)
                     .SetLegacyState(pledgeAddress, contractList);
             }
-            return states;
+
+            repository.UpdateWorld(states);
+            return repository.World;
         }
     }
 }

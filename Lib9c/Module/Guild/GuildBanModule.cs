@@ -1,8 +1,8 @@
 using System;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Store.Trie;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 using Boolean = Bencodex.Types.Boolean;
 
@@ -10,10 +10,10 @@ namespace Nekoyume.Module.Guild
 {
     public static class GuildBanModule
     {
-        public static bool IsBanned(this IWorldState worldState, GuildAddress guildAddress, Address agentAddress)
+        public static bool IsBanned(this GuildRepository repository, GuildAddress guildAddress, Address agentAddress)
         {
             var accountAddress = Addresses.GetGuildBanAccountAddress(guildAddress);
-            var value = worldState.GetAccountState(accountAddress)
+            var value = repository.World.GetAccountState(accountAddress)
                 .GetState(agentAddress);
             if (value is Boolean boolean)
             {
@@ -28,9 +28,13 @@ namespace Nekoyume.Module.Guild
             return false;
         }
 
-        public static IWorld Ban(this IWorld world, GuildAddress guildAddress, AgentAddress signer, AgentAddress target)
+        public static void Ban(
+            this GuildRepository repository,
+            GuildAddress guildAddress,
+            AgentAddress signer,
+            AgentAddress target)
         {
-            if (!world.TryGetGuild(guildAddress, out var guild))
+            if (!repository.TryGetGuild(guildAddress, out var guild))
             {
                 throw new InvalidOperationException("There is no such guild.");
             }
@@ -45,22 +49,20 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("The guild master cannot be banned.");
             }
 
-            if (world.TryGetGuildApplication(target, out var guildApplication) && guildApplication.GuildAddress == guildAddress)
+            if (repository.GetJoinedGuild(target) == guildAddress)
             {
-                world = world.RejectGuildApplication(signer, target);
+                repository.LeaveGuild(target);
             }
 
-            if (world.GetJoinedGuild(target) == guildAddress)
-            {
-                world = world.LeaveGuild(target);
-            }
-
-            return world.MutateAccount(Addresses.GetGuildBanAccountAddress(guildAddress), account => account.SetState(target, (Boolean)true));
+            repository.UpdateWorld(
+                repository.World.MutateAccount(
+                    Addresses.GetGuildBanAccountAddress(guildAddress),
+                    account => account.SetState(target, (Boolean)true)));
         }
 
-        public static IWorld Unban(this IWorld world, GuildAddress guildAddress, AgentAddress signer, Address target)
+        public static void Unban(this GuildRepository repository, GuildAddress guildAddress, AgentAddress signer, Address target)
         {
-            if (!world.TryGetGuild(guildAddress, out var guild))
+            if (!repository.TryGetGuild(guildAddress, out var guild))
             {
                 throw new InvalidOperationException("There is no such guild.");
             }
@@ -70,17 +72,22 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("The signer is not a guild master.");
             }
 
-            if (!world.IsBanned(guildAddress, target))
+            if (!repository.IsBanned(guildAddress, target))
             {
                 throw new InvalidOperationException("The target is not banned.");
             }
 
-            return world.MutateAccount(Addresses.GetGuildBanAccountAddress(guildAddress),
-                account => account.RemoveState(target));
+            repository.UpdateWorld(
+                repository.World.MutateAccount(
+                    Addresses.GetGuildBanAccountAddress(guildAddress),
+                    account => account.RemoveState(target)));
         }
 
-        public static IWorld RemoveBanList(this IWorld world, GuildAddress guildAddress) =>
-            world.SetAccount(Addresses.GetGuildBanAccountAddress(guildAddress), GetEmptyAccount(world));
+        public static void RemoveBanList(this GuildRepository repository, GuildAddress guildAddress) =>
+            repository.UpdateWorld(
+                repository.World.SetAccount(
+                    Addresses.GetGuildBanAccountAddress(guildAddress),
+                    GetEmptyAccount(repository.World)));
 
         private static IAccount GetEmptyAccount(this IWorld world)
         {
