@@ -3,19 +3,27 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Delegation;
 using Nekoyume.Exceptions;
+using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Stake;
+using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 using Serilog;
 using static Lib9c.SerializeKeys;
+using static Nekoyume.Model.WorldInformation;
 
 namespace Nekoyume.Action
 {
@@ -49,7 +57,7 @@ namespace Nekoyume.Action
         public override IWorld Execute(IActionContext context)
         {
             var started = DateTimeOffset.UtcNow;
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
             // NOTE: Restrict staking if there is a monster collection until now.
@@ -94,7 +102,7 @@ namespace Nekoyume.Action
                     $"The amount must be greater than or equal to {minimumRequiredGold}.");
             }
 
-            var stakeStateAddress = StakeState.DeriveAddress(context.Signer);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
             var currency = states.GetGoldCurrency();
             var currentBalance = states.GetBalance(context.Signer, currency);
             var stakedBalance = states.GetBalance(stakeStateAddress, currency);
@@ -110,7 +118,7 @@ namespace Nekoyume.Action
 
             var latestStakeContract = new Contract(stakePolicySheet);
             // NOTE: When the staking state is not exist.
-            if (!states.TryGetStakeStateV2(context.Signer, out var stakeStateV2))
+            if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
                 // NOTE: Cannot withdraw staking.
                 if (Amount == 0)
@@ -123,7 +131,7 @@ namespace Nekoyume.Action
                     context,
                     states,
                     stakeStateAddress,
-                    stakedBalance: null,
+                    stakedBalance: currency * 0,
                     targetStakeBalance,
                     latestStakeContract);
                 Log.Debug(
@@ -140,6 +148,7 @@ namespace Nekoyume.Action
             }
 
             // NOTE: When the staking state is locked up.
+            // TODO: Remove this condition after the migration is done.
             if (stakeStateV2.CancellableBlockIndex > context.BlockIndex)
             {
                 // NOTE: Cannot re-contract with less balance.
@@ -149,12 +158,14 @@ namespace Nekoyume.Action
                 }
             }
 
-            // NOTE: Withdraw staking.
-            if (Amount == 0)
+            if (stakeStateV2.StateVersion == 2)
             {
-                return states
-                    .RemoveLegacyState(stakeStateAddress)
-                    .TransferAsset(context, stakeStateAddress, context.Signer, stakedBalance);
+                if (!StakeStateUtils.TryMigrateV2ToV3(context, states, stakeStateAddress, stakeStateV2, out var result))
+                {
+                    throw new InvalidOperationException("Failed to migration. Unexpected situation.");
+                }
+
+                states = result.Value.world;
             }
 
             // NOTE: Contract a new staking.
@@ -176,23 +187,108 @@ namespace Nekoyume.Action
             IActionContext context,
             IWorld state,
             Address stakeStateAddr,
-            FungibleAssetValue? stakedBalance,
+            FungibleAssetValue stakedBalance,
             FungibleAssetValue targetStakeBalance,
             Contract latestStakeContract)
         {
-            var newStakeState = new StakeStateV2(latestStakeContract, context.BlockIndex);
-            if (stakedBalance.HasValue)
+            var stakeStateValue = new StakeState(latestStakeContract, context.BlockIndex).Serialize();
+            var additionalBalance = targetStakeBalance - stakedBalance;
+            var height = context.BlockIndex;
+            var agentAddress = new AgentAddress(context.Signer);
+
+            if (additionalBalance.Sign > 0)
             {
-                state = state.TransferAsset(
-                    context,
-                    stakeStateAddr,
-                    context.Signer,
-                    stakedBalance.Value);
+                var gg = GetGuildCoinFromNCG(additionalBalance);
+                state = state
+                    .TransferAsset(context, context.Signer, stakeStateAddr, additionalBalance)
+                    .MintAsset(context, stakeStateAddr, gg);
+
+                var guildRepository = new GuildRepository(state, context);
+                if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
+                {
+                    var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    guildParticipant.Delegate(guild, gg, height);
+                    state = guildRepository.World;
+                }
+                else
+                {
+                    state = state
+                        .TransferAsset(context, stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
+                }
+
+            }
+            else if (additionalBalance.Sign < 0)
+            {
+                var gg = GetGuildCoinFromNCG(-additionalBalance);
+
+                var guildRepository = new GuildRepository(state, context);
+
+                // TODO : [GuildMigration] Remove below code when the migration is done.
+                if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
+                {
+                    var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                    var share = guildDelegatee.ShareFromFAV(gg);
+
+                    var guildDelegator = guildRepository.GetGuildDelegator(agentAddress);
+                    guildDelegatee.Unbond(guildDelegator, share, height);
+
+                    var validatorRepository = new ValidatorRepository(guildRepository);
+                    var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+                    var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+                    validatorDelegatee.Unbond(validatorDelegator, share, height);
+
+                    state = validatorRepository.World;
+
+                    state = state.BurnAsset(context, guildDelegatee.DelegationPoolAddress, gg);
+                }
+                else
+                {
+                    state = state.BurnAsset(context, Addresses.NonValidatorDelegatee, gg);
+                }
+
+                state = state.TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);
+
+                // TODO : [GuildMigration] Revive below code when the migration is done.
+                // if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
+                // {
+                //     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                //     var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                //     var share = guildDelegatee.ShareFromFAV(gg);
+                //     guildParticipant.Undelegate(guild, share, height);
+                //     state = guildRepository.World;
+                // }
+                // else
+                // {
+                //     var delegateeAddress = Addresses.NonValidatorDelegatee;
+                //     var delegatorAddress = context.Signer;
+                //     var repository = new GuildRepository(state, context);
+                //     var unbondLockInAddress = DelegationAddress.UnbondLockInAddress(delegateeAddress, repository.DelegateeAccountAddress, delegatorAddress);
+                //     var unbondLockIn = new UnbondLockIn(
+                //         unbondLockInAddress, ValidatorDelegatee.ValidatorMaxUnbondLockInEntries, delegateeAddress, delegatorAddress, null);
+                //     unbondLockIn = unbondLockIn.LockIn(
+                //         gg, height, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                //     repository.SetUnbondLockIn(unbondLockIn);
+                //     repository.SetUnbondingSet(
+                //         repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
+                //     state = repository.World;
+                // }
+
+                if ((stakedBalance + additionalBalance).Sign == 0)
+                {
+                    return state.MutateAccount(
+                        ReservedAddresses.LegacyAccount,
+                        state => state.RemoveState(stakeStateAddr));
+                }
             }
 
-            return state
-                .TransferAsset(context, context.Signer, stakeStateAddr, targetStakeBalance)
-                .SetLegacyState(stakeStateAddr, newStakeState.Serialize());
+            return state.SetLegacyState(stakeStateAddr, stakeStateValue);
+        }
+
+        private static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)
+        {
+            return FungibleAssetValue.Parse(Currencies.GuildGold,
+                balance.GetQuantityString(true));
         }
     }
 }

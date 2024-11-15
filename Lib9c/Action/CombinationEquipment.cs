@@ -8,6 +8,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -87,7 +88,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -374,14 +375,21 @@ namespace Nekoyume.Action
             // Transfer Required NCG
             if (costNcg > 0L)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                // Transfer tax.
+                var feeAddress = Addresses.RewardPool;
+                // TODO: [GuildMigration] Remove this after migration
+                if (states.GetDelegationMigrationHeight() is long migrationHeight
+                    && context.BlockIndex < migrationHeight)
+                {
+                    var arenaSheet = states.GetSheet<ArenaSheet>();
+                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                    feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                }
 
                 states = states.TransferAsset(
                     context,
                     context.Signer,
-                    feeStoreAddress,
+                    feeAddress,
                     states.GetGoldCurrency() * costNcg
                 );
             }

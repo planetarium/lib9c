@@ -24,24 +24,19 @@ namespace Lib9c.Tests
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Loader;
+    using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class BlockPolicyTest
     {
         private readonly PrivateKey _privateKey;
-        private readonly Currency _currency;
 
         public BlockPolicyTest()
         {
             _privateKey = new PrivateKey();
-#pragma warning disable CS0618
-            // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            _currency = Currency.Legacy("NCG", 2, _privateKey.Address);
-#pragma warning restore CS0618
         }
 
         [Fact]
@@ -69,12 +64,12 @@ namespace Lib9c.Tests
                     1 * Currencies.Mead,
                 },
             };
-            var genesis = MakeGenesisBlock(
+            Block genesis = MakeGenesisBlock(
+                new ValidatorSet(
+                    new List<Validator> { new (adminPrivateKey.PublicKey, 10_000_000_000_000_000_000) }),
                 adminAddress,
                 ImmutableHashSet<Address>.Empty,
-                initialValidators: new Dictionary<PublicKey, BigInteger>
-                    { { adminPrivateKey.PublicKey, BigInteger.One }, },
-                actionBases: new[] { mint, mint2, },
+                actionBases: new[] { mint, mint2 },
                 privateKey: adminPrivateKey
             );
             using var store = new DefaultStore(null);
@@ -93,8 +88,13 @@ namespace Lib9c.Tests
                 new[] { new BlockRenderer(), }
             );
 
-            var block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
+            Block block = blockChain.ProposeBlock(adminPrivateKey);
+            blockChain.Append(
+                block,
+                GenerateBlockCommit(
+                    block,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
 
             Assert.Equal(
                 1 * Currencies.Mead,
@@ -162,11 +162,11 @@ namespace Lib9c.Tests
             var blockPolicySource = new BlockPolicySource();
             var policy = blockPolicySource.GetPolicy(null, null, null, null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
-            var genesis = MakeGenesisBlock(
+            Block genesis = MakeGenesisBlock(
+                new ValidatorSet(
+                    new List<Validator> { new (adminPrivateKey.PublicKey, 10_000_000_000_000_000_000) }),
                 adminAddress,
-                ImmutableHashSet.Create(adminAddress),
-                initialValidators: new Dictionary<PublicKey, BigInteger>
-                    { { adminPrivateKey.PublicKey, BigInteger.One }, }
+                ImmutableHashSet.Create(adminAddress)
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
@@ -183,9 +183,27 @@ namespace Lib9c.Tests
                 ),
                 new[] { new BlockRenderer(), }
             );
-            var block1 = blockChain.ProposeBlock(adminPrivateKey);
+            Block block1 = blockChain.ProposeBlock(adminPrivateKey);
+            var invalidBlockCommit = new BlockCommit(
+                block1.Index,
+                0,
+                block1.Hash,
+                new[]
+                {
+                    new VoteMetadata(
+                        block1.Index,
+                        0,
+                        block1.Hash,
+                        DateTimeOffset.UtcNow,
+                        nonValidator.PublicKey,
+                        1000,
+                        VoteFlag.PreCommit
+                    ).Sign(nonValidator),
+                }.ToImmutableArray());
             Assert.Throws<InvalidBlockCommitException>(
-                () => blockChain.Append(block1, GenerateBlockCommit(block1, nonValidator)));
+                () => blockChain.Append(
+                    block1,
+                    invalidBlockCommit));
         }
 
         [Fact]
@@ -207,7 +225,9 @@ namespace Lib9c.Tests
                 null,
                 null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
-            var genesis = MakeGenesisBlock(
+            Block genesis = MakeGenesisBlock(
+                new ValidatorSet(
+                    new List<Validator> { new (adminPrivateKey.PublicKey, 10_000_000_000_000_000_000) }),
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
@@ -243,7 +263,7 @@ namespace Lib9c.Tests
         }
 
         [Fact]
-        public void EarnMiningGoldWhenSuccessMining()
+        public void EarnMiningMeadWhenSuccessMining()
         {
             var adminPrivateKey = new PrivateKey();
             var adminAddress = adminPrivateKey.Address;
@@ -261,7 +281,9 @@ namespace Lib9c.Tests
                 null,
                 null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
-            var genesis = MakeGenesisBlock(
+            Block genesis = MakeGenesisBlock(
+                new ValidatorSet(
+                    new List<Validator> { new (adminPrivateKey.PublicKey, 10_000_000_000_000_000_000) }),
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
@@ -269,8 +291,7 @@ namespace Lib9c.Tests
                     5,
                     10
                 ),
-                new Dictionary<PublicKey, BigInteger> { { adminPrivateKey.PublicKey, BigInteger.One }, },
-                pendingActivations: new[] { ps, }
+                pendingActivations: new[] { ps }
             );
 
             using var store = new DefaultStore(null);
@@ -294,13 +315,93 @@ namespace Lib9c.Tests
                 new ActionBase[] { new DailyReward(), }
             );
 
-            var block = blockChain.ProposeBlock(adminPrivateKey);
-            blockChain.Append(block, GenerateBlockCommit(block, adminPrivateKey));
+            Block block = blockChain.ProposeBlock(adminPrivateKey);
+            BigInteger power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            BlockCommit commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            // Since it's a block right after the Genesis, the reward is 0.
+            blockChain.Append(block, commit);
+
+            var mintAmount = 10 * Currencies.Mead;
+            var mint = new PrepareRewardAssets
+            {
+                RewardPoolAddress = adminAddress,
+                Assets = new List<FungibleAssetValue>
+                {
+                    mintAmount,
+                },
+            };
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { mint, }
+            );
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            // First Reward : Proposer base reward 5 * 0.01, proposer bonus reward 5 * 0.04, Commission 4.75 * 0.1
+            // Total 10 + 0.05 + 0.2 + 0.475 = 10.725
+            blockChain.Append(block, commit);
+
+            var rewardCurrency = Currencies.Mead;
             var actualBalance = blockChain
                 .GetNextWorldState()
-                .GetBalance(adminAddress, _currency);
-            var expectedBalance = new FungibleAssetValue(_currency, 10, 0);
-            Assert.True(expectedBalance.Equals(actualBalance));
+                .GetBalance(adminAddress, rewardCurrency);
+            var expectedBalance = mintAmount + new FungibleAssetValue(rewardCurrency, 0, 725000000000000000);
+            Assert.Equal(expectedBalance, actualBalance);
+
+            var ssss = blockChain
+                .GetNextWorldState()
+                .GetBalance(Addresses.RewardPool, rewardCurrency);
+
+            // After claimed, mead have to be used?
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { new ClaimValidatorRewardSelf(), },
+                gasLimit: 1,
+                maxGasPrice: Currencies.Mead * 1
+            );
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            // First + Second Reward : Total reward of two blocks : 10 * 2 = 20
+            // Base reward: 0.05 + 0.2 + 0.475 = 0.725
+            // Total reward: 4.275 + 4.275 (two blocks)
+            // Used gas: 1
+            // Total 10.725 + 0.725 + 4.275 + 4.275 - 1 = 19
+            blockChain.Append(block, commit);
+
+            actualBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(adminAddress, rewardCurrency);
+            expectedBalance = rewardCurrency * 19;
+            Assert.Equal(expectedBalance, actualBalance);
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(adminPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            // Mining reward: 5 + 1 / 2 = 5.5
+            // Proposer base reward 5.5 * 0.01, proposer bonus reward 5.5 * 0.04, Commission (5.5 - 0.275) * 0.1
+            // Base reward: (5.5 * 0.01 + 5.5 * 0.04) + (5.5 - 0.275) * 0.1 = 0.7975
+            // Total 19 + 0.7975 = 19.7975
+            blockChain.Append(block, commit);
+            actualBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(adminAddress, rewardCurrency);
+            expectedBalance = new FungibleAssetValue(rewardCurrency, 19, 797500000000000000);
+            Assert.Equal(expectedBalance, actualBalance);
         }
 
         [Fact]
@@ -319,10 +420,10 @@ namespace Lib9c.Tests
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             var genesis =
                 MakeGenesisBlock(
+                    validators: new ValidatorSet(
+                        new List<Validator> { new (adminPublicKey, 10_000_000_000_000_000_000) }),
                     adminPublicKey.Address,
-                    ImmutableHashSet<Address>.Empty,
-                    initialValidators: new Dictionary<PublicKey, BigInteger>
-                        { { adminPrivateKey.PublicKey, BigInteger.One }, });
+                    ImmutableHashSet<Address>.Empty);
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -376,43 +477,64 @@ namespace Lib9c.Tests
                 txs,
                 evs).Propose();
             var stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
-            var block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
-            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
+            Block block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
+            blockChain.Append(block1, GenerateBlockCommit(
+                block1,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
-            var preEvalBlock2 = new BlockContent(
+            var blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            PreEvaluationBlock preEvalBlock2 = new BlockContent(
                 new BlockMetadata(
-                    2,
-                    DateTimeOffset.MinValue,
-                    adminPublicKey,
-                    blockChain.Tip.Hash,
-                    BlockContent.DeriveTxHash(txs),
-                    GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    BlockContent.DeriveEvidenceHash(evs)),
-                txs,
-                evs).Propose();
+                    index: 2,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent.DeriveTxHash(txs),
+                    lastCommit: blockCommit,
+                    evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
+                transactions: txs,
+                evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
-            var block2 = EvaluateAndSign(stateRootHash, preEvalBlock2, adminPrivateKey);
-            blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey));
+            Block block2 = EvaluateAndSign(stateRootHash, preEvalBlock2, adminPrivateKey);
+            blockChain.Append(
+                block2,
+                GenerateBlockCommit(
+                    block2,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block2.Hash));
             txs = GenerateTransactions(11).OrderBy(tx => tx.Id).ToList();
-            var preEvalBlock3 = new BlockContent(
+            blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            PreEvaluationBlock preEvalBlock3 = new BlockContent(
                 new BlockMetadata(
-                    3,
-                    DateTimeOffset.MinValue,
-                    adminPublicKey,
-                    blockChain.Tip.Hash,
-                    BlockContent.DeriveTxHash(txs),
-                    GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    BlockContent.DeriveEvidenceHash(evs)),
-                txs,
-                evs).Propose();
+                    index: 3,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent.DeriveTxHash(txs),
+                    lastCommit: blockCommit,
+                    evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
+                transactions: txs,
+                evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
             var block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
             Assert.Throws<InvalidBlockTxCountException>(
-                () => blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey)));
+                () => blockChain.Append(
+                    block3,
+                    GenerateBlockCommit(
+                        block3,
+                        blockChain.GetNextWorldState().GetValidatorSet(),
+                        new PrivateKey[] { adminPrivateKey })));
             Assert.Equal(3, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block3.Hash));
         }
@@ -433,12 +555,13 @@ namespace Lib9c.Tests
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)));
             IStagePolicy stagePolicy = new VolatileStagePolicy();
-            var genesis =
+            var validatorSet = new ValidatorSet(
+                new List<Validator> { new (adminPrivateKey.PublicKey, 10_000_000_000_000_000_000) });
+            Block genesis =
                 MakeGenesisBlock(
+                    validatorSet,
                     adminPublicKey.Address,
-                    ImmutableHashSet<Address>.Empty,
-                    initialValidators: new Dictionary<PublicKey, BigInteger>
-                        { { adminPrivateKey.PublicKey, BigInteger.One }, });
+                    ImmutableHashSet<Address>.Empty);
 
             using var store = new DefaultStore(null);
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
@@ -495,28 +618,42 @@ namespace Lib9c.Tests
             var block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
 
             // Should be fine since policy hasn't kicked in yet.
-            blockChain.Append(block1, GenerateBlockCommit(block1, adminPrivateKey));
+            blockChain.Append(
+                block1,
+                GenerateBlockCommit(
+                    block1,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(2, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block1.Hash));
 
             txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
-            var preEvalBlock2 = new BlockContent(
+            var blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            PreEvaluationBlock preEvalBlock2 = new BlockContent(
                 new BlockMetadata(
-                    2,
-                    DateTimeOffset.MinValue,
-                    adminPublicKey,
-                    blockChain.Tip.Hash,
-                    BlockContent.DeriveTxHash(txs),
-                    GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    BlockContent.DeriveEvidenceHash(evs)),
-                txs,
-                evs).Propose();
+                    index: 2,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent.DeriveTxHash(txs),
+                    lastCommit: blockCommit,
+                    evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
+                transactions: txs,
+                evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
             var block2 = EvaluateAndSign(stateRootHash, preEvalBlock2, adminPrivateKey);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
-                () => blockChain.Append(block2, GenerateBlockCommit(block2, adminPrivateKey)));
+                () => blockChain.Append(
+                    block2,
+                    GenerateBlockCommit(
+                        block2,
+                        blockChain.GetNextWorldState().GetValidatorSet(),
+                        new PrivateKey[] { adminPrivateKey })));
             Assert.Equal(2, blockChain.Count);
             Assert.False(blockChain.ContainsBlock(block2.Hash));
             // Since failed, roll back nonce.
@@ -524,48 +661,56 @@ namespace Lib9c.Tests
 
             // Limit should also pass.
             txs = GenerateTransactions(5).OrderBy(tx => tx.Id).ToList();
-            var preEvalBlock3 = new BlockContent(
+            blockCommit = GenerateBlockCommit(
+                blockChain.Tip,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { adminPrivateKey });
+            PreEvaluationBlock preEvalBlock3 = new BlockContent(
                 new BlockMetadata(
-                    2,
-                    DateTimeOffset.MinValue,
-                    adminPublicKey,
-                    blockChain.Tip.Hash,
-                    BlockContent.DeriveTxHash(txs),
-                    GenerateBlockCommit(blockChain.Tip, adminPrivateKey),
-                    BlockContent.DeriveEvidenceHash(evs)),
-                txs,
-                evs).Propose();
-            var block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
-            blockChain.Append(block3, GenerateBlockCommit(block3, adminPrivateKey));
+                    index: 2,
+                    timestamp: DateTimeOffset.MinValue,
+                    publicKey: adminPublicKey,
+                    previousHash: blockChain.Tip.Hash,
+                    txHash: BlockContent.DeriveTxHash(txs),
+                    lastCommit: blockCommit,
+                    evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
+                transactions: txs,
+                evidence: evs).Propose();
+            Block block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
+            blockChain.Append(
+                block3,
+                GenerateBlockCommit(
+                    block3,
+                    blockChain.GetNextWorldState().GetValidatorSet(),
+                    new PrivateKey[] { adminPrivateKey }));
             Assert.Equal(3, blockChain.Count);
             Assert.True(blockChain.ContainsBlock(block3.Hash));
         }
 
-        private BlockCommit GenerateBlockCommit(Block block, PrivateKey key)
+        private BlockCommit GenerateBlockCommit(
+            Block block, ValidatorSet validatorSet, IEnumerable<PrivateKey> validatorPrivateKeys)
         {
-            var privateKey = key;
             return block.Index != 0
                 ? new BlockCommit(
                     block.Index,
                     0,
                     block.Hash,
-                    ImmutableArray<Vote>.Empty.Add(
-                        new VoteMetadata(
-                            block.Index,
-                            0,
-                            block.Hash,
-                            DateTimeOffset.UtcNow,
-                            privateKey.PublicKey,
-                            null,
-                            VoteFlag.PreCommit).Sign(privateKey)))
+                    validatorPrivateKeys.Select(k => new VoteMetadata(
+                        block.Index,
+                        0,
+                        block.Hash,
+                        DateTimeOffset.UtcNow,
+                        k.PublicKey,
+                        validatorSet.GetValidator(k.PublicKey).Power,
+                        VoteFlag.PreCommit).Sign(k)).ToImmutableArray())
                 : null;
         }
 
         private Block MakeGenesisBlock(
+            ValidatorSet validators,
             Address adminAddress,
             IImmutableSet<Address> activatedAddresses,
             AuthorizedMinersState authorizedMinersState = null,
-            Dictionary<PublicKey, BigInteger> initialValidators = null,
             DateTimeOffset? timestamp = null,
             PendingActivationState[] pendingActivations = null,
             IEnumerable<ActionBase> actionBases = null,
@@ -581,18 +726,18 @@ namespace Lib9c.Tests
 
             var sheets = TableSheetsImporter.ImportSheets();
             return BlockHelper.ProposeGenesisBlock(
+                validators,
                 sheets,
                 new GoldDistribution[0],
                 pendingActivations,
                 new AdminState(adminAddress, 1500000),
-                authorizedMinersState,
-                activatedAddresses,
-                initialValidators,
-                false,
-                null,
-                privateKey ?? _privateKey,
-                timestamp ?? DateTimeOffset.MinValue,
-                actionBases);
+                authorizedMinersState: authorizedMinersState,
+                activatedAccounts: activatedAddresses,
+                isActivateAdminAddress: false,
+                credits: null,
+                privateKey: privateKey ?? _privateKey,
+                timestamp: timestamp ?? DateTimeOffset.MinValue,
+                actionBases: actionBases);
         }
 
         private Block EvaluateAndSign(

@@ -61,7 +61,7 @@ namespace Nekoyume.Action
         /// <exception cref="AlreadyClaimedGiftsException">Thrown when the gift has already been claimed.</exception>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var random = context.GetRandom();
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
