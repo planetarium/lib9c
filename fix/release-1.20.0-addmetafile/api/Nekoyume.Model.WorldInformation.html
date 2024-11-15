@@ -1,0 +1,937 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class WorldInformation | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class WorldInformation | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/fix/release-1.20.0-addmetafile/apiSpec/new?filename=Nekoyume_Model_WorldInformation.md&amp;value=---%0Auid%3A%20Nekoyume.Model.WorldInformation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.WorldInformation">
+
+
+
+  <h1 id="Nekoyume_Model_WorldInformation" data-uid="Nekoyume.Model.WorldInformation" class="text-break">
+Class WorldInformation  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class WorldInformation : IState, ISerializable, ICloneable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">WorldInformation</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.State.IState.html">IState</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.iserializable">ISerializable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.icloneable">ICloneable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Nekoyume.Extensions.WorldInformationExtensions.html#Nekoyume_Extensions_WorldInformationExtensions_ValidateFromAction_Nekoyume_Model_WorldInformation_System_Int32_System_String_System_String_">WorldInformationExtensions.ValidateFromAction(WorldInformation, int, string, string)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_WorldInformation__ctor_" data-uid="Nekoyume.Model.WorldInformation.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.WorldInformation.#ctor(Bencodex.Types.Dictionary)">
+  WorldInformation(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L249"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorldInformation(Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation__ctor_" data-uid="Nekoyume.Model.WorldInformation.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation__ctor_System_Int64_Nekoyume_TableData_WorldSheet_System_Boolean_System_String_" data-uid="Nekoyume.Model.WorldInformation.#ctor(System.Int64,Nekoyume.TableData.WorldSheet,System.Boolean,System.String)">
+  WorldInformation(long, WorldSheet, bool, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorldInformation(long blockIndex, WorldSheet worldSheet, bool openAllOfWorldsAndStages = false, string avatarName = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>worldSheet</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a></dt>
+    <dd></dd>
+    <dt><code>openAllOfWorldsAndStages</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>avatarName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation__ctor_" data-uid="Nekoyume.Model.WorldInformation.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation__ctor_System_Int64_Nekoyume_TableData_WorldSheet_System_Int32_" data-uid="Nekoyume.Model.WorldInformation.#ctor(System.Int64,Nekoyume.TableData.WorldSheet,System.Int32)">
+  WorldInformation(long, WorldSheet, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorldInformation(long blockIndex, WorldSheet worldSheet, int clearStageId = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>worldSheet</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a></dt>
+    <dd></dd>
+    <dt><code>clearStageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_WorldInformation_AddAndUnlockMimisbrunnrWorld_" data-uid="Nekoyume.Model.WorldInformation.AddAndUnlockMimisbrunnrWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_AddAndUnlockMimisbrunnrWorld_Nekoyume_TableData_WorldSheet_Row_System_Int64_Nekoyume_TableData_WorldSheet_Nekoyume_TableData_WorldUnlockSheet_" data-uid="Nekoyume.Model.WorldInformation.AddAndUnlockMimisbrunnrWorld(Nekoyume.TableData.WorldSheet.Row,System.Int64,Nekoyume.TableData.WorldSheet,Nekoyume.TableData.WorldUnlockSheet)">
+  AddAndUnlockMimisbrunnrWorld(Row, long, WorldSheet, WorldUnlockSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L514"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddAndUnlockMimisbrunnrWorld(WorldSheet.Row worldRow, long unlockedAt, WorldSheet worldSheet, WorldUnlockSheet worldUnlockSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldRow</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>unlockedAt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>worldSheet</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a></dt>
+    <dd></dd>
+    <dt><code>worldUnlockSheet</code> <a class="xref" href="Nekoyume.TableData.WorldUnlockSheet.html">WorldUnlockSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_AddAndUnlockNewWorld_" data-uid="Nekoyume.Model.WorldInformation.AddAndUnlockNewWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_AddAndUnlockNewWorld_Nekoyume_TableData_WorldSheet_Row_System_Int64_Nekoyume_TableData_WorldSheet_" data-uid="Nekoyume.Model.WorldInformation.AddAndUnlockNewWorld(Nekoyume.TableData.WorldSheet.Row,System.Int64,Nekoyume.TableData.WorldSheet)">
+  AddAndUnlockNewWorld(Row, long, WorldSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L499"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddAndUnlockNewWorld(WorldSheet.Row worldRow, long unlockedAt, WorldSheet worldSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldRow</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>unlockedAt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>worldSheet</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_ClearStage_" data-uid="Nekoyume.Model.WorldInformation.ClearStage*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_ClearStage_System_Int32_System_Int32_System_Int64_Nekoyume_TableData_WorldSheet_Nekoyume_TableData_WorldUnlockSheet_" data-uid="Nekoyume.Model.WorldInformation.ClearStage(System.Int32,System.Int32,System.Int64,Nekoyume.TableData.WorldSheet,Nekoyume.TableData.WorldUnlockSheet)">
+  ClearStage(int, int, long, WorldSheet, WorldUnlockSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L462"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clear a specific stage. And consider world unlock.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearStage(int worldId, int stageId, long clearedAt, WorldSheet worldSheet, WorldUnlockSheet worldUnlockSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>stageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>clearedAt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>worldSheet</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a></dt>
+    <dd></dd>
+    <dt><code>worldUnlockSheet</code> <a class="xref" href="Nekoyume.TableData.WorldUnlockSheet.html">WorldUnlockSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.FailedToUnlockWorldException.html">FailedToUnlockWorldException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_Clone_" data-uid="Nekoyume.Model.WorldInformation.Clone*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_Clone" data-uid="Nekoyume.Model.WorldInformation.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L581"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_GetObjectData_" data-uid="Nekoyume.Model.WorldInformation.GetObjectData*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_GetObjectData_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.WorldInformation.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+  GetObjectData(SerializationInfo, StreamingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L576"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Populates a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.serializationinfo">SerializationInfo</a> with the data needed to serialize the target object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void GetObjectData(SerializationInfo info, StreamingContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>info</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.serializationinfo">SerializationInfo</a></dt>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.serializationinfo">SerializationInfo</a> to populate with data.</p>
+</dd>
+    <dt><code>context</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.streamingcontext">StreamingContext</a></dt>
+    <dd><p>The destination (see <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.streamingcontext">StreamingContext</a>) for this serialization.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.securityexception">SecurityException</a></dt>
+    <dd><p>The caller does not have the required permission.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_IsStageCleared_" data-uid="Nekoyume.Model.WorldInformation.IsStageCleared*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_IsStageCleared_System_Int32_" data-uid="Nekoyume.Model.WorldInformation.IsStageCleared(System.Int32)">
+  IsStageCleared(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsStageCleared(int stageId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_IsWorldUnlocked_" data-uid="Nekoyume.Model.WorldInformation.IsWorldUnlocked*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_IsWorldUnlocked_System_Int32_" data-uid="Nekoyume.Model.WorldInformation.IsWorldUnlocked(System.Int32)">
+  IsWorldUnlocked(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L274"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsWorldUnlocked(int worldId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_Serialize_" data-uid="Nekoyume.Model.WorldInformation.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_Serialize" data-uid="Nekoyume.Model.WorldInformation.Serialize">
+  Serialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L259"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IValue Serialize()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryAddWorld_" data-uid="Nekoyume.Model.WorldInformation.TryAddWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryAddWorld_Nekoyume_TableData_WorldSheet_Row_Nekoyume_Model_WorldInformation_World__" data-uid="Nekoyume.Model.WorldInformation.TryAddWorld(Nekoyume.TableData.WorldSheet.Row,Nekoyume.Model.WorldInformation.World@)">
+  TryAddWorld(Row, out World)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L291"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryAddWorld(WorldSheet.Row worldRow, out WorldInformation.World world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldRow</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>world</code> <a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a>.<a class="xref" href="Nekoyume.Model.WorldInformation.World.html">World</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryGetFirstWorld_" data-uid="Nekoyume.Model.WorldInformation.TryGetFirstWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryGetFirstWorld_Nekoyume_Model_WorldInformation_World__" data-uid="Nekoyume.Model.WorldInformation.TryGetFirstWorld(Nekoyume.Model.WorldInformation.World@)">
+  TryGetFirstWorld(out World)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L359"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetFirstWorld(out WorldInformation.World world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a>.<a class="xref" href="Nekoyume.Model.WorldInformation.World.html">World</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryGetLastClearedMimisbrunnrStageId_" data-uid="Nekoyume.Model.WorldInformation.TryGetLastClearedMimisbrunnrStageId*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryGetLastClearedMimisbrunnrStageId_System_Int32__" data-uid="Nekoyume.Model.WorldInformation.TryGetLastClearedMimisbrunnrStageId(System.Int32@)">
+  TryGetLastClearedMimisbrunnrStageId(out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L436"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetLastClearedMimisbrunnrStageId(out int stageId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryGetLastClearedStageId_" data-uid="Nekoyume.Model.WorldInformation.TryGetLastClearedStageId*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryGetLastClearedStageId_System_Int32__" data-uid="Nekoyume.Model.WorldInformation.TryGetLastClearedStageId(System.Int32@)">
+  TryGetLastClearedStageId(out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L419"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get stage id of the most recent cleared.(ignore mimisbrunnr)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetLastClearedStageId(out int stageId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryGetUnlockedWorldByStageClearedBlockIndex_" data-uid="Nekoyume.Model.WorldInformation.TryGetUnlockedWorldByStageClearedBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryGetUnlockedWorldByStageClearedBlockIndex_Nekoyume_Model_WorldInformation_World__" data-uid="Nekoyume.Model.WorldInformation.TryGetUnlockedWorldByStageClearedBlockIndex(Nekoyume.Model.WorldInformation.World@)">
+  TryGetUnlockedWorldByStageClearedBlockIndex(out World)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L397"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get <code>World</code> object that contains the most recent stage clear.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetUnlockedWorldByStageClearedBlockIndex(out WorldInformation.World world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a>.<a class="xref" href="Nekoyume.Model.WorldInformation.World.html">World</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryGetWorld_" data-uid="Nekoyume.Model.WorldInformation.TryGetWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryGetWorld_System_Int32_Nekoyume_Model_WorldInformation_World__" data-uid="Nekoyume.Model.WorldInformation.TryGetWorld(System.Int32,Nekoyume.Model.WorldInformation.World@)">
+  TryGetWorld(int, out World)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L347"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get <code>World</code> object that equals to <code>worldId</code> argument.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetWorld(int worldId, out WorldInformation.World world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>world</code> <a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a>.<a class="xref" href="Nekoyume.Model.WorldInformation.World.html">World</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keynotfoundexception">KeyNotFoundException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_TryGetWorldByStageId_" data-uid="Nekoyume.Model.WorldInformation.TryGetWorldByStageId*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_TryGetWorldByStageId_System_Int32_Nekoyume_Model_WorldInformation_World__" data-uid="Nekoyume.Model.WorldInformation.TryGetWorldByStageId(System.Int32,Nekoyume.Model.WorldInformation.World@)">
+  TryGetWorldByStageId(int, out World)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get <code>World</code> object that contains <code>stageId</code> argument.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetWorldByStageId(int stageId, out WorldInformation.World world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stageId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>world</code> <a class="xref" href="Nekoyume.Model.WorldInformation.html">WorldInformation</a>.<a class="xref" href="Nekoyume.Model.WorldInformation.World.html">World</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_UnlockWorld_" data-uid="Nekoyume.Model.WorldInformation.UnlockWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_UnlockWorld_System_Int32_System_Int64_Nekoyume_TableData_WorldSheet_" data-uid="Nekoyume.Model.WorldInformation.UnlockWorld(System.Int32,System.Int64,Nekoyume.TableData.WorldSheet)">
+  UnlockWorld(int, long, WorldSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L555"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Unlock a specific world.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UnlockWorld(int worldId, long unlockedAt, WorldSheet worldSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>unlockedAt</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>worldSheet</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.FailedToUnlockWorldException.html">FailedToUnlockWorldException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_WorldInformation_UpdateWorld_" data-uid="Nekoyume.Model.WorldInformation.UpdateWorld*"></a>
+
+  <h3 id="Nekoyume_Model_WorldInformation_UpdateWorld_Nekoyume_TableData_WorldSheet_Row_" data-uid="Nekoyume.Model.WorldInformation.UpdateWorld(Nekoyume.TableData.WorldSheet.Row)">
+  UpdateWorld(Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L316"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateWorld(WorldSheet.Row worldRow)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldRow</code> <a class="xref" href="Nekoyume.TableData.WorldSheet.html">WorldSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldSheet.Row.html">Row</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/fix/release-1.20.0-addmetafile/Lib9c/Model/WorldInformation.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
