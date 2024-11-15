@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_InitializeStates" data-uid="Nekoyume.Action.InitializeStates" class="text-break">
-Class InitializeStates  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L32"><i class="bi bi-code-slash"></i></a>
+Class InitializeStates  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -203,7 +203,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates__ctor" data-uid="Nekoyume.Action.InitializeStates.#ctor">
   InitializeStates()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -227,20 +227,22 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <a id="Nekoyume_Action_InitializeStates__ctor_" data-uid="Nekoyume.Action.InitializeStates.#ctor*"></a>
 
-  <h3 id="Nekoyume_Action_InitializeStates__ctor_Nekoyume_Model_State_RankingState0_Nekoyume_Model_State_ShopState_System_Collections_Generic_Dictionary_System_String_System_String__Nekoyume_Model_State_GameConfigState_Nekoyume_Model_State_RedeemCodeState_Nekoyume_Model_State_ActivatedAccountsState_Nekoyume_Model_State_GoldCurrencyState_Nekoyume_Action_GoldDistribution___Nekoyume_Model_State_PendingActivationState___Nekoyume_Model_State_AdminState_Nekoyume_Model_State_AuthorizedMinersState_Nekoyume_Model_State_CreditsState_System_Collections_Generic_ISet_Libplanet_Crypto_Address__" data-uid="Nekoyume.Action.InitializeStates.#ctor(Nekoyume.Model.State.RankingState0,Nekoyume.Model.State.ShopState,System.Collections.Generic.Dictionary{System.String,System.String},Nekoyume.Model.State.GameConfigState,Nekoyume.Model.State.RedeemCodeState,Nekoyume.Model.State.ActivatedAccountsState,Nekoyume.Model.State.GoldCurrencyState,Nekoyume.Action.GoldDistribution[],Nekoyume.Model.State.PendingActivationState[],Nekoyume.Model.State.AdminState,Nekoyume.Model.State.AuthorizedMinersState,Nekoyume.Model.State.CreditsState,System.Collections.Generic.ISet{Libplanet.Crypto.Address})">
-  InitializeStates(RankingState0, ShopState, Dictionary&lt;string, string&gt;, GameConfigState, RedeemCodeState, ActivatedAccountsState, GoldCurrencyState, GoldDistribution[], PendingActivationState[], AdminState, AuthorizedMinersState, CreditsState, ISet&lt;Address&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_InitializeStates__ctor_Libplanet_Types_Consensus_ValidatorSet_Nekoyume_Model_State_RankingState0_Nekoyume_Model_State_ShopState_System_Collections_Generic_Dictionary_System_String_System_String__Nekoyume_Model_State_GameConfigState_Nekoyume_Model_State_RedeemCodeState_Nekoyume_Model_State_ActivatedAccountsState_Nekoyume_Model_State_GoldCurrencyState_Nekoyume_Action_GoldDistribution___Nekoyume_Model_State_PendingActivationState___Nekoyume_Model_State_AdminState_Nekoyume_Model_State_AuthorizedMinersState_Nekoyume_Model_State_CreditsState_System_Collections_Generic_ISet_Libplanet_Crypto_Address__" data-uid="Nekoyume.Action.InitializeStates.#ctor(Libplanet.Types.Consensus.ValidatorSet,Nekoyume.Model.State.RankingState0,Nekoyume.Model.State.ShopState,System.Collections.Generic.Dictionary{System.String,System.String},Nekoyume.Model.State.GameConfigState,Nekoyume.Model.State.RedeemCodeState,Nekoyume.Model.State.ActivatedAccountsState,Nekoyume.Model.State.GoldCurrencyState,Nekoyume.Action.GoldDistribution[],Nekoyume.Model.State.PendingActivationState[],Nekoyume.Model.State.AdminState,Nekoyume.Model.State.AuthorizedMinersState,Nekoyume.Model.State.CreditsState,System.Collections.Generic.ISet{Libplanet.Crypto.Address})">
+  InitializeStates(ValidatorSet, RankingState0, ShopState, Dictionary&lt;string, string&gt;, GameConfigState, RedeemCodeState, ActivatedAccountsState, GoldCurrencyState, GoldDistribution[], PendingActivationState[], AdminState, AuthorizedMinersState, CreditsState, ISet&lt;Address&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public InitializeStates(RankingState0 rankingState, ShopState shopState, Dictionary&lt;string, string&gt; tableSheets, GameConfigState gameConfigState, RedeemCodeState redeemCodeState, ActivatedAccountsState activatedAccountsState, GoldCurrencyState goldCurrencyState, GoldDistribution[] goldDistributions, PendingActivationState[] pendingActivationStates, AdminState adminAddressState = null, AuthorizedMinersState authorizedMinersState = null, CreditsState creditsState = null, ISet&lt;Address&gt; assetMinters = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public InitializeStates(ValidatorSet validatorSet, RankingState0 rankingState, ShopState shopState, Dictionary&lt;string, string&gt; tableSheets, GameConfigState gameConfigState, RedeemCodeState redeemCodeState, ActivatedAccountsState activatedAccountsState, GoldCurrencyState goldCurrencyState, GoldDistribution[] goldDistributions, PendingActivationState[] pendingActivationStates, AdminState adminAddressState = null, AuthorizedMinersState authorizedMinersState = null, CreditsState creditsState = null, ISet&lt;Address&gt; assetMinters = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
+    <dt><code>validatorSet</code> <span class="xref">ValidatorSet</span></dt>
+    <dd></dd>
     <dt><code>rankingState</code> <a class="xref" href="Nekoyume.Model.State.RankingState0.html">RankingState0</a></dt>
     <dd></dd>
     <dt><code>shopState</code> <a class="xref" href="Nekoyume.Model.State.ShopState.html">ShopState</a></dt>
@@ -288,7 +290,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_ActivatedAccounts" data-uid="Nekoyume.Action.InitializeStates.ActivatedAccounts">
   ActivatedAccounts
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -319,7 +321,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_AdminAddressState" data-uid="Nekoyume.Action.InitializeStates.AdminAddressState">
   AdminAddressState
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -350,7 +352,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_AssetMinters" data-uid="Nekoyume.Action.InitializeStates.AssetMinters">
   AssetMinters
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -381,7 +383,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_AuthorizedMiners" data-uid="Nekoyume.Action.InitializeStates.AuthorizedMiners">
   AuthorizedMiners
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -412,7 +414,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_Credits" data-uid="Nekoyume.Action.InitializeStates.Credits">
   Credits
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -443,7 +445,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_GameConfig" data-uid="Nekoyume.Action.InitializeStates.GameConfig">
   GameConfig
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -474,7 +476,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_GoldCurrency" data-uid="Nekoyume.Action.InitializeStates.GoldCurrency">
   GoldCurrency
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -505,7 +507,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_GoldDistributions" data-uid="Nekoyume.Action.InitializeStates.GoldDistributions">
   GoldDistributions
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -536,7 +538,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_PendingActivations" data-uid="Nekoyume.Action.InitializeStates.PendingActivations">
   PendingActivations
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -567,7 +569,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_PlainValueInternal" data-uid="Nekoyume.Action.InitializeStates.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L230"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -598,7 +600,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_Ranking" data-uid="Nekoyume.Action.InitializeStates.Ranking">
   Ranking
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -629,7 +631,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_RedeemCode" data-uid="Nekoyume.Action.InitializeStates.RedeemCode">
   RedeemCode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -660,7 +662,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_Shop" data-uid="Nekoyume.Action.InitializeStates.Shop">
   Shop
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -691,7 +693,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_TableSheets" data-uid="Nekoyume.Action.InitializeStates.TableSheets">
   TableSheets
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -718,6 +720,37 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
 
 
+  <a id="Nekoyume_Action_InitializeStates_ValidatorSet_" data-uid="Nekoyume.Action.InitializeStates.ValidatorSet*"></a>
+
+  <h3 id="Nekoyume_Action_InitializeStates_ValidatorSet" data-uid="Nekoyume.Action.InitializeStates.ValidatorSet">
+  ValidatorSet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IValue ValidatorSet { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -726,7 +759,7 @@ public class InitializeStates : GameAction, IAction, IInitializeStatesV1</code><
 
   <h3 id="Nekoyume_Action_InitializeStates_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.InitializeStates.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L130"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Executes the main game logic of an action.  This should be
@@ -811,7 +844,7 @@ your project as a dependency.</p>
 
   <h3 id="Nekoyume_Action_InitializeStates_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.InitializeStates.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L275"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -842,7 +875,7 @@ your project as a dependency.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L32" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InitializeStates.cs/#L40" class="edit-link">Edit this page</a>
         </div>
 
 

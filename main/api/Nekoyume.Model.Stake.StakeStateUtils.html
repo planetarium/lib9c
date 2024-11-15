@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Stake_StakeStateUtils" data-uid="Nekoyume.Model.Stake.StakeStateUtils" class="text-break">
-Class StakeStateUtils  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Class StakeStateUtils  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -152,18 +152,18 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
 </h2>
 
 
-  <a id="Nekoyume_Model_Stake_StakeStateUtils_Migrate_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.Migrate*"></a>
+  <a id="Nekoyume_Model_Stake_StakeStateUtils_MigrateV1ToV2_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.MigrateV1ToV2*"></a>
 
-  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_Migrate_Bencodex_Types_IValue_Nekoyume_Model_State_GameConfigState_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.Migrate(Bencodex.Types.IValue,Nekoyume.Model.State.GameConfigState)">
-  Migrate(IValue, GameConfigState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_MigrateV1ToV2_Bencodex_Types_IValue_Nekoyume_Model_State_GameConfigState_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.MigrateV1ToV2(Bencodex.Types.IValue,Nekoyume.Model.State.GameConfigState)">
+  MigrateV1ToV2(IValue, GameConfigState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static StakeStateV2? Migrate(IValue serialized, GameConfigState gameConfigState)</code></pre>
+    <pre><code class="lang-csharp hljs">public static StakeState? MigrateV1ToV2(IValue serialized, GameConfigState gameConfigState)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -176,7 +176,7 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Nekoyume.Model.Stake.StakeStateV2.html">StakeStateV2</a>?</dt>
+    <dt><a class="xref" href="Nekoyume.Model.Stake.StakeState.html">StakeState</a>?</dt>
     <dd></dd>
   </dl>
 
@@ -190,18 +190,18 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
 
 
 
-  <a id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrate_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrate*"></a>
+  <a id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrateV1ToV2_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrateV1ToV2*"></a>
 
-  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrate_Bencodex_Types_IValue_Nekoyume_Model_State_GameConfigState_Nekoyume_Model_Stake_StakeStateV2__" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrate(Bencodex.Types.IValue,Nekoyume.Model.State.GameConfigState,Nekoyume.Model.Stake.StakeStateV2@)">
-  TryMigrate(IValue, GameConfigState, out StakeStateV2)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrateV1ToV2_Bencodex_Types_IValue_Nekoyume_Model_State_GameConfigState_Nekoyume_Model_Stake_StakeState__" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrateV1ToV2(Bencodex.Types.IValue,Nekoyume.Model.State.GameConfigState,Nekoyume.Model.Stake.StakeState@)">
+  TryMigrateV1ToV2(IValue, GameConfigState, out StakeState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool TryMigrate(IValue serialized, GameConfigState gameConfigState, out StakeStateV2 stakeStateV2)</code></pre>
+    <pre><code class="lang-csharp hljs">public static bool TryMigrateV1ToV2(IValue serialized, GameConfigState gameConfigState, out StakeState stakeState)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -210,7 +210,7 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
     <dd></dd>
     <dt><code>gameConfigState</code> <a class="xref" href="Nekoyume.Model.State.GameConfigState.html">GameConfigState</a></dt>
     <dd></dd>
-    <dt><code>stakeStateV2</code> <a class="xref" href="Nekoyume.Model.Stake.StakeStateV2.html">StakeStateV2</a></dt>
+    <dt><code>stakeState</code> <a class="xref" href="Nekoyume.Model.Stake.StakeState.html">StakeState</a></dt>
     <dd></dd>
   </dl>
 
@@ -230,18 +230,18 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
 
 
 
-  <a id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrate_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrate*"></a>
+  <a id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrateV1ToV2_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrateV1ToV2*"></a>
 
-  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrate_Libplanet_Action_State_IWorldState_Libplanet_Crypto_Address_Nekoyume_Model_Stake_StakeStateV2__" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrate(Libplanet.Action.State.IWorldState,Libplanet.Crypto.Address,Nekoyume.Model.Stake.StakeStateV2@)">
-  TryMigrate(IWorldState, Address, out StakeStateV2)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrateV1ToV2_Libplanet_Action_State_IWorldState_Libplanet_Crypto_Address_Nekoyume_Model_Stake_StakeState__" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrateV1ToV2(Libplanet.Action.State.IWorldState,Libplanet.Crypto.Address,Nekoyume.Model.Stake.StakeState@)">
+  TryMigrateV1ToV2(IWorldState, Address, out StakeState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool TryMigrate(IWorldState state, Address stakeStateAddr, out StakeStateV2 stakeStateV2)</code></pre>
+    <pre><code class="lang-csharp hljs">public static bool TryMigrateV1ToV2(IWorldState state, Address stakeStateAddr, out StakeState stakeState)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -250,7 +250,51 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
     <dd></dd>
     <dt><code>stakeStateAddr</code> <span class="xref">Address</span></dt>
     <dd></dd>
-    <dt><code>stakeStateV2</code> <a class="xref" href="Nekoyume.Model.Stake.StakeStateV2.html">StakeStateV2</a></dt>
+    <dt><code>stakeState</code> <a class="xref" href="Nekoyume.Model.Stake.StakeState.html">StakeState</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrateV2ToV3_" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrateV2ToV3*"></a>
+
+  <h3 id="Nekoyume_Model_Stake_StakeStateUtils_TryMigrateV2ToV3_Libplanet_Action_IActionContext_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_Nekoyume_Model_Stake_StakeState_System_Nullable_System_ValueTuple_Libplanet_Action_State_IWorld_Nekoyume_Model_Stake_StakeState____" data-uid="Nekoyume.Model.Stake.StakeStateUtils.TryMigrateV2ToV3(Libplanet.Action.IActionContext,Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,Nekoyume.Model.Stake.StakeState,System.Nullable{System.ValueTuple{Libplanet.Action.State.IWorld,Nekoyume.Model.Stake.StakeState}}@)">
+  TryMigrateV2ToV3(IActionContext, IWorld, Address, StakeState, out (IWorld world, StakeState newStakeState)?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool TryMigrateV2ToV3(IActionContext context, IWorld world, Address stakeStateAddr, StakeState stakeState, out (IWorld world, StakeState newStakeState)? result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>stakeStateAddr</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>stakeState</code> <a class="xref" href="Nekoyume.Model.Stake.StakeState.html">StakeState</a></dt>
+    <dd></dd>
+    <dt><code>result</code> (<span class="xref">IWorld</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-libplanet.action.state.iworld,nekoyume.model.stake.stakestate-.world">world</a>, <a class="xref" href="Nekoyume.Model.Stake.StakeState.html">StakeState</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-libplanet.action.state.iworld,nekoyume.model.stake.stakestate-.newstakestate">newStakeState</a>)?</dt>
     <dd></dd>
   </dl>
 
@@ -274,7 +318,7 @@ Class StakeStateUtils  <a class="header-action link-secondary" title="View sourc
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Stake/StakeStateUtils.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

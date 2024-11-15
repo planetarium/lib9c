@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Guild_Guild" data-uid="Nekoyume.Model.Guild.Guild" class="text-break">
-Class Guild  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Class Guild  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -101,7 +101,7 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Guild : IEquatable&lt;Guild&gt;, IBencodable</code></pre>
+    <pre><code class="lang-csharp hljs">public class Guild : IBencodable, IEquatable&lt;Guild&gt;</code></pre>
   </div>
 
 
@@ -118,8 +118,8 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
-      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a>&gt;</div>
       <div><span class="xref">IBencodable</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a>&gt;</div>
     </dd>
   </dl>
 
@@ -155,21 +155,25 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 
   <a id="Nekoyume_Model_Guild_Guild__ctor_" data-uid="Nekoyume.Model.Guild.Guild.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Guild_Guild__ctor_Bencodex_Types_List_" data-uid="Nekoyume.Model.Guild.Guild.#ctor(Bencodex.Types.List)">
-  Guild(List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Guild_Guild__ctor_Nekoyume_TypedAddress_GuildAddress_Bencodex_Types_IValue_Nekoyume_Model_Guild_GuildRepository_" data-uid="Nekoyume.Model.Guild.Guild.#ctor(Nekoyume.TypedAddress.GuildAddress,Bencodex.Types.IValue,Nekoyume.Model.Guild.GuildRepository)">
+  Guild(GuildAddress, IValue, GuildRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Guild(List list)</code></pre>
+    <pre><code class="lang-csharp hljs">public Guild(GuildAddress address, IValue bencoded, GuildRepository repository)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>list</code> <span class="xref">List</span></dt>
+    <dt><code>address</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
+    <dd></dd>
+    <dt><code>bencoded</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -186,21 +190,27 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 
   <a id="Nekoyume_Model_Guild_Guild__ctor_" data-uid="Nekoyume.Model.Guild.Guild.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Guild_Guild__ctor_Nekoyume_TypedAddress_AgentAddress_" data-uid="Nekoyume.Model.Guild.Guild.#ctor(Nekoyume.TypedAddress.AgentAddress)">
-  Guild(AgentAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Guild_Guild__ctor_Nekoyume_TypedAddress_GuildAddress_Nekoyume_TypedAddress_AgentAddress_Libplanet_Crypto_Address_Nekoyume_Model_Guild_GuildRepository_" data-uid="Nekoyume.Model.Guild.Guild.#ctor(Nekoyume.TypedAddress.GuildAddress,Nekoyume.TypedAddress.AgentAddress,Libplanet.Crypto.Address,Nekoyume.Model.Guild.GuildRepository)">
+  Guild(GuildAddress, AgentAddress, Address, GuildRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Guild(AgentAddress guildMasterAddress)</code></pre>
+    <pre><code class="lang-csharp hljs">public Guild(GuildAddress address, AgentAddress guildMasterAddress, Address validatorAddress, GuildRepository repository)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
+    <dt><code>address</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
+    <dd></dd>
     <dt><code>guildMasterAddress</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
+    <dd></dd>
+    <dt><code>validatorAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -222,7 +232,7 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 
   <h3 id="Nekoyume_Model_Guild_Guild_GuildMasterAddress" data-uid="Nekoyume.Model.Guild.Guild.GuildMasterAddress">
   GuildMasterAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -249,15 +259,76 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 
 
 
+
+  <h3 id="Nekoyume_Model_Guild_Guild_ValidatorAddress" data-uid="Nekoyume.Model.Guild.Guild.ValidatorAddress">
+  ValidatorAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Address ValidatorAddress</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
+
+
+  <a id="Nekoyume_Model_Guild_Guild_Address_" data-uid="Nekoyume.Model.Guild.Guild.Address*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_Guild_Address" data-uid="Nekoyume.Model.Guild.Guild.Address">
+  Address
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuildAddress Address { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Nekoyume_Model_Guild_Guild_Bencoded_" data-uid="Nekoyume.Model.Guild.Guild.Bencoded*"></a>
 
   <h3 id="Nekoyume_Model_Guild_Guild_Bencoded" data-uid="Nekoyume.Model.Guild.Guild.Bencoded">
   Bencoded
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -284,15 +355,79 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 
 
 
+  <a id="Nekoyume_Model_Guild_Guild_Repository_" data-uid="Nekoyume.Model.Guild.Guild.Repository*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_Guild_Repository" data-uid="Nekoyume.Model.Guild.Guild.Repository">
+  Repository
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuildRepository Repository { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
+
+
+  <a id="Nekoyume_Model_Guild_Guild_ClaimReward_" data-uid="Nekoyume.Model.Guild.Guild.ClaimReward*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_Guild_ClaimReward_Libplanet_Crypto_Address_System_Int64_" data-uid="Nekoyume.Model.Guild.Guild.ClaimReward(Libplanet.Crypto.Address,System.Int64)">
+  ClaimReward(Address, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClaimReward(Address validatorAddress, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>validatorAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Nekoyume_Model_Guild_Guild_Equals_" data-uid="Nekoyume.Model.Guild.Guild.Equals*"></a>
 
   <h3 id="Nekoyume_Model_Guild_Guild_Equals_Nekoyume_Model_Guild_Guild_" data-uid="Nekoyume.Model.Guild.Guild.Equals(Nekoyume.Model.Guild.Guild)">
-  Equals(Guild)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  Equals(Guild?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -300,7 +435,7 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Equals(Guild other)</code></pre>
+    <pre><code class="lang-csharp hljs">public bool Equals(Guild? other)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -330,8 +465,8 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
   <a id="Nekoyume_Model_Guild_Guild_Equals_" data-uid="Nekoyume.Model.Guild.Guild.Equals*"></a>
 
   <h3 id="Nekoyume_Model_Guild_Guild_Equals_System_Object_" data-uid="Nekoyume.Model.Guild.Guild.Equals(System.Object)">
-  Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -339,7 +474,7 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -370,7 +505,7 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 
   <h3 id="Nekoyume_Model_Guild_Guild_GetHashCode" data-uid="Nekoyume.Model.Guild.Guild.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -403,7 +538,7 @@ Class Guild  <a class="header-action link-secondary" title="View source" href="h
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Guild/Guild.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 
