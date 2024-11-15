@@ -682,16 +682,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ClaimStakeReward.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.ClaimStakeReward.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ClaimStakeReward2.yml",
       "output": {
         ".html": {
