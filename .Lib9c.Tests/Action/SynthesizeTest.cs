@@ -14,6 +14,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 using Xunit;
 
 using Sheets = System.Collections.Generic.Dictionary<System.Type, (Libplanet.Crypto.Address, Nekoyume.TableData.ISheet)>;
@@ -89,7 +90,7 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
         };
 
         var ctx = new ActionContext
@@ -121,7 +122,7 @@ public class SynthesizeTest
                 }
 
                 resultGrade = (Grade)costume.Grade;
-                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
+                expectedGrade = SynthesizeSimulator.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
                 break;
             case ItemSubType.Aura:
             case ItemSubType.Grimoire:
@@ -131,7 +132,7 @@ public class SynthesizeTest
                 }
 
                 resultGrade = (Grade)itemUsable.Grade;
-                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
+                expectedGrade = SynthesizeSimulator.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
                 break;
         }
 
@@ -157,7 +158,7 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
         };
 
         var ctx = new ActionContext
@@ -176,7 +177,7 @@ public class SynthesizeTest
         foreach (var item in inventory.Items.Select(i => i.item))
         {
             Assert.Equal(itemSubType, item.ItemSubType);
-            var expectedGrade = Synthesize.GetTargetGrade((int)grade);
+            var expectedGrade = SynthesizeSimulator.GetTargetGrade((int)grade);
             Assert.True(item.Grade == expectedGrade || item.Grade == (int)grade);
         }
     }
@@ -198,7 +199,7 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
         };
 
         var ctx = new ActionContext
