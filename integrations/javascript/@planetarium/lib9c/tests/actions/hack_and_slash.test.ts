@@ -1,8 +1,8 @@
 import { describe } from "vitest";
+import { HackAndSlash } from "../../src/actions/hack_and_slash.js";
 import { RuneSlotInfo, uuidToGuidBytes } from "../../src/index.js";
 import { runTests } from "./common.js";
 import { avatarAddress } from "./fixtures.js";
-import { HackAndSlash } from "../../src/actions/hack_and_slash.js";
 
 describe("HackAndSlash", () => {
   describe("odin", () => {
@@ -13,7 +13,7 @@ describe("HackAndSlash", () => {
         worldId: BigInt(1),
         stageId: BigInt(1),
         stageBuffId: null,
-        apStoneCount:BigInt(1),
+        apStoneCount: BigInt(1),
         totalPlayCount: BigInt(1),
         costumes: [uuidToGuidBytes("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")],
         equipments: [uuidToGuidBytes("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")],

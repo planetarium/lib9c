@@ -1,9 +1,11 @@
-import { BencodexDictionary, Value, type Dictionary } from "@planetarium/bencodex";
-import { GameAction, type GameActionArgs } from "./common.js";
 import type { Address } from "@planetarium/account";
-import { CreateAvatarArgs } from "./create_avatar.js";
-import { RuneSlotInfo } from "../models/rune_slot_info.js";
-
+import {
+  BencodexDictionary,
+  type Dictionary,
+  type Value,
+} from "@planetarium/bencodex";
+import type { RuneSlotInfo } from "../models/rune_slot_info.js";
+import { GameAction, type GameActionArgs } from "./common.js";
 
 export type HackAndSlashArgs = {
   costumes: Array<Uint8Array>;
@@ -13,9 +15,9 @@ export type HackAndSlashArgs = {
   worldId: bigint;
   stageId: bigint;
   stageBuffId: bigint | null;
-  avatarAddress:Address;
-  totalPlayCount:bigint;
-  apStoneCount:bigint;
+  avatarAddress: Address;
+  totalPlayCount: bigint;
+  apStoneCount: bigint;
 } & GameActionArgs;
 
 export class HackAndSlash extends GameAction {
@@ -32,8 +34,19 @@ export class HackAndSlash extends GameAction {
   public readonly runeInfos: Array<RuneSlotInfo>;
   public readonly stageBuffId: bigint | null;
 
-
-  constructor({ avatarAddress, worldId, stageId, equipments, foods, totalPlayCount, apStoneCount, runeInfos, stageBuffId, costumes, id }: HackAndSlashArgs) {
+  constructor({
+    avatarAddress,
+    worldId,
+    stageId,
+    equipments,
+    foods,
+    totalPlayCount,
+    apStoneCount,
+    runeInfos,
+    stageBuffId,
+    costumes,
+    id,
+  }: HackAndSlashArgs) {
     super({ id });
     this.costumes = costumes;
     this.avatarAddress = avatarAddress;
@@ -48,7 +61,7 @@ export class HackAndSlash extends GameAction {
   }
 
   protected plain_value_internal(): Dictionary {
-    var data = new BencodexDictionary([
+    const params: [string, Value][] = [
       ["avatarAddress", this.avatarAddress.toBytes()],
       ["equipments", this.equipments.map((equipment) => equipment)],
       ["costumes", this.costumes.map((costume) => costume)],
@@ -57,20 +70,13 @@ export class HackAndSlash extends GameAction {
       ["worldId", this.worldId.toString()],
       ["stageId", this.stageId.toString()],
       ["totalPlayCount", this.totalPlayCount.toString()],
-      ["apStoneCount", this.apStoneCount.toString()]
-    ]);
+      ["apStoneCount", this.apStoneCount.toString()],
+    ];
 
     if (this.stageBuffId !== null) {
-      (data as any)["stageBuffId"] = this.stageBuffId.toString();
+      params.push(["stageBuffId", this.stageBuffId.toString()]);
     }
 
- 
-    return data
+    return new BencodexDictionary(params);
   }
-
-
-
 }
-
-
-//stageBuffId
