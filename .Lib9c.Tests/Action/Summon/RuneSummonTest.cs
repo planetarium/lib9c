@@ -85,28 +85,6 @@ namespace Lib9c.Tests.Action.Summon
         }
 
         [Theory]
-        [InlineData(20001)]
-        public void CumulativeRatio(int groupId)
-        {
-            var sheet = _tableSheets.SummonSheet;
-            var targetRow = sheet.OrderedList.First(r => r.GroupId == groupId);
-
-            for (var i = 1; i <= SummonSheet.Row.MaxRecipeCount; i++)
-            {
-                var sum = 0;
-                for (var j = 0; j < i; j++)
-                {
-                    if (j < targetRow.Recipes.Count)
-                    {
-                        sum += targetRow.Recipes[j].Item2;
-                    }
-                }
-
-                Assert.Equal(sum, targetRow.CumulativeRatio(i));
-            }
-        }
-
-        [Theory]
         [ClassData(typeof(ExecuteMemeber))]
         public void Execute(
             int groupId,
@@ -120,21 +98,17 @@ namespace Lib9c.Tests.Action.Summon
             var random = new TestRandom(seed);
             var state = _initialState;
             state = state.SetLegacyState(
-                Addresses.TableSheet.Derive(nameof(SummonSheet)),
-                _tableSheets.SummonSheet.Serialize()
+                Addresses.TableSheet.Derive(nameof(RuneSummonSheet)),
+                _tableSheets.RuneSummonSheet.Serialize()
             );
 
-            if (!(materialId is null))
+            if (!(materialId is null) && materialCount > 0)
             {
                 var materialSheet = _tableSheets.MaterialItemSheet;
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
-                if (materialCount > 0)
-                {
-                    _avatarState.inventory.AddItem(
-                        ItemFactory.CreateItem(material, random),
-                        materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
-                }
-
+                _avatarState.inventory.AddItem(
+                    ItemFactory.CreateItem(material, random),
+                    materialCount * _tableSheets.RuneSummonSheet[groupId].CostMaterialCount);
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
@@ -158,7 +132,7 @@ namespace Lib9c.Tests.Action.Summon
                 var nextState = action.Execute(ctx);
                 var result = RuneSummon.SimulateSummon(
                     _tableSheets.RuneSheet,
-                    _tableSheets.SummonSheet[groupId],
+                    _tableSheets.RuneSummonSheet[groupId],
                     summonCount,
                     new TestRandom(seed)
                 );
@@ -201,10 +175,6 @@ namespace Lib9c.Tests.Action.Summon
                 {
                     20001, 1, 600201, 1, 1, null,
                 },
-                new object[]
-                {
-                    20001, 2, 600201, 2, 54, null,
-                },
                 // Nine plus zero
                 new object[]
                 {
@@ -213,7 +183,7 @@ namespace Lib9c.Tests.Action.Summon
                     600201,
                     9,
                     0,
-                    null,
+                    typeof(InvalidSummonCountException),
                 },
                 // Ten plus one
                 new object[]
@@ -238,11 +208,7 @@ namespace Lib9c.Tests.Action.Summon
                 // Fail by exceeding summon limit
                 new object[]
                 {
-                    20001, 11, 600201, 22, 1, typeof(InvalidSummonCountException),
-                },
-                new object[]
-                {
-                    10002, 1, 600201, 1, 1, typeof(SheetRowNotFoundException),
+                    20001, 101, 600201, 22, 1,  typeof(InvalidSummonCountException),
                 },
             };
 

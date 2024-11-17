@@ -237,7 +237,11 @@ namespace Lib9c.Tests
 
         public LoadIntoMyGaragesCostSheet LoadIntoMyGaragesCostSheet { get; private set; }
 
-        public SummonSheet SummonSheet { get; private set; }
+        public EquipmentSummonSheet EquipmentSummonSheet { get; private set; }
+
+        public RuneSummonSheet RuneSummonSheet { get; private set; }
+
+        public CostumeSummonSheet CostumeSummonSheet { get; private set; }
 
         public CreateAvatarItemSheet CreateAvatarItemSheet { get; set; }
 
@@ -274,6 +278,8 @@ namespace Lib9c.Tests
         public CustomEquipmentCraftRecipeSkillSheet CustomEquipmentCraftRecipeSkillSheet { get; private set; }
 
         /* Custom Craft */
+
+        public ClaimableGiftsSheet ClaimableGiftsSheet { get; private set; }
 
         public void ItemSheetInitialize()
         {

@@ -44,6 +44,7 @@ id,_name,item_sub_type,grade,elemental_type,stat_type_1,stat_value_1,stat_type_2
 201038,홍색 만두,Food,3,Normal,SPD,2268,,
 201039,홍색 만두,Food,4,Normal,SPD,3174,,
 201040,홍색 만두,Food,5,Normal,SPD,13988,,
+201041,슈퍼 황금 스테이크,Food,6,Normal,DEF,30000,HIT,50000
 900101,몬스터펀치,Food,3,Normal,HP,834,ATK,46
 900102,시원한 몬스터펀치,Food,4,Normal,HP,1799,ATK,98
 900103,위대한 몬스터펀치,Food,5,Normal,HP,3629,ATK,202

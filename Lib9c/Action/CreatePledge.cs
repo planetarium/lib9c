@@ -10,6 +10,12 @@ using Nekoyume.Module;
 
 namespace Nekoyume.Action
 {
+    using Extensions;
+    using Module.Guild;
+
+    /// <summary>
+    /// Admin action for pledge contract
+    /// </summary>
     [ActionType(TypeIdentifier)]
     public class CreatePledge : ActionBase
     {
@@ -56,8 +62,21 @@ namespace Nekoyume.Action
                 .Add(PatronAddress.Serialize())
                 .Add(true.Serialize())
                 .Add(Mead.Serialize());
+            // migration for planetarium guild
+            var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
+            if (states.GetJoinedGuild(planetariumGuildOwner) is null)
+            {
+                var random = context.GetRandom();
+                var guildAddress = new Nekoyume.TypedAddress.GuildAddress(random.GenerateAddress());
+                states = states.MakeGuild(guildAddress, new Nekoyume.TypedAddress.AgentAddress(planetariumGuildOwner));
+            }
             foreach (var (agentAddress, pledgeAddress) in AgentAddresses)
             {
+                if (PatronAddress == MeadConfig.PatronAddress && states.GetJoinedGuild(planetariumGuildOwner) is { } guildAddress)
+                {
+                    states = states.JoinGuild(guildAddress, new Nekoyume.TypedAddress.AgentAddress(agentAddress));
+                }
+
                 states = states
                     .TransferAsset(context, PatronAddress, agentAddress, mead)
                     .SetLegacyState(pledgeAddress, contractList);
