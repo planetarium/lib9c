@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Delegation;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
@@ -23,7 +22,6 @@ using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Serilog;
 using static Lib9c.SerializeKeys;
-using static Nekoyume.Model.WorldInformation;
 
 namespace Nekoyume.Action
 {
@@ -210,12 +208,6 @@ namespace Nekoyume.Action
                     guildParticipant.Delegate(guild, gg, height);
                     state = guildRepository.World;
                 }
-                else
-                {
-                    state = state
-                        .TransferAsset(context, stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
-                }
-
             }
             else if (additionalBalance.Sign < 0)
             {
@@ -239,15 +231,15 @@ namespace Nekoyume.Action
                     validatorDelegatee.Unbond(validatorDelegator, share, height);
 
                     state = validatorRepository.World;
-
                     state = state.BurnAsset(context, guildDelegatee.DelegationPoolAddress, gg);
                 }
                 else
                 {
-                    state = state.BurnAsset(context, Addresses.NonValidatorDelegatee, gg);
+                    state = state.BurnAsset(context, stakeStateAddr, gg);
                 }
 
-                state = state.TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);
+                state = state
+                    .TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);
 
                 // TODO : [GuildMigration] Revive below code when the migration is done.
                 // if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))

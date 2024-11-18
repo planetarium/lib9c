@@ -15,16 +15,16 @@ namespace Nekoyume.Module.Guild
         public static bool TryGetGuildDelegatee(
             this GuildRepository repository,
             Address address,
-            [NotNullWhen(true)] out GuildDelegatee? validatorDelegateeForGuildParticipant)
+            [NotNullWhen(true)] out GuildDelegatee? guildDelegatee)
         {
             try
             {
-                validatorDelegateeForGuildParticipant = repository.GetGuildDelegatee(address);
+                guildDelegatee = repository.GetGuildDelegatee(address);
                 return true;
             }
             catch
             {
-                validatorDelegateeForGuildParticipant = null;
+                guildDelegatee = null;
                 return false;
             }
         }

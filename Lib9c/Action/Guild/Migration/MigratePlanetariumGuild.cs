@@ -2,7 +2,6 @@ using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
-using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.Model.Guild;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Lib9c;
@@ -59,7 +58,7 @@ namespace Nekoyume.Action.Guild.Migration
             var guild = new Model.Guild.Guild(
                 guildAddress,
                 legacyGuild.GuildMasterAddress,
-                ValidatorConfig.PlanetariumValidatorAddress,
+                context.Miner,
                 repository);
             repository.SetGuild(guild);
 
