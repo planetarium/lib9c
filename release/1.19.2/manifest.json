@@ -3252,16 +3252,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ValidatorConfig.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ValidatorConfig.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.yml",
       "output": {
         ".html": {
@@ -8276,16 +8266,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorListModule.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorUnbondingModule.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorUnbondingModule.html"
         }
       },
       "version": ""
