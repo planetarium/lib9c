@@ -98,21 +98,19 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throws_WhenClaimableExisting()
         {
-            var stakeStateAddress = StakeState.DeriveAddress(_signerAddress);
+            var stakeStateAddress = LegacyStakeState.DeriveAddress(_signerAddress);
             var context = new ActionContext();
             var states = _initialState
-                .SetLegacyState(stakeStateAddress, new StakeState(stakeStateAddress, 0).Serialize())
+                .SetLegacyState(stakeStateAddress, new LegacyStakeState(stakeStateAddress, 0).Serialize())
                 .MintAsset(context, stakeStateAddress, _currency * 50);
             var action = new Stake2(100);
-            Assert.Throws<StakeExistingClaimableException>(
-                () =>
-                    action.Execute(
-                        new ActionContext
-                        {
-                            PreviousState = states,
-                            Signer = _signerAddress,
-                            BlockIndex = StakeState.RewardInterval,
-                        }));
+            Assert.Throws<StakeExistingClaimableException>(() =>
+                action.Execute(new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = _signerAddress,
+                    BlockIndex = LegacyStakeState.RewardInterval,
+                }));
         }
 
         [Fact]
@@ -150,11 +148,11 @@ namespace Lib9c.Tests.Action
                     }));
 
             // Same (since 4611070)
-            if (states.TryGetStakeState(_signerAddress, out var stakeState))
+            if (states.TryGetLegacyStakeState(_signerAddress, out LegacyStakeState stakeState))
             {
                 states = states.SetLegacyState(
                     stakeState.address,
-                    new StakeState(stakeState.address, 4611070 - 100).Serialize());
+                    new LegacyStakeState(stakeState.address, 4611070 - 100).Serialize());
             }
 
             updateAction = new Stake2(51);
@@ -168,14 +166,12 @@ namespace Lib9c.Tests.Action
                     }));
 
             // At 4611070 - 99, it should be updated.
-            Assert.True(
-                updateAction.Execute(
-                    new ActionContext
-                    {
-                        PreviousState = states,
-                        Signer = _signerAddress,
-                        BlockIndex = 4611070 - 99,
-                    }).TryGetStakeState(_signerAddress, out stakeState));
+            Assert.True(updateAction.Execute(new ActionContext
+            {
+                PreviousState = states,
+                Signer = _signerAddress,
+                BlockIndex = 4611070 - 99,
+            }).TryGetLegacyStakeState(_signerAddress, out stakeState));
             Assert.Equal(4611070 - 99, stakeState.StartedBlockIndex);
         }
 
@@ -194,11 +190,11 @@ namespace Lib9c.Tests.Action
             Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
             Assert.Equal(
                 _currency * 100,
-                states.GetBalance(StakeState.DeriveAddress(_signerAddress), _currency));
+                states.GetBalance(LegacyStakeState.DeriveAddress(_signerAddress), _currency));
 
-            states.TryGetStakeState(_signerAddress, out var stakeState);
+            states.TryGetLegacyStakeState(_signerAddress, out LegacyStakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
-            Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
+            Assert.Equal(0 + LegacyStakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
             Assert.Equal(_currency * 100, states.GetBalance(stakeState.address, _currency));
             Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
@@ -208,22 +204,21 @@ namespace Lib9c.Tests.Action
             Assert.False(achievements.Check(0, 1));
             Assert.False(achievements.Check(1, 0));
 
-            var producedStakeState = new StakeState(
+            var producedLegacyStakeState = new LegacyStakeState(
                 stakeState.address,
                 stakeState.StartedBlockIndex,
                 // Produce a situation that it already received rewards.
-                StakeState.LockupInterval - 1,
+                LegacyStakeState.LockupInterval - 1,
                 stakeState.CancellableBlockIndex,
                 stakeState.Achievements);
-            states = states.SetLegacyState(stakeState.address, producedStakeState.SerializeV2());
+            states = states.SetLegacyState(stakeState.address, producedLegacyStakeState.SerializeV2());
             var cancelAction = new Stake2(0);
-            states = cancelAction.Execute(
-                new ActionContext
-                {
-                    PreviousState = states,
-                    Signer = _signerAddress,
-                    BlockIndex = StakeState.LockupInterval,
-                });
+            states = cancelAction.Execute(new ActionContext
+            {
+                PreviousState = states,
+                Signer = _signerAddress,
+                BlockIndex = LegacyStakeState.LockupInterval,
+            });
 
             Assert.Null(states.GetLegacyState(stakeState.address));
             Assert.Equal(_currency * 0, states.GetBalance(stakeState.address, _currency));
@@ -242,9 +237,9 @@ namespace Lib9c.Tests.Action
                     BlockIndex = 0,
                 });
 
-            states.TryGetStakeState(_signerAddress, out var stakeState);
+            states.TryGetLegacyStakeState(_signerAddress, out LegacyStakeState stakeState);
             Assert.Equal(0, stakeState.StartedBlockIndex);
-            Assert.Equal(0 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
+            Assert.Equal(0 + LegacyStakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
             Assert.Equal(_currency * 50, states.GetBalance(stakeState.address, _currency));
             Assert.Equal(_currency * 50, states.GetBalance(_signerAddress, _currency));
@@ -258,9 +253,9 @@ namespace Lib9c.Tests.Action
                     BlockIndex = 1,
                 });
 
-            states.TryGetStakeState(_signerAddress, out stakeState);
+            states.TryGetLegacyStakeState(_signerAddress, out stakeState);
             Assert.Equal(1, stakeState.StartedBlockIndex);
-            Assert.Equal(1 + StakeState.LockupInterval, stakeState.CancellableBlockIndex);
+            Assert.Equal(1 + LegacyStakeState.LockupInterval, stakeState.CancellableBlockIndex);
             Assert.Equal(0, stakeState.ReceivedBlockIndex);
             Assert.Equal(_currency * 100, states.GetBalance(stakeState.address, _currency));
             Assert.Equal(_currency * 0, states.GetBalance(_signerAddress, _currency));
@@ -270,22 +265,20 @@ namespace Lib9c.Tests.Action
         public void RestrictForStakeStateV2()
         {
             var action = new Stake2(50);
-            Assert.Throws<InvalidOperationException>(
-                () => action.Execute(
-                    new ActionContext
-                    {
-                        PreviousState = _initialState.SetLegacyState(
-                            StakeState.DeriveAddress(_signerAddress),
-                            new StakeStateV2(
-                                new Contract(
-                                    "StakeRegularFixedRewardSheet_V1",
-                                    "StakeRegularRewardSheet_V1",
-                                    50400,
-                                    201600),
-                                0).Serialize()),
-                        Signer = _signerAddress,
-                        BlockIndex = 0,
-                    }));
+            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
+            {
+                PreviousState = _initialState.SetLegacyState(
+                    LegacyStakeState.DeriveAddress(_signerAddress),
+                    new StakeState(
+                        new Contract(
+                            "StakeRegularFixedRewardSheet_V1",
+                            "StakeRegularRewardSheet_V1",
+                            50400,
+                            201600),
+                        0).Serialize()),
+                Signer = _signerAddress,
+                BlockIndex = 0,
+            }));
         }
 
         [Fact]

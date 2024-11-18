@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 
@@ -45,19 +46,20 @@ namespace Nekoyume.Action.Guild
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+            var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            if (world.GetJoinedGuild(signer) is not { } guildAddress)
+            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
             {
                 throw new InvalidOperationException("The signer does not have a guild.");
             }
 
-            world = world.Ban(guildAddress, signer, Target);
+            repository.Ban(guildAddress, signer, Target);
 
-            return world;
+            return repository.World;
         }
     }
 }

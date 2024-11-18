@@ -7,6 +7,7 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
@@ -95,7 +96,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             ValidateTicket();
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(
@@ -133,7 +134,7 @@ namespace Nekoyume.Action
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
-                typeof(DeBuffLimitSheet),
+                typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
             };
             if (collectionExist)
@@ -318,8 +319,6 @@ namespace Nekoyume.Action
             }
             else
             {
-                var arenaAddr =
-                    ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
                 var goldCurrency = states.GetGoldCurrency();
                 var ticketBalance =
                     ArenaHelper.GetTicketPrice(roundData, myArenaInformation, goldCurrency);
@@ -331,8 +330,17 @@ namespace Nekoyume.Action
                 }
 
                 purchasedCountDuringInterval++;
+
+                var feeAddress = Addresses.RewardPool;
+                // TODO: [GuildMigration] Remove this after migration
+                if (states.GetDelegationMigrationHeight() is long migrationHeight
+                    && context.BlockIndex < migrationHeight)
+                {
+                    feeAddress = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
+                }
+
                 states = states
-                    .TransferAsset(context, context.Signer, arenaAddr, ticketBalance)
+                    .TransferAsset(context, context.Signer, feeAddress, ticketBalance)
                     .SetLegacyState(purchasedCountAddr, purchasedCountDuringInterval);
             }
 
@@ -373,7 +381,7 @@ namespace Nekoyume.Action
                 enemyRuneSlotState);
             var previousMyScore = myArenaScore.Score;
             var arenaSheets = sheets.GetArenaSimulatorSheets();
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+            var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var winCount = 0;
             var defeatCount = 0;
             var rewards = new List<ItemBase>();
@@ -405,7 +413,7 @@ namespace Nekoyume.Action
                     arenaSheets,
                     collectionModifiers[myAvatarAddress],
                     collectionModifiers[enemyAvatarAddress],
-                    deBuffLimitSheet,
+                    buffLimitSheet,
                     buffLinkSheet,
                     true);
                 if (log.Result.Equals(ArenaLog.ArenaResult.Win))

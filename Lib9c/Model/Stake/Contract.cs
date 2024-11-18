@@ -18,6 +18,7 @@ namespace Nekoyume.Model.Stake
         public string StakeRegularFixedRewardSheetTableName { get; }
         public string StakeRegularRewardSheetTableName { get; }
         public long RewardInterval { get; }
+        [Obsolete("Not used because of guild system")]
         public long LockupInterval { get; }
 
         public Contract(StakePolicySheet stakePolicySheet) : this(
