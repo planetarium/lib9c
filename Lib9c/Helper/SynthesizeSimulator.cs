@@ -59,8 +59,8 @@ namespace Nekoyume.Helper
                     }
 
                     // TODO: subType별로 필요한 아이템 개수가 다를 수 있음
-                    var requiredCount = synthesizeRow.RequiredCount;
-                    var succeedRate = Math.Clamp(synthesizeRow.SucceedRate, 0, 1);
+                    var requiredCount = synthesizeRow.RequiredCountDict[itemSubType].RequiredCount;
+                    var succeedRate = Math.Clamp(synthesizeRow.RequiredCountDict[itemSubType].SucceedRate, 0, 1);
                     var succeedRatePercentage = (int)(succeedRate * 100);
 
                     var synthesizeCount = materialCount / requiredCount;
