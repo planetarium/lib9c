@@ -362,7 +362,7 @@ namespace Lib9c.Tests.Action
                         AvatarAddr,
                         0));
 
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var previousState = _initialState.RemoveLegacyState(stakeAddr);
             Assert.Throws<FailedLoadStateException>(
                 () =>
@@ -375,19 +375,19 @@ namespace Lib9c.Tests.Action
 
         [Theory]
         [InlineData(0, null, 0)]
-        [InlineData(0, null, StakeState.RewardInterval - 1)]
-        [InlineData(0, StakeState.RewardInterval - 2, StakeState.RewardInterval - 1)]
-        [InlineData(0, StakeState.RewardInterval, StakeState.RewardInterval + 1)]
-        [InlineData(0, StakeState.RewardInterval, StakeState.RewardInterval * 2 - 1)]
-        [InlineData(0, StakeState.RewardInterval * 2 - 2, StakeState.RewardInterval * 2 - 1)]
-        [InlineData(0, StakeState.RewardInterval * 2, StakeState.RewardInterval * 2 + 1)]
+        [InlineData(0, null, LegacyStakeState.RewardInterval - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval - 2, LegacyStakeState.RewardInterval - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval + 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval * 2 - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval * 2 - 2, LegacyStakeState.RewardInterval * 2 - 1)]
+        [InlineData(0, LegacyStakeState.RewardInterval * 2, LegacyStakeState.RewardInterval * 2 + 1)]
         public void Execute_Throw_RequiredBlockIndexException_With_StakeState(
             long startedBlockIndex,
             long? receivedBlockIndex,
             long blockIndex)
         {
-            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
-            var stakeState = new StakeState(stakeAddr, startedBlockIndex);
+            var stakeAddr = LegacyStakeState.DeriveAddress(AgentAddr);
+            var stakeState = new LegacyStakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
                 stakeState.Claim((long)receivedBlockIndex);
@@ -420,7 +420,7 @@ namespace Lib9c.Tests.Action
             long? receivedBlockIndex,
             long blockIndex)
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakeStateV2 = PrepareStakeStateV2(
                 _stakePolicySheet,
                 startedBlockIndex,
@@ -441,7 +441,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_FailedLoadStateException_When_Sheet_Null()
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakeStateV2 = PrepareStakeStateV2(_stakePolicySheet, 0, null);
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             var prevState = _initialState
@@ -483,7 +483,7 @@ namespace Lib9c.Tests.Action
         [InlineData(0)]
         public void Execute_Throw_InsufficientBalanceException(long stakedBalance)
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakeStateV2 = PrepareStakeStateV2(_stakePolicySheet, 0, null);
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             var previousState = _initialState.SetLegacyState(stakeAddr, stakeStateV2.Serialize());
@@ -505,7 +505,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_ArgumentNullException_When_Reward_CurrencyTicker_Null()
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakeStateV2 = PrepareStakeStateV2(_stakePolicySheet, 0, null);
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             var prevState = _initialState
@@ -542,7 +542,7 @@ namespace Lib9c.Tests.Action
         public void
             Execute_Throw_ArgumentNullException_When_Reward_CurrencyTicker_New_CurrencyDecimalPlaces_Null()
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakeStateV2 = PrepareStakeStateV2(_stakePolicySheet, 0, null);
             var blockIndex = stakeStateV2.StartedBlockIndex + stakeStateV2.Contract.RewardInterval;
             var prevState = _initialState
@@ -591,8 +591,8 @@ namespace Lib9c.Tests.Action
             (Address balanceAddr, FungibleAssetValue fav)[] expectedBalances,
             (int itemSheetId, int count)[] expectedItems)
         {
-            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
-            var stakeState = new StakeState(stakeAddr, startedBlockIndex);
+            var stakeAddr = LegacyStakeState.DeriveAddress(AgentAddr);
+            var stakeState = new LegacyStakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
                 stakeState.Claim((long)receivedBlockIndex);
@@ -627,7 +627,7 @@ namespace Lib9c.Tests.Action
             (Address balanceAddr, FungibleAssetValue fav)[] expectedBalances,
             (int itemSheetId, int count)[] expectedItems)
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakeStateV2 = PrepareStakeStateV2(
                 _stakePolicySheet,
                 startedBlockIndex,
@@ -655,7 +655,7 @@ namespace Lib9c.Tests.Action
         public void Execute_V6()
         {
             var prevState = _initialState;
-            var stakeAddr = StakeStateV2.DeriveAddress(AgentAddr);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var stakePolicySheet = new StakePolicySheet();
             stakePolicySheet.Set(StakePolicySheetFixtures.V6);
             var stakeStateV2 = PrepareStakeStateV2(
@@ -706,15 +706,15 @@ namespace Lib9c.Tests.Action
             }
         }
 
-        private static StakeStateV2 PrepareStakeStateV2(
+        private static StakeState PrepareStakeStateV2(
             StakePolicySheet stakePolicySheet,
             long startedBlockIndex,
             long? receivedBlockIndex)
         {
             var contract = new Contract(stakePolicySheet);
             return receivedBlockIndex is null
-                ? new StakeStateV2(contract, startedBlockIndex)
-                : new StakeStateV2(contract, startedBlockIndex, receivedBlockIndex.Value);
+                ? new StakeState(contract, startedBlockIndex)
+                : new StakeState(contract, startedBlockIndex, receivedBlockIndex.Value);
         }
 
         private static IWorld Execute(
@@ -723,7 +723,7 @@ namespace Lib9c.Tests.Action
             Address avatarAddr,
             long blockIndex)
         {
-            var stakeAddr = StakeStateV2.DeriveAddress(agentAddr);
+            var stakeAddr = StakeState.DeriveAddress(agentAddr);
             var ncg = prevState.GetGoldCurrency();
             var prevBalance = prevState.GetBalance(agentAddr, ncg);
             var prevStakedBalance = prevState.GetBalance(stakeAddr, ncg);
@@ -739,7 +739,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(prevBalance, nextBalance);
             var nextStakedBalance = nextState.GetBalance(stakeAddr, ncg);
             Assert.Equal(prevStakedBalance, nextStakedBalance);
-            Assert.True(nextState.TryGetStakeStateV2(agentAddr, out var stakeStateV2));
+            Assert.True(nextState.TryGetStakeState(agentAddr, out var stakeStateV2));
             Assert.Equal(blockIndex, stakeStateV2.ReceivedBlockIndex);
             Assert.True(stakeStateV2.ClaimedBlockIndex <= blockIndex);
             Assert.True(stakeStateV2.ClaimableBlockIndex > blockIndex);

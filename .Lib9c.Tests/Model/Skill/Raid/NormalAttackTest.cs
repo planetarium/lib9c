@@ -45,7 +45,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 {
                     new (StatType.DEF, StatModifier.OperationType.Percentage, 100),
                 },
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;

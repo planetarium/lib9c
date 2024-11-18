@@ -1,17 +1,15 @@
 namespace Lib9c.Tests.Action.Guild
 {
-    using System;
     using System.Collections.Generic;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
-    using Libplanet.Mocks;
-    using Nekoyume;
+    using Libplanet.Crypto;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Module.Guild;
-    using Nekoyume.TypedAddress;
     using Xunit;
 
-    public class MakeGuildTest
+    public class MakeGuildTest : GuildTestBase
     {
         public static IEnumerable<object[]> TestCases =>
             new[]
@@ -39,37 +37,27 @@ namespace Lib9c.Tests.Action.Guild
             deserialized.LoadPlainValue(plainValue);
         }
 
-        [Theory]
-        [MemberData(nameof(TestCases))]
-        public void Execute(AgentAddress guildMasterAddress, bool fail)
+        [Fact]
+        public void Execute()
         {
-            var action = new MakeGuild();
-            IWorld world = new World(MockUtil.MockModernWorldState);
+            IWorld world = World;
+            var validatorPrivateKey = new PrivateKey();
+            var guildMasterAddress = AddressUtil.CreateAgentAddress();
+            world = EnsureToMintAsset(world, validatorPrivateKey.Address, GG * 100);
+            world = EnsureToCreateValidator(world, validatorPrivateKey.PublicKey);
+            var action = new MakeGuild(validatorPrivateKey.Address);
 
-            if (fail)
+            world = action.ExecutePublic(new ActionContext
             {
-                Assert.Throws<InvalidOperationException>(
-                    () => action.Execute(
-                        new ActionContext
-                        {
-                            PreviousState = world,
-                            Signer = guildMasterAddress,
-                        }));
-            }
-            else
-            {
-                world = action.Execute(
-                    new ActionContext
-                    {
-                        PreviousState = world,
-                        Signer = guildMasterAddress,
-                    });
+                PreviousState = world,
+                Signer = guildMasterAddress,
+            });
 
-                var guildAddress = world.GetJoinedGuild(guildMasterAddress);
-                Assert.NotNull(guildAddress);
-                Assert.True(world.TryGetGuild(guildAddress.Value, out var guild));
-                Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
-            }
+            var repository = new GuildRepository(world, new ActionContext());
+            var guildAddress = repository.GetJoinedGuild(guildMasterAddress);
+            Assert.NotNull(guildAddress);
+            var guild = repository.GetGuild(guildAddress.Value);
+            Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
         }
     }
 }

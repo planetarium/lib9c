@@ -17,3 +17,7 @@ export const fungibleIdA = HashDigest.fromHex(
 export const patronAddress = Address.fromHex(
   "0xc64c7cBf29BF062acC26024D5b9D1648E8f8D2e1",
 );
+
+export const validatorAddress = Address.fromHex(
+  "0xc2Ef377d9F526E4b480518863b94d79FCEABB2e1",
+);
