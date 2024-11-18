@@ -125,7 +125,7 @@ namespace Nekoyume.Action.Garages
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var state = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context);
             ValidateFields(context.Signer, addressesHex);

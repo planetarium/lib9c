@@ -72,7 +72,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     _tableSheets.MaterialItemSheet
                 ),
                 statModifiers,
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
 
@@ -149,7 +149,7 @@ namespace Lib9c.Tests.Model.AdventureBoss
                     {
                         new (StatType.ATK, StatModifier.OperationType.Add, 100),
                     },
-                    _tableSheets.DeBuffLimitSheet,
+                    _tableSheets.BuffLimitSheet,
                     _tableSheets.BuffLinkSheet
                 );
             }

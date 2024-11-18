@@ -750,7 +750,7 @@ namespace Nekoyume.Model
             if (!isBuffRemoved)
                 return;
 
-            Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
+            Stats.SetBuffs(StatBuffs, Simulator.BuffLimitSheet);
         }
 
         [Obsolete("Use RemoveBuffs")]
@@ -772,7 +772,7 @@ namespace Nekoyume.Model
 
             if (isApply)
             {
-                Stats.SetBuffs(StatBuffs, Simulator.DeBuffLimitSheet);
+                Stats.SetBuffs(StatBuffs, Simulator.BuffLimitSheet);
             }
         }
 
@@ -814,7 +814,7 @@ namespace Nekoyume.Model
                         clone.SetStack(stack);
                     }
                     Buffs[stat.RowData.GroupId] = clone;
-                    Stats.AddBuff(clone, Simulator.DeBuffLimitSheet, updateImmediate);
+                    Stats.AddBuff(clone, Simulator.BuffLimitSheet, updateImmediate);
                     break;
                 }
                 case ActionBuff action:

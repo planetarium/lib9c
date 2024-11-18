@@ -37,7 +37,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var contractAddress = AgentAddress.GetPledgeAddress();
             if (states.TryGetLegacyState(contractAddress, out List _))

@@ -249,7 +249,7 @@ namespace Lib9c.Tests
 
         public CollectionSheet CollectionSheet { get; private set; }
 
-        public DeBuffLimitSheet DeBuffLimitSheet { get; set; }
+        public BuffLimitSheet BuffLimitSheet { get; set; }
 
         public BuffLinkSheet BuffLinkSheet { get; set; }
 
