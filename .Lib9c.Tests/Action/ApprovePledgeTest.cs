@@ -59,6 +59,7 @@ namespace Lib9c.Tests.Action
         public void Execute_JoinGuild(int mead)
         {
             var address = new PrivateKey().Address;
+            var validatorKey = new PrivateKey();
             var patron = MeadConfig.PatronAddress;
             var contractAddress = address.Derive(nameof(RequestPledge));
             var guildAddress = AddressUtil.CreateGuildAddress();
@@ -72,7 +73,7 @@ namespace Lib9c.Tests.Action
                 );
 
             states = DelegationUtil.EnsureValidatorPromotionReady(
-                states, ValidatorConfig.PlanetariumValidatorPublicKey, 0L);
+                states, validatorKey.PublicKey, 0L);
 
             states = new GuildRepository(
                 states,
@@ -80,7 +81,7 @@ namespace Lib9c.Tests.Action
                 {
                     Signer = GuildConfig.PlanetariumGuildOwner,
                 })
-                .MakeGuild(guildAddress, ValidatorConfig.PlanetariumValidatorAddress).World;
+                .MakeGuild(guildAddress, validatorKey.Address).World;
 
             var action = new ApprovePledge
             {

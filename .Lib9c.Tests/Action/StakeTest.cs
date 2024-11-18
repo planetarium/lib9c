@@ -435,8 +435,6 @@ namespace Lib9c.Tests.Action
                 world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
                 world = world.TransferAsset(
                     new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
-                world = world.TransferAsset(
-                    new ActionContext(), stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
             }
 
             world = world.SetLegacyState(stakeStateAddr, stakeState.Serialize());
@@ -465,7 +463,12 @@ namespace Lib9c.Tests.Action
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
+            var nonValidatorDelegateeBalance = world.GetBalance(
+                Addresses.NonValidatorDelegatee, Currencies.GuildGold);
+            var stakeBalance = world.GetBalance(stakeStateAddr, Currencies.GuildGold);
             Assert.Equal(expectedBalance, actualBalance);
+            Assert.Equal(Currencies.GuildGold * 0, nonValidatorDelegateeBalance);
+            Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
         }
 
         private IWorld Execute(
