@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Delegation;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
@@ -23,7 +22,6 @@ using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Serilog;
 using static Lib9c.SerializeKeys;
-using static Nekoyume.Model.WorldInformation;
 
 namespace Nekoyume.Action
 {

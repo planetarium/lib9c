@@ -459,8 +459,10 @@ namespace Lib9c.Tests.Action
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
             var nonValidatorDelegateeBalance = world.GetBalance(
                 Addresses.NonValidatorDelegatee, Currencies.GuildGold);
+            var stakeBalance = world.GetBalance(stakeStateAddr, Currencies.GuildGold);
             Assert.Equal(expectedBalance, actualBalance);
             Assert.Equal(Currencies.GuildGold * 0, nonValidatorDelegateeBalance);
+            Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
         }
 
         private IWorld Execute(
