@@ -82,7 +82,7 @@ public class SynthesizeTest
     public void ExecuteSingle(Grade grade, ItemSubType itemSubType)
     {
         var context = new ActionContext();
-        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(grade));
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
@@ -149,7 +149,7 @@ public class SynthesizeTest
     {
         var grade = Grade.Rare;
         var itemSubType = ItemSubType.FullCostume;
-        var materialCount = GetSucceededMaterialCount(grade) * testCount;
+        var materialCount = GetSucceededMaterialCount(itemSubType, grade) * testCount;
         var itemSubTypes = GetSubTypeArray(itemSubType, materialCount);
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
@@ -310,10 +310,10 @@ public class SynthesizeTest
         return subTypes;
     }
 
-    private static int GetSucceededMaterialCount(Grade grade)
+    private static int GetSucceededMaterialCount(ItemSubType itemSubType, Grade grade)
     {
         var synthesizeSheet = TableSheets.SynthesizeSheet;
         var row = synthesizeSheet.Values.First(r => (Grade)r.GradeId == grade);
-        return row.RequiredCount;
+        return row.RequiredCountDict[itemSubType].RequiredCount;
     }
 }
