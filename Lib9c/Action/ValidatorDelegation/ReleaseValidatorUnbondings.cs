@@ -91,7 +91,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
             else if (!IsValidator(world, context, unbondLockIn.DelegateeAddress))
             {
-                if (releasedFAV is not FungibleAssetValue gg)
+                if (releasedFAV is not FungibleAssetValue gg || gg.Sign < 1)
                 {
                     return world;
                 }
