@@ -141,7 +141,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, unbondLockIn.Entries.Count);
 
-            unbondLockIn = unbondLockIn.Release(10L + delegatee.UnbondingPeriod - 1);
+            unbondLockIn = unbondLockIn.Release(10L + delegatee.UnbondingPeriod - 1, out _);
             delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee.DelegationCurrency);
             delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
             Assert.Equal(2, unbondLockIn.Entries.Count);
@@ -162,7 +162,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
             Assert.Equal(delegatingFAV, delegateeBalance);
 
-            unbondLockIn = unbondLockIn.Release(10L + delegatee.UnbondingPeriod);
+            unbondLockIn = unbondLockIn.Release(10L + delegatee.UnbondingPeriod, out _);
             delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee.DelegationCurrency);
             delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
             entriesByExpireHeight = Assert.Single(unbondLockIn.Entries);
@@ -175,7 +175,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatorInitialBalance - delegatingFAV + undelegatingFAV, delegatorBalance);
             Assert.Equal(delegatingFAV - undelegatingFAV, delegateeBalance);
 
-            unbondLockIn = unbondLockIn.Release(12L + delegatee.UnbondingPeriod);
+            unbondLockIn = unbondLockIn.Release(12L + delegatee.UnbondingPeriod, out _);
             delegatorBalance = repo.World.GetBalance(delegator.Address, delegatee.DelegationCurrency);
             delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
             Assert.Empty(unbondLockIn.Entries);
@@ -253,7 +253,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, rebondGrace.Entries.Count);
 
-            rebondGrace = rebondGrace.Release(10L + delegatee1.UnbondingPeriod - 1);
+            rebondGrace = rebondGrace.Release(10L + delegatee1.UnbondingPeriod - 1, out _);
             Assert.Equal(2, rebondGrace.Entries.Count);
             entriesByExpireHeight = rebondGrace.Entries.ElementAt(0);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
@@ -272,7 +272,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(12L, entry.CreationHeight);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entry.ExpireHeight);
 
-            rebondGrace = rebondGrace.Release(10L + delegatee1.UnbondingPeriod);
+            rebondGrace = rebondGrace.Release(10L + delegatee1.UnbondingPeriod, out _);
             entriesByExpireHeight = Assert.Single(rebondGrace.Entries);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             entry = Assert.Single(entriesByExpireHeight.Value);
@@ -282,7 +282,7 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(12L, entry.CreationHeight);
             Assert.Equal(12L + delegatee1.UnbondingPeriod, entry.ExpireHeight);
 
-            rebondGrace = rebondGrace.Release(12L + delegatee1.UnbondingPeriod);
+            rebondGrace = rebondGrace.Release(12L + delegatee1.UnbondingPeriod, out _);
             Assert.Empty(rebondGrace.Entries);
         }
 
