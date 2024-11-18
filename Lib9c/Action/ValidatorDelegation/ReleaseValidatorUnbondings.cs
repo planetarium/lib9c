@@ -98,8 +98,9 @@ namespace Nekoyume.Action.ValidatorDelegation
 
                 var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
                 var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
-                world = world.TransferAsset(
-                    context, stakeStateAddress, agentAddress, ncg);
+                world = world
+                    .TransferAsset(context, stakeStateAddress, agentAddress, ncg)
+                    .BurnAsset(context, stakeStateAddress, gg);
             }
 
             return world;

@@ -235,8 +235,13 @@ namespace Nekoyume.Action
                     state = validatorRepository.World;
                     state = state.BurnAsset(context, guildDelegatee.DelegationPoolAddress, gg);
                 }
+                else
+                {
+                    state = state.BurnAsset(context, stakeStateAddr, gg);
+                }
 
-                state = state.TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);
+                state = state
+                    .TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);
 
                 // TODO : [GuildMigration] Revive below code when the migration is done.
                 // if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
