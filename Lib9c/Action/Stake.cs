@@ -210,12 +210,6 @@ namespace Nekoyume.Action
                     guildParticipant.Delegate(guild, gg, height);
                     state = guildRepository.World;
                 }
-                else
-                {
-                    state = state
-                        .TransferAsset(context, stakeStateAddr, Addresses.NonValidatorDelegatee, gg);
-                }
-
             }
             else if (additionalBalance.Sign < 0)
             {
@@ -239,12 +233,7 @@ namespace Nekoyume.Action
                     validatorDelegatee.Unbond(validatorDelegator, share, height);
 
                     state = validatorRepository.World;
-
                     state = state.BurnAsset(context, guildDelegatee.DelegationPoolAddress, gg);
-                }
-                else
-                {
-                    state = state.BurnAsset(context, Addresses.NonValidatorDelegatee, gg);
                 }
 
                 state = state.TransferAsset(context, stakeStateAddr, context.Signer, -additionalBalance);

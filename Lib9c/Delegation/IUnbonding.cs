@@ -14,7 +14,7 @@ namespace Nekoyume.Delegation
 
         bool IsEmpty { get; }
 
-        IUnbonding Release(long height);
+        IUnbonding Release(long height, out FungibleAssetValue? releasedFAV);
 
         IUnbonding Slash(
             BigInteger slashFactor,

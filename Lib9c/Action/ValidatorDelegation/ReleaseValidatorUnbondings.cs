@@ -46,20 +46,18 @@ namespace Nekoyume.Action.ValidatorDelegation
             var unbondingSet = repository.GetUnbondingSet();
             var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
 
-            unbondings = unbondings.Select(unbonding => unbonding.Release(context.BlockIndex)).ToImmutableArray();
-
             foreach (var unbonding in unbondings)
             {
                 switch (unbonding)
                 {
                     case UnbondLockIn unbondLockIn:
-                        {
-                            repository.SetUnbondLockIn(unbondLockIn);
-                            repository.UpdateWorld(
-                                Unstake(repository.World, context, unbondLockIn.DelegatorAddress));
-                        }
+                        unbondLockIn.Release(context.BlockIndex, out var releasedFAV);
+                        repository.SetUnbondLockIn(unbondLockIn);
+                        repository.UpdateWorld(
+                            Unstake(repository.World, context, unbondLockIn, releasedFAV));
                         break;
                     case RebondGrace rebondGrace:
+                        rebondGrace.Release(context.BlockIndex, out _);
                         repository.SetRebondGrace(rebondGrace);
                         break;
                     default:
@@ -72,9 +70,10 @@ namespace Nekoyume.Action.ValidatorDelegation
             return repository.World;
         }
 
-        private IWorld Unstake(IWorld world, IActionContext context, Address address)
+        private IWorld Unstake(
+            IWorld world, IActionContext context, UnbondLockIn unbondLockIn, FungibleAssetValue? releasedFAV)
         {
-            var agentAddress = new AgentAddress(address);
+            var agentAddress = new AgentAddress(unbondLockIn.DelegatorAddress);
             var guildRepository = new GuildRepository(world, context);
             var goldCurrency = world.GetGoldCurrency();
             if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
@@ -87,20 +86,20 @@ namespace Nekoyume.Action.ValidatorDelegation
                     var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
                     world = world.BurnAsset(context, stakeStateAddress, gg);
                     world = world.TransferAsset(
-                        context, stakeStateAddress, address, ncg);
+                        context, stakeStateAddress, agentAddress, ncg);
                 }
             }
-            else if (!IsValidator(world, context, address))
+            else if (!IsValidator(world, context, unbondLockIn.DelegateeAddress))
             {
-                var stakeStateAddress = StakeState.DeriveAddress(address);
-                var gg = world.GetBalance(stakeStateAddress, Currencies.GuildGold);
-                if (gg.Sign > 0)
+                if (releasedFAV is not FungibleAssetValue gg)
                 {
-                    var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
-                    world = world.BurnAsset(context, stakeStateAddress, gg);
-                    world = world.TransferAsset(
-                        context, stakeStateAddress, address, ncg);
+                    return world;
                 }
+
+                var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
+                var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
+                world = world.TransferAsset(
+                    context, stakeStateAddress, agentAddress, ncg);
             }
 
             return world;

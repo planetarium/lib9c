@@ -137,7 +137,7 @@ namespace Nekoyume.Delegation
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public UnbondLockIn Release(long height)
+        public UnbondLockIn Release(long height, out FungibleAssetValue? releasedFAV)
         {
             CannotMutateRelationsWithoutRepository();
             if (height <= 0)
@@ -149,7 +149,7 @@ namespace Nekoyume.Delegation
             }
 
             var updatedEntries = Entries;
-            FungibleAssetValue? releasingFAV = null;
+            releasedFAV = null;
             foreach (var (expireHeight, entries) in updatedEntries)
             {
                 if (expireHeight <= height)
@@ -157,8 +157,8 @@ namespace Nekoyume.Delegation
                     FungibleAssetValue entriesFAV = entries
                         .Select(e => e.UnbondingFAV)
                         .Aggregate((accum, next) => accum + next);
-                    releasingFAV = releasingFAV.HasValue
-                        ? releasingFAV.Value + entriesFAV
+                    releasedFAV = releasedFAV.HasValue
+                        ? releasedFAV.Value + entriesFAV
                         : entriesFAV;
                     updatedEntries = updatedEntries.Remove(expireHeight);
                 }
@@ -168,7 +168,7 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            if (releasingFAV.HasValue)
+            if (releasedFAV.HasValue)
             {
                 if (DelegateeAddress != Addresses.NonValidatorDelegatee)
                 {
@@ -177,22 +177,14 @@ namespace Nekoyume.Delegation
                     _repository!.TransferAsset(
                         delegateeMetadata.DelegationPoolAddress,
                         delegatorMetadata.DelegationPoolAddress,
-                        releasingFAV.Value);
-                }
-                else
-                {
-                    var stakeStateAddress = StakeState.DeriveAddress(DelegatorAddress);
-                    _repository!.TransferAsset(
-                        Addresses.NonValidatorDelegatee,
-                        stakeStateAddress,
-                        releasingFAV.Value);
+                        releasedFAV.Value);
                 }
             }
 
             return UpdateEntries(updatedEntries);
         }
 
-        IUnbonding IUnbonding.Release(long height) => Release(height);
+        IUnbonding IUnbonding.Release(long height, out FungibleAssetValue? releasedFAV) => Release(height, out releasedFAV);
 
         public UnbondLockIn Slash(
             BigInteger slashFactor,

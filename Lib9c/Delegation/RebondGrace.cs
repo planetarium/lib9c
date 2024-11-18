@@ -111,8 +111,10 @@ namespace Nekoyume.Delegation
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public RebondGrace Release(long height)
+        public RebondGrace Release(long height, out FungibleAssetValue? releasedFAV)
         {
+            releasedFAV = null;
+
             if (height <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -137,7 +139,7 @@ namespace Nekoyume.Delegation
             return UpdateEntries(updatedEntries);
         }
 
-        IUnbonding IUnbonding.Release(long height) => Release(height);
+        IUnbonding IUnbonding.Release(long height, out FungibleAssetValue? releasedFAV) => Release(height, out releasedFAV);
 
         public RebondGrace Slash(
             BigInteger slashFactor,
