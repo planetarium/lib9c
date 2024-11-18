@@ -154,21 +154,21 @@ Class GuildMemberCounterModule  <a class="header-action link-secondary" title="V
 
   <a id="Nekoyume_Module_Guild_GuildMemberCounterModule_DecreaseGuildMemberCount_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.DecreaseGuildMemberCount*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildMemberCounterModule_DecreaseGuildMemberCount_Libplanet_Action_State_IWorld_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.DecreaseGuildMemberCount(Libplanet.Action.State.IWorld,Nekoyume.TypedAddress.GuildAddress)">
-  DecreaseGuildMemberCount(IWorld, GuildAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Module/Guild/GuildMemberCounterModule.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildMemberCounterModule_DecreaseGuildMemberCount_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.DecreaseGuildMemberCount(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress)">
+  DecreaseGuildMemberCount(GuildRepository, GuildAddress)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Module/Guild/GuildMemberCounterModule.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IWorld DecreaseGuildMemberCount(this IWorld world, GuildAddress guildAddress)</code></pre>
+    <pre><code class="lang-csharp hljs">public static GuildRepository DecreaseGuildMemberCount(this GuildRepository repository, GuildAddress guildAddress)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
     <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
@@ -176,7 +176,7 @@ Class GuildMemberCounterModule  <a class="header-action link-secondary" title="V
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><span class="xref">IWorld</span></dt>
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -192,8 +192,8 @@ Class GuildMemberCounterModule  <a class="header-action link-secondary" title="V
 
   <a id="Nekoyume_Module_Guild_GuildMemberCounterModule_GetGuildMemberCount_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.GetGuildMemberCount*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildMemberCounterModule_GetGuildMemberCount_Libplanet_Action_State_IWorldState_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.GetGuildMemberCount(Libplanet.Action.State.IWorldState,Nekoyume.TypedAddress.GuildAddress)">
-  GetGuildMemberCount(IWorldState, GuildAddress)
+  <h3 id="Nekoyume_Module_Guild_GuildMemberCounterModule_GetGuildMemberCount_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.GetGuildMemberCount(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress)">
+  GetGuildMemberCount(GuildRepository, GuildAddress)
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Module/Guild/GuildMemberCounterModule.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -201,12 +201,12 @@ Class GuildMemberCounterModule  <a class="header-action link-secondary" title="V
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static BigInteger GetGuildMemberCount(this IWorldState world, GuildAddress guildAddress)</code></pre>
+    <pre><code class="lang-csharp hljs">public static BigInteger GetGuildMemberCount(this GuildRepository repository, GuildAddress guildAddress)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>world</code> <span class="xref">IWorldState</span></dt>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
     <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
@@ -230,21 +230,21 @@ Class GuildMemberCounterModule  <a class="header-action link-secondary" title="V
 
   <a id="Nekoyume_Module_Guild_GuildMemberCounterModule_IncreaseGuildMemberCount_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.IncreaseGuildMemberCount*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildMemberCounterModule_IncreaseGuildMemberCount_Libplanet_Action_State_IWorld_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.IncreaseGuildMemberCount(Libplanet.Action.State.IWorld,Nekoyume.TypedAddress.GuildAddress)">
-  IncreaseGuildMemberCount(IWorld, GuildAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Module/Guild/GuildMemberCounterModule.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildMemberCounterModule_IncreaseGuildMemberCount_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildMemberCounterModule.IncreaseGuildMemberCount(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress)">
+  IncreaseGuildMemberCount(GuildRepository, GuildAddress)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.20.0/Lib9c/Module/Guild/GuildMemberCounterModule.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IWorld IncreaseGuildMemberCount(this IWorld world, GuildAddress guildAddress)</code></pre>
+    <pre><code class="lang-csharp hljs">public static GuildRepository IncreaseGuildMemberCount(this GuildRepository repository, GuildAddress guildAddress)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
     <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
@@ -252,7 +252,7 @@ Class GuildMemberCounterModule  <a class="header-action link-secondary" title="V
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><span class="xref">IWorld</span></dt>
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
