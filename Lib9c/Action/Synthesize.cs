@@ -60,7 +60,7 @@ namespace Nekoyume.Action
         /// </summary>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
 
             // Collect addresses
