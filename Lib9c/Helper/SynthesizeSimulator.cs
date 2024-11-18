@@ -19,7 +19,7 @@ namespace Nekoyume.Helper
     public struct SynthesizeResult
     {
         public ItemBase ItemBase;
-        // TODO: Add more fields
+        public bool IsSuccess;
     }
 
     public static class SynthesizeSimulator
@@ -83,7 +83,18 @@ namespace Nekoyume.Helper
 
                         // Decide the item to add to inventory based on SynthesizeWeightSheet
                         var synthesizedItem = GetSynthesizedItem(outputGradeId, sheets, random, itemSubType);
-                        synthesizeResults.Add(new SynthesizeResult { ItemBase = synthesizedItem, });
+
+                        if (isSuccess && grade == (Grade)synthesizedItem.Grade)
+                        {
+                            // If there are no items in the data that are one above the current grade, they cannot succeed.
+                            isSuccess = false;
+                        }
+
+                        synthesizeResults.Add(new SynthesizeResult
+                        {
+                            ItemBase = synthesizedItem,
+                            IsSuccess = isSuccess,
+                        });
                     }
                 }
             }
