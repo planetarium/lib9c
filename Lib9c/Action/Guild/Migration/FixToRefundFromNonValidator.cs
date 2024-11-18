@@ -26,7 +26,6 @@ namespace Nekoyume.Action.Guild.Migration
 
         public List<Address> Targets { get; private set; }
 
-        [Obsolete("Don't call in code.", error: false)]
         public FixToRefundFromNonValidator()
         {
         }
