@@ -76,7 +76,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
         [Fact]
         public void Execute()
         {
-            var world = new FixToRefundFromNonValidator(_agentAddress).Execute(new ActionContext
+            var world = new FixToRefundFromNonValidator(new Address[] { _agentAddress }).Execute(new ActionContext
             {
                 PreviousState = _world,
                 Signer = _adminAddress,
@@ -91,7 +91,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
         {
             Assert.Throws<PermissionDeniedException>(() =>
             {
-                new FixToRefundFromNonValidator(_agentAddress).Execute(new ActionContext
+                new FixToRefundFromNonValidator(new Address[] { _agentAddress }).Execute(new ActionContext
                 {
                     PreviousState = _world,
                     Signer = new PrivateKey().Address,
@@ -107,7 +107,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
                 .MintAsset(new ActionContext { }, _stakeAddress, _gg * 5);
             Assert.Throws<InvalidOperationException>(() =>
             {
-                new FixToRefundFromNonValidator(_agentAddress).Execute(new ActionContext
+                new FixToRefundFromNonValidator(new Address[] { _agentAddress }).Execute(new ActionContext
                 {
                     PreviousState = world,
                     Signer = _adminAddress,
@@ -123,7 +123,7 @@ namespace Lib9c.Tests.Action.Guild.Migration
             var world = _world.SetLegacyState(_stakeAddress, stakeState.Serialize());
             Assert.Throws<InvalidOperationException>(() =>
             {
-                new FixToRefundFromNonValidator(_agentAddress).Execute(new ActionContext
+                new FixToRefundFromNonValidator(new Address[] { _agentAddress }).Execute(new ActionContext
                 {
                     PreviousState = World,
                     Signer = _adminAddress,

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Bencodex.Types;
 using Lib9c;
 using Libplanet.Action.State;
@@ -8,6 +9,7 @@ using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Libplanet.Crypto;
+using System.Linq;
 
 namespace Nekoyume.Action.Guild.Migration
 {
@@ -20,37 +22,37 @@ namespace Nekoyume.Action.Guild.Migration
     {
         public const string TypeIdentifier = "fix_to_refund_from_non_validator";
 
-        private const string TargetKey = "t";
+        private const string TargetsKey = "t";
 
-        public Address Target { get; private set; }
+        public List<Address> Targets { get; private set; }
 
         [Obsolete("Don't call in code.", error: false)]
         public FixToRefundFromNonValidator()
         {
         }
 
-        public FixToRefundFromNonValidator(Address target)
+        public FixToRefundFromNonValidator(IEnumerable<Address> targets)
         {
-            Target = target;
+            Targets = targets.ToList();
         }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", Dictionary.Empty
-                .Add(TargetKey, Target.Bencoded));
+                .Add(TargetsKey, new List(Targets.Select(t => t.Bencoded))));
 
         public override void LoadPlainValue(IValue plainValue)
         {
             if (plainValue is not Dictionary root ||
                 !root.TryGetValue((Text)"values", out var rawValues) ||
                 rawValues is not Dictionary values ||
-                !values.TryGetValue((Text)TargetKey, out var rawTarget) ||
-                rawTarget is not Binary target)
+                !values.TryGetValue((Text)TargetsKey, out var rawTarget) ||
+                rawTarget is not List targets)
             {
                 throw new InvalidCastException();
             }
 
-            Target = new Address(target);
+            Targets = targets.Select(t => new Address(t)).ToList();
         }
 
         public override IWorld Execute(IActionContext context)
@@ -69,9 +71,19 @@ namespace Nekoyume.Action.Guild.Migration
                 throw new PermissionDeniedException(adminState, context.Signer);
             }
 
-            var stakeStateAddress = StakeState.DeriveAddress(Target);
+            foreach (var target in Targets)
+            {
+                world = RefundFromNonValidator(context, world, target);
+            }
 
-            if (!world.TryGetStakeState(Target, out var stakeState)
+            return world;
+        }
+
+        private IWorld RefundFromNonValidator(IActionContext context, IWorld world, Address target)
+        {
+            var stakeStateAddress = StakeState.DeriveAddress(target);
+
+            if (!world.TryGetStakeState(target, out var stakeState)
                 || stakeState.StateVersion != 3)
             {
                 throw new InvalidOperationException(
