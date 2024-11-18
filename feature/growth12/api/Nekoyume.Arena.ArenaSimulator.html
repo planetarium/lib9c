@@ -198,6 +198,37 @@ Class ArenaSimulator  <a class="header-action link-secondary" title="View source
 </h2>
 
 
+  <a id="Nekoyume_Arena_ArenaSimulator_BuffLimitSheet_" data-uid="Nekoyume.Arena.ArenaSimulator.BuffLimitSheet*"></a>
+
+  <h3 id="Nekoyume_Arena_ArenaSimulator_BuffLimitSheet" data-uid="Nekoyume.Arena.ArenaSimulator.BuffLimitSheet">
+  BuffLimitSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Arena/ArenaSimulator.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BuffLimitSheet BuffLimitSheet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Arena_ArenaSimulator_BuffLinkSheet_" data-uid="Nekoyume.Arena.ArenaSimulator.BuffLinkSheet*"></a>
 
   <h3 id="Nekoyume_Arena_ArenaSimulator_BuffLinkSheet" data-uid="Nekoyume.Arena.ArenaSimulator.BuffLinkSheet">
@@ -219,37 +250,6 @@ Class ArenaSimulator  <a class="header-action link-secondary" title="View source
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.TableData.BuffLinkSheet.html">BuffLinkSheet</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Nekoyume_Arena_ArenaSimulator_DeBuffLimitSheet_" data-uid="Nekoyume.Arena.ArenaSimulator.DeBuffLimitSheet*"></a>
-
-  <h3 id="Nekoyume_Arena_ArenaSimulator_DeBuffLimitSheet" data-uid="Nekoyume.Arena.ArenaSimulator.DeBuffLimitSheet">
-  DeBuffLimitSheet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Arena/ArenaSimulator.cs/#L26"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DeBuffLimitSheet DeBuffLimitSheet { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Nekoyume.TableData.DeBuffLimitSheet.html">DeBuffLimitSheet</a></dt>
     <dd></dd>
   </dl>
 
@@ -421,8 +421,8 @@ Class ArenaSimulator  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Arena_ArenaSimulator_Simulate_" data-uid="Nekoyume.Arena.ArenaSimulator.Simulate*"></a>
 
-  <h3 id="Nekoyume_Arena_ArenaSimulator_Simulate_Nekoyume_Model_ArenaPlayerDigest_Nekoyume_Model_ArenaPlayerDigest_Nekoyume_TableData_ArenaSimulatorSheets_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_DeBuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_" data-uid="Nekoyume.Arena.ArenaSimulator.Simulate(Nekoyume.Model.ArenaPlayerDigest,Nekoyume.Model.ArenaPlayerDigest,Nekoyume.TableData.ArenaSimulatorSheets,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.DeBuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean)">
-  Simulate(ArenaPlayerDigest, ArenaPlayerDigest, ArenaSimulatorSheets, List&lt;StatModifier&gt;, List&lt;StatModifier&gt;, DeBuffLimitSheet, BuffLinkSheet, bool)
+  <h3 id="Nekoyume_Arena_ArenaSimulator_Simulate_Nekoyume_Model_ArenaPlayerDigest_Nekoyume_Model_ArenaPlayerDigest_Nekoyume_TableData_ArenaSimulatorSheets_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_" data-uid="Nekoyume.Arena.ArenaSimulator.Simulate(Nekoyume.Model.ArenaPlayerDigest,Nekoyume.Model.ArenaPlayerDigest,Nekoyume.TableData.ArenaSimulatorSheets,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean)">
+  Simulate(ArenaPlayerDigest, ArenaPlayerDigest, ArenaSimulatorSheets, List&lt;StatModifier&gt;, List&lt;StatModifier&gt;, BuffLimitSheet, BuffLinkSheet, bool)
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Arena/ArenaSimulator.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -430,7 +430,7 @@ Class ArenaSimulator  <a class="header-action link-secondary" title="View source
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ArenaLog Simulate(ArenaPlayerDigest challenger, ArenaPlayerDigest enemy, ArenaSimulatorSheets sheets, List&lt;StatModifier&gt; challengerCollectionModifiers, List&lt;StatModifier&gt; enemyCollectionModifiers, DeBuffLimitSheet deBuffLimitSheet, BuffLinkSheet buffLinkSheet, bool setExtraValueBuffBeforeGetBuffs = false)</code></pre>
+    <pre><code class="lang-csharp hljs">public ArenaLog Simulate(ArenaPlayerDigest challenger, ArenaPlayerDigest enemy, ArenaSimulatorSheets sheets, List&lt;StatModifier&gt; challengerCollectionModifiers, List&lt;StatModifier&gt; enemyCollectionModifiers, BuffLimitSheet buffLimitSheet, BuffLinkSheet buffLinkSheet, bool setExtraValueBuffBeforeGetBuffs = false)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -445,7 +445,7 @@ Class ArenaSimulator  <a class="header-action link-secondary" title="View source
     <dd></dd>
     <dt><code>enemyCollectionModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
     <dd></dd>
-    <dt><code>deBuffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.DeBuffLimitSheet.html">DeBuffLimitSheet</a></dt>
+    <dt><code>buffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
     <dd></dd>
     <dt><code>buffLinkSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLinkSheet.html">BuffLinkSheet</a></dt>
     <dd></dd>

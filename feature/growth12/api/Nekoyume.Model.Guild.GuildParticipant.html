@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Guild_GuildParticipant" data-uid="Nekoyume.Model.Guild.GuildParticipant" class="text-break">
-Class GuildParticipant  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Class GuildParticipant  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -155,21 +155,25 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 
   <a id="Nekoyume_Model_Guild_GuildParticipant__ctor_" data-uid="Nekoyume.Model.Guild.GuildParticipant.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Guild_GuildParticipant__ctor_Bencodex_Types_List_" data-uid="Nekoyume.Model.Guild.GuildParticipant.#ctor(Bencodex.Types.List)">
-  GuildParticipant(List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant__ctor_Nekoyume_TypedAddress_AgentAddress_Bencodex_Types_IValue_Nekoyume_Model_Guild_GuildRepository_" data-uid="Nekoyume.Model.Guild.GuildParticipant.#ctor(Nekoyume.TypedAddress.AgentAddress,Bencodex.Types.IValue,Nekoyume.Model.Guild.GuildRepository)">
+  GuildParticipant(AgentAddress, IValue, GuildRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public GuildParticipant(List list)</code></pre>
+    <pre><code class="lang-csharp hljs">public GuildParticipant(AgentAddress address, IValue bencoded, GuildRepository repository)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>list</code> <span class="xref">List</span></dt>
+    <dt><code>address</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
+    <dd></dd>
+    <dt><code>bencoded</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -186,21 +190,25 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 
   <a id="Nekoyume_Model_Guild_GuildParticipant__ctor_" data-uid="Nekoyume.Model.Guild.GuildParticipant.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Guild_GuildParticipant__ctor_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Model.Guild.GuildParticipant.#ctor(Nekoyume.TypedAddress.GuildAddress)">
-  GuildParticipant(GuildAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant__ctor_Nekoyume_TypedAddress_AgentAddress_Nekoyume_TypedAddress_GuildAddress_Nekoyume_Model_Guild_GuildRepository_" data-uid="Nekoyume.Model.Guild.GuildParticipant.#ctor(Nekoyume.TypedAddress.AgentAddress,Nekoyume.TypedAddress.GuildAddress,Nekoyume.Model.Guild.GuildRepository)">
+  GuildParticipant(AgentAddress, GuildAddress, GuildRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public GuildParticipant(GuildAddress guildAddress)</code></pre>
+    <pre><code class="lang-csharp hljs">public GuildParticipant(AgentAddress address, GuildAddress guildAddress, GuildRepository repository)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
+    <dt><code>address</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
+    <dd></dd>
     <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -222,7 +230,7 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Guild_GuildParticipant_GuildAddress" data-uid="Nekoyume.Model.Guild.GuildParticipant.GuildAddress">
   GuildAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -253,11 +261,42 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 </h2>
 
 
+  <a id="Nekoyume_Model_Guild_GuildParticipant_Address_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Address*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_Address" data-uid="Nekoyume.Model.Guild.GuildParticipant.Address">
+  Address
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AgentAddress Address { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Guild_GuildParticipant_Bencoded_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Bencoded*"></a>
 
   <h3 id="Nekoyume_Model_Guild_GuildParticipant_Bencoded" data-uid="Nekoyume.Model.Guild.GuildParticipant.Bencoded">
   Bencoded
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -284,15 +323,176 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 
 
 
+  <a id="Nekoyume_Model_Guild_GuildParticipant_DelegationPoolAddress_" data-uid="Nekoyume.Model.Guild.GuildParticipant.DelegationPoolAddress*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_DelegationPoolAddress" data-uid="Nekoyume.Model.Guild.GuildParticipant.DelegationPoolAddress">
+  DelegationPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address DelegationPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildParticipant_Repository_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Repository*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_Repository" data-uid="Nekoyume.Model.Guild.GuildParticipant.Repository">
+  Repository
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuildRepository Repository { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildParticipant_RewardAddress_" data-uid="Nekoyume.Model.Guild.GuildParticipant.RewardAddress*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_RewardAddress" data-uid="Nekoyume.Model.Guild.GuildParticipant.RewardAddress">
+  RewardAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address RewardAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
+
+
+  <a id="Nekoyume_Model_Guild_GuildParticipant_ClaimReward_" data-uid="Nekoyume.Model.Guild.GuildParticipant.ClaimReward*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_ClaimReward_Nekoyume_Model_Guild_Guild_System_Int64_" data-uid="Nekoyume.Model.Guild.GuildParticipant.ClaimReward(Nekoyume.Model.Guild.Guild,System.Int64)">
+  ClaimReward(Guild, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClaimReward(Guild guild, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>guild</code> <a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildParticipant_Delegate_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Delegate*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_Delegate_Nekoyume_Model_Guild_Guild_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Delegate(Nekoyume.Model.Guild.Guild,Libplanet.Types.Assets.FungibleAssetValue,System.Int64)">
+  Delegate(Guild, FungibleAssetValue, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Delegate(Guild guild, FungibleAssetValue fav, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>guild</code> <a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+    <dt><code>fav</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
 
 
   <a id="Nekoyume_Model_Guild_GuildParticipant_Equals_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Equals*"></a>
 
   <h3 id="Nekoyume_Model_Guild_GuildParticipant_Equals_Nekoyume_Model_Guild_GuildParticipant_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Equals(Nekoyume.Model.Guild.GuildParticipant)">
-  Equals(GuildParticipant)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  Equals(GuildParticipant?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L164"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -300,7 +500,7 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Equals(GuildParticipant other)</code></pre>
+    <pre><code class="lang-csharp hljs">public bool Equals(GuildParticipant? other)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -330,8 +530,8 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
   <a id="Nekoyume_Model_Guild_GuildParticipant_Equals_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Equals*"></a>
 
   <h3 id="Nekoyume_Model_Guild_GuildParticipant_Equals_System_Object_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Equals(System.Object)">
-  Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -339,7 +539,7 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -370,7 +570,7 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Guild_GuildParticipant_GetHashCode" data-uid="Nekoyume.Model.Guild.GuildParticipant.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -399,11 +599,83 @@ Class GuildParticipant  <a class="header-action link-secondary" title="View sour
 
 
 
+  <a id="Nekoyume_Model_Guild_GuildParticipant_Redelegate_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Redelegate*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_Redelegate_Nekoyume_Model_Guild_Guild_Nekoyume_Model_Guild_Guild_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Redelegate(Nekoyume.Model.Guild.Guild,Nekoyume.Model.Guild.Guild,System.Numerics.BigInteger,System.Int64)">
+  Redelegate(Guild, Guild, BigInteger, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Redelegate(Guild srcGuild, Guild dstGuild, BigInteger share, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>srcGuild</code> <a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+    <dt><code>dstGuild</code> <a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildParticipant_Undelegate_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Undelegate*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildParticipant_Undelegate_Nekoyume_Model_Guild_Guild_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.Model.Guild.GuildParticipant.Undelegate(Nekoyume.Model.Guild.Guild,System.Numerics.BigInteger,System.Int64)">
+  Undelegate(Guild, BigInteger, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Undelegate(Guild guild, BigInteger share, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>guild</code> <a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Model/Guild/GuildParticipant.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 

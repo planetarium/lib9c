@@ -1,0 +1,1486 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ValidatorDelegatee | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ValidatorDelegatee | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/feature/growth12/apiSpec/new?filename=Nekoyume_ValidatorDelegation_ValidatorDelegatee.md&amp;value=---%0Auid%3A%20Nekoyume.ValidatorDelegation.ValidatorDelegatee%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee">
+
+
+
+  <h1 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee" class="text-break">
+Class ValidatorDelegatee  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.ValidatorDelegation.html">ValidatorDelegation</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class ValidatorDelegatee : Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;, IDelegatee, IEquatable&lt;ValidatorDelegatee&gt;, IBencodable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Delegation.Delegatee-2.html">Delegatee</a>&lt;<a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorDelegator.html">ValidatorDelegator</a>, <a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorDelegatee.html">ValidatorDelegatee</a>&gt;</div>
+      <div><span class="xref">ValidatorDelegatee</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Delegation.IDelegatee.html">IDelegatee</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorDelegatee.html">ValidatorDelegatee</a>&gt;</div>
+      <div><span class="xref">IBencodable</span></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DelegationChanged">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.DelegationChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Enjailed">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Enjailed</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unjailed">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Unjailed</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Metadata">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Metadata</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Repository">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Repository</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Address">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Address</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_AccountAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.AccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MetadataAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.MetadataAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DelegationCurrency">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.DelegationCurrency</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardCurrencies">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.RewardCurrencies</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DelegationPoolAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.DelegationPoolAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardPoolAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.RewardPoolAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardRemainderPoolAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.RewardRemainderPoolAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_SlashedPoolAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.SlashedPoolAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_UnbondingPeriod">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.UnbondingPeriod</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MaxUnbondLockInEntries">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.MaxUnbondLockInEntries</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MaxRebondGraceEntries">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.MaxRebondGraceEntries</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Delegators">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Delegators</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_TotalDelegated">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.TotalDelegated</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_TotalShares">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.TotalShares</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Jailed">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Jailed</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_JailedUntil">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.JailedUntil</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Tombstoned">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Tombstoned</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MetadataBencoded">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.MetadataBencoded</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_ShareFromFAV_Libplanet_Types_Assets_FungibleAssetValue_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.ShareFromFAV(FungibleAssetValue)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_FAVFromShare_System_Numerics_BigInteger_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.FAVFromShare(BigInteger)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Bond_Nekoyume_Delegation_IDelegator_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Bond(IDelegator, FungibleAssetValue, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unbond_Nekoyume_Delegation_IDelegator_System_Numerics_BigInteger_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Unbond(IDelegator, BigInteger, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DistributeReward_Nekoyume_Delegation_IDelegator_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.DistributeReward(IDelegator, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Jail_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Jail(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unjail_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Unjail(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Tombstone">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Tombstone()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_BondAddress_Libplanet_Crypto_Address_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.BondAddress(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_UnbondLockInAddress_Libplanet_Crypto_Address_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.UnbondLockInAddress(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RebondGraceAddress_Libplanet_Crypto_Address_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.RebondGraceAddress(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CurrentLumpSumRewardsRecordAddress">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.CurrentLumpSumRewardsRecordAddress()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_LumpSumRewardsRecordAddress_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.LumpSumRewardsRecordAddress(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Bond__0_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Bond(ValidatorDelegator, FungibleAssetValue, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unbond__0_System_Numerics_BigInteger_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Unbond(ValidatorDelegator, BigInteger, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DistributeReward__0_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.DistributeReward(ValidatorDelegator, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CollectRewards_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.CollectRewards(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.Slash(BigInteger, long, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_AddUnbondingRef_Nekoyume_Delegation_UnbondingRef_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.AddUnbondingRef(UnbondingRef)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RemoveUnbondingRef_Nekoyume_Delegation_UnbondingRef_">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.RemoveUnbondingRef(UnbondingRef)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CalculateReward_System_Numerics_BigInteger_System_Collections_Generic_IEnumerable_Nekoyume_Delegation_LumpSumRewardsRecord__">Delegatee&lt;ValidatorDelegator, ValidatorDelegatee&gt;.CalculateReward(BigInteger, IEnumerable&lt;LumpSumRewardsRecord&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee__ctor_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.#ctor*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee__ctor_Libplanet_Crypto_Address_Bencodex_Types_IValue_Nekoyume_ValidatorDelegation_ValidatorRepository_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.#ctor(Libplanet.Crypto.Address,Bencodex.Types.IValue,Nekoyume.ValidatorDelegation.ValidatorRepository)">
+  ValidatorDelegatee(Address, IValue, ValidatorRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ValidatorDelegatee(Address address, IValue bencoded, ValidatorRepository repository)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>bencoded</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorRepository.html">ValidatorRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee__ctor_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.#ctor*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee__ctor_Libplanet_Crypto_Address_Bencodex_Types_List_Nekoyume_ValidatorDelegation_ValidatorRepository_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.#ctor(Libplanet.Crypto.Address,Bencodex.Types.List,Nekoyume.ValidatorDelegation.ValidatorRepository)">
+  ValidatorDelegatee(Address, List, ValidatorRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ValidatorDelegatee(Address address, List bencoded, ValidatorRepository repository)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>bencoded</code> <span class="xref">List</span></dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorRepository.html">ValidatorRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee__ctor_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.#ctor*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee__ctor_Libplanet_Crypto_Address_Libplanet_Crypto_PublicKey_System_Numerics_BigInteger_System_Int64_System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_Currency__Nekoyume_ValidatorDelegation_ValidatorRepository_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.#ctor(Libplanet.Crypto.Address,Libplanet.Crypto.PublicKey,System.Numerics.BigInteger,System.Int64,System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.Currency},Nekoyume.ValidatorDelegation.ValidatorRepository)">
+  ValidatorDelegatee(Address, PublicKey, BigInteger, long, IEnumerable&lt;Currency&gt;, ValidatorRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ValidatorDelegatee(Address address, PublicKey publicKey, BigInteger commissionPercentage, long creationHeight, IEnumerable&lt;Currency&gt; rewardCurrencies, ValidatorRepository repository)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>publicKey</code> <span class="xref">PublicKey</span></dt>
+    <dd></dd>
+    <dt><code>commissionPercentage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>creationHeight</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>rewardCurrencies</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">Currency</span>&gt;</dt>
+    <dd></dd>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorRepository.html">ValidatorRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ActiveDelegationPoolAddress_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ActiveDelegationPoolAddress*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ActiveDelegationPoolAddress" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ActiveDelegationPoolAddress">
+  ActiveDelegationPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L284"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address ActiveDelegationPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_BaseProposerRewardPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.BaseProposerRewardPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_BaseProposerRewardPercentage" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.BaseProposerRewardPercentage">
+  BaseProposerRewardPercentage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger BaseProposerRewardPercentage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Bencoded_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Bencoded*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Bencoded" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Bencoded">
+  Bencoded
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List Bencoded { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">List</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_BonusProposerRewardPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.BonusProposerRewardPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_BonusProposerRewardPercentage" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.BonusProposerRewardPercentage">
+  BonusProposerRewardPercentage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger BonusProposerRewardPercentage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentage" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentage">
+  CommissionPercentage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigInteger CommissionPercentage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentageLastUpdateHeight_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentageLastUpdateHeight*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentageLastUpdateHeight" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentageLastUpdateHeight">
+  CommissionPercentageLastUpdateHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long CommissionPercentageLastUpdateHeight { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentageMaxChange_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentageMaxChange*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentageMaxChange" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentageMaxChange">
+  CommissionPercentageMaxChange
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger CommissionPercentageMaxChange { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentageUpdateCooldown_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentageUpdateCooldown*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_CommissionPercentageUpdateCooldown" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.CommissionPercentageUpdateCooldown">
+  CommissionPercentageUpdateCooldown
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long CommissionPercentageUpdateCooldown { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_DefaultCommissionPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.DefaultCommissionPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_DefaultCommissionPercentage" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.DefaultCommissionPercentage">
+  DefaultCommissionPercentage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger DefaultCommissionPercentage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_InactiveDelegationPoolAddress_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.InactiveDelegationPoolAddress*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_InactiveDelegationPoolAddress" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.InactiveDelegationPoolAddress">
+  InactiveDelegationPoolAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address InactiveDelegationPoolAddress { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_IsActive_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.IsActive*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_IsActive" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.IsActive">
+  IsActive
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsActive { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_MaxCommissionPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.MaxCommissionPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_MaxCommissionPercentage" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.MaxCommissionPercentage">
+  MaxCommissionPercentage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger MaxCommissionPercentage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_MinCommissionPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.MinCommissionPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_MinCommissionPercentage" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.MinCommissionPercentage">
+  MinCommissionPercentage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger MinCommissionPercentage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_MinSelfDelegation_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.MinSelfDelegation*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_MinSelfDelegation" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.MinSelfDelegation">
+  MinSelfDelegation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue MinSelfDelegation { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Power_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Power*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Power" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Power">
+  Power
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigInteger Power { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_PublicKey_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.PublicKey*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_PublicKey" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.PublicKey">
+  PublicKey
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PublicKey PublicKey { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PublicKey</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Validator_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Validator*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Validator" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Validator">
+  Validator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Validator Validator { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Validator</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorDelegationCurrency_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorDelegationCurrency*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorDelegationCurrency" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorDelegationCurrency">
+  ValidatorDelegationCurrency
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Currency ValidatorDelegationCurrency { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Currency</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorMaxRebondGraceEntries_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorMaxRebondGraceEntries*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorMaxRebondGraceEntries" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorMaxRebondGraceEntries">
+  ValidatorMaxRebondGraceEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ValidatorMaxRebondGraceEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorMaxUnbondLockInEntries_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorMaxUnbondLockInEntries*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorMaxUnbondLockInEntries" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorMaxUnbondLockInEntries">
+  ValidatorMaxUnbondLockInEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ValidatorMaxUnbondLockInEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorUnbondingPeriod_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorUnbondingPeriod*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_ValidatorUnbondingPeriod" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.ValidatorUnbondingPeriod">
+  ValidatorUnbondingPeriod
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long ValidatorUnbondingPeriod { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Activate_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Activate*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Activate" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Activate">
+  Activate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Activate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_AllocateReward_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.AllocateReward*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_AllocateReward_Libplanet_Types_Assets_FungibleAssetValue_System_Numerics_BigInteger_System_Numerics_BigInteger_Libplanet_Crypto_Address_System_Int64_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.AllocateReward(Libplanet.Types.Assets.FungibleAssetValue,System.Numerics.BigInteger,System.Numerics.BigInteger,Libplanet.Crypto.Address,System.Int64)">
+  AllocateReward(FungibleAssetValue, BigInteger, BigInteger, Address, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AllocateReward(FungibleAssetValue rewardToAllocate, BigInteger validatorPower, BigInteger validatorSetPower, Address RewardSource, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rewardToAllocate</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+    <dt><code>validatorPower</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>validatorSetPower</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>RewardSource</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Deactivate_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Deactivate*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Deactivate" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Deactivate">
+  Deactivate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Deactivate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Equals_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Equals*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Equals_Nekoyume_Delegation_IDelegatee_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Equals(Nekoyume.Delegation.IDelegatee)">
+  Equals(IDelegatee?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(IDelegatee? other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Nekoyume.Delegation.IDelegatee.html">IDelegatee</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Equals_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Equals*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Equals_Nekoyume_ValidatorDelegation_ValidatorDelegatee_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Equals(Nekoyume.ValidatorDelegation.ValidatorDelegatee)">
+  Equals(ValidatorDelegatee?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(ValidatorDelegatee? other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Nekoyume.ValidatorDelegation.ValidatorDelegatee.html">ValidatorDelegatee</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Equals_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Equals*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Equals_System_Object_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L278"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the specified object  is equal to the current object; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_GetHashCode_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.GetHashCode*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_GetHashCode" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L281"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A hash code for the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_OnDelegationChanged_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.OnDelegationChanged*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_OnDelegationChanged_System_Object_System_Int64_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.OnDelegationChanged(System.Object,System.Int64)">
+  OnDelegationChanged(object?, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnDelegationChanged(object? sender, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_OnEnjailed_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.OnEnjailed*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_OnEnjailed_System_Object_System_EventArgs_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.OnEnjailed(System.Object,System.EventArgs)">
+  OnEnjailed(object?, EventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnEnjailed(object? sender, EventArgs e)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>e</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs">EventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_OnUnjailed_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.OnUnjailed*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_OnUnjailed_System_Object_System_EventArgs_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.OnUnjailed(System.Object,System.EventArgs)">
+  OnUnjailed(object?, EventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L261"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnUnjailed(object? sender, EventArgs e)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>e</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventargs">EventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_SetCommissionPercentage_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.SetCommissionPercentage*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_SetCommissionPercentage_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.SetCommissionPercentage(System.Numerics.BigInteger,System.Int64)">
+  SetCommissionPercentage(BigInteger, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCommissionPercentage(BigInteger percentage, long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>percentage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Unjail_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Unjail*"></a>
+
+  <h3 id="Nekoyume_ValidatorDelegation_ValidatorDelegatee_Unjail_System_Int64_" data-uid="Nekoyume.ValidatorDelegation.ValidatorDelegatee.Unjail(System.Int64)">
+  Unjail(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Unjail(long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/ValidatorDelegation/ValidatorDelegatee.cs/#L17" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Module_Guild_GuildModule" data-uid="Nekoyume.Module.Guild.GuildModule" class="text-break">
-Class GuildModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class GuildModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -152,31 +152,31 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 </h2>
 
 
-  <a id="Nekoyume_Module_Guild_GuildModule_GetGuild_" data-uid="Nekoyume.Module.Guild.GuildModule.GetGuild*"></a>
+  <a id="Nekoyume_Module_Guild_GuildModule_GetGuildRepository_" data-uid="Nekoyume.Module.Guild.GuildModule.GetGuildRepository*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildModule_GetGuild_Libplanet_Action_State_IWorldState_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildModule.GetGuild(Libplanet.Action.State.IWorldState,Nekoyume.TypedAddress.GuildAddress)">
-  GetGuild(IWorldState, GuildAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetGuildRepository_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Module.Guild.GuildModule.GetGuildRepository(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext)">
+  GetGuildRepository(IWorld, IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Guild GetGuild(this IWorldState worldState, GuildAddress guildAddress)</code></pre>
+    <pre><code class="lang-csharp hljs">public static GuildRepository GetGuildRepository(this IWorld world, IActionContext context)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>worldState</code> <span class="xref">IWorldState</span></dt>
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
     <dd></dd>
-    <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
     <dd></dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -192,31 +192,31 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 
   <a id="Nekoyume_Module_Guild_GuildModule_MakeGuild_" data-uid="Nekoyume.Module.Guild.GuildModule.MakeGuild*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildModule_MakeGuild_Libplanet_Action_State_IWorld_Nekoyume_TypedAddress_GuildAddress_Nekoyume_TypedAddress_AgentAddress_" data-uid="Nekoyume.Module.Guild.GuildModule.MakeGuild(Libplanet.Action.State.IWorld,Nekoyume.TypedAddress.GuildAddress,Nekoyume.TypedAddress.AgentAddress)">
-  MakeGuild(IWorld, GuildAddress, AgentAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildModule_MakeGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.MakeGuild(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress,Libplanet.Crypto.Address)">
+  MakeGuild(GuildRepository, GuildAddress, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IWorld MakeGuild(this IWorld world, GuildAddress guildAddress, AgentAddress signer)</code></pre>
+    <pre><code class="lang-csharp hljs">public static GuildRepository MakeGuild(this GuildRepository repository, GuildAddress guildAddress, Address validatorAddress)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
     <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
-    <dt><code>signer</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
+    <dt><code>validatorAddress</code> <span class="xref">Address</span></dt>
     <dd></dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><span class="xref">IWorld</span></dt>
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -232,29 +232,27 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 
   <a id="Nekoyume_Module_Guild_GuildModule_RemoveGuild_" data-uid="Nekoyume.Module.Guild.GuildModule.RemoveGuild*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildModule_RemoveGuild_Libplanet_Action_State_IWorld_Nekoyume_TypedAddress_AgentAddress_" data-uid="Nekoyume.Module.Guild.GuildModule.RemoveGuild(Libplanet.Action.State.IWorld,Nekoyume.TypedAddress.AgentAddress)">
-  RemoveGuild(IWorld, AgentAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildModule_RemoveGuild_Nekoyume_Model_Guild_GuildRepository_" data-uid="Nekoyume.Module.Guild.GuildModule.RemoveGuild(Nekoyume.Model.Guild.GuildRepository)">
+  RemoveGuild(GuildRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IWorld RemoveGuild(this IWorld world, AgentAddress signer)</code></pre>
+    <pre><code class="lang-csharp hljs">public static GuildRepository RemoveGuild(this GuildRepository repository)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>world</code> <span class="xref">IWorld</span></dt>
-    <dd></dd>
-    <dt><code>signer</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><span class="xref">IWorld</span></dt>
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
   </dl>
 
@@ -270,21 +268,21 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 
   <a id="Nekoyume_Module_Guild_GuildModule_TryGetGuild_" data-uid="Nekoyume.Module.Guild.GuildModule.TryGetGuild*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildModule_TryGetGuild_Libplanet_Action_State_IWorldState_Nekoyume_TypedAddress_GuildAddress_Nekoyume_Model_Guild_Guild__" data-uid="Nekoyume.Module.Guild.GuildModule.TryGetGuild(Libplanet.Action.State.IWorldState,Nekoyume.TypedAddress.GuildAddress,Nekoyume.Model.Guild.Guild@)">
-  TryGetGuild(IWorldState, GuildAddress, out Guild?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildModule_TryGetGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Nekoyume_Model_Guild_Guild__" data-uid="Nekoyume.Module.Guild.GuildModule.TryGetGuild(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress,Nekoyume.Model.Guild.Guild@)">
+  TryGetGuild(GuildRepository, GuildAddress, out Guild?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool TryGetGuild(this IWorldState worldState, GuildAddress guildAddress, out Guild? guild)</code></pre>
+    <pre><code class="lang-csharp hljs">public static bool TryGetGuild(this GuildRepository repository, GuildAddress guildAddress, out Guild? guild)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>worldState</code> <span class="xref">IWorldState</span></dt>
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
     <dd></dd>
     <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
@@ -312,7 +310,7 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Module/Guild/GuildModule.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 
