@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Delegation_LumpSumRewardsRecord" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord" class="text-break">
-Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,7 +157,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_Bencodex_Types_IValue_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,Bencodex.Types.IValue)">
   LumpSumRewardsRecord(Address, IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -190,7 +190,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_Bencodex_Types_List_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,Bencodex.Types.List)">
   LumpSumRewardsRecord(Address, List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -221,16 +221,16 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <a id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor*"></a>
 
-  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_System_Int64_System_Numerics_BigInteger_System_Collections_Immutable_ImmutableSortedSet_Libplanet_Crypto_Address__Libplanet_Types_Assets_Currency_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,System.Int64,System.Numerics.BigInteger,System.Collections.Immutable.ImmutableSortedSet{Libplanet.Crypto.Address},Libplanet.Types.Assets.Currency)">
-  LumpSumRewardsRecord(Address, long, BigInteger, ImmutableSortedSet&lt;Address&gt;, Currency)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_System_Int64_System_Numerics_BigInteger_System_Collections_Immutable_ImmutableSortedSet_Libplanet_Crypto_Address__System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_Currency__" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,System.Int64,System.Numerics.BigInteger,System.Collections.Immutable.ImmutableSortedSet{Libplanet.Crypto.Address},System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.Currency})">
+  LumpSumRewardsRecord(Address, long, BigInteger, ImmutableSortedSet&lt;Address&gt;, IEnumerable&lt;Currency&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord(Address address, long startHeight, BigInteger totalShares, ImmutableSortedSet&lt;Address&gt; delegators, Currency currency)</code></pre>
+    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord(Address address, long startHeight, BigInteger totalShares, ImmutableSortedSet&lt;Address&gt; delegators, IEnumerable&lt;Currency&gt; currencies)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -243,7 +243,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
     <dd></dd>
     <dt><code>delegators</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablesortedset-1">ImmutableSortedSet</a>&lt;<span class="xref">Address</span>&gt;</dt>
     <dd></dd>
-    <dt><code>currency</code> <span class="xref">Currency</span></dt>
+    <dt><code>currencies</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">Currency</span>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -260,16 +260,16 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <a id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor*"></a>
 
-  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_System_Int64_System_Numerics_BigInteger_System_Collections_Immutable_ImmutableSortedSet_Libplanet_Crypto_Address__Libplanet_Types_Assets_Currency_System_Nullable_System_Int64__" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,System.Int64,System.Numerics.BigInteger,System.Collections.Immutable.ImmutableSortedSet{Libplanet.Crypto.Address},Libplanet.Types.Assets.Currency,System.Nullable{System.Int64})">
-  LumpSumRewardsRecord(Address, long, BigInteger, ImmutableSortedSet&lt;Address&gt;, Currency, long?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_System_Int64_System_Numerics_BigInteger_System_Collections_Immutable_ImmutableSortedSet_Libplanet_Crypto_Address__System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_Currency__System_Nullable_System_Int64__" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,System.Int64,System.Numerics.BigInteger,System.Collections.Immutable.ImmutableSortedSet{Libplanet.Crypto.Address},System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.Currency},System.Nullable{System.Int64})">
+  LumpSumRewardsRecord(Address, long, BigInteger, ImmutableSortedSet&lt;Address&gt;, IEnumerable&lt;Currency&gt;, long?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord(Address address, long startHeight, BigInteger totalShares, ImmutableSortedSet&lt;Address&gt; delegators, Currency currency, long? lastStartHeight)</code></pre>
+    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord(Address address, long startHeight, BigInteger totalShares, ImmutableSortedSet&lt;Address&gt; delegators, IEnumerable&lt;Currency&gt; currencies, long? lastStartHeight)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -282,7 +282,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
     <dd></dd>
     <dt><code>delegators</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablesortedset-1">ImmutableSortedSet</a>&lt;<span class="xref">Address</span>&gt;</dt>
     <dd></dd>
-    <dt><code>currency</code> <span class="xref">Currency</span></dt>
+    <dt><code>currencies</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">Currency</span>&gt;</dt>
     <dd></dd>
     <dt><code>lastStartHeight</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
     <dd></dd>
@@ -301,16 +301,16 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <a id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor*"></a>
 
-  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_System_Int64_System_Numerics_BigInteger_System_Collections_Immutable_ImmutableSortedSet_Libplanet_Crypto_Address__Libplanet_Types_Assets_FungibleAssetValue_System_Nullable_System_Int64__" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,System.Int64,System.Numerics.BigInteger,System.Collections.Immutable.ImmutableSortedSet{Libplanet.Crypto.Address},Libplanet.Types.Assets.FungibleAssetValue,System.Nullable{System.Int64})">
-  LumpSumRewardsRecord(Address, long, BigInteger, ImmutableSortedSet&lt;Address&gt;, FungibleAssetValue, long?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord__ctor_Libplanet_Crypto_Address_System_Int64_System_Numerics_BigInteger_System_Collections_Immutable_ImmutableSortedSet_Libplanet_Crypto_Address__System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_FungibleAssetValue__System_Nullable_System_Int64__" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.#ctor(Libplanet.Crypto.Address,System.Int64,System.Numerics.BigInteger,System.Collections.Immutable.ImmutableSortedSet{Libplanet.Crypto.Address},System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.FungibleAssetValue},System.Nullable{System.Int64})">
+  LumpSumRewardsRecord(Address, long, BigInteger, ImmutableSortedSet&lt;Address&gt;, IEnumerable&lt;FungibleAssetValue&gt;, long?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord(Address address, long startHeight, BigInteger totalShares, ImmutableSortedSet&lt;Address&gt; delegators, FungibleAssetValue lumpSumRewards, long? lastStartHeight)</code></pre>
+    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord(Address address, long startHeight, BigInteger totalShares, ImmutableSortedSet&lt;Address&gt; delegators, IEnumerable&lt;FungibleAssetValue&gt; lumpSumRewards, long? lastStartHeight)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -323,7 +323,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
     <dd></dd>
     <dt><code>delegators</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablesortedset-1">ImmutableSortedSet</a>&lt;<span class="xref">Address</span>&gt;</dt>
     <dd></dd>
-    <dt><code>lumpSumRewards</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dt><code>lumpSumRewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">FungibleAssetValue</span>&gt;</dt>
     <dd></dd>
     <dt><code>lastStartHeight</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
     <dd></dd>
@@ -348,7 +348,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_Address" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.Address">
   Address
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -379,7 +379,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_Bencoded" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.Bencoded">
   Bencoded
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -410,7 +410,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_Delegators" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.Delegators">
   Delegators
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L113"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -441,7 +441,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_LastStartHeight" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.LastStartHeight">
   LastStartHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -472,14 +472,14 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_LumpSumRewards" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.LumpSumRewards">
   LumpSumRewards
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public FungibleAssetValue LumpSumRewards { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ImmutableDictionary&lt;Currency, FungibleAssetValue&gt; LumpSumRewards { get; }</code></pre>
   </div>
 
 
@@ -488,7 +488,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutabledictionary-2">ImmutableDictionary</a>&lt;<span class="xref">Currency</span>, <span class="xref">FungibleAssetValue</span>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -503,7 +503,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_StartHeight" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.StartHeight">
   StartHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -534,7 +534,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_TotalShares" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.TotalShares">
   TotalShares
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L109"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -569,7 +569,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_AddLumpSumRewards_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.AddLumpSumRewards(Libplanet.Types.Assets.FungibleAssetValue)">
   AddLumpSumRewards(FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -601,11 +601,85 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
 
 
+  <a id="Nekoyume_Delegation_LumpSumRewardsRecord_AddLumpSumRewards_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.AddLumpSumRewards*"></a>
+
+  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_AddLumpSumRewards_Nekoyume_Delegation_LumpSumRewardsRecord_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.AddLumpSumRewards(Nekoyume.Delegation.LumpSumRewardsRecord,Libplanet.Types.Assets.FungibleAssetValue)">
+  AddLumpSumRewards(LumpSumRewardsRecord, FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static LumpSumRewardsRecord AddLumpSumRewards(LumpSumRewardsRecord record, FungibleAssetValue rewards)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>record</code> <a class="xref" href="Nekoyume.Delegation.LumpSumRewardsRecord.html">LumpSumRewardsRecord</a></dt>
+    <dd></dd>
+    <dt><code>rewards</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Delegation.LumpSumRewardsRecord.html">LumpSumRewardsRecord</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_LumpSumRewardsRecord_AddLumpSumRewards_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.AddLumpSumRewards*"></a>
+
+  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_AddLumpSumRewards_System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.AddLumpSumRewards(System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.FungibleAssetValue})">
+  AddLumpSumRewards(IEnumerable&lt;FungibleAssetValue&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LumpSumRewardsRecord AddLumpSumRewards(IEnumerable&lt;FungibleAssetValue&gt; rewards)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">FungibleAssetValue</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Delegation.LumpSumRewardsRecord.html">LumpSumRewardsRecord</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Delegation_LumpSumRewardsRecord_Equals_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.Equals*"></a>
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_Equals_Nekoyume_Delegation_LumpSumRewardsRecord_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.Equals(Nekoyume.Delegation.LumpSumRewardsRecord)">
   Equals(LumpSumRewardsRecord?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L185"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -644,7 +718,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_Equals_System_Object_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.Equals(System.Object)">
   Equals(object?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L182"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -683,7 +757,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_GetHashCode" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L195"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -716,7 +790,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_MoveAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.MoveAddress(Libplanet.Crypto.Address)">
   MoveAddress(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L137"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -752,7 +826,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_RemoveDelegator_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.RemoveDelegator(Libplanet.Crypto.Address)">
   RemoveDelegator(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L163"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -788,19 +862,57 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 
   <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_RewardsDuringPeriod_System_Numerics_BigInteger_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.RewardsDuringPeriod(System.Numerics.BigInteger)">
   RewardsDuringPeriod(BigInteger)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public FungibleAssetValue RewardsDuringPeriod(BigInteger share)</code></pre>
+    <pre><code class="lang-csharp hljs">public ImmutableSortedDictionary&lt;Currency, FungibleAssetValue&gt; RewardsDuringPeriod(BigInteger share)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablesorteddictionary-2">ImmutableSortedDictionary</a>&lt;<span class="xref">Currency</span>, <span class="xref">FungibleAssetValue</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_LumpSumRewardsRecord_RewardsDuringPeriod_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.RewardsDuringPeriod*"></a>
+
+  <h3 id="Nekoyume_Delegation_LumpSumRewardsRecord_RewardsDuringPeriod_System_Numerics_BigInteger_Libplanet_Types_Assets_Currency_" data-uid="Nekoyume.Delegation.LumpSumRewardsRecord.RewardsDuringPeriod(System.Numerics.BigInteger,Libplanet.Types.Assets.Currency)">
+  RewardsDuringPeriod(BigInteger, Currency)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue RewardsDuringPeriod(BigInteger share, Currency currency)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>currency</code> <span class="xref">Currency</span></dt>
     <dd></dd>
   </dl>
 
@@ -824,7 +936,7 @@ Class LumpSumRewardsRecord  <a class="header-action link-secondary" title="View 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Delegation/LumpSumRewardsRecord.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 
