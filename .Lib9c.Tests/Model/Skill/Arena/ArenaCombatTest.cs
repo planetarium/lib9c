@@ -269,5 +269,52 @@ namespace Lib9c.Tests.Model.Skill.Arena
             Assert.True(battleStatus.SkillInfos.First().Affected);
             Assert.Contains(600001, challenger.Buffs.Values.Select(bf => bf.BuffInfo.Id));
         }
+
+        [Fact]
+        public void Drr()
+        {
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+            var myDigest = new ArenaPlayerDigest(_avatar1, _arenaAvatar1);
+            var enemyDigest = new ArenaPlayerDigest(_avatar2, _arenaAvatar2);
+            var simulator = new ArenaSimulator(new TestRandom());
+            var challenger = new ArenaCharacter(
+                simulator,
+                myDigest,
+                arenaSheets,
+                simulator.HpModifier,
+                new List<StatModifier>()
+            );
+            var enemy = new ArenaCharacter(
+                simulator,
+                enemyDigest,
+                arenaSheets,
+                simulator.HpModifier,
+                new List<StatModifier>()
+            );
+            var statBuffRow = new Nekoyume.TableData.StatBuffSheet.Row();
+            var csv = $"101000,101000,20,10,Self,DRR,Add,{int.MaxValue},true";
+            statBuffRow.Set(csv.Split(","));
+            var buff = new StatBuff(statBuffRow);
+            enemy.AddBuff(buff);
+            Assert.True(enemy.DRR > 1000000);
+            var attackRow =
+                _tableSheets.SkillSheet.Values.First(bf => bf.Id == 100000);
+            var attack = new ArenaNormalAttack(attackRow, 100, 100, 0, StatType.NONE);
+            var arenaSkill = attack.Use(
+                challenger,
+                enemy,
+                simulator.Turn,
+                BuffFactory.GetBuffs(
+                    challenger.Stats,
+                    attack,
+                    _tableSheets.SkillBuffSheet,
+                    _tableSheets.StatBuffSheet,
+                    _tableSheets.SkillActionBuffSheet,
+                    _tableSheets.ActionBuffSheet
+                )
+            );
+            var info = arenaSkill.SkillInfos.Single();
+            Assert.True(info.Effect > 1);
+        }
     }
 }
