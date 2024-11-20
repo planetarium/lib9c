@@ -11,8 +11,8 @@ namespace Nekoyume.Battle
         {
             switch (drr)
             {
-                case > 5000L:
-                    drr = 5000L;
+                case > 8100L:
+                    drr = 8100L;
                     break;
                 case < 0L:
                     return 0m;
