@@ -36,6 +36,10 @@ namespace Lib9c.Tests.Action
             MessagePackSerializer.DefaultOptions = options;
         }
 
+        /// <summary>
+        /// Get all exceptions defined in the Libplanet namespace.
+        /// </summary>
+        /// <returns>Enumerable object array that contain an exception object.</returns>
         public static IEnumerable<object[]> GetLibplanetExceptions()
         {
             var t = typeof(Exception);
@@ -63,6 +67,10 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        /// <summary>
+        /// Get all exceptions defined in the Lib9c namespace.
+        /// </summary>
+        /// <returns>Enumerable object array that contain an exception object.</returns>
         public static IEnumerable<object[]> GetLib9cExceptions()
         {
             var t = typeof(Exception);
@@ -81,6 +89,10 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        /// <summary>
+        /// Tests weather Libplanet and Lib9c exceptions are serializable using MessagePack.
+        /// </summary>
+        /// <param name="excType">The type of the exception being tested.</param>
         [Theory]
         [MemberData(nameof(GetLibplanetExceptions))]
         [MemberData(nameof(GetLib9cExceptions))]
