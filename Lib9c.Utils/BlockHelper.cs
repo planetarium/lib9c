@@ -38,7 +38,8 @@ namespace Nekoyume
             DateTimeOffset? timestamp = null,
             IEnumerable<ActionBase>? actionBases = null,
             Currency? goldCurrency = null,
-            ISet<Address>? assetMinters = null
+            ISet<Address>? assetMinters = null,
+            long initialSupply = GoldCurrencyState.DEFAULT_INITIAL_SUPPLY
         )
         {
             if (!tableSheets.TryGetValue(nameof(GameConfigSheet), out var csv))
@@ -69,7 +70,7 @@ namespace Nekoyume
                     isActivateAdminAddress && !(adminState is null)  // Can't use 'not pattern' due to Unity
                     ? activatedAccounts.Add(adminState.AdminAddress)
                     : activatedAccounts),
-                goldCurrencyState: new GoldCurrencyState(goldCurrency.Value),
+                goldCurrencyState: new GoldCurrencyState(goldCurrency.Value, initialSupply),
                 goldDistributions: goldDistributions,
                 pendingActivationStates: pendingActivationStates,
                 authorizedMinersState: authorizedMinersState,

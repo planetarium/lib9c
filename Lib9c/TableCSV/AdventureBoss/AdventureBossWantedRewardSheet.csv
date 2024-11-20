@@ -1,5 +1,5 @@
 id,adventure_boss_id,fixed_type,fixed_id,random_1_type,random_1_id,random_1_ratio,random_2_type,random_2_id,random_2_ratio,random_3_type,random_3_id,random_3_ratio,random_4_type,random_4_id,random_4_ratio
-1,1,Material,600201,Material,600201,10,Material,600202,20,Rune,10035,30,Material,600203,40
-2,2,Material,600202,Material,600201,10,Material,600202,20,Rune,10035,30,Material,600203,40
-3,3,Rune,10035,Material,600201,10,Material,600202,20,Rune,10035,30,Material,600203,40
-4,4,Material,600203,Material,600201,10,Material,600202,20,Rune,10035,30,Material,600203,40
+1,1,Material,600201,Material,600201,10,Material,600202,20,Rune,10036,30,Material,600203,40
+2,2,Material,600202,Material,600201,10,Material,600202,20,Rune,10036,30,Material,600203,40
+3,3,Rune,10036,Material,600201,10,Material,600202,20,Rune,10036,30,Material,600203,40
+4,4,Material,600203,Material,600201,10,Material,600202,20,Rune,10036,30,Material,600203,40
