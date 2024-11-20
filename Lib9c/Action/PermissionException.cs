@@ -10,9 +10,13 @@ namespace Nekoyume.Action
     {
         public AdminState Policy { get; private set; }
 
-        public AdminPermissionException(AdminState policy)
+        protected AdminPermissionException(AdminState policy)
         {
             Policy = policy;
+        }
+
+        protected AdminPermissionException(string message) : base(message)
+        {
         }
 
         protected AdminPermissionException(SerializationInfo info, StreamingContext context)

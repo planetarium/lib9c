@@ -154,7 +154,11 @@ namespace Nekoyume.Battle
 
     public class InvalidCountException : InvalidOperationException
     {
-        public InvalidCountException() : base("count must be greater than 0.")
+        public InvalidCountException() : this("count must be greater than 0.")
+        {
+        }
+
+        public InvalidCountException(string message) : base(message)
         {
         }
     }

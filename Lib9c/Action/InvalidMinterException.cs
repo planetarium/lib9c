@@ -16,10 +16,13 @@ namespace Nekoyume.Action
         {
         }
 
-
         public InvalidMinterException(Address signer)
         {
             _signer = signer;
+        }
+
+        public InvalidMinterException(string message) : base(message)
+        {
         }
 
         protected InvalidMinterException(SerializationInfo info, StreamingContext context)
