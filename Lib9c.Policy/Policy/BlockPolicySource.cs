@@ -118,10 +118,6 @@ namespace Nekoyume.Blockchain.Policy
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
         {
-#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
-             return new DebugPolicy();
-#else
             maxTransactionsBytesPolicy = maxTransactionsBytesPolicy
                 ?? MaxTransactionsBytesPolicy.Default;
             minTransactionsPerBlockPolicy = minTransactionsPerBlockPolicy
@@ -169,7 +165,6 @@ namespace Nekoyume.Blockchain.Policy
                 getMinTransactionsPerBlock: minTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerBlock: maxTransactionsPerBlockPolicy.Getter,
                 getMaxTransactionsPerSignerPerBlock: maxTransactionsPerSignerPerBlockPolicy.Getter);
-#endif
         }
 
         // TODO: Remove BlockChain.GetNextWorldState() from below method.
