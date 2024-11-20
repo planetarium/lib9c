@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Bencodex.Types;
     using Lib9c.Formatters;
     using Libplanet.Action;
+    using Libplanet.Blockchain.Renderers.Debug;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
@@ -167,6 +168,12 @@ namespace Lib9c.Tests.Action
                     return true;
                 }
 
+                if (type == typeof(Guid))
+                {
+                    value = Guid.NewGuid();
+                    return true;
+                }
+
                 if (type == typeof(HashDigest<SHA256>))
                 {
                     value = HashDigest<SHA256>.FromString("baa2081d3b485ef2906c95a3965531ec750a74cfaefe91d0c3061865608b426c");
@@ -182,6 +189,12 @@ namespace Lib9c.Tests.Action
                 if (type == typeof(IImmutableSet<Type>))
                 {
                     value = ImmutableHashSet<Type>.Empty;
+                    return true;
+                }
+
+                if (type == typeof(IReadOnlyList<RenderRecord>))
+                {
+                    value = new List<RenderRecord>();
                     return true;
                 }
 
