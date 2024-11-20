@@ -30,72 +30,46 @@ namespace Lib9c.Tests.Action.Guild.Migration
         [Fact]
         public void PlainValue()
         {
-            var addresses = Enumerable.Range(0, 5).Select(_ => new PrivateKey().Address).ToList();
-            var amounts = Enumerable.Range(0, 5).Select(i => (i + 1) * 10).ToList();
-
-            var plainValue = new FixToRefundFromNonValidator(
-                addresses,
-                amounts
-            ).PlainValue;
+            var targets = Enumerable.Range(0, 5).Select(i => (new PrivateKey().Address, (i + 1) * 10)).ToList();
+            var plainValue = new FixToRefundFromNonValidator(targets).PlainValue;
 
             var recon = new FixToRefundFromNonValidator();
             recon.LoadPlainValue(plainValue);
-            Assert.Equal(addresses, recon.Targets);
-            Assert.Equal(amounts, recon.Amounts);
+            Assert.Equal(targets, recon.Targets);
         }
 
         [Fact]
         public void Execute()
         {
-            var addresses = Enumerable.Range(0, 5).Select(_ => new PrivateKey().Address).ToList();
-            var amounts = Enumerable.Range(0, 5).Select(i => (i + 1) * 10).ToList();
+            var targets = Enumerable.Range(0, 5).Select(i => (new PrivateKey().Address, (i + 1) * 10)).ToList();
 
-            var world = new FixToRefundFromNonValidator(
-                addresses,
-                amounts
-            ).Execute(new ActionContext
+            var world = new FixToRefundFromNonValidator(targets).Execute(new ActionContext
             {
                 PreviousState = _world,
                 Signer = _adminAddress,
                 BlockIndex = 2L,
             });
 
-            foreach (var item in addresses.Select((a, i) => (a, i)))
+            foreach (var item in targets)
             {
                 Assert.Equal(
-                    Currencies.GuildGold * ((item.i + 1) * 10),
-                    world.GetBalance(StakeState.DeriveAddress(item.a), Currencies.GuildGold));
+                    Currencies.GuildGold * item.Item2,
+                    world.GetBalance(StakeState.DeriveAddress(item.Item1), Currencies.GuildGold));
             }
 
             Assert.Equal(
-                Currencies.GuildGold * (500 - amounts.Sum()),
+                Currencies.GuildGold * (500 - targets.Select(t => t.Item2).Sum()),
                 world.GetBalance(Addresses.NonValidatorDelegatee, Currencies.GuildGold));
-        }
-
-        [Fact]
-        public void AssertWhenDifferentLengthArgument()
-        {
-            var addresses = Enumerable.Range(0, 5).Select(_ => new PrivateKey().Address).ToList();
-            var amounts = Enumerable.Range(0, 4).Select(i => (i + 1) * 10).ToList();
-
-            Assert.Throws<ArgumentException>(() =>
-            {
-                new FixToRefundFromNonValidator(addresses, amounts);
-            });
         }
 
         [Fact]
         public void AssertWhenExecutedByNonAdmin()
         {
-            var addresses = Enumerable.Range(0, 5).Select(_ => new PrivateKey().Address).ToList();
-            var amounts = Enumerable.Range(0, 5).Select(i => (i + 1) * 10);
+            var targets = Enumerable.Range(0, 5).Select(i => (new PrivateKey().Address, (i + 1) * 10)).ToList();
 
             Assert.Throws<PermissionDeniedException>(() =>
             {
-                new FixToRefundFromNonValidator(
-                    addresses,
-                    amounts
-                ).Execute(new ActionContext
+                new FixToRefundFromNonValidator(targets).Execute(new ActionContext
                 {
                     PreviousState = _world,
                     Signer = new PrivateKey().Address,

@@ -22,34 +22,25 @@ namespace Nekoyume.Action.Guild.Migration
 
         private const string TargetsKey = "t";
 
-        private const string AmountsKey = "a";
-
-        public List<Address> Targets { get; private set; }
-
-        public List<int> Amounts { get; private set; }
+        public List<(Address Address, int Amount)> Targets { get; private set; }
 
         public FixToRefundFromNonValidator()
         {
         }
 
         public FixToRefundFromNonValidator(
-            IEnumerable<Address> targets,
-            IEnumerable<int> amounts)
+            IEnumerable<(Address, int)> targets)
         {
             Targets = targets.ToList();
-            Amounts = amounts.ToList();
-
-            if (Targets.Count != Amounts.Count)
-            {
-                throw new ArgumentException("The number of targets and amounts must be the same.");
-            }
         }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", Dictionary.Empty
-                .Add(TargetsKey, new List(Targets.Select(t => t.Bencoded)))
-                .Add(AmountsKey, new List(Amounts)));
+                .Add(
+                    TargetsKey,
+                    new List(Targets.Select(t =>
+                        new List(t.Item1.Bencoded, (Integer)t.Item2)))));
 
         public override void LoadPlainValue(IValue plainValue)
         {
@@ -57,20 +48,15 @@ namespace Nekoyume.Action.Guild.Migration
                 !root.TryGetValue((Text)"values", out var rawValues) ||
                 rawValues is not Dictionary values ||
                 !values.TryGetValue((Text)TargetsKey, out var rawTarget) ||
-                rawTarget is not List targets ||
-                !values.TryGetValue((Text)AmountsKey, out var rawAmounts) ||
-                rawAmounts is not List amounts)
+                rawTarget is not List targets)
             {
                 throw new InvalidCastException();
             }
 
-            Targets = targets.Select(t => new Address(t)).ToList();
-            Amounts = amounts.Select(a => (int)(Integer)a).ToList();
-
-            if (Targets.Count != Amounts.Count)
-            {
-                throw new ArgumentException("The number of targets and amounts must be the same.");
-            }
+            Targets = targets.Select(
+                t => (
+                    new Address(((List)t)[0]),
+                    (int)(Integer)((List)t)[1])).ToList();
         }
 
         public override IWorld Execute(IActionContext context)
@@ -89,7 +75,7 @@ namespace Nekoyume.Action.Guild.Migration
                 throw new PermissionDeniedException(adminState, context.Signer);
             }
 
-            foreach (var ta in Targets.Zip(Amounts, (f, s) => (f, s)))
+            foreach (var ta in Targets)
             {
                 world = RefundFromNonValidator(context, world, ta);
             }
