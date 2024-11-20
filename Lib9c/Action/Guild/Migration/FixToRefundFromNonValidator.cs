@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Bencodex.Types;
 using Lib9c;
-using Libplanet.Action.State;
 using Libplanet.Action;
-using Libplanet.Types.Assets;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Libplanet.Crypto;
-using System.Linq;
 
 namespace Nekoyume.Action.Guild.Migration
 {
@@ -24,13 +22,14 @@ namespace Nekoyume.Action.Guild.Migration
 
         private const string TargetsKey = "t";
 
-        public List<Address> Targets { get; private set; }
+        public List<(Address Address, int Amount)> Targets { get; private set; }
 
         public FixToRefundFromNonValidator()
         {
         }
 
-        public FixToRefundFromNonValidator(IEnumerable<Address> targets)
+        public FixToRefundFromNonValidator(
+            IEnumerable<(Address, int)> targets)
         {
             Targets = targets.ToList();
         }
@@ -38,7 +37,10 @@ namespace Nekoyume.Action.Guild.Migration
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", Dictionary.Empty
-                .Add(TargetsKey, new List(Targets.Select(t => t.Bencoded))));
+                .Add(
+                    TargetsKey,
+                    new List(Targets.Select(t =>
+                        new List(t.Item1.Bencoded, (Integer)t.Item2)))));
 
         public override void LoadPlainValue(IValue plainValue)
         {
@@ -51,7 +53,10 @@ namespace Nekoyume.Action.Guild.Migration
                 throw new InvalidCastException();
             }
 
-            Targets = targets.Select(t => new Address(t)).ToList();
+            Targets = targets.Select(
+                t => (
+                    new Address(((List)t)[0]),
+                    (int)(Integer)((List)t)[1])).ToList();
         }
 
         public override IWorld Execute(IActionContext context)
@@ -70,43 +75,24 @@ namespace Nekoyume.Action.Guild.Migration
                 throw new PermissionDeniedException(adminState, context.Signer);
             }
 
-            foreach (var target in Targets)
+            foreach (var ta in Targets)
             {
-                world = RefundFromNonValidator(context, world, target);
+                world = RefundFromNonValidator(context, world, ta);
             }
 
             return world;
         }
 
-        private IWorld RefundFromNonValidator(IActionContext context, IWorld world, Address target)
+        private IWorld RefundFromNonValidator(IActionContext context, IWorld world, (Address, int) ta)
         {
+            var (target, amount) = ta;
             var stakeStateAddress = StakeState.DeriveAddress(target);
 
-            if (!world.TryGetStakeState(target, out var stakeState)
-                || stakeState.StateVersion != 3)
-            {
-                throw new InvalidOperationException(
-                    "Target is not valid for refunding from non-validator.");
-            }
-
-            var ncgStaked = world.GetBalance(stakeStateAddress, world.GetGoldCurrency());
-            var ggStaked = world.GetBalance(stakeStateAddress, Currencies.GuildGold);
-
-            var requiredGG = GetGuildCoinFromNCG(ncgStaked) - ggStaked;
-
-            if (requiredGG.Sign != 1)
-            {
-                throw new InvalidOperationException(
-                    "Target has sufficient amount of guild gold.");
-            }
-
-            return world.TransferAsset(context, Addresses.NonValidatorDelegatee, stakeStateAddress, requiredGG);
-        }
-
-        private static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)
-        {
-            return FungibleAssetValue.Parse(Currencies.GuildGold,
-                balance.GetQuantityString(true));
+            return world.TransferAsset(
+                context,
+                Addresses.NonValidatorDelegatee,
+                stakeStateAddress,
+                Currencies.GuildGold * amount);
         }
     }
 }
