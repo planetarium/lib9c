@@ -61,7 +61,8 @@ namespace Lib9c.Tests.Model.Skill.Adventure
         [InlineData(10, 10, 5000, 120, 50)]
         [InlineData(0, 1000, 0, 999, 1)]
         [InlineData(1000, 0, 0, 999, 1)]
-        [InlineData(0, 0, 10000, int.MaxValue, 1)]
+        [InlineData(0, 0, 10000, 300, 150)]
+        [InlineData(0, 0, 10000, int.MaxValue, 300)]
         public void CalculateDEFAndDamageReduction(int def, int drv, int drr, int enemyATK, int expectedDamage)
         {
             _player.Stats.SetStatForTest(StatType.DEF, def);
