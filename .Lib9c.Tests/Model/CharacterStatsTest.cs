@@ -78,7 +78,7 @@ namespace Lib9c.Tests.Model
             var statBuffSheet = new StatBuffSheet();
             statBuffSheet.Set($"id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is_enhanceable,max_stack\n702001,702001,DRR (커스텀 장비),100,12,Self,DRR,Add,{buffDrrValue},true,");
             var buffLimitSheet = new BuffLimitSheet();
-            // +60% atk with no limit
+            // +80 drr with no limit
             var buff = new StatBuff(statBuffSheet[702001]);
             var groupId = buff.RowData.GroupId;
             var drr = stats.DRR;
@@ -88,7 +88,7 @@ namespace Lib9c.Tests.Model
             // reset stats
             stats.RemoveBuff(buff);
             Assert.Equal(drr, stats.DRR);
-            // +60% atk but limit 50% stats
+            // +80 drr but limit 50 stats
             buffLimitSheet.Set($"group_id,modify_type,percentage\n{groupId},Add,{buffLimitValue}");
             var modifier = buffLimitSheet[groupId].GetModifier(buff.RowData.StatType);
             stats.AddBuff(buff, buffLimitSheet);
