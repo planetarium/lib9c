@@ -21,6 +21,10 @@ namespace Nekoyume.Action
             Recipient = recipient;
         }
 
+        public InvalidTransferMinterException(string message) : base(message)
+        {
+        }
+
         protected InvalidTransferMinterException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
