@@ -1,7 +1,7 @@
 item_id,_item_name,ratio
-600201,Golden Dust,0.5
-600202,Ruby Dust,2
-600203,Emerald Dust,4
+600201,Golden Dust,0.25
+600202,Ruby Dust,1
+600203,Emerald Dust,2
 600301,Normal Hammer,0.001
 600302,Rare Hammer,0.01
 600303,Epic Hammer,0.1

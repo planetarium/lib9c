@@ -32,3 +32,7 @@ id,_name,grade,rune_type,required_level,use_place,bonus_coef
 10036,HP Rune,5,1,1,7,10
 10037,ATK Rune,5,1,1,7,10
 10038,DEF Rune,5,1,1,7,10
+10039,Thor Stun Rune (Adventure),6,2,1,1,30
+10040,Thor Stun Rune (Arena),6,2,1,2,30
+10041,Loki Vampiric Rune (Adventure),6,2,1,1,30
+10042,Loki Vampiric Rune (WorldBoss),6,2,1,4,30
