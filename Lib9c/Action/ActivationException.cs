@@ -8,7 +8,11 @@ namespace Nekoyume.Action
         protected ActivationException()
         {
         }
-        
+
+        protected ActivationException(string message) : base(message)
+        {
+        }
+
         protected ActivationException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

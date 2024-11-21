@@ -4,14 +4,18 @@ using System.Runtime.Serialization;
 namespace Nekoyume.Action
 {
     [Serializable]
-    public class RankingExceededException: InvalidOperationException
+    public class RankingExceededException : InvalidOperationException
     {
         public RankingExceededException()
         {
         }
 
-        protected RankingExceededException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        public RankingExceededException(string message) : base(message)
+        {
+        }
+
+        protected RankingExceededException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
         {
         }
     }
