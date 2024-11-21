@@ -435,7 +435,7 @@ namespace Nekoyume.Action
                     // Set level of equipment here.
                     level: item.Level,
                     // Set recipeId of target equipment here.
-                    recipeId: item.ID,
+                    recipeId: item.Id,
                     // Add optionIds here.
                     item.OptionIds);
             }
