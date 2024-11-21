@@ -52,7 +52,6 @@ namespace Lib9c.Tests.Action.Coupons
                     Signer = CouponsFixture.AgentAddress1,
                     BlockIndex = 0,
                 },
-                state.GetSheet<MaterialItemSheet>(),
                 default);
             var agent1Avatar1State = CreateAvatar.CreateAvatarState(
                 "agent1avatar1",
@@ -63,7 +62,6 @@ namespace Lib9c.Tests.Action.Coupons
                     Signer = CouponsFixture.AgentAddress1,
                     BlockIndex = 0,
                 },
-                state.GetSheet<MaterialItemSheet>(),
                 default);
             var agent2Avatar0State = CreateAvatar.CreateAvatarState(
                 "agent2avatar0",
@@ -74,7 +72,6 @@ namespace Lib9c.Tests.Action.Coupons
                     Signer = CouponsFixture.AgentAddress2,
                     BlockIndex = 0,
                 },
-                state.GetSheet<MaterialItemSheet>(),
                 default);
 
             state = state
