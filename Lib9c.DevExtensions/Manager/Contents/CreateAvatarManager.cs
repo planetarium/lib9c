@@ -114,11 +114,13 @@ namespace Lib9c.DevExtensions.Manager.Contents
                     optionRow.SkillChanceMax,
                     optionRow.StatDamageRatioMax,
                     optionRow.ReferencedStatType);
-                if (skill != null)
+                if (skill == null)
                 {
-                    equipment.Skills.Add(skill);
-                    equipment.optionCountFromCombination++;
+                    return;
                 }
+
+                equipment.Skills.Add(skill);
+                equipment.optionCountFromCombination++;
             }
         }
 
@@ -238,17 +240,17 @@ namespace Lib9c.DevExtensions.Manager.Contents
         {
             foreach (var row in costumeItemSheet.OrderedList)
             {
-                avatarState.inventory.AddItem2(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
+                avatarState.inventory.AddItem(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
             }
 
             foreach (var row in materialItemSheet.OrderedList)
             {
-                avatarState.inventory.AddItem2(ItemFactory.CreateMaterial(row), materialCount);
+                avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), materialCount);
 
                 if (row.ItemSubType == ItemSubType.Hourglass ||
                     row.ItemSubType == ItemSubType.ApStone)
                 {
-                    avatarState.inventory.AddItem2(ItemFactory.CreateTradableMaterial(row), tradableMaterialCount);
+                    avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), tradableMaterialCount);
                 }
             }
 
@@ -256,7 +258,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
                 row.Id > GameConfig.DefaultAvatarWeaponId))
             {
                 var itemId = random.GenerateRandomGuid();
-                avatarState.inventory.AddItem2(ItemFactory.CreateItemUsable(row, itemId, default));
+                avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, itemId, default));
             }
 
             foreach (var row in consumableItemSheet.OrderedList)
@@ -266,7 +268,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
                     var itemId = random.GenerateRandomGuid();
                     var consumable = (Consumable)ItemFactory.CreateItemUsable(row, itemId,
                         0, 0);
-                    avatarState.inventory.AddItem2(consumable);
+                    avatarState.inventory.AddItem(consumable);
                 }
             }
         }
@@ -301,7 +303,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
 
             AddOption(skillSheet, equipment, optionRows, random);
 
-            avatarState.inventory.AddItem2(equipment);
+            avatarState.inventory.AddItem(equipment);
         }
 
         private static HashSet<int> AddOption(
