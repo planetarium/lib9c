@@ -29,7 +29,7 @@ namespace Lib9c.DevExtensions.Action
             var states = context.PreviousState;
             if (!(FaucetRuneInfos is null))
             {
-                RuneSheet runeSheet = states.GetSheet<RuneSheet>();
+                var runeSheet = states.GetSheet<RuneSheet>();
                 if (runeSheet.OrderedList != null)
                 {
                     foreach (var rune in FaucetRuneInfos)
@@ -53,7 +53,7 @@ namespace Lib9c.DevExtensions.Action
                     .OrderBy(x => x.RuneId)
                     .ThenBy(x => x.Amount)
                     .Select(x => x.Serialize())
-                    .Serialize()
+                    .Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(

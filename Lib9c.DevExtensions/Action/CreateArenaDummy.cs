@@ -90,7 +90,7 @@ namespace Lib9c.DevExtensions.Action
 
                 // create ArenaScore
                 var sheets = states.GetSheets(
-                    sheetTypes: new[]
+                    new[]
                     {
                         typeof(ItemRequirementSheet),
                         typeof(EquipmentItemRecipeSheet),
@@ -190,6 +190,5 @@ namespace Lib9c.DevExtensions.Action
 
             return states;
         }
-
     }
 }

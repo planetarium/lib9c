@@ -45,7 +45,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             var tableSheets = new TableSheets(sheets);
             _runeSheet = _initialState.GetSheet<RuneSheet>();
 
-            Address agentAddress = new PrivateKey().Address;
+            var agentAddress = new PrivateKey().Address;
             _avatarAddress = new PrivateKey().Address;
             var agentState = new AgentState(agentAddress);
             var avatarState = AvatarState.Create(
@@ -58,8 +58,8 @@ namespace Lib9c.DevExtensions.Tests.Action
             agentState.avatarAddresses.Add(0, _avatarAddress);
 
             _initialState = _initialState
-                    .SetAgentState(agentAddress, agentState)
-                    .SetAvatarState(_avatarAddress, avatarState);
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(_avatarAddress, avatarState);
         }
 
         [Theory]
@@ -71,7 +71,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 AvatarAddress = _avatarAddress,
                 FaucetRuneInfos = faucetRuneInfos,
             };
-            var states = action.Execute(new ActionContext { PreviousState = _initialState });
+            var states = action.Execute(new ActionContext { PreviousState = _initialState, });
             foreach (var rune in faucetRuneInfos)
             {
                 var expectedRune = RuneHelper.ToCurrency(
@@ -113,9 +113,15 @@ namespace Lib9c.DevExtensions.Tests.Action
                 },
             };
 
-            public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+            public IEnumerator<object[]> GetEnumerator()
+            {
+                return _data.GetEnumerator();
+            }
 
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
         }
     }
 }

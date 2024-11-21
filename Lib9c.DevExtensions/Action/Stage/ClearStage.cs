@@ -30,6 +30,7 @@ namespace Lib9c.DevExtensions.Action.Stage
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
+
             avatarState.worldInformation = new WorldInformation(
                 context.BlockIndex,
                 states.GetSheet<WorldSheet>(),
