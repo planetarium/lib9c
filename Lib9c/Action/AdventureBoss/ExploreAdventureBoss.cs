@@ -292,7 +292,7 @@ namespace Nekoyume.Action.AdventureBoss
                     collectionModifiers,
                     buffLimitSheet,
                     buffLinkSheet,
-                    true,
+                    false,
                     gameConfigState.ShatterStrikeMaxDamage
                 );
 
