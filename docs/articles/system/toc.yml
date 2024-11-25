@@ -7,3 +7,5 @@ items:
   href: adventure.md
 - name: Arena
   href: arena.md
+- name: Account
+  href: account.md
