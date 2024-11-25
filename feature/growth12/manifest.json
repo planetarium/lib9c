@@ -3532,6 +3532,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.DamageHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.DamageHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Battle.EnemyPlayerDigest.yml",
       "output": {
         ".html": {
