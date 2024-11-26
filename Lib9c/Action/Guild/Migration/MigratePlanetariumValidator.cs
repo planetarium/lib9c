@@ -1,0 +1,83 @@
+using System;
+using Bencodex.Types;
+using Libplanet.Action;
+using Libplanet.Action.State;
+using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
+using Nekoyume.ValidatorDelegation;
+
+namespace Nekoyume.Action.Guild.Migration
+{
+    // TODO: [GuildMigration] Remove this class when the migration is done.
+    /// <summary>
+    /// An action to migrate the planetarium guild.
+    /// </summary>
+    [ActionType(TypeIdentifier)]
+    public class MigratePlanetariumValidator : ActionBase
+    {
+        public const string TypeIdentifier = "migrate_planetarium_validator";
+
+        public MigratePlanetariumValidator()
+        {
+        }
+
+        public override IValue PlainValue => Dictionary.Empty
+            .Add("type_id", TypeIdentifier)
+            .Add("values", Null.Value);
+
+        public override void LoadPlainValue(IValue plainValue)
+        {
+            if (plainValue is not Dictionary root ||
+                !root.TryGetValue((Text)"values", out var rawValues) ||
+                rawValues is not Null)
+            {
+                throw new InvalidCastException();
+            }
+        }
+
+        public override IWorld Execute(IActionContext context)
+        {
+            GasTracer.UseGas(1);
+
+            var world = context.PreviousState;
+            var guildRepository = new GuildRepository(world, context);
+            var guildAddress = guildRepository.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner);
+            if (guildAddress is not { } planetariumGuildAddress)
+            {
+                throw new InvalidOperationException("The planetarium guild not exists");
+            }
+
+            var planetariumGuild = guildRepository.GetGuild(
+                planetariumGuildAddress);
+
+            var validatorRepository = new ValidatorRepository(guildRepository);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(
+                planetariumGuild.ValidatorAddress);
+
+            var validatorSet = world.GetValidatorSet();
+
+            if (!validatorSet.ContainsPublicKey(validatorDelegatee.PublicKey))
+            {
+                throw new InvalidOperationException(
+                    "The planetarium validator is not in the validator set.");
+            }
+
+            if (validatorDelegatee.IsActive)
+            {
+                throw new InvalidOperationException(
+                    "The planetarium validator is already active.");
+            }
+
+            validatorDelegatee.Activate();
+            validatorRepository.SetValidatorDelegatee(validatorDelegatee);
+
+            guildRepository.UpdateWorld(validatorRepository.World);
+            var guildDelegatee = guildRepository.GetGuildDelegatee(
+                planetariumGuild.ValidatorAddress);
+            guildDelegatee.Activate();
+            guildRepository.SetGuildDelgatee(guildDelegatee);
+
+            return guildRepository.World;
+        }
+    }
+}

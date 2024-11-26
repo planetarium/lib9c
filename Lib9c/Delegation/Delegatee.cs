@@ -295,7 +295,7 @@ namespace Nekoyume.Delegation
             Repository.SetLumpSumRewardsRecord(record);
         }
 
-        public void Slash(BigInteger slashFactor, long infractionHeight, long height)
+        public virtual void Slash(BigInteger slashFactor, long infractionHeight, long height)
         {
             FungibleAssetValue slashed = TotalDelegated.DivRem(slashFactor, out var rem);
             if (rem.Sign > 0)

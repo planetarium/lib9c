@@ -199,6 +199,11 @@ namespace Nekoyume.ValidatorDelegation
 
         public void Activate()
         {
+            if (IsActive)
+            {
+                throw new InvalidOperationException("The validator is already active.");
+            }
+
             ValidatorRepository repository = (ValidatorRepository)Repository;
             IsActive = true;
             Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
@@ -214,6 +219,11 @@ namespace Nekoyume.ValidatorDelegation
 
         public void Deactivate()
         {
+            if (!IsActive)
+            {
+                throw new InvalidOperationException("The validator is already inactive.");
+            }
+
             ValidatorRepository repository = (ValidatorRepository)Repository;
             IsActive = false;
             Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
