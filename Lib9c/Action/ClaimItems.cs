@@ -127,31 +127,30 @@ namespace Nekoyume.Action
                     {
                         (bool tradable, int itemId) = Currencies.ParseItemCurrency(tokenCurrency);
                         states = states.BurnAsset(context, context.Signer, fungibleAssetValue);
-                        var item = itemSheet[itemId] switch
-                        {
-                            MaterialItemSheet.Row materialRow => tradable
-                                ? ItemFactory.CreateTradableMaterial(materialRow)
-                                : ItemFactory.CreateMaterial(materialRow),
-                            var itemRow => ItemFactory.CreateItem(itemRow, random)
-                        };
 
                         // FIXME: This is an implementation bug in the Inventory class,
                         // but we'll deal with it temporarily here.
                         // If Pluggable AEV ever becomes a reality,
                         // it's only right that this is fixed in Inventory.
+                        var itemRow = itemSheet[itemId];
                         var itemCount = (int)fungibleAssetValue.RawValue;
-                        if (item is INonFungibleItem)
+                        if (itemRow is MaterialItemSheet.Row materialRow)
                         {
-                            foreach (var _ in Enumerable.Range(0, itemCount))
-                            {
-                                avatarState.inventory.AddItem(item, 1);
-                            }
+                            var item = tradable
+                                ? ItemFactory.CreateTradableMaterial(materialRow)
+                                : ItemFactory.CreateMaterial(materialRow);
+                            avatarState.inventory.AddItem(item, itemCount);
                         }
                         else
                         {
-                            avatarState.inventory.AddItem(item, itemCount);
+                            foreach (var _ in Enumerable.Range(0, itemCount))
+                            {
+                                var item = ItemFactory.CreateItem(itemRow, random);
+                                avatarState.inventory.AddItem(item);
+                            }
                         }
-                        items.Add((item.Id, itemCount));
+
+                        items.Add((itemRow.Id, itemCount));
                     }
                 }
 
