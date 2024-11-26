@@ -17,6 +17,8 @@ namespace Nekoyume.Action.Guild.Migration
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>
     /// An action to migrate guild delegation.
+    /// After migration is done, guild participant now have delegation with
+    /// validator.
     /// </summary>
     [ActionType(TypeIdentifier)]
     public class MigrateDelegation : ActionBase

@@ -5,6 +5,10 @@ using Nekoyume.Extensions;
 
 namespace Nekoyume.Action.Guild.Migration.LegacyModels
 {
+    // TODO: [GuildMigration] Remove this class when the migration is done.
+    /// <summary>
+    /// The module for delegation height for migration.
+    /// </summary>
     public static class MigrationModule
     {
         /// <summary>
