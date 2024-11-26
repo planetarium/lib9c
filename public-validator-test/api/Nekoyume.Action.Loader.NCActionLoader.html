@@ -200,7 +200,9 @@ and has an <span class="xref">Libplanet.Action.ActionTypeAttribute</span> from <
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Action/Loader/NCActionLoader.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Loads a concrete <span class="xref">Libplanet.Action.IAction</span> from <code class="paramref">value</code>
+given <code class="paramref">index</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -210,15 +212,20 @@ and has an <span class="xref">Libplanet.Action.ActionTypeAttribute</span> from <
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The index of a block to use as context for deserializing
+<code class="paramref">value</code>.</p>
+</dd>
     <dt><code>value</code> <span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Bencodex.Types.IValue</span> to deserialize to
+an <span class="xref">Libplanet.Action.IAction</span>.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IAction</span></dt>
-    <dd></dd>
+    <dd><p>An <span class="xref">Libplanet.Action.IAction</span> instantiated with <code class="paramref">value</code>.</p>
+</dd>
   </dl>
 
 
@@ -228,6 +235,13 @@ and has an <span class="xref">Libplanet.Action.ActionTypeAttribute</span> from <
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><span class="xref">InvalidActionException</span></dt>
+    <dd><p>Thrown when an <span class="xref">Libplanet.Action.IAction</span> cannot be
+instantiated with given <code class="paramref">index</code> and <code class="paramref">value</code>.</p>
+</dd>
+  </dl>
 
 
 

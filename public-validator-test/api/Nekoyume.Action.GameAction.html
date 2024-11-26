@@ -142,7 +142,6 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
       <div><a class="xref" href="Nekoyume.Action.BuyProduct.html">BuyProduct</a></div>
       <div><a class="xref" href="Nekoyume.Action.CancelProductRegistration.html">CancelProductRegistration</a></div>
       <div><a class="xref" href="Nekoyume.Action.ChargeActionPoint.html">ChargeActionPoint</a></div>
-      <div><a class="xref" href="Nekoyume.Action.ClaimGifts.html">ClaimGifts</a></div>
       <div><a class="xref" href="Nekoyume.Action.ClaimItems.html">ClaimItems</a></div>
       <div><a class="xref" href="Nekoyume.Action.ClaimRaidReward.html">ClaimRaidReward</a></div>
       <div><a class="xref" href="Nekoyume.Action.ClaimStakeReward.html">ClaimStakeReward</a></div>
@@ -150,7 +149,6 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
       <div><a class="xref" href="Nekoyume.Action.CombinationConsumable.html">CombinationConsumable</a></div>
       <div><a class="xref" href="Nekoyume.Action.CombinationConsumable5.html">CombinationConsumable5</a></div>
       <div><a class="xref" href="Nekoyume.Action.CombinationEquipment.html">CombinationEquipment</a></div>
-      <div><a class="xref" href="Nekoyume.Action.CostumeSummon.html">CostumeSummon</a></div>
       <div><a class="xref" href="Nekoyume.Action.Coupons.IssueCoupons.html">IssueCoupons</a></div>
       <div><a class="xref" href="Nekoyume.Action.Coupons.RedeemCoupon.html">RedeemCoupon</a></div>
       <div><a class="xref" href="Nekoyume.Action.Coupons.TransferCoupons.html">TransferCoupons</a></div>
@@ -327,7 +325,12 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Action/GameAction.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes values bound to an action, which is held by properties
+(or fields) of an action, so that they can be transmitted over
+network or saved to persistent storage.</p>
+<p>Serialized values are deserialized by
+<span class="xref">Libplanet.Action.IAction.LoadPlainValue(Bencodex.Types.IValue)</span> method later.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -341,7 +344,9 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>A Bencodex value which encodes this action's bound values (held
+by properties or fields).</p>
+</dd>
   </dl>
 
 
@@ -349,6 +354,12 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
 
 
 
+  <dl class="typelist seealso">
+    <dt>See Also</dt>
+    <dd>
+    <div><span class="xref">LoadPlainValue</span>(<span class="xref">IValue</span>)</div>
+    </dd>
+  </dl>
 
 
   <a id="Nekoyume_Action_GameAction_PlainValueInternal_" data-uid="Nekoyume.Action.GameAction.PlainValueInternal*"></a>
@@ -393,7 +404,10 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test/Lib9c/Action/GameAction.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Deserializes serialized data (i.e., data <span class="xref">Libplanet.Action.IAction.PlainValue</span>
+property made), and then fills this action's properties (or fields)
+with the deserialized values.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -403,7 +417,10 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>plainValue</code> <span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>Data (made by <span class="xref">Libplanet.Action.IAction.PlainValue</span>
+property) to be deserialized and assigned to this action's
+properties (or fields).</p>
+</dd>
   </dl>
 
 
@@ -415,6 +432,12 @@ public abstract class GameAction : ActionBase, IAction</code></pre>
 
 
 
+  <dl class="typelist seealso">
+    <dt>See Also</dt>
+    <dd>
+    <div><span class="xref">PlainValue</span></div>
+    </dd>
+  </dl>
 
 
   <a id="Nekoyume_Action_GameAction_LoadPlainValueInternal_" data-uid="Nekoyume.Action.GameAction.LoadPlainValueInternal*"></a>
