@@ -14,13 +14,13 @@ namespace Nekoyume.TableData
 
             public int GradeId { get; private set; }
             public int RequiredCount { get; private set; }
-            public float SucceedRate { get; private set; }
+            public decimal SucceedRate { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 GradeId = ParseInt(fields[0]);
                 RequiredCount = ParseInt(fields[1], 25);
-                SucceedRate = ParseFloat(fields[2], 0.0f);
+                SucceedRate = ParseDecimal(fields[2]);
             }
         }
 
