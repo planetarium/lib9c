@@ -10,6 +10,7 @@ namespace Nekoyume.Action.Guild.Migration
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>
     /// An action to migrate the delegation height.
+    /// This action triggers the migration of the delegation height.
     /// </summary>
     [ActionType(TypeIdentifier)]
     public class MigrateDelegationHeight : ActionBase

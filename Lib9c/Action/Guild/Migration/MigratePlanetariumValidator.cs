@@ -10,7 +10,9 @@ namespace Nekoyume.Action.Guild.Migration
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>
-    /// An action to migrate the planetarium guild.
+    /// An action to migrate the planetarium validator.
+    /// With this migration, planetarium validator is now active,
+    /// and bonded FAVs are moved to active address.
     /// </summary>
     [ActionType(TypeIdentifier)]
     public class MigratePlanetariumValidator : ActionBase
