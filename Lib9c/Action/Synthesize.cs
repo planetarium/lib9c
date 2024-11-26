@@ -30,6 +30,7 @@ namespace Nekoyume.Action
         private const string TypeIdentifier = "synthesize";
 
         private const string MaterialsKey = "m";
+        private const string ChargeApKey = "c";
         private const string AvatarAddressKey = "a";
 
         private static readonly ItemType[] ValidItemType =
@@ -48,6 +49,7 @@ namespace Nekoyume.Action
 
 #region Fields
         public List<Guid> MaterialIds = new();
+        public bool ChargeAp;
         public Address AvatarAddress;
 
         private ItemSubType? _cachedItemSubType;
@@ -412,6 +414,7 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
                 {
                     [MaterialsKey] = new List(MaterialIds.OrderBy(i => i).Select(i => i.Serialize())),
+                    [ChargeApKey] = ChargeAp.Serialize(),
                     [AvatarAddressKey] = AvatarAddress.Serialize(),
                 }
                 .ToImmutableDictionary();
@@ -419,6 +422,7 @@ namespace Nekoyume.Action
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
+            ChargeAp = plainValue[ChargeApKey].ToBoolean();
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
         }
 #endregion Serialize
