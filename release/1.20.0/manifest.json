@@ -11678,6 +11678,16 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/system/account.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/system/account.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/system/adventure.md",
       "output": {
         ".html": {
