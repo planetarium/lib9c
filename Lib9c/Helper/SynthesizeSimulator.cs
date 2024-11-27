@@ -22,10 +22,18 @@ namespace Nekoyume.Helper
         // TODO: Add more fields
     }
 
+    /// <summary>
+    /// A class that simulates the synthesis of items.
+    /// <see cref="InputData"/>
+    /// </summary>
     public static class SynthesizeSimulator
     {
+        /// <summary>
+        /// Simulate the synthesis of items.
+        /// </summary>
         public struct InputData
         {
+            // TODO: 각자 테이블로 분리?
             public Sheets Sheets;
             public IRandom RandomObject;
             public GradeDict GradeDict;
