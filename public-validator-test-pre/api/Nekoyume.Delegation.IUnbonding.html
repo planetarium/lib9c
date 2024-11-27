@@ -250,8 +250,8 @@ Interface IUnbonding  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Delegation_IUnbonding_Release_" data-uid="Nekoyume.Delegation.IUnbonding.Release*"></a>
 
-  <h3 id="Nekoyume_Delegation_IUnbonding_Release_System_Int64_" data-uid="Nekoyume.Delegation.IUnbonding.Release(System.Int64)">
-  Release(long)
+  <h3 id="Nekoyume_Delegation_IUnbonding_Release_System_Int64_System_Nullable_Libplanet_Types_Assets_FungibleAssetValue___" data-uid="Nekoyume.Delegation.IUnbonding.Release(System.Int64,System.Nullable{Libplanet.Types.Assets.FungibleAssetValue}@)">
+  Release(long, out FungibleAssetValue?)
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/public-validator-test-pre/Lib9c/Delegation/IUnbonding.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -259,12 +259,14 @@ Interface IUnbonding  <a class="header-action link-secondary" title="View source
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IUnbonding Release(long height)</code></pre>
+    <pre><code class="lang-csharp hljs">IUnbonding Release(long height, out FungibleAssetValue? releasedFAV)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>releasedFAV</code> <span class="xref">FungibleAssetValue</span>?</dt>
     <dd></dd>
   </dl>
 
