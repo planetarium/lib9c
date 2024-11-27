@@ -4,6 +4,9 @@ using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
 {
+    /// <summary>
+    /// Represents a SynthesizeSheet.
+    /// </summary>
     [Serializable]
     public class SynthesizeSheet : Sheet<int, SynthesizeSheet.Row>
     {
