@@ -3,6 +3,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.Action;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -13,6 +14,9 @@ namespace Nekoyume.Delegation
 {
     public class DelegateeMetadata : IDelegateeMetadata
     {
+        private const string StateTypeName = "delegatee_metadata";
+        private const long StateVersion = 1;
+
         private Address? _address;
         private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
@@ -40,7 +44,6 @@ namespace Nekoyume.Delegation
                   unbondingPeriod,
                   maxUnbondLockInEntries,
                   maxRebondGraceEntries,
-                  ImmutableSortedSet<Address>.Empty,
                   delegationCurrency * 0,
                   BigInteger.Zero,
                   false,
@@ -62,26 +65,110 @@ namespace Nekoyume.Delegation
             Address address,
             Address accountAddress,
             List bencoded)
-            : this(
-                  address,
-                  accountAddress,
-                  new Currency(bencoded[0]),
-                  ((List)bencoded[1]).Select(v => new Currency(v)),
-                  new Address(bencoded[2]),
-                  new Address(bencoded[3]),
-                  new Address(bencoded[4]),
-                  new Address(bencoded[5]),
-                  (Integer)bencoded[6],
-                  (Integer)bencoded[7],
-                  (Integer)bencoded[8],
-                  ((List)bencoded[9]).Select(item => new Address(item)),
-                  new FungibleAssetValue(bencoded[10]),
-                  (Integer)bencoded[11],
-                  (Bencodex.Types.Boolean)bencoded[12],
-                  (Integer)bencoded[13],
-                  (Bencodex.Types.Boolean)bencoded[14],
-                  ((List)bencoded[15]).Select(item => new UnbondingRef(item)))
         {
+            Currency delegationCurrency;
+            IEnumerable< Currency > rewardCurrencies;
+            Address delegationPoolAddress;
+            Address rewardPoolAddress;
+            Address rewardRemainderPoolAddress;
+            Address slashedPoolAddress;
+            long unbondingPeriod;
+            int maxUnbondLockInEntries;
+            int maxRebondGraceEntries;
+            FungibleAssetValue totalDelegated;
+            BigInteger totalShares;
+            bool jailed;
+            long jailedUntil;
+            bool tombstoned;
+            IEnumerable<UnbondingRef> unbondingRefs;
+
+            // TODO: Remove this if block after migration to state version 1 is done.
+            if (bencoded[0] is not Text)
+            {
+                // Assume state version 0
+                delegationCurrency = new Currency(bencoded[0]);
+                rewardCurrencies = ((List)bencoded[1]).Select(v => new Currency(v));
+                delegationPoolAddress = new Address(bencoded[2]);
+                rewardPoolAddress = new Address(bencoded[3]);
+                rewardRemainderPoolAddress = new Address(bencoded[4]);
+                slashedPoolAddress = new Address(bencoded[5]);
+                unbondingPeriod = (Integer)bencoded[6];
+                maxUnbondLockInEntries = (Integer)bencoded[7];
+                maxRebondGraceEntries = (Integer)bencoded[8];
+                totalDelegated = new FungibleAssetValue(bencoded[10]);
+                totalShares = (Integer)bencoded[11];
+                jailed = (Bencodex.Types.Boolean)bencoded[12];
+                jailedUntil = (Integer)bencoded[13];
+                tombstoned = (Bencodex.Types.Boolean)bencoded[14];
+                unbondingRefs = ((List)bencoded[15]).Select(item => new UnbondingRef(item));
+            }
+            else
+            {
+                if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
+                {
+                    throw new InvalidCastException();
+                }
+
+                if (integer > StateVersion)
+                {
+                    throw new FailedLoadStateException("Un-deserializable state.");
+                }
+
+                delegationCurrency = new Currency(bencoded[2]);
+                rewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v));
+                delegationPoolAddress = new Address(bencoded[4]);
+                rewardPoolAddress = new Address(bencoded[5]);
+                rewardRemainderPoolAddress = new Address(bencoded[6]);
+                slashedPoolAddress = new Address(bencoded[7]);
+                unbondingPeriod = (Integer)bencoded[8];
+                maxUnbondLockInEntries = (Integer)bencoded[9];
+                maxRebondGraceEntries = (Integer)bencoded[10];
+                totalDelegated = new FungibleAssetValue(bencoded[11]);
+                totalShares = (Integer)bencoded[12];
+                jailed = (Bencodex.Types.Boolean)bencoded[13];
+                jailedUntil = (Integer)bencoded[14];
+                tombstoned = (Bencodex.Types.Boolean)bencoded[15];
+                unbondingRefs = ((List)bencoded[16]).Select(item => new UnbondingRef(item));
+            }
+
+            if (!totalDelegated.Currency.Equals(delegationCurrency))
+            {
+                throw new InvalidOperationException("Invalid currency.");
+            }
+
+            if (totalDelegated.Sign < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(totalDelegated),
+                    totalDelegated,
+                    "Total delegated must be non-negative.");
+            }
+
+            if (totalShares.Sign < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(totalShares),
+                    totalShares,
+                    "Total shares must be non-negative.");
+            }
+
+            DelegateeAddress = address;
+            DelegateeAccountAddress = accountAddress;
+            DelegationCurrency = delegationCurrency;
+            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
+            DelegationPoolAddress = delegationPoolAddress;
+            RewardPoolAddress = rewardPoolAddress;
+            RewardRemainderPoolAddress = rewardRemainderPoolAddress;
+            SlashedPoolAddress = slashedPoolAddress;
+            UnbondingPeriod = unbondingPeriod;
+            MaxUnbondLockInEntries = maxUnbondLockInEntries;
+            MaxRebondGraceEntries = maxRebondGraceEntries;
+            TotalDelegatedFAV = totalDelegated;
+            TotalShares = totalShares;
+            Jailed = jailed;
+            JailedUntil = jailedUntil;
+            Tombstoned = tombstoned;
+            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
         }
 
         private DelegateeMetadata(
@@ -96,7 +183,6 @@ namespace Nekoyume.Delegation
             long unbondingPeriod,
             int maxUnbondLockInEntries,
             int maxRebondGraceEntries,
-            IEnumerable<Address> delegators,
             FungibleAssetValue totalDelegated,
             BigInteger totalShares,
             bool jailed,
@@ -136,7 +222,6 @@ namespace Nekoyume.Delegation
             UnbondingPeriod = unbondingPeriod;
             MaxUnbondLockInEntries = maxUnbondLockInEntries;
             MaxRebondGraceEntries = maxRebondGraceEntries;
-            Delegators = delegators.ToImmutableSortedSet();
             TotalDelegatedFAV = totalDelegated;
             TotalShares = totalShares;
             Jailed = jailed;
@@ -172,8 +257,6 @@ namespace Nekoyume.Delegation
 
         public int MaxRebondGraceEntries { get; }
 
-        public ImmutableSortedSet<Address> Delegators { get; private set; }
-
         public FungibleAssetValue TotalDelegatedFAV { get; private set; }
 
         public BigInteger TotalShares { get; private set; }
@@ -188,6 +271,8 @@ namespace Nekoyume.Delegation
 
         // TODO : Better serialization
         public List Bencoded => List.Empty
+            .Add(StateTypeName)
+            .Add(StateVersion)
             .Add(DelegationCurrency.Serialize())
             .Add(new List(RewardCurrencies.Select(c => c.Serialize())))
             .Add(DelegationPoolAddress.Bencoded)
@@ -197,7 +282,6 @@ namespace Nekoyume.Delegation
             .Add(UnbondingPeriod)
             .Add(MaxUnbondLockInEntries)
             .Add(MaxRebondGraceEntries)
-            .Add(new List(Delegators.Select(delegator => delegator.Bencoded)))
             .Add(TotalDelegatedFAV.Serialize())
             .Add(TotalShares)
             .Add(Jailed)
@@ -216,16 +300,6 @@ namespace Nekoyume.Delegation
             => TotalShares == share
                 ? TotalDelegatedFAV
                 : (TotalDelegatedFAV * share).DivRem(TotalShares).Quotient;
-
-        public void AddDelegator(Address delegatorAddress)
-        {
-            Delegators = Delegators.Add(delegatorAddress);
-        }
-
-        public void RemoveDelegator(Address delegatorAddress)
-        {
-            Delegators = Delegators.Remove(delegatorAddress);
-        }
 
         public void AddDelegatedFAV(FungibleAssetValue fav)
         {
@@ -289,7 +363,6 @@ namespace Nekoyume.Delegation
             && SlashedPoolAddress.Equals(delegatee.SlashedPoolAddress)
             && UnbondingPeriod == delegatee.UnbondingPeriod
             && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
-            && Delegators.SequenceEqual(delegatee.Delegators)
             && TotalDelegatedFAV.Equals(delegatee.TotalDelegatedFAV)
             && TotalShares.Equals(delegatee.TotalShares)
             && Jailed == delegatee.Jailed
