@@ -127,6 +127,27 @@ namespace Nekoyume.Action
                 throw new InvalidOperationException("ItemSubType is not set.");
             }
 
+            // Unequip items (if necessary)
+            foreach (var materialEquipment in materialEquipments)
+            {
+                materialEquipment.Unequip();
+            }
+            foreach (var materialCostume in materialCostumes)
+            {
+                materialCostume.Unequip();
+            }
+
+            // Remove materials from inventory
+            foreach (var materialId in MaterialIds)
+            {
+                if (!avatarState.inventory.RemoveNonFungibleItem(materialId))
+                {
+                    throw new NotEnoughMaterialException(
+                        $"{addressesHex} Aborted as the material item ({materialId}) does not exist in inventory."
+                    );
+                }
+            }
+
             var synthesizeSheet = sheets.GetSheet<SynthesizeSheet>();
             var random = context.GetRandom();
             var synthesizedItems = new List<ItemBase>();
@@ -176,27 +197,6 @@ namespace Nekoyume.Action
                         var synthesizedItem = GetSynthesizedItem(outputGradeId, sheets, random, itemSubType);
                         synthesizedItems.Add(synthesizedItem);
                     }
-                }
-            }
-
-            // Unequip items (if necessary)
-            foreach (var materialEquipment in materialEquipments)
-            {
-                materialEquipment.Unequip();
-            }
-            foreach (var materialCostume in materialCostumes)
-            {
-                materialCostume.Unequip();
-            }
-
-            // Remove materials from inventory
-            foreach (var materialId in MaterialIds)
-            {
-                if (!avatarState.inventory.RemoveNonFungibleItem(materialId))
-                {
-                    throw new NotEnoughMaterialException(
-                        $"{addressesHex} Aborted as the material item ({materialId}) does not exist in inventory."
-                    );
                 }
             }
 
