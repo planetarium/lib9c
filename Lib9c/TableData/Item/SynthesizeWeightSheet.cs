@@ -9,6 +9,8 @@ namespace Nekoyume.TableData
     [Serializable]
     public class SynthesizeWeightSheet : Sheet<int, SynthesizeWeightSheet.Row>
     {
+        public const int DefaultWeight = 10000;
+
         [Serializable]
         public class Row : SheetRow<int>
         {
@@ -24,7 +26,7 @@ namespace Nekoyume.TableData
 
                 WeightDict = new Dictionary<int, int>();
                 var itemId = ParseInt(fields[1]);
-                var weight = ParseInt(fields[2], 10000);
+                var weight = ParseInt(fields[2], DefaultWeight);
                 WeightDict.Add(itemId, weight);
             }
         }
