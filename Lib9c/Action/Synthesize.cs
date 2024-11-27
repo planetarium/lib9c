@@ -22,6 +22,8 @@ namespace Nekoyume.Action
 
     /// <summary>
     /// Synthesize action is a type of action that synthesizes items.
+    /// <value>MaterialIds: Id list of items as material</value>
+    /// <value><br/>ChargeAp: Whether to charge action points with action execution</value>
     /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
@@ -189,6 +191,9 @@ namespace Nekoyume.Action
                     // Calculate success for each synthesis
                     for (var i = 0; i < synthesizeCount; i++)
                     {
+                        // random value range is 0 ~ 9999
+                        // If the SucceedRate of the table is 0, use '<' for always to fail.
+                        // and SucceedRate of the table is 10000, always success(because left value range is 0~9999)
                         var isSuccess = random.Next(SynthesizeSheet.SucceedRateMax) < synthesizeRow.SucceedRate;
 
                         var grade = (Grade)gradeId;
@@ -310,7 +315,7 @@ namespace Nekoyume.Action
             }
 
             // Random selection based on weight
-            return random.Next(totalWeight);
+            return random.Next(totalWeight + 1);
         }
 
 #endregion GetRandomItem
