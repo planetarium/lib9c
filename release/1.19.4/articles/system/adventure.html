@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Adventure | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Adventure | Lib9c ">
+      
+      
+      <link rel="icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/blob/release/1.19.4/docs/articles/system/adventure.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="adventure">Adventure</h1>
+
+<p>Adventure content is available to players as a first step in developing their avatars. For a detailed description of Adventure content, see the <a href="https://docs.nine-chronicles.com/introduction/intro/game-contents/adventure">official documentation</a>.</p>
+<h2 id="world">World</h2>
+<p>The adventures of the Nine Chronicles begin in Yggdrasil, and there are new worlds after that, in the following order: Alfheim, Svartalfheim, Asgard, and so on. This data comes from the <code>WorldSheet</code>.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/WorldAndStage/WorldSheet.cs">Nekoyume.TableData.WorldSheet</a></li>
+</ul>
+<p>You can use the 9c-board service to view the <code>WorldSheet</code>.</p>
+<ul>
+<li><a href="https://9c-board.nine-chronicles.dev/odin/tablesheet/WorldSheet">https://9c-board.nine-chronicles.dev/odin/tablesheet/WorldSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/heimdall/tablesheet/WorldSheet">https://9c-board.nine-chronicles.dev/heimdall/tablesheet/WorldSheet</a></li>
+</ul>
+<p>Yggdrasil, where you begin your adventure, is open when you create your avatar. Subsequent worlds are unlocked by meeting certain conditions. More information can be found in the <code>WorldUnlockSheet</code>.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/WorldAndStage/WorldUnlockSheet.cs">Nekoyume.TableData.WorldUnlockSheet</a></li>
+</ul>
+<p>Like <code>WorldSheet</code>, you can check it out in 9c-board.</p>
+<ul>
+<li><a href="https://9c-board.nine-chronicles.dev/odin/tablesheet/WorldUnlockSheet">https://9c-board.nine-chronicles.dev/odin/tablesheet/WorldUnlockSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/heimdall/tablesheet/WorldUnlockSheet">https://9c-board.nine-chronicles.dev/heimdall/tablesheet/WorldUnlockSheet</a></li>
+</ul>
+<h2 id="stage-challenges-and-rewards">Stage Challenges and Rewards</h2>
+<p>Each world contains multiple stages, each with different rewards for completing them. Stage information can be found in the <code>StageSheet</code>.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/WorldAndStage/StageSheet.cs">Nekoyume.TableData.StageSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/odin/tablesheet/StageSheet">https://9c-board.nine-chronicles.dev/odin/tablesheet/StageSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/heimdall/tablesheet/StageSheet">https://9c-board.nine-chronicles.dev/heimdall/tablesheet/StageSheet</a></li>
+</ul>
+<h3 id="stage-challenge-cost">Stage Challenge Cost</h3>
+<p>When you look at the <code>StageSheet</code>, there is a field called <code>CostAP</code>. This field represents the number of action points required to progress through the stage. Players can spend <a href="https://nine-chronicles.dev/modding/system-guide/1-transaction-and-action">their avatar's action points</a> to progress through the adventure.</p>
+<h2 id="stage-waves">Stage Waves</h2>
+<p>A stage consists of several waves, each of which must be cleared before moving on to the next wave. Wave information can be found in the <code>StageWaveSheet</code>.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/WorldAndStage/StageWaveSheet.cs">Nekoyume.TableData.StageWaveSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/odin/tablesheet/StageWaveSheet">https://9c-board.nine-chronicles.dev/odin/tablesheet/StageWaveSheet</a></li>
+<li><a href="https://9c-board.nine-chronicles.dev/heimdall/tablesheet/StageWaveSheet">https://9c-board.nine-chronicles.dev/heimdall/tablesheet/StageWaveSheet</a></li>
+</ul>
+<p>Nine Chronicles currently has all stages set to three waves. The number of waves your avatar completes determines the number of stars you earn in the stage. The number of stars also determines the rewards, as shown below.</p>
+<ul>
+<li>1 star: EXP</li>
+<li>2 stars: EXP, items</li>
+<li>3 stars: EXP, items, unlock next stage</li>
+</ul>
+<h2 id="stage-buff">Stage Buff</h2>
+<p>Stage buffs are buffs that the player can receive when progressing through a particular stage. These buffs can be found in the <code>CrystalRandomBuffSheet</code> and <code>CrystalStageBuffGachaSheet</code>.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/Crystal/CrystalRandomBuffSheet.cs">Nekoyume.TableData.Crystal.CrystalRandomBuffSheet</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/TableData/Crystal/CrystalStageBuffGachaSheet.cs">Nekoyume.TableData.Crystal.CrystalStageBuffGachaSheet</a></li>
+</ul>
+<h2 id="item-slots">Item Slots</h2>
+<p>There are item slots available to you as you progress through your adventure. You can equip different items in these slots to give you an advantage in combat.<br>
+Items that can be used in an adventure include equipment, costumes, and food.</p>
+<h2 id="rune-slots">Rune Slots</h2>
+<p>As you progress through your adventure, you can equip runes to gain various effects.</p>
+<h2 id="repeat-battle">Repeat Battle</h2>
+<p>Adventures can be repeated, and AP potions can be used to do so.</p>
+<h2 id="battlestagesimulator">Battle(StageSimulator)</h2>
+<p>Battle is turn-based, and players can use various items with their avatars to defeat enemies. Adventures utilize the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Battle/StageSimulator.cs">StageSimulator</a> class to run battle. This class manages the flow of battle and handles the events that occur on each turn.</p>
+<p>When a battle begins, it creates a player avatar.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/SpawnPlayer.cs">Nekoyume.Model.BattleStatus.SpawnPlayer</a></li>
+</ul>
+<h3 id="wave">Wave</h3>
+<p>When a battle starts, the first wave begins. If you don't clear the wave, the battle ends, if you do, you move on to the next wave, and if you clear the last wave, the battle ends.</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/SpawnWave.cs">Nekoyume.Model.BattleStatus.SpawnWave</a></li>
+</ul>
+<h3 id="turn">Turn</h3>
+<p>When a wave starts, a formula is used to give the highest priority character a turn, which is determined by the character's SPD(Speed) stat.</p>
+<ol>
+<li>Wave starts.</li>
+<li>The player avatar has a priority of <strong>100[^simulator-turn-priority] / avatar's SPD stat</strong>. The number <code>100</code> in the above formula, is the value used in the formula for determining turn priority in the simulator and can be found in <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Battle/Simulator.cs#L21">Nekoyume.Battle.Simulator.TurnPriority</a>.</li>
+<li>All enemies in the wave have a priority of <strong>100 / enemy's SPD stat</strong>.</li>
+<li>Give the turn to the character with the highest priority, i.e., the smallest <strong>100 / SPD stat</strong>.</li>
+<li>The character granted a turn in (4) takes the turn.</li>
+<li>Increase the priority of characters that were not granted a turn in (4).
+<ul>
+<li>Multiply by <code>0.9</code> if the character is a player and used a non-Basic Attack skill in the previous turn.</li>
+<li>Otherwise, multiply by <code>0.6</code>.</li>
+</ul>
+</li>
+<li>Characters granted a turn in (4) again have a priority of <strong>100 / character SPD stat</strong>.</li>
+<li>Repeat steps (2) through (7) until the player avatar dies or the wave is cleared.</li>
+<li>Wave ends. Repeat from (1) for the next wave if one exists.</li>
+</ol>
+<h3 id="skill-activation">Skill Activation</h3>
+<p>All characters, including avatars and enemies, can activate skills. Skills include a variety of offensive and buff skills, including <strong>Normal Attack</strong>. Which skill is activated is determined by the activation chance of each skill.</p>
+<p>::: details Skill Activation Flowchart</p>
+<pre><code class="lang-mermaid">flowchart TB
+   subgraph SG_A[Handling Cooldowns]
+      direction TB
+      select-cooldown-0[Select only skills with 0 cooldowns] --&gt; zero-cooldown-skills
+      zero-cooldown-skills[/**Zero Cooldown Skills**/] --&gt; check-normal-attack-only
+      check-normal-attack-only{Is there only a **Normal Attack** left?} --&gt;|Yes| check-normal-attack-only-yes
+      check-normal-attack-only --&gt;|No| check-normal-attack-only-no
+   end
+   subgraph SG_B[Handling Chances]
+      direction TB
+      select-skills-without-normal-attack[Select all skills except **Normal Attack**.] --&gt; skills-with-out-normal-attack
+      skills-with-out-normal-attack[/**Skills w/o Normal Attack**/] --&gt; sum-skills-probabilities
+      sum-skills-probabilities[Combining Skills' Trigger Chances] --&gt; total-chance
+      total-chance[/**Total Chance**/] --&gt; check-total-chance-100
+      check-total-chance-100{Is the **Total Chance** greater than or equal to 100?} --&gt;|Yes| input-skills-without-normal-attack
+      check-total-chance-100 --&gt;|No| check-total-chance-100-no
+      check-total-chance-100-no{Is the random number above the **Total Chance**?} --&gt;|Yes| check-total-chance-100-no-yes
+      check-total-chance-100-no --&gt;|No| input-skills-without-normal-attack
+      weighted-selector[Randomly select one skill] --&gt; input-selected-skill
+      input-selected-skill[/**Randomly Selected Skill**/]
+   end
+   turn-start([Turn Starts]) --&gt; skills
+   skills[/**Skills**/] --&gt; SG_A
+   check-normal-attack-only-yes[/**Normal Attack**/] --&gt; result([Skill selection complete])
+   check-normal-attack-only-no[/**Zero Cooldown Skills**/] --&gt; SG_B
+   input-skills-without-normal-attack[/**Skills w/o Normal Attack**/]
+   input-skills-without-normal-attack --&gt; weighted-selector
+   check-total-chance-100-no-yes[/**Normal Attack**/] --&gt; result
+   input-selected-skill --&gt; result
+</code></pre>
+<p>:::</p>
+<p><strong>Skill Types</strong></p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/NormalAttack.cs">Nekoyume.Model.BattleStatus.NormalAttack</a>: This is the <strong>Normal Attack</strong>.</li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/BlowAttack.cs">Nekoyume.Model.BattleStatus.BlowAttack</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/DoubleAttack.cs">Nekoyume.Model.BattleStatus.DoubleAttack</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/DoubleAttackWithCombo.cs">Nekoyume.Model.BattleStatus.DoubleAttackWithCombo</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/AreaAttack.cs">Nekoyume.Model.BattleStatus.AreaAttack</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/BuffSkill.cs">Nekoyume.Model.BattleStatus.BuffSkill</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/HealSkill.cs">Nekoyume.Model.BattleStatus.HealSkill</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/BattleStatus/BuffRemovalAttack.cs">Nekoyume.Model.BattleStatus.BuffRemovalAttack</a></li>
+<li>...</li>
+</ul>
+<h3 id="normal-attack-hits">Normal Attack Hits</h3>
+<p>Normal Attack is also treated as skills in Nine Chronicles, and whether or not they hit is largely determined by the attacker's and defender's levels and HIT stats, with a few other formulas.</p>
+<ul>
+<li>In the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Skill/AttackSkill.cs#L62">Nekoyume.Model.Skill.AttackSkill.ProcessDamage</a> method, get the hit status of the <strong>Normal Attack</strong>: <code>target.IsHit(caster)</code>.</li>
+<li>The <code>IsHit</code> method above points to <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Character/CharacterBase.cs#L508">Nekoyume.Model.CharacterBase.IsHit(CharacterBase)</a>, which is overridden by the player character (<a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Character/Player.cs">Nekoyume.Model.Player</a>) and so on.</li>
+<li>A quick look at the logic of hits in adventures:
+<ul>
+<li>When the defender is a player character, they cannot dodge an attacker's attack.</li>
+<li>If the attacker is under the effect of a Focus buff(<a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Buff/Focus.cs">Nekoyume.Model.Buff.Focus</a>), it will hit 100% of the time.
+<ul>
+<li>Otherwise, the hit is handled according to the result of the <a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Battle/HitHelper.cs#L23">Nekoyume.Battle.HitHelper.IsHit</a> method.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Nekoyume.Battle.HitHelper.IsHit</strong></p>
+<ol>
+<li>Get a value <code>A</code> between <code>-5 ~ 50</code> with <code>(attacker's level - defender's level)</code>.</li>
+<li>Use <code>(Attacker's HIT stat * 10000 - Defender's HIT stat * 10000 / 3) / Defender's HIT stat / 100</code> to get a value <code>B</code> between <code>0 ~ 50</code>.
+<ul>
+<li>If the attacker's and defender's HIT stats are less than or equal to 0, then it is scaled by 1.</li>
+</ul>
+</li>
+<li>Use <code>A + B</code> to get a value <code>C</code> between <code>10 ~ 90</code>.</li>
+<li>Find a random number <code>D</code> between <code>0 ~ 99</code>.</li>
+<li>finally, if <code>C</code> is greater than or equal to <code>D</code>, treat it as a hit.</li>
+</ol>
+<h3 id="combo">Combo</h3>
+<p>Avatar's attacks can have combo effects.</p>
+<ul>
+<li>The maximum number of combos depends on the avatar's level. For example, at level 1, you can get up to 2 combos, and at level 250, you can get up to 5 combos.</li>
+<li>If you fulfill the <a href="#increase-combo">combo increase condition</a> after getting the maximum combo, you will start with 1 combo.</li>
+</ul>
+<h4 id="increase-combo">Increase Combo</h4>
+<ul>
+<li>Successfully executes a normal attack.</li>
+<li>Successfully executes a skill with the <code>SkillSheet.Combo</code> field set to <code>true</code>.</li>
+</ul>
+<h4 id="reset-combo">Reset Combo</h4>
+<ul>
+<li>Normal attack fails.</li>
+</ul>
+<h4 id="combo-effect">Combo Effect</h4>
+<ul>
+<li>Increases the damage of normal attack or skills with a <code>SkillSheet.Combo</code> field of <code>true</code>.
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Character/CharacterBase.cs#L524">Nekoyume.Model.CharacterBase.GetDamage</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Battle/AttackCountHelper.cs#L23">Nekoyume.Battle.AttackCountHelper.GetDamageMultiplier</a></li>
+</ul>
+</li>
+<li>Gain additional critical chance based on a condition.
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Model/Character/CharacterBase.cs#L490">Nekoyume.Model.CharacterBase.IsCritical</a></li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Battle/AttackCountHelper.cs#L37">Nekoyume.Battle.AttackCountHelper.GetAdditionalCriticalChance</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="related-actions">Related actions</h2>
+<p>A list of actions associated with Adventure content:</p>
+<ul>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/DailyReward.cs">DailyReward</a>: You get the action points you need to execute the action.</li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/HackAndSlash.cs">HackAndSlash</a>: The default adventure action.</li>
+<li><a href="https://github.com/planetarium/lib9c/blob/1.17.3/Lib9c/Action/HackAndSlashSweep.cs">HackAndSlashSweep</a>: This action clears stages with 3 stars.</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.19.4/docs/articles/system/adventure.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
