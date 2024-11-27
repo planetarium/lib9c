@@ -7,8 +7,10 @@ namespace Lib9c.Tests.Action
     using Libplanet.Mocks;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -24,27 +26,42 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true, null)]
-        [InlineData(false, typeof(PermissionDeniedException))]
-        public void Execute(bool admin, Type exc)
+        [InlineData(true, false, null)]
+        [InlineData(true, true, null)]
+        [InlineData(false, false, typeof(PermissionDeniedException))]
+        public void Execute(bool admin, bool plPatron, Type exc)
         {
+            var validatorKey = new PrivateKey();
             var adminAddress = new PrivateKey().Address;
             var poolAddress = new PrivateKey().Address;
             var adminState = new AdminState(adminAddress, 150L);
-            var patronAddress = new PrivateKey().Address;
+            var patronAddress = plPatron
+                ? MeadConfig.PatronAddress
+                : new PrivateKey().Address;
             var mead = Currencies.Mead;
-            var agentAddress = new PrivateKey().Address;
-            var pledgeAddress = agentAddress.GetPledgeAddress();
+            var pledgedAddress = new PrivateKey().Address;
+            var pledgeAddress = pledgedAddress.GetPledgeAddress();
+            var agentAddress = new Nekoyume.TypedAddress.AgentAddress(pledgedAddress);
             var context = new ActionContext();
-            IWorld states = new World(MockUtil.MockModernWorldState)
+            var states = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(
+                    Addresses.GoldCurrency,
+                    new GoldCurrencyState(Libplanet.Types.Assets.Currency.Legacy("NCG", 2, null))
+                        .Serialize())
                 .SetLegacyState(Addresses.Admin, adminState.Serialize())
                 .MintAsset(context, patronAddress, 4 * 500 * mead);
 
+            states = Lib9c.Tests.Util.DelegationUtil.EnsureValidatorPromotionReady(
+                states,
+                validatorKey.PublicKey,
+                0L
+            );
+
             var agentAddresses = new List<(Address, Address)>
             {
-                (agentAddress, pledgeAddress),
+                (pledgedAddress, pledgeAddress),
             };
-            for (int i = 0; i < 499; i++)
+            for (var i = 0; i < 499; i++)
             {
                 var address = new PrivateKey().Address;
                 agentAddresses.Add((address, address.GetPledgeAddress()));
@@ -57,19 +74,41 @@ namespace Lib9c.Tests.Action
                 AgentAddresses = agentAddresses,
             };
 
-            Address singer = admin ? adminAddress : poolAddress;
+            var singer = admin ? adminAddress : poolAddress;
             var actionContext = new ActionContext
             {
                 Signer = singer,
                 PreviousState = states,
+                Miner = validatorKey.Address,
             };
 
             if (exc is null)
             {
                 var nextState = action.Execute(actionContext);
-
                 Assert.Equal(0 * mead, nextState.GetBalance(patronAddress, mead));
-                Assert.Equal(4 * mead, nextState.GetBalance(agentAddress, mead));
+                Assert.Equal(4 * mead, nextState.GetBalance(pledgedAddress, mead));
+
+                var repository = new GuildRepository(nextState, context);
+                var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
+                var guildAddress = repository.GetJoinedGuild(planetariumGuildOwner);
+                Assert.NotNull(guildAddress);
+                Assert.True(repository.TryGetGuild(guildAddress.Value, out var guild));
+                Assert.Equal(planetariumGuildOwner, guild.GuildMasterAddress);
+                if (!plPatron)
+                {
+                    Assert.Null(repository.GetJoinedGuild(agentAddress));
+                }
+                else
+                {
+                    var joinedGuildAddress =
+                        Assert.IsType<Nekoyume.TypedAddress.GuildAddress>(
+                            repository.GetJoinedGuild(agentAddress));
+                    Assert.True(repository.TryGetGuild(joinedGuildAddress, out var joinedGuild));
+                    Assert.Equal(
+                        Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner,
+                        joinedGuild.GuildMasterAddress
+                    );
+                }
             }
             else
             {

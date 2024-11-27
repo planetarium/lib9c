@@ -18,6 +18,11 @@ namespace Nekoyume
             "209b22087045ec834f01249c8661c2734cea41ccc5d8c9a273a4c8c0521d22ec"
         );
 
+        // FIXME should be changed before Thor mainnet launches
+        private static readonly BlockHash ThorGenesisHash = BlockHash.FromString(
+            "a6b53f0a1ac983d6ae49edb89a58e0d3d697adf1d2c88c074e49ed6764a57f10"
+        );
+
         public static Planet? DeterminePlanet(this ITransaction tx)
         {
             // TODO Replace planet detection to using transaction payload instead.
@@ -32,6 +37,11 @@ namespace Nekoyume
             if (tx.GenesisHash.Equals(IdunGenesisHash))
             {
                 return Planet.Idun;
+            }
+
+            if (tx.GenesisHash.Equals(ThorGenesisHash))
+            {
+                return Planet.Thor;
             }
 
             return null;

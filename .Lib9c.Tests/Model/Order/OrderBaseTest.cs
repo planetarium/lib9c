@@ -34,7 +34,9 @@ namespace Lib9c.Tests.Model.Order
             }
             else
             {
-                Assert.Throws(exc, () => new OrderBase(
+                Assert.Throws(
+                    exc,
+                    () => new OrderBase(
                         Guid.NewGuid(),
                         Guid.NewGuid(),
                         startedBlockIndex,

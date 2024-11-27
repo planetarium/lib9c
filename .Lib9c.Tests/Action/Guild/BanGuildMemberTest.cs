@@ -4,13 +4,8 @@ namespace Lib9c.Tests.Action.Guild
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Action.Guild;
     using Nekoyume.Model.Guild;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Nekoyume.Module.Guild;
     using Xunit;
 
@@ -227,11 +222,13 @@ namespace Lib9c.Tests.Action.Guild
 
             // Other tries to ban GuildMaster.
             action = new BanGuildMember(guildMasterAddress);
-            Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = otherAddress,
-            }));
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = world,
+                        Signer = otherAddress,
+                    }));
         }
     }
 }

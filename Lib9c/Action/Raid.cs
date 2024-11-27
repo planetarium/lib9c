@@ -87,7 +87,7 @@ namespace Nekoyume.Action
                 typeof(RuneSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
-                typeof(DeBuffLimitSheet),
+                typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
                 typeof(MaterialItemSheet),
             };
@@ -245,7 +245,7 @@ namespace Nekoyume.Action
                 raidSimulatorSheets,
                 sheets.GetSheet<CostumeStatSheet>(),
                 collectionModifiers,
-                sheets.GetSheet<DeBuffLimitSheet>(),
+                sheets.GetSheet<BuffLimitSheet>(),
                 sheets.GetSheet<BuffLinkSheet>(),
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
             );

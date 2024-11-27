@@ -78,13 +78,14 @@ namespace Lib9c.Tests.Model.Item
         {
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0);
-            Assert.Throws<ArgumentOutOfRangeException>(() => new ShopItem(
-                new PrivateKey().Address,
-                new PrivateKey().Address,
-                Guid.NewGuid(),
-                new FungibleAssetValue(_currency, 100, 0),
-                -1,
-                (ITradableItem)equipment));
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => new ShopItem(
+                    new PrivateKey().Address,
+                    new PrivateKey().Address,
+                    Guid.NewGuid(),
+                    new FungibleAssetValue(_currency, 100, 0),
+                    -1,
+                    (ITradableItem)equipment));
         }
 
         [Fact]
@@ -99,17 +100,20 @@ namespace Lib9c.Tests.Model.Item
                 new FungibleAssetValue(_currency, 100, 0),
                 0,
                 (ITradableItem)equipment);
-            Dictionary serialized = (Dictionary)shopItem.Serialize();
+            var serialized = (Dictionary)shopItem.Serialize();
             serialized = serialized.SetItem(ShopItem.ExpiredBlockIndexKey, "-1");
             Assert.Throws<ArgumentOutOfRangeException>(() => new ShopItem(serialized));
         }
 
-        private static ShopItem[] GetShopItems() => new[]
+        private static ShopItem[] GetShopItems()
         {
-            GetShopItemWithFirstCostume(),
-            GetShopItemWithFirstEquipment(),
-            GetShopItemWithFirstMaterial(),
-        };
+            return new[]
+            {
+                GetShopItemWithFirstCostume(),
+                GetShopItemWithFirstEquipment(),
+                GetShopItemWithFirstMaterial(),
+            };
+        }
 
         private static ShopItem GetShopItemWithFirstCostume()
         {

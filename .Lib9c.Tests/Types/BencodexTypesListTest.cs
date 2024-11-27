@@ -18,22 +18,24 @@ namespace Lib9c.Tests.Types
 
         public BencodexTypesListTest()
         {
-            _integerList = new Bencodex.Types.List(new List<IValue>
-            {
-                1.Serialize(),
-                2.Serialize(),
-                3.Serialize(),
-            });
+            _integerList = new Bencodex.Types.List(
+                new List<IValue>
+                {
+                    1.Serialize(),
+                    2.Serialize(),
+                    3.Serialize(),
+                });
             _descendingIntegerList = (Bencodex.Types.List)_integerList
                 .OrderByDescending(element => element.ToInteger())
                 .Serialize();
 
-            _addressList = new Bencodex.Types.List(new List<IValue>
-            {
-                new PrivateKey().Address.Serialize(),
-                new PrivateKey().Address.Serialize(),
-                new PrivateKey().Address.Serialize(),
-            });
+            _addressList = new Bencodex.Types.List(
+                new List<IValue>
+                {
+                    new PrivateKey().Address.Serialize(),
+                    new PrivateKey().Address.Serialize(),
+                    new PrivateKey().Address.Serialize(),
+                });
             _descendingAddressList = (Bencodex.Types.List)_addressList
                 .OrderByDescending(element => element.ToAddress())
                 .Serialize();
@@ -44,7 +46,7 @@ namespace Lib9c.Tests.Types
         [InlineData(1)]
         private void DeterministicWhenSerializationWithInteger(int caseIndex)
         {
-            Bencodex.Types.List targetList = Bencodex.Types.List.Empty;
+            var targetList = Bencodex.Types.List.Empty;
             switch (caseIndex)
             {
                 case 0:
@@ -74,7 +76,7 @@ namespace Lib9c.Tests.Types
         [InlineData(1)]
         private void DeterministicWhenSerializationWithAddress(int caseIndex)
         {
-            Bencodex.Types.List targetList = Bencodex.Types.List.Empty;
+            var targetList = Bencodex.Types.List.Empty;
             switch (caseIndex)
             {
                 case 0:

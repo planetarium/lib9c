@@ -134,7 +134,7 @@ namespace Nekoyume.Action
                             {
                                 costume.RequiredBlockIndex = context.BlockIndex;
                             }
-                            buyerAvatarState.UpdateFromAddCostume(costume, false);
+                            buyerAvatarState.UpdateFromAddCostume(costume);
                             break;
                         case ItemUsable itemUsable:
                             // Fix RequiredBlockIndex from RegisterProduct0

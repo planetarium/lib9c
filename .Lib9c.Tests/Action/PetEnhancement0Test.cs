@@ -63,30 +63,32 @@ namespace Lib9c.Tests.Action
         public void Execute_Throw_InvalidActionFieldException_AgentAddress()
         {
             var invalidAgentAddr = new PrivateKey().Address;
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    invalidAgentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
+            Assert.Throws<InvalidActionFieldException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        invalidAgentAddr,
+                        _avatarAddr,
+                        _targetPetId,
+                        0,
+                        1));
         }
 
         [Fact]
         public void Execute_Throw_InvalidActionFieldException_AvatarAddress()
         {
             var invalidAvatarAddr = new PrivateKey().Address;
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    invalidAvatarAddr,
-                    _targetPetId,
-                    0,
-                    1));
+            Assert.Throws<InvalidActionFieldException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        _agentAddr,
+                        invalidAvatarAddr,
+                        _targetPetId,
+                        0,
+                        1));
         }
 
         [Theory]
@@ -98,43 +100,46 @@ namespace Lib9c.Tests.Action
             int currentPetLevel,
             int targetPetLevel)
         {
-            Assert.Throws<InvalidActionFieldException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    currentPetLevel,
-                    targetPetLevel));
+            Assert.Throws<InvalidActionFieldException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        _agentAddr,
+                        _avatarAddr,
+                        _targetPetId,
+                        currentPetLevel,
+                        targetPetLevel));
         }
 
         [Fact]
         public void Execute_Throw_SheetRowNotFoundException()
         {
             // PetSheet
-            Assert.Throws<SheetRowNotFoundException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1,
-                    removePetRow: true));
+            Assert.Throws<SheetRowNotFoundException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        _agentAddr,
+                        _avatarAddr,
+                        _targetPetId,
+                        0,
+                        1,
+                        removePetRow: true));
 
             // PetCostSheet
-            Assert.Throws<SheetRowNotFoundException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    1,
-                    removePetCostRow: true));
+            Assert.Throws<SheetRowNotFoundException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        _agentAddr,
+                        _avatarAddr,
+                        _targetPetId,
+                        0,
+                        1,
+                        removePetCostRow: true));
         }
 
         [Fact]
@@ -142,16 +147,17 @@ namespace Lib9c.Tests.Action
         {
             const int targetPetLevel = 1;
 
-            Assert.Throws<PetCostNotFoundException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    0,
-                    targetPetLevel,
-                    removePetCostRowWithTargetPetLevel: true));
+            Assert.Throws<PetCostNotFoundException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        _agentAddr,
+                        _avatarAddr,
+                        _targetPetId,
+                        0,
+                        targetPetLevel,
+                        removePetCostRowWithTargetPetLevel: true));
         }
 
         [Theory]
@@ -160,16 +166,17 @@ namespace Lib9c.Tests.Action
             int currentPetLevel,
             int targetPetLevel)
         {
-            Assert.Throws<NotEnoughFungibleAssetValueException>(() =>
-                Execute(
-                    _initialStatesWithAvatarStateV2,
-                    _firstRoundStartBlockIndex,
-                    _agentAddr,
-                    _avatarAddr,
-                    _targetPetId,
-                    currentPetLevel,
-                    targetPetLevel,
-                    mintAssets: false));
+            Assert.Throws<NotEnoughFungibleAssetValueException>(
+                () =>
+                    Execute(
+                        _initialStatesWithAvatarStateV2,
+                        _firstRoundStartBlockIndex,
+                        _agentAddr,
+                        _avatarAddr,
+                        _targetPetId,
+                        currentPetLevel,
+                        targetPetLevel,
+                        false));
         }
 
         private static IWorld Execute(
@@ -200,7 +207,7 @@ namespace Lib9c.Tests.Action
             var ncgCurrency = prevStates.GetGoldCurrency();
             var petSheet = prevStates.GetSheet<PetSheet>();
             Assert.True(petSheet.TryGetValue(petId, out var petRow));
-            var soulStoneCurrency = Currency.Legacy(petRow.SoulStoneTicker, 0, minters: null);
+            var soulStoneCurrency = Currency.Legacy(petRow.SoulStoneTicker, 0, null);
             if (mintAssets &&
                 // NOTE: If the currentPetLevel does not less than targetPetLevel,
                 //       ArgumentOutOfRangeException will be thrown.
@@ -274,13 +281,14 @@ namespace Lib9c.Tests.Action
                 PetId = petId,
                 TargetLevel = targetPetLevel,
             };
-            var nextStates = action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = prevStates,
-                RandomSeed = 0,
-                Signer = agentAddr,
-            });
+            var nextStates = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = prevStates,
+                    RandomSeed = 0,
+                    Signer = agentAddr,
+                });
             var nextNcgBal = nextStates.GetBalance(agentAddr, ncgCurrency);
             var nextSoulStoneBal = nextStates.GetBalance(avatarAddr, soulStoneCurrency);
             Assert.Equal(0, nextNcgBal.MajorUnit);

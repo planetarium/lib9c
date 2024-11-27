@@ -69,6 +69,17 @@ namespace Nekoyume.Blockchain.Policy
                     startIndex: 3_031_001L,
                     value: 1024L * 1024L));          // 1 MiB
 
+        public static IVariableSubPolicy<long> Thor =>
+            Default
+                // Note: The genesis block of Thor weights 4,700,853 B (4.5 MiB).
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 0L,
+                    value: 1024L * 1024L * 5L))    // 5 MiB
+                // Note: Thor has been started after v200250
+                .Add(new SpannedSubPolicy<long>(
+                    startIndex: 1L,
+                    value: 1024L * 1024L));         // 1 MiB
+
         // Note: For internal testing.
         public static IVariableSubPolicy<long> OdinInternal =>
             Default

@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS0162;CS8032;CS0618</NoWarn>
-    <CodeAnalysisRuleSet>Lib9c.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Lib9c.Common.ruleset</CodeAnalysisRuleSet>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
     <RootNamespace>Nekoyume</RootNamespace>
     <LangVersion>9</LangVersion>
-    <VersionPrefix>1.19.4</VersionPrefix>
+    <VersionPrefix>1.20.0</VersionPrefix>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
@@ -29,23 +29,38 @@
     </PackageReference>
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="CsvHelper" Version="15.0.5" />
-    <!-- Include System.Diagnostics.DiagnosticSource only if targeting netstandard2.1 -->
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
-    <!-- Include Pyroscope only if not targeting netstandard2.1 -->
-    <PackageReference Include="Pyroscope" Version="0.8.14" Condition="'$(TargetFramework)' != 'netstandard2.1'" />
+    <!-- Include System.Diagnostics.DiagnosticSource only if targeting net48 -->
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.0" Condition="'$(TargetFramework)' == 'net5.0'" />
+    <!-- Include Pyroscope only if not targeting net48 -->
+    <PackageReference Include="Pyroscope" Version="0.8.14" Condition="'$(TargetFramework)' != 'net5.0'" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet\src\Libplanet\Libplanet.csproj">
+    <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(UseLocalLibplanet)">
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Libplanet.Analyzers" Version="$(LibplanetVersion)">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Analyzer</OutputItemType>
+      <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(UseLocalLibplanet)">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
-    <ProjectReference Include="..\.Libplanet\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
+    <ProjectReference Include="$(LibplanetDirectory)\tools\Libplanet.Analyzers\Libplanet.Analyzers.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <OutputItemType>Analyzer</OutputItemType>
       <!-- https://github.com/dotnet/roslyn/issues/18093#issuecomment-405702631 -->
     </ProjectReference>
-    <ProjectReference Include="..\Lib9c.Abstractions\Lib9c.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

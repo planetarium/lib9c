@@ -20,8 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Check if .Libplanet refers to a tagged commit
       if: |
         github.event_name == 'push' && (
@@ -44,7 +42,7 @@ jobs:
         fi
         popd
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.400
     - name: Install dependencies
@@ -58,19 +56,15 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.400
-      - name: Enforce netstandard2.1 target with custom patch
+      - name: Enforce net5.0 target with custom patch
         run: |
           set -e
 
-          sed -i -E 's|<TargetFramework>.*</TargetFramework>|<TargetFramework>netstandard2.1</TargetFramework>|' Lib9c*/*.csproj
-          sed -i -E 's|(<TargetFramework.+>).*(</TargetFramework>)|\1netstandard2.1\2|' .Libplanet/Directory.Build.props
+          sed -i -E 's|<TargetFramework>.*</TargetFramework>|<TargetFramework>net5.0</TargetFramework>|' Lib9c*/*.csproj
           sed -i -E 's|<ImplicitUsings>.*</ImplicitUsings>|<ImplicitUsings>disable</ImplicitUsings>|' Lib9c*/*.csproj Libplanet*/*.csproj
-          sed -i -E 's|\[MaybeNullWhen\(false\)] out TValue value|out TValue value|' Lib9c/TableData/Sheet.cs
           sed -i -E 's|public bool TryGetValue\(TKey key, out TValue value, bool throwException\)|public bool TryGetValue\(TKey key, out TValue? value, bool throwException\)|' Lib9c/TableData/Sheet.cs
       - name: build
         run: dotnet build --self-contained=false
@@ -79,10 +73,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.400
       - uses: pnpm/action-setup@v4
@@ -90,23 +82,21 @@ jobs:
           version: 9
           run_install: |
             recursive: true
-            cwd: "@planetarium"
+            cwd: "integrations/javascript/@planetarium"
       - name: Build Lib9c.Tools
         run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
       - run: pnpm -r build
-        working-directory: "@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium/lib9c"
       - run: pnpm -r fmt:ci
-        working-directory: "@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium/lib9c"
       - run: pnpm -r test
-        working-directory: "@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium/lib9c"
 
   release:
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: Check if a new tag refers a merge commit
       if: github.ref_type == 'tag'
       run: |
@@ -127,7 +117,7 @@ jobs:
       env:
         WEB_FLOW_KEY_URL: https://github.com/web-flow.gpg
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.400
     - name: Collect available action type ids
@@ -136,13 +126,13 @@ jobs:
         dotnet run --property WarningLevel=0 --project .Lib9c.Tools/Lib9c.Tools.csproj -- action list > publish/all_action_type_ids.txt
         dotnet run --property WarningLevel=0 --project .Lib9c.Tools/Lib9c.Tools.csproj -- action list --obsolete-only --json-path=publish/obsolete_action_types.json
     - name: Publish available action type ids
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./publish
         destination_dir: ${{ github.ref_name }}
     - name: Publish available action type ids for latest
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./publish

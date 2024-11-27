@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private static readonly Dictionary<string, string> Sheets =
             TableSheetsImporter.ImportSheets();
 
-        private static readonly TableSheets TableSheets = new TableSheets(Sheets);
+        private static readonly TableSheets TableSheets = new (Sheets);
 #pragma warning disable CS0618
         // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1419
         private static readonly Currency NCG = Currency.Legacy("NCG", 2, null);
@@ -48,7 +48,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "wanted"
+            "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -69,7 +69,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "explorer"
+            "explorer"
         );
 
         private static readonly AgentState ExplorerState = new (ExplorerAddress)
@@ -93,7 +93,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "Tester"
+            "Tester"
         );
 
         private static readonly AgentState TesterState = new (TesterAddress)
@@ -399,13 +399,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
                 Bounty = bounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 0L,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = seed,
+                });
 
             if (anotherWanted)
             {
@@ -416,13 +417,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     Season = 1,
                     AvatarAddress = WantedAvatarAddress,
                     Bounty = anotherBounty * NCG,
-                }.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = WantedAddress,
-                    BlockIndex = 1L,
-                    RandomSeed = seed,
-                });
+                }.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = WantedAddress,
+                        BlockIndex = 1L,
+                        RandomSeed = seed,
+                    });
             }
 
             // Burn all remaining NCG to make test easier
@@ -436,16 +438,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var resultState = new ClaimAdventureBossReward
             {
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
+                    RandomSeed = seed,
+                });
 
-            Assert.True(resultState.GetBountyBoard(1).Investors
-                .First(inv => inv.AvatarAddress == TesterAvatarAddress).Claimed);
+            Assert.True(
+                resultState.GetBountyBoard(1).Investors
+                    .First(inv => inv.AvatarAddress == TesterAvatarAddress).Claimed);
 
             Test(resultState, expectedReward);
         }
@@ -460,7 +464,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 0 * NCG, // No Raffle Reward
                 FavReward = new Dictionary<int, int>
                 {
-                    { 10035, 84 },  // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
+                    { 10036, 84 }, // 100NCG * 1.2 * 0.7 Fixed / 1 NCG Ratio * 100% contribution for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
@@ -491,37 +495,40 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
             state = new Wanted
             {
                 Season = 2,
                 AvatarAddress = WantedAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = WantedAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
             state = new Wanted
             {
                 Season = 3,
                 AvatarAddress = TesterAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
 
             // Burn remaining NCG
             state = state.BurnAsset(
@@ -534,13 +541,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var resultState = new ClaimAdventureBossReward
             {
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                RandomSeed = seed + 3,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                    RandomSeed = seed + 3,
+                });
 
             for (var szn = 3; szn > 0; szn--)
             {
@@ -587,13 +595,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = WantedAvatarAddress,
                 Bounty = bounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = WantedAddress,
-                BlockIndex = 0L,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = seed,
+                });
 
             // Explore : just add data to avoid explore reward
             // Manipulate point to calculate reward above zero
@@ -627,13 +636,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     Equipments = new List<Guid>(),
                     Foods = new List<Guid>(),
                     RuneInfos = new List<RuneSlotInfo>(),
-                }.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = ExplorerAddress,
-                    BlockIndex = 1L,
-                    RandomSeed = seed,
-                });
+                }.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = ExplorerAddress,
+                        BlockIndex = 1L,
+                        RandomSeed = seed,
+                    });
 
                 board = state.GetExploreBoard(1);
                 board.UsedApPotion += 99;
@@ -660,13 +670,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var resultState = new ClaimAdventureBossReward
             {
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                    RandomSeed = seed,
+                });
 
             // Test
             var exploreBoard = resultState.GetExploreBoard(1);
@@ -696,13 +707,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 resultState = new ClaimAdventureBossReward
                 {
                     AvatarAddress = ExplorerAvatarAddress,
-                }.Execute(new ActionContext
-                {
-                    PreviousState = resultState,
-                    Signer = ExplorerAddress,
-                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
-                    RandomSeed = seed,
-                });
+                }.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = resultState,
+                        Signer = ExplorerAddress,
+                        BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex + 1,
+                        RandomSeed = seed,
+                    });
 
                 Assert.Equal(
                     0 * NCG,
@@ -714,9 +726,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 var avatarState = resultState.GetAvatarState(
                     TesterAvatarAddress,
-                    getInventory: true,
-                    getWorldInformation: false,
-                    getQuestList: false
+                    true,
+                    false,
+                    false
                 );
                 Assert.IsType<AdventureBossRaffleWinnerMail>(avatarState.mailBox.First());
             }
@@ -735,7 +747,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 NcgReward = 40 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
-                    { 10035, 40 }, // (100 AP * 0.4 Exchange / 1 Ratio * 100% contribution) for season 3
+                    { 10036, 40 }, // (100 AP * 0.4 Exchange / 1 Ratio * 100% contribution) for season 3
                 },
                 ItemReward = new Dictionary<int, int>
                 {
@@ -768,13 +780,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = WantedAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = WantedAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
 
             // Manipulate point to calculate reward above zero
             var board = state.GetExploreBoard(1);
@@ -796,26 +809,28 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 AvatarAddress =
                     ExplorerAvatarAddress, // To avoid wanted for two seasons in a row error
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = ExplorerAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = ExplorerAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
 
             state = new Wanted
             {
                 Season = 3,
                 AvatarAddress = WantedAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = WantedAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
 
             // Manipulate point to calculate reward above zero
             board = state.GetExploreBoard(3);
@@ -840,13 +855,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var resultState = new ClaimAdventureBossReward
             {
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                RandomSeed = seed + 3,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                    RandomSeed = seed + 3,
+                });
 
             for (var szn = 3; szn > 0; szn--)
             {
@@ -898,13 +914,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 0L,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = seed,
+                });
 
             // Explore : just add data to avoid explore reward
             // Manipulate point to calculate reward above zero
@@ -931,13 +948,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var resultState = new ClaimAdventureBossReward
             {
                 AvatarAddress = TesterAvatarAddress,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                    RandomSeed = seed,
+                });
 
             Test(resultState, expectedReward);
         }
@@ -975,13 +993,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = wanted ? TesterAvatarAddress : WantedAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = wanted ? TesterAddress : WantedAddress,
-                BlockIndex = 0L,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = wanted ? TesterAddress : WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = seed,
+                });
 
             // Explore : just add data to avoid explore reward
             // Manipulate point to calculate reward above zero
@@ -989,12 +1008,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
             var lst = state.GetExplorerList(1);
             board.TotalPoint += 100;
             board.UsedApPotion += 100;
-            lst.Explorers.Add(explore
-                ? (TesterAvatarAddress, TesterAvatarState.name)
-                : (ExplorerAvatarAddress, ExplorerAvatarState.name));
+            lst.Explorers.Add(
+                explore
+                    ? (TesterAvatarAddress, TesterAvatarState.name)
+                    : (ExplorerAvatarAddress, ExplorerAvatarState.name));
             var exp =
                 state.TryGetExplorer(
-                    1, explore ? TesterAvatarAddress : ExplorerAvatarAddress, out var e
+                    1,
+                    explore ? TesterAvatarAddress : ExplorerAvatarAddress,
+                    out var e
                 )
                     ? e
                     : new Explorer(
@@ -1012,13 +1034,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 2,
                 AvatarAddress = ExplorerAvatarAddress,
                 Bounty = 100 * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = ExplorerAddress,
-                BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
-                RandomSeed = seed,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = ExplorerAddress,
+                    BlockIndex = state.GetLatestAdventureBossSeason().NextStartBlockIndex,
+                    RandomSeed = seed,
+                });
 
             // Burn
             state = state.BurnAsset(
@@ -1034,24 +1057,28 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             if (exc is null)
             {
-                var resultState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = TesterAddress,
-                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                    RandomSeed = seed + 2,
-                });
+                var resultState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = TesterAddress,
+                        BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                        RandomSeed = seed + 2,
+                    });
                 Test(resultState, expectedReward);
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = TesterAddress,
-                    BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
-                    RandomSeed = seed + 2,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = TesterAddress,
+                            BlockIndex = state.GetLatestAdventureBossSeason().EndBlockIndex,
+                            RandomSeed = seed + 2,
+                        }));
             }
         }
 
@@ -1063,12 +1090,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private IWorld Stake(IWorld world, Address agentAddress)
         {
             var action = new Stake(new BigInteger(500_000));
-            var state = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                BlockIndex = 0L,
-            });
+            var state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                    BlockIndex = 0L,
+                });
             _runeSheet = state.GetSheet<RuneSheet>();
             return state;
         }

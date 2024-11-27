@@ -56,27 +56,27 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(new[] { 2 }, true, false, true, 500, null)]
+        [InlineData(new[] { 2, }, true, false, true, 500, null)]
         // Migration AvatarState.
-        [InlineData(new[] { 2, 3, 4, 5 }, true, false, true, 153000, null)]
+        [InlineData(new[] { 2, 3, 4, 5, }, true, false, true, 153000, null)]
         // TODO: add world 6 unlock
         //[InlineData(new[] { 2, 3, 4, 5, 6 }, true, false, true, 153000, null)]
         // Try open Yggdrasil.
-        [InlineData(new[] { 1 }, false, false, true, 0, typeof(InvalidWorldException))]
+        [InlineData(new[] { 1, }, false, false, true, 0, typeof(InvalidWorldException))]
         // Try open Mimisbrunnr.
-        [InlineData(new[] { GameConfig.MimisbrunnrWorldId }, false, false, true, 0, typeof(InvalidWorldException))]
+        [InlineData(new[] { GameConfig.MimisbrunnrWorldId, }, false, false, true, 0, typeof(InvalidWorldException))]
         // Empty WorldId.
         [InlineData(new int[] { }, false, false, true, 0, typeof(InvalidWorldException))]
         // AvatarState is null.
-        [InlineData(new[] { 2 }, false, false, true, 0, typeof(FailedLoadStateException))]
+        [InlineData(new[] { 2, }, false, false, true, 0, typeof(FailedLoadStateException))]
         // Already unlocked world.
-        [InlineData(new[] { 2 }, true, true, true, 0, typeof(AlreadyWorldUnlockedException))]
+        [InlineData(new[] { 2, }, true, true, true, 0, typeof(AlreadyWorldUnlockedException))]
         // Skip previous world.
-        [InlineData(new[] { 3 }, true, false, true, 0, typeof(FailedToUnlockWorldException))]
+        [InlineData(new[] { 3, }, true, false, true, 0, typeof(FailedToUnlockWorldException))]
         // Stage not cleared.
-        [InlineData(new[] { 2 }, true, false, false, 0, typeof(FailedToUnlockWorldException))]
+        [InlineData(new[] { 2, }, true, false, false, 0, typeof(FailedToUnlockWorldException))]
         // Insufficient CRYSTAL.
-        [InlineData(new[] { 2 }, true, false, true, 100, typeof(NotEnoughFungibleAssetValueException))]
+        [InlineData(new[] { 2, }, true, false, true, 100, typeof(NotEnoughFungibleAssetValueException))]
         public void Execute(
             IEnumerable<int> ids,
             bool stateExist,
@@ -87,7 +87,7 @@ namespace Lib9c.Tests.Action
         )
         {
             var context = new ActionContext();
-            var state = (balance > 0)
+            var state = balance > 0
                 ? _initialState.MintAsset(context, _agentAddress, balance * _currency)
                 : _initialState;
             var worldIds = ids.ToList();
@@ -99,23 +99,25 @@ namespace Lib9c.Tests.Action
                 {
                     foreach (var wordId in worldIds)
                     {
-                        var row = _tableSheets.WorldUnlockSheet.OrderedList.First(r =>
-                            r.WorldIdToUnlock == wordId);
+                        var row = _tableSheets.WorldUnlockSheet.OrderedList.First(
+                            r =>
+                                r.WorldIdToUnlock == wordId);
                         var worldRow = _tableSheets.WorldSheet[row.WorldId];
                         var prevRow =
-                            _tableSheets.WorldUnlockSheet.OrderedList.FirstOrDefault(r =>
-                                r.WorldIdToUnlock == row.WorldId);
+                            _tableSheets.WorldUnlockSheet.OrderedList.FirstOrDefault(
+                                r =>
+                                    r.WorldIdToUnlock == row.WorldId);
                         // Clear prev world.
                         if (!(prevRow is null))
                         {
                             var prevWorldRow = _tableSheets.WorldSheet[prevRow.WorldId];
-                            for (int i = prevWorldRow.StageBegin; i < prevWorldRow.StageEnd + 1; i++)
+                            for (var i = prevWorldRow.StageBegin; i < prevWorldRow.StageEnd + 1; i++)
                             {
                                 worldInformation.ClearStage(prevWorldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                             }
                         }
 
-                        for (int i = worldRow.StageBegin; i < worldRow.StageEnd + 1; i++)
+                        for (var i = worldRow.StageBegin; i < worldRow.StageEnd + 1; i++)
                         {
                             worldInformation.ClearStage(worldRow.Id, i, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
                         }
@@ -145,13 +147,14 @@ namespace Lib9c.Tests.Action
 
             if (exc is null)
             {
-                IWorld nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 1,
-                    RandomSeed = _random.Seed,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        BlockIndex = 1,
+                        RandomSeed = _random.Seed,
+                    });
 
                 Assert.True(nextState.TryGetLegacyState(unlockedWorldIdsAddress, out List rawIds));
 
@@ -163,13 +166,16 @@ namespace Lib9c.Tests.Action
             }
             else
             {
-                Assert.Throws(exc, () => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    BlockIndex = 1,
-                    RandomSeed = _random.Seed,
-                }));
+                Assert.Throws(
+                    exc,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = _agentAddress,
+                            BlockIndex = 1,
+                            RandomSeed = _random.Seed,
+                        }));
             }
         }
     }

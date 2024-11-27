@@ -13,8 +13,9 @@ namespace Lib9c.Tests.Model.Item
         public BeltTest()
         {
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _beltRow = tableSheets.EquipmentItemSheet.OrderedList.FirstOrDefault(row =>
-                row.ItemSubType == ItemSubType.Belt);
+            _beltRow = tableSheets.EquipmentItemSheet.OrderedList.FirstOrDefault(
+                row =>
+                    row.ItemSubType == ItemSubType.Belt);
         }
 
         [Fact]

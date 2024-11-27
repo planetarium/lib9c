@@ -388,7 +388,7 @@ namespace Nekoyume.Action
                 }
                 if (purchaseResult.costume != null)
                 {
-                    buyerAvatarState.UpdateFromAddCostume(purchaseResult.costume, false);
+                    buyerAvatarState.UpdateFromAddCostume(purchaseResult.costume);
                 }
                 sellerAvatarState.Update(sellerMail);
 

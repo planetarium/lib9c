@@ -40,10 +40,10 @@ namespace Lib9c.Tests
                 MockWorldState.CreateModern()
                     .SetBalance(garageBalanceAddr, Currencies.Crystal * 1000));
 
-            IEnumerable<Material> materials = _tableSheets.MaterialItemSheet.OrderedList!
+            var materials = _tableSheets.MaterialItemSheet.OrderedList!
                 .Take(3)
                 .Select(ItemFactory.CreateMaterial);
-            foreach (Material material in materials)
+            foreach (var material in materials)
             {
                 var garageAddr = Addresses.GetGarageAddress(_signer, material.FungibleId);
                 var garage = new FungibleItemGarage(material, 1000);
@@ -66,11 +66,13 @@ namespace Lib9c.Tests
             };
 
             var action = new IssueTokensFromGarage(specs);
-            Dictionary expected = Dictionary.Empty
+            var expected = Dictionary.Empty
                 .Add("type_id", "issue_tokens_from_garage")
-                .Add("values", List.Empty
-                    .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
-                    .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
+                        .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
             Assert.Equal(
                 expected,
                 action.PlainValue
@@ -80,11 +82,13 @@ namespace Lib9c.Tests
         [Fact]
         public void LoadPlainValue()
         {
-            Dictionary encoded = Dictionary.Empty
+            var encoded = Dictionary.Empty
                 .Add("type_id", "issue_tokens_from_garage")
-                .Add("values", List.Empty
-                    .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
-                    .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
+                .Add(
+                    "values",
+                    List.Empty
+                        .Add(new List((Currencies.Crystal * 1000).Serialize(), default(Null)))
+                        .Add(new List(default(Null), new FungibleItemValue(SampleFungibleId, 42).Serialize())));
             var action = new IssueTokensFromGarage();
             action.LoadPlainValue(encoded);
             var expected = new List<IssueTokensFromGarage.Spec>()
@@ -99,12 +103,13 @@ namespace Lib9c.Tests
         [Fact]
         public void Execute_With_FungibleAssetValue()
         {
-            var action = new IssueTokensFromGarage(new[]
-            {
-                IssueTokensFromGarage.Spec.FromFungibleAssetValue(Currencies.Crystal * 42),
-            });
+            var action = new IssueTokensFromGarage(
+                new[]
+                {
+                    IssueTokensFromGarage.Spec.FromFungibleAssetValue(Currencies.Crystal * 42),
+                });
 
-            IWorld nextState = action.Execute(
+            var nextState = action.Execute(
                 new ActionContext()
                 {
                     PreviousState = _prevState,
@@ -128,10 +133,11 @@ namespace Lib9c.Tests
         [Fact]
         public void Execute_With_FungibleItemValue()
         {
-            var action = new IssueTokensFromGarage(new[]
-            {
-                IssueTokensFromGarage.Spec.FromFungibleItemValue(new FungibleItemValue(SampleFungibleId, 42)),
-            });
+            var action = new IssueTokensFromGarage(
+                new[]
+                {
+                    IssueTokensFromGarage.Spec.FromFungibleItemValue(new FungibleItemValue(SampleFungibleId, 42)),
+                });
 
             var nextState = action.Execute(
                 new ActionContext()
@@ -142,7 +148,7 @@ namespace Lib9c.Tests
                 }
             );
 
-            Currency itemCurrency = Currency.Legacy("Item_NT_100000", 0, null);
+            var itemCurrency = Currency.Legacy("Item_NT_100000", 0, null);
             var garageAddr = Addresses.GetGarageAddress(_signer, SampleFungibleId);
             Assert.Equal(itemCurrency * 42, nextState.GetBalance(_signer, itemCurrency));
             Assert.Equal(1000 - 42, new FungibleItemGarage(nextState.GetLegacyState(garageAddr)).Count);

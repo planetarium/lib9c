@@ -18,7 +18,7 @@ namespace Lib9c.Tests
             _fileSystem = fileSystem;
         }
 
-        public static JsonStatesLoader Default => new JsonStatesLoader(new FileSystem());
+        public static JsonStatesLoader Default => new (new FileSystem());
 
         public Dictionary<string, IValue> Load(string jsonFilePath)
         {
@@ -32,8 +32,8 @@ namespace Lib9c.Tests
                 throw new FileNotFoundException();
             }
 
-            string rawJsonString = _fileSystem.File.ReadAllText(jsonFilePath);
-            Dictionary<string, byte[]> json = JsonSerializer.Deserialize<Dictionary<string, byte[]>>(rawJsonString);
+            var rawJsonString = _fileSystem.File.ReadAllText(jsonFilePath);
+            var json = JsonSerializer.Deserialize<Dictionary<string, byte[]>>(rawJsonString);
             var codec = new Codec();
             return json.ToDictionary(pair => pair.Key, pair => codec.Decode(pair.Value));
         }

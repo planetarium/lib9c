@@ -24,7 +24,7 @@ namespace Lib9c.Tests.Action
     {
         private const string AgentAddressHex = "0x0000000001000000000100000000010000000001";
         private const int AvatarIndex = 0;
-        private static readonly Address AgentAddr = new Address(AgentAddressHex);
+        private static readonly Address AgentAddr = new (AgentAddressHex);
 
         private static readonly Address AvatarAddr =
             Addresses.GetAvatarAddress(AgentAddr, AvatarIndex);
@@ -354,21 +354,23 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_FailedLoadStateException_When_Staking_State_Null()
         {
-            Assert.Throws<FailedLoadStateException>(() =>
-                Execute(
-                    _initialState,
-                    AgentAddr,
-                    AvatarAddr,
-                    0));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    Execute(
+                        _initialState,
+                        AgentAddr,
+                        AvatarAddr,
+                        0));
 
             var stakeAddr = StakeState.DeriveAddress(AgentAddr);
             var previousState = _initialState.RemoveLegacyState(stakeAddr);
-            Assert.Throws<FailedLoadStateException>(() =>
-                Execute(
-                    previousState,
-                    AgentAddr,
-                    AvatarAddr,
-                    0));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    Execute(
+                        previousState,
+                        AgentAddr,
+                        AvatarAddr,
+                        0));
         }
 
         [Theory]
@@ -395,12 +397,13 @@ namespace Lib9c.Tests.Action
                 // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
                 .MintAsset(new ActionContext(), stakeAddr, _ncg * 50)
                 .SetLegacyState(stakeAddr, stakeState.Serialize());
-            Assert.Throws<RequiredBlockIndexException>(() =>
-                Execute(
-                    prevState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<RequiredBlockIndexException>(
+                () =>
+                    Execute(
+                        prevState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
         }
 
         [Theory]
@@ -426,12 +429,13 @@ namespace Lib9c.Tests.Action
                 // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
                 .MintAsset(new ActionContext(), stakeAddr, _ncg * 50)
                 .SetLegacyState(stakeAddr, stakeStateV2.Serialize());
-            Assert.Throws<RequiredBlockIndexException>(() =>
-                Execute(
-                    prevState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<RequiredBlockIndexException>(
+                () =>
+                    Execute(
+                        prevState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
         }
 
         [Fact]
@@ -448,12 +452,13 @@ namespace Lib9c.Tests.Action
             var sheetAddr = Addresses.GetSheetAddress(
                 stakeStateV2.Contract.StakeRegularFixedRewardSheetTableName);
             prevState = prevState.RemoveLegacyState(sheetAddr);
-            Assert.Throws<FailedLoadStateException>(() =>
-                Execute(
-                    prevState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    Execute(
+                        prevState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
 
             prevState = _initialState
                 // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
@@ -463,12 +468,13 @@ namespace Lib9c.Tests.Action
             sheetAddr = Addresses.GetSheetAddress(
                 stakeStateV2.Contract.StakeRegularRewardSheetTableName);
             prevState = prevState.RemoveLegacyState(sheetAddr);
-            Assert.Throws<FailedLoadStateException>(() =>
-                Execute(
-                    prevState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<FailedLoadStateException>(
+                () =>
+                    Execute(
+                        prevState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
         }
 
         [Theory]
@@ -487,12 +493,13 @@ namespace Lib9c.Tests.Action
                     stakeAddr,
                     _ncg * stakedBalance)
                 : previousState;
-            Assert.Throws<InsufficientBalanceException>(() =>
-                Execute(
-                    previousState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<InsufficientBalanceException>(
+                () =>
+                    Execute(
+                        previousState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
         }
 
         [Fact]
@@ -510,18 +517,25 @@ namespace Lib9c.Tests.Action
             var sheetAddr = Addresses.GetSheetAddress(
                 stakeStateV2.Contract.StakeRegularRewardSheetTableName);
             var sheetValue = prevState.GetSheetCsv(sheetAddr);
-            sheetValue = string.Join('\n', sheetValue.Split('\n')
-                .Select(line => string.Join(',', line.Split(',')
-                    .Select((column, index) => index == 5
-                        ? string.Empty
-                        : column))));
+            sheetValue = string.Join(
+                '\n',
+                sheetValue.Split('\n')
+                    .Select(
+                        line => string.Join(
+                            ',',
+                            line.Split(',')
+                                .Select(
+                                    (column, index) => index == 5
+                                        ? string.Empty
+                                        : column))));
             prevState = prevState.SetLegacyState(sheetAddr, sheetValue.Serialize());
-            Assert.Throws<ArgumentNullException>(() =>
-                Execute(
-                    prevState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    Execute(
+                        prevState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
         }
 
         [Fact]
@@ -540,24 +554,31 @@ namespace Lib9c.Tests.Action
             var sheetAddr = Addresses.GetSheetAddress(
                 stakeStateV2.Contract.StakeRegularRewardSheetTableName);
             var sheetValue = prevState.GetSheetCsv(sheetAddr);
-            sheetValue = string.Join('\n', sheetValue.Split('\n')
-                .Select(line => string.Join(',', line.Split(',')
-                    .Select((column, index) =>
-                    {
-                        return index switch
-                        {
-                            5 => "NEW_TICKER",
-                            6 => string.Empty,
-                            _ => column,
-                        };
-                    }))));
+            sheetValue = string.Join(
+                '\n',
+                sheetValue.Split('\n')
+                    .Select(
+                        line => string.Join(
+                            ',',
+                            line.Split(',')
+                                .Select(
+                                    (column, index) =>
+                                    {
+                                        return index switch
+                                        {
+                                            5 => "NEW_TICKER",
+                                            6 => string.Empty,
+                                            _ => column,
+                                        };
+                                    }))));
             prevState = prevState.SetLegacyState(sheetAddr, sheetValue.Serialize());
-            Assert.Throws<ArgumentNullException>(() =>
-                Execute(
-                    prevState,
-                    AgentAddr,
-                    AvatarAddr,
-                    blockIndex));
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                    Execute(
+                        prevState,
+                        AgentAddr,
+                        AvatarAddr,
+                        blockIndex));
         }
 
         [Theory]
@@ -707,12 +728,13 @@ namespace Lib9c.Tests.Action
             var prevBalance = prevState.GetBalance(agentAddr, ncg);
             var prevStakedBalance = prevState.GetBalance(stakeAddr, ncg);
             var action = new ClaimStakeReward(avatarAddr);
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = prevState,
-                Signer = agentAddr,
-                BlockIndex = blockIndex,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = prevState,
+                    Signer = agentAddr,
+                    BlockIndex = blockIndex,
+                });
             var nextBalance = nextState.GetBalance(agentAddr, ncg);
             Assert.Equal(prevBalance, nextBalance);
             var nextStakedBalance = nextState.GetBalance(stakeAddr, ncg);

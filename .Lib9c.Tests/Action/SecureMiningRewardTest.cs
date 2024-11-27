@@ -15,17 +15,13 @@ namespace Lib9c.Tests.Action
         private static readonly Currency NCG = SecureMiningReward.NCG;
 
         // Just for sake of checking, chosen arbitrary addresses statically.
-        private static readonly Address _admin =
-            new Address("0x765781BB7B4FA2598Cb09383EBb9bEe8b1aE10bF");
+        private static readonly Address _admin = new ("0x765781BB7B4FA2598Cb09383EBb9bEe8b1aE10bF");
 
-        private static readonly Address _recipient =
-            new Address("0xC63c1dDCeB5054015bC01dE352b42234d4a25be5");
+        private static readonly Address _recipient = new ("0xC63c1dDCeB5054015bC01dE352b42234d4a25be5");
 
-        private static readonly Address _treasury =
-            new Address("0xB3bCa3b3c6069EF5Bdd6384bAD98F11378Dc360E");
+        private static readonly Address _treasury = new ("0xB3bCa3b3c6069EF5Bdd6384bAD98F11378Dc360E");
 
-        private static readonly Address _nil =
-            new Address("0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF");
+        private static readonly Address _nil = new ("0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF");
 
         private static readonly ImmutableList<Address> _authMiners = new[]
         {
@@ -36,19 +32,19 @@ namespace Lib9c.Tests.Action
         }.ToImmutableList();
 
         private static readonly IWorld _previousState = new World(
-            MockWorldState.CreateModern()
-                .SetBalance(_authMiners[0], NCG * 1000)
-                .SetBalance(_authMiners[1], NCG * 2000)
-                .SetBalance(_authMiners[2], NCG * 3000)
-                .SetBalance(_authMiners[3], NCG * 4000))
+                MockWorldState.CreateModern()
+                    .SetBalance(_authMiners[0], NCG * 1000)
+                    .SetBalance(_authMiners[1], NCG * 2000)
+                    .SetBalance(_authMiners[2], NCG * 3000)
+                    .SetBalance(_authMiners[3], NCG * 4000))
             .SetLegacyState(AdminState.Address, new AdminState(_admin, 100).Serialize())
             .SetLegacyState(GoldCurrencyState.Address, new GoldCurrencyState(NCG).Serialize());
 
         [Fact]
         public void Execute()
         {
-            var action = new SecureMiningReward(recipient: _recipient);
-            IWorld nextState = action.Execute(
+            var action = new SecureMiningReward(_recipient);
+            var nextState = action.Execute(
                 new ActionContext
                 {
                     PreviousState = _previousState,
@@ -76,15 +72,16 @@ namespace Lib9c.Tests.Action
         public void Execute_InvalidSigner()
         {
             var invalidSigner = new Address("0x94cde435616875310f0739FAf2c8671c58987bf0");
-            var action = new SecureMiningReward(recipient: _recipient);
-            Assert.Throws<PermissionDeniedException>(() => action.Execute(
-                new ActionContext
-                {
-                    PreviousState = _previousState,
-                    Signer = invalidSigner,
-                    BlockIndex = 1,
-                }
-            ));
+            var action = new SecureMiningReward(_recipient);
+            Assert.Throws<PermissionDeniedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _previousState,
+                        Signer = invalidSigner,
+                        BlockIndex = 1,
+                    }
+                ));
         }
     }
 }

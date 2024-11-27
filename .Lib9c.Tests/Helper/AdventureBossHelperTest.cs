@@ -34,8 +34,9 @@ namespace Lib9c.Tests.Helper
         public void CalculateWantedReward(int expectedReward)
         {
             var ncgRuneRatio =
-                TableExtensions.ParseDecimal(_tableSheets
-                    .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
+                TableExtensions.ParseDecimal(
+                    _tableSheets
+                        .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
             var bountyBoard = new BountyBoard(1);
             bountyBoard.FixedRewardFavId = 30001;
             bountyBoard.RandomRewardFavId = 30001;
@@ -69,11 +70,13 @@ namespace Lib9c.Tests.Helper
         public void CalculateExploreReward(bool isReal, bool winner, int expectedNcgReward)
         {
             var ncgApRatio =
-                TableExtensions.ParseDecimal(_tableSheets
-                    .GameConfigSheet["adventure_boss_ncg_ap_ratio"].Value);
+                TableExtensions.ParseDecimal(
+                    _tableSheets
+                        .GameConfigSheet["adventure_boss_ncg_ap_ratio"].Value);
             var ncgRuneRatio =
-                TableExtensions.ParseDecimal(_tableSheets
-                    .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
+                TableExtensions.ParseDecimal(
+                    _tableSheets
+                        .GameConfigSheet["adventure_boss_ncg_rune_ratio"].Value);
             var bountyBoard = new BountyBoard(1);
             bountyBoard.AddOrUpdate(_avatarAddress, _name, 100 * NCG);
 

@@ -39,12 +39,12 @@ namespace Nekoyume.Battle
             RaidSimulatorSheets simulatorSheets,
             CostumeStatSheet costumeStatSheet,
             List<StatModifier> collectionModifiers,
-            DeBuffLimitSheet deBuffLimitSheet,
+            BuffLimitSheet buffLimitSheet,
             BuffLinkSheet buffLinkSheet,
             long shatterStrikeMaxDamage = 400_000) : base(random, avatarState, foods, simulatorSheets,
             shatterStrikeMaxDamage: shatterStrikeMaxDamage)
         {
-            DeBuffLimitSheet = deBuffLimitSheet;
+            BuffLimitSheet = buffLimitSheet;
             BuffLinkSheet = buffLinkSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;

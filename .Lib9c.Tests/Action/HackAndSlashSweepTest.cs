@@ -105,7 +105,8 @@ namespace Lib9c.Tests.Action
                     .Id;
 
                 var costume = (Costume)ItemFactory.CreateItem(
-                    _tableSheets.ItemSheet[costumeId], random);
+                    _tableSheets.ItemSheet[costumeId],
+                    random);
                 avatarState.inventory.AddItem(costume);
                 costumes.Add(costume.ItemId);
             }
@@ -127,12 +128,14 @@ namespace Lib9c.Tests.Action
 
             IWorld state = new World(MockUtil.MockModernWorldState);
 
-            Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<FailedLoadStateException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -153,12 +156,14 @@ namespace Lib9c.Tests.Action
                 List.Empty.Add(worldId.Serialize())
             );
 
-            Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<SheetRowNotFoundException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -180,12 +185,14 @@ namespace Lib9c.Tests.Action
                 List.Empty.Add(worldId.Serialize())
             );
 
-            Assert.Throws<SheetRowColumnException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<SheetRowColumnException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -208,17 +215,19 @@ namespace Lib9c.Tests.Action
 
             var state = _initialState
                 .SetLegacyState(
-                _avatarAddress.Derive("world_ids"),
-                List.Empty.Add(worldId.Serialize())
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize())
                 )
                 .SetAvatarState(_avatarAddress, _avatarState);
 
-            Assert.Throws<InvalidStageException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<InvalidStageException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -238,7 +247,7 @@ namespace Lib9c.Tests.Action
             avatarState.worldInformation =
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 10000001);
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             if (unlockedIdsExist)
             {
@@ -257,12 +266,14 @@ namespace Lib9c.Tests.Action
                 stageId = stageId,
             };
 
-            Assert.Throws<InvalidWorldException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<InvalidWorldException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -278,7 +289,7 @@ namespace Lib9c.Tests.Action
             avatarState.worldInformation =
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
 
             var action = new HackAndSlashSweep
             {
@@ -289,12 +300,14 @@ namespace Lib9c.Tests.Action
                 stageId = 2,
             };
 
-            Assert.Throws<UsageLimitExceedException>(() => action.Execute(new ActionContext()
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<UsageLimitExceedException>(
+                () => action.Execute(
+                    new ActionContext()
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -313,12 +326,13 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            var row = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.ApStone);
+            var row = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(row);
             avatarState.inventory.AddItem(apStone, holdingApStoneCount);
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
             var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
@@ -348,12 +362,14 @@ namespace Lib9c.Tests.Action
                     stageId = 2,
                 };
 
-                Assert.Throws<NotEnoughMaterialException>(() => action.Execute(new ActionContext()
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    RandomSeed = 0,
-                }));
+                Assert.Throws<NotEnoughMaterialException>(
+                    () => action.Execute(
+                        new ActionContext()
+                        {
+                            PreviousState = state,
+                            Signer = _agentAddress,
+                            RandomSeed = 0,
+                        }));
             }
         }
 
@@ -371,7 +387,7 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
@@ -401,13 +417,15 @@ namespace Lib9c.Tests.Action
                     stageId = 2,
                 };
 
-                Assert.Throws<NotEnoughActionPointException>(() =>
-                    action.Execute(new ActionContext()
-                    {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        RandomSeed = 0,
-                    }));
+                Assert.Throws<NotEnoughActionPointException>(
+                    () =>
+                        action.Execute(
+                            new ActionContext()
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                RandomSeed = 0,
+                            }));
             }
         }
 
@@ -425,7 +443,7 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = state.GetActionPoint(_avatarAddress);
 
@@ -455,13 +473,15 @@ namespace Lib9c.Tests.Action
                     stageId = 2,
                 };
 
-                Assert.Throws<PlayCountIsZeroException>(() =>
-                    action.Execute(new ActionContext()
-                    {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        RandomSeed = 0,
-                    }));
+                Assert.Throws<PlayCountIsZeroException>(
+                    () =>
+                        action.Execute(
+                            new ActionContext()
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                RandomSeed = 0,
+                            }));
             }
         }
 
@@ -479,13 +499,13 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 1;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = state.GetActionPoint(_avatarAddress);
 
             var stageSheet = _initialState.GetSheet<StageSheet>();
             var (expectedLevel, expectedExp) = (0, 0L);
-            int stageId = 24;
+            var stageId = 24;
             if (stageSheet.TryGetValue(stageId, out var stageRow))
             {
                 var itemPlayCount =
@@ -509,13 +529,15 @@ namespace Lib9c.Tests.Action
                     stageId = stageId,
                 };
 
-                Assert.Throws<NotEnoughCombatPointException>(() =>
-                    action.Execute(new ActionContext()
-                    {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        RandomSeed = 0,
-                    }));
+                Assert.Throws<NotEnoughCombatPointException>(
+                    () =>
+                        action.Execute(
+                            new ActionContext()
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                RandomSeed = 0,
+                            }));
             }
         }
 
@@ -540,8 +562,9 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 3;
 
-            var itemRow = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.ApStone);
+            var itemRow = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(itemRow);
             avatarState.inventory.AddItem(apStone);
 
@@ -581,12 +604,13 @@ namespace Lib9c.Tests.Action
                     stageId = stageId,
                 };
 
-                var nextState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    RandomSeed = 0,
-                });
+                var nextState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    });
                 var nextAvatar = nextState.GetAvatarState(_avatarAddress);
                 Assert.Equal(expectedLevel, nextAvatar.level);
                 Assert.Equal(expectedExp, nextAvatar.exp);
@@ -654,12 +678,13 @@ namespace Lib9c.Tests.Action
                 stageId = stageId,
             };
 
-            var nextState = action.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-            });
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                });
             var nextAvatar = nextState.GetAvatarState(_avatarAddress);
 
             var circleRow = materialSheet.Values.First(i => i.ItemSubType == ItemSubType.Circle);
@@ -690,8 +715,9 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 3;
 
-            var itemRow = _tableSheets.MaterialItemSheet.Values.First(r =>
-                r.ItemSubType == ItemSubType.ApStone);
+            var itemRow = _tableSheets.MaterialItemSheet.Values.First(
+                r =>
+                    r.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(itemRow);
             avatarState.inventory.AddItem(apStone);
 
@@ -728,13 +754,14 @@ namespace Lib9c.Tests.Action
                     SlotIndex = 1,
                 };
 
-                state = unlockRuneSlot.Execute(new ActionContext
-                {
-                    BlockIndex = 1,
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    RandomSeed = 0,
-                });
+                state = unlockRuneSlot.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1,
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                    });
 
                 var action = new HackAndSlashSweep
                 {
@@ -742,8 +769,8 @@ namespace Lib9c.Tests.Action
                     equipments = new List<Guid>(),
                     runeInfos = new List<RuneSlotInfo>()
                     {
-                        new RuneSlotInfo(slotIndex, runeId),
-                        new RuneSlotInfo(slotIndex2, runeId2),
+                        new (slotIndex, runeId),
+                        new (slotIndex2, runeId2),
                     },
                     avatarAddress = _avatarAddress,
                     actionPoint = (int)actionPoint,
@@ -752,12 +779,15 @@ namespace Lib9c.Tests.Action
                     stageId = stageId,
                 };
 
-                Assert.Throws(exception, () => action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = _agentAddress,
-                    RandomSeed = 0,
-                }));
+                Assert.Throws(
+                    exception,
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = _agentAddress,
+                            RandomSeed = 0,
+                        }));
             }
             else
             {
@@ -782,7 +812,7 @@ namespace Lib9c.Tests.Action
                 new WorldInformation(0, _initialState.GetSheet<WorldSheet>(), 25);
             avatarState.level = 400;
 
-            IWorld state = _initialState.SetAvatarState(_avatarAddress, avatarState)
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState)
                 .SetActionPoint(_avatarAddress, 0);
             var actionPoint = _initialState.GetActionPoint(_avatarAddress);
 
@@ -812,13 +842,15 @@ namespace Lib9c.Tests.Action
                     stageId = 2,
                 };
 
-                Assert.Throws<ArgumentOutOfRangeException>(() =>
-                    action.Execute(new ActionContext()
-                    {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        RandomSeed = 0,
-                    }));
+                Assert.Throws<ArgumentOutOfRangeException>(
+                    () =>
+                        action.Execute(
+                            new ActionContext()
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                RandomSeed = 0,
+                            }));
             }
         }
     }

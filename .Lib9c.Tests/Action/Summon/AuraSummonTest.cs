@@ -93,15 +93,15 @@ namespace Lib9c.Tests.Action.Summon
             var sheets = TableSheetsImporter.ImportSheets();
             if (version == "V1")
             {
-                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V1;
+                sheets[nameof(EquipmentSummonSheet)] = SummonSheetFixtures.V1;
             }
             else
             {
-                sheets[nameof(SummonSheet)] = SummonSheetFixtures.V2;
+                sheets[nameof(EquipmentSummonSheet)] = SummonSheetFixtures.V2;
             }
 
             _tableSheets = new TableSheets(sheets);
-            var sheet = _tableSheets.SummonSheet;
+            var sheet = _tableSheets.EquipmentSummonSheet;
 
             var targetRow = sheet.OrderedList.First(r => r.GroupId == groupId);
 
@@ -123,10 +123,8 @@ namespace Lib9c.Tests.Action.Summon
         [Theory]
         // success first group
         [InlineData("V1", 10001, 1, 800201, 1, 1, new[] { 10610000 }, null)]
-        [InlineData("V1", 10001, 2, 800201, 2, 54, new[] { 10620000, 10630000 }, null)]
         // success second group
         [InlineData("V1", 10002, 1, 600201, 1, 1, new[] { 10620001 }, null)]
-        [InlineData("V1", 10002, 2, 600201, 2, 4, new[] { 10620001, 10630001 }, null)]
         // Nine plus zero
         [InlineData(
             "V1",
@@ -136,7 +134,7 @@ namespace Lib9c.Tests.Action.Summon
             9,
             0,
             new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
-            null
+            typeof(InvalidSummonCountException)
         )]
         [InlineData(
             "V1",
@@ -146,7 +144,7 @@ namespace Lib9c.Tests.Action.Summon
             9,
             0,
             new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10630001, 10630001, 10630001 },
-            null
+            typeof(InvalidSummonCountException)
         )]
         // Ten plus one
         [InlineData(
@@ -156,7 +154,7 @@ namespace Lib9c.Tests.Action.Summon
             800201,
             10,
             0,
-            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000 },
+            new[] { 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10610000, 10620000, 10620000, 10620000, },
             null
         )]
         [InlineData(
@@ -166,20 +164,18 @@ namespace Lib9c.Tests.Action.Summon
             600201,
             10,
             0,
-            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001 },
+            new[] { 10620001, 10620001, 10620001, 10620001, 10620001, 10620001, 10630001, 10620001, 10630001, 10630001, 10630001, },
             null
         )]
         // fail by invalid group
         [InlineData("V1", 100003, 1, null, 0, 0, new int[] { }, typeof(RowNotInTableException))]
         // fail by not enough material
         [InlineData("V1", 10001, 1, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
-        [InlineData("V1", 10001, 2, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
+        [InlineData("V1", 10001, 10, 800201, 0, 0, new int[] { }, typeof(NotEnoughMaterialException))]
         // Fail by exceeding summon limit
-        [InlineData("V1", 10001, 11, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
+        [InlineData("V1", 10001, 101, 800201, 22, 1, new int[] { }, typeof(InvalidSummonCountException))]
         // 15 recipes
         [InlineData("V2", 10002, 1, 600201, 1, 5341, new[] { 10650006 }, null)]
-        // 15 recipes
-        [InlineData("V3", 20001, 1, 600201, 1, 5341, new int[] { }, typeof(SheetRowNotFoundException))]
         public void Execute(
             string version,
             int groupId,
@@ -198,17 +194,17 @@ namespace Lib9c.Tests.Action.Summon
                 "V1" => SummonSheetFixtures.V1.Serialize(),
                 "V2" => SummonSheetFixtures.V2.Serialize(),
                 "V3" => SummonSheetFixtures.V3.Serialize(),
-                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(version), version, null),
             };
-            state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(SummonSheet)), sheet);
+            state = state.SetLegacyState(Addresses.TableSheet.Derive(nameof(EquipmentSummonSheet)), sheet);
 
-            if (!(materialId is null))
+            if (!(materialId is null) && materialCount > 0)
             {
                 var materialSheet = _tableSheets.MaterialItemSheet;
                 var material = materialSheet.OrderedList.FirstOrDefault(m => m.Id == materialId);
                 _avatarState.inventory.AddItem(
                     ItemFactory.CreateItem(material, random),
-                    materialCount * _tableSheets.SummonSheet[groupId].CostMaterialCount);
+                    materialCount * _tableSheets.EquipmentSummonSheet[groupId].CostMaterialCount);
                 state = state.SetAvatarState(_avatarAddress, _avatarState);
             }
 
@@ -237,8 +233,9 @@ namespace Lib9c.Tests.Action.Summon
                 var checkedEquipments = new List<Guid>();
                 foreach (var equipmentId in expectedEquipmentId)
                 {
-                    var resultEquipment = equipments.First(e =>
-                        e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
+                    var resultEquipment = equipments.First(
+                        e =>
+                            e.Id == equipmentId && !checkedEquipments.Contains(e.ItemId)
                     );
 
                     checkedEquipments.Add(resultEquipment.ItemId);
@@ -254,16 +251,19 @@ namespace Lib9c.Tests.Action.Summon
             else
             {
                 // Failure
-                Assert.Throws(expectedExc, () =>
-                {
-                    action.Execute(new ActionContext
+                Assert.Throws(
+                    expectedExc,
+                    () =>
                     {
-                        PreviousState = state,
-                        Signer = _agentAddress,
-                        BlockIndex = 1,
-                        RandomSeed = random.Seed,
+                        action.Execute(
+                            new ActionContext
+                            {
+                                PreviousState = state,
+                                Signer = _agentAddress,
+                                BlockIndex = 1,
+                                RandomSeed = random.Seed,
+                            });
                     });
-                });
             }
         }
     }

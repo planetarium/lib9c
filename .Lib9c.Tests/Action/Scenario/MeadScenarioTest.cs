@@ -22,7 +22,7 @@ namespace Lib9c.Tests.Action.Scenario
         [Fact]
         public void Contract()
         {
-            Currency mead = Currencies.Mead;
+            var mead = Currencies.Mead;
             var patron = new PrivateKey().Address;
             var agentKey = new PrivateKey();
             var agentAddress = agentKey.Address;
@@ -36,12 +36,12 @@ namespace Lib9c.Tests.Action.Scenario
                                 null,
                                 DateTimeOffset.UtcNow,
                                 new TxActionList(new List<IValue>()),
-                                maxGasPrice: Currencies.Mead * 4,
-                                gasLimit: 4),
+                                Currencies.Mead * 4,
+                                4),
                             new TxSigningMetadata(agentKey.PublicKey, 0)),
                         agentKey)),
             };
-            IWorld states = new World(MockUtil.MockModernWorldState).MintAsset(context, patron, 10 * mead);
+            var states = new World(MockUtil.MockModernWorldState).MintAsset(context, patron, 10 * mead);
 
             var requestPledge = new RequestPledge
             {
@@ -82,13 +82,13 @@ namespace Lib9c.Tests.Action.Scenario
         [Fact(Skip = "No way tracing gas usage outside of ActionEvaluator for now")]
         public void UseGas()
         {
-            Type baseType = typeof(Nekoyume.Action.ActionBase);
+            var baseType = typeof(Nekoyume.Action.ActionBase);
 
             bool IsTarget(Type type)
             {
                 return baseType.IsAssignableFrom(type) &&
                     type != typeof(InitializeStates) &&
-                    type.GetCustomAttribute<ActionTypeAttribute>() is { } &&
+                    type.GetCustomAttribute<ActionTypeAttribute>() is not null &&
                     (
                         !(type.GetCustomAttribute<ActionObsoleteAttribute>()?.ObsoleteIndex is { } obsoleteIndex) ||
                         obsoleteIndex > ActionObsoleteConfig.V200030ObsoleteIndex
@@ -98,8 +98,8 @@ namespace Lib9c.Tests.Action.Scenario
             var assembly = baseType.Assembly;
             var typeIds = assembly.GetTypes()
                 .Where(IsTarget);
-            long expectedTransferActionGasLimit = 4L;
-            long expectedActionGasLimit = 1L;
+            var expectedTransferActionGasLimit = 4L;
+            var expectedActionGasLimit = 1L;
             foreach (var typeId in typeIds)
             {
                 var action = (IAction)Activator.CreateInstance(typeId)!;
@@ -116,7 +116,7 @@ namespace Lib9c.Tests.Action.Scenario
                     // ignored
                 }
 
-                long expectedGasLimit = action is ITransferAsset || action is ITransferAssets
+                var expectedGasLimit = action is ITransferAsset || action is ITransferAssets
                     ? expectedTransferActionGasLimit
                     : expectedActionGasLimit;
                 long gasUsed = GasTracer.GasUsed;
@@ -128,11 +128,12 @@ namespace Lib9c.Tests.Action.Scenario
         {
             Assert.True(state.GetBalance(signer, Currencies.Mead) > 0 * Currencies.Mead);
             var nextState = state.BurnAsset(context, signer, 1 * Currencies.Mead);
-            var executedState = action.Execute(new ActionContext
-            {
-                Signer = signer,
-                PreviousState = nextState,
-            });
+            var executedState = action.Execute(
+                new ActionContext
+                {
+                    Signer = signer,
+                    PreviousState = nextState,
+                });
             return RewardGold.TransferMead(context, executedState);
         }
     }

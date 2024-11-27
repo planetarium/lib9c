@@ -53,6 +53,7 @@ namespace Nekoyume
         public static readonly Address Relationship          = new("0000000000000000000000000000000000000023");
 
         public static readonly Address CombinationSlot       = new("0000000000000000000000000000000000000024");
+        public static readonly Address ClaimedGiftIds        = new("0000000000000000000000000000000000000025");
 
         // Adventure Boss
         public static readonly Address AdventureBoss         = new("0000000000000000000000000000000000000100");

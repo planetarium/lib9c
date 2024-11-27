@@ -42,11 +42,11 @@ namespace Lib9c.Tests.Action
         [InlineData(false)]
         public void Execute(bool stateExist)
         {
-            IWorld previousStates = stateExist switch
+            var previousStates = stateExist switch
             {
                 true => _initialState.SetDailyRewardReceivedBlockIndex(_agentAddress, 0L)
                     .SetActionPoint(_avatarAddress, 0),
-                false => _initialState
+                false => _initialState,
             };
 
             var nextState = ExecuteInternal(previousStates, _avatarAddress, DailyReward.DailyRewardInterval);
@@ -89,10 +89,11 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_Throw_InvalidAddressException()
         {
-            Assert.Throws<InvalidAddressException>(() =>
-                ExecuteInternal(
-                    new World(MockUtil.MockModernWorldState),
-                    new PrivateKey().Address));
+            Assert.Throws<InvalidAddressException>(
+                () =>
+                    ExecuteInternal(
+                        new World(MockUtil.MockModernWorldState),
+                        new PrivateKey().Address));
         }
 
         private IWorld ExecuteInternal(IWorld previousStates, Address avatarAddress, long blockIndex = 0)
@@ -102,13 +103,14 @@ namespace Lib9c.Tests.Action
                 avatarAddress = avatarAddress,
             };
 
-            return dailyRewardAction.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                RandomSeed = 0,
-                Signer = _agentAddress,
-            });
+            return dailyRewardAction.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = previousStates,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
         }
     }
 }

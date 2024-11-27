@@ -45,14 +45,14 @@ namespace Lib9c.Tests.Model.Skill.Raid
                 {
                     new (StatType.DEF, StatModifier.OperationType.Percentage, 100),
                 },
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
             var buffRow = new ActionBuffSheet.Row();
             buffRow.Set(
                 new List<string>
-                    { "706000", "706000", "100", "9999", "Self", "Focus", "Normal", "0" }
+                    { "706000", "706000", "100", "9999", "Self", "Focus", "Normal", "0", }
             );
             player.AddBuff(new Focus(buffRow));
 

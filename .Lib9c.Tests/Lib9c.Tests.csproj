@@ -50,13 +50,24 @@
     <ProjectReference Include="..\Lib9c\Lib9c.csproj" />
     <ProjectReference Include="..\Lib9c.Utils\Lib9c.Utils.csproj" />
     <ProjectReference Include="..\Lib9c.MessagePack\Lib9c.MessagePack.csproj" />
-    <ProjectReference Include="..\.Libplanet\test\Libplanet.Mocks\Libplanet.Mocks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!'$(UseLocalLibplanet)'">
+    <PackageReference Include="Libplanet.Mocks" Version="$(LibplanetVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalLibplanet)'">
+    <ProjectReference Include="$(LibplanetDirectory)\test\Libplanet.Mocks\Libplanet.Mocks.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(Configuration)' != 'DevEx' ">
     <!-- NOTE: Lib9c.DevExtensions project will be contained by Lib9c project
                when the configuration is 'DevEx'.-->
     <ProjectReference Include="..\Lib9c.DevExtensions\Lib9c.DevExtensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="PolicyAction\Tx\Begin\" />
   </ItemGroup>
 
 </Project>

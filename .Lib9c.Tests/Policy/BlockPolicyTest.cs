@@ -28,7 +28,6 @@ namespace Lib9c.Tests
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
     using Nekoyume.Model.State;
-    using Nekoyume.ValidatorDelegation;
     using Xunit;
 
     public class BlockPolicyTest
@@ -47,23 +46,23 @@ namespace Lib9c.Tests
             var adminAddress = adminPrivateKey.Address;
             var blockPolicySource = new BlockPolicySource();
             var actionTypeLoader = new NCActionLoader();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
+            var policy = blockPolicySource.GetPolicy(null, null, null, null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             var mint = new PrepareRewardAssets
             {
                 RewardPoolAddress = adminAddress,
                 Assets = new List<FungibleAssetValue>
-                 {
-                     1 * Currencies.Mead,
-                 },
+                {
+                    1 * Currencies.Mead,
+                },
             };
             var mint2 = new PrepareRewardAssets
             {
                 RewardPoolAddress = MeadConfig.PatronAddress,
                 Assets = new List<FungibleAssetValue>
-                 {
-                     1 * Currencies.Mead,
-                 },
+                {
+                    1 * Currencies.Mead,
+                },
             };
             Block genesis = MakeGenesisBlock(
                 new ValidatorSet(
@@ -83,10 +82,10 @@ namespace Lib9c.Tests
                 genesis,
                 new ActionEvaluator(
                     policy.PolicyActionsRegistry,
-                    stateStore: stateStore,
-                    actionTypeLoader: new NCActionLoader()
+                    stateStore,
+                    new NCActionLoader()
                 ),
-                renderers: new[] { new BlockRenderer() }
+                new[] { new BlockRenderer(), }
             );
 
             Block block = blockChain.ProposeBlock(adminPrivateKey);
@@ -112,7 +111,7 @@ namespace Lib9c.Tests
                 avatarAddress = adminAddress,
             };
 
-            Transaction txEmpty =
+            var txEmpty =
                 Transaction.Create(
                     0,
                     adminPrivateKey,
@@ -121,34 +120,34 @@ namespace Lib9c.Tests
                 );
             Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, txEmpty));
 
-            Transaction tx1 =
+            var tx1 =
                 Transaction.Create(
                     0,
                     adminPrivateKey,
                     genesis.Hash,
-                    actions: new ActionBase[] { action }.ToPlainValues()
+                    new ActionBase[] { action, }.ToPlainValues()
                 );
             Assert.IsType<TxPolicyViolationException>(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, tx1));
 
-            Transaction tx2 =
+            var tx2 =
                 Transaction.Create(
                     1,
                     adminPrivateKey,
                     genesis.Hash,
                     gasLimit: 1,
                     maxGasPrice: new FungibleAssetValue(Currencies.Mead, 10, 10),
-                    actions: new ActionBase[] { action }.ToPlainValues()
+                    actions: new ActionBase[] { action, }.ToPlainValues()
                 );
             Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, tx2));
 
-            Transaction tx3 =
+            var tx3 =
                 Transaction.Create(
                     2,
                     adminPrivateKey,
                     genesis.Hash,
                     gasLimit: 1,
                     maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0),
-                    actions: new ActionBase[] { action }.ToPlainValues()
+                    actions: new ActionBase[] { action, }.ToPlainValues()
                 );
             Assert.Null(BlockPolicySource.ValidateNextBlockTxRaw(blockChain, actionTypeLoader, tx3));
         }
@@ -161,7 +160,7 @@ namespace Lib9c.Tests
             var nonValidator = new PrivateKey();
 
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(null, null, null, null);
+            var policy = blockPolicySource.GetPolicy(null, null, null, null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 new ValidatorSet(
@@ -179,10 +178,10 @@ namespace Lib9c.Tests
                 genesis,
                 new ActionEvaluator(
                     policy.PolicyActionsRegistry,
-                    stateStore: stateStore,
-                    actionTypeLoader: new NCActionLoader()
+                    stateStore,
+                    new NCActionLoader()
                 ),
-                renderers: new[] { new BlockRenderer() }
+                new[] { new BlockRenderer(), }
             );
             Block block1 = blockChain.ProposeBlock(adminPrivateKey);
             var invalidBlockCommit = new BlockCommit(
@@ -214,17 +213,17 @@ namespace Lib9c.Tests
             var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
 
-            (ActivationKey ak, PendingActivationState ps) = ActivationKey.Create(
+            var (ak, ps) = ActivationKey.Create(
                 new PrivateKey(),
-                new byte[] { 0x00, 0x01 }
+                new byte[] { 0x00, 0x01, }
             );
 
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(
-                maxTransactionsBytesPolicy: null,
-                minTransactionsPerBlockPolicy: null,
-                maxTransactionsPerBlockPolicy: null,
-                maxTransactionsPerSignerPerBlockPolicy: null);
+            var policy = blockPolicySource.GetPolicy(
+                null,
+                null,
+                null,
+                null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 new ValidatorSet(
@@ -232,11 +231,11 @@ namespace Lib9c.Tests
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
-                    new[] { authorizedMinerPrivateKey.Address },
+                    new[] { authorizedMinerPrivateKey.Address, },
                     5,
                     10
                 ),
-                pendingActivations: new[] { ps }
+                pendingActivations: new[] { ps, }
             );
             using var store = new DefaultStore(null);
             using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
@@ -249,16 +248,18 @@ namespace Lib9c.Tests
                 genesis,
                 new ActionEvaluator(
                     policy.PolicyActionsRegistry,
-                    stateStore: stateStore,
-                    actionTypeLoader: actionLoader
+                    stateStore,
+                    actionLoader
                 ),
-                renderers: new[] { new BlockRenderer() }
+                new[] { new BlockRenderer(), }
             );
 
             var unloadableAction = blockChain.MakeTransaction(
-                adminPrivateKey, new ActionBase[] { new RewardGold() }).Actions[0];
-            Assert.Throws<InvalidActionException>(() =>
-                actionLoader.LoadAction(blockChain.Tip.Index, unloadableAction));
+                adminPrivateKey,
+                new ActionBase[] { new RewardGold(), }).Actions[0];
+            Assert.Throws<InvalidActionException>(
+                () =>
+                    actionLoader.LoadAction(blockChain.Tip.Index, unloadableAction));
         }
 
         [Fact]
@@ -268,17 +269,17 @@ namespace Lib9c.Tests
             var adminAddress = adminPrivateKey.Address;
             var authorizedMinerPrivateKey = new PrivateKey();
 
-            (ActivationKey ak, PendingActivationState ps) = ActivationKey.Create(
+            var (ak, ps) = ActivationKey.Create(
                 new PrivateKey(),
-                new byte[] { 0x00, 0x01 }
+                new byte[] { 0x00, 0x01, }
             );
 
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(
-                maxTransactionsBytesPolicy: null,
-                minTransactionsPerBlockPolicy: null,
-                maxTransactionsPerBlockPolicy: null,
-                maxTransactionsPerSignerPerBlockPolicy: null);
+            var policy = blockPolicySource.GetPolicy(
+                null,
+                null,
+                null,
+                null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             Block genesis = MakeGenesisBlock(
                 new ValidatorSet(
@@ -286,7 +287,7 @@ namespace Lib9c.Tests
                 adminAddress,
                 ImmutableHashSet.Create(adminAddress),
                 new AuthorizedMinersState(
-                    new[] { authorizedMinerPrivateKey.Address },
+                    new[] { authorizedMinerPrivateKey.Address, },
                     5,
                     10
                 ),
@@ -303,10 +304,10 @@ namespace Lib9c.Tests
                 genesis,
                 new ActionEvaluator(
                     policy.PolicyActionsRegistry,
-                    stateStore: stateStore,
-                    actionTypeLoader: new NCActionLoader()
+                    stateStore,
+                    new NCActionLoader()
                 ),
-                renderers: new[] { new BlockRenderer() }
+                new[] { new BlockRenderer(), }
             );
 
             blockChain.MakeTransaction(
@@ -409,15 +410,15 @@ namespace Lib9c.Tests
             var adminPrivateKey = new PrivateKey();
             var adminPublicKey = adminPrivateKey.PublicKey;
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(
-                maxTransactionsBytesPolicy: null,
-                minTransactionsPerBlockPolicy: null,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
+            var policy = blockPolicySource.GetPolicy(
+                null,
+                null,
+                MaxTransactionsPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
-                maxTransactionsPerSignerPerBlockPolicy: null);
+                null);
             IStagePolicy stagePolicy = new VolatileStagePolicy();
-            Block genesis =
+            var genesis =
                 MakeGenesisBlock(
                     validators: new ValidatorSet(
                         new List<Validator> { new (adminPublicKey, 10_000_000_000_000_000_000) }),
@@ -428,8 +429,8 @@ namespace Lib9c.Tests
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             var actionEvaluator = new ActionEvaluator(
                 policy.PolicyActionsRegistry,
-                stateStore: stateStore,
-                actionTypeLoader: new NCActionLoader()
+                stateStore,
+                new NCActionLoader()
             );
             var blockChain = BlockChain.Create(
                 policy,
@@ -440,20 +441,22 @@ namespace Lib9c.Tests
                 actionEvaluator
             );
 
-            int nonce = 0;
+            var nonce = 0;
+
             List<Transaction> GenerateTransactions(int count)
             {
                 var list = new List<Transaction>();
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
-                    list.Add(Transaction.Create(
-                        nonce++,
-                        adminPrivateKey,
-                        genesis.Hash,
-                        Array.Empty<IValue>(),
-                        gasLimit: 1,
-                        maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
-                    ));
+                    list.Add(
+                        Transaction.Create(
+                            nonce++,
+                            adminPrivateKey,
+                            genesis.Hash,
+                            Array.Empty<IValue>(),
+                            gasLimit: 1,
+                            maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
+                        ));
                 }
 
                 return list;
@@ -464,15 +467,15 @@ namespace Lib9c.Tests
             var evs = new List<EvidenceBase>();
             var preEvalBlock1 = new BlockContent(
                 new BlockMetadata(
-                    index: 1,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: null,
-                    evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
-                transactions: txs,
-                evidence: evs).Propose();
+                    1,
+                    DateTimeOffset.MinValue,
+                    adminPublicKey,
+                    blockChain.Tip.Hash,
+                    BlockContent.DeriveTxHash(txs),
+                    null,
+                    BlockContent.DeriveEvidenceHash(evs)),
+                txs,
+                evs).Propose();
             var stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
             Block block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
             blockChain.Append(block1, GenerateBlockCommit(
@@ -524,7 +527,7 @@ namespace Lib9c.Tests
                 transactions: txs,
                 evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
-            Block block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
+            var block3 = EvaluateAndSign(stateRootHash, preEvalBlock3, adminPrivateKey);
             Assert.Throws<InvalidBlockTxCountException>(
                 () => blockChain.Append(
                     block3,
@@ -542,13 +545,13 @@ namespace Lib9c.Tests
             var adminPrivateKey = new PrivateKey();
             var adminPublicKey = adminPrivateKey.PublicKey;
             var blockPolicySource = new BlockPolicySource();
-            IBlockPolicy policy = blockPolicySource.GetPolicy(
-                maxTransactionsBytesPolicy: null,
-                minTransactionsPerBlockPolicy: null,
-                maxTransactionsPerBlockPolicy: MaxTransactionsPerBlockPolicy
+            var policy = blockPolicySource.GetPolicy(
+                null,
+                null,
+                MaxTransactionsPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(0, null, null, 10)),
-                maxTransactionsPerSignerPerBlockPolicy: MaxTransactionsPerSignerPerBlockPolicy
+                MaxTransactionsPerSignerPerBlockPolicy
                     .Default
                     .Add(new SpannedSubPolicy<int>(2, null, null, 5)));
             IStagePolicy stagePolicy = new VolatileStagePolicy();
@@ -564,8 +567,8 @@ namespace Lib9c.Tests
             var stateStore = new TrieStateStore(new MemoryKeyValueStore());
             var actionEvaluator = new ActionEvaluator(
                 policy.PolicyActionsRegistry,
-                stateStore: stateStore,
-                actionTypeLoader: new NCActionLoader()
+                stateStore,
+                new NCActionLoader()
             );
             var blockChain = BlockChain.Create(
                 policy,
@@ -576,20 +579,22 @@ namespace Lib9c.Tests
                 actionEvaluator
             );
 
-            int nonce = 0;
+            var nonce = 0;
+
             List<Transaction> GenerateTransactions(int count)
             {
                 var list = new List<Transaction>();
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
-                    list.Add(Transaction.Create(
-                        nonce++,
-                        adminPrivateKey,
-                        genesis.Hash,
-                        Array.Empty<IValue>(),
-                        gasLimit: 1,
-                        maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
-                    ));
+                    list.Add(
+                        Transaction.Create(
+                            nonce++,
+                            adminPrivateKey,
+                            genesis.Hash,
+                            Array.Empty<IValue>(),
+                            gasLimit: 1,
+                            maxGasPrice: new FungibleAssetValue(Currencies.Mead, 0, 0)
+                        ));
                 }
 
                 return list;
@@ -598,19 +603,19 @@ namespace Lib9c.Tests
             Assert.Equal(1, blockChain.Count);
             var txs = GenerateTransactions(10).OrderBy(tx => tx.Id).ToList();
             var evs = new List<EvidenceBase>();
-            PreEvaluationBlock preEvalBlock1 = new BlockContent(
+            var preEvalBlock1 = new BlockContent(
                 new BlockMetadata(
-                    index: 1,
-                    timestamp: DateTimeOffset.MinValue,
-                    publicKey: adminPublicKey,
-                    previousHash: blockChain.Tip.Hash,
-                    txHash: BlockContent.DeriveTxHash(txs),
-                    lastCommit: null,
-                    evidenceHash: BlockContent.DeriveEvidenceHash(evs)),
-                transactions: txs,
-                evidence: evs).Propose();
+                    1,
+                    DateTimeOffset.MinValue,
+                    adminPublicKey,
+                    blockChain.Tip.Hash,
+                    BlockContent.DeriveTxHash(txs),
+                    null,
+                    BlockContent.DeriveEvidenceHash(evs)),
+                txs,
+                evs).Propose();
             var stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
-            Block block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
+            var block1 = EvaluateAndSign(stateRootHash, preEvalBlock1, adminPrivateKey);
 
             // Should be fine since policy hasn't kicked in yet.
             blockChain.Append(
@@ -639,7 +644,7 @@ namespace Lib9c.Tests
                 transactions: txs,
                 evidence: evs).Propose();
             stateRootHash = blockChain.DetermineNextBlockStateRootHash(blockChain.Tip, out _);
-            Block block2 = EvaluateAndSign(stateRootHash, preEvalBlock2, adminPrivateKey);
+            var block2 = EvaluateAndSign(stateRootHash, preEvalBlock2, adminPrivateKey);
 
             // Subpolicy kicks in.
             Assert.Throws<InvalidBlockTxCountPerSignerException>(
@@ -713,10 +718,10 @@ namespace Lib9c.Tests
         {
             if (pendingActivations is null)
             {
-                var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
-                (ActivationKey activationKey, PendingActivationState pendingActivation) =
+                var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03, };
+                var (activationKey, pendingActivation) =
                     ActivationKey.Create(_privateKey, nonce);
-                pendingActivations = new[] { pendingActivation };
+                pendingActivations = new[] { pendingActivation, };
             }
 
             var sheets = TableSheetsImporter.ImportSheets();

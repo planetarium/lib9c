@@ -26,7 +26,8 @@ namespace Lib9c.Tests.Action
         {
             var sheets = TableSheetsImporter.ImportSheets();
             // Fix csv data for test
-            sheets[nameof(CollectionSheet)] = @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
+            sheets[nameof(CollectionSheet)] =
+                @"id,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,item_id,count,level,skill,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value,stat_type,modify_type,modify_value
 1,10110000,1,0,,302000,2,,,200000,2,,,40100000,1,,,,,,,,,,,ATK,Add,1,,,,,,
 2,10110000,1,0,,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,1,,,,,,";
 
@@ -76,38 +77,41 @@ namespace Lib9c.Tests.Action
                 {
                     var item = ItemFactory.CreateItem(itemRow, random);
                     avatarState.inventory.AddItem(item, material.Count);
-                    materials.Add(new FungibleCollectionMaterial
-                    {
-                        ItemId = item.Id,
-                        ItemCount = material.Count,
-                    });
+                    materials.Add(
+                        new FungibleCollectionMaterial
+                        {
+                            ItemId = item.Id,
+                            ItemCount = material.Count,
+                        });
                 }
                 else
                 {
-                    for (int i = 0; i < material.Count; i++)
+                    for (var i = 0; i < material.Count; i++)
                     {
                         var item = ItemFactory.CreateItem(itemRow, random);
                         var nonFungibleId = ((INonFungibleItem)item).NonFungibleId;
                         avatarState.inventory.AddItem(item);
                         if (item.ItemType != ItemType.Consumable)
                         {
-                            materials.Add(new NonFungibleCollectionMaterial
-                            {
-                                ItemId = item.Id,
-                                NonFungibleId = nonFungibleId,
-                                SkillContains = material.SkillContains,
-                            });
+                            materials.Add(
+                                new NonFungibleCollectionMaterial
+                                {
+                                    ItemId = item.Id,
+                                    NonFungibleId = nonFungibleId,
+                                    SkillContains = material.SkillContains,
+                                });
                         }
                         else
                         {
                             // Add consumable material only one.
                             if (i == 0)
                             {
-                                materials.Add(new FungibleCollectionMaterial
-                                {
-                                    ItemId = item.Id,
-                                    ItemCount = material.Count,
-                                });
+                                materials.Add(
+                                    new FungibleCollectionMaterial
+                                    {
+                                        ItemId = item.Id,
+                                        ItemCount = material.Count,
+                                    });
                             }
                         }
                     }
@@ -120,7 +124,7 @@ namespace Lib9c.Tests.Action
                 PreviousState = state,
                 Signer = _agentAddress,
             };
-            ActivateCollection activateCollection = new ActivateCollection()
+            var activateCollection = new ActivateCollection()
             {
                 AvatarAddress = _avatarAddress,
                 CollectionData =
@@ -136,11 +140,13 @@ namespace Lib9c.Tests.Action
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
             Assert.Empty(nextAvatarState.inventory.Items);
 
-            Assert.Throws<AlreadyActivatedException>(() => activateCollection.Execute(new ActionContext
-            {
-                PreviousState = nextState,
-                Signer = _agentAddress,
-            }));
+            Assert.Throws<AlreadyActivatedException>(
+                () => activateCollection.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = nextState,
+                        Signer = _agentAddress,
+                    }));
         }
     }
 }

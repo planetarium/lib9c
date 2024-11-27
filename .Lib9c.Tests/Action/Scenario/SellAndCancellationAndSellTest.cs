@@ -75,8 +75,9 @@ namespace Lib9c.Tests.Action.Scenario
         public void Execute_With_TradableMaterial()
         {
             var previousStates = _initialState;
-            var apStoneRow = _tableSheets.MaterialItemSheet.OrderedList!.First(row =>
-                row.ItemSubType == ItemSubType.ApStone);
+            var apStoneRow = _tableSheets.MaterialItemSheet.OrderedList!.First(
+                row =>
+                    row.ItemSubType == ItemSubType.ApStone);
             var apStone = ItemFactory.CreateTradableMaterial(apStoneRow);
             var avatarState = previousStates.GetAvatarState(_avatarAddress);
             // Add 10 ap stones to inventory.
@@ -97,22 +98,24 @@ namespace Lib9c.Tests.Action.Scenario
             var nextStates = previousStates;
             foreach (var sellAction in sellActions)
             {
-                nextStates = sellAction.Execute(new ActionContext
-                {
-                    Signer = _agentAddress,
-                    PreviousState = nextStates,
-                    BlockIndex = sellBlockIndex,
-                    RandomSeed = random.Seed,
-                });
+                nextStates = sellAction.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = nextStates,
+                        BlockIndex = sellBlockIndex,
+                        RandomSeed = random.Seed,
+                    });
                 // TODO: Check state.. inventory, orders..
             }
 
             // Check inventory does not have ap stones.
             var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
-            Assert.False(nextAvatarState.inventory.RemoveFungibleItem(
-                apStone.FungibleId,
-                sellBlockIndex,
-                1));
+            Assert.False(
+                nextAvatarState.inventory.RemoveFungibleItem(
+                    apStone.FungibleId,
+                    sellBlockIndex,
+                    1));
 
             // Cancel sell orders.
             var sellCancellationActions = new[]
@@ -124,44 +127,48 @@ namespace Lib9c.Tests.Action.Scenario
             };
             foreach (var sellCancellationAction in sellCancellationActions)
             {
-                nextStates = sellCancellationAction.Execute(new ActionContext
-                {
-                    Signer = _agentAddress,
-                    PreviousState = nextStates,
-                    BlockIndex = sellBlockIndex + 1L,
-                    RandomSeed = random.Seed,
-                });
+                nextStates = sellCancellationAction.Execute(
+                    new ActionContext
+                    {
+                        Signer = _agentAddress,
+                        PreviousState = nextStates,
+                        BlockIndex = sellBlockIndex + 1L,
+                        RandomSeed = random.Seed,
+                    });
                 // TODO: Check state.. inventory, orders..
             }
 
             // Check inventory has 10 ap stones.
             nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
-            Assert.True(nextAvatarState.inventory.RemoveFungibleItem(
-                apStone.FungibleId,
-                sellBlockIndex + 1L,
-                10));
+            Assert.True(
+                nextAvatarState.inventory.RemoveFungibleItem(
+                    apStone.FungibleId,
+                    sellBlockIndex + 1L,
+                    10));
 
             // Sell 10 ap stones at once.
             var newSellOrderId = Guid.NewGuid();
             var newSellAction = GetSell(apStone, 10, newSellOrderId);
-            nextStates = newSellAction.Execute(new ActionContext
-            {
-                Signer = _agentAddress,
-                PreviousState = nextStates,
-                BlockIndex = sellBlockIndex + 2L,
-                RandomSeed = random.Seed,
-            });
+            nextStates = newSellAction.Execute(
+                new ActionContext
+                {
+                    Signer = _agentAddress,
+                    PreviousState = nextStates,
+                    BlockIndex = sellBlockIndex + 2L,
+                    RandomSeed = random.Seed,
+                });
 
             // Check inventory does not have ap stones.
             nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
-            Assert.False(nextAvatarState.inventory.RemoveFungibleItem(
-                apStone.FungibleId,
-                sellBlockIndex + 2L,
-                1));
+            Assert.False(
+                nextAvatarState.inventory.RemoveFungibleItem(
+                    apStone.FungibleId,
+                    sellBlockIndex + 2L,
+                    1));
         }
 
         private Sell GetSell(ITradableItem tradableItem, int count, Guid orderId) =>
-            new Sell
+            new ()
             {
                 sellerAvatarAddress = _avatarAddress,
                 tradableId = tradableItem.TradableId,
@@ -177,13 +184,15 @@ namespace Lib9c.Tests.Action.Scenario
                 orderId = orderId,
             };
 
-        private SellCancellation GetSellCancellation(Guid orderId, ITradableItem tradableItem) =>
-            new SellCancellation
+        private SellCancellation GetSellCancellation(Guid orderId, ITradableItem tradableItem)
+        {
+            return new SellCancellation()
             {
                 orderId = orderId,
                 tradableId = tradableItem.TradableId,
                 sellerAvatarAddress = _avatarAddress,
                 itemSubType = tradableItem.ItemSubType,
             };
+        }
     }
 }

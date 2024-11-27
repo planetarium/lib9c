@@ -134,7 +134,7 @@ namespace Nekoyume.Action
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
-                typeof(DeBuffLimitSheet),
+                typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
             };
             if (collectionExist)
@@ -381,7 +381,7 @@ namespace Nekoyume.Action
                 enemyRuneSlotState);
             var previousMyScore = myArenaScore.Score;
             var arenaSheets = sheets.GetArenaSimulatorSheets();
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+            var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var winCount = 0;
             var defeatCount = 0;
             var rewards = new List<ItemBase>();
@@ -413,7 +413,7 @@ namespace Nekoyume.Action
                     arenaSheets,
                     collectionModifiers[myAvatarAddress],
                     collectionModifiers[enemyAvatarAddress],
-                    deBuffLimitSheet,
+                    buffLimitSheet,
                     buffLinkSheet,
                     true);
                 if (log.Result.Equals(ArenaLog.ArenaResult.Win))

@@ -13,8 +13,9 @@ namespace Lib9c.Tests.Model.Item
         public ArmorTest()
         {
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-            _armorRow = tableSheets.EquipmentItemSheet.OrderedList.FirstOrDefault(row =>
-                row.ItemSubType == ItemSubType.Armor);
+            _armorRow = tableSheets.EquipmentItemSheet.OrderedList.FirstOrDefault(
+                row =>
+                    row.ItemSubType == ItemSubType.Armor);
         }
 
         [Fact]

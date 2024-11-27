@@ -192,12 +192,14 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<InvalidAddressException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<InvalidAddressException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -210,7 +212,9 @@ namespace Lib9c.Tests.Action
                 Signer = _agent1Address,
                 RandomSeed = 0,
             };
-            prevState = prevState.SetLegacyState(Addresses.TableSheet.Derive("ArenaSheet"), @"id,round,arena_type,start_block_index,end_block_index,required_medal_count,entrance_fee,ticket_price,additional_ticket_price,max_purchase_count,max_purchase_count_during_interval,medal_id
+            prevState = prevState.SetLegacyState(
+                Addresses.TableSheet.Derive("ArenaSheet"),
+                @"id,round,arena_type,start_block_index,end_block_index,required_medal_count,entrance_fee,ticket_price,additional_ticket_price,max_purchase_count,max_purchase_count_during_interval,medal_id
 1,1,Season,1,100,0,0,5,2,80,79".Serialize());
             prevState = JoinArena(
                 context,
@@ -242,13 +246,15 @@ namespace Lib9c.Tests.Action
                 equipments = new List<Guid>(),
                 runeInfos = new List<RuneSlotInfo>(),
             };
-            Assert.Throws<MedalIdNotFoundException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = prevState,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-                BlockIndex = 10,
-            }));
+            Assert.Throws<MedalIdNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = prevState,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                        BlockIndex = 10,
+                    }));
         }
 
         [Fact]
@@ -266,12 +272,14 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<FailedLoadStateException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<FailedLoadStateException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -289,12 +297,14 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<SheetRowNotFoundException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<SheetRowNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -312,13 +322,15 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<ThisArenaIsClosedException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-                BlockIndex = 4480001,
-            }));
+            Assert.Throws<ThisArenaIsClosedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                        BlockIndex = 4480001,
+                    }));
         }
 
         [Fact]
@@ -336,13 +348,15 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<ArenaParticipantsNotFoundException>(() => action.Execute(new ActionContext
-            {
-                PreviousState = _initialStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-                BlockIndex = 1,
-            }));
+            Assert.Throws<ArenaParticipantsNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = _initialStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                        BlockIndex = 1,
+                    }));
         }
 
         [Theory]
@@ -354,9 +368,10 @@ namespace Lib9c.Tests.Action
             const int round = 1;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -397,14 +412,16 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            Assert.Throws<AddressNotFoundInArenaParticipantsException>(() =>
-                action.Execute(new ActionContext
-                {
-                    PreviousState = previousStates,
-                    Signer = _agent1Address,
-                    RandomSeed = 0,
-                    BlockIndex = 1,
-                }));
+            Assert.Throws<AddressNotFoundInArenaParticipantsException>(
+                () =>
+                    action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = previousStates,
+                            Signer = _agent1Address,
+                            RandomSeed = 0,
+                            BlockIndex = 1,
+                        }));
         }
 
         [Theory]
@@ -416,9 +433,10 @@ namespace Lib9c.Tests.Action
             const int round = 2;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -449,7 +467,8 @@ namespace Lib9c.Tests.Action
             var arenaScoreAdr = ArenaScore.DeriveAddress(
                 isSigner
                     ? _avatar1Address
-                    : _avatar2Address, roundData.ChampionshipId,
+                    : _avatar2Address,
+                roundData.ChampionshipId,
                 roundData.Round);
             previousStates.TryGetArenaScore(arenaScoreAdr, out var arenaScore);
             arenaScore.AddScore(900);
@@ -468,13 +487,15 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<ValidateScoreDifferenceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ValidateScoreDifferenceException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -484,9 +505,10 @@ namespace Lib9c.Tests.Action
             const int round = 2;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -537,13 +559,15 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<InsufficientBalanceException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<InsufficientBalanceException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -553,9 +577,10 @@ namespace Lib9c.Tests.Action
             const int round = 2;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -603,13 +628,15 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<ExceedPlayCountException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ExceedPlayCountException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -619,9 +646,10 @@ namespace Lib9c.Tests.Action
             const int round = 2;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -683,13 +711,15 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<ExceedTicketPurchaseLimitException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ExceedTicketPurchaseLimitException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -699,9 +729,10 @@ namespace Lib9c.Tests.Action
             const int round = 2;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -768,13 +799,15 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<ExceedTicketPurchaseLimitDuringIntervalException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<ExceedTicketPurchaseLimitDuringIntervalException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Fact]
@@ -784,9 +817,10 @@ namespace Lib9c.Tests.Action
             const int round = 2;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -848,21 +882,24 @@ namespace Lib9c.Tests.Action
 
             var blockIndex = roundData.StartBlockIndex + 1;
 
-            var nextStates = action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            });
+            var nextStates = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = previousStates,
+                    Signer = _agent1Address,
+                    RandomSeed = 0,
+                });
 
-            Assert.Throws<CoolDownBlockException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex + 1,
-                PreviousState = nextStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<CoolDownBlockException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex + 1,
+                        PreviousState = nextStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -871,17 +908,18 @@ namespace Lib9c.Tests.Action
         public void ExecuteDuplicatedException(int slotIndex, int runeId, int slotIndex2, int runeId2, Type exception)
         {
             long nextBlockIndex = 4;
-            int championshipId = 1;
-            int round = 1;
-            int ticket = 1;
-            int arenaInterval = 5;
-            int randomSeed = 3;
+            var championshipId = 1;
+            var round = 1;
+            var ticket = 1;
+            var arenaInterval = 5;
+            var randomSeed = 3;
 
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(_initialStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                _initialStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -925,13 +963,14 @@ namespace Lib9c.Tests.Action
                 SlotIndex = 1,
             };
 
-            previousStates = unlockRuneSlot.Execute(new ActionContext
-            {
-                BlockIndex = 1,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            });
+            previousStates = unlockRuneSlot.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = previousStates,
+                    Signer = _agent1Address,
+                    RandomSeed = 0,
+                });
 
             var action = new BattleArena
             {
@@ -944,8 +983,8 @@ namespace Lib9c.Tests.Action
                 equipments = new List<Guid>(),
                 runeInfos = new List<RuneSlotInfo>()
                 {
-                    new RuneSlotInfo(slotIndex, runeId),
-                    new RuneSlotInfo(slotIndex2, runeId2),
+                    new (slotIndex, runeId),
+                    new (slotIndex2, runeId2),
                 },
             };
 
@@ -967,10 +1006,11 @@ namespace Lib9c.Tests.Action
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarState(
-                _agent1Address,
-                _avatar1Address,
-                out var previousMyAvatarState));
+            Assert.True(
+                previousStates.TryGetAvatarState(
+                    _agent1Address,
+                    _avatar1Address,
+                    out var previousMyAvatarState));
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
@@ -978,13 +1018,16 @@ namespace Lib9c.Tests.Action
 
             var blockIndex = roundData.StartBlockIndex + nextBlockIndex;
 
-            Assert.Throws(exception, () => action.Execute(new ActionContext
-            {
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = random.Seed,
-                BlockIndex = blockIndex,
-            }));
+            Assert.Throws(
+                exception,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = random.Seed,
+                        BlockIndex = blockIndex,
+                    }));
         }
 
         [Fact]
@@ -994,9 +1037,10 @@ namespace Lib9c.Tests.Action
             const int round = 1;
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(previousStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -1064,13 +1108,15 @@ namespace Lib9c.Tests.Action
             };
 
             var blockIndex = roundData.StartBlockIndex + 1;
-            Assert.Throws<TicketPurchaseLimitExceedException>(() => action.Execute(new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = previousStates,
-                Signer = _agent1Address,
-                RandomSeed = 0,
-            }));
+            Assert.Throws<TicketPurchaseLimitExceedException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = blockIndex,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
         }
 
         [Theory]
@@ -1080,7 +1126,7 @@ namespace Lib9c.Tests.Action
         [InlineData(-1, typeof(ArgumentException))]
         public void PlainValue(int ticket, Type exc)
         {
-            BattleArena action = new BattleArena
+            var action = new BattleArena
             {
                 myAvatarAddress = _avatar1Address,
                 enemyAvatarAddress = _avatar2Address,
@@ -1091,8 +1137,8 @@ namespace Lib9c.Tests.Action
                 equipments = new List<Guid>(),
                 runeInfos = new List<RuneSlotInfo>(),
             };
-            IValue plainValue = action.PlainValue;
-            BattleArena des = new BattleArena();
+            var plainValue = action.PlainValue;
+            var des = new BattleArena();
             if (exc is null)
             {
                 des.LoadPlainValue(plainValue);
@@ -1144,9 +1190,10 @@ namespace Lib9c.Tests.Action
         {
             var context = new ActionContext();
             var previousStates = _initialStates;
-            Assert.True(_initialStates.GetSheet<ArenaSheet>().TryGetValue(
-                championshipId,
-                out var row));
+            Assert.True(
+                _initialStates.GetSheet<ArenaSheet>().TryGetValue(
+                    championshipId,
+                    out var row));
 
             if (!row.TryGetRound(round, out var roundData))
             {
@@ -1226,10 +1273,11 @@ namespace Lib9c.Tests.Action
                 throw new ArenaScoreNotFoundException($"enemyScoreAdr : {enemyScoreAdr}");
             }
 
-            Assert.True(previousStates.TryGetAvatarState(
-                myAgentAddress,
-                myAvatarAddress,
-                out var previousMyAvatarState));
+            Assert.True(
+                previousStates.TryGetAvatarState(
+                    myAgentAddress,
+                    myAvatarAddress,
+                    out var previousMyAvatarState));
             Assert.Empty(previousMyAvatarState.inventory.Materials);
 
             var gameConfigState = SetArenaInterval(arenaInterval);
@@ -1238,13 +1286,14 @@ namespace Lib9c.Tests.Action
             var blockIndex = roundData.StartBlockIndex < arenaInterval
                 ? roundData.StartBlockIndex
                 : roundData.StartBlockIndex + arenaInterval;
-            var nextStates = action.Execute(new ActionContext
-            {
-                PreviousState = previousStates,
-                Signer = myAgentAddress,
-                RandomSeed = random.Seed,
-                BlockIndex = blockIndex,
-            });
+            var nextStates = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = previousStates,
+                    Signer = myAgentAddress,
+                    RandomSeed = random.Seed,
+                    BlockIndex = blockIndex,
+                });
 
             if (!nextStates.TryGetArenaScore(myScoreAdr, out var myScoreNext))
             {
@@ -1316,7 +1365,7 @@ namespace Lib9c.Tests.Action
             }
 
             var materialCount = myAvatarStateNext.inventory.Materials.Count();
-            var high = (ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket) + medalCount;
+            var high = ArenaHelper.GetRewardCount(beforeMyScore.Score) * ticket + medalCount;
             Assert.InRange(materialCount, 0, high);
 
             var myArenaAvatarStateAddr = ArenaAvatarState.DeriveAddress(myAvatarAddress);
@@ -1367,13 +1416,14 @@ namespace Lib9c.Tests.Action
                 runeInfos = new List<RuneSlotInfo>(),
             };
 
-            states = action.Execute(new ActionContext
-            {
-                PreviousState = states,
-                Signer = signer,
-                RandomSeed = random.Seed,
-                BlockIndex = blockIndex,
-            });
+            states = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = states,
+                    Signer = signer,
+                    RandomSeed = random.Seed,
+                    BlockIndex = blockIndex,
+                });
             return states;
         }
 

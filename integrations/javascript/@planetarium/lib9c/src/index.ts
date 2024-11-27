@@ -3,6 +3,12 @@ export {
   type ClaimStakeRewardArgs,
 } from "./actions/claim_stake_reward.js";
 export { Stake, type StakeArgs } from "./actions/stake.js";
+export {
+  ChargeActionPoint,
+  type ChargeActionPointArgs,
+} from "./actions/charge_action_point.js";
+export { JoinArena, type JoinArenaArgs } from "./actions/join_arena.js";
+export { Grinding, type GrindingArgs } from "./actions/grinding.js";
 export { DailyReward, type DailyRewardArgs } from "./actions/daily_reward.js";
 export {
   TransferAsset,
@@ -43,6 +49,7 @@ export {
 } from "./models/currencies.js";
 export { HashDigest, type AlgorithmNames } from "./models/hashdigest.js";
 export { ODIN_GENESIS_HASH, HEIMDALL_GENESIS_HASH } from "./models/networks.js";
+export { RuneSlotInfo } from "./models/rune_slot_info.js";
 
 export {
   CreateAvatar,

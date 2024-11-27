@@ -134,8 +134,9 @@ namespace Lib9c.Tests.Action
             int eventScheduleId,
             int eventMaterialItemRecipeId)
         {
-            Assert.True(_tableSheets.EventScheduleSheet
-                .TryGetValue(eventScheduleId, out var scheduleRow));
+            Assert.True(
+                _tableSheets.EventScheduleSheet
+                    .TryGetValue(eventScheduleId, out var scheduleRow));
             var materialsToUse = new Dictionary<int, int>();
             var totalCount = 0;
             var row = _tableSheets.EventMaterialItemRecipeSheet[eventMaterialItemRecipeId];
@@ -176,17 +177,19 @@ namespace Lib9c.Tests.Action
             int eventMaterialItemRecipeId,
             Dictionary<int, int> materialsToUse)
         {
-            Assert.True(_tableSheets.EventScheduleSheet
-                .TryGetValue(1002, out var scheduleRow));
-            Assert.Throws<InvalidMaterialCountException>(() =>
-            {
-                Execute(
-                    _initialStates,
-                    eventScheduleId,
-                    eventMaterialItemRecipeId,
-                    materialsToUse,
-                    scheduleRow.StartBlockIndex);
-            });
+            Assert.True(
+                _tableSheets.EventScheduleSheet
+                    .TryGetValue(1002, out var scheduleRow));
+            Assert.Throws<InvalidMaterialCountException>(
+                () =>
+                {
+                    Execute(
+                        _initialStates,
+                        eventScheduleId,
+                        eventMaterialItemRecipeId,
+                        materialsToUse,
+                        scheduleRow.StartBlockIndex);
+                });
         }
 
         private void Execute(
@@ -232,13 +235,14 @@ namespace Lib9c.Tests.Action
                 MaterialsToUse = materialsToUse,
             };
 
-            var nextStates = action.Execute(new ActionContext
-            {
-                PreviousState = previousStates,
-                Signer = _agentAddress,
-                RandomSeed = 0,
-                BlockIndex = blockIndex,
-            });
+            var nextStates = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = previousStates,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = blockIndex,
+                });
 
             var nextAvatarState = nextStates.GetAvatarState(_avatarAddress);
 

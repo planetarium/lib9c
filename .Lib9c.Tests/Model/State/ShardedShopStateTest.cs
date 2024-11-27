@@ -31,8 +31,8 @@ namespace Lib9c.Tests.Model.State
         [InlineData(ItemSubType.FullCostume, "9", "2d977CC12057F55173e50847c8D397b92eFf9d9c")]
         public void DeriveAddress(ItemSubType itemSubType, string nonce, string addressHex)
         {
-            Guid guid = new Guid($"{nonce}9168C5E-CEB2-4faa-B6BF-329BF39FA1E4");
-            Address expectedAddress = new Address(addressHex);
+            var guid = new Guid($"{nonce}9168C5E-CEB2-4faa-B6BF-329BF39FA1E4");
+            var expectedAddress = new Address(addressHex);
             Assert.Equal(expectedAddress, ShardedShopState.DeriveAddress(itemSubType, guid));
         }
 
@@ -49,15 +49,15 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Register()
         {
-            ShardedShopState shardedShopState = new ShardedShopState(default(Address));
+            var shardedShopState = new ShardedShopState(default(Address));
             Assert.Empty(shardedShopState.Products);
 
-            Guid itemId = Guid.NewGuid();
+            var itemId = Guid.NewGuid();
             var itemUsable = new Weapon(
                 _tableSheets.EquipmentItemSheet.First,
                 itemId,
                 0);
-            ShopItem shopItem = new ShopItem(
+            var shopItem = new ShopItem(
                 default,
                 default,
                 default,
@@ -70,14 +70,14 @@ namespace Lib9c.Tests.Model.State
         [Fact]
         public void Serialize()
         {
-            ShardedShopState shardedShopState = new ShardedShopState(default(Address));
-            for (int i = 0; i < 4; i++)
+            var shardedShopState = new ShardedShopState(default(Address));
+            for (var i = 0; i < 4; i++)
             {
                 var itemUsable = new Weapon(
                     _tableSheets.EquipmentItemSheet.First,
                     Guid.NewGuid(),
                     0);
-                ShopItem shopItem = new ShopItem(
+                var shopItem = new ShopItem(
                     default,
                     default,
                     Guid.NewGuid(),
@@ -88,8 +88,8 @@ namespace Lib9c.Tests.Model.State
 
             Assert.NotEmpty(shardedShopState.Products);
 
-            Dictionary serialized = (Dictionary)shardedShopState.Serialize();
-            ShardedShopState deserialized = new ShardedShopState(serialized);
+            var serialized = (Dictionary)shardedShopState.Serialize();
+            var deserialized = new ShardedShopState(serialized);
             Assert.NotEmpty(deserialized.Products);
             Assert.Equal(shardedShopState.address, deserialized.address);
             Assert.Equal(shardedShopState.Products.First(), deserialized.Products.First());

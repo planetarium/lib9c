@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "wanted"
+            "wanted"
         );
 
         private static readonly AgentState WantedState = new (WantedAddress)
@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             0L,
             TableSheets.GetAvatarSheets(),
             new PrivateKey().Address,
-            name: "Tester"
+            "Tester"
         );
 
         private static readonly AgentState TesterState = new (TesterAddress)
@@ -97,7 +97,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
         [InlineData(false, true, 5, 5, typeof(NotEnoughMaterialException))]
         [InlineData(true, true, 5, 5, typeof(InsufficientBalanceException))]
         public void Execute(
-            bool useNcg, bool notEnough, int startFloor, int expectedFloor, Type exc
+            bool useNcg,
+            bool notEnough,
+            int startFloor,
+            int expectedFloor,
+            Type exc
         )
         {
             // Settings
@@ -144,13 +148,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = WantedAvatarAddress,
                 Bounty = gameConfigState.AdventureBossMinBounty * NCG,
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = WantedAddress,
-                BlockIndex = 0L,
-                RandomSeed = 1,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
 
             // Explore
             state = new ExploreAdventureBoss
@@ -161,12 +166,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Equipments = new List<Guid>(),
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = TesterAddress,
-                BlockIndex = 1L,
-            });
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = 1L,
+                });
 
             // Make all floors cleared
             var explorer = state.GetExplorer(1, TesterAvatarAddress);
@@ -186,22 +192,24 @@ namespace Lib9c.Tests.Action.AdventureBoss
             {
                 Assert.Throws(
                     exc,
-                    () => action.Execute(new ActionContext
-                    {
-                        PreviousState = state,
-                        Signer = TesterAddress,
-                        BlockIndex = 2L,
-                    })
+                    () => action.Execute(
+                        new ActionContext
+                        {
+                            PreviousState = state,
+                            Signer = TesterAddress,
+                            BlockIndex = 2L,
+                        })
                 );
             }
             else
             {
-                var resultState = action.Execute(new ActionContext
-                {
-                    PreviousState = state,
-                    Signer = TesterAddress,
-                    BlockIndex = 2L,
-                });
+                var resultState = action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = TesterAddress,
+                        BlockIndex = 2L,
+                    });
 
                 Assert.Equal(0 * NCG, resultState.GetBalance(TesterAddress, NCG));
                 if (!useNcg)
@@ -220,12 +228,13 @@ namespace Lib9c.Tests.Action.AdventureBoss
         private IWorld Stake(IWorld world, Address agentAddress)
         {
             var action = new Stake(new BigInteger(500_000));
-            var state = action.Execute(new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                BlockIndex = 0L,
-            });
+            var state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = world,
+                    Signer = agentAddress,
+                    BlockIndex = 0L,
+                });
             return state;
         }
     }

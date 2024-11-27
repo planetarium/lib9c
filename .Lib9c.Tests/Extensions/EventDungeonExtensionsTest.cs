@@ -11,10 +11,12 @@
         [InlineData(99_999_999, 9_999)]
         public void ToEventDungeonStageNumber(
             int eventDungeonStageId,
-            int expected) =>
+            int expected)
+        {
             Assert.Equal(
                 expected,
                 eventDungeonStageId.ToEventDungeonStageNumber());
+        }
 
         [Theory]
         [InlineData(int.MinValue)]
@@ -30,8 +32,11 @@
         [InlineData(100_000_000)]
         [InlineData(int.MaxValue)]
         public void ToEventDungeonStageNumber_Throw_ArgumentException(
-            int eventDungeonStageId) =>
-            Assert.Throws<ArgumentException>(() =>
-                eventDungeonStageId.ToEventDungeonStageNumber());
+            int eventDungeonStageId)
+        {
+            Assert.Throws<ArgumentException>(
+                () =>
+                    eventDungeonStageId.ToEventDungeonStageNumber());
+        }
     }
 }

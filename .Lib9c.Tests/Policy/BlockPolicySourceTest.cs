@@ -36,13 +36,13 @@ namespace Lib9c.Tests.Policy
                 0,
                 new PrivateKey(),
                 OdinGenesisHash,
-                new[] { buy.PlainValue }
+                new[] { buy.PlainValue, }
             );
             var heimdallTx = Transaction.Create(
                 0,
                 new PrivateKey(),
                 HeimdallGenesisHash,
-                new[] { buy.PlainValue }
+                new[] { buy.PlainValue, }
             );
             var ncActionLoader = new NCActionLoader();
 
@@ -54,19 +54,19 @@ namespace Lib9c.Tests.Policy
                 0,
                 new PrivateKey(),
                 OdinGenesisHash,
-                new[] { Dictionary.Empty }
+                new[] { Dictionary.Empty, }
             );
             var heimdallTx2 = Transaction.Create(
                 0,
                 new PrivateKey(),
                 HeimdallGenesisHash,
-                new[] { Dictionary.Empty }
+                new[] { Dictionary.Empty, }
             );
             var newActionLoader = new SingleActionLoader(typeof(NewAction));
 
             Assert.False(BlockPolicySource.IsObsolete(odinTx2, newActionLoader, 1));
             Assert.False(BlockPolicySource.IsObsolete(odinTx2, newActionLoader, 50));
-            Assert.True(BlockPolicySource.IsObsolete(odinTx2, newActionLoader, 103));  // Due to +2 offset for odin bug
+            Assert.True(BlockPolicySource.IsObsolete(odinTx2, newActionLoader, 103)); // Due to +2 offset for odin bug
             Assert.False(BlockPolicySource.IsObsolete(heimdallTx2, newActionLoader, 1));
             Assert.True(BlockPolicySource.IsObsolete(heimdallTx2, newActionLoader, 51));
         }

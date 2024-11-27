@@ -123,7 +123,7 @@ namespace Nekoyume.Action.AdventureBoss
 
             // Check balance and unlock
             var price = costSheet[floorId];
-            var avatarState = states.GetAvatarState(AvatarAddress);
+            var avatarState = states.GetAvatarState(AvatarAddress, true, false, false);
             if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);

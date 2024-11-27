@@ -9,7 +9,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
@@ -167,7 +166,7 @@ namespace Nekoyume.Action
                 typeof(MaterialItemSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
-                typeof(DeBuffLimitSheet),
+                typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
             };
             if (collectionExist)
@@ -355,7 +354,7 @@ namespace Nekoyume.Action
                 collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
 
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+            var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var simulator = new StageSimulator(
                 random,
                 avatarState,
@@ -378,7 +377,7 @@ namespace Nekoyume.Action
                     sheets.GetSheet<MaterialItemSheet>(),
                     PlayCount),
                 collectionModifiers,
-                deBuffLimitSheet,
+                buffLimitSheet,
                 sheets.GetSheet<BuffLinkSheet>(),
                 shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage);
             simulator.Simulate();

@@ -71,7 +71,7 @@ namespace Lib9c.Tests.Model
                 {
                     new (StatType.ATK, StatModifier.OperationType.Add, 100),
                 },
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
 
@@ -93,9 +93,10 @@ namespace Lib9c.Tests.Model
             var filtered =
                 simulator.Log
                     .Select(e => e.GetType())
-                    .Where(type =>
-                        type != typeof(GetReward) ||
-                        type != typeof(DropBox));
+                    .Where(
+                        type =>
+                            type != typeof(GetReward) ||
+                            type != typeof(DropBox));
             Assert.Equal(typeof(WaveTurnEnd), filtered.Last());
             Assert.Equal(1, simulator.Log.OfType<WaveTurnEnd>().First().TurnNumber);
         }
@@ -132,7 +133,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[3],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var unskilledPlayer = simulator.Player;
@@ -187,7 +188,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[3],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var skilledPlayer = simulator.Player;
