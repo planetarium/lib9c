@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Diagnostics;
 using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
@@ -15,6 +16,8 @@ namespace Nekoyume.Model.Guild
     // will be moved to lower level library.
     public class GuildParticipant : IBencodable, IEquatable<GuildParticipant>
     {
+        private static readonly ActivitySource ActivitySource = new ActivitySource("Lib9c.Model.Guild.GuildParticipant");
+
         private const string StateTypeName = "guild_participant";
         private const long StateVersion = 2;
 
@@ -79,22 +82,69 @@ namespace Nekoyume.Model.Guild
 
         public void Delegate(Guild guild, FungibleAssetValue fav, long height)
         {
+            using var activity = ActivitySource.StartActivity("Delegate");
+
             if (fav.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
+            var getGuildDelegateeActivity = ActivitySource.StartActivity(
+                "GetGuildDelegatee",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
+            getGuildDelegateeActivity?.Dispose();
+
+            var getGuildDelegatorActivity = ActivitySource.StartActivity(
+               "GetGuildDelegator",
+               ActivityKind.Internal,
+               activity?.Id ?? string.Empty);
             var guildDelegator = Repository.GetGuildDelegator(Address);
+            getGuildDelegatorActivity?.Dispose();
+
+            var guildDelegateActivity = ActivitySource.StartActivity(
+               "GuildDelegate",
+               ActivityKind.Internal,
+               activity?.Id ?? string.Empty);
             guildDelegator.Delegate(guildDelegatee, fav, height);
+            guildDelegateActivity?.Dispose();
 
+            var createValidatorRepositoryActivity = ActivitySource.StartActivity(
+               "CreateValidatorRepository",
+               ActivityKind.Internal,
+               activity?.Id ?? string.Empty);
             var validatorRepository = new ValidatorRepository(Repository);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
-            var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
-            validatorDelegatee.Bond(validatorDelegator, fav, height);
+            createValidatorRepositoryActivity?.Dispose();
 
+            var getValidatorDelegateeActivity = ActivitySource.StartActivity(
+                "GetValidatorDelegatee",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
+            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+            getValidatorDelegateeActivity?.Dispose();
+
+            var getValidatorDelegatorActivity = ActivitySource.StartActivity(
+                "GetValidatorDelegator",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
+            var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+            getValidatorDelegatorActivity?.Dispose();
+
+            var bondActivity = ActivitySource.StartActivity(
+                "Bond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
+            validatorDelegatee.Bond(validatorDelegator, fav, height);
+            bondActivity?.Dispose();
+
+            var updateWorldActivity = ActivitySource.StartActivity(
+                "UpdateWorld",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Repository.UpdateWorld(validatorRepository.World);
+            updateWorldActivity?.Dispose();
         }
 
         public void Undelegate(Guild guild, BigInteger share, long height)
