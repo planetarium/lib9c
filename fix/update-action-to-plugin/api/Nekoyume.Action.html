@@ -1,0 +1,1203 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Namespace Nekoyume.Action | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Namespace Nekoyume.Action | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Action">
+
+  <h1 id="Nekoyume_Action" data-uid="Nekoyume.Action" class="text-break">Namespace Nekoyume.Action</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+
+    <h3 id="classes">
+Classes
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActionBase.html">ActionBase</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActionContextExtensions.html">ActionContextExtensions</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActionObsoleteAttribute.html">ActionObsoleteAttribute</a></dt>
+      <dd><p>
+An attribute on an <span class="xref">Libplanet.Action.IAction</span> to indicate that
+such <span class="xref">Libplanet.Action.IAction</span> is obsoleted after a certain index.
+</p>
+<p>
+Due to a bug introduced earlier and to keep backward compatibility,
+an <span class="xref">Libplanet.Action.IAction</span> with this attribute is obsoleted, i.e. cannot be included,
+starting from <a class="xref" href="Nekoyume.Action.ActionObsoleteAttribute.html#Nekoyume_Action_ActionObsoleteAttribute_ObsoleteIndex">ObsoleteIndex</a> + 2.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActionObsoletedException.html">ActionObsoletedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActionPointExceededException.html">ActionPointExceededException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActionUnavailableException.html">ActionUnavailableException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActivateCollection.html">ActivateCollection</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActivatedAccountsDoesNotExistsException.html">ActivatedAccountsDoesNotExistsException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ActivationException.html">ActivationException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AddRedeemCode.html">AddRedeemCode</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AddressExtension.html">AddressExtension</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AdminPermissionException.html">AdminPermissionException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AgentStateNotContainsAvatarAddressException.html">AgentStateNotContainsAvatarAddressException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AlreadyActivatedException.html">AlreadyActivatedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AlreadyClaimedGiftsException.html">AlreadyClaimedGiftsException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AlreadyContractedException.html">AlreadyContractedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AlreadyReceivedException.html">AlreadyReceivedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AlreadyRecipeUnlockedException.html">AlreadyRecipeUnlockedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AlreadyWorldUnlockedException.html">AlreadyWorldUnlockedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AppraiseBlockNotReachedException.html">AppraiseBlockNotReachedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ApprovePledge.html">ApprovePledge</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ArenaNotEndedException.html">ArenaNotEndedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AssetInfo.html">AssetInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AttachmentActionResult.html">AttachmentActionResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AuraSummon.html">AuraSummon</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AvatarIndexAlreadyUsedException.html">AvatarIndexAlreadyUsedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.AvatarIndexOutOfRangeException.html">AvatarIndexOutOfRangeException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BalanceDoesNotExistsException.html">BalanceDoesNotExistsException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BattleArena.html">BattleArena</a></dt>
+      <dd><p>Introduce at <a href="https://github.com/planetarium/lib9c/pull/2229">https://github.com/planetarium/lib9c/pull/2229</a>
+Changed at <a href="https://github.com/planetarium/lib9c/pull/2242">https://github.com/planetarium/lib9c/pull/2242</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BurnAsset.html">BurnAsset</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy.html">Buy</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/1164">https://github.com/planetarium/lib9c/pull/1164</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy7.html">Buy7</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy7.BuyerMultipleResult.html">Buy7.BuyerMultipleResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy7.BuyerResult.html">Buy7.BuyerResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy7.PurchaseResult.html">Buy7.PurchaseResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy7.SellerMultipleResult.html">Buy7.SellerMultipleResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Buy7.SellerResult.html">Buy7.SellerResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.html">BuyMultiple</a></dt>
+      <dd><p>Introduced at <a href="https://github.com/planetarium/lib9c/pull/331">https://github.com/planetarium/lib9c/pull/331</a>
+Updated at many pull requests
+Obsoleted at <a href="https://github.com/planetarium/lib9c/pull/487">https://github.com/planetarium/lib9c/pull/487</a>
+Updated at many pull requests
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.BuyerResult.html">BuyMultiple.BuyerResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.PurchaseInfo.html">BuyMultiple.PurchaseInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.PurchaseResult.html">BuyMultiple.PurchaseResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.SellerResult.html">BuyMultiple.SellerResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.BuyProduct.html">BuyProduct</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CancelProductRegistration.html">CancelProductRegistration</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ChargeActionPoint.html">ChargeActionPoint</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/430">https://github.com/planetarium/lib9c/pull/430</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/474">https://github.com/planetarium/lib9c/pull/474</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/602">https://github.com/planetarium/lib9c/pull/602</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/861">https://github.com/planetarium/lib9c/pull/861</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimGifts.html">ClaimGifts</a></dt>
+      <dd><p>An action to claim gifts using the Gift Id. <br>
+Refer <a class="xref" href="Nekoyume.TableData.ClaimableGiftsSheet.html">ClaimableGiftsSheet</a> to find gifts data.<br>
+It can only claim once at the specified block index.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimItems.html">ClaimItems</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimRaidReward.html">ClaimRaidReward</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimStakeReward.html">ClaimStakeReward</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2097">https://github.com/planetarium/lib9c/pull/2097</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimStakeReward2.html">ClaimStakeReward2</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimStakeReward8.html">ClaimStakeReward8</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimWordBossKillReward.html">ClaimWordBossKillReward</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimableGiftsNotAvailableException.html">ClaimableGiftsNotAvailableException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationConsumable.html">CombinationConsumable</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationConsumable5.html">CombinationConsumable5</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationConsumable5.ResultModel.html">CombinationConsumable5.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationEquipment.html">CombinationEquipment</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationEquipment5.html">CombinationEquipment5</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationSlotResultNullException.html">CombinationSlotResultNullException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CombinationSlotUnlockException.html">CombinationSlotUnlockException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ConsumableSlotOutOfRangeException.html">ConsumableSlotOutOfRangeException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ConsumableSlotUnlockException.html">ConsumableSlotUnlockException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CostumeSlotUnlockException.html">CostumeSlotUnlockException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CostumeSummon.html">CostumeSummon</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CreateAvatar.html">CreateAvatar</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CreatePendingActivation.html">CreatePendingActivation</a></dt>
+      <dd><p>Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CreatePendingActivations.html">CreatePendingActivations</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/746">https://github.com/planetarium/lib9c/pull/746</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.CreatePledge.html">CreatePledge</a></dt>
+      <dd><p>Admin action for pledge contract</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DailyReward.html">DailyReward</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/1828">https://github.com/planetarium/lib9c/pull/1828</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/1828">https://github.com/planetarium/lib9c/pull/1828</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DailyReward2.html">DailyReward2</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DailyReward2.DailyRewardResult.html">DailyReward2.DailyRewardResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DuplicateCostumeException.html">DuplicateCostumeException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DuplicateEquipmentException.html">DuplicateEquipmentException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DuplicateMaterialException.html">DuplicateMaterialException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.DuplicateOrderIdException.html">DuplicateOrderIdException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EndPledge.html">EndPledge</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EquipmentLevelExceededException.html">EquipmentLevelExceededException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EquipmentSlotUnlockException.html">EquipmentSlotUnlockException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EventConsumableItemCrafts.html">EventConsumableItemCrafts</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EventDungeonBattle.html">EventDungeonBattle</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EventMaterialItemCrafts.html">EventMaterialItemCrafts</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.FailedLoadSheetException.html">FailedLoadSheetException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.FailedLoadStateException.html">FailedLoadStateException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.FavProductInfo.html">FavProductInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.GameAction.html">GameAction</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.GoldDistribution.html">GoldDistribution</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Grinding.html">Grinding</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.HackAndSlash.html">HackAndSlash</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.HackAndSlashRandomBuff.html">HackAndSlashRandomBuff</a></dt>
+      <dd><p>Created at <a href="https://github.com/planetarium/lib9c/pull/1031">https://github.com/planetarium/lib9c/pull/1031</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.HackAndSlashSweep.html">HackAndSlashSweep</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InitializeStates.html">InitializeStates</a></dt>
+      <dd><p>Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)
+Updated at NCG distribution(7e4515b6e14cc5d6eb716d5ebb587ab04b4246f9)
+Updated at <a href="https://github.com/planetarium/lib9c/pull/19">https://github.com/planetarium/lib9c/pull/19</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/36">https://github.com/planetarium/lib9c/pull/36</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/42">https://github.com/planetarium/lib9c/pull/42</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/55">https://github.com/planetarium/lib9c/pull/55</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/57">https://github.com/planetarium/lib9c/pull/57</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/60">https://github.com/planetarium/lib9c/pull/60</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/102">https://github.com/planetarium/lib9c/pull/102</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/128">https://github.com/planetarium/lib9c/pull/128</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/167">https://github.com/planetarium/lib9c/pull/167</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/422">https://github.com/planetarium/lib9c/pull/422</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/747">https://github.com/planetarium/lib9c/pull/747</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/798">https://github.com/planetarium/lib9c/pull/798</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidAddressException.html">InvalidAddressException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidClaimException.html">InvalidClaimException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidCurrencyException.html">InvalidCurrencyException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidElementalException.html">InvalidElementalException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidEquipmentException.html">InvalidEquipmentException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidItemCountException.html">InvalidItemCountException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidItemTypeException.html">InvalidItemTypeException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidLevelException.html">InvalidLevelException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidMaterialException.html">InvalidMaterialException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidMinterException.html">InvalidMinterException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidMonsterCollectionRoundException.html">InvalidMonsterCollectionRoundException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidNamePatternException.html">InvalidNamePatternException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidPriceException.html">InvalidPriceException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidProductTypeException.html">InvalidProductTypeException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidRecipeIdException.html">InvalidRecipeIdException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidRepeatPlayException.html">InvalidRepeatPlayException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidShopItemException.html">InvalidShopItemException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidSignatureException.html">InvalidSignatureException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidSlotIndexException.html">InvalidSlotIndexException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidStageException.html">InvalidStageException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTradableIdException.html">InvalidTradableIdException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTradableItemException.html">InvalidTradableItemException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTransferCurrencyException.html">InvalidTransferCurrencyException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTransferMinterException.html">InvalidTransferMinterException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTransferRecipientException.html">InvalidTransferRecipientException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTransferSignerException.html">InvalidTransferSignerException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidTransferUnactivatedRecipientException.html">InvalidTransferUnactivatedRecipientException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InvalidWorldException.html">InvalidWorldException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IssueToken.html">IssueToken</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IssueTokensFromGarage.html">IssueTokensFromGarage</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemDoesNotExistException.html">ItemDoesNotExistException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement.html">ItemEnhancement</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement10.html">ItemEnhancement10</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/1176">https://github.com/planetarium/lib9c/pull/1176</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement10.ResultModel.html">ItemEnhancement10.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement11.html">ItemEnhancement11</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/1164">https://github.com/planetarium/lib9c/pull/1164</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement11.ResultModel.html">ItemEnhancement11.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement12.html">ItemEnhancement12</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/2068">https://github.com/planetarium/lib9c/pull/2068</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement12.ResultModel.html">ItemEnhancement12.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement13.html">ItemEnhancement13</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/2068">https://github.com/planetarium/lib9c/pull/2068</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement13.ResultModel.html">ItemEnhancement13.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement7.html">ItemEnhancement7</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement7.ResultModel.html">ItemEnhancement7.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement9.html">ItemEnhancement9</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement9.ResultModel.html">ItemEnhancement9.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemProductInfo.html">ItemProductInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.JoinArena.html">JoinArena</a></dt>
+      <dd><p>Introduced at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.JoinArena1.html">JoinArena1</a></dt>
+      <dd><p>Introduced at <a href="https://github.com/planetarium/lib9c/pull/1495">https://github.com/planetarium/lib9c/pull/1495</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.JoinArena3.html">JoinArena3</a></dt>
+      <dd><p>Introduced at <a href="https://github.com/planetarium/lib9c/pull/1663">https://github.com/planetarium/lib9c/pull/1663</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MemoLengthOverflowException.html">MemoLengthOverflowException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MigrateAgentAvatar.html">MigrateAgentAvatar</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MigrateFee.html">MigrateFee</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MigrateMonsterCollection.html">MigrateMonsterCollection</a></dt>
+      <dd><p>An action to claim remained monster collection rewards and to migrate
+<a class="xref" href="Nekoyume.Model.State.MonsterCollectionState.html">MonsterCollectionState</a> into <a class="xref" href="Nekoyume.Model.State.LegacyStakeState.html">LegacyStakeState</a> without cancellation, to
+keep its staked period.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MigrationActivatedAccountsState.html">MigrationActivatedAccountsState</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MintAssets.html">MintAssets</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MonsterCollectionExistingClaimableException.html">MonsterCollectionExistingClaimableException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MonsterCollectionExistingException.html">MonsterCollectionExistingException</a></dt>
+      <dd><p>An exception thrown when there is unexpected monster collection.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MonsterCollectionExpiredException.html">MonsterCollectionExpiredException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MonsterCollectionLevelException.html">MonsterCollectionLevelException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughActionPointException.html">NotEnoughActionPointException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughAvatarLevelException.html">NotEnoughAvatarLevelException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughClearedStageLevelException.html">NotEnoughClearedStageLevelException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughCombatPointException.html">NotEnoughCombatPointException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughFungibleAssetValueException.html">NotEnoughFungibleAssetValueException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughHammerPointException.html">NotEnoughHammerPointException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughMaterialException.html">NotEnoughMaterialException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughMedalException.html">NotEnoughMedalException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughRankException.html">NotEnoughRankException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughStarException.html">NotEnoughStarException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.NotEnoughWeeklyArenaChallengeCountException.html">NotEnoughWeeklyArenaChallengeCountException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.OrderIdDoesNotExistException.html">OrderIdDoesNotExistException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PatchTableSheet.html">PatchTableSheet</a></dt>
+      <dd><p>Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)
+Updated at <a href="https://github.com/planetarium/lib9c/pull/42">https://github.com/planetarium/lib9c/pull/42</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/101">https://github.com/planetarium/lib9c/pull/101</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/287">https://github.com/planetarium/lib9c/pull/287</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/315">https://github.com/planetarium/lib9c/pull/315</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/1560">https://github.com/planetarium/lib9c/pull/1560</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PendingActivationDoesNotExistsException.html">PendingActivationDoesNotExistsException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PermissionDeniedException.html">PermissionDeniedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PetEnhancement.html">PetEnhancement</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PetIsLockedException.html">PetIsLockedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PlayCountIsZeroException.html">PlayCountIsZeroException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PolicyExpiredException.html">PolicyExpiredException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PrepareRewardAssets.html">PrepareRewardAssets</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ProductNotFoundException.html">ProductNotFoundException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PurchaseInfo.html">PurchaseInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PurchaseInfo0.html">PurchaseInfo0</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Raid.html">Raid</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RankingBattle.html">RankingBattle</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/941">https://github.com/planetarium/lib9c/pull/941</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/1135">https://github.com/planetarium/lib9c/pull/1135</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RankingBattle11.html">RankingBattle11</a></dt>
+      <dd><p>Updated at <a href="https://github.com/planetarium/lib9c/pull/1176">https://github.com/planetarium/lib9c/pull/1176</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RankingExceededException.html">RankingExceededException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RapidCombination.html">RapidCombination</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RapidCombination0.html">RapidCombination0</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RapidCombination0.ResultModel.html">RapidCombination0.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RapidCombination5.html">RapidCombination5</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RapidCombination5.ResultModel.html">RapidCombination5.ResultModel</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ReRegisterProduct.html">ReRegisterProduct</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RedeemCode.html">RedeemCode</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/602">https://github.com/planetarium/lib9c/pull/602</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/861">https://github.com/planetarium/lib9c/pull/861</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RedeemCode2.html">RedeemCode2</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RegisterInfo.html">RegisterInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RegisterProduct.html">RegisterProduct</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RegisterProduct0.html">RegisterProduct0</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RenewAdminState.html">RenewAdminState</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/805">https://github.com/planetarium/lib9c/pull/805</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/815">https://github.com/planetarium/lib9c/pull/815</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RequestPledge.html">RequestPledge</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RequiredBlockIndexException.html">RequiredBlockIndexException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RequiredBlockIntervalException.html">RequiredBlockIntervalException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RetrieveAvatarAssets.html">RetrieveAvatarAssets</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RewardGold.html">RewardGold</a></dt>
+      <dd><p>Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)
+Updated at many pull requests
+Updated at <a href="https://github.com/planetarium/lib9c/pull/1135">https://github.com/planetarium/lib9c/pull/1135</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RuneEnhancement.html">RuneEnhancement</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RuneSlotInfo.html">RuneSlotInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RuneSummon.html">RuneSummon</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.SecureMiningReward.html">SecureMiningReward</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Sell.html">Sell</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/1640">https://github.com/planetarium/lib9c/pull/1640</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Sell6.html">Sell6</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.SellCancellation.html">SellCancellation</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/602">https://github.com/planetarium/lib9c/pull/602</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/609">https://github.com/planetarium/lib9c/pull/609</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/620">https://github.com/planetarium/lib9c/pull/620</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/861">https://github.com/planetarium/lib9c/pull/861</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.SellCancellation.Result.html">SellCancellation.Result</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ShopItemExpiredException.html">ShopItemExpiredException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.SlotAlreadyUnlockedException.html">SlotAlreadyUnlockedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.StageNotClearedException.html">StageNotClearedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Stake.html">Stake</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Stake2.html">Stake2</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.StakeExistingClaimableException.html">StakeExistingClaimableException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.TotalSupplyDoesNotExistException.html">TotalSupplyDoesNotExistException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.TransferAsset.html">TransferAsset</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2143">https://github.com/planetarium/lib9c/pull/2143</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/2143">https://github.com/planetarium/lib9c/pull/2143</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.TransferAsset3.html">TransferAsset3</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.TransferAssets.html">TransferAssets</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/636">https://github.com/planetarium/lib9c/pull/636</a>
+Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://github.com/planetarium/lib9c/pull/957</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UnlockCombinationSlot.html">UnlockCombinationSlot</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UnlockEquipmentRecipe.html">UnlockEquipmentRecipe</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UnlockRuneSlot.html">UnlockRuneSlot</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UnlockWorld.html">UnlockWorld</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/1309">https://github.com/planetarium/lib9c/pull/1309</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UpdateSell.html">UpdateSell</a></dt>
+      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/1640">https://github.com/planetarium/lib9c/pull/1640</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UpdateSellInfo.html">UpdateSellInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.UsageLimitExceedException.html">UsageLimitExceedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ValidatorSetOperate.html">ValidatorSetOperate</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ValidatorSetOperatorTypeExtensions.html">ValidatorSetOperatorTypeExtensions</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.WeeklyArenaStateAlreadyEndedException.html">WeeklyArenaStateAlreadyEndedException</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.WeeklyArenaStateNotContainsAvatarAddressException.html">WeeklyArenaStateNotContainsAvatarAddressException</a></dt>
+      <dd></dd>
+    </dl>
+    <h3 id="structs">
+Structs
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IssueTokensFromGarage.Spec.html">IssueTokensFromGarage.Spec</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.MintAssets.MintSpec.html">MintAssets.MintSpec</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.RuneEnhancement.LevelUpResult.html">RuneEnhancement.LevelUpResult</a></dt>
+      <dd></dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IBuy0.html">IBuy0</a></dt>
+      <dd><p>Common interface used before <a class="xref" href="Nekoyume.Action.IBuy5.html">IBuy5</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IBuy5.html">IBuy5</a></dt>
+      <dd><p>Common interface used after <a class="xref" href="Nekoyume.Action.IBuy5.html">IBuy5</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IClaimItems.html">IClaimItems</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IClaimStakeReward.html">IClaimStakeReward</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IHackAndSlashV10.html">IHackAndSlashV10</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IProductInfo.html">IProductInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IPurchaseInfo.html">IPurchaseInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.IRegisterInfo.html">IRegisterInfo</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ITransferAsset.html">ITransferAsset</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ITransferAssets.html">ITransferAssets</a></dt>
+      <dd></dd>
+    </dl>
+    <h3 id="enums">
+Enums
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement10.EnhancementResult.html">ItemEnhancement10.EnhancementResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement11.EnhancementResult.html">ItemEnhancement11.EnhancementResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement12.EnhancementResult.html">ItemEnhancement12.EnhancementResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement13.EnhancementResult.html">ItemEnhancement13.EnhancementResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ItemEnhancement9.EnhancementResult.html">ItemEnhancement9.EnhancementResult</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ShopErrorType.html">ShopErrorType</a></dt>
+      <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ValidatorSetOperatorType.html">ValidatorSetOperatorType</a></dt>
+      <dd></dd>
+    </dl>
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
