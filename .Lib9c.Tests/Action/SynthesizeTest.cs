@@ -86,6 +86,7 @@ public class SynthesizeTest
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
 
         var action = new Synthesize()
         {
@@ -141,6 +142,34 @@ public class SynthesizeTest
         Assert.True(expectedGrade == resultGrade || resultGrade == grade);
     }
 
+    [Fact]
+    public void ExecuteNotEnoughActionPoint()
+    {
+        var grade = Grade.Rare;
+        var itemSubType = ItemSubType.FullCostume;
+        var context = new ActionContext();
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+
+        var action = new Synthesize()
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        Assert.Throws<NotEnoughActionPointException>(() => action.Execute(ctx));
+    }
+
     [Theory]
     [InlineData(2)]
     [InlineData(3)]
@@ -154,6 +183,7 @@ public class SynthesizeTest
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
 
         var action = new Synthesize()
         {
@@ -195,6 +225,7 @@ public class SynthesizeTest
         var context = new ActionContext();
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
 
         var action = new Synthesize()
         {

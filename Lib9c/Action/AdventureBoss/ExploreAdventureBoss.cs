@@ -251,8 +251,8 @@ namespace Nekoyume.Action.AdventureBoss
             for (var fl = explorer.Floor + 1; fl < explorer.MaxFloor + 1; fl++)
             {
                 // Get Data for simulator
-                var floorRow = floorRows.First(row => row.Floor == fl);
-                if (!floorSheet.TryGetValue(fl, out var flRow))
+                var floorRow = floorRows.FirstOrDefault(row => row.Floor == fl);
+                if (floorRow == null)
                 {
                     throw new SheetRowNotFoundException(addressesHex, nameof(floorSheet), fl);
                 }
@@ -263,7 +263,7 @@ namespace Nekoyume.Action.AdventureBoss
                 }
 
                 var rewards =
-                    AdventureBossSimulator.GetWaveRewards(random, flRow, materialItemSheet);
+                    AdventureBossSimulator.GetWaveRewards(random, floorRow, materialItemSheet);
 
                 // Use AP Potion
                 if (!avatarState.inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,

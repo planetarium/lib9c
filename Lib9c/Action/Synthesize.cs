@@ -16,6 +16,7 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    using Extensions;
     using Sheets = Dictionary<Type, (Address, ISheet)>;
     using GradeDict = Dictionary<int, Dictionary<ItemSubType, int>>;
 
@@ -29,6 +30,7 @@ namespace Nekoyume.Action
         private const string TypeIdentifier = "synthesize";
 
         private const string MaterialsKey = "m";
+        private const string ChargeApKey = "c";
         private const string AvatarAddressKey = "a";
 
         private static readonly ItemType[] ValidItemType =
@@ -47,6 +49,7 @@ namespace Nekoyume.Action
 
 #region Fields
         public List<Guid> MaterialIds = new();
+        public bool ChargeAp;
         public Address AvatarAddress;
 
         private ItemSubType? _cachedItemSubType;
@@ -87,7 +90,11 @@ namespace Nekoyume.Action
                 typeof(EquipmentItemSheet),
                 typeof(SynthesizeSheet),
                 typeof(SynthesizeWeightSheet),
+                typeof(MaterialItemSheet),
             });
+
+            // Calculate action point
+            var actionPoint = CalculateActionPoint(states, avatarState, sheets, context);
 
             // Initialize variables
             var materialEquipments = new List<Equipment>();
@@ -124,13 +131,6 @@ namespace Nekoyume.Action
                 throw new InvalidOperationException("ItemSubType is not set.");
             }
 
-            var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
-            {
-                Sheets = sheets,
-                RandomObject = context.GetRandom(),
-                GradeDict = gradeDict,
-            });
-
             // Unequip items (if necessary)
             foreach (var materialEquipment in materialEquipments)
             {
@@ -150,7 +150,14 @@ namespace Nekoyume.Action
                         $"{addressesHex} Aborted as the material item ({materialId}) does not exist in inventory."
                     );
                 }
-            }
+            };
+
+            var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
+            {
+                Sheets = sheets,
+                RandomObject = context.GetRandom(),
+                GradeDict = gradeDict,
+            });
 
             // Add synthesized items to inventory
             foreach (var item in synthesizedItems)
@@ -158,7 +165,9 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddNonFungibleItem(item.ItemBase);
             }
 
-            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
+            return states
+                   .SetActionPoint(AvatarAddress, actionPoint)
+                   .SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
         private Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, IActionContext context, string addressesHex)
@@ -257,11 +266,52 @@ namespace Nekoyume.Action
             }
         }
 
+        private long CalculateActionPoint(IWorld states, AvatarState avatarState, Sheets sheets, IActionContext context)
+        {
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            if (actionPoint < GameConfig.ActionCostAP)
+            {
+                switch (ChargeAp)
+                {
+                    case false:
+                        throw new NotEnoughActionPointException("Action point is not enough. for synthesize.");
+                    case true:
+                    {
+                        var row = sheets.GetSheet<MaterialItemSheet>()
+                                                          .OrderedList?
+                                                          .First(r => r.ItemSubType == ItemSubType.ApStone);
+                        if (row == null)
+                        {
+                            throw new SheetRowNotFoundException(
+                                nameof(MaterialItemSheet),
+                                ItemSubType.ApStone.ToString()
+                            );
+                        }
+
+                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, context.BlockIndex))
+                        {
+                            throw new NotEnoughMaterialException("not enough ap stone.");
+                        }
+                        actionPoint = DailyReward.ActionPointMax;
+                        break;
+                    }
+                }
+            }
+
+            actionPoint -= GameConfig.ActionCostAP;
+            return actionPoint;
+        }
+
 #region Serialize
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
                 {
                     [MaterialsKey] = new List(MaterialIds.OrderBy(i => i).Select(i => i.Serialize())),
+                    [ChargeApKey] = ChargeAp.Serialize(),
                     [AvatarAddressKey] = AvatarAddress.Serialize(),
                 }
                 .ToImmutableDictionary();
@@ -269,6 +319,7 @@ namespace Nekoyume.Action
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
+            ChargeAp = plainValue[ChargeApKey].ToBoolean();
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
         }
 #endregion Serialize

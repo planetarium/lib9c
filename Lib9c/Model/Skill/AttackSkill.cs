@@ -67,7 +67,7 @@ namespace Nekoyume.Model.Skill
                         // Apply multiple hits
                         damage = (long) (damage * multiplier);
                         // Apply damage reduction
-                        damage = (long) ((damage - target.DRV) * (1 - target.DRR / 10000m));
+                        damage = (long) ((damage - target.DRV) * DamageHelper.GetDamageReductionRate(target.DRR));
 
                         if (damage < 1)
                         {
