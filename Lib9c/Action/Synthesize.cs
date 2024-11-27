@@ -241,7 +241,7 @@ namespace Nekoyume.Action
             }
 
             var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
-            float cumulativeWeight = 0;
+            var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
                 cumulativeWeight += weight;
@@ -275,7 +275,7 @@ namespace Nekoyume.Action
             }
 
             var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
-            float cumulativeWeight = 0;
+            var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
                 cumulativeWeight += weight;
@@ -298,10 +298,10 @@ namespace Nekoyume.Action
         }
 
         private int GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
-            IRandom random, out List<(int ItemId, float Weight)> itemWeights)
+            IRandom random, out List<(int ItemId, int Weight)> itemWeights)
         {
             var totalWeight = 0;
-            itemWeights = new List<(int ItemId, float Weight)>();
+            itemWeights = new List<(int ItemId, int Weight)>();
             foreach (var itemId in synthesizeResultPool)
             {
                 var weight = GetWeight(grade, itemId, synthesizeWeightSheet);
