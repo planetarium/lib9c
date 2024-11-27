@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
@@ -29,6 +30,8 @@ namespace Nekoyume.Action
     [ActionType("stake3")]
     public class Stake : GameAction, IStakeV1
     {
+        private static readonly ActivitySource ActivitySource = new ActivitySource("Lib9c.Action.Stake");
+
         internal BigInteger Amount { get; set; }
 
         BigInteger IStakeV1.Amount => Amount;
@@ -59,6 +62,12 @@ namespace Nekoyume.Action
             GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
+            using var activity = ActivitySource.StartActivity("Stake");
+
+            var monsterCollectionStateActivity = ActivitySource.StartActivity(
+                "GetMonsterCollectionState",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             // NOTE: Restrict staking if there is a monster collection until now.
             if (states.GetAgentState(context.Signer) is { } agentState &&
                 states.TryGetLegacyState(MonsterCollectionState.DeriveAddress(
@@ -67,7 +76,12 @@ namespace Nekoyume.Action
             {
                 throw new MonsterCollectionExistingException();
             }
+            monsterCollectionStateActivity?.Dispose();
 
+            var stakePolicySheetActivity = ActivitySource.StartActivity(
+                "GetStakePolicySheet",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             // NOTE: When the amount is less than 0.
             if (Amount < 0)
             {
@@ -116,6 +130,12 @@ namespace Nekoyume.Action
             }
 
             var latestStakeContract = new Contract(stakePolicySheet);
+            stakePolicySheetActivity?.Dispose();
+
+            var findStakeStateAndStakeFromNoneActivity = ActivitySource.StartActivity(
+                "FindStakeStateAndStakeFromNone",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             // NOTE: When the staking state is not exist.
             if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
@@ -125,6 +145,10 @@ namespace Nekoyume.Action
                     throw new StateNullException(ReservedAddresses.LegacyAccount, stakeStateAddress);
                 }
 
+                var contractNewStakeFromNoneActivity = ActivitySource.StartActivity(
+                    "ContractNewStakeFromNone",
+                    ActivityKind.Internal,
+                    findStakeStateAndStakeFromNoneActivity?.Id ?? string.Empty);
                 // NOTE: Contract a new staking.
                 states = ContractNewStake(
                     context,
@@ -137,8 +161,12 @@ namespace Nekoyume.Action
                     "{AddressesHex}Stake Total Executed Time: {Elapsed}",
                     addressesHex,
                     DateTimeOffset.UtcNow - started);
+
+                contractNewStakeFromNoneActivity?.Dispose();
                 return states;
             }
+
+            findStakeStateAndStakeFromNoneActivity?.Dispose();
 
             // NOTE: Cannot anything if staking state is claimable.
             if (stakeStateV2.ClaimableBlockIndex <= context.BlockIndex)
@@ -165,14 +193,25 @@ namespace Nekoyume.Action
 
             if (stakeStateV2.StateVersion == 2)
             {
+                var migrateV2toV3Activity = ActivitySource.StartActivity(
+                   "MigrateV2toV3",
+                   ActivityKind.Internal,
+                   activity?.Id ?? string.Empty);
+
                 if (!StakeStateUtils.TryMigrateV2ToV3(context, states, stakeStateAddress, stakeStateV2, out var result))
                 {
                     throw new InvalidOperationException("Failed to migration. Unexpected situation.");
                 }
 
                 states = result.Value.world;
+
+                migrateV2toV3Activity?.Dispose();
             }
 
+            var contractNewStakeActivity = ActivitySource.StartActivity(
+                "ContractNewStake",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             // NOTE: Contract a new staking.
             states = ContractNewStake(
                 context,
@@ -181,6 +220,7 @@ namespace Nekoyume.Action
                 stakedBalance,
                 targetStakeBalance,
                 latestStakeContract);
+            contractNewStakeActivity?.Dispose();
             Log.Debug(
                 "{AddressesHex}Stake Total Executed Time: {Elapsed}",
                 addressesHex,
@@ -196,48 +236,181 @@ namespace Nekoyume.Action
             FungibleAssetValue targetStakeBalance,
             Contract latestStakeContract)
         {
+            using var activity = ActivitySource.StartActivity("ContractNewStake");
+
+            var getLastStakeStateActivity = ActivitySource.StartActivity(
+               "GetLastStakeState",
+               ActivityKind.Internal,
+               activity?.Id ?? string.Empty);
             var stakeStateValue = new StakeState(latestStakeContract, context.BlockIndex).Serialize();
             var additionalBalance = targetStakeBalance - stakedBalance;
             var height = context.BlockIndex;
             var agentAddress = new AgentAddress(context.Signer);
+            getLastStakeStateActivity?.Dispose();
 
             if (additionalBalance.Sign > 0)
             {
+                var addStakeActivity = ActivitySource.StartActivity(
+                   "AddStake",
+                   ActivityKind.Internal,
+                   activity?.Id ?? string.Empty);
+
+                var getGuildCoinActivity = ActivitySource.StartActivity(
+                   "GetGuildCoin",
+                   ActivityKind.Internal,
+                   addStakeActivity?.Id ?? string.Empty);
                 var gg = GetGuildCoinFromNCG(additionalBalance);
+
+                getGuildCoinActivity?.Dispose();
+
+                var transferActivity = ActivitySource.StartActivity(
+                   "GetGuildCoin",
+                   ActivityKind.Internal,
+                   addStakeActivity?.Id ?? string.Empty);
                 state = state
                     .TransferAsset(context, context.Signer, stakeStateAddr, additionalBalance)
                     .MintAsset(context, stakeStateAddr, gg);
+                transferActivity?.Dispose();
 
+                var guildActivity = ActivitySource.StartActivity(
+                   "Guild",
+                   ActivityKind.Internal,
+                   addStakeActivity?.Id ?? string.Empty);
+
+                var createGuildRepoActivity = ActivitySource.StartActivity(
+                       "CreateGuildRepo",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                 var guildRepository = new GuildRepository(state, context);
+                createGuildRepoActivity?.Dispose();
+
                 if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
+                    var getGuildActivity = ActivitySource.StartActivity(
+                       "GetGuild",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    getGuildActivity?.Dispose();
+
+                    var delegateActivity = ActivitySource.StartActivity(
+                       "Delegate",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     guildParticipant.Delegate(guild, gg, height);
+                    delegateActivity?.Dispose();
+
+                    var worldFromGuildRepoActivity = ActivitySource.StartActivity(
+                       "WorldFromGuildRepo",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     state = guildRepository.World;
+                    worldFromGuildRepoActivity?.Dispose();
                 }
+
+                guildActivity?.Dispose();
+                addStakeActivity?.Dispose();
             }
             else if (additionalBalance.Sign < 0)
             {
+                var subtractStakeActivity = ActivitySource.StartActivity(
+                   "SubtractStake",
+                   ActivityKind.Internal,
+                   activity?.Id ?? string.Empty);
+
+                var getGuildCoinActivity = ActivitySource.StartActivity(
+                   "GetGuildCoin",
+                   ActivityKind.Internal,
+                   subtractStakeActivity?.Id ?? string.Empty);
                 var gg = GetGuildCoinFromNCG(-additionalBalance);
+                getGuildCoinActivity?.Dispose();
+
+                var guildActivity = ActivitySource.StartActivity(
+                   "Guild",
+                   ActivityKind.Internal,
+                   subtractStakeActivity?.Id ?? string.Empty);
+
+                var createGuildRepoActivity = ActivitySource.StartActivity(
+                    "CreateGuildRepo",
+                    ActivityKind.Internal,
+                    guildActivity?.Id ?? string.Empty);
 
                 var guildRepository = new GuildRepository(state, context);
+                createGuildRepoActivity?.Dispose();
 
                 // TODO : [GuildMigration] Remove below code when the migration is done.
                 if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
+                    var getGuildActivity = ActivitySource.StartActivity(
+                       "GetGuild",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    getGuildActivity?.Dispose();
+
+                    var getGuildDelegateeActivity = ActivitySource.StartActivity(
+                       "GetGuildDelegateeActivity",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                    getGuildDelegateeActivity?.Dispose();
+
+                    var shareFromFAVActivity = ActivitySource.StartActivity(
+                       "ShareFromFAV",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     var share = guildDelegatee.ShareFromFAV(gg);
+                    shareFromFAVActivity?.Dispose();
 
+                    var getGuildDelegatorActivity = ActivitySource.StartActivity(
+                       "GetGuildDelegatorActivity",
+                       ActivityKind.Internal,
+                       guildActivity?.Id ?? string.Empty);
                     var guildDelegator = guildRepository.GetGuildDelegator(agentAddress);
+                    getGuildDelegatorActivity?.Dispose();
+
+                    var unbondGuildActivity = ActivitySource.StartActivity(
+                      "UnbondGuild",
+                      ActivityKind.Internal,
+                      guildActivity?.Id ?? string.Empty);
                     guildDelegatee.Unbond(guildDelegator, share, height);
+                    unbondGuildActivity?.Dispose();
 
+                    var createValidatorRepoActivity = ActivitySource.StartActivity(
+                        "CreateValidatorRepo",
+                        ActivityKind.Internal,
+                        guildActivity?.Id ?? string.Empty);
                     var validatorRepository = new ValidatorRepository(guildRepository);
-                    var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
-                    var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
-                    validatorDelegatee.Unbond(validatorDelegator, share, height);
+                    createValidatorRepoActivity?.Dispose();
 
+                    var getValidatorDelegateeActivity = ActivitySource.StartActivity(
+                        "GetValidatorDelegatee",
+                        ActivityKind.Internal,
+                        guildActivity?.Id ?? string.Empty);
+                    var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+                    getValidatorDelegateeActivity?.Dispose();
+
+                    var getValidatorDelegatorActivity = ActivitySource.StartActivity(
+                        "GetValidatorDelegator",
+                        ActivityKind.Internal,
+                        guildActivity?.Id ?? string.Empty);
+                    var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+                    getValidatorDelegatorActivity?.Dispose();
+
+                    var unbondValidatorActivity = ActivitySource.StartActivity(
+                      "UnbondValidator",
+                      ActivityKind.Internal,
+                      guildActivity?.Id ?? string.Empty);
+                    validatorDelegatee.Unbond(validatorDelegator, share, height);
+                    unbondValidatorActivity?.Dispose();
+
+                    var worldFromValidatorRepoActivity = ActivitySource.StartActivity(
+                      "WorldFromValidatorepo",
+                      ActivityKind.Internal,
+                      guildActivity?.Id ?? string.Empty);
                     state = validatorRepository.World;
+                    worldFromValidatorRepoActivity?.Dispose();
+
                     state = state.BurnAsset(context, guildDelegatee.DelegationPoolAddress, gg);
                 }
                 else
@@ -279,6 +452,9 @@ namespace Nekoyume.Action
                         ReservedAddresses.LegacyAccount,
                         state => state.RemoveState(stakeStateAddr));
                 }
+
+                guildActivity?.Dispose();
+                subtractStakeActivity?.Dispose();
             }
 
             return state.SetLegacyState(stakeStateAddr, stakeStateValue);
