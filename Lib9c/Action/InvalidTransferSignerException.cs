@@ -7,19 +7,25 @@ namespace Nekoyume.Action
     [Serializable]
     public class InvalidTransferSignerException : Exception
     {
-        public InvalidTransferSignerException(
-            Address txSigner,
-            Address sender,
-            Address recipient)
+        public Address TxSigner { get; }
+
+        public Address Sender { get; }
+
+        public Address Recipient { get; }
+
+        public InvalidTransferSignerException(Address txSigner, Address sender, Address recipient)
         {
             TxSigner = txSigner;
             Sender = sender;
             Recipient = recipient;
         }
-        
-        public InvalidTransferSignerException(
-            SerializationInfo info, StreamingContext context
-        ) : base(info, context)
+
+        public InvalidTransferSignerException(string message) : base(message)
+        {
+        }
+
+        public InvalidTransferSignerException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
         {
             TxSigner = (Address)info.GetValue(nameof(TxSigner), typeof(Address));
             Sender = (Address)info.GetValue(nameof(Sender), typeof(Address));
@@ -33,11 +39,5 @@ namespace Nekoyume.Action
             info.AddValue(nameof(Sender), Sender);
             info.AddValue(nameof(Recipient), Recipient);
         }
-
-        public Address TxSigner { get; }
-
-        public Address Sender { get; }
-
-        public Address Recipient { get; }
     }
 }
