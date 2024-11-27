@@ -300,10 +300,10 @@ namespace Nekoyume.Action
             throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
-        private float GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
+        private int GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
             IRandom random, out List<(int ItemId, float Weight)> itemWeights)
         {
-            float totalWeight = 0;
+            var totalWeight = 0;
             itemWeights = new List<(int ItemId, float Weight)>();
             foreach (var itemId in synthesizeResultPool)
             {
@@ -313,8 +313,7 @@ namespace Nekoyume.Action
             }
 
             // Random selection based on weight
-            var randomValuePercentage = random.Next((int)(totalWeight * 100));
-            return randomValuePercentage * 0.01f;
+            return random.Next(totalWeight);
         }
 
 #endregion GetRandomItem
@@ -587,15 +586,11 @@ namespace Nekoyume.Action
                 };
             }).ToList();
 
-        public static float GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
+        public static int GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
         {
+            var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
             var gradeRow = sheet.Values.FirstOrDefault(r => r.GradeId == (int)grade);
-            if (gradeRow == null)
-            {
-                return 1;
-            }
-
-            return gradeRow.WeightDict.TryGetValue(itemId, out var weight) ? weight : 1;
+            return gradeRow == null ? defaultWeight : gradeRow.WeightDict.GetValueOrDefault(itemId, defaultWeight);
         }
 
 #endregion Helper

@@ -16,15 +16,15 @@ namespace Nekoyume.TableData
 
             public int GradeId { get; private set; }
 
-            public Dictionary<int, float> WeightDict { get; private set; }
+            public Dictionary<int, int> WeightDict { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 GradeId = ParseInt(fields[0]);
 
-                WeightDict = new Dictionary<int, float>();
+                WeightDict = new Dictionary<int, int>();
                 var itemId = ParseInt(fields[1]);
-                var weight = ParseFloat(fields[2], 1.0f);
+                var weight = ParseInt(fields[2], 10000);
                 WeightDict.Add(itemId, weight);
             }
         }
