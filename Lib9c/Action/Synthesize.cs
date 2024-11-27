@@ -90,7 +90,11 @@ namespace Nekoyume.Action
                 typeof(EquipmentItemSheet),
                 typeof(SynthesizeSheet),
                 typeof(SynthesizeWeightSheet),
+                typeof(MaterialItemSheet),
             });
+
+            // Calculate action point
+            var actionPoint = CalculateActionPoint(states, avatarState, sheets, context);
 
             // Initialize variables
             var materialEquipments = new List<Equipment>();
@@ -158,17 +162,17 @@ namespace Nekoyume.Action
                 var gradeId = gradeItem.Key;
                 var subTypeDict = gradeItem.Value;
 
+                if (!synthesizeSheet.TryGetValue(gradeId, out var synthesizeRow))
+                {
+                    throw new SheetRowNotFoundException(
+                        $"Aborted as the synthesize row for grade ({gradeId}) was failed to load in {nameof(SynthesizeSheet)}", gradeId
+                    );
+                }
+
                 foreach (var subTypeItem in subTypeDict)
                 {
                     var itemSubType = subTypeItem.Key;
                     var materialCount = subTypeItem.Value;
-
-                    if (!synthesizeSheet.TryGetValue(gradeId, out var synthesizeRow))
-                    {
-                        throw new SheetRowNotFoundException(
-                            $"Aborted as the synthesize row for grade ({gradeId}) was failed to load in {nameof(SynthesizeSheet)}", gradeId
-                        );
-                    }
 
                     // TODO: subType별로 필요한 아이템 개수가 다를 수 있음
                     var requiredCount = synthesizeRow.RequiredCount;
@@ -206,7 +210,9 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddNonFungibleItem(item);
             }
 
-            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
+            return states
+                   .SetActionPoint(AvatarAddress, actionPoint)
+                   .SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
         private ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IRandom random, ItemSubType itemSubTypeValue)
@@ -407,6 +413,46 @@ namespace Nekoyume.Action
                     { itemSubType, 1 },
                 };
             }
+        }
+
+        private long CalculateActionPoint(IWorld states, AvatarState avatarState, Sheets sheets, IActionContext context)
+        {
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            if (actionPoint < GameConfig.ActionCostAP)
+            {
+                switch (ChargeAp)
+                {
+                    case false:
+                        throw new NotEnoughActionPointException("Action point is not enough. for synthesize.");
+                    case true:
+                    {
+                        var row = sheets.GetSheet<MaterialItemSheet>()
+                                                          .OrderedList?
+                                                          .First(r => r.ItemSubType == ItemSubType.ApStone);
+                        if (row == null)
+                        {
+                            throw new SheetRowNotFoundException(
+                                nameof(MaterialItemSheet),
+                                ItemSubType.ApStone.ToString()
+                            );
+                        }
+
+                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, context.BlockIndex))
+                        {
+                            throw new NotEnoughMaterialException("not enough ap stone.");
+                        }
+                        actionPoint = DailyReward.ActionPointMax;
+                        break;
+                    }
+                }
+            }
+
+            actionPoint -= GameConfig.ActionCostAP;
+            return actionPoint;
         }
 
 #region Serialize
