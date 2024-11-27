@@ -73,6 +73,9 @@ namespace Nekoyume.Helper
                     // Calculate success for each synthesis
                     for (var i = 0; i < synthesizeCount; i++)
                     {
+                        // random value range is 0 ~ 9999
+                        // If the SucceedRate of the table is 0, use '<' for always to fail.
+                        // and SucceedRate of the table is 10000, always success(because left value range is 0~9999)
                         var isSuccess = random.Next(SynthesizeSheet.SucceedRateMax) < synthesizeRow.SucceedRate;
 
                         var grade = (Grade)gradeId;
@@ -186,7 +189,7 @@ namespace Nekoyume.Helper
             }
 
             // Random selection based on weight
-            return random.Next(totalWeight);
+            return random.Next(totalWeight + 1);
         }
 
 #endregion GetRandomItem

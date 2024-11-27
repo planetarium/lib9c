@@ -22,6 +22,8 @@ namespace Nekoyume.Action
 
     /// <summary>
     /// Synthesize action is a type of action that synthesizes items.
+    /// <value>MaterialIds: Id list of items as material</value>
+    /// <value><br/>ChargeAp: Whether to charge action points with action execution</value>
     /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
