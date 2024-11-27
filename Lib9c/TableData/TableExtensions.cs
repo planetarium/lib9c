@@ -45,6 +45,18 @@ namespace Nekoyume.TableData
         public static decimal ParseDecimal(string value, decimal defaultValue) =>
             TryParseDecimal(value, out var result) ? result : defaultValue;
 
+        public static float ParseFloat(string value)
+        {
+            if (TryParseFloat(value, out var result))
+            {
+                return result;
+            }
+            throw new ArgumentException(value);
+        }
+
+        public static float ParseFloat(string value, float defaultValue) =>
+            TryParseFloat(value, out var result) ? result : defaultValue;
+
         public static long ParseLong(string value)
         {
             if (TryParseLong(value, out var result))

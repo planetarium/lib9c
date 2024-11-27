@@ -18,10 +18,12 @@ using Nekoyume.TableData;
 namespace Nekoyume.Action
 {
     using Sheets = Dictionary<Type, (Address, ISheet)>;
+    using GradeDict = Dictionary<int, Dictionary<ItemSubType, int>>;
 
     /// <summary>
     /// Synthesize action is a type of action that synthesizes items.
-    /// TODO: Implement Synthesize action.
+    /// <value>MaterialIds: Id list of items as material</value>
+    /// <value><br/>ChargeAp: Whether to charge action points with action execution</value>
     /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
@@ -30,6 +32,7 @@ namespace Nekoyume.Action
         private const string TypeIdentifier = "synthesize";
 
         private const string MaterialsKey = "m";
+        private const string ChargeApKey = "c";
         private const string AvatarAddressKey = "a";
 
         private static readonly ItemType[] ValidItemType =
@@ -48,12 +51,12 @@ namespace Nekoyume.Action
 
 #region Fields
         public List<Guid> MaterialIds = new();
+        public bool ChargeAp;
         public Address AvatarAddress;
 
         private ItemSubType? _cachedItemSubType;
 #endregion Fields
 
-        // TODO: 세부 기획 정해지면 그에 맞게 테스트 코드 우선 작성
         /// <summary>
         /// Execute Synthesize action, Input <see cref="MaterialIds"/> and <see cref="AvatarAddress"/>.
         /// Depending on the probability, you can get different items.
@@ -61,7 +64,7 @@ namespace Nekoyume.Action
         /// </summary>
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
 
             // Collect addresses
@@ -87,15 +90,20 @@ namespace Nekoyume.Action
             {
                 typeof(CostumeItemSheet),
                 typeof(EquipmentItemSheet),
+                typeof(SynthesizeSheet),
+                typeof(SynthesizeWeightSheet),
+                typeof(MaterialItemSheet),
             });
 
-            // TODO - TransferAsset (NCG)
+            // Calculate action point
+            var actionPoint = CalculateActionPoint(states, avatarState, sheets, context);
 
-            // Select id to equipment
-            var sourceGrade = Grade.Normal; // TODO: change to set
-
+            // Initialize variables
             var materialEquipments = new List<Equipment>();
             var materialCostumes = new List<Costume>();
+            var gradeDict = new GradeDict();
+
+            // Process materials
             foreach (var materialId in MaterialIds)
             {
                 var materialEquipment = GetEquipmentFromId(materialId, avatarState, context, addressesHex);
@@ -110,13 +118,13 @@ namespace Nekoyume.Action
                 if (materialEquipment != null)
                 {
                     materialEquipments.Add(materialEquipment);
-                    sourceGrade = (Grade)materialEquipment.Grade;
+                    SetGradeDict(ref gradeDict, materialEquipment.Grade, materialEquipment.ItemSubType);
                 }
 
                 if (materialCostume != null)
                 {
                     materialCostumes.Add(materialCostume);
-                    sourceGrade = (Grade)materialCostume.Grade;
+                    SetGradeDict(ref gradeDict, materialCostume.Grade, materialCostume.ItemSubType);
                 }
             }
 
@@ -125,41 +133,98 @@ namespace Nekoyume.Action
                 throw new InvalidOperationException("ItemSubType is not set.");
             }
 
-            // Unequip items
+            // Unequip items (if necessary)
             foreach (var materialEquipment in materialEquipments)
             {
                 materialEquipment.Unequip();
             }
-            foreach (var materialEquipment in materialCostumes)
+            foreach (var materialCostume in materialCostumes)
             {
-                materialEquipment.Unequip();
+                materialCostume.Unequip();
             }
 
-            // Remove materials
+            // Remove materials from inventory
             foreach (var materialId in MaterialIds)
             {
-                avatarState.inventory.RemoveNonFungibleItem(materialId);
+                if (!avatarState.inventory.RemoveNonFungibleItem(materialId))
+                {
+                    throw new NotEnoughMaterialException(
+                        $"{addressesHex} Aborted as the material item ({materialId}) does not exist in inventory."
+                    );
+                }
             }
 
-            // clone random item
-            // TODO: Add items to inventory
+            var synthesizeSheet = sheets.GetSheet<SynthesizeSheet>();
             var random = context.GetRandom();
-            avatarState.inventory.AddNonFungibleItem(GetSynthesizedItem(sourceGrade, sheets, random, _cachedItemSubType.Value));
+            var synthesizedItems = new List<ItemBase>();
 
-            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
+            // Calculate the number of items to be synthesized based on materials
+            foreach (var gradeItem in gradeDict)
+            {
+                var gradeId = gradeItem.Key;
+                var subTypeDict = gradeItem.Value;
+
+                if (!synthesizeSheet.TryGetValue(gradeId, out var synthesizeRow))
+                {
+                    throw new SheetRowNotFoundException(
+                        $"Aborted as the synthesize row for grade ({gradeId}) was failed to load in {nameof(SynthesizeSheet)}", gradeId
+                    );
+                }
+
+                foreach (var subTypeItem in subTypeDict)
+                {
+                    var itemSubType = subTypeItem.Key;
+                    var materialCount = subTypeItem.Value;
+
+                    // TODO: subType별로 필요한 아이템 개수가 다를 수 있음
+                    var requiredCount = synthesizeRow.RequiredCount;
+                    var synthesizeCount = materialCount / requiredCount;
+                    var remainder = materialCount % requiredCount;
+
+                    if (synthesizeCount <= 0 || remainder > 0)
+                    {
+                        throw new NotEnoughMaterialException(
+                            $"{addressesHex} Aborted as the number of materials for grade {gradeId} and subtype {itemSubType} is not enough."
+                        );
+                    }
+
+                    // Calculate success for each synthesis
+                    for (var i = 0; i < synthesizeCount; i++)
+                    {
+                        // random value range is 0 ~ 9999
+                        // If the SucceedRate of the table is 0, use '<' for always to fail.
+                        // and SucceedRate of the table is 10000, always success(because left value range is 0~9999)
+                        var isSuccess = random.Next(SynthesizeSheet.SucceedRateMax) < synthesizeRow.SucceedRate;
+
+                        var grade = (Grade)gradeId;
+                        var outputGradeId = isSuccess ? GetTargetGrade(grade) : grade;
+
+                        // Decide the item to add to inventory based on SynthesizeWeightSheet
+                        var synthesizedItem = GetSynthesizedItem(outputGradeId, sheets, random, itemSubType);
+                        synthesizedItems.Add(synthesizedItem);
+                    }
+                }
+            }
+
+            // Add synthesized items to inventory
+            foreach (var item in synthesizedItems)
+            {
+                avatarState.inventory.AddNonFungibleItem(item);
+            }
+
+            return states
+                   .SetActionPoint(AvatarAddress, actionPoint)
+                   .SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
-        // TODO: Use Sheet, grade의 set화
         private ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IRandom random, ItemSubType itemSubTypeValue)
         {
             switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
-                    return GetRandomCostume(grade, itemSubTypeValue, sheets, random);
                 case ItemSubType.Title:
                     return GetRandomCostume(grade, itemSubTypeValue, sheets, random);
                 case ItemSubType.Aura:
-                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, random);
                 case ItemSubType.Grimoire:
                     return GetRandomEquipment(grade, itemSubTypeValue, sheets, random);
                 default:
@@ -167,47 +232,93 @@ namespace Nekoyume.Action
             }
         }
 
+#region GetRandomItem
+
         private ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
         {
             var sheet = sheets.GetSheet<CostumeItemSheet>();
-            var synthesizeResultPool = GetSynthesizeResultPool(
-                new List<Grade>() { grade, },
-                itemSubType,
-                sheet
-            );
+            var synthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>();
+            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, sheet);
 
-            // TODO: add weight
-            var randomId = synthesizeResultPool[random.Next(synthesizeResultPool.Count)];
-            if (!sheet.TryGetValue(randomId, out var costumeRow))
+            if (synthesizeResultPool.Count == 0)
             {
-                throw new SheetRowNotFoundException(
-                    $"Aborted as the costume row ({randomId}) was failed to load in {nameof(CostumeItemSheet)}", randomId
-                );
+                throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            return ItemFactory.CreateItem(costumeRow, random);
+            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
+            var cumulativeWeight = 0;
+            foreach (var (itemId, weight) in itemWeights)
+            {
+                cumulativeWeight += weight;
+                if (randomValue >= cumulativeWeight)
+                {
+                    continue;
+                }
+
+                if (!sheet.TryGetValue(itemId, out var equipmentRow))
+                {
+                    throw new SheetRowNotFoundException(
+                        $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId
+                    );
+                }
+                return ItemFactory.CreateItem(equipmentRow, random);
+            }
+
+            // Should not reach here
+            throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
         private ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
         {
             var sheet = sheets.GetSheet<EquipmentItemSheet>();
-            var synthesizeResultPool = GetSynthesizeResultPool(
-                new List<Grade>() { grade, },
-                itemSubType,
-                sheet
-            );
+            var synthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>();
+            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, sheet);
 
-            // TODO: add weight
-            var randomId = synthesizeResultPool[random.Next(synthesizeResultPool.Count)];
-            if (!sheet.TryGetValue(randomId, out var costumeRow))
+            if (synthesizeResultPool.Count == 0)
             {
-                throw new SheetRowNotFoundException(
-                    $"Aborted as the equipment row ({randomId}) was failed to load in {nameof(EquipmentItemSheet)}", randomId
-                );
+                throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            return ItemFactory.CreateItem(costumeRow, random);
+            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
+            var cumulativeWeight = 0;
+            foreach (var (itemId, weight) in itemWeights)
+            {
+                cumulativeWeight += weight;
+                if (randomValue >= cumulativeWeight)
+                {
+                    continue;
+                }
+
+                if (!sheet.TryGetValue(itemId, out var equipmentRow))
+                {
+                    throw new SheetRowNotFoundException(
+                        $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId
+                    );
+                }
+                return ItemFactory.CreateItem(equipmentRow, random);
+            }
+
+            // Should not reach here
+            throw new InvalidOperationException("Failed to select a synthesized item.");
         }
+
+        private int GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
+            IRandom random, out List<(int ItemId, int Weight)> itemWeights)
+        {
+            var totalWeight = 0;
+            itemWeights = new List<(int ItemId, int Weight)>();
+            foreach (var itemId in synthesizeResultPool)
+            {
+                var weight = GetWeight(grade, itemId, synthesizeWeightSheet);
+                itemWeights.Add((itemId, weight));
+                totalWeight += weight;
+            }
+
+            // Random selection based on weight
+            return random.Next(totalWeight + 1);
+        }
+
+#endregion GetRandomItem
 
         private Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, IActionContext context, string addressesHex)
         {
@@ -283,10 +394,74 @@ namespace Nekoyume.Action
             return costumeItem;
         }
 
+        private void SetGradeDict(ref GradeDict gradeDict, int grade, ItemSubType itemSubType)
+        {
+            if (gradeDict.ContainsKey(grade))
+            {
+                if (gradeDict[grade].ContainsKey(itemSubType))
+                {
+                    gradeDict[grade][itemSubType]++;
+                }
+                else
+                {
+                    gradeDict[grade][itemSubType] = 1;
+                }
+            }
+            else
+            {
+                gradeDict[grade] = new Dictionary<ItemSubType, int>
+                {
+                    { itemSubType, 1 },
+                };
+            }
+        }
+
+        private long CalculateActionPoint(IWorld states, AvatarState avatarState, Sheets sheets, IActionContext context)
+        {
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
+            {
+                actionPoint = avatarState.actionPoint;
+            }
+
+            if (actionPoint < GameConfig.ActionCostAP)
+            {
+                switch (ChargeAp)
+                {
+                    case false:
+                        throw new NotEnoughActionPointException("Action point is not enough. for synthesize.");
+                    case true:
+                    {
+                        var row = sheets.GetSheet<MaterialItemSheet>()
+                                                          .OrderedList?
+                                                          .First(r => r.ItemSubType == ItemSubType.ApStone);
+                        if (row == null)
+                        {
+                            throw new SheetRowNotFoundException(
+                                nameof(MaterialItemSheet),
+                                ItemSubType.ApStone.ToString()
+                            );
+                        }
+
+                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, context.BlockIndex))
+                        {
+                            throw new NotEnoughMaterialException("not enough ap stone.");
+                        }
+                        actionPoint = DailyReward.ActionPointMax;
+                        break;
+                    }
+                }
+            }
+
+            actionPoint -= GameConfig.ActionCostAP;
+            return actionPoint;
+        }
+
+#region Serialize
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
                 {
                     [MaterialsKey] = new List(MaterialIds.OrderBy(i => i).Select(i => i.Serialize())),
+                    [ChargeApKey] = ChargeAp.Serialize(),
                     [AvatarAddressKey] = AvatarAddress.Serialize(),
                 }
                 .ToImmutableDictionary();
@@ -294,10 +469,30 @@ namespace Nekoyume.Action
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
+            ChargeAp = plainValue[ChargeApKey].ToBoolean();
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
         }
+#endregion Serialize
 
 #region Helper
+
+        public static HashSet<int> GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, CostumeItemSheet sheet)
+        {
+            return sheet.Values
+                .Where(r => r.ItemSubType == subType)
+                .Where(r => (Grade)r.Grade == sourceGrade)
+                .Select(r => r.Id)
+                .ToHashSet();
+        }
+
+        public static HashSet<int> GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, EquipmentItemSheet sheet)
+        {
+            return sheet.Values
+                .Where(r => r.ItemSubType == subType)
+                .Where(r => (Grade)r.Grade == sourceGrade)
+                .Select(r => r.Id)
+                .ToHashSet();
+        }
 
         /// <summary>
         /// Returns a list of items that may come out as a result of that synthesis.
@@ -360,6 +555,20 @@ namespace Nekoyume.Action
             _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, null),
         };
 
+        public static int GetTargetGrade(int gradeId)
+        {
+            return gradeId switch
+            {
+                1 => 2, // Grade.Normal => Grade.Rare
+                2 => 3, // Grade.Rare => Grade.Epic
+                3 => 4, // Grade.Epic => Grade.Unique
+                4 => 5, // Grade.Unique => Grade.Legendary
+                5 => 6, // Grade.Legendary => Grade.Divinity
+                6 => 6, // Grade.Divinity => Grade.Divinity (Max)
+                _ => throw new ArgumentOutOfRangeException(nameof(gradeId), gradeId, null),
+            };
+        }
+
         // TODO: move to ItemExtensions
         public static List<Guid> GetItemGuid(ItemBase itemBase) => itemBase switch
         {
@@ -378,6 +587,13 @@ namespace Nekoyume.Action
                     _ => throw new ArgumentException($"Unexpected item type: {i.GetType()}", nameof(i)),
                 };
             }).ToList();
+
+        public static int GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
+        {
+            var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
+            var gradeRow = sheet.Values.FirstOrDefault(r => r.GradeId == (int)grade);
+            return gradeRow == null ? defaultWeight : gradeRow.WeightDict.GetValueOrDefault(itemId, defaultWeight);
+        }
 
 #endregion Helper
     }
