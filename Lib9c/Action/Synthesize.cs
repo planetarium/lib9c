@@ -176,9 +176,6 @@ namespace Nekoyume.Action
 
                     // TODO: subType별로 필요한 아이템 개수가 다를 수 있음
                     var requiredCount = synthesizeRow.RequiredCount;
-                    var succeedRate = Math.Clamp(synthesizeRow.SucceedRate, 0, 1);
-                    var succeedRatePercentage = (int)(succeedRate * 100);
-
                     var synthesizeCount = materialCount / requiredCount;
                     var remainder = materialCount % requiredCount;
 
@@ -192,7 +189,7 @@ namespace Nekoyume.Action
                     // Calculate success for each synthesis
                     for (var i = 0; i < synthesizeCount; i++)
                     {
-                        var isSuccess = random.Next(100) < succeedRatePercentage;
+                        var isSuccess = random.Next(SynthesizeSheet.SucceedRateMax) < synthesizeRow.SucceedRate;
 
                         var grade = (Grade)gradeId;
                         var outputGradeId = isSuccess ? GetTargetGrade(grade) : grade;
