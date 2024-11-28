@@ -376,7 +376,6 @@ public class ClaimRewardTest : ValidatorDelegationTestBase
                 AllocateRewardCurrency))
             .ToArray();
 
-        Assert.Equal(expectedRemainGuildReward, actualRemainGuildReward);
         Assert.Equal(expectedValidatorBalance, actualValidatorBalance);
         Assert.Equal(expectedDelegatorBalances, actualDelegatorBalances);
         Assert.Equal(expectedValidatorGuildReward, actualValidatorGuildReward);
@@ -384,8 +383,9 @@ public class ClaimRewardTest : ValidatorDelegationTestBase
         Assert.Equal(expectedValidatorClaim, actualValidatorReward);
         Assert.Equal(expectedGuildClaims, actualGuildRewards);
         Assert.Equal(expectedGuildParticipantClaims, actualGuildParticipantRewards);
-        Assert.Equal(expectedRemainReward, actualRemainReward);
-
+        // Flushing to remainder pool is now inactive.
+        // Assert.Equal(expectedRemainGuildReward, actualRemainGuildReward);
+        // Assert.Equal(expectedRemainReward, actualRemainReward);
         foreach (var key in guildParticipantKeys)
         {
             Assert.Throws<InvalidOperationException>(

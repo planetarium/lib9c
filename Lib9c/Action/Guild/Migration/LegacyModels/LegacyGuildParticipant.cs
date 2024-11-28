@@ -6,6 +6,9 @@ using Nekoyume.TypedAddress;
 namespace Nekoyume.Action.Guild.Migration.LegacyModels
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
+    /// <summary>
+    /// The legacy model for GuildParticipant.
+    /// </summary>
     public class LegacyGuildParticipant : IBencodable, IEquatable<LegacyGuildParticipant>
     {
         private const string StateTypeName = "guild_participant";

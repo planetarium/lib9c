@@ -12,6 +12,7 @@ namespace Nekoyume.Action.Guild.Migration
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>
     /// An action to migrate the planetarium guild.
+    /// After migration, the planetarium guild now has a validator to delegate.
     /// </summary>
     [ActionType(TypeIdentifier)]
     public class MigratePlanetariumGuild : ActionBase

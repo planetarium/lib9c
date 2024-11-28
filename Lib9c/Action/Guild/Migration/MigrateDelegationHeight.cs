@@ -3,12 +3,14 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Nekoyume.Model.State;
 
 namespace Nekoyume.Action.Guild.Migration
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>
     /// An action to migrate the delegation height.
+    /// This action triggers the migration of the delegation height.
     /// </summary>
     [ActionType(TypeIdentifier)]
     public class MigrateDelegationHeight : ActionBase
@@ -52,6 +54,16 @@ namespace Nekoyume.Action.Guild.Migration
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
+
+            if (!TryGetAdminState(context, out AdminState adminState))
+            {
+                throw new InvalidOperationException("Couldn't find admin state");
+            }
+
+            if (context.Signer != adminState.AdminAddress)
+            {
+                throw new PermissionDeniedException(adminState, context.Signer);
+            }
 
             return world.SetDelegationMigrationHeight(Height);
         }

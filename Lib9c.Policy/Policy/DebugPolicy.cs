@@ -5,6 +5,7 @@ using Libplanet.Blockchain.Policies;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
 using Nekoyume.Action;
+using Nekoyume.Action.ValidatorDelegation;
 
 namespace Nekoyume.Blockchain.Policy
 {
@@ -14,7 +15,25 @@ namespace Nekoyume.Blockchain.Policy
         {
         }
 
-        public IPolicyActionsRegistry PolicyActionsRegistry { get; } = new PolicyActionsRegistry();
+        public IPolicyActionsRegistry PolicyActionsRegistry { get; } =
+            new PolicyActionsRegistry(
+                beginBlockActions: new IAction[] {
+                    new SlashValidator(),
+                    new AllocateGuildReward(),
+                    new AllocateReward(),
+                }.ToImmutableArray(),
+                endBlockActions: new IAction[] {
+                    new UpdateValidators(),
+                    new RecordProposer(),
+                    new RewardGold(),
+                    new ReleaseValidatorUnbondings(),
+                }.ToImmutableArray(),
+                beginTxActions: new IAction[] {
+                    new Mortgage(),
+                }.ToImmutableArray(),
+                endTxActions: new IAction[] {
+                    new Reward(), new Refund(),
+                }.ToImmutableArray());
 
         public TxPolicyViolationException ValidateNextBlockTx(
             BlockChain blockChain, Transaction transaction)

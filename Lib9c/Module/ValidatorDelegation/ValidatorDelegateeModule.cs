@@ -35,7 +35,7 @@ namespace Nekoyume.Module.ValidatorDelegation
 
             if (repository.TryGetValidatorDelegatee(publicKey.Address, out _))
             {
-                throw new InvalidOperationException("The signer already has a validator delegatee.");
+                throw new InvalidOperationException("The public key already has a validator delegatee.");
             }
 
             var validatorDelegatee = new ValidatorDelegatee(
