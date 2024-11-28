@@ -29,8 +29,6 @@ namespace Nekoyume.Delegation
 
         Address RewardPoolAddress { get; }
 
-        ImmutableSortedSet<Address> Delegators { get; }
-
         FungibleAssetValue TotalDelegated { get; }
 
         BigInteger TotalShares { get; }

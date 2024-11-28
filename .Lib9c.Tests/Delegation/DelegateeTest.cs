@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Delegation
     using System.Numerics;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
+    using Nekoyume;
     using Nekoyume.Delegation;
     using Xunit;
 
@@ -38,7 +39,6 @@ namespace Lib9c.Tests.Delegation
             delegatee.Bond(delegator, delegatee.DelegationCurrency * 10, 10L);
             var delegateeRecon = repo.GetDelegatee(delegatee.Address);
             Assert.Equal(delegatee.Address, delegateeRecon.Address);
-            Assert.Equal(delegator.Address, Assert.Single(delegateeRecon.Delegators));
             Assert.Equal(delegatee.TotalDelegated, delegateeRecon.TotalDelegated);
             Assert.Equal(delegatee.TotalShares, delegateeRecon.TotalShares);
         }
@@ -70,7 +70,6 @@ namespace Lib9c.Tests.Delegation
 
             var bondedShare = testDelegatee.Bond(testDelegator1, bonding, 10L);
             var bondedShare1 = _fixture.TestRepository.GetBond(testDelegatee, testDelegator1.Address).Share;
-            Assert.Equal(testDelegator1.Address, Assert.Single(testDelegatee.Delegators));
             Assert.Equal(share, bondedShare);
             Assert.Equal(share1, bondedShare1);
             Assert.Equal(totalShare, testDelegatee.TotalShares);
@@ -83,7 +82,6 @@ namespace Lib9c.Tests.Delegation
             totalBonding += bonding;
             bondedShare = testDelegatee.Bond(testDelegator1, bonding, 20L);
             bondedShare1 = _fixture.TestRepository.GetBond(testDelegatee, testDelegator1.Address).Share;
-            Assert.Equal(testDelegator1.Address, Assert.Single(testDelegatee.Delegators));
             Assert.Equal(share, bondedShare);
             Assert.Equal(share1, bondedShare1);
             Assert.Equal(totalShare, testDelegatee.TotalShares);
@@ -96,9 +94,6 @@ namespace Lib9c.Tests.Delegation
             totalBonding += bonding;
             bondedShare = testDelegatee.Bond(testDelegator2, bonding, 30L);
             var bondedShare2 = _fixture.TestRepository.GetBond(testDelegatee, testDelegator2.Address).Share;
-            Assert.Equal(2, testDelegatee.Delegators.Count);
-            Assert.Contains(testDelegator1.Address, testDelegatee.Delegators);
-            Assert.Contains(testDelegator2.Address, testDelegatee.Delegators);
             Assert.Equal(share, bondedShare);
             Assert.Equal(share2, bondedShare2);
             Assert.Equal(totalShare, testDelegatee.TotalShares);
@@ -163,9 +158,6 @@ namespace Lib9c.Tests.Delegation
             totalDelegated -= unbondingFAV;
             var unbondedFAV = testDelegatee.Unbond(testDelegator1, unbonding, 3L);
             var shareAfterUnbond = _fixture.TestRepository.GetBond(testDelegatee, testDelegator1.Address).Share;
-            Assert.Equal(2, testDelegatee.Delegators.Count);
-            Assert.Contains(testDelegator1.Address, testDelegatee.Delegators);
-            Assert.Contains(testDelegator2.Address, testDelegatee.Delegators);
             Assert.Equal(unbondingFAV, unbondedFAV);
             Assert.Equal(share1, shareAfterUnbond);
             Assert.Equal(totalShares, testDelegatee.TotalShares);
@@ -178,9 +170,6 @@ namespace Lib9c.Tests.Delegation
             totalDelegated -= unbondingFAV;
             unbondedFAV = testDelegatee.Unbond(testDelegator2, unbonding, 4L);
             shareAfterUnbond = _fixture.TestRepository.GetBond(testDelegatee, testDelegator2.Address).Share;
-            Assert.Equal(2, testDelegatee.Delegators.Count);
-            Assert.Contains(testDelegator1.Address, testDelegatee.Delegators);
-            Assert.Contains(testDelegator2.Address, testDelegatee.Delegators);
             Assert.Equal(unbondingFAV, unbondedFAV);
             Assert.Equal(share2, shareAfterUnbond);
             Assert.Equal(totalShares, testDelegatee.TotalShares);
@@ -191,7 +180,6 @@ namespace Lib9c.Tests.Delegation
             totalDelegated -= unbondingFAV;
             unbondedFAV = testDelegatee.Unbond(testDelegator1, share1, 5L);
             shareAfterUnbond = _fixture.TestRepository.GetBond(testDelegatee, testDelegator1.Address).Share;
-            Assert.Equal(testDelegator2.Address, Assert.Single(testDelegatee.Delegators));
             Assert.Equal(unbondingFAV, unbondedFAV);
             Assert.Equal(BigInteger.Zero, shareAfterUnbond);
             Assert.Equal(totalShares, testDelegatee.TotalShares);
@@ -207,7 +195,7 @@ namespace Lib9c.Tests.Delegation
                     _fixture.DummyDelegator1, BigInteger.One, 10L));
         }
 
-        [Fact]
+        [Fact(Skip = "Flushing to remainder pool is now inactive.")]
         public void ClearRemainderRewards()
         {
             var repo = _fixture.TestRepository;
