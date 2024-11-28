@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Delegation;
@@ -38,6 +39,23 @@ namespace Nekoyume.Model.Guild
                   address: address,
                   repository: repository)
         {
+        }
+
+        public override void Slash(BigInteger slashFactor, long infractionHeight, long height)
+        {
+            FungibleAssetValue slashed = TotalDelegated.DivRem(slashFactor, out var rem);
+            if (rem.Sign > 0)
+            {
+                slashed += FungibleAssetValue.FromRawValue(rem.Currency, 1);
+            }
+
+            if (slashed > Metadata.TotalDelegatedFAV)
+            {
+                slashed = Metadata.TotalDelegatedFAV;
+            }
+
+            Metadata.RemoveDelegatedFAV(slashed);
+            Repository.SetDelegateeMetadata(Metadata);
         }
 
         public void Activate()

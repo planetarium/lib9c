@@ -78,7 +78,7 @@ namespace Nekoyume.ValidatorDelegation
                 }
             }
 
-            foreach (var history in History)
+            foreach (var history in History.ToArray())
             {
                 history.Value.RemoveAll(abstainHeight => abstainHeight < lowerBound);
                 if (history.Value.Count == 0)

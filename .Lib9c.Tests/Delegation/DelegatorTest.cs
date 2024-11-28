@@ -57,7 +57,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegateShare, share);
             Assert.Equal(delegateFAV, delegatee1.TotalDelegated);
             Assert.Equal(delegateShare, delegatee1.TotalShares);
-            Assert.Equal(delegator.Address, Assert.Single(delegatee1.Delegators));
             Assert.Equal(delegatee1.Address, Assert.Single(delegator.Delegatees));
 
             var delegateFAV2 = delegatee1.DelegationCurrency * 20;
@@ -71,7 +70,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegateShare + delegateShare2, share);
             Assert.Equal(delegateFAV + delegateFAV2, delegatee1.TotalDelegated);
             Assert.Equal(delegateShare + delegateShare2, delegatee1.TotalShares);
-            Assert.Equal(delegator.Address, Assert.Single(delegatee1.Delegators));
             Assert.Equal(delegatee1.Address, Assert.Single(delegator.Delegatees));
 
             delegator.Delegate(delegatee2, delegateFAV, 3L);
@@ -112,7 +110,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(initialShare - undelegatingShare, share1);
             Assert.Equal(delegatingFAV - undelegatingFAV, delegatee.TotalDelegated);
             Assert.Equal(initialShare - undelegatingShare, delegatee.TotalShares);
-            Assert.Equal(delegator.Address, Assert.Single(delegatee.Delegators));
             Assert.Equal(delegatee.Address, Assert.Single(delegator.Delegatees));
             Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             var entriesByExpireHeight = Assert.Single(unbondLockIn.Entries);
@@ -137,7 +134,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatee.DelegationCurrency * 0, delegatee.TotalDelegated);
             Assert.Equal(System.Numerics.BigInteger.Zero, delegatee.TotalShares);
             Assert.Empty(delegator.Delegatees);
-            Assert.Empty(delegatee.Delegators);
             Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, unbondLockIn.Entries.Count);
 
@@ -215,8 +211,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(redelegatedDstShare, delegatee2.TotalShares);
             Assert.Equal(delegatingFAV - redelegatingFAV, delegatee1.TotalDelegated);
             Assert.Equal(redelegatingFAV, delegatee2.TotalDelegated);
-            Assert.Equal(delegator.Address, Assert.Single(delegatee1.Delegators));
-            Assert.Equal(delegator.Address, Assert.Single(delegatee2.Delegators));
             Assert.Equal(2, delegator.Delegatees.Count);
             Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             var entriesByExpireHeight = Assert.Single(rebondGrace.Entries);
@@ -247,8 +241,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(redelegatedDstShare + redelegatedDstShare2, delegatee2.TotalShares);
             Assert.Equal(delegatingFAV - redelegatingFAV - redelegatingFAV2, delegatee1.TotalDelegated);
             Assert.Equal(redelegatingFAV + redelegatingFAV2, delegatee2.TotalDelegated);
-            Assert.Empty(delegatee1.Delegators);
-            Assert.Equal(delegator.Address, Assert.Single(delegatee2.Delegators));
             Assert.Equal(delegatee2.Address, Assert.Single(delegator.Delegatees));
             Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, rebondGrace.Entries.Count);
@@ -357,7 +349,12 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatorInitialBalance - delegatingFAV2 * 2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards2, delegator2RewardBalances);
-            Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+
+            // Flushing to remainder pool is now inactive.
+            // Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+            Assert.Equal(
+                rewards.Select(r => r * 2).Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
+                collectedRewards);
         }
 
         [Fact]
@@ -431,7 +428,12 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards2, delegator2RewardBalances);
-            Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+
+            // Flushing to remainder pool is now inactive.
+            // Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+            Assert.Equal(
+                rewards.Select(r => r * 2).Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
+                collectedRewards);
         }
 
         [Fact]
@@ -506,7 +508,12 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards2, delegator2RewardBalances);
-            Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+
+            // Flushing to remainder pool is now inactive.
+            // Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+            Assert.Equal(
+                rewards.Select(r => r * 2).Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
+                collectedRewards);
         }
 
         [Fact]
@@ -581,7 +588,12 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards2, delegator2RewardBalances);
-            Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+
+            // Flushing to remainder pool is now inactive.
+            // Assert.Equal(delegatee.RewardCurrencies.Select(c => c * 0), collectedRewards);
+            Assert.Equal(
+                rewards.Select(r => r * 2).Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
+                collectedRewards);
         }
     }
 }

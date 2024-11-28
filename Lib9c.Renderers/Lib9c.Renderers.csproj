@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
-    <VersionPrefix>1.20.0</VersionPrefix>
+    <VersionPrefix>1.20.1</VersionPrefix>
     <RootNamespace>Lib9c</RootNamespace>
   </PropertyGroup>
 

@@ -17,6 +17,8 @@ namespace Nekoyume.Action.Guild.Migration
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>
     /// An action to migrate guild delegation.
+    /// After migration is done, guild participant now have delegation with
+    /// validator.
     /// </summary>
     [ActionType(TypeIdentifier)]
     public class MigrateDelegation : ActionBase
@@ -119,23 +121,28 @@ namespace Nekoyume.Action.Guild.Migration
 
                 return repository.World;
             }
-            catch (FailedLoadStateException)
+            catch (Exception e)
             {
-                var pledgeAddress = ((Address)Target).GetPledgeAddress();
-
-                // Patron contract structure:
-                // [0] = PatronAddress
-                // [1] = IsApproved
-                // [2] = Mead amount to refill.
-                if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 ||
-                    list[0] is not Binary || list[0].ToAddress() != MeadConfig.PatronAddress ||
-                    list[1] is not Bencodex.Types.Boolean approved || !approved)
+                if (e is FailedLoadStateException || e is NullReferenceException)
                 {
-                    throw new GuildMigrationFailedException("Unexpected pledge structure.");
+                    var pledgeAddress = ((Address)Target).GetPledgeAddress();
+
+                    // Patron contract structure:
+                    // [0] = PatronAddress
+                    // [1] = IsApproved
+                    // [2] = Mead amount to refill.
+                    if (!world.TryGetLegacyState(pledgeAddress, out List list) || list.Count < 3 ||
+                        list[0] is not Binary || list[0].ToAddress() != MeadConfig.PatronAddress ||
+                        list[1] is not Bencodex.Types.Boolean approved || !approved)
+                    {
+                        throw new GuildMigrationFailedException("Unexpected pledge structure.");
+                    }
+
+                    repository.JoinGuild(planetariumGuildAddress, Target);
+                    return repository.World;
                 }
 
-                repository.JoinGuild(planetariumGuildAddress, Target);
-                return repository.World;
+                throw;
             }
         }
     }

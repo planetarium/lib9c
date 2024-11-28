@@ -210,4 +210,50 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         Assert.Equal(expectedJailed, actualJailed);
     }
+
+    [Fact]
+    public void Execute_ByAbstain_ToJailedValidator_ThenNothingHappens()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var height = 1L;
+        var actionContext = new ActionContext();
+        world = EnsureToMintAsset(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsurePromotedValidator(world, validatorKey, DelegationCurrency * 10, height++);
+        world = EnsureJailedValidator(world, validatorKey, ref height);
+
+        var expectedRepository = new ValidatorRepository(world, actionContext);
+        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedTotalDelegated = expectedDelegatee.TotalDelegated;
+
+        // When
+        for (var i = 0L; i <= AbstainHistory.MaxAbstainAllowance; i++)
+        {
+            var vote = CreateNullVote(validatorKey, height - 1);
+            var lastCommit = new BlockCommit(
+                height: height - 1,
+                round: 0,
+                blockHash: vote.BlockHash,
+                ImmutableArray.Create(vote));
+            var slashValidator = new SlashValidator();
+            actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorKey.Address,
+                BlockIndex = height++,
+                LastCommit = lastCommit,
+            };
+            world = slashValidator.Execute(actionContext);
+        }
+
+        // Then
+        var actualRepisitory = new ValidatorRepository(world, actionContext);
+        var actualDelegatee = actualRepisitory.GetValidatorDelegatee(validatorKey.Address);
+        var actualTotalDelegated = actualDelegatee.TotalDelegated;
+
+        Assert.True(actualDelegatee.Jailed);
+        Assert.False(actualDelegatee.Tombstoned);
+        Assert.Equal(expectedTotalDelegated, actualTotalDelegated);
+    }
 }
