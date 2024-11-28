@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Synthesize | Lib9c ">
       
-      <meta name="description" content="Synthesize action is a type of action that synthesizes items. TODO: Implement Synthesize action.">
+      <meta name="description" content="Synthesize action is a type of action that synthesizes items. MaterialIds: Id list of items as materialChargeAp: Whether to charge action points with action execution">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_Synthesize" data-uid="Nekoyume.Action.Synthesize" class="text-break">
-Class Synthesize  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L26"><i class="bi bi-code-slash"></i></a>
+Class Synthesize  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -98,7 +98,7 @@ Class Synthesize  <a class="header-action link-secondary" title="View source" hr
   </div>
 
   <div class="markdown summary"><p>Synthesize action is a type of action that synthesizes items.
-TODO: Implement Synthesize action.</p>
+<returns>MaterialIds: Id list of items as material</returns><returns><br>ChargeAp: Whether to charge action points with action execution</returns></p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -188,7 +188,7 @@ public class Synthesize : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_Synthesize_AvatarAddress" data-uid="Nekoyume.Action.Synthesize.AvatarAddress">
   AvatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -216,9 +216,39 @@ public class Synthesize : GameAction, IAction</code></pre>
 
 
 
+  <h3 id="Nekoyume_Action_Synthesize_ChargeAp" data-uid="Nekoyume.Action.Synthesize.ChargeAp">
+  ChargeAp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ChargeAp</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_Action_Synthesize_MaterialIds" data-uid="Nekoyume.Action.Synthesize.MaterialIds">
   MaterialIds
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -253,7 +283,7 @@ public class Synthesize : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_Synthesize_PlainValueInternal" data-uid="Nekoyume.Action.Synthesize.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L286"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L460"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -288,7 +318,7 @@ public class Synthesize : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_Synthesize_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.Synthesize.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Execute Synthesize action, Input <a class="xref" href="Nekoyume.Action.Synthesize.html#Nekoyume_Action_Synthesize_MaterialIds">MaterialIds</a> and <a class="xref" href="Nekoyume.Action.Synthesize.html#Nekoyume_Action_Synthesize_AvatarAddress">AvatarAddress</a>.
@@ -327,7 +357,7 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
   <h3 id="Nekoyume_Action_Synthesize_GetItemGuid_Nekoyume_Model_Item_ItemBase_" data-uid="Nekoyume.Action.Synthesize.GetItemGuid(Nekoyume.Model.Item.ItemBase)">
   GetItemGuid(ItemBase)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L364"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L573"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -363,7 +393,7 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
   <h3 id="Nekoyume_Action_Synthesize_GetItemGuids_System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_ItemBase__" data-uid="Nekoyume.Action.Synthesize.GetItemGuids(System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.ItemBase})">
   GetItemGuids(IEnumerable&lt;ItemBase&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L371"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L580"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -397,9 +427,89 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
   <a id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool*"></a>
 
+  <h3 id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_Nekoyume_Model_EnumType_Grade_Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_CostumeItemSheet_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool(Nekoyume.Model.EnumType.Grade,Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.CostumeItemSheet)">
+  GetSynthesizeResultPool(Grade, ItemSubType, CostumeItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L479"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HashSet&lt;int&gt; GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, CostumeItemSheet sheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceGrade</code> <a class="xref" href="Nekoyume.Model.EnumType.Grade.html">Grade</a></dt>
+    <dd></dd>
+    <dt><code>subType</code> <a class="xref" href="Nekoyume.Model.Item.ItemSubType.html">ItemSubType</a></dt>
+    <dd></dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.CostumeItemSheet.html">CostumeItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool*"></a>
+
+  <h3 id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_Nekoyume_Model_EnumType_Grade_Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_EquipmentItemSheet_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool(Nekoyume.Model.EnumType.Grade,Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.EquipmentItemSheet)">
+  GetSynthesizeResultPool(Grade, ItemSubType, EquipmentItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L488"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HashSet&lt;int&gt; GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, EquipmentItemSheet sheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceGrade</code> <a class="xref" href="Nekoyume.Model.EnumType.Grade.html">Grade</a></dt>
+    <dd></dd>
+    <dt><code>subType</code> <a class="xref" href="Nekoyume.Model.Item.ItemSubType.html">ItemSubType</a></dt>
+    <dd></dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemSheet.html">EquipmentItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool*"></a>
+
   <h3 id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_System_Collections_Generic_List_Nekoyume_Model_EnumType_Grade__Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_CostumeItemSheet_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool(System.Collections.Generic.List{Nekoyume.Model.EnumType.Grade},Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.CostumeItemSheet)">
   GetSynthesizeResultPool(List&lt;Grade&gt;, ItemSubType, CostumeItemSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L504"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a list of items that may come out as a result of that synthesis.</p>
@@ -444,7 +554,7 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
   <h3 id="Nekoyume_Action_Synthesize_GetSynthesizeResultPool_System_Collections_Generic_List_Nekoyume_Model_EnumType_Grade__Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_EquipmentItemSheet_" data-uid="Nekoyume.Action.Synthesize.GetSynthesizeResultPool(System.Collections.Generic.List{Nekoyume.Model.EnumType.Grade},Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.EquipmentItemSheet)">
   GetSynthesizeResultPool(List&lt;Grade&gt;, ItemSubType, EquipmentItemSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L325"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L520"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a list of items that may come out as a result of that synthesis.</p>
@@ -485,11 +595,47 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
 
 
+  <a id="Nekoyume_Action_Synthesize_GetTargetGrade_" data-uid="Nekoyume.Action.Synthesize.GetTargetGrade*"></a>
+
+  <h3 id="Nekoyume_Action_Synthesize_GetTargetGrade_System_Int32_" data-uid="Nekoyume.Action.Synthesize.GetTargetGrade(System.Int32)">
+  GetTargetGrade(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L558"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GetTargetGrade(int gradeId)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>gradeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Action_Synthesize_GetUpgradeGrade_" data-uid="Nekoyume.Action.Synthesize.GetUpgradeGrade*"></a>
 
   <h3 id="Nekoyume_Action_Synthesize_GetUpgradeGrade_Nekoyume_Model_EnumType_Grade_Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_CostumeItemSheet_" data-uid="Nekoyume.Action.Synthesize.GetUpgradeGrade(Nekoyume.Model.EnumType.Grade,Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.CostumeItemSheet)">
   GetUpgradeGrade(Grade, ItemSubType, CostumeItemSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L529"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -529,7 +675,7 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
   <h3 id="Nekoyume_Action_Synthesize_GetUpgradeGrade_Nekoyume_Model_EnumType_Grade_Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_EquipmentItemSheet_" data-uid="Nekoyume.Action.Synthesize.GetUpgradeGrade(Nekoyume.Model.EnumType.Grade,Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.EquipmentItemSheet)">
   GetUpgradeGrade(Grade, ItemSubType, EquipmentItemSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L343"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L538"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -565,11 +711,51 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 
 
 
+  <a id="Nekoyume_Action_Synthesize_GetWeight_" data-uid="Nekoyume.Action.Synthesize.GetWeight*"></a>
+
+  <h3 id="Nekoyume_Action_Synthesize_GetWeight_Nekoyume_Model_EnumType_Grade_System_Int32_Nekoyume_TableData_SynthesizeWeightSheet_" data-uid="Nekoyume.Action.Synthesize.GetWeight(Nekoyume.Model.EnumType.Grade,System.Int32,Nekoyume.TableData.SynthesizeWeightSheet)">
+  GetWeight(Grade, int, SynthesizeWeightSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L591"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>grade</code> <a class="xref" href="Nekoyume.Model.EnumType.Grade.html">Grade</a></dt>
+    <dd></dd>
+    <dt><code>itemId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.SynthesizeWeightSheet.html">SynthesizeWeightSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Action_Synthesize_LoadPlainValueInternal_" data-uid="Nekoyume.Action.Synthesize.LoadPlainValueInternal*"></a>
 
   <h3 id="Nekoyume_Action_Synthesize_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.Synthesize.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L469"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -600,7 +786,7 @@ Success: Return new AvatarState with synthesized item in inventory.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L26" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/growth12/Lib9c/Action/Synthesize.cs/#L28" class="edit-link">Edit this page</a>
         </div>
 
 
