@@ -199,6 +199,8 @@ id,_name,item_sub_type,grade,elemental_type
 600201,Golden Dust,EquipmentMaterial,4,Normal
 600202,Ruby Dust,EquipmentMaterial,4,Normal
 600203,Emerald Dust,EquipmentMaterial,4,Normal
+600204,Star Dust,EquipmentMaterial,5,Normal
+600205,Great Star Dust,EquipmentMaterial,5,Normal
 600301,망치 노멀,EquipmentMaterial,1,Normal
 600302,망치 레어,EquipmentMaterial,2,Normal
 600303,망치 에픽,EquipmentMaterial,3,Normal
@@ -225,7 +227,8 @@ id,_name,item_sub_type,grade,elemental_type
 700108,챔피언 쉽 1 메달,NormalMaterial,5,Normal
 700202,시즌 7 메달,NormalMaterial,5,Normal
 700204,시즌 8 메달,NormalMaterial,5,Normal
-700206,챔피언 쉽 2 메달,NormalMaterial,5,Normal
+700206,시즌 X 메달,NormalMaterial,5,Normal
+700208,챔피언 쉽 2 메달,NormalMaterial,5,Normal
 700302,시즌 9 메달,NormalMaterial,5,Normal
 700304,시즌 10 메달,NormalMaterial,5,Normal
 700306,챔피언 쉽 3 메달,NormalMaterial,5,Normal
@@ -250,3 +253,21 @@ id,_name,item_sub_type,grade,elemental_type
 701002,시즌 23 메달,NormalMaterial,5,Normal
 701004,시즌 24 메달,NormalMaterial,5,Normal
 701006,챔피언 쉽 10 메달,NormalMaterial,5,Normal
+701102,시즌 25 메달,NormalMaterial,5,Normal
+701104,시즌 26 메달,NormalMaterial,5,Normal
+701106,챔피언 쉽 11 메달,NormalMaterial,5,Normal
+701202,시즌 27 메달,NormalMaterial,5,Normal
+701204,시즌 28 메달,NormalMaterial,5,Normal
+701206,챔피언 쉽 12 메달,NormalMaterial,5,Normal
+701302,시즌 29 메달,NormalMaterial,5,Normal
+701304,시즌 30 메달,NormalMaterial,5,Normal
+701306,챔피언 쉽 13 메달,NormalMaterial,5,Normal
+701402,시즌 31 메달,NormalMaterial,5,Normal
+701404,시즌 32 메달,NormalMaterial,5,Normal
+701406,챔피언 쉽 14 메달,NormalMaterial,5,Normal
+701502,시즌 33 메달,NormalMaterial,5,Normal
+701504,시즌 34 메달,NormalMaterial,5,Normal
+701506,챔피언 쉽 15 메달,NormalMaterial,5,Normal
+701602,시즌 35 메달,NormalMaterial,5,Normal
+701604,시즌 36 메달,NormalMaterial,5,Normal
+701606,챔피언 쉽 16 메달,NormalMaterial,5,Normal
