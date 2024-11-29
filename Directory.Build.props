@@ -4,7 +4,7 @@
 
         <!-- Fill with Libplanet's absolute path to debug with local Libplanet.
              Example: $(MSBuildThisFileDirectory).Libplanet -->
-        <LibplanetDirectory></LibplanetDirectory>
+        <LibplanetDirectory>$(MSBuildThisFileDirectory)..\Libplanet</LibplanetDirectory>
     </PropertyGroup>
 
     <PropertyGroup>
