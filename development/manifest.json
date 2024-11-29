@@ -1422,26 +1422,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.AcceptGuildApplication.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.AcceptGuildApplication.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.ApplyGuild.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.ApplyGuild.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.BanGuildMember.yml",
       "output": {
         ".html": {
@@ -1452,10 +1432,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.CancelGuildApplication.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.ClaimGuildReward.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.CancelGuildApplication.html"
+          "relative_path": "api/Nekoyume.Action.Guild.ClaimGuildReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.ClaimReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.ClaimReward.html"
         }
       },
       "version": ""
@@ -1472,6 +1462,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.JoinGuild.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.JoinGuild.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.MakeGuild.yml",
       "output": {
         ".html": {
@@ -1482,20 +1482,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.Controls.GuildMigrationCtrl.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.Controls.GuildMigrationCtrl.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.Controls.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.Controls.html"
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.html"
         }
       },
       "version": ""
@@ -1512,10 +1502,80 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePledgeToGuild.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuild.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePledgeToGuild.html"
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuild.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.MigrationModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.MigrationModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html"
         }
       },
       "version": ""
@@ -1532,20 +1592,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.QuitGuild.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.MoveGuild.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.QuitGuild.html"
+          "relative_path": "api/Nekoyume.Action.Guild.MoveGuild.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.RejectGuildApplication.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.QuitGuild.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.RejectGuildApplication.html"
+          "relative_path": "api/Nekoyume.Action.Guild.QuitGuild.html"
         }
       },
       "version": ""
@@ -3102,6 +3162,166 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.AllocateGuildReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.AllocateGuildReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.AllocateReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.AllocateReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ClaimValidatorRewardSelf.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ClaimValidatorRewardSelf.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.DelegateValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.DelegateValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.Mortgage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.Mortgage.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.PromoteValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.PromoteValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.RecordProposer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.RecordProposer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.Refund.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.Refund.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.Reward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.Reward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.SetValidatorCommission.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.SetValidatorCommission.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.SlashValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.SlashValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.UndelegateValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.UndelegateValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.UnjailValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.UnjailValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.UpdateValidators.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.UpdateValidators.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ValidatorSetOperate.yml",
       "output": {
         ".html": {
@@ -3306,6 +3526,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Battle.CriticalHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.DamageHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.DamageHelper.html"
         }
       },
       "version": ""
@@ -3566,6 +3796,236 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Data.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.Bond.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.Bond.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.Delegatee-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.Delegatee-2.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.DelegateeMetadata.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.DelegateeMetadata.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.DelegationAddress.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.DelegationAddress.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.DelegationRepository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.DelegationRepository.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.Delegator-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.Delegator-2.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.DelegatorMetadata.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.DelegatorMetadata.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.IDelegatee.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.IDelegatee.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.IDelegateeMetadata.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.IDelegateeMetadata.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.IDelegationRepository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.IDelegationRepository.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.IDelegator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.IDelegator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.IDelegatorMetadata.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.IDelegatorMetadata.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.IUnbonding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.IUnbonding.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.LumpSumRewardsRecord.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.LumpSumRewardsRecord.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.RebondGrace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.RebondGrace.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondLockIn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondLockIn.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondingEntry.Comparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondingEntry.Comparer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondingEntry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondingEntry.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondingFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondingFactory.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondingRef.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondingRef.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondingSet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondingSet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.UnbondingType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.UnbondingType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.html"
         }
       },
       "version": ""
@@ -5412,10 +5872,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.Guild.GuildApplication.yml",
+      "source_relative_path": "api/Nekoyume.Model.Guild.GuildDelegatee.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Model.Guild.GuildApplication.html"
+          "relative_path": "api/Nekoyume.Model.Guild.GuildDelegatee.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Guild.GuildDelegator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Guild.GuildDelegator.html"
         }
       },
       "version": ""
@@ -5426,6 +5896,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Guild.GuildParticipant.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Guild.GuildRejoinCooldown.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Guild.GuildRejoinCooldown.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Guild.GuildRepository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Guild.GuildRepository.html"
         }
       },
       "version": ""
@@ -6872,20 +7362,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.Stake.StakeStateUtils.yml",
+      "source_relative_path": "api/Nekoyume.Model.Stake.StakeState.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Model.Stake.StakeStateUtils.html"
+          "relative_path": "api/Nekoyume.Model.Stake.StakeState.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.Stake.StakeStateV2.yml",
+      "source_relative_path": "api/Nekoyume.Model.Stake.StakeStateUtils.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Model.Stake.StakeStateV2.html"
+          "relative_path": "api/Nekoyume.Model.Stake.StakeStateUtils.html"
         }
       },
       "version": ""
@@ -7282,6 +7772,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.State.LegacyStakeState.StakeAchievements.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.State.LegacyStakeState.StakeAchievements.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.State.LegacyStakeState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.State.LegacyStakeState.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.State.MarketState.yml",
       "output": {
         ".html": {
@@ -7486,26 +7996,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.State.StakeRewardCalculator.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.State.StakeState.StakeAchievements.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Model.State.StakeState.StakeAchievements.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.State.StakeState.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Model.State.StakeState.html"
         }
       },
       "version": ""
@@ -7732,20 +8222,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Module.Guild.GuildApplicationModule.yml",
+      "source_relative_path": "api/Nekoyume.Module.Guild.GuildBanModule.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Module.Guild.GuildApplicationModule.html"
+          "relative_path": "api/Nekoyume.Module.Guild.GuildBanModule.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Module.Guild.GuildBanModule.yml",
+      "source_relative_path": "api/Nekoyume.Module.Guild.GuildDelegateeModule.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Module.Guild.GuildBanModule.html"
+          "relative_path": "api/Nekoyume.Module.Guild.GuildDelegateeModule.html"
         }
       },
       "version": ""
@@ -7832,6 +8322,56 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.ValidatorDelegation.AbstainHistoryModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.ValidatorDelegation.AbstainHistoryModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorDelegateeModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorDelegateeModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorDelegatorModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorDelegatorModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorListModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.ValidatorDelegation.ValidatorListModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.ValidatorDelegation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.ValidatorDelegation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Module.yml",
       "output": {
         ".html": {
@@ -7856,26 +8396,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.PlanetExtension.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.PolicyAction.Tx.Begin.AutoJoinGuild.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.PolicyAction.Tx.Begin.AutoJoinGuild.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.PolicyAction.Tx.Begin.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.PolicyAction.Tx.Begin.html"
         }
       },
       "version": ""
@@ -8216,6 +8736,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.AvatarSheets.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BuffLimitSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BuffLimitSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BuffLimitSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BuffLimitSheet.html"
         }
       },
       "version": ""
@@ -8856,26 +9396,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.CustomEquipmentCraft.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.Row.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.Row.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.TableData.DeBuffLimitSheet.html"
         }
       },
       "version": ""
@@ -11006,6 +11526,86 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TypedAddress.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.AbstainHistory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.AbstainHistory.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.ProposerInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.ProposerInfo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorComparer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorDelegatee.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorDelegatee.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorDelegator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorDelegator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorList.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorList.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorRepository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.ValidatorRepository.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.ValidatorDelegation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.ValidatorDelegation.html"
         }
       },
       "version": ""

@@ -95,13 +95,39 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.html">GuildMigrationFailedException</a></dt>
-      <dd></dd>
+      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.html">FixToRefundFromNonValidator</a></dt>
+      <dd><p>An action to fix refund from non-validator.</p>
+</dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.MigratePledgeToGuild.html">MigratePledgeToGuild</a></dt>
-      <dd><p>An action to migrate the pledge to the guild.
-But it is only for accounts contracted pledge with Planetarium (<a class="xref" href="Nekoyume.MeadConfig.html#Nekoyume_MeadConfig_PatronAddress">PatronAddress</a>).</p>
+      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.html">GuildMigrationFailedException</a></dt>
+      <dd><p>An exception to be thrown when guild migration failed.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.MigrateDelegation.html">MigrateDelegation</a></dt>
+      <dd><p>An action to migrate guild delegation.
+After migration is done, guild participant now have delegation with
+validator.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.html">MigrateDelegationHeight</a></dt>
+      <dd><p>An action to migrate the delegation height.
+This action triggers the migration of the delegation height.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.html">MigratePlanetariumGuild</a></dt>
+      <dd><p>An action to migrate the planetarium guild.
+After migration, the planetarium guild now has a validator to delegate.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html">MigratePlanetariumValidator</a></dt>
+      <dd><p>An action to migrate the planetarium validator.
+With this migration, planetarium validator is now active,
+and bonded FAVs are moved to active address.</p>
 </dd>
     </dl>
 
