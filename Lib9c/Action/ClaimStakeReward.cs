@@ -54,17 +54,33 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-            var stakeStateAddr = StakeState.DeriveAddress(context.Signer);
-            if (!states.TryGetStakeStateV2(context.Signer, out var stakeStateV2))
+            var stakeStateAddr = LegacyStakeState.DeriveAddress(context.Signer);
+            if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
                 throw new FailedLoadStateException(
                     ActionTypeText,
                     addressesHex,
-                    typeof(StakeState),
+                    typeof(LegacyStakeState),
                     stakeStateAddr);
+            }
+
+            if (stakeStateV2.StateVersion == 2)
+            {
+                if (!StakeStateUtils.TryMigrateV2ToV3(
+                        context,
+                        states,
+                        StakeState.DeriveAddress(context.Signer),
+                        stakeStateV2, out var result))
+                {
+                    throw new InvalidOperationException(
+                        "Failed to migrate stake state. Unexpected situation.");
+                }
+
+                states = result.Value.world;
+                stakeStateV2 = result.Value.newStakeState;
             }
 
             if (stakeStateV2.ClaimableBlockIndex > context.BlockIndex)
@@ -148,7 +164,7 @@ namespace Nekoyume.Action
             }
 
             // NOTE: update claimed block index.
-            stakeStateV2 = new StakeStateV2(
+            stakeStateV2 = new StakeState(
                 stakeStateV2.Contract,
                 stakeStateV2.StartedBlockIndex,
                 context.BlockIndex);

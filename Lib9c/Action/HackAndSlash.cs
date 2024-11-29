@@ -100,7 +100,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var random = context.GetRandom();
             return Execute(
                 context.PreviousState,
@@ -191,7 +191,7 @@ namespace Nekoyume.Action
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
-                typeof(DeBuffLimitSheet),
+                typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
             };
             if (collectionExist)
@@ -553,7 +553,7 @@ namespace Nekoyume.Action
                 collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
 
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+            var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
             for (var i = 0; i < TotalPlayCount; i++)
             {
@@ -579,7 +579,7 @@ namespace Nekoyume.Action
                     costumeStatSheet,
                     rewards,
                     collectionModifiers,
-                    deBuffLimitSheet,
+                    buffLimitSheet,
                     buffLinkSheet,
                     false,
                     gameConfigState.ShatterStrikeMaxDamage);

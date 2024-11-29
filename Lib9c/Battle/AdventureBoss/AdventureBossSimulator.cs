@@ -66,7 +66,7 @@ namespace Nekoyume.Battle.AdventureBoss
             CostumeStatSheet costumeStatSheet,
             List<ItemBase> waveRewards,
             List<StatModifier> collectionModifiers,
-            DeBuffLimitSheet deBuffLimitSheet,
+            BuffLimitSheet buffLimitSheet,
             BuffLinkSheet buffLinkSheet,
             bool logEvent = true,
             long shatterStrikeMaxDamage = 400_000
@@ -80,7 +80,7 @@ namespace Nekoyume.Battle.AdventureBoss
                 shatterStrikeMaxDamage
             )
         {
-            DeBuffLimitSheet = deBuffLimitSheet;
+            BuffLimitSheet = buffLimitSheet;
             BuffLinkSheet = buffLinkSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
             var skillSheet = simulatorSheets.SkillSheet;

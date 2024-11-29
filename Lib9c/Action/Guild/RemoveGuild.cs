@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Extensions;
+using Nekoyume.Model.Guild;
 using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
@@ -32,14 +33,14 @@ namespace Nekoyume.Action.Guild
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
 
             var world = context.PreviousState;
-            var signer = context.GetAgentAddress();
+            var repository = new GuildRepository(world, context);
 
             // TODO: Do something to return 'Power' token;
-
-            return world.RemoveGuild(signer);
+            repository.RemoveGuild();
+            return repository.World;
         }
     }
 }

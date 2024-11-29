@@ -98,7 +98,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet,
                 copyCharacter
             );

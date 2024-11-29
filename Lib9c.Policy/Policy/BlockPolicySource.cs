@@ -1,22 +1,16 @@
 using System;
 using System.Collections.Immutable;
-using System.Linq;
-using Bencodex.Types;
-using Lib9c.Abstractions;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
+using Libplanet.Action.State;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
-using Nekoyume.Action;
-using Nekoyume.Action.Loader;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
-using Lib9c;
-using Libplanet.Action.State;
-using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
-using Nekoyume.PolicyAction.Tx.Begin;
+using Nekoyume.Action;
+using Nekoyume.Action.Loader;
+using Nekoyume.Action.ValidatorDelegation;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
@@ -149,12 +143,27 @@ namespace Nekoyume.Blockchain.Policy
                     maxTransactionsPerSignerPerBlockPolicy);
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
+            // WARNING: If the block actions in the policyActionsRegistry have been modified,
+            // the constructor of the PluginActionEvaluator must be modified as well.
             return new BlockPolicy(
                 policyActionsRegistry: new PolicyActionsRegistry(
-                    beginBlockActions: ImmutableArray<IAction>.Empty,
-                    endBlockActions: new IAction[] { new RewardGold() }.ToImmutableArray(),
-                    beginTxActions: ImmutableArray<IAction>.Empty,
-                    endTxActions: ImmutableArray<IAction>.Empty),
+                    beginBlockActions: new IAction[] {
+                        new SlashValidator(),
+                        new AllocateGuildReward(),
+                        new AllocateReward(),
+                    }.ToImmutableArray(),
+                    endBlockActions: new IAction[] {
+                        new UpdateValidators(),
+                        new RecordProposer(),
+                        new RewardGold(),
+                        new ReleaseValidatorUnbondings(),
+                    }.ToImmutableArray(),
+                    beginTxActions: new IAction[] {
+                        new Mortgage(),
+                    }.ToImmutableArray(),
+                    endTxActions: new IAction[] {
+                        new Reward(), new Refund(),
+                    }.ToImmutableArray()),
                 blockInterval: BlockInterval,
                 validateNextBlockTx: validateNextBlockTx,
                 validateNextBlock: validateNextBlock,
@@ -172,7 +181,7 @@ namespace Nekoyume.Blockchain.Policy
             Transaction transaction)
         {
             // Avoid NRE when genesis block appended
-            long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1: 0;
+            long index = blockChain.Count > 0 ? blockChain.Tip.Index + 1 : 0;
 
             if (transaction.Actions?.Count > 1)
             {

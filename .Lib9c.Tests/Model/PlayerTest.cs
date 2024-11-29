@@ -63,7 +63,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -100,7 +100,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -154,7 +154,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -208,7 +208,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                new DeBuffLimitSheet(),
+                new BuffLimitSheet(),
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -266,7 +266,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                new DeBuffLimitSheet(),
+                new BuffLimitSheet(),
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -397,7 +397,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -479,7 +479,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -551,7 +551,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var skill = SkillFactory.Get(_tableSheets.SkillSheet[700004], 0, 100, 0, StatType.NONE);
@@ -637,7 +637,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -752,7 +752,7 @@ namespace Lib9c.Tests.Model
                 new CostumeStatSheet(),
                 new List<ItemBase>(),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;
@@ -825,7 +825,7 @@ namespace Lib9c.Tests.Model
             var addBuffAtk = addBuffModifier.GetModifiedValue(costumeLayerAtk);
             Assert.Equal(10, addBuffAtk);
 
-            player.Stats.SetBuffs(statBuffs, _tableSheets.DeBuffLimitSheet);
+            player.Stats.SetBuffs(statBuffs, _tableSheets.BuffLimitSheet);
             Assert.Equal(player.ATK, collectionLayerAtk + addBuffAtk + percentageBuffAtk);
             // 20 + 1 + 18 + 1829 + 235 + 100 + 1662
             // Assert.Equal(3865, player.ATK);
@@ -930,7 +930,7 @@ namespace Lib9c.Tests.Model
             statBuffs.Add(percentageBuff);
             var percentageModifier = percentageBuff.GetModifier();
             var percentageBuffAtk = (long)percentageModifier.GetModifiedValue(arenaHp);
-            player.Stats.SetBuffs(statBuffs, _tableSheets.DeBuffLimitSheet);
+            player.Stats.SetBuffs(statBuffs, _tableSheets.BuffLimitSheet);
             Assert.Equal(arenaHp + percentageBuffAtk, player.HP);
             Assert.Equal(arenaHp, player.Stats.StatWithoutBuffs.HP);
         }
@@ -967,7 +967,7 @@ namespace Lib9c.Tests.Model
                     _tableSheets.StageSheet[1],
                     _tableSheets.MaterialItemSheet),
                 new List<StatModifier>(),
-                _tableSheets.DeBuffLimitSheet,
+                _tableSheets.BuffLimitSheet,
                 _tableSheets.BuffLinkSheet
             );
             var player = simulator.Player;

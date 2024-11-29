@@ -19,22 +19,21 @@ namespace Lib9c.Tests.Model.Stake
         [Fact]
         public void TryMigrate_Throw_NullReferenceException_When_IAccountDelta_Null()
         {
-            Assert.Throws<NullReferenceException>(
-                () =>
-                    StakeStateUtils.TryMigrate((IWorld)null, default, out _));
+            Assert.Throws<NullReferenceException>(() =>
+                StakeStateUtils.TryMigrateV1ToV2((IWorld)null, default, out _));
         }
 
         [Fact]
         public void TryMigrate_Return_False_When_IValue_Null()
         {
-            Assert.False(StakeStateUtils.TryMigrate((IValue)null, default, out _));
+            Assert.False(StakeStateUtils.TryMigrateV1ToV2((IValue)null, default, out _));
         }
 
         [Fact]
         public void TryMigrate_Return_False_When_Staking_State_Null()
         {
             var state = new World(MockUtil.MockModernWorldState);
-            Assert.False(StakeStateUtils.TryMigrate(state, new PrivateKey().Address, out _));
+            Assert.False(StakeStateUtils.TryMigrateV1ToV2(state, new PrivateKey().Address, out _));
         }
 
         [Theory]
@@ -114,14 +113,14 @@ namespace Lib9c.Tests.Model.Stake
                 Addresses.GameConfig,
                 new GameConfigState(GameConfigSheetFixtures.Default).Serialize());
             var stakeAddr = new PrivateKey().Address;
-            var stakeState = new StakeState(stakeAddr, startedBlockIndex);
+            var stakeState = new LegacyStakeState(stakeAddr, startedBlockIndex);
             if (receivedBlockIndex is not null)
             {
                 stakeState.Claim(receivedBlockIndex.Value);
             }
 
             state = state.SetLegacyState(stakeAddr, stakeState.Serialize());
-            Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var stakeStateV2));
+            Assert.True(StakeStateUtils.TryMigrateV1ToV2(state, stakeAddr, out var stakeStateV2));
             Assert.Equal(
                 stakeRegularFixedRewardSheetTableName,
                 stakeStateV2.Contract.StakeRegularFixedRewardSheetTableName);
@@ -150,11 +149,11 @@ namespace Lib9c.Tests.Model.Stake
             stakePolicySheet.Set(StakePolicySheetFixtures.V2);
             var contract = new Contract(stakePolicySheet);
             var stakeStateV2 = receivedBlockIndex is null
-                ? new StakeStateV2(contract, startedBlockIndex)
-                : new StakeStateV2(contract, receivedBlockIndex.Value);
+                ? new StakeState(contract, startedBlockIndex)
+                : new StakeState(contract, receivedBlockIndex.Value);
 
             state = state.SetLegacyState(stakeAddr, stakeStateV2.Serialize());
-            Assert.True(StakeStateUtils.TryMigrate(state, stakeAddr, out var result));
+            Assert.True(StakeStateUtils.TryMigrateV1ToV2(state, stakeAddr, out var result));
             Assert.Equal(stakeStateV2.Contract, result.Contract);
             Assert.Equal(stakeStateV2.StartedBlockIndex, result.StartedBlockIndex);
             Assert.Equal(stakeStateV2.ReceivedBlockIndex, result.ReceivedBlockIndex);

@@ -78,7 +78,7 @@ namespace Nekoyume.Blockchain.Policy
                 // Note: Thor has been started after v200250
                 .Add(new SpannedSubPolicy<long>(
                     startIndex: 1L,
-                    value: 1024L * 500L));         // 500 KiB
+                    value: 1024L * 1024L));         // 1 MiB
 
         // Note: For internal testing.
         public static IVariableSubPolicy<long> OdinInternal =>

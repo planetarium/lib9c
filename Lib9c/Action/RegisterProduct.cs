@@ -43,7 +43,7 @@ namespace Nekoyume.Action
         {
             var sw = new Stopwatch();
 
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
 
             sw.Start();
