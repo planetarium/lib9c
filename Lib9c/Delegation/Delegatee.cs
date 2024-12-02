@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
@@ -14,6 +15,9 @@ namespace Nekoyume.Delegation
         where T : Delegator<TSelf, T>
         where TSelf : Delegatee<T, TSelf>
     {
+        private static readonly ActivitySource ActivitySource
+            = new ActivitySource("Lib9c.Delegation.Delegatee");
+
         public Delegatee(
             Address address,
             Address accountAddress,
@@ -182,7 +186,14 @@ namespace Nekoyume.Delegation
 
         public virtual BigInteger Bond(T delegator, FungibleAssetValue fav, long height)
         {
+            using var activity = ActivitySource.StartActivity("Bond");
+
+            var distributeRewardActivity = ActivitySource.StartActivity(
+                "DistributeReward",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             DistributeReward(delegator, height);
+            distributeRewardActivity?.Dispose();
 
             if (!fav.Currency.Equals(DelegationCurrency))
             {
@@ -196,14 +207,62 @@ namespace Nekoyume.Delegation
                     "Cannot bond to tombstoned delegatee.");
             }
 
+            var getBondActivity = ActivitySource.StartActivity(
+                "GetBond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Bond bond = Repository.GetBond(this, delegator.Address);
+            getBondActivity?.Dispose();
+
+            var shareFromFAVActivity = ActivitySource.StartActivity(
+                "ShareFromFAV",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             BigInteger share = ShareFromFAV(fav);
+            shareFromFAVActivity?.Dispose();
+
+            var addShareActivity = ActivitySource.StartActivity(
+                "AddShare",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             bond = bond.AddShare(share);
+            addShareActivity?.Dispose();
+
+            var addShareMetadataActivity = ActivitySource.StartActivity(
+                "AddShareMetadata",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Metadata.AddShare(share);
+            addShareMetadataActivity?.Dispose();
+
+            var addDelegatedFAVMetadataActivity = ActivitySource.StartActivity(
+                "AddDelegatedFAVMetadata",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Metadata.AddDelegatedFAV(fav);
+            addDelegatedFAVMetadataActivity?.Dispose();
+
+            var setBondActivity = ActivitySource.StartActivity(
+                "SetBond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Repository.SetBond(bond);
+            setBondActivity?.Dispose();
+
+            var startNewRewardPeriodActivity = ActivitySource.StartActivity(
+                "StartNewRewardPeriod",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             StartNewRewardPeriod(height);
+            startNewRewardPeriodActivity?.Dispose();
+
+            var setDelegateeMetadataActivity = ActivitySource.StartActivity(
+                "SetDelegateeMetadata",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Repository.SetDelegateeMetadata(Metadata);
+            setDelegateeMetadataActivity?.Dispose();
+
             DelegationChanged?.Invoke(this, height);
 
             return share;
@@ -214,26 +273,80 @@ namespace Nekoyume.Delegation
 
         public FungibleAssetValue Unbond(T delegator, BigInteger share, long height)
         {
+            using var activity = ActivitySource.StartActivity("Unbond");
+
+            var distributeRewardActivity = ActivitySource.StartActivity(
+                "DistributeReward",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             DistributeReward(delegator, height);
+            distributeRewardActivity?.Dispose();
+
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
                 throw new InvalidOperationException(
                     "Cannot unbond without bonding.");
             }
 
+            var getBondActivity = ActivitySource.StartActivity(
+                "GetBond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Bond bond = Repository!.GetBond(this, delegator.Address);
+            getBondActivity?.Dispose();
+
+            var favFromShareActivity = ActivitySource.StartActivity(
+                "FAVFromShare",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             FungibleAssetValue fav = FAVFromShare(share);
+            favFromShareActivity?.Dispose();
+
+            var subtractShareActivity = ActivitySource.StartActivity(
+                "SubtractShare",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             bond = bond.SubtractShare(share);
             if (bond.Share.IsZero)
             {
                 bond = bond.ClearLastDistributeHeight();
             }
+            subtractShareActivity?.Dispose();
 
+            var removeShareMetadataActivity = ActivitySource.StartActivity(
+               "RemoveShareMetadata",
+               ActivityKind.Internal,
+               activity?.Id ?? string.Empty);
             Metadata.RemoveShare(share);
+            removeShareMetadataActivity?.Dispose();
+
+            var removeDelegatedFAVMetadataActivity = ActivitySource.StartActivity(
+                "RemoveDelegatedFAVMetadata",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Metadata.RemoveDelegatedFAV(fav);
+
+            var setBondActivity = ActivitySource.StartActivity(
+                "SetBond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Repository.SetBond(bond);
+            setBondActivity?.Dispose();
+
+            var startNewRewardPeriodActivity = ActivitySource.StartActivity(
+                "StartNewRewardPeriod",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             StartNewRewardPeriod(height);
+            startNewRewardPeriodActivity?.Dispose();
+
+            var setDelegateeMetadataActivity = ActivitySource.StartActivity(
+                "SetDelegateeMetadata",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Repository.SetDelegateeMetadata(Metadata);
+            setDelegateeMetadataActivity?.Dispose();
+
             DelegationChanged?.Invoke(this, height);
 
             return fav;
@@ -244,19 +357,35 @@ namespace Nekoyume.Delegation
 
         public void DistributeReward(T delegator, long height)
         {
+            using var activity = ActivitySource.StartActivity("DistributeReward");
+
+            var getBondActivity = ActivitySource.StartActivity(
+                "GetBond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Bond bond = Repository.GetBond(this, delegator.Address);
             BigInteger share = bond.Share;
+            getBondActivity?.Dispose();
 
             if (!share.IsZero && bond.LastDistributeHeight.HasValue)
             {
                 if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
                 {
+                    var distributeByRewardBaseActivity = ActivitySource.StartActivity(
+                        "DistributeByRewardBaseActivity",
+                        ActivityKind.Internal,
+                        activity?.Id ?? string.Empty);
                     var lastRewardBase = Repository.GetRewardBase(this, bond.LastDistributeHeight.Value);
                     TransferReward(delegator, share, rewardBase, lastRewardBase);
                     // TransferRemainders(newRecord);
+                    distributeByRewardBaseActivity?.Dispose();
                 }
                 else
                 {
+                    var distributeByLumpSumRewardsRecordActivity = ActivitySource.StartActivity(
+                        "DistributeByLumpSumRewardsRecordActivity",
+                        ActivityKind.Internal,
+                        activity?.Id ?? string.Empty);
                     IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords
                         = GetLumpSumRewardsRecords(bond.LastDistributeHeight);
 
@@ -266,15 +395,27 @@ namespace Nekoyume.Delegation
                         // TransferRemainders(newRecord);
                         Repository.SetLumpSumRewardsRecord(record);
                     }
+
+                    distributeByLumpSumRewardsRecordActivity?.Dispose();
                 }
             }
 
+            var updateLastDistributeHeightActivity = ActivitySource.StartActivity(
+                "UpdateLastDistributeHeight",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             if (bond.LastDistributeHeight != height)
             {
                 bond = bond.UpdateLastDistributeHeight(height);
             }
+            updateLastDistributeHeightActivity?.Dispose();
 
+            var setBondActivity = ActivitySource.StartActivity(
+                "SetBond",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             Repository.SetBond(bond);
+            setBondActivity?.Dispose();
         }
 
         void IDelegatee.DistributeReward(IDelegator delegator, long height)
@@ -282,10 +423,21 @@ namespace Nekoyume.Delegation
 
         public void CollectRewards(long height)
         {
+            using var activity = ActivitySource.StartActivity("CollectRewards");
+
+            var calculateRewardActivity = ActivitySource.StartActivity(
+                "CalculateReward",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             var rewards = RewardCurrencies.Select(c => Repository.GetBalance(RewardPoolAddress, c));
+            calculateRewardActivity?.Dispose();
+
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
-                rewardBase = rewardBase.AddRewards(rewards);
+                var collectWithRewardBaseActivity = ActivitySource.StartActivity(
+                    "CollectWithRewardBase",
+                    ActivityKind.Internal,
+                    activity?.Id ?? string.Empty);
 
                 foreach (var rewardsEach in rewards)
                 {
@@ -296,9 +448,14 @@ namespace Nekoyume.Delegation
                 }
 
                 Repository.SetRewardBase(rewardBase);
+                collectWithRewardBaseActivity?.Dispose();
             }
             else
             {
+                var collectWithLumpSumRewardsRecordActivity = ActivitySource.StartActivity(
+                    "CollectWithLumpSumRewardsRecord",
+                    ActivityKind.Internal,
+                    activity?.Id ?? string.Empty);
                 LumpSumRewardsRecord record = Repository.GetCurrentLumpSumRewardsRecord(this)
                     ?? new LumpSumRewardsRecord(
                         CurrentLumpSumRewardsRecordAddress(),
@@ -316,6 +473,7 @@ namespace Nekoyume.Delegation
                 }
             
                 Repository.SetLumpSumRewardsRecord(record);
+                collectWithLumpSumRewardsRecordActivity?.Dispose();
             }
         }
 
@@ -406,8 +564,19 @@ namespace Nekoyume.Delegation
 
         public void StartNewRewardPeriod(long height)
         {
-            MigrateLumpSumRewardsRecords();
+            using var activity = ActivitySource.StartActivity("StartNewRewardPeriod");
 
+            var migrateLumpSumRewardsRecordsActivity = ActivitySource.StartActivity(
+                "MigrateLumpSumRewardsRecords",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
+            MigrateLumpSumRewardsRecords();
+            migrateLumpSumRewardsRecordsActivity?.Dispose();
+
+            var startNewRewardBaseActivity = ActivitySource.StartActivity(
+                "StartNewRewardBase",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             RewardBase newRewardBase;
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
@@ -436,17 +605,29 @@ namespace Nekoyume.Delegation
             }
 
             Repository.SetRewardBase(newRewardBase);
+            startNewRewardBaseActivity?.Dispose();
         }
 
         private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
         {
+            using var activity = ActivitySource.StartActivity("GetLumpSumRewardsRecords");
+
+            var getCurrentLumpSumRewardsRecordsActivity = ActivitySource.StartActivity(
+                "GetCurrentLumpSumRewardsRecords",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             List<LumpSumRewardsRecord> records = new();
             if (lastRewardHeight is null
                 || !(Repository.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
             {
                 return records;
             }
+            getCurrentLumpSumRewardsRecordsActivity?.Dispose();
 
+            var getLumpSumRewardsRecordActivity = ActivitySource.StartActivity(
+                "GetLumpSumRewardsRecord",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty);
             while (record.StartHeight >= lastRewardHeight)
             {
                 records.Add(record);
@@ -460,6 +641,7 @@ namespace Nekoyume.Delegation
                     ?? throw new InvalidOperationException(
                         $"Lump sum rewards record for #{lastStartHeight} is missing");
             }
+            getLumpSumRewardsRecordActivity?.Dispose();
 
             return records;
         }
