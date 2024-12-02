@@ -143,6 +143,8 @@ namespace Nekoyume.Blockchain.Policy
                     maxTransactionsPerSignerPerBlockPolicy);
 
             // FIXME: Slight inconsistency due to pre-existing delegate.
+            // WARNING: If the block actions in the policyActionsRegistry have been modified,
+            // the constructor of the PluginActionEvaluator must be modified as well.
             return new BlockPolicy(
                 policyActionsRegistry: new PolicyActionsRegistry(
                     beginBlockActions: new IAction[] {
