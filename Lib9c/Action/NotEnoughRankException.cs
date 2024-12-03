@@ -10,8 +10,12 @@ namespace Nekoyume.Action
         {
         }
 
-        public NotEnoughRankException(SerializationInfo info, StreamingContext context) : base(
-            info, context)
+        public NotEnoughRankException(string message) : base(message)
+        {
+        }
+
+        public NotEnoughRankException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
         {
         }
     }

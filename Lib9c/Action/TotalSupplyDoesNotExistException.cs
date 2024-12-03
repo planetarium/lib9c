@@ -7,15 +7,21 @@ namespace Nekoyume.Action
     [Serializable]
     public class TotalSupplyDoesNotExistException : Exception
     {
+        public Currency Currency { get; }
+
         public TotalSupplyDoesNotExistException(Currency currency)
         {
             Currency = currency;
         }
 
-        protected TotalSupplyDoesNotExistException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        public TotalSupplyDoesNotExistException(string message) : base(message)
         {
-            Currency = (Currency) info.GetValue(nameof(Currency), typeof(Currency));
+        }
+
+        protected TotalSupplyDoesNotExistException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
+        {
+            Currency = (Currency)info.GetValue(nameof(Currency), typeof(Currency));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -23,7 +29,5 @@ namespace Nekoyume.Action
             base.GetObjectData(info, context);
             info.AddValue(nameof(Currency), Currency);
         }
-
-        public Currency Currency { get; }
     }
 }
