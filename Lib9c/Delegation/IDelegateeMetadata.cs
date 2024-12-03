@@ -1,6 +1,4 @@
 #nullable enable
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
@@ -32,8 +30,6 @@ namespace Nekoyume.Delegation
         int MaxRebondGraceEntries { get; }
 
         Address RewardPoolAddress { get; }
-
-        ImmutableSortedSet<Address> Delegators { get; }
 
         FungibleAssetValue TotalDelegatedFAV { get; }
 

@@ -70,7 +70,6 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         var actualValidatorList = actualRepository.GetValidatorList();
         var actualBond = actualRepository.GetBond(actualDelegatee, validatorKey.Address);
 
-        Assert.NotEqual(expectedDelegatee.Delegators, actualDelegatee.Delegators);
         Assert.NotEqual(expectedDelegatee.Validator.Power, actualDelegatee.Validator.Power);
         Assert.Equal(BigInteger.Zero, actualDelegatee.Validator.Power);
         Assert.Empty(actualValidatorList.Validators);
