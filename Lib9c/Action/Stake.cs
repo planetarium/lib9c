@@ -62,111 +62,125 @@ namespace Nekoyume.Action
             GasTracer.UseGas(1);
             IWorld states = context.PreviousState;
 
-            using var activity = ActivitySource.StartActivity("Stake");
+            using Activity activity = ActivitySource.StartActivity("Stake");
+            activity?.AddTag("Signer", context.Signer.ToString());
 
-            var monsterCollectionStateActivity = ActivitySource.StartActivity(
+            using (Activity _ = ActivitySource.StartActivity(
                 "GetMonsterCollectionState",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            // NOTE: Restrict staking if there is a monster collection until now.
-            if (states.GetAgentState(context.Signer) is { } agentState &&
-                states.TryGetLegacyState(MonsterCollectionState.DeriveAddress(
-                    context.Signer,
-                    agentState.MonsterCollectionRound), out Dictionary _))
+                activity?.Id ?? string.Empty))
             {
-                throw new MonsterCollectionExistingException();
+                // NOTE: Restrict staking if there is a monster collection until now.
+                if (states.GetAgentState(context.Signer) is { } agentState &&
+                    states.TryGetLegacyState(MonsterCollectionState.DeriveAddress(
+                        context.Signer,
+                        agentState.MonsterCollectionRound), out Dictionary _))
+                {
+                    throw new MonsterCollectionExistingException();
+                }
             }
-            monsterCollectionStateActivity?.Dispose();
 
-            var stakePolicySheetActivity = ActivitySource.StartActivity(
+            string addressesHex;
+            Address stakeStateAddress;
+            Currency currency;
+            FungibleAssetValue currentBalance;
+            FungibleAssetValue stakedBalance;
+            FungibleAssetValue targetStakeBalance;
+            Contract latestStakeContract;
+
+            using (var stakePolicySheetActivity = ActivitySource.StartActivity(
                 "GetStakePolicySheet",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            // NOTE: When the amount is less than 0.
-            if (Amount < 0)
+                activity?.Id ?? string.Empty))
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(Amount),
-                    "The amount must be greater than or equal to 0.");
-            }
-
-            var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
-            Log.Debug("{AddressesHex}Stake exec started", addressesHex);
-            if (!states.TryGetSheet<StakePolicySheet>(out var stakePolicySheet))
-            {
-                throw new StateNullException(ReservedAddresses.LegacyAccount, Addresses.GetSheetAddress<StakePolicySheet>());
-            }
-
-            var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
-                stakePolicySheet.StakeRegularRewardSheetValue);
-            if (!states.TryGetSheet<StakeRegularRewardSheet>(
-                    currentStakeRegularRewardSheetAddr,
-                    out var stakeRegularRewardSheet))
-            {
-                throw new StateNullException(ReservedAddresses.LegacyAccount, currentStakeRegularRewardSheetAddr);
-            }
-
-            var minimumRequiredGold = stakeRegularRewardSheet.OrderedRows.Min(x => x.RequiredGold);
-            // NOTE: When the amount is less than the minimum required gold.
-            if (Amount != 0 && Amount < minimumRequiredGold)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(Amount),
-                    $"The amount must be greater than or equal to {minimumRequiredGold}.");
-            }
-
-            var stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
-            var currency = states.GetGoldCurrency();
-            var currentBalance = states.GetBalance(context.Signer, currency);
-            var stakedBalance = states.GetBalance(stakeStateAddress, currency);
-            var targetStakeBalance = currency * Amount;
-            // NOTE: When the total balance is less than the target balance.
-            if (currentBalance + stakedBalance < targetStakeBalance)
-            {
-                throw new NotEnoughFungibleAssetValueException(
-                    context.Signer.ToHex(),
-                    Amount,
-                    currentBalance);
-            }
-
-            var latestStakeContract = new Contract(stakePolicySheet);
-            stakePolicySheetActivity?.Dispose();
-
-            var findStakeStateAndStakeFromNoneActivity = ActivitySource.StartActivity(
-                "FindStakeStateAndStakeFromNone",
-                ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            // NOTE: When the staking state is not exist.
-            if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
-            {
-                // NOTE: Cannot withdraw staking.
-                if (Amount == 0)
+                // NOTE: When the amount is less than 0.
+                if (Amount < 0)
                 {
-                    throw new StateNullException(ReservedAddresses.LegacyAccount, stakeStateAddress);
+                    throw new ArgumentOutOfRangeException(
+                        nameof(Amount),
+                        "The amount must be greater than or equal to 0.");
                 }
 
-                var contractNewStakeFromNoneActivity = ActivitySource.StartActivity(
-                    "ContractNewStakeFromNone",
-                    ActivityKind.Internal,
-                    findStakeStateAndStakeFromNoneActivity?.Id ?? string.Empty);
-                // NOTE: Contract a new staking.
-                states = ContractNewStake(
-                    context,
-                    states,
-                    stakeStateAddress,
-                    stakedBalance: currency * 0,
-                    targetStakeBalance,
-                    latestStakeContract);
-                Log.Debug(
-                    "{AddressesHex}Stake Total Executed Time: {Elapsed}",
-                    addressesHex,
-                    DateTimeOffset.UtcNow - started);
+                addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
+                Log.Debug("{AddressesHex}Stake exec started", addressesHex);
+                if (!states.TryGetSheet<StakePolicySheet>(out var stakePolicySheet))
+                {
+                    throw new StateNullException(ReservedAddresses.LegacyAccount, Addresses.GetSheetAddress<StakePolicySheet>());
+                }
 
-                contractNewStakeFromNoneActivity?.Dispose();
-                return states;
+                var currentStakeRegularRewardSheetAddr = Addresses.GetSheetAddress(
+                    stakePolicySheet.StakeRegularRewardSheetValue);
+                if (!states.TryGetSheet<StakeRegularRewardSheet>(
+                    currentStakeRegularRewardSheetAddr,
+                    out var stakeRegularRewardSheet))
+                {
+                    throw new StateNullException(ReservedAddresses.LegacyAccount, currentStakeRegularRewardSheetAddr);
+                }
+
+                var minimumRequiredGold = stakeRegularRewardSheet.OrderedRows.Min(x => x.RequiredGold);
+                // NOTE: When the amount is less than the minimum required gold.
+                if (Amount != 0 && Amount < minimumRequiredGold)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(Amount),
+                        $"The amount must be greater than or equal to {minimumRequiredGold}.");
+                }
+
+                stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
+                currency = states.GetGoldCurrency();
+                currentBalance = states.GetBalance(context.Signer, currency);
+                stakedBalance = states.GetBalance(stakeStateAddress, currency);
+                targetStakeBalance = currency * Amount;
+                // NOTE: When the total balance is less than the target balance.
+                if (currentBalance + stakedBalance < targetStakeBalance)
+                {
+                    throw new NotEnoughFungibleAssetValueException(
+                        context.Signer.ToHex(),
+                        Amount,
+                        currentBalance);
+                }
+
+                latestStakeContract = new Contract(stakePolicySheet);
             }
 
-            findStakeStateAndStakeFromNoneActivity?.Dispose();
+            StakeState stakeStateV2;
+
+            using (var findStakeStateAndStakeFromNoneActivity = ActivitySource.StartActivity(
+                "FindStakeStateAndStakeFromNone",
+                ActivityKind.Internal,
+                activity?.Id ?? string.Empty))
+            {
+                // NOTE: When the staking state is not exist.
+                if (!states.TryGetStakeState(context.Signer, out stakeStateV2))
+                {
+                    // NOTE: Cannot withdraw staking.
+                    if (Amount == 0)
+                    {
+                        throw new StateNullException(ReservedAddresses.LegacyAccount, stakeStateAddress);
+                    }
+
+                    using (var contractNewStakeFromNoneActivity = ActivitySource.StartActivity(
+                        "ContractNewStakeFromNone",
+                        ActivityKind.Internal,
+                        findStakeStateAndStakeFromNoneActivity?.Id ?? string.Empty))
+                    {
+                        // NOTE: Contract a new staking.
+                        states = ContractNewStake(
+                            context,
+                            states,
+                            stakeStateAddress,
+                            stakedBalance: currency * 0,
+                            targetStakeBalance,
+                            latestStakeContract);
+                        Log.Debug(
+                            "{AddressesHex}Stake Total Executed Time: {Elapsed}",
+                            addressesHex,
+                            DateTimeOffset.UtcNow - started);
+                    }
+
+                    return states;
+                }
+            }
 
             // NOTE: Cannot anything if staking state is claimable.
             if (stakeStateV2.ClaimableBlockIndex <= context.BlockIndex)
@@ -208,19 +222,20 @@ namespace Nekoyume.Action
                 migrateV2toV3Activity?.Dispose();
             }
 
-            var contractNewStakeActivity = ActivitySource.StartActivity(
+            using (var contractNewStakeActivity = ActivitySource.StartActivity(
                 "ContractNewStake",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            // NOTE: Contract a new staking.
-            states = ContractNewStake(
-                context,
-                states,
-                stakeStateAddress,
-                stakedBalance,
-                targetStakeBalance,
-                latestStakeContract);
-            contractNewStakeActivity?.Dispose();
+                activity?.Id ?? string.Empty))
+            {
+                // NOTE: Contract a new staking.
+                states = ContractNewStake(
+                    context,
+                    states,
+                    stakeStateAddress,
+                    stakedBalance,
+                    targetStakeBalance,
+                    latestStakeContract);
+            }
             Log.Debug(
                 "{AddressesHex}Stake Total Executed Time: {Elapsed}",
                 addressesHex,
