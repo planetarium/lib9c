@@ -220,7 +220,8 @@ namespace Nekoyume.Action
 
             // Validate enhancement materials
             var uniqueMaterialIds = materialIds.Distinct().ToList();
-            if (!uniqueMaterialIds.Any())
+            // Validate hammer without materials count
+            if (hammers.Any())
             {
                 if (HammerBannedTypes.Contains(enhancementEquipment.ItemSubType))
                 {

@@ -109,7 +109,7 @@ namespace Nekoyume.Delegation
             unbondLockIn = unbondLockIn.LockIn(
                 fav, height, height + delegatee.UnbondingPeriod);
 
-            if (!delegatee.Delegators.Contains(Address))
+            if (Repository.GetBond(delegatee, Address).Share.IsZero)
             {
                 Metadata.RemoveDelegatee(delegatee.Address);
             }
@@ -157,7 +157,7 @@ namespace Nekoyume.Delegation
                 height,
                 height + srcDelegatee.UnbondingPeriod);
 
-            if (!srcDelegatee.Delegators.Contains(Address))
+            if (Repository.GetBond(srcDelegatee, Address).Share.IsZero)
             {
                 Metadata.RemoveDelegatee(srcDelegatee.Address);
             }
