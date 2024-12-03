@@ -76,7 +76,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             IActionContext ctx = context;
             var states = ctx.PreviousState;
             var slotAddress = avatarAddress.Derive(

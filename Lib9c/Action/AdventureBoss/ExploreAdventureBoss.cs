@@ -82,7 +82,7 @@ namespace Nekoyume.Action.AdventureBoss
         public override IWorld Execute(IActionContext context)
         {
             var addressesHex = $"[{context.Signer.ToHex()}, {AvatarAddress.ToHex()}]";
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
 
             // Validation
@@ -142,7 +142,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(CollectionSheet),
                     typeof(EnemySkillSheet),
                     typeof(CostumeStatSheet),
-                    typeof(DeBuffLimitSheet),
+                    typeof(BuffLimitSheet),
                     typeof(BuffLinkSheet),
                     typeof(ItemRequirementSheet),
                     typeof(EquipmentItemRecipeSheet),
@@ -226,7 +226,7 @@ namespace Nekoyume.Action.AdventureBoss
             var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
-            var deBuffLimitSheet = sheets.GetSheet<DeBuffLimitSheet>();
+            var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
             if (gameConfigState is null)
             {
@@ -251,8 +251,8 @@ namespace Nekoyume.Action.AdventureBoss
             for (var fl = explorer.Floor + 1; fl < explorer.MaxFloor + 1; fl++)
             {
                 // Get Data for simulator
-                var floorRow = floorRows.First(row => row.Floor == fl);
-                if (!floorSheet.TryGetValue(fl, out var flRow))
+                var floorRow = floorRows.FirstOrDefault(row => row.Floor == fl);
+                if (floorRow == null)
                 {
                     throw new SheetRowNotFoundException(addressesHex, nameof(floorSheet), fl);
                 }
@@ -263,7 +263,7 @@ namespace Nekoyume.Action.AdventureBoss
                 }
 
                 var rewards =
-                    AdventureBossSimulator.GetWaveRewards(random, flRow, materialItemSheet);
+                    AdventureBossSimulator.GetWaveRewards(random, floorRow, materialItemSheet);
 
                 // Use AP Potion
                 if (!avatarState.inventory.RemoveFungibleItem(material.ItemId, context.BlockIndex,
@@ -290,7 +290,7 @@ namespace Nekoyume.Action.AdventureBoss
                     costumeStatSheet,
                     rewards,
                     collectionModifiers,
-                    deBuffLimitSheet,
+                    buffLimitSheet,
                     buffLinkSheet,
                     false,
                     gameConfigState.ShatterStrikeMaxDamage

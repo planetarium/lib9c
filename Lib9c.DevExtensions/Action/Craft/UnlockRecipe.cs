@@ -20,7 +20,7 @@ namespace Lib9c.DevExtensions.Action.Craft
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var recipeIdList = List.Empty;
             for (var i = 1; i <= TargetStage; i++)

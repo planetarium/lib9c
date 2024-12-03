@@ -249,7 +249,7 @@ namespace Lib9c.Tests
 
         public CollectionSheet CollectionSheet { get; private set; }
 
-        public DeBuffLimitSheet DeBuffLimitSheet { get; set; }
+        public BuffLimitSheet BuffLimitSheet { get; set; }
 
         public BuffLinkSheet BuffLinkSheet { get; set; }
 
@@ -280,6 +280,10 @@ namespace Lib9c.Tests
         /* Custom Craft */
 
         public ClaimableGiftsSheet ClaimableGiftsSheet { get; private set; }
+
+        public SynthesizeSheet SynthesizeSheet { get; private set; }
+
+        public SynthesizeWeightSheet SynthesizeWeightSheet { get; private set; }
 
         public void ItemSheetInitialize()
         {

@@ -23,6 +23,8 @@ namespace Nekoyume
 
         #region action
 
+        public const int ActionCostAP = 5;
+
         public const int DefaultAvatarCharacterId = 100010;
         public const int DefaultAvatarWeaponId = 10100000;
         public const int DefaultAvatarArmorId = 10200000;

@@ -47,7 +47,7 @@ namespace Lib9c.DevExtensions.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             return Execute(context, context.PreviousState, StateList, BalanceList);
         }
 

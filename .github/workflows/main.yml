@@ -20,29 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Check if .Libplanet refers to a tagged commit
-      if: |
-        github.event_name == 'push' && (
-          github.ref == 'refs/heads/main' ||
-          startsWith(github.ref, 'refs/heads/rc-') ||
-          startsWith(github.ref, 'refs/tags/')
-        ) ||
-        github.event_name == 'pull_request' && (
-          github.head_ref == 'refs/heads/main' ||
-          startsWith(github.head_ref, 'refs/heads/rc-') ||
-          startsWith(github.head_ref, 'refs/tags/')
-        )
-      run: |
-        set -e
-        pushd .Libplanet/
-        git fetch origin 'refs/tags/*:refs/tags/*'
-        if ! git describe --tags --exact-match; then
-          echo "The unreleased Libplanet shouldn't be used." > /dev/stderr
-          exit 1
-        fi
-        popd
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.400
     - name: Install dependencies
@@ -56,7 +35,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.400
       - name: Enforce net5.0 target with custom patch
@@ -74,7 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.400
       - uses: pnpm/action-setup@v4
@@ -117,7 +96,7 @@ jobs:
       env:
         WEB_FLOW_KEY_URL: https://github.com/web-flow.gpg
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.400
     - name: Collect available action type ids
@@ -126,13 +105,13 @@ jobs:
         dotnet run --property WarningLevel=0 --project .Lib9c.Tools/Lib9c.Tools.csproj -- action list > publish/all_action_type_ids.txt
         dotnet run --property WarningLevel=0 --project .Lib9c.Tools/Lib9c.Tools.csproj -- action list --obsolete-only --json-path=publish/obsolete_action_types.json
     - name: Publish available action type ids
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./publish
         destination_dir: ${{ github.ref_name }}
     - name: Publish available action type ids for latest
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./publish

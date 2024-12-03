@@ -315,13 +315,9 @@ namespace Lib9c.Tests.Action
                 nextState.GetBalance(_agentAddress, _currency)
             );
 
-            var arenaSheet = _tableSheets.ArenaSheet;
-            var arenaData = arenaSheet.GetRoundByBlockIndex(1);
-            var feeStoreAddress =
-                ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
             Assert.Equal(
                 expectedCost * _currency,
-                nextState.GetBalance(feeStoreAddress, _currency)
+                nextState.GetBalance(Addresses.RewardPool, _currency)
             );
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
@@ -547,6 +543,47 @@ namespace Lib9c.Tests.Action
             Assert.Equal(preItemUsable.ItemId, slotResult.preItemUsable.ItemId);
             Assert.Equal(preItemUsable.ItemId, resultEquipment.ItemId);
             Assert.Equal(expectedCost, slotResult.gold);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_Throw_InvalidItemTypeException(bool withMaterials)
+        {
+            var types = ItemEnhancement.HammerBannedTypes;
+            foreach (var itemSubType in types)
+            {
+                var row =
+                    _tableSheets.EquipmentItemSheet.Values.First(r => r.ItemSubType == itemSubType);
+                var equipment = ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 0);
+                _avatarState.inventory.AddItem(equipment);
+                _initialState = _initialState.SetAvatarState(_avatarAddress, _avatarState);
+                var materialIds = new List<Guid>();
+                if (withMaterials)
+                {
+                    materialIds.Add(Guid.NewGuid());
+                    materialIds.Add(Guid.NewGuid());
+                }
+
+                var action = new ItemEnhancement
+                {
+                    itemId = equipment.ItemId,
+                    materialIds = materialIds,
+                    avatarAddress = _avatarAddress,
+                    slotIndex = 0,
+                    hammers = new Dictionary<int, int>
+                    {
+                        [600301] = 3,
+                    },
+                };
+                Assert.Throws<InvalidItemTypeException>(() => action.Execute(new ActionContext
+                {
+                    BlockIndex = 1,
+                    PreviousState = _initialState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                }));
+            }
         }
     }
 }

@@ -6,9 +6,12 @@ namespace Lib9c.Tests.Action
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
+    using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Guild;
+    using Nekoyume.Action.ValidatorDelegation;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
@@ -46,7 +49,8 @@ namespace Lib9c.Tests.Action
             Assert.Equal(patron, contract[0].ToAddress());
             Assert.True(contract[1].ToBoolean());
             Assert.Equal(mead, contract[2].ToInteger());
-            Assert.Null(nextState.GetJoinedGuild(new AgentAddress(address)));
+            Assert.Null(new GuildRepository(nextState, new ActionContext())
+                .GetJoinedGuild(new AgentAddress(address)));
         }
 
         [Theory]
@@ -55,15 +59,29 @@ namespace Lib9c.Tests.Action
         public void Execute_JoinGuild(int mead)
         {
             var address = new PrivateKey().Address;
+            var validatorKey = new PrivateKey();
             var patron = MeadConfig.PatronAddress;
             var contractAddress = address.Derive(nameof(RequestPledge));
             var guildAddress = AddressUtil.CreateGuildAddress();
             var states = new World(MockUtil.MockModernWorldState)
                 .SetLegacyState(
+                    Addresses.GoldCurrency,
+                    new GoldCurrencyState(Currency.Legacy("NCG", 2, null)).Serialize())
+                .SetLegacyState(
                     contractAddress,
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
-                )
-                .MakeGuild(guildAddress, GuildConfig.PlanetariumGuildOwner);
+                );
+
+            states = DelegationUtil.EnsureValidatorPromotionReady(
+                states, validatorKey.PublicKey, 0L);
+
+            states = new GuildRepository(
+                states,
+                new ActionContext
+                {
+                    Signer = GuildConfig.PlanetariumGuildOwner,
+                })
+                .MakeGuild(guildAddress, validatorKey.Address).World;
 
             var action = new ApprovePledge
             {
@@ -80,7 +98,8 @@ namespace Lib9c.Tests.Action
             Assert.Equal(patron, contract[0].ToAddress());
             Assert.True(contract[1].ToBoolean());
             Assert.Equal(mead, contract[2].ToInteger());
-            var joinedGuildAddress = nextState.GetJoinedGuild(new AgentAddress(address));
+            var joinedGuildAddress = new GuildRepository(nextState, new ActionContext())
+                .GetJoinedGuild(new AgentAddress(address));
             Assert.NotNull(joinedGuildAddress);
             Assert.Equal(guildAddress, joinedGuildAddress);
         }

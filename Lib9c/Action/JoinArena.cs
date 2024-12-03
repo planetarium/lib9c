@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.Arena;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
@@ -72,7 +73,7 @@ namespace Nekoyume.Action
 
         public override IWorld Execute(IActionContext context)
         {
-            context.UseGas(1);
+            GasTracer.UseGas(1);
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             var started = DateTimeOffset.UtcNow;
@@ -173,8 +174,15 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var arenaAddr = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                states = states.TransferAsset(context, context.Signer, arenaAddr, fee);
+                var feeAddress = Addresses.RewardPool;
+                // TODO: [GuildMigration] Remove this after migration
+                if (states.GetDelegationMigrationHeight() is long migrationHeight
+                    && context.BlockIndex < migrationHeight)
+                {
+                    feeAddress = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
+                }
+
+                states = states.TransferAsset(context, context.Signer, feeAddress, fee);
             }
 
             // check medal

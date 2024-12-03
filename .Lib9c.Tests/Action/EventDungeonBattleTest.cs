@@ -185,9 +185,7 @@ namespace Lib9c.Tests.Action
                 )
             );
             Assert.Equal(0 * _ncgCurrency, balance);
-            var arenaData = _tableSheets.ArenaSheet.GetRoundByBlockIndex(scheduleRow.StartBlockIndex);
-            var feeStoreAddress =
-                Nekoyume.Arena.ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+            var feeStoreAddress = Addresses.RewardPool;
             Assert.Equal(ncgHas, nextStates.GetBalance(feeStoreAddress, _ncgCurrency));
         }
 

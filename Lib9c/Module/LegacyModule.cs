@@ -877,18 +877,18 @@ namespace Nekoyume.Module
             return (arenaInfoAddress, arenaInfo, isNew);
         }
 
-        public static bool TryGetStakeState(
+        public static bool TryGetLegacyStakeState(
             this IWorldState worldState,
             Address agentAddress,
-            out StakeState stakeState)
+            out LegacyStakeState legacyStakeState)
         {
-            if (TryGetLegacyState(worldState, StakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
+            if (TryGetLegacyState(worldState, LegacyStakeState.DeriveAddress(agentAddress), out Dictionary dictionary))
             {
-                stakeState = new StakeState(dictionary);
+                legacyStakeState = new LegacyStakeState(dictionary);
                 return true;
             }
 
-            stakeState = null;
+            legacyStakeState = null;
             return false;
         }
 
@@ -897,19 +897,19 @@ namespace Nekoyume.Module
             Address agentAddr)
         {
             var goldCurrency = GetGoldCurrency(worldState);
-            return worldState.GetBalance(StakeState.DeriveAddress(agentAddr), goldCurrency);
+            return worldState.GetBalance(LegacyStakeState.DeriveAddress(agentAddr), goldCurrency);
         }
 
-        public static bool TryGetStakeStateV2(
+        public static bool TryGetStakeState(
             this IWorldState worldState,
             Address agentAddr,
-            out StakeStateV2 stakeStateV2)
+            out StakeState stakeState)
         {
-            var stakeStateAddr = StakeStateV2.DeriveAddress(agentAddr);
-            return StakeStateUtils.TryMigrate(
+            var stakeStateAddr = StakeState.DeriveAddress(agentAddr);
+            return StakeStateUtils.TryMigrateV1ToV2(
                 worldState,
                 stakeStateAddr,
-                out stakeStateV2);
+                out stakeState);
         }
 
         public static ArenaParticipants GetArenaParticipants(

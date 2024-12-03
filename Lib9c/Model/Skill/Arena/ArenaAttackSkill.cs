@@ -62,7 +62,7 @@ namespace Nekoyume.Model.Skill.Arena
                     var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, long.MaxValue);
                     damage = Math.Max(damage - finalDEF, 1);
                     // Apply damage reduce
-                    damage = (int)((damage - target.DRV) * (1 - target.DRR / 10000m));
+                    damage = (int)((damage - target.DRV) * DamageHelper.GetDamageReductionRate(target.DRR));
 
                     // ShatterStrike has max damage limitation
                     if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)

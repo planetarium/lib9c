@@ -160,21 +160,6 @@ namespace Lib9c.Tests.Action
                         removePetCostRowWithTargetPetLevel: true));
         }
 
-        [Fact]
-        public void Execute_Throw_RoundNotFoundException()
-        {
-            Assert.Throws<RoundNotFoundException>(
-                () =>
-                    Execute(
-                        _initialStatesWithAvatarStateV2,
-                        _firstRoundStartBlockIndex - 1,
-                        _agentAddr,
-                        _avatarAddr,
-                        _targetPetId,
-                        0,
-                        1));
-        }
-
         [Theory]
         [InlineData(0, 1)]
         public void Execute_Throw_NotEnoughFungibleAssetValueException(

@@ -263,18 +263,18 @@ namespace Nekoyume.Model.Stat
         /// Set stats based on buffs.
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="deBuffLimitSheet"></param>
+        /// <param name="buffLimitSheet"></param>
         /// <param name="updateImmediate"></param>
         /// <returns></returns>
         public CharacterStats SetBuffs(IEnumerable<Buff.StatBuff> value,
-            DeBuffLimitSheet deBuffLimitSheet, bool updateImmediate = true)
+            BuffLimitSheet buffLimitSheet, bool updateImmediate = true)
         {
             _buffStatModifiers.Clear();
             if (!(value is null))
             {
                 foreach (var buff in value)
                 {
-                    AddBuff(buff,  deBuffLimitSheet, false);
+                    AddBuff(buff,  buffLimitSheet, false);
                 }
             }
 
@@ -323,9 +323,9 @@ namespace Nekoyume.Model.Stat
             return this;
         }
 
-        public void AddBuff(Buff.StatBuff buff, DeBuffLimitSheet deBuffLimitSheet, bool updateImmediate = true)
+        public void AddBuff(Buff.StatBuff buff, BuffLimitSheet buffLimitSheet, bool updateImmediate = true)
         {
-            var modifier = GetBuffModifier(buff, deBuffLimitSheet);
+            var modifier = GetBuffModifier(buff, buffLimitSheet);
             _buffStatModifiers[buff.RowData.GroupId] = modifier;
 
             if (updateImmediate)
@@ -617,27 +617,38 @@ namespace Nekoyume.Model.Stat
             SetCollections(collectionStatModifiers);
         }
 
-        private StatModifier GetBuffModifier(Buff.StatBuff buff, DeBuffLimitSheet deBuffLimitSheet)
+        /// <summary>
+        /// Returns a <see cref="StatModifier"/> based on the upper limit from <see cref="BuffLimitSheet"/>.
+        /// </summary>
+        /// <param name="buff"><see cref="Buff.StatBuff"/> for modify stats.</param>
+        /// <param name="buffLimitSheet">Upper limit sheet data.</param>
+        /// <returns>if buff modify stats 100% but limit 50% set in <see cref="BuffLimitSheet"/>,
+        /// it will return 50%, else return 100% <see cref="StatModifier"/>,
+        /// if de-buff modify stats -100% but limit -50% set in <see cref="BuffLimitSheet"/>,
+        /// it will return -50%, else return -100% <see cref="StatModifier"/>
+        /// </returns>
+        private StatModifier GetBuffModifier(Buff.StatBuff buff, BuffLimitSheet buffLimitSheet)
         {
             var modifier = buff.GetModifier();
-            if (buff.IsDebuff())
+            try
             {
-                try
+                var statType = modifier.StatType;
+                var limitModifier = buffLimitSheet[buff.RowData.GroupId].GetModifier(statType);
+                var stat = _statMap.GetStatAsLong(statType);
+                var buffModified = modifier.GetModifiedValue(stat);
+                var maxModified = (long)limitModifier.GetModifiedValue(stat);
+                if (buff.IsDebuff() && maxModified > buffModified || buff.IsBuff() && maxModified < buffModified)
                 {
-                    var statType = modifier.StatType;
-                    var limitModifier = deBuffLimitSheet[buff.RowData.GroupId].GetModifier(statType);
-                    var stat = _statMap.GetStatAsLong(statType);
-                    var buffModified = modifier.GetModifiedValue(stat);
-                    var maxModified = (long)limitModifier.GetModifiedValue(stat);
-                    if (maxModified > buffModified)
-                    {
-                        return limitModifier;
-                    }
+                    return limitModifier;
                 }
-                catch (KeyNotFoundException)
-                {
-                    // pass
-                }
+            }
+            catch (KeyNotFoundException)
+            {
+                // pass
+            }
+            catch (NullReferenceException)
+            {
+                // pass
             }
 
             return modifier;
