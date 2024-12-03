@@ -179,12 +179,13 @@ namespace Nekoyume.Delegation
         {
             using var activity = ActivitySource.StartActivity("Bond");
 
-            var distributeRewardActivity = ActivitySource.StartActivity(
+            using (Activity? _ = ActivitySource.StartActivity(
                 "DistributeReward",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            DistributeReward(delegator, height);
-            distributeRewardActivity?.Dispose();
+                activity?.Id ?? string.Empty))
+            {
+                DistributeReward(delegator, height);
+            }
 
             if (!fav.Currency.Equals(DelegationCurrency))
             {
@@ -240,12 +241,13 @@ namespace Nekoyume.Delegation
             Repository.SetBond(bond);
             setBondActivity?.Dispose();
 
-            var startNewRewardPeriodActivity = ActivitySource.StartActivity(
+            using (Activity? _ = ActivitySource.StartActivity(
                 "StartNewRewardPeriod",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            StartNewRewardPeriod(height);
-            startNewRewardPeriodActivity?.Dispose();
+                activity?.Id ?? string.Empty))
+            {
+                StartNewRewardPeriod(height);
+            }
 
             var setDelegateeMetadataActivity = ActivitySource.StartActivity(
                 "SetDelegateeMetadata",
@@ -266,12 +268,13 @@ namespace Nekoyume.Delegation
         {
             using var activity = ActivitySource.StartActivity("Unbond");
 
-            var distributeRewardActivity = ActivitySource.StartActivity(
+            using (Activity? _ = ActivitySource.StartActivity(
                 "DistributeReward",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            DistributeReward(delegator, height);
-            distributeRewardActivity?.Dispose();
+                activity?.Id ?? string.Empty))
+            {
+                DistributeReward(delegator, height);
+            }
 
             if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
             {
@@ -324,12 +327,13 @@ namespace Nekoyume.Delegation
             Repository.SetBond(bond);
             setBondActivity?.Dispose();
 
-            var startNewRewardPeriodActivity = ActivitySource.StartActivity(
+            using (Activity? _ = ActivitySource.StartActivity(
                 "StartNewRewardPeriod",
                 ActivityKind.Internal,
-                activity?.Id ?? string.Empty);
-            StartNewRewardPeriod(height);
-            startNewRewardPeriodActivity?.Dispose();
+                activity?.Id ?? string.Empty))
+            {
+                StartNewRewardPeriod(height);
+            }
 
             var setDelegateeMetadataActivity = ActivitySource.StartActivity(
                 "SetDelegateeMetadata",
