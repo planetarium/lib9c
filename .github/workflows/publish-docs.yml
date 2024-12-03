@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
