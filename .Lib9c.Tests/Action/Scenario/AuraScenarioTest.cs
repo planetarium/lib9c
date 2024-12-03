@@ -352,6 +352,82 @@ namespace Lib9c.Tests.Action.Scenario
                     }));
         }
 
+        [Fact]
+        public void Combination()
+        {
+            var row = _tableSheets.EquipmentItemRecipeSheet.Values.FirstOrDefault(r =>
+                r.ItemSubType == ItemSubType.Aura && r.MaterialId > 0 && r.RequiredBlockIndex > 0);
+            var prevState = _initialState;
+            if (row is not null)
+            {
+                var avatarState = _initialState.GetAvatarState(_avatarAddress);
+                var inventory = avatarState.inventory;
+                var material =
+                    ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[row.MaterialId]);
+                inventory.AddItem(material, row.MaterialCount);
+                prevState = prevState.SetInventory(_avatarAddress, inventory);
+
+                var action = new CombinationEquipment
+                {
+                    avatarAddress = _avatarAddress,
+                    slotIndex = 0,
+                    recipeId = row.Id,
+                    subRecipeId = null,
+                    payByCrystal = false,
+                    useHammerPoint = false,
+                    petId = null,
+                };
+
+                var nextState = action.Execute(new ActionContext
+                {
+                    BlockIndex = 0,
+                    PreviousState = prevState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
+
+                var nextInventory = nextState.GetInventoryV2(_avatarAddress);
+                Assert.True(nextInventory.TryGetItem(row.ResultEquipmentId, out var item));
+                var aura = (Aura)item.item;
+                Assert.False(aura.equipped);
+                Assert.Equal(row.RequiredBlockIndex, aura.RequiredBlockIndex);
+
+                var has = new HackAndSlash
+                {
+                    StageId = 1,
+                    AvatarAddress = _avatarAddress,
+                    Equipments = new List<Guid>
+                    {
+                        aura.ItemId,
+                    },
+                    Costumes = new List<Guid>(),
+                    Foods = new List<Guid>(),
+                    WorldId = 1,
+                    RuneInfos = new List<RuneSlotInfo>(),
+                };
+
+                Assert.Throws<RequiredBlockIndexException>(() => has.Execute(new ActionContext
+                {
+                    BlockIndex = 0,
+                    PreviousState = nextState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                }));
+
+                var equippedState = has.Execute(new ActionContext
+                {
+                    BlockIndex = aura.RequiredBlockIndex,
+                    PreviousState = nextState,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
+
+                nextInventory = equippedState.GetInventoryV2(_avatarAddress);
+                nextInventory.TryGetNonFungibleItem(aura.ItemId, out Aura aura2);
+                Assert.True(aura2.equipped);
+            }
+        }
+
         private void Assert_Player(AvatarState avatarState, IWorld state, Address avatarAddress, Address itemSlotStateAddress)
         {
             var nextAvatarState = state.GetAvatarState(avatarAddress);
