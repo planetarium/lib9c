@@ -7,6 +7,10 @@ namespace Nekoyume.Action
     [Serializable]
     public class InvalidTransferUnactivatedRecipientException : Exception
     {
+        public Address Sender { get; }
+
+        public Address Recipient { get; }
+
         public InvalidTransferUnactivatedRecipientException(
             Address sender,
             Address recipient)
@@ -15,9 +19,12 @@ namespace Nekoyume.Action
             Recipient = recipient;
         }
 
-        public InvalidTransferUnactivatedRecipientException(
-            SerializationInfo info, StreamingContext context
-        ) : base(info, context)
+        public InvalidTransferUnactivatedRecipientException(string message) : base(message)
+        {
+        }
+
+        public InvalidTransferUnactivatedRecipientException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
         {
             Sender = (Address)info.GetValue(nameof(Sender), typeof(Address));
             Recipient = (Address)info.GetValue(nameof(Recipient), typeof(Address));
@@ -29,9 +36,5 @@ namespace Nekoyume.Action
             info.AddValue(nameof(Sender), Sender);
             info.AddValue(nameof(Recipient), Recipient);
         }
-
-        public Address Sender { get; }
-
-        public Address Recipient { get; }
     }
 }

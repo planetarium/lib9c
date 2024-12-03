@@ -11,12 +11,14 @@ namespace Nekoyume.Action
     {
         public Address Signer { get; }
 
-        public PermissionDeniedException(AdminState policy, Address signer)
-            : base(policy)
+        public PermissionDeniedException(AdminState policy, Address signer) : base(policy)
         {
             Signer = signer;
         }
 
+        public PermissionDeniedException(string message) : base(message)
+        {
+        }
 
         public PermissionDeniedException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
