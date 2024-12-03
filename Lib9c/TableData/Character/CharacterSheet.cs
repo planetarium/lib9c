@@ -56,7 +56,7 @@ namespace Nekoyume.TableData
                 RunSpeed = TryParseFloat(fields[16], out var runSpeed) ? runSpeed : 1f;
             }
         }
-        
+
         public CharacterSheet() : base(nameof(CharacterSheet))
         {
         }
