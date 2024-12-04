@@ -4,11 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
-using Libplanet.Crypto;
 using Nekoyume.Action;
-using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.EnumType;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
@@ -27,6 +26,20 @@ namespace Nekoyume.Helper
     /// </summary>
     public static class SynthesizeSimulator
     {
+        private static readonly ItemType[] ValidItemType =
+        {
+            ItemType.Costume,
+            ItemType.Equipment,
+        };
+
+        private static readonly ItemSubType[] ValidItemSubType =
+        {
+            ItemSubType.FullCostume,
+            ItemSubType.Title,
+            ItemSubType.Grimoire,
+            ItemSubType.Aura,
+        };
+
         /// <summary>
         /// Simulate the synthesis of items.
         /// </summary>
@@ -97,6 +110,142 @@ namespace Nekoyume.Helper
             }
 
             return synthesizeResults;
+        }
+
+        public static GradeDict GetGradeDict(List<Guid> materialIds, AvatarState avatarState, long blockIndex,
+            string addressesHex, out List<Equipment> materialEquipments, out List<Costume> materialCostumes)
+        {
+            ItemSubType? cachedItemSubType = null;
+            var gradeDict = new GradeDict();
+            materialEquipments = new List<Equipment>();
+            materialCostumes = new List<Costume>();
+
+            foreach (var materialId in materialIds)
+            {
+                var materialEquipment = GetEquipmentFromId(materialId, avatarState, blockIndex, addressesHex, ref cachedItemSubType);
+                var materialCostume = GetCostumeFromId(materialId, avatarState, addressesHex, ref cachedItemSubType);
+                if (materialEquipment == null && materialCostume == null)
+                {
+                    throw new InvalidMaterialException(
+                        $"{addressesHex} Aborted as the material item is not a valid item type."
+                    );
+                }
+
+                if (materialEquipment != null)
+                {
+                    materialEquipments.Add(materialEquipment);
+                    SetGradeDict(ref gradeDict, materialEquipment.Grade, materialEquipment.ItemSubType);
+                }
+
+                if (materialCostume != null)
+                {
+                    materialCostumes.Add(materialCostume);
+                    SetGradeDict(ref gradeDict, materialCostume.Grade, materialCostume.ItemSubType);
+                }
+            }
+
+            if (cachedItemSubType == null)
+            {
+                throw new InvalidOperationException("ItemSubType is not set.");
+            }
+
+            return gradeDict;
+        }
+
+        private static void SetGradeDict(ref GradeDict gradeDict, int grade, ItemSubType itemSubType)
+        {
+            if (gradeDict.ContainsKey(grade))
+            {
+                if (gradeDict[grade].ContainsKey(itemSubType))
+                {
+                    gradeDict[grade][itemSubType]++;
+                }
+                else
+                {
+                    gradeDict[grade][itemSubType] = 1;
+                }
+            }
+            else
+            {
+                gradeDict[grade] = new Dictionary<ItemSubType, int>
+                {
+                    { itemSubType, 1 },
+                };
+            }
+        }
+
+        private static Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, long blockIndex, string addressesHex, ref ItemSubType? cachedItemSubType)
+        {
+            if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out Equipment materialEquipment))
+            {
+                return null;
+            }
+
+            if (materialEquipment.RequiredBlockIndex > blockIndex)
+            {
+                throw new RequiredBlockIndexException(
+                    $"{addressesHex} Aborted as the material ({materialId}) is not available yet;" +
+                    $" it will be available at the block #{materialEquipment.RequiredBlockIndex}."
+                );
+            }
+
+            // Validate item type
+            if (!ValidItemType.Contains(materialEquipment.ItemType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item type: {materialEquipment.ItemType}."
+                );
+            }
+
+            if (!ValidItemSubType.Contains(materialEquipment.ItemSubType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item sub type: {materialEquipment.ItemSubType}."
+                );
+            }
+
+            cachedItemSubType ??= materialEquipment.ItemSubType;
+            if (materialEquipment.ItemSubType != cachedItemSubType)
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a {cachedItemSubType}, but {materialEquipment.ItemSubType}."
+                    );
+            }
+
+            return materialEquipment;
+        }
+
+        private static Costume? GetCostumeFromId(Guid materialId, AvatarState avatarState, string addressesHex, ref ItemSubType? cachedItemSubType)
+        {
+            if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out Costume costumeItem))
+            {
+                return null;
+            }
+
+            // Validate item type
+            if (!ValidItemType.Contains(costumeItem.ItemType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item type: {costumeItem.ItemType}."
+                );
+            }
+
+            if (!ValidItemSubType.Contains(costumeItem.ItemSubType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item sub type: {costumeItem.ItemSubType}."
+                );
+            }
+
+            cachedItemSubType ??= costumeItem.ItemSubType;
+            if (costumeItem.ItemSubType != cachedItemSubType)
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a {cachedItemSubType}, but {costumeItem.ItemSubType}."
+                    );
+            }
+
+            return costumeItem;
         }
 
         private static ItemBase GetSynthesizedItem(Grade grade, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, EquipmentItemSheet equipmentItemSheet, IRandom random, ItemSubType itemSubTypeValue)
