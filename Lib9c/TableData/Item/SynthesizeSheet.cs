@@ -13,6 +13,9 @@ namespace Nekoyume.TableData
     [Serializable]
     public class SynthesizeSheet : Sheet<int, SynthesizeSheet.Row>
     {
+        /// <summary>
+        /// synthesize data for each subtype
+        /// </summary>
         public struct SynthesizeData
         {
             public int RequiredCount;
