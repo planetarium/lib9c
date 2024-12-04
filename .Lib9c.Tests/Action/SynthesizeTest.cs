@@ -89,6 +89,7 @@ public class SynthesizeTest
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
         state = state.SetActionPoint(avatarAddress, 120);
 
+        var previousAvatarState = state.GetAvatarState(avatarAddress);
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
@@ -138,9 +139,125 @@ public class SynthesizeTest
                 break;
         }
 
-        // TODO: if success, grade should be exceptedGrade, but sometimes it is not.
-        // Assert.Equal(expectedGrade, resultGrade);
-        Assert.True(expectedGrade == resultGrade || resultGrade == grade);
+        var gradeDict = SynthesizeSimulator.GetGradeDict(
+            action.MaterialIds,
+            previousAvatarState,
+            blockIndex,
+            avatarAddress.ToHex(),
+            out _,
+            out _
+        );
+
+        var inputData = new SynthesizeSimulator.InputData()
+        {
+            SynthesizeSheet = TableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
+            RandomObject = new TestRandom(),
+            GradeDict = gradeDict,
+        };
+
+        var result = SynthesizeSimulator.Simulate(inputData)[0];
+        if (result.IsSuccess)
+        {
+            Assert.Equal(expectedGrade, resultGrade);
+        }
+        else
+        {
+            Assert.Equal(resultGrade, grade);
+        }
+    }
+
+    [Theory]
+    [InlineData((Grade)3, ItemSubType.FullCostume)]
+    [InlineData((Grade)4, ItemSubType.FullCostume)]
+    [InlineData((Grade)5, ItemSubType.FullCostume)]
+    [InlineData((Grade)3, ItemSubType.Title)]
+    [InlineData((Grade)4, ItemSubType.Title)]
+    [InlineData((Grade)5, ItemSubType.Title)]
+    [InlineData((Grade)3, ItemSubType.Grimoire)]
+    [InlineData((Grade)4, ItemSubType.Grimoire)]
+    [InlineData((Grade)5, ItemSubType.Grimoire)]
+    [InlineData((Grade)6, ItemSubType.Grimoire)]
+    [InlineData((Grade)1, ItemSubType.Aura)]
+    [InlineData((Grade)2, ItemSubType.Aura)]
+    [InlineData((Grade)3, ItemSubType.Aura)]
+    [InlineData((Grade)4, ItemSubType.Aura)]
+    [InlineData((Grade)5, ItemSubType.Aura)]
+    [InlineData((Grade)6, ItemSubType.Aura)]
+    public void ExecuteMultiple(Grade grade, ItemSubType itemSubType)
+    {
+        var testCount = 100;
+        var itemSubTypes = GetSubTypeArray(itemSubType, testCount * GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
+
+        var previousAvatarState = state.GetAvatarState(avatarAddress);
+        var action = new Synthesize()
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        state = action.Execute(ctx);
+
+        var gradeDict = SynthesizeSimulator.GetGradeDict(
+            action.MaterialIds,
+            previousAvatarState,
+            blockIndex,
+            avatarAddress.ToHex(),
+            out _,
+            out _
+        );
+
+        var inputData = new SynthesizeSimulator.InputData()
+        {
+            SynthesizeSheet = TableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
+            RandomObject = new TestRandom(),
+            GradeDict = gradeDict,
+        };
+
+        var resultList = SynthesizeSimulator.Simulate(inputData);
+        foreach (var result in resultList)
+        {
+            // Check Grade
+            if (result.IsSuccess)
+            {
+                Assert.Equal((int)grade + 1, result.ItemBase.Grade);
+            }
+            else
+            {
+                Assert.Equal((int)grade, result.ItemBase.Grade);
+            }
+
+            if (result.IsEquipment)
+            {
+                Assert.True(result.RecipeId != 0);
+                Assert.True(result.SubRecipeId != 0);
+            }
+        }
     }
 
     [Fact]
