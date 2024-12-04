@@ -48,7 +48,9 @@ public class SynthesizeTest
             .SetAgentState(agentAddress, new AgentState(agentAddress));
 
         foreach (var (key, value) in Sheets)
+        {
             state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+        }
 
         var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
         var avatarState = AvatarState.Create(
@@ -81,7 +83,6 @@ public class SynthesizeTest
     [InlineData((Grade)6, ItemSubType.Aura)]
     public void ExecuteSingle(Grade grade, ItemSubType itemSubType)
     {
-        var context = new ActionContext();
         var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
@@ -147,8 +148,7 @@ public class SynthesizeTest
     {
         var grade = Grade.Rare;
         var itemSubType = ItemSubType.FullCostume;
-        var context = new ActionContext();
-        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(grade));
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
@@ -222,7 +222,6 @@ public class SynthesizeTest
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Grimoire })]
     public void ExecuteInvalidMaterial(Grade grade, ItemSubType[] itemSubTypes)
     {
-        var context = new ActionContext();
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
         state = state.SetActionPoint(avatarAddress, 120);
