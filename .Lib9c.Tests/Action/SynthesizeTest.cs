@@ -33,6 +33,14 @@ public class SynthesizeTest
     private readonly Currency _goldCurrency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
 
+    /// <summary>
+    /// Initializes the game state for testing.
+    /// Sets up an initial agent, avatar, and world state with relevant table sheets.
+    /// </summary>
+    /// <param name="agentAddress">The address of the agent to be created.</param>
+    /// <param name="avatarAddress">The address of the avatar to be created.</param>
+    /// <param name="blockIndex">The initial block index.</param>
+    /// <returns>The initialized world state.</returns>
     public IWorld Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
     {
         agentAddress = new PrivateKey().Address;
@@ -64,6 +72,12 @@ public class SynthesizeTest
         return state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
     }
 
+    /// <summary>
+    /// Tests the synthesis process for a single item.
+    /// Verifies that the resulting item matches the expected grade and type.
+    /// </summary>
+    /// <param name="grade">The grade of the material used in synthesis.</param>
+    /// <param name="itemSubType">The subtype of the item to synthesize.</param>
     [Theory]
     [InlineData((Grade)3, ItemSubType.FullCostume)]
     [InlineData((Grade)4, ItemSubType.FullCostume)]
@@ -173,6 +187,13 @@ public class SynthesizeTest
         }
     }
 
+    /// <summary>
+    /// Tests the synthesis process for multiple items.
+    /// Verifies that the resulting items match the expected grades and types.
+    /// The test case also checks whether the equipment has a recipe.
+    /// </summary>
+    /// <param name="grade">The grade of the material used in synthesis.</param>
+    /// <param name="itemSubType">The subtype of the items to synthesize.</param>
     [Theory]
     [InlineData((Grade)3, ItemSubType.FullCostume)]
     [InlineData((Grade)4, ItemSubType.FullCostume)]
@@ -260,6 +281,10 @@ public class SynthesizeTest
         }
     }
 
+    /// <summary>
+    /// Tests the synthesis action when there are not enough action points.
+    /// Verifies that the action throws a NotEnoughActionPointException.
+    /// </summary>
     [Fact]
     public void ExecuteNotEnoughActionPoint()
     {
@@ -287,6 +312,11 @@ public class SynthesizeTest
         Assert.Throws<NotEnoughActionPointException>(() => action.Execute(ctx));
     }
 
+    /// <summary>
+    /// Tests the synthesis of multiple items of the same type.
+    /// Verifies that the resulting items are of the correct type and grade.
+    /// </summary>
+    /// <param name="testCount">The number of items to synthesize.</param>
     [Theory]
     [InlineData(2)]
     [InlineData(3)]
@@ -329,9 +359,12 @@ public class SynthesizeTest
         }
     }
 
-    // TODO: Add Simulator for test and client
-    // TODO: Exception Tests
-    // TODO: ExecuteMultiple
+    /// <summary>
+    /// Tests the synthesis action with invalid material combinations.
+    /// Verifies that the action throws an InvalidMaterialException.
+    /// </summary>
+    /// <param name="grade">The grade of the material used in synthesis.</param>
+    /// <param name="itemSubTypes">An array of invalid item subtypes to use in synthesis.</param>
     [Theory]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
     [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]

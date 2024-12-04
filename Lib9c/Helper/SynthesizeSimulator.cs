@@ -52,22 +52,70 @@ namespace Nekoyume.Helper
         /// </summary>
         public struct InputData
         {
+            /// <summary>
+            /// The sheet that contains the synthesis information.
+            /// <seealso cref="Nekoyume.TableData.SynthesizeSheet"/>
+            /// </summary>
             public SynthesizeSheet SynthesizeSheet;
+            /// <summary>
+            /// The sheet that contains the synthesis weight information.
+            /// <seealso cref="Nekoyume.TableData.SynthesizeWeightSheet"/>
+            /// </summary>
             public SynthesizeWeightSheet SynthesizeWeightSheet;
+            /// <summary>
+            /// The sheet that contains the costume item information.
+            /// <seealso cref="Nekoyume.TableData.CostumeItemSheet"/>
+            /// </summary>
             public CostumeItemSheet CostumeItemSheet;
+            /// <summary>
+            /// The sheet that contains the equipment item information.
+            /// <seealso cref="Nekoyume.TableData.EquipmentItemSheet"/>
+            /// </summary>
             public EquipmentItemSheet EquipmentItemSheet;
+            /// <summary>
+            /// The sheet that contains the equipment item recipe information.
+            /// <seealso cref="Nekoyume.TableData.EquipmentItemRecipeSheet"/>
+            /// </summary>
             public EquipmentItemRecipeSheet EquipmentItemRecipeSheet;
+            /// <summary>
+            /// The sheet that contains the equipment item sub recipe information.
+            /// <seealso cref="Nekoyume.TableData.EquipmentItemSubRecipeSheetV2"/>
+            /// </summary>
             public EquipmentItemSubRecipeSheetV2 EquipmentItemSubRecipeSheetV2;
+            /// <summary>
+            /// The sheet that contains the equipment item option information.
+            /// <seealso cref="Nekoyume.TableData.EquipmentItemOptionSheet"/>
+            /// </summary>
             public EquipmentItemOptionSheet EquipmentItemOptionSheet;
+            /// <summary>
+            /// The sheet that contains the skill information.
+            /// <seealso cref="Nekoyume.TableData.SkillSheet"/>
+            /// </summary>
             public SkillSheet SkillSheet;
+            /// <summary>
+            /// The block index when action is executed.
+            /// </summary>
             public long BlockIndex;
+            /// <summary>
+            /// The random object to use.
+            /// Caution: Must have the same seed as when the action is executed
+            /// </summary>
             public IRandom RandomObject;
+            /// <summary>
+            /// The grade dictionary of the material items.
+            /// </summary>
             public GradeDict GradeDict;
         }
 
-        public struct EquipmentData
+        private struct EquipmentData
         {
+            /// <summary>
+            /// RecipeId of the equipment
+            /// </summary>
             public int RecipeId;
+            /// <summary>
+            /// SubRecipeId of the equipment
+            /// </summary>
             public int SubRecipeId;
         }
 
