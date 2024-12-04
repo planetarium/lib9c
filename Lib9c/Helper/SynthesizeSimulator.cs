@@ -84,7 +84,7 @@ namespace Nekoyume.Helper
                     var synthesizeCount = materialCount / requiredCount;
                     var remainder = materialCount % requiredCount;
 
-                    if (synthesizeCount <= 0 || remainder > 0)
+                    if (synthesizeCount <= 0 || remainder != 0)
                     {
                         throw new NotEnoughMaterialException(
                             $"Aborted as the number of materials for grade {gradeId} and subtype {itemSubType} is not enough."
