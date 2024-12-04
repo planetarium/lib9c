@@ -7,14 +7,20 @@ namespace Nekoyume.TableData
 {
     using System.Linq;
 
+    /// <summary>
+    /// Represents a SynthesizeSheet.
+    /// </summary>
     [Serializable]
     public class SynthesizeSheet : Sheet<int, SynthesizeSheet.Row>
     {
         public struct SynthesizeData
         {
             public int RequiredCount;
-            public float SucceedRate;
+            public int SucceedRate;
         }
+
+        public const int SucceedRateMin = 0;
+        public const int SucceedRateMax = 10000;
 
         [Serializable]
         public class Row : SheetRow<int>
@@ -29,13 +35,13 @@ namespace Nekoyume.TableData
                 GradeId = ParseInt(fields[0]);
                 var itemSubType = (ItemSubType) Enum.Parse(typeof(ItemSubType), fields[1]);
                 var requiredCount = ParseInt(fields[2], 25);
-                var succeedRate = ParseFloat(fields[3], 0.0f);
+                var succeedRate = ParseInt(fields[3], SucceedRateMin);
                 RequiredCountDict = new Dictionary<ItemSubType, SynthesizeData>
                 {
                     [itemSubType] = new ()
                     {
                         RequiredCount = requiredCount,
-                        SucceedRate = succeedRate,
+                        SucceedRate = Math.Min(SucceedRateMax, Math.Max(SucceedRateMin, succeedRate)),
                     },
                 };
             }

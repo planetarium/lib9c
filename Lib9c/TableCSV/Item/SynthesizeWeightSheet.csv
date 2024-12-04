@@ -1,7 +1,7 @@
 grade_id,item_id,weight
-_default value for weight is 1. only the second decimal place
-3,40100001,0.3
-3,40100015,0.1
-3,40100016,0.1
-3,40100019,0.1
-5,49900027,4
+_default value for weight is 10000.
+3,40100001,3000
+3,40100015,1000
+3,40100016,1000
+3,40100019,1000
+5,49900027,40000

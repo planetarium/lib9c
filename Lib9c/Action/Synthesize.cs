@@ -16,11 +16,14 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Action
 {
+    using Extensions;
     using Sheets = Dictionary<Type, (Address, ISheet)>;
     using GradeDict = Dictionary<int, Dictionary<ItemSubType, int>>;
 
     /// <summary>
     /// Synthesize action is a type of action that synthesizes items.
+    /// <value>MaterialIds: Id list of items as material</value>
+    /// <value><br/>ChargeAp: Whether to charge action points with action execution</value>
     /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
@@ -29,27 +32,13 @@ namespace Nekoyume.Action
         private const string TypeIdentifier = "synthesize";
 
         private const string MaterialsKey = "m";
+        private const string ChargeApKey = "c";
         private const string AvatarAddressKey = "a";
-
-        private static readonly ItemType[] ValidItemType =
-        {
-            ItemType.Costume,
-            ItemType.Equipment,
-        };
-
-        private static readonly ItemSubType[] ValidItemSubType =
-        {
-            ItemSubType.FullCostume,
-            ItemSubType.Title,
-            ItemSubType.Grimoire,
-            ItemSubType.Aura,
-        };
 
 #region Fields
         public List<Guid> MaterialIds = new();
+        public bool ChargeAp;
         public Address AvatarAddress;
-
-        private ItemSubType? _cachedItemSubType;
 #endregion Fields
 
         /// <summary>
@@ -87,49 +76,15 @@ namespace Nekoyume.Action
                 typeof(EquipmentItemSheet),
                 typeof(SynthesizeSheet),
                 typeof(SynthesizeWeightSheet),
+                typeof(MaterialItemSheet),
             });
+
+            // Calculate action point
+            var actionPoint = CalculateActionPoint(states, avatarState, sheets, context);
 
             // Initialize variables
-            var materialEquipments = new List<Equipment>();
-            var materialCostumes = new List<Costume>();
-            var gradeDict = new GradeDict();
-
-            // Process materials
-            foreach (var materialId in MaterialIds)
-            {
-                var materialEquipment = GetEquipmentFromId(materialId, avatarState, context, addressesHex);
-                var materialCostume = GetCostumeFromId(materialId, avatarState, addressesHex);
-                if (materialEquipment == null && materialCostume == null)
-                {
-                    throw new InvalidMaterialException(
-                        $"{addressesHex} Aborted as the material item is not a valid item type."
-                    );
-                }
-
-                if (materialEquipment != null)
-                {
-                    materialEquipments.Add(materialEquipment);
-                    SetGradeDict(ref gradeDict, materialEquipment.Grade, materialEquipment.ItemSubType);
-                }
-
-                if (materialCostume != null)
-                {
-                    materialCostumes.Add(materialCostume);
-                    SetGradeDict(ref gradeDict, materialCostume.Grade, materialCostume.ItemSubType);
-                }
-            }
-
-            if (_cachedItemSubType == null)
-            {
-                throw new InvalidOperationException("ItemSubType is not set.");
-            }
-
-            var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
-            {
-                Sheets = sheets,
-                RandomObject = context.GetRandom(),
-                GradeDict = gradeDict,
-            });
+            var gradeDict = SynthesizeSimulator.GetGradeDict(MaterialIds, avatarState, context.BlockIndex,
+                addressesHex, out var materialEquipments, out var materialCostumes);
 
             // Unequip items (if necessary)
             foreach (var materialEquipment in materialEquipments)
@@ -150,7 +105,17 @@ namespace Nekoyume.Action
                         $"{addressesHex} Aborted as the material item ({materialId}) does not exist in inventory."
                     );
                 }
-            }
+            };
+
+            var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
+            {
+                SynthesizeSheet = sheets.GetSheet<SynthesizeSheet>(),
+                SynthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>(),
+                CostumeItemSheet = sheets.GetSheet<CostumeItemSheet>(),
+                EquipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>(),
+                RandomObject = context.GetRandom(),
+                GradeDict = gradeDict,
+            });
 
             // Add synthesized items to inventory
             foreach (var item in synthesizedItems)
@@ -158,103 +123,49 @@ namespace Nekoyume.Action
                 avatarState.inventory.AddNonFungibleItem(item.ItemBase);
             }
 
-            return states.SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
+            return states
+                   .SetActionPoint(AvatarAddress, actionPoint)
+                   .SetAvatarState(AvatarAddress, avatarState, true, true, false, false);
         }
 
-        private Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, IActionContext context, string addressesHex)
+        private long CalculateActionPoint(IWorld states, AvatarState avatarState, Sheets sheets, IActionContext context)
         {
-            if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out Equipment materialEquipment))
+            if (!states.TryGetActionPoint(AvatarAddress, out var actionPoint))
             {
-                return null;
+                actionPoint = avatarState.actionPoint;
             }
 
-            if (materialEquipment.RequiredBlockIndex > context.BlockIndex)
+            if (actionPoint < GameConfig.ActionCostAP)
             {
-                throw new RequiredBlockIndexException(
-                    $"{addressesHex} Aborted as the material ({materialId}) is not available yet;" +
-                    $" it will be available at the block #{materialEquipment.RequiredBlockIndex}."
-                );
-            }
-
-            // Validate item type
-            if (!ValidItemType.Contains(materialEquipment.ItemType))
-            {
-                throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a valid item type: {materialEquipment.ItemType}."
-                );
-            }
-
-            if (!ValidItemSubType.Contains(materialEquipment.ItemSubType))
-            {
-                throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a valid item sub type: {materialEquipment.ItemSubType}."
-                );
-            }
-
-            _cachedItemSubType ??= materialEquipment.ItemSubType;
-            if (materialEquipment.ItemSubType != _cachedItemSubType)
-            {
-                throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a {_cachedItemSubType}, but {materialEquipment.ItemSubType}."
-                    );
-            }
-
-            return materialEquipment;
-        }
-
-        private Costume? GetCostumeFromId(Guid materialId, AvatarState avatarState, string addressesHex)
-        {
-            if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out Costume costumeItem))
-            {
-                return null;
-            }
-
-            // Validate item type
-            if (!ValidItemType.Contains(costumeItem.ItemType))
-            {
-                throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a valid item type: {costumeItem.ItemType}."
-                );
-            }
-
-            if (!ValidItemSubType.Contains(costumeItem.ItemSubType))
-            {
-                throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a valid item sub type: {costumeItem.ItemSubType}."
-                );
-            }
-
-            _cachedItemSubType ??= costumeItem.ItemSubType;
-            if (costumeItem.ItemSubType != _cachedItemSubType)
-            {
-                throw new InvalidMaterialException(
-                    $"{addressesHex} Aborted as the material item is not a {_cachedItemSubType}, but {costumeItem.ItemSubType}."
-                    );
-            }
-
-            return costumeItem;
-        }
-
-        private void SetGradeDict(ref GradeDict gradeDict, int grade, ItemSubType itemSubType)
-        {
-            if (gradeDict.ContainsKey(grade))
-            {
-                if (gradeDict[grade].ContainsKey(itemSubType))
+                switch (ChargeAp)
                 {
-                    gradeDict[grade][itemSubType]++;
-                }
-                else
-                {
-                    gradeDict[grade][itemSubType] = 1;
+                    case false:
+                        throw new NotEnoughActionPointException("Action point is not enough. for synthesize.");
+                    case true:
+                    {
+                        var row = sheets.GetSheet<MaterialItemSheet>()
+                                                          .OrderedList?
+                                                          .First(r => r.ItemSubType == ItemSubType.ApStone);
+                        if (row == null)
+                        {
+                            throw new SheetRowNotFoundException(
+                                nameof(MaterialItemSheet),
+                                ItemSubType.ApStone.ToString()
+                            );
+                        }
+
+                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, context.BlockIndex))
+                        {
+                            throw new NotEnoughMaterialException("not enough ap stone.");
+                        }
+                        actionPoint = DailyReward.ActionPointMax;
+                        break;
+                    }
                 }
             }
-            else
-            {
-                gradeDict[grade] = new Dictionary<ItemSubType, int>
-                {
-                    { itemSubType, 1 },
-                };
-            }
+
+            actionPoint -= GameConfig.ActionCostAP;
+            return actionPoint;
         }
 
 #region Serialize
@@ -262,6 +173,7 @@ namespace Nekoyume.Action
             new Dictionary<string, IValue>
                 {
                     [MaterialsKey] = new List(MaterialIds.OrderBy(i => i).Select(i => i.Serialize())),
+                    [ChargeApKey] = ChargeAp.Serialize(),
                     [AvatarAddressKey] = AvatarAddress.Serialize(),
                 }
                 .ToImmutableDictionary();
@@ -269,6 +181,7 @@ namespace Nekoyume.Action
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
+            ChargeAp = plainValue[ChargeApKey].ToBoolean();
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
         }
 #endregion Serialize

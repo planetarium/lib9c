@@ -49,7 +49,6 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
         var bond = repository.GetBond(validator, validatorKey.Address);
         var validatorList = repository.GetValidatorList();
 
-        Assert.Equal(validatorKey.Address, Assert.Single(validator.Delegators));
         Assert.Equal(gold.RawValue, bond.Share);
         Assert.Equal(validator.Validator, Assert.Single(validatorList.Validators));
         Assert.Equal(validator.Validator, Assert.Single(validatorList.ActiveSet()));

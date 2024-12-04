@@ -1,4 +1,3 @@
-using System;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -6,6 +5,10 @@ using Nekoyume.Extensions;
 
 namespace Nekoyume.Action.Guild.Migration.LegacyModels
 {
+    // TODO: [GuildMigration] Remove this class when the migration is done.
+    /// <summary>
+    /// The module for delegation height for migration.
+    /// </summary>
     public static class MigrationModule
     {
         /// <summary>
@@ -23,11 +26,6 @@ namespace Nekoyume.Action.Guild.Migration.LegacyModels
 
         public static IWorld SetDelegationMigrationHeight(this IWorld world, long height)
         {
-            if (world.GetDelegationMigrationHeight() is long)
-            {
-                throw new InvalidOperationException("Cannot overwrite delegation migration index.");
-            }
-
             return world
                 .MutateAccount(
                     Addresses.Migration,

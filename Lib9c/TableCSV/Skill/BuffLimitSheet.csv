@@ -1,5 +1,5 @@
-group_id,percentage
-206000,-20
-709000,-50
-206003,-20
-206009,-50
+group_id,modify_type1,percentage
+206000,Percentage,-20
+709000,Percentage,-50
+206003,Percentage,-20
+206009,Percentage,-50

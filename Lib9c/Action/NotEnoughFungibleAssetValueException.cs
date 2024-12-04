@@ -9,9 +9,11 @@ namespace Nekoyume.Action
     [Serializable]
     public class NotEnoughFungibleAssetValueException : Exception
     {
-        public NotEnoughFungibleAssetValueException(
-            string message,
-            Exception innerException = null) :
+        public NotEnoughFungibleAssetValueException(string message) : base(message)
+        {
+        }
+
+        public NotEnoughFungibleAssetValueException(string message, Exception innerException) :
             base(message, innerException)
         {
         }
@@ -20,8 +22,8 @@ namespace Nekoyume.Action
             string addressesHex,
             string require,
             string current,
-            Exception innerException = null)
-            : this(
+            Exception innerException = null) :
+            this(
                 $"{addressesHex}Aborted as the signer's balance is" +
                 $" insufficient to pay entrance fee/stake: {current} < {require}.",
                 innerException)
@@ -33,8 +35,8 @@ namespace Nekoyume.Action
             string addressesHex,
             string require,
             string current,
-            Exception innerException = null)
-            : this(
+            Exception innerException = null) :
+            this(
                 $"[{actionType}][{addressesHex}] Aborted as the signer's balance is" +
                 $" insufficient to pay entrance fee/stake: {current} < {require}.",
                 innerException)
@@ -91,8 +93,8 @@ namespace Nekoyume.Action
             string actionType,
             string addressesHex,
             BigInteger require,
-            BigInteger current)
-            : this(
+            BigInteger current) :
+            this(
                 actionType,
                 addressesHex,
                 require.ToString(CultureInfo.InvariantCulture),
@@ -100,9 +102,8 @@ namespace Nekoyume.Action
         {
         }
 
-        public NotEnoughFungibleAssetValueException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
+        public NotEnoughFungibleAssetValueException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
         {
         }
     }

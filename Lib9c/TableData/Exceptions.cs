@@ -47,13 +47,13 @@ namespace Nekoyume.TableData
         }
 
         public SheetRowNotFoundException(string sheetName, string condition, string value) :
-            base($"{sheetName}: {condition} - {value}")
+            this($"{sheetName}: {condition} - {value}")
         {
         }
 
-        public SheetRowNotFoundException(string addressesHex, string sheetName, int intKey)
-            : base($"{addressesHex}{sheetName}:" +
-                   $" Key - {intKey.ToString(CultureInfo.InvariantCulture)}")
+        public SheetRowNotFoundException(string addressesHex, string sheetName, int intKey) :
+            this($"{addressesHex}{sheetName}:" +
+                $" Key - {intKey.ToString(CultureInfo.InvariantCulture)}")
         {
         }
 
@@ -61,16 +61,18 @@ namespace Nekoyume.TableData
             string actionType,
             string addressesHex,
             string sheetName,
-            int intKey)
-            : base($"[{actionType}][{addressesHex}]{sheetName}:" +
-                   $" Key - {intKey.ToString(CultureInfo.InvariantCulture)}")
+            int intKey) :
+            this($"[{actionType}][{addressesHex}]{sheetName}:" +
+                $" Key - {intKey.ToString(CultureInfo.InvariantCulture)}")
         {
         }
 
-        protected SheetRowNotFoundException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
+        public SheetRowNotFoundException(string message) : base(message)
+        {
+        }
+
+        protected SheetRowNotFoundException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
         {
         }
     }

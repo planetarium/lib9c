@@ -4,16 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
-using Libplanet.Crypto;
 using Nekoyume.Action;
-using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.EnumType;
+using Nekoyume.Model.State;
 using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
 {
-    using Sheets = Dictionary<Type, (Address, ISheet)>;
     using GradeDict = Dictionary<int, Dictionary<ItemSubType, int>>;
 
     public struct SynthesizeResult
@@ -22,11 +20,35 @@ namespace Nekoyume.Helper
         public bool IsSuccess;
     }
 
+    /// <summary>
+    /// A class that simulates the synthesis of items.
+    /// <see cref="InputData"/>
+    /// </summary>
     public static class SynthesizeSimulator
     {
+        private static readonly ItemType[] ValidItemType =
+        {
+            ItemType.Costume,
+            ItemType.Equipment,
+        };
+
+        private static readonly ItemSubType[] ValidItemSubType =
+        {
+            ItemSubType.FullCostume,
+            ItemSubType.Title,
+            ItemSubType.Grimoire,
+            ItemSubType.Aura,
+        };
+
+        /// <summary>
+        /// Simulate the synthesis of items.
+        /// </summary>
         public struct InputData
         {
-            public Sheets Sheets;
+            public SynthesizeSheet SynthesizeSheet;
+            public SynthesizeWeightSheet SynthesizeWeightSheet;
+            public CostumeItemSheet CostumeItemSheet;
+            public EquipmentItemSheet EquipmentItemSheet;
             public IRandom RandomObject;
             public GradeDict GradeDict;
         }
@@ -35,8 +57,7 @@ namespace Nekoyume.Helper
         {
             var synthesizeResults = new List<SynthesizeResult>();
 
-            var sheets = inputData.Sheets;
-            var synthesizeSheet = sheets.GetSheet<SynthesizeSheet>();
+            var synthesizeSheet = inputData.SynthesizeSheet;
             var random = inputData.RandomObject;
             var gradeDict = inputData.GradeDict;
 
@@ -46,27 +67,25 @@ namespace Nekoyume.Helper
                 var gradeId = gradeItem.Key;
                 var subTypeDict = gradeItem.Value;
 
+                if (!synthesizeSheet.TryGetValue(gradeId, out var synthesizeRow))
+                {
+                    throw new SheetRowNotFoundException(
+                        $"Aborted as the synthesize row for grade ({gradeId}) was failed to load in {nameof(SynthesizeSheet)}", gradeId
+                    );
+                }
+
                 foreach (var subTypeItem in subTypeDict)
                 {
                     var itemSubType = subTypeItem.Key;
                     var materialCount = subTypeItem.Value;
 
-                    if (!synthesizeSheet.TryGetValue(gradeId, out var synthesizeRow))
-                    {
-                        throw new SheetRowNotFoundException(
-                            $"Aborted as the synthesize row for grade ({gradeId}) was failed to load in {nameof(SynthesizeSheet)}", gradeId
-                        );
-                    }
-
                     // TODO: subType별로 필요한 아이템 개수가 다를 수 있음
                     var requiredCount = synthesizeRow.RequiredCountDict[itemSubType].RequiredCount;
-                    var succeedRate = Math.Clamp(synthesizeRow.RequiredCountDict[itemSubType].SucceedRate, 0, 1);
-                    var succeedRatePercentage = (int)(succeedRate * 100);
-
+                    var succeedRate = synthesizeRow.RequiredCountDict[itemSubType].SucceedRate;
                     var synthesizeCount = materialCount / requiredCount;
                     var remainder = materialCount % requiredCount;
 
-                    if (synthesizeCount <= 0 || remainder > 0)
+                    if (synthesizeCount <= 0 || remainder != 0)
                     {
                         throw new NotEnoughMaterialException(
                             $"Aborted as the number of materials for grade {gradeId} and subtype {itemSubType} is not enough."
@@ -76,13 +95,17 @@ namespace Nekoyume.Helper
                     // Calculate success for each synthesis
                     for (var i = 0; i < synthesizeCount; i++)
                     {
-                        var isSuccess = random.Next(100) < succeedRatePercentage;
+                        // random value range is 0 ~ 9999
+                        // If the SucceedRate of the table is 0, use '<' for always to fail.
+                        // and SucceedRate of the table is 10000, always success(because left value range is 0~9999)
+                        var isSuccess = random.Next(SynthesizeSheet.SucceedRateMax) < succeedRate;
 
                         var grade = (Grade)gradeId;
                         var outputGradeId = isSuccess ? GetTargetGrade(grade) : grade;
 
                         // Decide the item to add to inventory based on SynthesizeWeightSheet
-                        var synthesizedItem = GetSynthesizedItem(outputGradeId, sheets, random, itemSubType);
+                        var synthesizedItem = GetSynthesizedItem(outputGradeId, inputData.SynthesizeWeightSheet, inputData.CostumeItemSheet,
+                            inputData.EquipmentItemSheet, random, itemSubType);
 
                         if (isSuccess && grade == (Grade)synthesizedItem.Grade)
                         {
@@ -102,16 +125,152 @@ namespace Nekoyume.Helper
             return synthesizeResults;
         }
 
-        private static ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IRandom random, ItemSubType itemSubTypeValue)
+        public static GradeDict GetGradeDict(List<Guid> materialIds, AvatarState avatarState, long blockIndex,
+            string addressesHex, out List<Equipment> materialEquipments, out List<Costume> materialCostumes)
+        {
+            ItemSubType? cachedItemSubType = null;
+            var gradeDict = new GradeDict();
+            materialEquipments = new List<Equipment>();
+            materialCostumes = new List<Costume>();
+
+            foreach (var materialId in materialIds)
+            {
+                var materialEquipment = GetEquipmentFromId(materialId, avatarState, blockIndex, addressesHex, ref cachedItemSubType);
+                var materialCostume = GetCostumeFromId(materialId, avatarState, addressesHex, ref cachedItemSubType);
+                if (materialEquipment == null && materialCostume == null)
+                {
+                    throw new InvalidMaterialException(
+                        $"{addressesHex} Aborted as the material item is not a valid item type."
+                    );
+                }
+
+                if (materialEquipment != null)
+                {
+                    materialEquipments.Add(materialEquipment);
+                    SetGradeDict(ref gradeDict, materialEquipment.Grade, materialEquipment.ItemSubType);
+                }
+
+                if (materialCostume != null)
+                {
+                    materialCostumes.Add(materialCostume);
+                    SetGradeDict(ref gradeDict, materialCostume.Grade, materialCostume.ItemSubType);
+                }
+            }
+
+            if (cachedItemSubType == null)
+            {
+                throw new InvalidOperationException("ItemSubType is not set.");
+            }
+
+            return gradeDict;
+        }
+
+        private static void SetGradeDict(ref GradeDict gradeDict, int grade, ItemSubType itemSubType)
+        {
+            if (gradeDict.ContainsKey(grade))
+            {
+                if (gradeDict[grade].ContainsKey(itemSubType))
+                {
+                    gradeDict[grade][itemSubType]++;
+                }
+                else
+                {
+                    gradeDict[grade][itemSubType] = 1;
+                }
+            }
+            else
+            {
+                gradeDict[grade] = new Dictionary<ItemSubType, int>
+                {
+                    { itemSubType, 1 },
+                };
+            }
+        }
+
+        private static Equipment? GetEquipmentFromId(Guid materialId, AvatarState avatarState, long blockIndex, string addressesHex, ref ItemSubType? cachedItemSubType)
+        {
+            if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out Equipment materialEquipment))
+            {
+                return null;
+            }
+
+            if (materialEquipment.RequiredBlockIndex > blockIndex)
+            {
+                throw new RequiredBlockIndexException(
+                    $"{addressesHex} Aborted as the material ({materialId}) is not available yet;" +
+                    $" it will be available at the block #{materialEquipment.RequiredBlockIndex}."
+                );
+            }
+
+            // Validate item type
+            if (!ValidItemType.Contains(materialEquipment.ItemType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item type: {materialEquipment.ItemType}."
+                );
+            }
+
+            if (!ValidItemSubType.Contains(materialEquipment.ItemSubType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item sub type: {materialEquipment.ItemSubType}."
+                );
+            }
+
+            cachedItemSubType ??= materialEquipment.ItemSubType;
+            if (materialEquipment.ItemSubType != cachedItemSubType)
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a {cachedItemSubType}, but {materialEquipment.ItemSubType}."
+                    );
+            }
+
+            return materialEquipment;
+        }
+
+        private static Costume? GetCostumeFromId(Guid materialId, AvatarState avatarState, string addressesHex, ref ItemSubType? cachedItemSubType)
+        {
+            if (!avatarState.inventory.TryGetNonFungibleItem(materialId, out Costume costumeItem))
+            {
+                return null;
+            }
+
+            // Validate item type
+            if (!ValidItemType.Contains(costumeItem.ItemType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item type: {costumeItem.ItemType}."
+                );
+            }
+
+            if (!ValidItemSubType.Contains(costumeItem.ItemSubType))
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a valid item sub type: {costumeItem.ItemSubType}."
+                );
+            }
+
+            cachedItemSubType ??= costumeItem.ItemSubType;
+            if (costumeItem.ItemSubType != cachedItemSubType)
+            {
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not a {cachedItemSubType}, but {costumeItem.ItemSubType}."
+                    );
+            }
+
+            return costumeItem;
+        }
+
+        private static ItemBase GetSynthesizedItem(Grade grade, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, EquipmentItemSheet equipmentItemSheet, IRandom random, ItemSubType itemSubTypeValue)
         {
             switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
                 case ItemSubType.Title:
-                    return GetRandomCostume(grade, itemSubTypeValue, sheets, random);
+                    return GetRandomCostume(grade, itemSubTypeValue, weightSheet, costumeItemSheet, random);
                 case ItemSubType.Aura:
                 case ItemSubType.Grimoire:
-                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, random);
+                    return GetRandomEquipment(grade, itemSubTypeValue, weightSheet, equipmentItemSheet, random);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -119,19 +278,17 @@ namespace Nekoyume.Helper
 
 #region GetRandomItem
 
-        private static ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
+        private static ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, IRandom random)
         {
-            var sheet = sheets.GetSheet<CostumeItemSheet>();
-            var synthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>();
-            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, sheet);
+            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, costumeItemSheet);
 
             if (synthesizeResultPool.Count == 0)
             {
                 throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
-            float cumulativeWeight = 0;
+            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, weightSheet, random, out var itemWeights);
+            var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
                 cumulativeWeight += weight;
@@ -140,7 +297,7 @@ namespace Nekoyume.Helper
                     continue;
                 }
 
-                if (!sheet.TryGetValue(itemId, out var equipmentRow))
+                if (!costumeItemSheet.TryGetValue(itemId, out var equipmentRow))
                 {
                     throw new SheetRowNotFoundException(
                         $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId
@@ -153,19 +310,17 @@ namespace Nekoyume.Helper
             throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
-        private static ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
+        private static ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, EquipmentItemSheet equipmentItemSheet,  IRandom random)
         {
-            var sheet = sheets.GetSheet<EquipmentItemSheet>();
-            var synthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>();
-            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, sheet);
+            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, equipmentItemSheet);
 
             if (synthesizeResultPool.Count == 0)
             {
                 throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
-            float cumulativeWeight = 0;
+            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, weightSheet, random, out var itemWeights);
+            var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
                 cumulativeWeight += weight;
@@ -174,7 +329,7 @@ namespace Nekoyume.Helper
                     continue;
                 }
 
-                if (!sheet.TryGetValue(itemId, out var equipmentRow))
+                if (!equipmentItemSheet.TryGetValue(itemId, out var equipmentRow))
                 {
                     throw new SheetRowNotFoundException(
                         $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId
@@ -187,11 +342,11 @@ namespace Nekoyume.Helper
             throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
-        private static float GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
-            IRandom random, out List<(int ItemId, float Weight)> itemWeights)
+        private static int GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
+                                          IRandom random, out List<(int ItemId, int Weight)> itemWeights)
         {
-            float totalWeight = 0;
-            itemWeights = new List<(int ItemId, float Weight)>();
+            var totalWeight = 0;
+            itemWeights = new List<(int ItemId, int Weight)>();
             foreach (var itemId in synthesizeResultPool)
             {
                 var weight = GetWeight(grade, itemId, synthesizeWeightSheet);
@@ -200,8 +355,7 @@ namespace Nekoyume.Helper
             }
 
             // Random selection based on weight
-            var randomValuePercentage = random.Next((int)(totalWeight * 100));
-            return randomValuePercentage * 0.01f;
+            return random.Next(totalWeight + 1);
         }
 
 #endregion GetRandomItem
@@ -211,19 +365,19 @@ namespace Nekoyume.Helper
         public static HashSet<int> GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, CostumeItemSheet sheet)
         {
             return sheet.Values
-                .Where(r => r.ItemSubType == subType)
-                .Where(r => (Grade)r.Grade == sourceGrade)
-                .Select(r => r.Id)
-                .ToHashSet();
+                        .Where(r => r.ItemSubType == subType)
+                        .Where(r => (Grade)r.Grade == sourceGrade)
+                        .Select(r => r.Id)
+                        .ToHashSet();
         }
 
         public static HashSet<int> GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, EquipmentItemSheet sheet)
         {
             return sheet.Values
-                .Where(r => r.ItemSubType == subType)
-                .Where(r => (Grade)r.Grade == sourceGrade)
-                .Select(r => r.Id)
-                .ToHashSet();
+                        .Where(r => r.ItemSubType == subType)
+                        .Where(r => (Grade)r.Grade == sourceGrade)
+                        .Select(r => r.Id)
+                        .ToHashSet();
         }
 
         /// <summary>
@@ -235,11 +389,12 @@ namespace Nekoyume.Helper
         /// <returns>list of items key(int)</returns>
         public static List<int> GetSynthesizeResultPool(List<Grade> sourceGrades, ItemSubType subType, CostumeItemSheet sheet)
         {
-            return sheet.Values
-                .Where(r => r.ItemSubType == subType)
-                .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
-                .Select(r => r.Id)
-                .ToList();
+            return sheet
+                   .Values
+                   .Where(r => r.ItemSubType == subType)
+                   .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
+                   .Select(r => r.Id)
+                   .ToList();
         }
 
         /// <summary>
@@ -251,11 +406,12 @@ namespace Nekoyume.Helper
         /// <returns>list of items key(int)</returns>
         public static List<int> GetSynthesizeResultPool(List<Grade> sourceGrades, ItemSubType subType, EquipmentItemSheet sheet)
         {
-            return sheet.Values
-                .Where(r => r.ItemSubType == subType)
-                .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
-                .Select(r => r.Id)
-                .ToList();
+            return sheet
+                   .Values
+                   .Where(r => r.ItemSubType == subType)
+                   .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
+                   .Select(r => r.Id)
+                   .ToList();
         }
 
         public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, CostumeItemSheet sheet)
@@ -276,15 +432,11 @@ namespace Nekoyume.Helper
             return hasGrade ? targetGrade : grade;
         }
 
-        public static float GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
+        public static int GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
         {
+            var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
             var gradeRow = sheet.Values.FirstOrDefault(r => r.GradeId == (int)grade);
-            if (gradeRow == null)
-            {
-                return 1;
-            }
-
-            return gradeRow.WeightDict.TryGetValue(itemId, out var weight) ? weight : 1;
+            return gradeRow == null ? defaultWeight : gradeRow.WeightDict.GetValueOrDefault(itemId, defaultWeight);
         }
 
         // TODO: move to ItemExtensions

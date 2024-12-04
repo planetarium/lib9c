@@ -68,3 +68,4 @@ export {
   MigrateDelegation,
   type MigrateDelegationArgs,
 } from "./actions/migrate_delegation.js";
+export { makeTx, type NetworkProvider } from "./tx.js";
