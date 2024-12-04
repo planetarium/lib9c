@@ -21,6 +21,10 @@ namespace Nekoyume.Helper
     {
         public ItemBase ItemBase;
         public bool IsSuccess;
+        public int RecipeId;
+        public int SubRecipeId;
+
+        public bool IsEquipment => ItemBase.ItemType == ItemType.Equipment;
     }
 
     /// <summary>
@@ -52,8 +56,19 @@ namespace Nekoyume.Helper
             public SynthesizeWeightSheet SynthesizeWeightSheet;
             public CostumeItemSheet CostumeItemSheet;
             public EquipmentItemSheet EquipmentItemSheet;
+            public EquipmentItemRecipeSheet EquipmentItemRecipeSheet;
+            public EquipmentItemSubRecipeSheetV2 EquipmentItemSubRecipeSheetV2;
+            public EquipmentItemOptionSheet EquipmentItemOptionSheet;
+            public SkillSheet SkillSheet;
+            public long BlockIndex;
             public IRandom RandomObject;
             public GradeDict GradeDict;
+        }
+
+        public struct EquipmentData
+        {
+            public int RecipeId;
+            public int SubRecipeId;
         }
 
         /// <summary>
@@ -111,11 +126,21 @@ namespace Nekoyume.Helper
                         var isSuccess = random.Next(SynthesizeSheet.SucceedRateMax) < succeedRate;
 
                         var grade = (Grade)gradeId;
-                        var outputGradeId = isSuccess ? GetTargetGrade(grade) : grade;
-
                         // Decide the item to add to inventory based on SynthesizeWeightSheet
-                        var synthesizedItem = GetSynthesizedItem(outputGradeId, inputData.SynthesizeWeightSheet, inputData.CostumeItemSheet,
-                            inputData.EquipmentItemSheet, random, itemSubType);
+                        var synthesizedItem = GetSynthesizedItem(
+                            grade,
+                            isSuccess,
+                            inputData.SynthesizeWeightSheet,
+                            inputData.CostumeItemSheet,
+                            inputData.EquipmentItemSheet,
+                            inputData.EquipmentItemRecipeSheet,
+                            inputData.EquipmentItemSubRecipeSheetV2,
+                            inputData.EquipmentItemOptionSheet,
+                            inputData.SkillSheet,
+                            inputData.BlockIndex,
+                            random,
+                            itemSubType,
+                            out var equipmentData);
 
                         if (isSuccess && grade == (Grade)synthesizedItem.Grade)
                         {
@@ -127,6 +152,8 @@ namespace Nekoyume.Helper
                         {
                             ItemBase = synthesizedItem,
                             IsSuccess = isSuccess,
+                            RecipeId = equipmentData.RecipeId,
+                            SubRecipeId = equipmentData.SubRecipeId,
                         });
                     }
                 }
@@ -283,16 +310,42 @@ namespace Nekoyume.Helper
             return costumeItem;
         }
 
-        private static ItemBase GetSynthesizedItem(Grade grade, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, EquipmentItemSheet equipmentItemSheet, IRandom random, ItemSubType itemSubTypeValue)
+        private static ItemBase GetSynthesizedItem(
+            Grade grade,
+            bool isSuccess,
+            SynthesizeWeightSheet weightSheet,
+            CostumeItemSheet costumeItemSheet,
+            EquipmentItemSheet equipmentItemSheet,
+            EquipmentItemRecipeSheet equipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 equipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet equipmentItemOptionSheet,
+            SkillSheet skillSheet,
+            long blockIndex,
+            IRandom random,
+            ItemSubType itemSubTypeValue,
+            out EquipmentData equipmentData)
         {
+            equipmentData = new EquipmentData();
             switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
                 case ItemSubType.Title:
-                    return GetRandomCostume(grade, itemSubTypeValue, weightSheet, costumeItemSheet, random);
+                    return GetRandomCostume(grade, isSuccess, itemSubTypeValue, weightSheet, costumeItemSheet, random);
                 case ItemSubType.Aura:
                 case ItemSubType.Grimoire:
-                    return GetRandomEquipment(grade, itemSubTypeValue, weightSheet, equipmentItemSheet, random);
+                    return GetRandomEquipment(
+                        grade,
+                        isSuccess,
+                        itemSubTypeValue,
+                        weightSheet,
+                        equipmentItemSheet,
+                        equipmentItemRecipeSheet,
+                        equipmentItemSubRecipeSheetV2,
+                        equipmentItemOptionSheet,
+                        skillSheet,
+                        blockIndex,
+                        random,
+                        ref equipmentData);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -300,9 +353,21 @@ namespace Nekoyume.Helper
 
 #region GetRandomItem
 
-        private static ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, IRandom random)
+        private static ItemBase GetRandomCostume(Grade grade, bool isSuccess, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, IRandom random)
         {
-            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, costumeItemSheet);
+            HashSet<int>? synthesizeResultPool = null;
+            if (isSuccess)
+            {
+                synthesizeResultPool = GetSynthesizeResultPool(GetTargetGrade(grade), itemSubType, costumeItemSheet);
+                if (synthesizeResultPool.Count == 0)
+                {
+                    synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, costumeItemSheet);
+                }
+            }
+            else
+            {
+                synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, costumeItemSheet);
+            }
 
             if (synthesizeResultPool.Count == 0)
             {
@@ -332,9 +397,33 @@ namespace Nekoyume.Helper
             throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
-        private static ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, EquipmentItemSheet equipmentItemSheet,  IRandom random)
+        private static ItemBase GetRandomEquipment(
+            Grade grade,
+            bool isSuccess,
+            ItemSubType itemSubType,
+            SynthesizeWeightSheet weightSheet,
+            EquipmentItemSheet equipmentItemSheet,
+            EquipmentItemRecipeSheet equipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 equipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet equipmentItemOptionSheet,
+            SkillSheet skillSheet,
+            long blockIndex,
+            IRandom random,
+            ref EquipmentData equipmentData)
         {
-            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, equipmentItemSheet);
+            HashSet<int>? synthesizeResultPool = null;
+            if (isSuccess)
+            {
+                synthesizeResultPool = GetSynthesizeResultPool(GetTargetGrade(grade), itemSubType, equipmentItemSheet);
+                if (synthesizeResultPool.Count == 0)
+                {
+                    synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, equipmentItemSheet);
+                }
+            }
+            else
+            {
+                synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, equipmentItemSheet);
+            }
 
             if (synthesizeResultPool.Count == 0)
             {
@@ -357,7 +446,50 @@ namespace Nekoyume.Helper
                         $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId
                     );
                 }
-                return ItemFactory.CreateItem(equipmentRow, random);
+
+                // find first recipe (see AuraSummon.SimulateSummon)
+                var recipeRow = equipmentItemRecipeSheet.Values.FirstOrDefault(r => r.ResultEquipmentId == itemId);
+                if (recipeRow == null)
+                {
+                    throw new SheetRowNotFoundException(
+                        $"Aborted as the recipe row for equipment ({itemId}) was failed to load in {nameof(EquipmentItemRecipeSheet)}", itemId
+                    );
+                }
+                equipmentData.RecipeId = recipeRow.Id;
+
+                // Validate subRecipeId
+                if (recipeRow.SubRecipeIds.Count == 0)
+                {
+                    throw new InvalidRecipeIdException(
+                        $"Recipe of item id({itemId}) does not have any subRecipe.");
+                }
+
+                // find first sub recipe (see AuraSummon.SimulateSummon)
+                var subRecipeId = recipeRow.SubRecipeIds[0];
+                if (!equipmentItemSubRecipeSheetV2.TryGetValue(subRecipeId, out var subRecipeRow))
+                {
+                    throw new SheetRowNotFoundException(
+                        nameof(EquipmentItemSubRecipeSheetV2),
+                        subRecipeId
+                    );
+                }
+                equipmentData.SubRecipeId = subRecipeId;
+
+                var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                    equipmentRow,
+                    random.GenerateRandomGuid(),
+                    blockIndex
+                );
+
+                AuraSummon.AddAndUnlockOption(
+                    equipment,
+                    random,
+                    subRecipeRow,
+                    equipmentItemOptionSheet,
+                    skillSheet
+                );
+
+                return equipment;
             }
 
             // Should not reach here

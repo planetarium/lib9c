@@ -77,6 +77,10 @@ namespace Nekoyume.Action
                 typeof(SynthesizeSheet),
                 typeof(SynthesizeWeightSheet),
                 typeof(MaterialItemSheet),
+                typeof(EquipmentItemRecipeSheet),
+                typeof(EquipmentItemSubRecipeSheetV2),
+                typeof(EquipmentItemOptionSheet),
+                typeof(SkillSheet),
             });
 
             // Calculate action point
@@ -113,6 +117,11 @@ namespace Nekoyume.Action
                 SynthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>(),
                 CostumeItemSheet = sheets.GetSheet<CostumeItemSheet>(),
                 EquipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>(),
+                EquipmentItemRecipeSheet = sheets.GetSheet<EquipmentItemRecipeSheet>(),
+                EquipmentItemSubRecipeSheetV2 = sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
+                EquipmentItemOptionSheet = sheets.GetSheet<EquipmentItemOptionSheet>(),
+                SkillSheet = sheets.GetSheet<SkillSheet>(),
+                BlockIndex = context.BlockIndex,
                 RandomObject = context.GetRandom(),
                 GradeDict = gradeDict,
             });
