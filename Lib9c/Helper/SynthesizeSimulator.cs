@@ -13,7 +13,6 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Helper
 {
-    using Sheets = Dictionary<Type, (Address, ISheet)>;
     using GradeDict = Dictionary<int, Dictionary<ItemSubType, int>>;
 
     public struct SynthesizeResult
@@ -33,8 +32,10 @@ namespace Nekoyume.Helper
         /// </summary>
         public struct InputData
         {
-            // TODO: 각자 테이블로 분리?
-            public Sheets Sheets;
+            public SynthesizeSheet SynthesizeSheet;
+            public SynthesizeWeightSheet SynthesizeWeightSheet;
+            public CostumeItemSheet CostumeItemSheet;
+            public EquipmentItemSheet EquipmentItemSheet;
             public IRandom RandomObject;
             public GradeDict GradeDict;
         }
@@ -43,8 +44,7 @@ namespace Nekoyume.Helper
         {
             var synthesizeResults = new List<SynthesizeResult>();
 
-            var sheets = inputData.Sheets;
-            var synthesizeSheet = sheets.GetSheet<SynthesizeSheet>();
+            var synthesizeSheet = inputData.SynthesizeSheet;
             var random = inputData.RandomObject;
             var gradeDict = inputData.GradeDict;
 
@@ -90,7 +90,7 @@ namespace Nekoyume.Helper
                         var outputGradeId = isSuccess ? GetTargetGrade(grade) : grade;
 
                         // Decide the item to add to inventory based on SynthesizeWeightSheet
-                        var synthesizedItem = GetSynthesizedItem(outputGradeId, sheets, random, itemSubType);
+                        var synthesizedItem = GetSynthesizedItem(outputGradeId, inputData.SynthesizeWeightSheet, inputData.CostumeItemSheet, inputData.EquipmentItemSheet, random, itemSubType);
                         synthesizeResults.Add(new SynthesizeResult { ItemBase = synthesizedItem, });
                     }
                 }
@@ -99,16 +99,16 @@ namespace Nekoyume.Helper
             return synthesizeResults;
         }
 
-        private static ItemBase GetSynthesizedItem(Grade grade, Sheets sheets, IRandom random, ItemSubType itemSubTypeValue)
+        private static ItemBase GetSynthesizedItem(Grade grade, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, EquipmentItemSheet equipmentItemSheet, IRandom random, ItemSubType itemSubTypeValue)
         {
             switch (itemSubTypeValue)
             {
                 case ItemSubType.FullCostume:
                 case ItemSubType.Title:
-                    return GetRandomCostume(grade, itemSubTypeValue, sheets, random);
+                    return GetRandomCostume(grade, itemSubTypeValue, weightSheet, costumeItemSheet, random);
                 case ItemSubType.Aura:
                 case ItemSubType.Grimoire:
-                    return GetRandomEquipment(grade, itemSubTypeValue, sheets, random);
+                    return GetRandomEquipment(grade, itemSubTypeValue, weightSheet, equipmentItemSheet, random);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -116,18 +116,16 @@ namespace Nekoyume.Helper
 
 #region GetRandomItem
 
-        private static ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
+        private static ItemBase GetRandomCostume(Grade grade, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, CostumeItemSheet costumeItemSheet, IRandom random)
         {
-            var sheet = sheets.GetSheet<CostumeItemSheet>();
-            var synthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>();
-            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, sheet);
+            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, costumeItemSheet);
 
             if (synthesizeResultPool.Count == 0)
             {
                 throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
+            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, weightSheet, random, out var itemWeights);
             var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
@@ -137,7 +135,7 @@ namespace Nekoyume.Helper
                     continue;
                 }
 
-                if (!sheet.TryGetValue(itemId, out var equipmentRow))
+                if (!costumeItemSheet.TryGetValue(itemId, out var equipmentRow))
                 {
                     throw new SheetRowNotFoundException(
                         $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId
@@ -150,18 +148,16 @@ namespace Nekoyume.Helper
             throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
-        private static ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, Sheets sheets, IRandom random)
+        private static ItemBase GetRandomEquipment(Grade grade, ItemSubType itemSubType, SynthesizeWeightSheet weightSheet, EquipmentItemSheet equipmentItemSheet,  IRandom random)
         {
-            var sheet = sheets.GetSheet<EquipmentItemSheet>();
-            var synthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>();
-            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, sheet);
+            var synthesizeResultPool = GetSynthesizeResultPool(grade, itemSubType, equipmentItemSheet);
 
             if (synthesizeResultPool.Count == 0)
             {
                 throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, synthesizeWeightSheet, random, out var itemWeights);
+            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, weightSheet, random, out var itemWeights);
             var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
@@ -171,7 +167,7 @@ namespace Nekoyume.Helper
                     continue;
                 }
 
-                if (!sheet.TryGetValue(itemId, out var equipmentRow))
+                if (!equipmentItemSheet.TryGetValue(itemId, out var equipmentRow))
                 {
                     throw new SheetRowNotFoundException(
                         $"Aborted as the equipment row ({itemId}) was failed to load in {nameof(EquipmentItemSheet)}", itemId

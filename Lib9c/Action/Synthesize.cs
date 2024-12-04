@@ -156,7 +156,10 @@ namespace Nekoyume.Action
 
             var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
             {
-                Sheets = sheets,
+                SynthesizeSheet = sheets.GetSheet<SynthesizeSheet>(),
+                SynthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>(),
+                CostumeItemSheet = sheets.GetSheet<CostumeItemSheet>(),
+                EquipmentItemSheet = sheets.GetSheet<EquipmentItemSheet>(),
                 RandomObject = context.GetRandom(),
                 GradeDict = gradeDict,
             });
