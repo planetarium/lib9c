@@ -14,6 +14,9 @@ namespace Nekoyume.Helper
 {
     using GradeDict = Dictionary<int, Dictionary<ItemSubType, int>>;
 
+    /// <summary>
+    /// Represents the result of the synthesis.
+    /// </summary>
     public struct SynthesizeResult
     {
         public ItemBase ItemBase;
@@ -53,6 +56,13 @@ namespace Nekoyume.Helper
             public GradeDict GradeDict;
         }
 
+        /// <summary>
+        /// Simulate the synthesis of items.
+        /// </summary>
+        /// <param name="inputData"><see cref="InputData"/> </param>
+        /// <returns></returns>
+        /// <exception cref="SheetRowNotFoundException"> </exception>
+        /// <exception cref="NotEnoughMaterialException"></exception>
         public static List<SynthesizeResult> Simulate(InputData inputData)
         {
             var synthesizeResults = new List<SynthesizeResult>();
@@ -125,6 +135,18 @@ namespace Nekoyume.Helper
             return synthesizeResults;
         }
 
+        /// <summary>
+        /// Get the grade of the material items and return the dictionary of the grade and the number of items.
+        /// </summary>
+        /// <param name="materialIds">material item ids</param>
+        /// <param name="avatarState">target avatar state</param>
+        /// <param name="blockIndex">current block index</param>
+        /// <param name="addressesHex">addresses in hex</param>
+        /// <param name="materialEquipments">material equipment list</param>
+        /// <param name="materialCostumes">material costume list</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidMaterialException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public static GradeDict GetGradeDict(List<Guid> materialIds, AvatarState avatarState, long blockIndex,
             string addressesHex, out List<Equipment> materialEquipments, out List<Costume> materialCostumes)
         {
@@ -362,6 +384,13 @@ namespace Nekoyume.Helper
 
 #region Helper
 
+        /// <summary>
+        /// get expected result item pool (Costume)
+        /// </summary>
+        /// <param name="sourceGrade">grade of material items</param>
+        /// <param name="subType">subtype of material items</param>
+        /// <param name="sheet">costume item sheet to use</param>
+        /// <returns>expected result item pool of costume</returns>
         public static HashSet<int> GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, CostumeItemSheet sheet)
         {
             return sheet.Values
@@ -371,6 +400,13 @@ namespace Nekoyume.Helper
                         .ToHashSet();
         }
 
+        /// <summary>
+        /// get expected result item pool (Equipment)
+        /// </summary>
+        /// <param name="sourceGrade">grade of material items</param>
+        /// <param name="subType">subtype of material items</param>
+        /// <param name="sheet">equipment item sheet to use</param>
+        /// <returns>expected result item pool of equipment</returns>
         public static HashSet<int> GetSynthesizeResultPool(Grade sourceGrade, ItemSubType subType, EquipmentItemSheet sheet)
         {
             return sheet.Values
@@ -414,6 +450,13 @@ namespace Nekoyume.Helper
                    .ToList();
         }
 
+        /// <summary>
+        /// Returns the grade of the item that can be obtained by synthesizing the item. (Costume)
+        /// </summary>
+        /// <param name="grade">source grade</param>
+        /// <param name="subType">subtype of material items</param>
+        /// <param name="sheet">costume item sheet to use</param>
+        /// <returns>grade of the item that can be obtained by synthesizing the item</returns>
         public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, CostumeItemSheet sheet)
         {
             var targetGrade = GetTargetGrade(grade);
@@ -423,6 +466,13 @@ namespace Nekoyume.Helper
             return hasGrade ? targetGrade : grade;
         }
 
+        /// <summary>
+        /// Returns the grade of the item that can be obtained by synthesizing the item. (Equipment)
+        /// </summary>
+        /// <param name="grade">source grade</param>
+        /// <param name="subType">subtype of material items</param>
+        /// <param name="sheet">equipment item sheet to use</param>
+        /// <returns>grade of the item that can be obtained by synthesizing the item</returns>
         public static Grade GetUpgradeGrade(Grade grade ,ItemSubType subType, EquipmentItemSheet sheet)
         {
             var targetGrade = GetTargetGrade(grade);
@@ -432,6 +482,13 @@ namespace Nekoyume.Helper
             return hasGrade ? targetGrade : grade;
         }
 
+        /// <summary>
+        /// Returns the weight of the item that can be obtained by synthesizing the item.
+        /// </summary>
+        /// <param name="grade">source grade</param>
+        /// <param name="itemId">item id of material item</param>
+        /// <param name="sheet">SynthesizeWeightSheet to use</param>
+        /// <returns>weight of the item that can be obtained by synthesizing the item</returns>
         public static int GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
         {
             var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
@@ -440,6 +497,12 @@ namespace Nekoyume.Helper
         }
 
         // TODO: move to ItemExtensions
+        /// <summary>
+        /// Get the item id from the item.
+        /// </summary>
+        /// <param name="itemBase">item to get id</param>
+        /// <returns>item id</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static List<Guid> GetItemGuid(ItemBase itemBase) => itemBase switch
         {
             Costume costume => new List<Guid> { costume.ItemId, },
@@ -447,6 +510,12 @@ namespace Nekoyume.Helper
             _ => throw new ArgumentException($"Unexpected item type: {itemBase.GetType()}", nameof(itemBase)),
         };
 
+        /// <summary>
+        /// Get the item id from the item.
+        /// </summary>
+        /// <param name="itemBases">items to get id</param>
+        /// <returns>item id list</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static List<Guid> GetItemGuids(IEnumerable<ItemBase> itemBases) => itemBases.Select(
             i =>
             {
@@ -469,6 +538,13 @@ namespace Nekoyume.Helper
             _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, null),
         };
 
+        /// <summary>
+        /// Get the target grade of the item.
+        /// max grade is Divinity
+        /// </summary>
+        /// <param name="gradeId">grade id of the item</param>
+        /// <returns>target grade id</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int GetTargetGrade(int gradeId)
         {
             return gradeId switch
