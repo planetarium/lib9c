@@ -6,6 +6,9 @@ namespace Nekoyume.TableData
 {
     using System.Linq;
 
+    /// <summary>
+    /// Represents a SynthesizeWeightSheet.
+    /// </summary>
     [Serializable]
     public class SynthesizeWeightSheet : Sheet<int, SynthesizeWeightSheet.Row>
     {
