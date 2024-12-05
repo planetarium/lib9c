@@ -4442,6 +4442,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SynthesizeResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SynthesizeResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.InputData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.InputData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Helper.WorldBossHelper.yml",
       "output": {
         ".html": {
@@ -11156,6 +11186,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.SynthesizeSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.SynthesizeSheet.SynthesizeData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.SynthesizeSheet.SynthesizeData.html"
         }
       },
       "version": ""

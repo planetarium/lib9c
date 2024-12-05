@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_SynthesizeSheet_Row" data-uid="Nekoyume.TableData.SynthesizeSheet.Row" class="text-break">
-Class SynthesizeSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class SynthesizeSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -164,7 +164,7 @@ public class SynthesizeSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_SynthesizeSheet_Row_GradeId" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.GradeId">
   GradeId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -195,7 +195,7 @@ public class SynthesizeSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_SynthesizeSheet_Row_Key" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.Key">
   Key
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -222,18 +222,18 @@ public class SynthesizeSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
 
 
-  <a id="Nekoyume_TableData_SynthesizeSheet_Row_RequiredCount_" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.RequiredCount*"></a>
+  <a id="Nekoyume_TableData_SynthesizeSheet_Row_RequiredCountDict_" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.RequiredCountDict*"></a>
 
-  <h3 id="Nekoyume_TableData_SynthesizeSheet_Row_RequiredCount" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.RequiredCount">
-  RequiredCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_TableData_SynthesizeSheet_Row_RequiredCountDict" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.RequiredCountDict">
+  RequiredCountDict
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int RequiredCount { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Dictionary&lt;ItemSubType, SynthesizeSheet.SynthesizeData&gt; RequiredCountDict { get; }</code></pre>
   </div>
 
 
@@ -242,38 +242,7 @@ public class SynthesizeSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Nekoyume_TableData_SynthesizeSheet_Row_SucceedRate_" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.SucceedRate*"></a>
-
-  <h3 id="Nekoyume_TableData_SynthesizeSheet_Row_SucceedRate" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.SucceedRate">
-  SucceedRate
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L20"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int SucceedRate { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemSubType.html">ItemSubType</a>, <a class="xref" href="Nekoyume.TableData.SynthesizeSheet.html">SynthesizeSheet</a>.<a class="xref" href="Nekoyume.TableData.SynthesizeSheet.SynthesizeData.html">SynthesizeData</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -292,7 +261,7 @@ public class SynthesizeSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_SynthesizeSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__" data-uid="Nekoyume.TableData.SynthesizeSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})">
   Set(IReadOnlyList&lt;string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -323,7 +292,7 @@ public class SynthesizeSheet.Row : SheetRow&lt;int&gt;</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Item/SynthesizeSheet.cs/#L28" class="edit-link">Edit this page</a>
         </div>
 
 
