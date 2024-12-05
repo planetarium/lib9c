@@ -603,14 +603,14 @@ namespace Nekoyume.Helper
         /// <param name="subType">excepted FullCostume,Title</param>
         /// <param name="sheet">CostumeItemSheet to use</param>
         /// <returns>list of items key(int)</returns>
-        public static List<int> GetSynthesizeResultPool(List<Grade> sourceGrades, ItemSubType subType, CostumeItemSheet sheet)
+        public static HashSet<int> GetSynthesizeResultPool(HashSet<Grade> sourceGrades, ItemSubType subType, CostumeItemSheet sheet)
         {
             return sheet
                    .Values
                    .Where(r => r.ItemSubType == subType)
-                   .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
+                   .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == grade))
                    .Select(r => r.Id)
-                   .ToList();
+                   .ToHashSet();
         }
 
         /// <summary>
@@ -620,14 +620,14 @@ namespace Nekoyume.Helper
         /// <param name="subType">excepted Grimoire,Aura</param>
         /// <param name="sheet">EquipmentItemSheet to use</param>
         /// <returns>list of items key(int)</returns>
-        public static List<int> GetSynthesizeResultPool(List<Grade> sourceGrades, ItemSubType subType, EquipmentItemSheet sheet)
+        public static HashSet<int> GetSynthesizeResultPool(HashSet<Grade> sourceGrades, ItemSubType subType, EquipmentItemSheet sheet)
         {
             return sheet
                    .Values
                    .Where(r => r.ItemSubType == subType)
-                   .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == GetUpgradeGrade(grade, subType, sheet)))
+                   .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == grade))
                    .Select(r => r.Id)
-                   .ToList();
+                   .ToHashSet();
         }
 
         /// <summary>
@@ -707,7 +707,7 @@ namespace Nekoyume.Helper
                 };
             }).ToList();
 
-        private static Grade GetTargetGrade(Grade grade) => grade switch
+        public static Grade GetTargetGrade(Grade grade) => grade switch
         {
             Grade.Normal => Grade.Rare,
             Grade.Rare => Grade.Epic,
