@@ -452,8 +452,7 @@ public class ValidatorDelegationTestBase
                 BlockIndex = blockHeight,
                 Signer = validatorKey.Address,
             };
-            var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address, currentCommission + increment);
+            var setValidatorCommission = new SetValidatorCommission(currentCommission + increment);
             world = setValidatorCommission.Execute(actionContext);
             currentCommission += increment;
             preferredHeight = blockHeight + cooldown;
