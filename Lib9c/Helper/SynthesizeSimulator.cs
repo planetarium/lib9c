@@ -602,14 +602,14 @@ namespace Nekoyume.Helper
         /// <param name="sourceGrades">grades of material items</param>
         /// <param name="subType">excepted FullCostume,Title</param>
         /// <param name="sheet">CostumeItemSheet to use</param>
-        /// <returns>list of items key(int)</returns>
-        public static HashSet<int> GetSynthesizeResultPool(HashSet<Grade> sourceGrades, ItemSubType subType, CostumeItemSheet sheet)
+        /// <returns>list of items key(int), grade(Grade) tuple</returns>
+        public static HashSet<(int, Grade)> GetSynthesizeResultPool(HashSet<Grade> sourceGrades, ItemSubType subType, CostumeItemSheet sheet)
         {
             return sheet
                    .Values
                    .Where(r => r.ItemSubType == subType)
                    .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == grade))
-                   .Select(r => r.Id)
+                   .Select(r => (r.Id, (Grade)r.Grade))
                    .ToHashSet();
         }
 
@@ -619,14 +619,14 @@ namespace Nekoyume.Helper
         /// <param name="sourceGrades">grades of material items</param>
         /// <param name="subType">excepted Grimoire,Aura</param>
         /// <param name="sheet">EquipmentItemSheet to use</param>
-        /// <returns>list of items key(int)</returns>
-        public static HashSet<int> GetSynthesizeResultPool(HashSet<Grade> sourceGrades, ItemSubType subType, EquipmentItemSheet sheet)
+        /// <returns>list of items key(int), grade(Grade) tuple</returns>
+        public static HashSet<(int, Grade)> GetSynthesizeResultPool(HashSet<Grade> sourceGrades, ItemSubType subType, EquipmentItemSheet sheet)
         {
             return sheet
                    .Values
                    .Where(r => r.ItemSubType == subType)
                    .Where(r => sourceGrades.Any(grade => (Grade)r.Grade == grade))
-                   .Select(r => r.Id)
+                   .Select(r => (r.Id, (Grade)r.Grade))
                    .ToHashSet();
         }
 
