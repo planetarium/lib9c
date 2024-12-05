@@ -707,6 +707,13 @@ namespace Nekoyume.Helper
                 };
             }).ToList();
 
+        /// <summary>
+        /// Get the target grade of the item.
+        /// max grade is Divinity
+        /// </summary>
+        /// <param name="grade">grade of the item</param>
+        /// <returns>target grade</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Grade GetTargetGrade(Grade grade) => grade switch
         {
             Grade.Normal => Grade.Rare,
