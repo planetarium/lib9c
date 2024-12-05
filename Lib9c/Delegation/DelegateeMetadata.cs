@@ -340,11 +340,17 @@ namespace Nekoyume.Delegation
         public virtual Address RebondGraceAddress(Address delegatorAddress)
             => DelegationAddress.RebondGraceAddress(Address, delegatorAddress);
 
+        public virtual Address CurrentRewardBaseAddress()
+            => DelegationAddress.CurrentRewardBaseAddress(Address);
+
+        public virtual Address RewardBaseAddress(long height)
+            => DelegationAddress.RewardBaseAddress(Address, height);
+
         public virtual Address CurrentLumpSumRewardsRecordAddress()
-            => DelegationAddress.CurrentLumpSumRewardsRecordAddress(Address);
+            => DelegationAddress.CurrentRewardBaseAddress(Address);
 
         public virtual Address LumpSumRewardsRecordAddress(long height)
-            => DelegationAddress.LumpSumRewardsRecordAddress(Address, height);
+            => DelegationAddress.RewardBaseAddress(Address, height);
 
         public override bool Equals(object? obj)
             => obj is IDelegateeMetadata other && Equals(other);

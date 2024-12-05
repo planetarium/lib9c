@@ -36,6 +36,8 @@ namespace Nekoyume.Delegation
 
         UnbondingSet GetUnbondingSet();
 
+        RewardBase GetRewardBase(IDelegatee delegatee, long height);
+
         LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height);
 
         LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee);
@@ -57,6 +59,8 @@ namespace Nekoyume.Delegation
         void SetRebondGrace(RebondGrace rebondGrace);
 
         void SetUnbondingSet(UnbondingSet unbondingSet);
+
+        void SetRewardBase(RewardBase rewardBase);
 
         void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
 

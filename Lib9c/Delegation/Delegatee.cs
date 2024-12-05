@@ -165,6 +165,12 @@ namespace Nekoyume.Delegation
         public Address RebondGraceAddress(Address delegatorAddress)
             => Metadata.RebondGraceAddress(delegatorAddress);
 
+        public Address CurrentRewardBaseAddress()
+            => Metadata.CurrentRewardBaseAddress();
+
+        public Address RewardBaseAddress(long height)
+            => Metadata.RewardBaseAddress(height);
+
         public Address CurrentLumpSumRewardsRecordAddress()
             => Metadata.CurrentLumpSumRewardsRecordAddress();
 
