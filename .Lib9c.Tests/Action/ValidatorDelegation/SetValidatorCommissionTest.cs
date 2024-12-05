@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
     using System.Collections.Generic;
     using System.Numerics;
     using Libplanet.Crypto;
+    using Nekoyume.Action;
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.ValidatorDelegation;
     using Xunit;
@@ -49,14 +50,12 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
         [Fact]
         public void Serialization()
         {
-            var address = new PrivateKey().Address;
             BigInteger commissionPercentage = 10;
-            var action = new SetValidatorCommission(address, commissionPercentage);
+            var action = new SetValidatorCommission(commissionPercentage);
             var plainValue = action.PlainValue;
 
             var deserialized = new SetValidatorCommission();
             deserialized.LoadPlainValue(plainValue);
-            Assert.Equal(address, deserialized.ValidatorDelegatee);
             Assert.Equal(commissionPercentage, deserialized.CommissionPercentage);
         }
 
@@ -73,7 +72,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             // When
             var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address, commissionPercentage: 11);
+                commissionPercentage: 11);
             var actionContext = new ActionContext
             {
                 PreviousState = world,
@@ -109,7 +108,6 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             // When
             var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address,
                 newCommissionPercentage);
             var actionContext = new ActionContext
             {
@@ -148,7 +146,6 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 BlockIndex = height + CommissionPercentageChangeCooldown,
             };
             var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address,
                 commissionPercentage);
 
             // Then
@@ -178,7 +175,6 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 BlockIndex = height + CommissionPercentageChangeCooldown,
             };
             var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address,
                 commissionPercentage);
 
             // Then
@@ -206,8 +202,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 Signer = validatorKey.Address,
                 BlockIndex = height + cooldown,
             };
-            var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address, commissionPercentage: 14);
+            var setValidatorCommission = new SetValidatorCommission(commissionPercentage: 14);
 
             // Then
             Assert.Throws<InvalidOperationException>(
@@ -235,8 +230,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
                 Signer = validatorKey.Address,
                 BlockIndex = height + period,
             };
-            var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address, commissionPercentage: expectedCommission);
+            var setValidatorCommission = new SetValidatorCommission(expectedCommission);
             world = setValidatorCommission.Execute(actionContext);
 
             // Then
@@ -245,6 +239,32 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             var actualPercentage = actualDelegatee.CommissionPercentage;
 
             Assert.Equal(expectedCommission, actualPercentage);
+        }
+
+        [Fact]
+        public void Execute_NotValidator_Throw()
+        {
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var agentAddress = new PrivateKey().Address;
+            var validatorGold = DelegationCurrency * 10;
+            var height = 1L;
+            world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+            world = EnsurePromotedValidator(world, validatorKey, validatorGold, height);
+
+            // When
+            var setValidatorCommission = new SetValidatorCommission(
+                commissionPercentage: 11);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = agentAddress,
+                BlockIndex = height + CommissionPercentageChangeCooldown,
+            };
+
+            Assert.Throws<FailedLoadStateException>(
+                () => setValidatorCommission.Execute(actionContext));
         }
     }
 }
