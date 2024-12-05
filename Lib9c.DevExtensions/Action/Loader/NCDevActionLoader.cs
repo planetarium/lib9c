@@ -26,6 +26,9 @@ namespace Lib9c.DevExtensions.Action.Loader
         }
 
         /// <inheritdoc cref="IActionLoader.LoadAction"/>
-        public IAction LoadAction(long index, IValue value) => _actionLoader.LoadAction(index, value);
+        public IAction LoadAction(long index, IValue value)
+        {
+            return _actionLoader.LoadAction(index, value);
+        }
     }
 }

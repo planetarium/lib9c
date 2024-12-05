@@ -33,8 +33,8 @@ namespace Lib9c.DevExtensions.Tests
         {
             IDictionary<string, string> sheets = Utils.ImportSheets();
 
-            string enhancement = Assert.Contains("EnhancementCostSheet", sheets);
-            string gameConfig = Assert.Contains("GameConfigSheet", sheets);
+            var enhancement = Assert.Contains("EnhancementCostSheet", sheets);
+            var gameConfig = Assert.Contains("GameConfigSheet", sheets);
 
             Assert.Contains("id,item_sub_type,grade,level,cost", enhancement);
             Assert.Contains("key,value", gameConfig);
@@ -99,7 +99,7 @@ namespace Lib9c.DevExtensions.Tests
             var configPath = Path.GetTempFileName();
             File.WriteAllText(configPath, json);
 
-            ImmutableHashSet<Address> activatedAccounts = Utils.GetActivatedAccounts(configPath);
+            var activatedAccounts = Utils.GetActivatedAccounts(configPath);
             Assert.Equal(5, activatedAccounts.Count);
             Assert.Contains(new Address("0000000000000000000000000000000000000001"), activatedAccounts);
             Assert.Contains(new Address("0000000000000000000000000000000000000002"), activatedAccounts);

@@ -22,15 +22,22 @@ namespace Lib9c.DevExtensions.Model
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Avatar)obj);
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return obj.GetType() == GetType() && Equals((Avatar)obj);
         }
 
         public override int GetHashCode()
         {
-            return (Name != null ? Name.GetHashCode() : 0);
+            return Name != null ? Name.GetHashCode() : 0;
         }
     }
 
@@ -38,7 +45,7 @@ namespace Lib9c.DevExtensions.Model
     public class Item
     {
         public ItemSubType ItemSubType;
-        public int ID;
+        public int Id;
         public int Level;
         public int Count;
         public int Price;

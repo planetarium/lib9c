@@ -9,7 +9,6 @@ namespace Lib9c.DevExtensions.Action.Factory
     {
         public static (Exception? exception, ICreateOrReplaceAvatar? result)
             TryGetByBlockIndex(
-                long blockIndex,
                 int avatarIndex = 0,
                 string name = "Avatar",
                 int hair = 0,

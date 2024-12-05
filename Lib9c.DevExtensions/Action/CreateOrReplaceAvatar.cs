@@ -41,11 +41,7 @@ namespace Lib9c.DevExtensions.Action
         public IOrderedEnumerable<int> CostumeIds { get; private set; }
         public IOrderedEnumerable<(int runeId, int level)> Runes { get; private set; }
 
-        public (int stageId, IOrderedEnumerable<int> crystalRandomBuffIds)? CrystalRandomBuff
-        {
-            get;
-            private set;
-        }
+        public (int stageId, IOrderedEnumerable<int> crystalRandomBuffIds)? CrystalRandomBuff { get; private set; }
         // public
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
@@ -395,7 +391,7 @@ namespace Lib9c.DevExtensions.Action
             // ~Set AgentState.
 
             var sheets = states.GetSheets(
-                containAvatarSheets: true,
+                true,
                 containQuestSheet: true,
                 sheetTypes: new[]
                 {
@@ -564,6 +560,7 @@ namespace Lib9c.DevExtensions.Action
                 var slot = new CombinationSlotState(slotAddr, i);
                 allCombinationSlotState.AddSlot(slot);
             }
+
             states = states.SetCombinationSlotState(avatarAddr, allCombinationSlotState);
             // ~Set CombinationSlot.
 
@@ -592,8 +589,8 @@ namespace Lib9c.DevExtensions.Action
                     crb.stageId);
                 var crystalStageBuffGachaSheet = sheets.GetSheet<CrystalStageBuffGachaSheet>();
                 if (crystalStageBuffGachaSheet.TryGetValue(
-                        crb.stageId,
-                        out var crystalStageBuffGachaRow))
+                    crb.stageId,
+                    out var crystalStageBuffGachaRow))
                 {
                     crystalRandomSkillState.Update(
                         crystalStageBuffGachaRow.MaxStar,

@@ -12,12 +12,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Factory
 {
     public class CreateOrReplaceAvatarFactoryTest
     {
-        private readonly TableSheets _tableSheets;
-
-        public CreateOrReplaceAvatarFactoryTest()
-        {
-            _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
-        }
+        private readonly TableSheets _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
 
         [Theory]
         [MemberData(
@@ -50,9 +45,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Factory
             }
 
             var (e, r) = CreateOrReplaceAvatarFactory
-                .TryGetByBlockIndex(
-                    blockIndex,
-                    avatarIndex,
+                .TryGetByBlockIndex(avatarIndex,
                     name,
                     hair,
                     lens,
@@ -73,14 +66,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Factory
             Assert.Equal(ear, r.Ear);
             Assert.Equal(tail, r.Tail);
             Assert.Equal(level, r.Level);
-            if (equipments is null)
-            {
-                Assert.Empty(r.Equipments);
-            }
-            else
-            {
-                Assert.True(equipments.SequenceEqual(r.Equipments));
-            }
+            Assert.True(equipments.SequenceEqual(r.Equipments));
 
             if (foods is null)
             {
@@ -142,9 +128,7 @@ namespace Lib9c.DevExtensions.Tests.Action.Factory
             (int stageId, int[] crystalRandomBuffIds)? crystalRandomBuff)
         {
             var (e, r) = CreateOrReplaceAvatarFactory
-                .TryGetByBlockIndex(
-                    blockIndex,
-                    avatarIndex,
+                .TryGetByBlockIndex(avatarIndex,
                     name,
                     hair,
                     lens,

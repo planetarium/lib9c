@@ -60,7 +60,7 @@ namespace Lib9c.DevExtensions.Action.Craft
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             avatarState.worldInformation = new WorldInformation(
                 context.BlockIndex,
                 states.GetSheet<WorldSheet>(),
@@ -73,12 +73,12 @@ namespace Lib9c.DevExtensions.Action.Craft
             new Dictionary<string, IValue>
             {
                 ["avatarAddress"] = AvatarAddress.Serialize(),
-                ["typeIdentifier"] = ActionType.TypeIdentifier
+                ["typeIdentifier"] = ActionType.TypeIdentifier,
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue
-            )
+        )
         {
             AvatarAddress = plainValue["avatarAddress"].ToAddress();
             ActionType = new ActionTypeAttribute(plainValue["typeIdentifier"].ToDotnetString());

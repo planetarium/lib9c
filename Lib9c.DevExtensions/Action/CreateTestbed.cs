@@ -59,7 +59,7 @@ namespace Lib9c.DevExtensions.Action
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>()
             {
-                {"w", weeklyArenaAddress.Serialize()},
+                { "w", weeklyArenaAddress.Serialize() },
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
@@ -121,7 +121,7 @@ namespace Lib9c.DevExtensions.Action
                 rankingMapAddress);
 
             // Add item
-            var costumeItemSheet =  context.PreviousState.GetSheet<CostumeItemSheet>();
+            var costumeItemSheet = context.PreviousState.GetSheet<CostumeItemSheet>();
             var equipmentItemSheet = context.PreviousState.GetSheet<EquipmentItemSheet>();
             var optionSheet = context.PreviousState.GetSheet<EquipmentItemOptionSheet>();
             var skillSheet = context.PreviousState.GetSheet<SkillSheet>();
@@ -148,6 +148,7 @@ namespace Lib9c.DevExtensions.Action
                 var slot = new CombinationSlotState(slotAddr, i);
                 allCombinationSlotState.AddSlot(slot);
             }
+
             states = states.SetCombinationSlotState(avatarAddress, allCombinationSlotState);
 
             avatarState.UpdateQuestRewards(materialItemSheet);

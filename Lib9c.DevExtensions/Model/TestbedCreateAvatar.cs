@@ -19,7 +19,7 @@ namespace Lib9c.DevExtensions.Model
     [Serializable]
     public class CustomEquipmentItem
     {
-        public int ID;
+        public int Id;
         public int Level;
         public int[] OptionIds;
     }

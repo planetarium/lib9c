@@ -47,7 +47,7 @@ namespace Lib9c.DevExtensions.Action
             {
                 ["agentAddress"] = AgentAddress.Serialize(),
                 ["faucetNcg"] = FaucetNcg.Serialize(),
-                ["faucetCrystal"] = FaucetCrystal.Serialize()
+                ["faucetCrystal"] = FaucetCrystal.Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
