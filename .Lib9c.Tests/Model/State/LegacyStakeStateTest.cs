@@ -10,7 +10,7 @@ namespace Lib9c.Tests.Model.State
 
     public class LegacyStakeStateTest
     {
-        [Fact(Skip = "RewardInterval is 2")]
+        [Fact(Skip = "RewardInterval is 10")]
         public void IsClaimable()
         {
             Assert.False(new LegacyStakeState(

@@ -113,7 +113,7 @@ namespace Lib9c.Tests.Action
                 }));
         }
 
-        [Fact(Skip = "RewardInterval is 2")]
+        [Fact(Skip = "RewardInterval is 10")]
         public void Execute_Throws_WhenCancelOrUpdateWhileLockup()
         {
             var action = new Stake2(51);

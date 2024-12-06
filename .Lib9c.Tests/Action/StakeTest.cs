@@ -326,7 +326,7 @@ namespace Lib9c.Tests.Action
                 world, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
         }
 
-        [Theory(Skip = "RewardInterval is 2")]
+        [Theory(Skip = "RewardInterval is 10")]
         // NOTE: non
         [InlineData(50, 50)]
         [InlineData(long.MaxValue, long.MaxValue)]
@@ -402,7 +402,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(expectedBalance, actualBalance);
         }
 
-        [Theory(Skip = "RewardInterval is 2")]
+        [Theory(Skip = "RewardInterval is 10")]
         // NOTE: non
         [InlineData(50, 50)]
         [InlineData(long.MaxValue, long.MaxValue)]
