@@ -18,7 +18,7 @@
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@biomejs/biome": "^1.7.1",
-    "@types/node": "^20.12.8",
+    "@types/node": "^22.10.1",
     "@types/uuid": "^9.0.8",
     "execa": "^8.0.1",
     "tsup": "^8.0.2",

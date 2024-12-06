@@ -61,18 +61,33 @@ export const GARAGE: Currency = {
 };
 
 /**
- * Creates a new `FungibleAssetValue` with the given `currency` and `number-like` values. If the `number-like` value is a `string`, it is parsed and multiplied by 10 times `currency.decimalPlaces` to return the FungibleAssetValue. The same is true if it is a `number`. However, in the case of `number`, beware of the possibility of an incorrect decimal value. The same is true for `bigint`, but due to the nature of the `bigint` type, decimals are not allowed.
+ * Creates a new `FungibleAssetValue` with the given `currency` and `number-like` values.
+ * If the `number-like` value is a `string`, it is parsed and multiplied by 10 times `currency.decimalPlaces` to return the FungibleAssetValue.
+ * The same is true if it is a `number`. However, in the case of `number`, beware of the possibility of an incorrect decimal value.
+ * The same is true for `bigint`, but due to the nature of the `bigint` type, decimals are not allowed.
+ *
+ * You must add `Decimal.set({ toExpPos: 900000000000000 });` line before using `fav()` function.
  * @param currency The currency of the value.
  * @param numberLike The amount of the given currency.
  * @returns
  * @example To create a FungibleAssetValue for 1 NCG:
  * ```typescript
+ * import { fav } from "@planetarium/lib9c";
+ * import { Decimal } from "decimal.js";
+ *
+ * Decimal.set({ toExpPos: 900000000000000 });
+ *
  * fav(NCG, 1); // With number
  * fav(NCG, "1"); // With string
  * fav(NCG, 1n); // With bigint
  * ```
  * @example To create a FungibleAssetValue for 1.23 NCG:
  * ```typescript
+ * import { fav } from "@planetarium/lib9c";
+ * import { Decimal } from "decimal.js";
+ *
+ * Decimal.set({ toExpPos: 900000000000000 });
+ *
  * fav(NCG, 1.23); // With number
  * fav(NCG, "1.23"); // With string
  * // With bigint, it cannot be created because bigint doesn't represents decimal values.
@@ -82,13 +97,17 @@ export function fav(
   currency: Currency,
   numberLike: string | number | bigint,
 ): FungibleAssetValue {
-  const rawValue = BigInt(
-    new Decimal(
-      typeof numberLike === "bigint" ? numberLike.toString() : numberLike,
-    )
-      .mul(Decimal.pow(10, currency.decimalPlaces))
-      .toString(),
-  );
+  const intermediateValue = new Decimal(
+    typeof numberLike === "bigint" ? numberLike.toString() : numberLike,
+  ).mul(Decimal.pow(10, currency.decimalPlaces));
+  if (!intermediateValue.isInteger()) {
+    throw new Error(
+      `The given 'numberLike' parameter seems to have more decimal places than the maximum supported by currency. (numberLike: type=${typeof numberLike} value=${numberLike}) (currency.decimalPlaces: ${
+        currency.decimalPlaces
+      })`,
+    );
+  }
+  const rawValue = BigInt(intermediateValue.toString());
   return {
     currency,
     rawValue,
