@@ -211,6 +211,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10640004,Ymir Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
 10650007,Ymir Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
 10660000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10660004,1주년 아우라,Aura,6,Normal,0,HIT,10,0,10620001,1
 10730000,공격의 그리모어 (A),Grimoire,3,Normal,0,ATK,10,0,10730000,600
 10730001,공격의 그리모어 (H),Grimoire,3,Normal,0,ATK,10,0,10730001,600
 10730002,공격의 그리모어 (S),Grimoire,3,Normal,0,ATK,10,0,10730002,600
@@ -247,6 +248,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10760006,기능의 그리모어 (A),Grimoire,6,Normal,0,SPD,10,0,10760006,130000
 10760007,기능의 그리모어 (D),Grimoire,6,Normal,0,SPD,10,0,10760007,130000
 10760008,기능의 그리모어 (S),Grimoire,6,Normal,0,SPD,10,0,10760008,130000
+10760009,1주년 그리모어,Grimoire,6,Normal,0,ATK,10,0,10760009,1
 20160000,커스텀 장비 무기,Weapon,3,Normal,0,ATK,10,0,20160000,1
 20160001,커스텀 장비 무기,Weapon,4,Normal,0,ATK,100,0,20160000,2
 20160002,커스텀 장비 무기,Weapon,5,Normal,0,ATK,500,0,20160000,3
