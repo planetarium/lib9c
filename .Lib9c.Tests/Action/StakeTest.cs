@@ -475,24 +475,24 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        // NOTE: non
-        [InlineData(50, 50)]
-        [InlineData(long.MaxValue, long.MaxValue)]
-        // NOTE: delegate
-        [InlineData(0, 500)]
-        [InlineData(50, 100)]
-        [InlineData(0, long.MaxValue)]
-        // NOTE: undelegate
-        [InlineData(50, 0)]
-        [InlineData(75, 50)]
-        [InlineData(long.MaxValue, 0)]
-        [InlineData(long.MaxValue, 500)]
-        public void Execute_Success_When_Exist_StakeStateV3_Validator_Without_Interval(
+        [InlineData(0, 500, false)]
+        [InlineData(50, 100, false)]
+        [InlineData(0, long.MaxValue, false)]
+        [InlineData(0, 500, true)]
+        [InlineData(50, 100, true)]
+        [InlineData(0, long.MaxValue, true)]
+        public void Execute_Success_When_Validator_Tries_To_Increase_Amount_Without_Claim(
             long previousAmount,
-            long amount)
+            long amount,
+            bool withoutInterval)
         {
-            var interval = previousAmount < amount
-                ? LegacyStakeState.RewardInterval : LegacyStakeState.LockupInterval;
+            if (previousAmount >= amount)
+            {
+                throw new ArgumentException(
+                    "previousAmount should be less than amount.", nameof(previousAmount));
+            }
+
+            var interval = LegacyStakeState.RewardInterval;
             var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
             var stakeState = new StakeState(
                 contract: new Contract(_stakePolicySheet),
@@ -523,7 +523,7 @@ namespace Lib9c.Tests.Action
             }
 
             var nextState = Execute(
-                height + 1,
+                height + (withoutInterval ? 1 : interval),
                 world,
                 new TestRandom(),
                 _agentAddr,
