@@ -28,11 +28,13 @@
     "vitest": "^1.5.2"
   },
   "dependencies": {
-    "@planetarium/account": "^4.4.1",
     "@planetarium/bencodex": "^0.2.2",
-    "@planetarium/tx": "^4.4.1",
     "buffer": "^6.0.3",
     "decimal.js": "^10.4.3",
     "uuid": "^9.0.1"
+  },
+  "peerDependencies": {
+    "@planetarium/account": "5.x",
+    "@planetarium/tx": "5.x"
   }
 }
