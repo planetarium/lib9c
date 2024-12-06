@@ -103,11 +103,13 @@ public class SynthesizeTest
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
         state = state.SetActionPoint(avatarAddress, 120);
 
-        var previousAvatarState = state.GetAvatarState(avatarAddress);
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
             MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -153,17 +155,11 @@ public class SynthesizeTest
                 break;
         }
 
-        var gradeDict = SynthesizeSimulator.GetGradeDict(
-            action.MaterialIds,
-            previousAvatarState,
-            blockIndex,
-            avatarAddress.ToHex(),
-            out _,
-            out _
-        );
-
         var inputData = new SynthesizeSimulator.InputData()
         {
+            Grade = grade,
+            ItemSubType = itemSubType,
+            MaterialCount = itemSubTypes.Length,
             SynthesizeSheet = TableSheets.SynthesizeSheet,
             SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
             CostumeItemSheet = TableSheets.CostumeItemSheet,
@@ -173,7 +169,6 @@ public class SynthesizeTest
             EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
             SkillSheet = TableSheets.SkillSheet,
             RandomObject = new TestRandom(),
-            GradeDict = gradeDict,
         };
 
         var result = SynthesizeSimulator.Simulate(inputData)[0];
@@ -220,11 +215,13 @@ public class SynthesizeTest
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
         state = state.SetActionPoint(avatarAddress, 120);
 
-        var previousAvatarState = state.GetAvatarState(avatarAddress);
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
             MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -235,19 +232,12 @@ public class SynthesizeTest
             Signer = agentAddress,
         };
 
-        state = action.Execute(ctx);
-
-        var gradeDict = SynthesizeSimulator.GetGradeDict(
-            action.MaterialIds,
-            previousAvatarState,
-            blockIndex,
-            avatarAddress.ToHex(),
-            out _,
-            out _
-        );
-
+        action.Execute(ctx);
         var inputData = new SynthesizeSimulator.InputData()
         {
+            Grade = grade,
+            ItemSubType = itemSubType,
+            MaterialCount = itemSubTypes.Length,
             SynthesizeSheet = TableSheets.SynthesizeSheet,
             SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
             CostumeItemSheet = TableSheets.CostumeItemSheet,
@@ -257,7 +247,6 @@ public class SynthesizeTest
             EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
             SkillSheet = TableSheets.SkillSheet,
             RandomObject = new TestRandom(),
-            GradeDict = gradeDict,
         };
 
         var resultList = SynthesizeSimulator.Simulate(inputData);
@@ -299,6 +288,9 @@ public class SynthesizeTest
         {
             AvatarAddress = avatarAddress,
             MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -336,6 +328,9 @@ public class SynthesizeTest
         {
             AvatarAddress = avatarAddress,
             MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -380,6 +375,9 @@ public class SynthesizeTest
         {
             AvatarAddress = avatarAddress,
             MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubTypes[0],
         };
 
         var ctx = new ActionContext
