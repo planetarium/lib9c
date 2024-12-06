@@ -9,14 +9,14 @@ importers:
   lib9c:
     dependencies:
       '@planetarium/account':
-        specifier: 5.x
-        version: 5.3.2
+        specifier: ^4.4.1
+        version: 4.4.1
       '@planetarium/bencodex':
         specifier: ^0.2.2
         version: 0.2.2
       '@planetarium/tx':
-        specifier: 5.x
-        version: 5.3.2(@planetarium/account@5.3.2)
+        specifier: ^4.4.1
+        version: 4.4.1(@planetarium/account@4.4.1)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -540,17 +540,17 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@planetarium/account@5.3.2':
-    resolution: {integrity: sha512-Yx+FpOkzFtuOO3NqMeC+4rtncqtel12uP/b4xr4wNL7HWhYt1Syg8UDh+Ibz9MWuGyoP6lA35D2PCBg0Ar1ykA==}
+  '@planetarium/account@4.4.1':
+    resolution: {integrity: sha512-aCPOiv2//axVtXmsRy7lXqcWj/bq01+DH3CQSjPisil/bg639hSzuCaTwJf/X1pTKxkItOEHW66yyAP83uyARA==}
 
   '@planetarium/bencodex@0.2.2':
     resolution: {integrity: sha512-hXYmV0gzEUxbhpVDiMIe/b0XAUoXBIl8Fo84Fx8nE0U39sU5q7tCFTkceock8TYs5rS4ix793033b7QYAPVoLA==}
 
-  '@planetarium/tx@5.3.2':
-    resolution: {integrity: sha512-jlxyNhS1kXElR+biWNEAzAPULk6UlyUEB0l1EuS4Xm0N2gXAuPCTV5ERvaD/+DWv+kivBW20tfBmB9N/Jdqitg==}
+  '@planetarium/tx@4.4.1':
+    resolution: {integrity: sha512-SZayh/xU57DxbaYKdpBrevwV43RPumhDtcvr9jV6LZMk00msCyo8d2PUPxA2YkwekMJnj9gWsTyd8n/JR29fug==}
     engines: {node: '>=19.0.0'}
     peerDependencies:
-      '@planetarium/account': ^5.3.2
+      '@planetarium/account': ^4.4.1
 
   '@rollup/rollup-android-arm-eabi@4.16.4':
     resolution: {integrity: sha512-GkhjAaQ8oUTOKE4g4gsZ0u8K/IHU1+2WQSgS1TwTcYvL+sjbaQjNHFXbOJ6kgqGHIO1DfUhI/Sphi9GkRT9K+Q==}
@@ -1933,17 +1933,16 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@planetarium/account@5.3.2':
+  '@planetarium/account@4.4.1':
     dependencies:
       '@noble/hashes': 1.4.0
       '@noble/secp256k1': 1.7.1
-      buffer: 6.0.3
 
   '@planetarium/bencodex@0.2.2': {}
 
-  '@planetarium/tx@5.3.2(@planetarium/account@5.3.2)':
+  '@planetarium/tx@4.4.1(@planetarium/account@4.4.1)':
     dependencies:
-      '@planetarium/account': 5.3.2
+      '@planetarium/account': 4.4.1
       '@planetarium/bencodex': 0.2.2
 
   '@rollup/rollup-android-arm-eabi@4.16.4':
