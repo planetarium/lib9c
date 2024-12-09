@@ -9,7 +9,7 @@
     "codegen": "graphql-codegen --config ./graphql/headless/codegen.yml",
     "fmt": "biome check --apply src tests",
     "fmt:ci": "biome check src tests",
-    "test": "vitest"
+    "test": "echo 'There is no tests yet.'"
   },
   "keywords": [],
   "author": "Planetarium",

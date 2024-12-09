@@ -20,6 +20,7 @@
     "fmt": "biome check --apply src tests",
     "fmt:ci": "biome check src tests",
     "test": "vitest",
+    "test:ci": "vitest run",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
