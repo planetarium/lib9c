@@ -266,5 +266,33 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
             Assert.Throws<FailedLoadStateException>(
                 () => setValidatorCommission.Execute(actionContext));
         }
+
+        [Fact]
+        public void Execute_With_SameValue_Throw()
+        {
+            // Given
+            var world = World;
+            var validatorKey = new PrivateKey();
+            var validatorGold = DelegationCurrency * 10;
+            var height = 1L;
+            world = EnsureToMintAsset(world, validatorKey, validatorGold, height++);
+            world = EnsurePromotedValidator(world, validatorKey, validatorGold, height);
+
+            // When
+            var repository = new ValidatorRepository(world, new ActionContext());
+            var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+            var commissionPercentage = delegatee.CommissionPercentage;
+            var setValidatorCommission = new SetValidatorCommission(
+                commissionPercentage: commissionPercentage);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorKey.Address,
+                BlockIndex = height + CommissionPercentageChangeCooldown,
+            };
+
+            Assert.Throws<InvalidOperationException>(
+                () => setValidatorCommission.Execute(actionContext));
+        }
     }
 }
