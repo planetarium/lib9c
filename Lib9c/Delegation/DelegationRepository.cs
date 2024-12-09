@@ -170,22 +170,22 @@ namespace Nekoyume.Delegation
                 ? new UnbondingSet(bencoded, this)
                 : new UnbondingSet(this);
 
-        public RewardBase GetCurrentRewardBase(IDelegatee delegatee)
+        public RewardBase? GetCurrentRewardBase(IDelegatee delegatee)
         {
             Address address = delegatee.CurrentRewardBaseAddress();
             IValue? value = rewardBaseAccount.GetState(address);
             return value is IValue bencoded
                 ? new RewardBase(address, bencoded)
-                : throw new FailedLoadStateException("RewardBase not found.");
+                : null;
         }
 
-        public RewardBase GetRewardBase(IDelegatee delegatee, long height)
+        public RewardBase? GetRewardBase(IDelegatee delegatee, long height)
         {
             Address address = delegatee.RewardBaseAddress(height);
             IValue? value = rewardBaseAccount.GetState(address);
             return value is IValue bencoded
                 ? new RewardBase(address, bencoded)
-                : throw new FailedLoadStateException("RewardBase not found.");
+                : null;
         }
 
         public LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
