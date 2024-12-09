@@ -1,0 +1,37 @@
+{
+  "name": "@planetarium/9c-headless-provider",
+  "version": "0.1.0",
+  "description": "A library to provide TxMetadataProvider implementation for NineChronicles.Headless.",
+  "module": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "codegen": "graphql-codegen --config ./graphql/headless/codegen.yml",
+    "fmt": "biome check --apply src tests",
+    "fmt:ci": "biome check src tests",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "Planetarium",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@planetarium/account": "^5.4.1",
+    "@planetarium/tx": "^5.4.1",
+    "@planetarium/bencodex": "^0.2.2",
+    "@planetarium/lib9c": "workspace:^",
+    "graphql-request": "^6.0.0",
+    "graphql-tag": "^2.12.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.1",
+    "@types/node": "^22.10.1",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.2",
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "@graphql-codegen/typescript-graphql-request": "^6.2.0",
+    "@graphql-codegen/typescript-operations": "^4.2.0"
+  }
+}

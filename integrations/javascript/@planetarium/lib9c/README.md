@@ -7,7 +7,7 @@ This npm package provides functions to build actions equivalent to [Lib9c].
 ## Usage Example
 
 ```typescript
-import { HeadlessNetworkProvider } from "@planetarium/9c-headless-network-provider";
+import { HeadlessNetworkProvider } from "@planetarium/9c-headless-provider";
 import { RawPrivateKey, Address } from "@planetarium/account";
 import { signTx } from "@planetarium/tx";
 import { makeTx, ClaimStakeReward } from "@planetarium/lib9c";

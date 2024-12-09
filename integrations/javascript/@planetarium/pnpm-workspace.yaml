@@ -1,2 +1,3 @@
 packages:
   - 'lib9c'
+  - '9c-headless-provider'
