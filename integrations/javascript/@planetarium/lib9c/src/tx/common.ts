@@ -1,10 +1,10 @@
 import { Buffer } from "buffer";
 import { type Account, Address } from "@planetarium/account";
 import type { UnsignedTx } from "@planetarium/tx";
-import type { PolymorphicAction } from "./actions/common.js";
-import { TransferAsset } from "./actions/transfer_asset.js";
-import { TransferAssets } from "./actions/transfer_assets.js";
-import { MEAD, fav } from "./models/currencies.js";
+import type { PolymorphicAction } from "../actions/common.js";
+import { TransferAsset } from "../actions/transfer_asset.js";
+import { TransferAssets } from "../actions/transfer_assets.js";
+import { MEAD, fav } from "../models/currencies.js";
 
 export interface TxMetadataProvider {
   getNextNonce(address: Address): Promise<bigint>;
