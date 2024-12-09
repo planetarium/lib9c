@@ -25,13 +25,30 @@ namespace Nekoyume.Delegation
 
         public RewardBase(
             Address address,
+            long startHeight,
             BigInteger totalShares,
             IEnumerable<Currency> currencies)
             : this(
                   address,
+                  startHeight,
                   totalShares,
                   currencies.Select(c => c * 0),
                   RecommendedSigFig(totalShares))
+        {
+        }
+
+        public RewardBase(
+            Address address,
+            long startHeight,
+            BigInteger totalShares,
+            IEnumerable<Currency> currencies,
+            int sigFig)
+            : this(
+                  address,
+                  startHeight,
+                  totalShares,
+                  currencies.Select(c => c * 0),
+                  sigFig)
         {
         }
 
@@ -42,11 +59,13 @@ namespace Nekoyume.Delegation
 
         public RewardBase(
             Address address,
+            long startHeight,
             BigInteger totalShares,
             IEnumerable<FungibleAssetValue> rewardPortion,
             int sigfig)
         {
             Address = address;
+            StartHeight = startHeight;
 
             if (totalShares.Sign <= 0)
             {
@@ -78,8 +97,9 @@ namespace Nekoyume.Delegation
             }
 
             Address = address;
-            TotalShares = (Integer)bencoded[2];
-            var rewardPortion = ((List)bencoded[3]).Select(v => new FungibleAssetValue(v));
+            StartHeight = (Integer)bencoded[2];
+            TotalShares = (Integer)bencoded[3];
+            var rewardPortion = ((List)bencoded[4]).Select(v => new FungibleAssetValue(v));
 
             if (!rewardPortion.Select(f => f.Currency).All(new HashSet<Currency>().Add))
             {
@@ -87,22 +107,26 @@ namespace Nekoyume.Delegation
             }
 
             RewardPortion = rewardPortion.ToImmutableDictionary(f => f.Currency, f => f);
-            SigFig = (Integer)bencoded[4];
+            SigFig = (Integer)bencoded[5];
         }
 
         private RewardBase(
             Address address,
+            long startHeight,
             BigInteger totalShares,
             ImmutableDictionary<Currency, FungibleAssetValue> rewardPortion,
             int sigfig)
         {
             Address = address;
+            StartHeight = startHeight;
             TotalShares = totalShares;
             RewardPortion = rewardPortion;
             SigFig = sigfig;
         }
 
         public Address Address { get; }
+
+        public long StartHeight { get; }
 
         public BigInteger TotalShares { get; }
 
@@ -116,6 +140,7 @@ namespace Nekoyume.Delegation
             => List.Empty
                 .Add(StateTypeName)
                 .Add(StateVersion)
+                .Add(StartHeight)
                 .Add(TotalShares)
                 .Add(new List(RewardPortion
                     .OrderBy(r => r.Key, _currencyComparer)
@@ -133,9 +158,18 @@ namespace Nekoyume.Delegation
         public RewardBase UpdateTotalShares(BigInteger totalShares)
             => UpdateTotalShares(this, totalShares);
 
+        public RewardBase MoveAddress(Address address)
+            => new RewardBase(
+                address,
+                StartHeight,
+                TotalShares,
+                RewardPortion,
+                SigFig);
+
         public static RewardBase AddReward(RewardBase rewardBase, FungibleAssetValue reward)
             => new RewardBase(
                 rewardBase.Address,
+                rewardBase.StartHeight,
                 rewardBase.TotalShares,
                 rewardBase.RewardPortion.TryGetValue(reward.Currency, out var portion)
                     ? rewardBase.RewardPortion.SetItem(
@@ -154,6 +188,7 @@ namespace Nekoyume.Delegation
 
             return new RewardBase(
                 rewardBase.Address,
+                rewardBase.StartHeight,
                 totalShares,
                 newPortion,
                 newSigFig);
@@ -162,11 +197,11 @@ namespace Nekoyume.Delegation
         public static int RecommendedSigFig(BigInteger totalShares)
             => (int)Math.Floor(BigInteger.Log10(totalShares)) + Margin;
 
-        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardsDuringPeriod(BigInteger share)
-            => RewardPortion.Keys.Select(k => RewardsDuringPeriod(share, k))
+        public ImmutableSortedDictionary<Currency, FungibleAssetValue> CumulativeRewardDuringPeriod(BigInteger share)
+            => RewardPortion.Keys.Select(k => CumulativeRewardDuringPeriod(share, k))
                 .ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
 
-        public FungibleAssetValue RewardsDuringPeriod(BigInteger share, Currency currency)
+        public FungibleAssetValue CumulativeRewardDuringPeriod(BigInteger share, Currency currency)
             => RewardPortion.TryGetValue(currency, out var portion)
                 ? (portion * share).DivRem(SigFig).Quotient
                 : throw new ArgumentException($"Invalid reward currency: {currency}");
