@@ -43,8 +43,12 @@ jobs:
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   jsr:
+    strategy:
+      matrix:
+        package: [ "lib9c", "9c-headless-provider" ]
+    name: "jsr (@planetarium/${{ matrix.package }})"
     uses: planetarium/.github/.github/workflows/publish_jsr.yaml@bfb34283b538003768d19bff9ea05bcbd709d643
     with:
       workspace_directory: "integrations/javascript/@planetarium"
-      working_directory: "integrations/javascript/@planetarium/lib9c"
+      working_directory: "integrations/javascript/@planetarium/${{ matrix.package }}"
       pnpm_version: "9"
