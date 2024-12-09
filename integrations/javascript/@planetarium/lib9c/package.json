@@ -3,12 +3,24 @@
   "version": "0.4.0",
   "description": "",
   "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "node": {
+        "types": "./dist/index.d.cts",
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "type": "module",
   "scripts": {
     "build": "tsup",
     "fmt": "biome check --apply src tests",
     "fmt:ci": "biome check src tests",
     "test": "vitest",
+    "test:ci": "vitest run",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
