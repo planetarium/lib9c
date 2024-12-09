@@ -9,6 +9,9 @@
       "src/**/*.ts",
       "README.md",
       "jsr.json"
+    ],
+    "exclude": [
+      "!src/generated"
     ]
   }
 }
