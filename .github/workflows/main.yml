@@ -65,11 +65,11 @@ jobs:
       - name: Build Lib9c.Tools
         run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
       - run: pnpm -r build
-        working-directory: "integrations/javascript/@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium"
       - run: pnpm -r fmt:ci
-        working-directory: "integrations/javascript/@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium"
       - run: pnpm -r test
-        working-directory: "integrations/javascript/@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium"
 
   release:
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
