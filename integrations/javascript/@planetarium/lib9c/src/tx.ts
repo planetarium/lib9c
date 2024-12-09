@@ -6,14 +6,14 @@ import { TransferAsset } from "./actions/transfer_asset.js";
 import { TransferAssets } from "./actions/transfer_assets.js";
 import { MEAD, fav } from "./models/currencies.js";
 
-export interface NetworkProvider {
+export interface TxMetadataProvider {
   getNextNonce(address: Address): Promise<bigint>;
   getGenesisHash(): Promise<string>;
 }
 
 export async function makeTx(
   account: Account,
-  provider: NetworkProvider,
+  provider: TxMetadataProvider,
   action: PolymorphicAction,
 ): Promise<UnsignedTx> {
   const publicKey = await account.getPublicKey();
