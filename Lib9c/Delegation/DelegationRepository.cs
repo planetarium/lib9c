@@ -262,6 +262,11 @@ namespace Nekoyume.Delegation
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
         }
 
+        public void RemoveLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord)
+        {
+            lumpSumRewardsRecordAccount = lumpSumRewardsRecordAccount.RemoveState(lumpSumRewardsRecord.Address);
+        }
+
         public void TransferAsset(Address sender, Address recipient, FungibleAssetValue value)
             => previousWorld = previousWorld.TransferAsset(ActionContext, sender, recipient, value);
 
