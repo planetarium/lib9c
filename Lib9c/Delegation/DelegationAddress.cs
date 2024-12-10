@@ -65,29 +65,29 @@ namespace Nekoyume.Delegation
                 delegateeMetadataAddress,
                 delegatorAddress.ByteArray);
 
-        public static Address CurrentLumpSumRewardsRecordAddress(
+        public static Address CurrentRewardBaseAddress(
             Address delegateeAddress, Address delegateeAccountAddress)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress));
 
-        public static Address CurrentLumpSumRewardsRecordAddress(
+        public static Address CurrentRewardBaseAddress(
             Address delegateeMetadataAddress)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 delegateeMetadataAddress);
 
-        public static Address LumpSumRewardsRecordAddress(
+        public static Address RewardBaseAddress(
             Address delegateeAddress, Address delegateeAccountAddress, long height)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress),
                 BitConverter.GetBytes(height));
 
-        public static Address LumpSumRewardsRecordAddress(
+        public static Address RewardBaseAddress(
             Address delegateeMetadataAddress, long height)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 delegateeMetadataAddress,
                 BitConverter.GetBytes(height));
 
@@ -138,7 +138,7 @@ namespace Nekoyume.Delegation
             Bond,
             UnbondLockIn,
             RebondGrace,
-            LumpSumRewardsRecord,
+            RewardBase,
             RewardPool,
             DelegationPool,
         }

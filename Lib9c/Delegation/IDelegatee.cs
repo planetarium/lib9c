@@ -65,6 +65,10 @@ namespace Nekoyume.Delegation
 
         Address RebondGraceAddress(Address delegatorAddress);
 
+        Address CurrentRewardBaseAddress();
+
+        Address RewardBaseAddress(long height);
+
         Address CurrentLumpSumRewardsRecordAddress();
 
         Address LumpSumRewardsRecordAddress(long height);
