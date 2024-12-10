@@ -22,7 +22,7 @@ namespace Nekoyume.Delegation
         private const string StateTypeName = "reward_base";
         private const long StateVersion = 1;
         public const int Margin = 2;
-        private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
+        private static readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         public RewardBase(
             Address address,
@@ -79,7 +79,7 @@ namespace Nekoyume.Delegation
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableDictionary(f => f.Currency, f => f);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
             SigFig = sigfig;
             StartHeight = startHeight;
         }
@@ -106,7 +106,7 @@ namespace Nekoyume.Delegation
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableDictionary(f => f.Currency, f => f);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
             SigFig = (Integer)bencoded[4];
 
             try
@@ -122,7 +122,7 @@ namespace Nekoyume.Delegation
         private RewardBase(
             Address address,
             BigInteger totalShares,
-            ImmutableDictionary<Currency, FungibleAssetValue> rewardPortion,
+            ImmutableSortedDictionary<Currency, FungibleAssetValue> rewardPortion,
             int sigfig,
             long? startHeight = null)
         {
@@ -141,7 +141,7 @@ namespace Nekoyume.Delegation
 
         public int SigFig { get; private set; }
 
-        public ImmutableDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
+        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
 
         public List Bencoded
         {
@@ -199,9 +199,10 @@ namespace Nekoyume.Delegation
         {
             var newSigFig = Math.Max(rewardBase.SigFig, RecommendedSigFig(totalShares));
             var multiplier = Multiplier(newSigFig - rewardBase.SigFig);
-            var newPortion = rewardBase.RewardPortion.ToImmutableDictionary(
+            var newPortion = rewardBase.RewardPortion.ToImmutableSortedDictionary(
                 kvp => kvp.Key,
-                kvp => kvp.Value * multiplier);
+                kvp => kvp.Value * multiplier,
+                _currencyComparer);
 
             return new RewardBase(
                 rewardBase.Address,
@@ -233,7 +234,7 @@ namespace Nekoyume.Delegation
             || (other is RewardBase rewardBase
             && Address == rewardBase.Address
             && TotalShares == rewardBase.TotalShares
-            && RewardPortion.Equals(rewardBase.RewardPortion)
+            && RewardPortion.SequenceEqual(rewardBase.RewardPortion)
             && SigFig == rewardBase.SigFig);
 
         public override int GetHashCode()
