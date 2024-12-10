@@ -165,6 +165,9 @@ namespace Nekoyume.Delegation
         public Address RebondGraceAddress(Address delegatorAddress)
             => Metadata.RebondGraceAddress(delegatorAddress);
 
+        public Address DistributionPoolAddress()
+            => Metadata.DistributionPoolAddress();
+
         public Address CurrentRewardBaseAddress()
             => Metadata.CurrentRewardBaseAddress();
 
@@ -283,6 +286,15 @@ namespace Nekoyume.Delegation
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
                 rewardBase = rewards.Aggregate(rewardBase, (accum, next) => accum.AddReward(next));
+
+                foreach (var rewardsEach in rewards)
+                {
+                    if (rewardsEach.Sign > 0)
+                    {
+                        Repository.TransferAsset(RewardPoolAddress, DistributionPoolAddress(), rewardsEach);
+                    }
+                }
+
                 Repository.SetRewardBase(rewardBase);
             }
             else
@@ -399,15 +411,15 @@ namespace Nekoyume.Delegation
             RewardBase newRewardBase;
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
-                newRewardBase = rewardBase.UpdateTotalShares(TotalShares, height);
-                if (rewardBase.StartHeight == height)
+                newRewardBase = rewardBase.UpdateTotalShares(TotalShares);
+                if (Repository.GetRewardBase(this, height) is not null)
                 {
                     Repository.SetRewardBase(newRewardBase);
                     return;
                 }
 
-                Address archiveAddress = RewardBaseAddress(rewardBase.StartHeight);
-                var archivedRewardBase = rewardBase.MoveAddress(archiveAddress);
+                Address archiveAddress = RewardBaseAddress(height);
+                var archivedRewardBase = rewardBase.AttachHeight(archiveAddress, height);
                 Repository.SetRewardBase(archivedRewardBase);
             }
             else
@@ -419,7 +431,6 @@ namespace Nekoyume.Delegation
 
                 newRewardBase = new(
                     CurrentRewardBaseAddress(),
-                    height,
                     TotalShares,
                     RewardCurrencies);
             }
@@ -487,7 +498,7 @@ namespace Nekoyume.Delegation
 
                 if (reward.Sign > 0)
                 {
-                    Repository.TransferAsset(RewardPoolAddress, delegator.RewardAddress, reward);
+                    Repository.TransferAsset(DistributionPoolAddress(), delegator.RewardAddress, reward);
                 }
             }
         }
@@ -530,9 +541,9 @@ namespace Nekoyume.Delegation
                 {
                     rewardBase = new RewardBase(
                         RewardBaseAddress(recordEach.StartHeight),
-                        recordEach.StartHeight,
                         recordEach.TotalShares,
-                        recordEach.LumpSumRewards.Keys);
+                        recordEach.LumpSumRewards.Keys,
+                        recordEach.StartHeight);
                 }
 
                 foreach (var r in recordEach.LumpSumRewards)
