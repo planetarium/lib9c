@@ -535,25 +535,43 @@ namespace Nekoyume.Delegation
             records.Reverse();
 
             RewardBase? rewardBase = null;
+            RewardBase? newRewardBase = null;
             foreach (var recordEach in records)
             {
                 if (rewardBase is null)
                 {
                     rewardBase = new RewardBase(
-                        RewardBaseAddress(recordEach.StartHeight),
+                        CurrentRewardBaseAddress(),
                         recordEach.TotalShares,
-                        recordEach.LumpSumRewards.Keys,
-                        recordEach.StartHeight);
+                        recordEach.LumpSumRewards.Keys);
+                }
+                else
+                {
+                    newRewardBase = rewardBase.UpdateTotalShares(recordEach.TotalShares);
+                    if (Repository.GetRewardBase(this, recordEach.StartHeight) is not null)
+                    {
+                        Repository.SetRewardBase(newRewardBase);
+                    }
+                    else
+                    {
+                        Address archiveAddress = RewardBaseAddress(recordEach.StartHeight);
+                        var archivedRewardBase = rewardBase.AttachHeight(archiveAddress, recordEach.StartHeight);
+                        Repository.SetRewardBase(archivedRewardBase);
+                    }
+
+                    rewardBase = newRewardBase;
                 }
 
                 foreach (var r in recordEach.LumpSumRewards)
                 {
                     rewardBase = rewardBase.AddReward(r.Value);
-                    Repository.TransferAsset(recordEach.Address, RewardPoolAddress, Repository.GetBalance(recordEach.Address, r.Key));
+                    Repository.TransferAsset(recordEach.Address, DistributionPoolAddress(), Repository.GetBalance(recordEach.Address, r.Key));
                 }
 
                 Repository.RemoveLumpSumRewardsRecord(recordEach);
             }
+
+            Repository.SetRewardBase(rewardBase!);
         }
     }
 }

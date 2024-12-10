@@ -80,21 +80,21 @@ namespace Nekoyume.Delegation
 
         public Address DelegatorAccountAddress { get; }
 
-        private Address DelegateeMetadataAccountAddress { get; }
+        public Address DelegateeMetadataAccountAddress { get; }
 
-        private Address DelegatorMetadataAccountAddress { get; }
+        public Address DelegatorMetadataAccountAddress { get; }
 
-        private Address BondAccountAddress { get; }
+        public Address BondAccountAddress { get; }
 
-        private Address UnbondLockInAccountAddress { get; }
+        public Address UnbondLockInAccountAddress { get; }
 
-        private Address RebondGraceAccountAddress { get; }
+        public Address RebondGraceAccountAddress { get; }
 
-        private Address UnbondingSetAccountAddress { get; }
+        public Address UnbondingSetAccountAddress { get; }
 
-        private Address RewardBaseAccountAddress { get; }
+        public Address RewardBaseAccountAddress { get; }
 
-        private Address LumpSumRewardsRecordAccountAddress { get; }
+        public Address LumpSumRewardsRecordAccountAddress { get; }
 
         public abstract IDelegatee GetDelegatee(Address address);
 
