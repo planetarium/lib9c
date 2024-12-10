@@ -11,6 +11,7 @@ using Libplanet.Crypto;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Helper;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 
@@ -34,11 +35,30 @@ namespace Nekoyume.Action
         private const string MaterialsKey = "m";
         private const string ChargeApKey = "c";
         private const string AvatarAddressKey = "a";
+        private const string GradeKey = "g";
+        private const string ItemSubTypeKey = "i";
 
 #region Fields
+        /// <summary>
+        /// Id list of items as material.
+        /// </summary>
         public List<Guid> MaterialIds = new();
+        /// <summary>
+        /// Whether to charge action points with action execution.
+        /// </summary>
         public bool ChargeAp;
+        /// <summary>
+        /// AvatarAddress of the signer.
+        /// </summary>
         public Address AvatarAddress;
+        /// <summary>
+        /// MaterialGrade of the material item.
+        /// </summary>
+        public int MaterialGradeId;
+        /// <summary>
+        /// ItemSubType of the material item.
+        /// </summary>
+        public int MaterialItemSubTypeId;
 #endregion Fields
 
         /// <summary>
@@ -50,6 +70,8 @@ namespace Nekoyume.Action
         {
             GasTracer.UseGas(1);
             var states = context.PreviousState;
+            var materialGrade = (Grade)MaterialGradeId;
+            var materialItemSubType = (ItemSubType)MaterialItemSubTypeId;
 
             // Collect addresses
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
@@ -85,19 +107,34 @@ namespace Nekoyume.Action
 
             // Calculate action point
             var actionPoint = CalculateActionPoint(states, avatarState, sheets, context);
-
-            // Initialize variables
-            var gradeDict = SynthesizeSimulator.GetGradeDict(MaterialIds, avatarState, context.BlockIndex,
-                addressesHex, out var materialEquipments, out var materialCostumes);
+            var materialItems = SynthesizeSimulator.GetMaterialList(
+                MaterialIds,
+                avatarState,
+                context.BlockIndex,
+                materialGrade,
+                materialItemSubType,
+                addressesHex
+            );
 
             // Unequip items (if necessary)
-            foreach (var materialEquipment in materialEquipments)
+            foreach (var materialItem in materialItems)
             {
-                materialEquipment.Unequip();
+                switch (materialItem)
+                {
+                    case Equipment equipment:
+                        equipment.Unequip();
+                        break;
+                    case Costume costume:
+                        costume.Unequip();
+                        break;
+                }
             }
-            foreach (var materialCostume in materialCostumes)
+
+            if (materialItems.Count == 0 || materialItems.Count != MaterialIds.Count)
             {
-                materialCostume.Unequip();
+                throw new InvalidMaterialException(
+                    $"{addressesHex} Aborted as the material item is not valid."
+                );
             }
 
             // Remove materials from inventory
@@ -113,6 +150,9 @@ namespace Nekoyume.Action
 
             var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
             {
+                Grade = materialGrade,
+                ItemSubType = materialItemSubType,
+                MaterialCount = materialItems.Count,
                 SynthesizeSheet = sheets.GetSheet<SynthesizeSheet>(),
                 SynthesizeWeightSheet = sheets.GetSheet<SynthesizeWeightSheet>(),
                 CostumeItemSheet = sheets.GetSheet<CostumeItemSheet>(),
@@ -123,7 +163,6 @@ namespace Nekoyume.Action
                 SkillSheet = sheets.GetSheet<SkillSheet>(),
                 BlockIndex = context.BlockIndex,
                 RandomObject = context.GetRandom(),
-                GradeDict = gradeDict,
             });
 
             // Add synthesized items to inventory
@@ -184,6 +223,8 @@ namespace Nekoyume.Action
                     [MaterialsKey] = new List(MaterialIds.OrderBy(i => i).Select(i => i.Serialize())),
                     [ChargeApKey] = ChargeAp.Serialize(),
                     [AvatarAddressKey] = AvatarAddress.Serialize(),
+                    [GradeKey] = (Integer)MaterialGradeId,
+                    [ItemSubTypeKey] = (Integer)MaterialItemSubTypeId,
                 }
                 .ToImmutableDictionary();
 
@@ -192,6 +233,8 @@ namespace Nekoyume.Action
             MaterialIds = plainValue[MaterialsKey].ToList(StateExtensions.ToGuid);
             ChargeAp = plainValue[ChargeApKey].ToBoolean();
             AvatarAddress = plainValue[AvatarAddressKey].ToAddress();
+            MaterialGradeId = (Integer)plainValue[GradeKey];
+            MaterialItemSubTypeId = (Integer)plainValue[ItemSubTypeKey];
         }
 #endregion Serialize
     }
