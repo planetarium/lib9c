@@ -354,6 +354,7 @@ namespace Nekoyume.Action
                 states = states.SetRuneState(myAvatarAddress, myRuneStates);
             }
 
+            // just validate
             foreach (var runeSlotInfo in runeInfos)
             {
                 myRuneStates.GetRuneState(runeSlotInfo.RuneId);
