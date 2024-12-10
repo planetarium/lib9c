@@ -246,9 +246,9 @@ namespace Nekoyume.Delegation
 
             if (!share.IsZero && bond.LastDistributeHeight.HasValue)
             {
-                if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase
-                    && Repository.GetRewardBase(this, bond.LastDistributeHeight.Value) is RewardBase lastRewardBase)
-                {   
+                if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
+                {
+                    var lastRewardBase = Repository.GetRewardBase(this, bond.LastDistributeHeight.Value);
                     TransferReward(delegator, share, rewardBase, lastRewardBase);
                     // TransferRemainders(newRecord);
                 }
@@ -392,16 +392,17 @@ namespace Nekoyume.Delegation
             return reward;
         }
 
-        private void StartNewRewardPeriod(long height)
+        public void StartNewRewardPeriod(long height)
         {
             MigrateLumpSumRewardsRecords();
 
+            RewardBase newRewardBase;
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
-                rewardBase = rewardBase.UpdateTotalShares(TotalShares);
+                newRewardBase = rewardBase.UpdateTotalShares(TotalShares, height);
                 if (rewardBase.StartHeight == height)
                 {
-                    Repository.SetRewardBase(rewardBase);
+                    Repository.SetRewardBase(newRewardBase);
                     return;
                 }
 
@@ -410,15 +411,20 @@ namespace Nekoyume.Delegation
                 Repository.SetRewardBase(archivedRewardBase);
             }
             else
-            {       
-                rewardBase = new(
+            {
+                if (TotalShares.IsZero)
+                {
+                    return;
+                }
+
+                newRewardBase = new(
                     CurrentRewardBaseAddress(),
                     height,
                     TotalShares,
                     RewardCurrencies);
             }
 
-            Repository.SetRewardBase(rewardBase);
+            Repository.SetRewardBase(newRewardBase);
         }
 
         private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
@@ -463,19 +469,21 @@ namespace Nekoyume.Delegation
             T delegator,
             BigInteger share,
             RewardBase currentRewardBase,
-            RewardBase lastRewardBase)
+            RewardBase? lastRewardBase)
         {
             var currentCumulative = currentRewardBase.CumulativeRewardDuringPeriod(share);
-            var lastCumulative = lastRewardBase.CumulativeRewardDuringPeriod(share);
+            var lastCumulative = lastRewardBase?.CumulativeRewardDuringPeriod(share);
 
             foreach (var c in currentCumulative)
             {
-                if (c.Value < lastCumulative[c.Key])
+                var lastCumulativeEach = lastCumulative?[c.Key] ?? c.Key * 0;
+
+                if (c.Value < lastCumulativeEach)
                 {
                     throw new InvalidOperationException("Invalid reward base.");
                 }
 
-                var reward = c.Value - lastCumulative[c.Key];
+                var reward = c.Value - lastCumulativeEach;
 
                 if (reward.Sign > 0)
                 {
