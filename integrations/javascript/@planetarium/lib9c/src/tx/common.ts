@@ -1,19 +1,18 @@
-import { Buffer } from "buffer";
 import { type Account, Address } from "@planetarium/account";
 import type { UnsignedTx } from "@planetarium/tx";
-import type { PolymorphicAction } from "./actions/common.js";
-import { TransferAsset } from "./actions/transfer_asset.js";
-import { TransferAssets } from "./actions/transfer_assets.js";
-import { MEAD, fav } from "./models/currencies.js";
+import type { PolymorphicAction } from "../actions/common.js";
+import { TransferAsset } from "../actions/transfer_asset.js";
+import { TransferAssets } from "../actions/transfer_assets.js";
+import { MEAD, fav } from "../models/currencies.js";
 
-export interface NetworkProvider {
+export interface TxMetadataProvider {
   getNextNonce(address: Address): Promise<bigint>;
-  getGenesisHash(): Promise<string>;
+  getGenesisHash(): Promise<Uint8Array>;
 }
 
 export async function makeTx(
   account: Account,
-  provider: NetworkProvider,
+  provider: TxMetadataProvider,
   action: PolymorphicAction,
 ): Promise<UnsignedTx> {
   const publicKey = await account.getPublicKey();
@@ -28,7 +27,7 @@ export async function makeTx(
 
   return {
     nonce,
-    genesisHash: Buffer.from(genesisHash, "hex"),
+    genesisHash: genesisHash,
     signer: signer.toBytes(),
     updatedAddresses: new Set(),
     actions: [action.bencode()],

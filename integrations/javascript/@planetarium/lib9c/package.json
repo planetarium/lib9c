@@ -1,14 +1,26 @@
 {
   "name": "@planetarium/lib9c",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "node": {
+        "types": "./dist/index.d.cts",
+        "import": "./dist/index.js",
+        "require": "./dist/index.cjs"
+      },
+      "browser": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "type": "module",
   "scripts": {
     "build": "tsup",
     "fmt": "biome check --apply src tests",
     "fmt:ci": "biome check src tests",
     "test": "vitest",
+    "test:ci": "vitest run",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -18,7 +30,7 @@
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@biomejs/biome": "^1.7.1",
-    "@types/node": "^20.12.8",
+    "@types/node": "^22.10.1",
     "@types/uuid": "^9.0.8",
     "execa": "^8.0.1",
     "tsup": "^8.0.2",

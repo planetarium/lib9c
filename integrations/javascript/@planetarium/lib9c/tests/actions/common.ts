@@ -6,10 +6,18 @@ import { execa } from "execa";
 import { expect, test } from "vitest";
 import type { PolymorphicAction } from "../../src/index.js";
 
-export function runTests(name: string, cases: PolymorphicAction[]) {
+type ActionFn = () => PolymorphicAction;
+
+export function runTests(
+  name: string,
+  cases: (PolymorphicAction | ActionFn)[],
+) {
   for (let i = 0; i < cases.length; i++) {
     test(`${name} ${i}`, async () => {
-      const action = cases[i];
+      const action =
+        typeof cases[i] === "function"
+          ? (cases[i] as ActionFn)()
+          : (cases[i] as PolymorphicAction);
       const bytes = action.serialize();
 
       const command = "dotnet";

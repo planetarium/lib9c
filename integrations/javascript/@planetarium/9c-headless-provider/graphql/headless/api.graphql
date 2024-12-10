@@ -1,0 +1,15 @@
+mutation StageTransaction($tx: String!) {
+    stageTransaction(payload: $tx)
+}
+
+query GetNextNonce($address: Address!) {
+    nextTxNonce(address: $address)
+}
+
+query GetGenesisHash {
+    nodeStatus {
+        genesis {
+            hash
+        }
+    }
+}
