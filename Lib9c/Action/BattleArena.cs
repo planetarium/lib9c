@@ -354,6 +354,11 @@ namespace Nekoyume.Action
                 states = states.SetRuneState(myAvatarAddress, myRuneStates);
             }
 
+            foreach (var runeSlotInfo in runeInfos)
+            {
+                myRuneStates.GetRuneState(runeSlotInfo.RuneId);
+            }
+
             // get enemy equipped items
             var enemyItemSlotStateAddress = ItemSlotState.DeriveAddress(enemyAvatarAddress, BattleType.Arena);
             var enemyItemSlotState = states.TryGetLegacyState(enemyItemSlotStateAddress, out List rawEnemyItemSlotState)
