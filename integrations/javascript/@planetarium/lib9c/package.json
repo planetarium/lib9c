@@ -1,6 +1,6 @@
 {
   "name": "@planetarium/lib9c",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "module": "dist/index.js",
   "exports": {
