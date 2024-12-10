@@ -25,30 +25,30 @@ namespace Nekoyume.Delegation
 
         public RewardBase(
             Address address,
-            long startHeight,
             BigInteger totalShares,
-            IEnumerable<Currency> currencies)
+            IEnumerable<Currency> currencies,
+            long? startHeight = null)
             : this(
                   address,
-                  startHeight,
                   totalShares,
                   currencies.Select(c => c * 0),
-                  RecommendedSigFig(totalShares))
+                  RecommendedSigFig(totalShares),
+                  startHeight)
         {
         }
 
         public RewardBase(
             Address address,
-            long startHeight,
             BigInteger totalShares,
             IEnumerable<Currency> currencies,
-            int sigFig)
+            int sigFig,
+            long? startHeight = null)
             : this(
                   address,
-                  startHeight,
                   totalShares,
                   currencies.Select(c => c * 0),
-                  sigFig)
+                  sigFig,
+                  startHeight)
         {
         }
 
@@ -59,13 +59,12 @@ namespace Nekoyume.Delegation
 
         public RewardBase(
             Address address,
-            long startHeight,
             BigInteger totalShares,
             IEnumerable<FungibleAssetValue> rewardPortion,
-            int sigfig)
+            int sigfig,
+            long? startHeight = null)
         {
             Address = address;
-            StartHeight = startHeight;
 
             if (totalShares.Sign <= 0)
             {
@@ -81,6 +80,7 @@ namespace Nekoyume.Delegation
 
             RewardPortion = rewardPortion.ToImmutableDictionary(f => f.Currency, f => f);
             SigFig = sigfig;
+            StartHeight = startHeight;
         }
 
 
@@ -97,9 +97,8 @@ namespace Nekoyume.Delegation
             }
 
             Address = address;
-            StartHeight = (Integer)bencoded[2];
-            TotalShares = (Integer)bencoded[3];
-            var rewardPortion = ((List)bencoded[4]).Select(v => new FungibleAssetValue(v));
+            TotalShares = (Integer)bencoded[2];
+            var rewardPortion = ((List)bencoded[3]).Select(v => new FungibleAssetValue(v));
 
             if (!rewardPortion.Select(f => f.Currency).All(new HashSet<Currency>().Add))
             {
@@ -107,26 +106,35 @@ namespace Nekoyume.Delegation
             }
 
             RewardPortion = rewardPortion.ToImmutableDictionary(f => f.Currency, f => f);
-            SigFig = (Integer)bencoded[5];
+            SigFig = (Integer)bencoded[4];
+
+            try
+            {
+                StartHeight = (Integer)bencoded[5];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                StartHeight = null;
+            }
         }
 
         private RewardBase(
             Address address,
-            long startHeight,
             BigInteger totalShares,
             ImmutableDictionary<Currency, FungibleAssetValue> rewardPortion,
-            int sigfig)
+            int sigfig,
+            long? startHeight = null)
         {
             Address = address;
-            StartHeight = startHeight;
             TotalShares = totalShares;
             RewardPortion = rewardPortion;
             SigFig = sigfig;
+            StartHeight = startHeight;
         }
 
         public Address Address { get; }
 
-        public long StartHeight { get; }
+        public long? StartHeight { get; }
 
         public BigInteger TotalShares { get; }
 
@@ -137,15 +145,23 @@ namespace Nekoyume.Delegation
         public ImmutableDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
 
         public List Bencoded
-            => List.Empty
-                .Add(StateTypeName)
-                .Add(StateVersion)
-                .Add(StartHeight)
-                .Add(TotalShares)
-                .Add(new List(RewardPortion
-                    .OrderBy(r => r.Key, _currencyComparer)
-                    .Select(r => r.Value.Serialize())))
-                .Add(SigFig);
+        {
+            get
+            {
+                var bencoded = List.Empty
+                    .Add(StateTypeName)
+                    .Add(StateVersion)
+                    .Add(TotalShares)
+                    .Add(new List(RewardPortion
+                        .OrderBy(r => r.Key, _currencyComparer)
+                        .Select(r => r.Value.Serialize())))
+                    .Add(SigFig);
+
+                return StartHeight is long height
+                    ? bencoded.Add(height)
+                    : bencoded;
+            }   
+        }
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -155,30 +171,32 @@ namespace Nekoyume.Delegation
         public RewardBase AddReward(FungibleAssetValue reward)
             => AddReward(this, reward);
 
-        public RewardBase UpdateTotalShares(BigInteger totalShares, long startHeight)
-            => UpdateTotalShares(this, totalShares, startHeight);
+        public RewardBase UpdateTotalShares(BigInteger totalShares)
+            => UpdateTotalShares(this, totalShares);
 
-        public RewardBase MoveAddress(Address address)
-            => new RewardBase(
-                address,
-                StartHeight,
-                TotalShares,
-                RewardPortion,
-                SigFig);
+        public RewardBase AttachHeight(Address address, long startHeight)
+            => StartHeight is null
+                ? new RewardBase(
+                    address,
+                    TotalShares,
+                    RewardPortion,
+                    SigFig,
+                    startHeight)
+                : throw new InvalidOperationException("StartHeight is already attached.");
 
         private static RewardBase AddReward(RewardBase rewardBase, FungibleAssetValue reward)
             => new RewardBase(
                 rewardBase.Address,
-                rewardBase.StartHeight,
                 rewardBase.TotalShares,
                 rewardBase.RewardPortion.TryGetValue(reward.Currency, out var portion)
                     ? rewardBase.RewardPortion.SetItem(
                         reward.Currency,
                         portion + (reward * Multiplier(rewardBase.SigFig)).DivRem(rewardBase.TotalShares).Quotient)
                     : throw new ArgumentException($"Invalid reward currency: {reward.Currency}"),
-                rewardBase.SigFig);
+                rewardBase.SigFig,
+                rewardBase.StartHeight);
 
-        private static RewardBase UpdateTotalShares(RewardBase rewardBase, BigInteger totalShares, long startHeight)
+        private static RewardBase UpdateTotalShares(RewardBase rewardBase, BigInteger totalShares)
         {
             var newSigFig = Math.Max(rewardBase.SigFig, RecommendedSigFig(totalShares));
             var multiplier = Multiplier(newSigFig - rewardBase.SigFig);
@@ -188,7 +206,6 @@ namespace Nekoyume.Delegation
 
             return new RewardBase(
                 rewardBase.Address,
-                startHeight,
                 totalShares,
                 newPortion,
                 newSigFig);

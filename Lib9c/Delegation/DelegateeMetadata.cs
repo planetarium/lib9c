@@ -62,8 +62,8 @@ namespace Nekoyume.Delegation
         }
 
         public DelegateeMetadata(
-            Address address,
-            Address accountAddress,
+            Address delegateeAddress,
+            Address delegateeAccountAddress,
             List bencoded)
         {
             Currency delegationCurrency;
@@ -152,8 +152,8 @@ namespace Nekoyume.Delegation
                     "Total shares must be non-negative.");
             }
 
-            DelegateeAddress = address;
-            DelegateeAccountAddress = accountAddress;
+            DelegateeAddress = delegateeAddress;
+            DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
             RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
             DelegationPoolAddress = delegationPoolAddress;
@@ -339,6 +339,9 @@ namespace Nekoyume.Delegation
 
         public virtual Address RebondGraceAddress(Address delegatorAddress)
             => DelegationAddress.RebondGraceAddress(Address, delegatorAddress);
+
+        public virtual Address DistributionPoolAddress()
+            => DelegationAddress.DistributionPoolAddress(Address);
 
         public virtual Address CurrentRewardBaseAddress()
             => DelegationAddress.CurrentRewardBaseAddress(Address);

@@ -103,6 +103,18 @@ namespace Nekoyume.Delegation
                 DelegationElementType.RewardPool,
                 delegateeMetadataAddress);
 
+        public static Address DistributionPoolAddress(
+            Address delegateeAddress, Address delegateeAccountAddress)
+            => DeriveAddress(
+                DelegationElementType.DistributionPool,
+                DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress));
+
+        public static Address DistributionPoolAddress(
+            Address delegateeMetadataAddress)
+            => DeriveAddress(
+                DelegationElementType.DistributionPool,
+                delegateeMetadataAddress);
+
         public static Address DelegationPoolAddress(
             Address delegateeAddress, Address delegateeAccountAddress)
             => DeriveAddress(
@@ -141,6 +153,7 @@ namespace Nekoyume.Delegation
             RewardBase,
             RewardPool,
             DelegationPool,
+            DistributionPool,
         }
     }
 }
