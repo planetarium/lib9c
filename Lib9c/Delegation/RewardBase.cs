@@ -21,6 +21,7 @@ namespace Nekoyume.Delegation
     {
         private const string StateTypeName = "reward_base";
         private const long StateVersion = 1;
+        public const int Margin = 2;
         private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         public RewardBase(
@@ -139,8 +140,6 @@ namespace Nekoyume.Delegation
         public BigInteger TotalShares { get; }
 
         public int SigFig { get; private set; }
-
-        public static int Margin => 2;
 
         public ImmutableDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
 
