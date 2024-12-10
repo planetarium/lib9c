@@ -231,7 +231,7 @@ public class AllocateGuildRewardTest : ValidatorDelegationTestBase
 
             var validatorAddress = vote.ValidatorPublicKey.Address;
             var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorAddress);
-            var validatorRewardAddress = actualDelegatee.CurrentLumpSumRewardsRecordAddress();
+            var validatorRewardAddress = actualDelegatee.DistributionPoolAddress();
             var actualDelegationBalance = world.GetBalance(validatorAddress, DelegationCurrency);
             var actualCommission = world.GetBalance(validatorAddress, GuildAllocateRewardCurrency);
             var actualUnclaimedReward = world.GetBalance(validatorRewardAddress, GuildAllocateRewardCurrency);
