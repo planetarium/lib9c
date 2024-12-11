@@ -285,7 +285,7 @@ namespace Nekoyume.Delegation
             var rewards = RewardCurrencies.Select(c => Repository.GetBalance(RewardPoolAddress, c));
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
-                rewardBase = rewards.Aggregate(rewardBase, (accum, next) => accum.AddReward(next));
+                rewardBase = rewardBase.AddRewards(rewards);
 
                 foreach (var rewardsEach in rewards)
                 {
@@ -562,9 +562,9 @@ namespace Nekoyume.Delegation
                     rewardBase = newRewardBase;
                 }
 
+                rewardBase = rewardBase.AddRewards(recordEach.LumpSumRewards.Values);
                 foreach (var r in recordEach.LumpSumRewards)
                 {
-                    rewardBase = rewardBase.AddReward(r.Value);
                     Repository.TransferAsset(recordEach.Address, DistributionPoolAddress(), Repository.GetBalance(recordEach.Address, r.Key));
                 }
 
