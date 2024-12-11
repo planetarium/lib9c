@@ -1119,6 +1119,70 @@ namespace Lib9c.Tests.Action
                     }));
         }
 
+        [Fact]
+        public void ExecuteRuneNotFoundException()
+        {
+            var previousStates = _initialStates;
+            var context = new ActionContext();
+            Assert.True(
+                previousStates.GetSheet<ArenaSheet>().TryGetValue(
+                    1,
+                    out var row));
+
+            if (!row.TryGetRound(1, out var roundData))
+            {
+                throw new RoundNotFoundException(
+                    $"[{nameof(BattleArena)}] ChampionshipId({row.ChampionshipId}) - round({1})");
+            }
+
+            if (roundData.ArenaType != ArenaType.OffSeason)
+            {
+                throw new InvalidSeasonException(
+                    $"[{nameof(BattleArena)}] This test is only for OffSeason. ArenaType : {roundData.ArenaType}");
+            }
+
+            var random = new TestRandom();
+            previousStates = JoinArena(
+                context,
+                previousStates,
+                _agent1Address,
+                _avatar1Address,
+                roundData.StartBlockIndex,
+                1,
+                1,
+                random);
+            previousStates = JoinArena(
+                context,
+                previousStates,
+                _agent2Address,
+                _avatar2Address,
+                roundData.StartBlockIndex,
+                1,
+                1,
+                random);
+
+            var action = new BattleArena
+            {
+                myAvatarAddress = _avatar1Address,
+                enemyAvatarAddress = _avatar2Address,
+                championshipId = 1,
+                round = 1,
+                ticket = 1,
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                runeInfos = new List<RuneSlotInfo> { new (0, 10035), },
+            };
+            Assert.Throws<RuneNotFoundException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = roundData.StartBlockIndex + 1,
+                        PreviousState = previousStates,
+                        Signer = _agent1Address,
+                        RandomSeed = 0,
+                    }));
+        }
+
         [Theory]
         [InlineData(8, null)]
         [InlineData(100, null)]
