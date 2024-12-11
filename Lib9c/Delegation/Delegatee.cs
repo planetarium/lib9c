@@ -571,7 +571,10 @@ namespace Nekoyume.Delegation
                 Repository.RemoveLumpSumRewardsRecord(recordEach);
             }
 
-            Repository.SetRewardBase(rewardBase!);
+            if (rewardBase is RewardBase rewardBaseToSet)
+            {
+                Repository.SetRewardBase(rewardBaseToSet);
+            }
         }
     }
 }
