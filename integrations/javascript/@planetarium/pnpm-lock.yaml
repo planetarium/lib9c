@@ -10,15 +10,15 @@ importers:
 
   9c-headless-provider:
     dependencies:
+      '@jsr/planetarium__lib9c':
+        specifier: ^0.4.0
+        version: 0.4.0
       '@planetarium/account':
         specifier: ^5.4.1
         version: 5.4.1
       '@planetarium/bencodex':
         specifier: ^0.2.2
         version: 0.2.2
-      '@planetarium/lib9c':
-        specifier: npm:@jsr/planetarium__lib9c@^0.4.0
-        version: '@jsr/planetarium__lib9c@0.4.0'
       '@planetarium/tx':
         specifier: ^5.4.1
         version: 5.4.1(@planetarium/account@5.4.1)
