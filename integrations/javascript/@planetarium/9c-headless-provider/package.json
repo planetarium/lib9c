@@ -17,7 +17,7 @@
   "dependencies": {
     "@planetarium/account": "^5.4.1",
     "@planetarium/bencodex": "^0.2.2",
-    "@planetarium/lib9c": "npm:@jsr/planetarium__lib9c@^0.4.0",
+    "@jsr/planetarium__lib9c": "^0.4.0",
     "@planetarium/tx": "^5.4.1",
     "graphql-request": "^6.0.0",
     "graphql-tag": "^2.12.6"
