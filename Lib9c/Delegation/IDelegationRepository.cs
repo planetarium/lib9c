@@ -36,9 +36,13 @@ namespace Nekoyume.Delegation
 
         UnbondingSet GetUnbondingSet();
 
-        LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height);
+        RewardBase? GetCurrentRewardBase(IDelegatee delegatee);
+
+        RewardBase? GetRewardBase(IDelegatee delegatee, long height);
 
         LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee);
+
+        LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height);
 
         FungibleAssetValue GetBalance(Address address, Currency currency);
 
@@ -58,7 +62,11 @@ namespace Nekoyume.Delegation
 
         void SetUnbondingSet(UnbondingSet unbondingSet);
 
+        void SetRewardBase(RewardBase rewardBase);
+
         void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
+
+        void RemoveLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
 
         void TransferAsset(Address sender, Address recipient, FungibleAssetValue value);
 

@@ -146,6 +146,12 @@ namespace Nekoyume
         public static readonly Address GuildUnbondingSet
             = new Address("0000000000000000000000000000000000000216");
 
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.RewardBase"/>.
+        /// </summary>
+        public static readonly Address GuildRewardBase
+            = new Address("0000000000000000000000000000000000000217");
+
         #endregion
 
         #region Validator
@@ -232,6 +238,12 @@ namespace Nekoyume
         /// </summary>
         public static readonly Address NonValidatorDelegatee
             = new Address("0000000000000000000000000000000000000313");
+
+        /// <summary>
+        /// An address of an account having <see cref="Delegation.RewardBase"/>.
+        /// </summary>
+        public static readonly Address ValidatorRewardBase
+            = new Address("0000000000000000000000000000000000000314");
 
         #endregion
 
