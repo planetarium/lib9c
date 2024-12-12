@@ -754,7 +754,7 @@ namespace Nekoyume.Delegation
                     var toTransfer = Repository.GetBalance(recordEach.Address, r.Key);
                     if (toTransfer.Sign > 0)
                     {
-                        Repository.TransferAsset(RewardPoolAddress, DistributionPoolAddress(), toTransfer);
+                        Repository.TransferAsset(recordEach.Address, DistributionPoolAddress(), toTransfer);
                     }
                 }
 
