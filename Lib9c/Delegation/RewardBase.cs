@@ -49,7 +49,7 @@ namespace Nekoyume.Delegation
             : this(
                   address,
                   totalShares,
-                  currencies.Select(c => c * 0),
+                  currencies.Select(c => (c, BigInteger.Zero)),
                   RecommendedSigFig(totalShares),
                   null)
         {
@@ -100,14 +100,16 @@ namespace Nekoyume.Delegation
 
             Address = address;
             TotalShares = (Integer)bencoded[2];
-            var rewardPortion = ((List)bencoded[3]).Select(v => new FungibleAssetValue(v));
+            var bencodedRewardPortion = ((List)bencoded[3]).Select(v => (List)v);
+            var rewardPortion = bencodedRewardPortion.Select(
+                p => (Currency: new Currency(p[0]), Portion: (BigInteger)(Integer)p[1]));
 
             if (!rewardPortion.Select(f => f.Currency).All(new HashSet<Currency>().Add))
             {
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f.Portion, _currencyComparer);
             SigFig = (Integer)bencoded[4];
 
             try
@@ -147,7 +149,7 @@ namespace Nekoyume.Delegation
         private RewardBase(
             Address address,
             BigInteger totalShares,
-            IEnumerable<FungibleAssetValue> rewardPortion,
+            IEnumerable<(Currency, BigInteger)> rewardPortion,
             int sigfig,
             long? startHeight = null)
         {
@@ -160,12 +162,12 @@ namespace Nekoyume.Delegation
 
             TotalShares = totalShares;
 
-            if (!rewardPortion.Select(f => f.Currency).All(new HashSet<Currency>().Add))
+            if (!rewardPortion.Select(f => f.Item1).All(new HashSet<Currency>().Add))
             {
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Item1, f => f.Item2, _currencyComparer);
             SigFig = sigfig;
             StartHeight = startHeight;
         }
@@ -191,7 +193,7 @@ namespace Nekoyume.Delegation
         private RewardBase(
             Address address,
             BigInteger totalShares,
-            ImmutableSortedDictionary<Currency, FungibleAssetValue> rewardPortion,
+            ImmutableSortedDictionary<Currency, BigInteger> rewardPortion,
             int sigfig,
             long? startHeight = null)
         {
@@ -216,7 +218,7 @@ namespace Nekoyume.Delegation
         /// Cumulative reward portion of <see cref="RewardBase"/>.
         /// When it's multiplied by the number of shares, it will be the reward for the period.
         /// </summary>
-        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
+        public ImmutableSortedDictionary<Currency, BigInteger> RewardPortion { get; }
 
         /// <summary>
         /// Significant figure of <see cref="RewardBase"/>.
@@ -238,7 +240,7 @@ namespace Nekoyume.Delegation
                     .Add(TotalShares)
                     .Add(new List(RewardPortion
                         .OrderBy(r => r.Key, _currencyComparer)
-                        .Select(r => r.Value.Serialize())))
+                        .Select(r => new List(r.Key.Serialize(), new Integer(r.Value)))))
                     .Add(SigFig);
 
                 return StartHeight is long height
@@ -340,7 +342,7 @@ namespace Nekoyume.Delegation
         /// </exception>
         public FungibleAssetValue CumulativeRewardDuringPeriod(BigInteger share, Currency currency)
             => RewardPortion.TryGetValue(currency, out var portion)
-                ? (portion * share).DivRem(Multiplier(SigFig)).Quotient
+                ? FungibleAssetValue.FromRawValue(currency, (portion * share) / (Multiplier(SigFig)))
                 : throw new ArgumentException($"Invalid reward currency: {currency}");
 
         private static RewardBase AddReward(RewardBase rewardBase, FungibleAssetValue reward)
@@ -351,8 +353,8 @@ namespace Nekoyume.Delegation
                     $"Invalid reward currency: {reward.Currency}", nameof(reward));
             }
 
-            var portionNumerator = reward * Multiplier(rewardBase.SigFig);
-            var updatedPortion = portion + portionNumerator.DivRem(rewardBase.TotalShares).Quotient;
+            var portionNumerator = reward.RawValue * Multiplier(rewardBase.SigFig);
+            var updatedPortion = portion + (portionNumerator / rewardBase.TotalShares);
 
             return new RewardBase(
                 rewardBase.Address,
