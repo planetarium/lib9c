@@ -208,14 +208,15 @@ namespace Nekoyume.Delegation
         public Address Address { get; }
 
         /// <summary>
-        /// Start height of <see cref="RewardBase"/> that attached when archived.
-        /// </summary>
-        public long? StartHeight { get; }
-
-        /// <summary>
         /// <see cref="IDelegatee.TotalShares"/> of <see cref="RewardBase"/>'s creation height.
         /// </summary>
         public BigInteger TotalShares { get; }
+
+        /// <summary>
+        /// Cumulative reward portion of <see cref="RewardBase"/>.
+        /// When it's multiplied by the number of shares, it will be the reward for the period.
+        /// </summary>
+        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
 
         /// <summary>
         /// Significant figure of <see cref="RewardBase"/>.
@@ -223,10 +224,9 @@ namespace Nekoyume.Delegation
         public int SigFig { get; private set; }
 
         /// <summary>
-        /// Cumulative reward portion of <see cref="RewardBase"/>.
-        /// When it's multiplied by the number of shares, it will be the reward for the period.
+        /// Start height of <see cref="RewardBase"/> that attached when archived.
         /// </summary>
-        public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardPortion { get; }
+        public long? StartHeight { get; }
 
         public List Bencoded
         {
@@ -344,16 +344,23 @@ namespace Nekoyume.Delegation
                 : throw new ArgumentException($"Invalid reward currency: {currency}");
 
         private static RewardBase AddReward(RewardBase rewardBase, FungibleAssetValue reward)
-            => new RewardBase(
+        {
+            if (!rewardBase.RewardPortion.TryGetValue(reward.Currency, out var portion))
+            {
+                throw new ArgumentException(
+                    $"Invalid reward currency: {reward.Currency}", nameof(reward));
+            }
+
+            var portionNumerator = reward * Multiplier(rewardBase.SigFig);
+            var updatedPortion = portion + portionNumerator.DivRem(rewardBase.TotalShares).Quotient;
+
+            return new RewardBase(
                 rewardBase.Address,
                 rewardBase.TotalShares,
-                rewardBase.RewardPortion.TryGetValue(reward.Currency, out var portion)
-                    ? rewardBase.RewardPortion.SetItem(
-                        reward.Currency,
-                        portion + (reward * Multiplier(rewardBase.SigFig)).DivRem(rewardBase.TotalShares).Quotient)
-                    : throw new ArgumentException($"Invalid reward currency: {reward.Currency}"),
+                rewardBase.RewardPortion.SetItem(reward.Currency, updatedPortion),
                 rewardBase.SigFig,
                 rewardBase.StartHeight);
+        }
 
         private static RewardBase UpdateTotalShares(RewardBase rewardBase, BigInteger totalShares)
         {
@@ -377,7 +384,6 @@ namespace Nekoyume.Delegation
         private static BigInteger Multiplier(int sigFig)
             => BigInteger.Pow(10, sigFig);
 
-
         public override bool Equals(object? obj)
             => obj is RewardBase other && Equals(other);
 
@@ -387,7 +393,8 @@ namespace Nekoyume.Delegation
             && Address == rewardBase.Address
             && TotalShares == rewardBase.TotalShares
             && RewardPortion.SequenceEqual(rewardBase.RewardPortion)
-            && SigFig == rewardBase.SigFig);
+            && SigFig == rewardBase.SigFig
+            && StartHeight == rewardBase.StartHeight);
 
         public override int GetHashCode()
             => Address.GetHashCode();

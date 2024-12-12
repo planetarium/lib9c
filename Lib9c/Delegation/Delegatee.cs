@@ -483,11 +483,12 @@ namespace Nekoyume.Delegation
             RewardBase? lastRewardBase)
         {
             var currentCumulative = currentRewardBase.CumulativeRewardDuringPeriod(share);
-            var lastCumulative = lastRewardBase?.CumulativeRewardDuringPeriod(share);
+            var lastCumulative = lastRewardBase?.CumulativeRewardDuringPeriod(share)
+                ?? ImmutableSortedDictionary<Currency, FungibleAssetValue>.Empty;
 
             foreach (var c in currentCumulative)
             {
-                var lastCumulativeEach = lastCumulative?[c.Key] ?? c.Key * 0;
+                var lastCumulativeEach = lastCumulative.GetValueOrDefault(c.Key, defaultValue: c.Key * 0);
 
                 if (c.Value < lastCumulativeEach)
                 {
@@ -518,7 +519,9 @@ namespace Nekoyume.Delegation
 
         private void MigrateLumpSumRewardsRecords()
         {
-            List<LumpSumRewardsRecord> records = new();
+            var growSize = 100;
+            var capacity = 5000;
+            List<LumpSumRewardsRecord> records = new(capacity);
             if (!(Repository.GetCurrentLumpSumRewardsRecord(this) is LumpSumRewardsRecord record))
             {
                 return;
@@ -526,18 +529,24 @@ namespace Nekoyume.Delegation
 
             while (record.LastStartHeight is long lastStartHeight)
             {
+                if (records.Count == capacity)
+                {
+                    capacity += growSize;
+                    records.Capacity = capacity;
+                }
+
                 records.Add(record);
                 record = Repository.GetLumpSumRewardsRecord(this, lastStartHeight)
                     ?? throw new InvalidOperationException(
                             $"Lump sum rewards record for #{lastStartHeight} is missing");
             }
 
-            records.Reverse();
-
             RewardBase? rewardBase = null;
             RewardBase? newRewardBase = null;
-            foreach (var recordEach in records)
+            for (var i = records.Count - 1; i >= 0; i--)
             {
+                var recordEach = records[i];
+
                 if (rewardBase is null)
                 {
                     rewardBase = new RewardBase(
