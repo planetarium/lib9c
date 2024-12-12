@@ -751,7 +751,11 @@ namespace Nekoyume.Delegation
                 rewardBase = rewardBase.AddRewards(recordEach.LumpSumRewards.Values);
                 foreach (var r in recordEach.LumpSumRewards)
                 {
-                    Repository.TransferAsset(recordEach.Address, DistributionPoolAddress(), Repository.GetBalance(recordEach.Address, r.Key));
+                    var toTransfer = Repository.GetBalance(recordEach.Address, r.Key);
+                    if (toTransfer.Sign > 0)
+                    {
+                        Repository.TransferAsset(RewardPoolAddress, DistributionPoolAddress(), toTransfer);
+                    }
                 }
 
                 Repository.RemoveLumpSumRewardsRecord(recordEach);
