@@ -51,13 +51,13 @@ namespace Nekoyume.Action.ValidatorDelegation
                 switch (unbonding)
                 {
                     case UnbondLockIn unbondLockIn:
-                        unbondLockIn.Release(context.BlockIndex, out var releasedFAV);
+                        unbondLockIn = unbondLockIn.Release(context.BlockIndex, out var releasedFAV);
                         repository.SetUnbondLockIn(unbondLockIn);
                         repository.UpdateWorld(
                             Unstake(repository.World, context, unbondLockIn, releasedFAV));
                         break;
                     case RebondGrace rebondGrace:
-                        rebondGrace.Release(context.BlockIndex, out _);
+                        rebondGrace = rebondGrace.Release(context.BlockIndex, out _);
                         repository.SetRebondGrace(rebondGrace);
                         break;
                     default:
