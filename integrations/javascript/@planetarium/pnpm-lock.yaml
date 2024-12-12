@@ -6,17 +6,19 @@ settings:
 
 importers:
 
+  .: {}
+
   9c-headless-provider:
     dependencies:
+      '@jsr/planetarium__lib9c':
+        specifier: ^0.4.0
+        version: 0.4.0
       '@planetarium/account':
         specifier: ^5.4.1
         version: 5.4.1
       '@planetarium/bencodex':
         specifier: ^0.2.2
         version: 0.2.2
-      '@planetarium/lib9c':
-        specifier: workspace:^
-        version: link:../lib9c
       '@planetarium/tx':
         specifier: ^5.4.1
         version: 5.4.1(@planetarium/account@5.4.1)
@@ -1103,6 +1105,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@jsr/planetarium__lib9c@0.4.0':
+    resolution: {integrity: sha512-bzMzIxdzuRkxwO03TgjTHNvgnhCrqxVF6Bbn3MY8yejOQ6JJeK/qlF5yf0Fk17sSjYtMOmAGSHP5V88HtMaXOg==, tarball: https://npm.jsr.io/~/11/@jsr/planetarium__lib9c/0.4.0.tgz}
 
   '@kamilkisiela/fast-url-parser@1.1.4':
     resolution: {integrity: sha512-gbkePEBupNydxCelHCESvFSFM8XPh1Zs/OAVRW/rKpEqPAl5PbOM90Si8mv9bvnR53uPD2s/FiRxdvSejpRJew==}
@@ -4189,6 +4194,15 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
+
+  '@jsr/planetarium__lib9c@0.4.0':
+    dependencies:
+      '@planetarium/account': 5.4.1
+      '@planetarium/bencodex': 0.2.2
+      '@planetarium/tx': 5.4.1(@planetarium/account@5.4.1)
+      buffer: 6.0.3
+      decimal.js: 10.4.3
+      uuid: 9.0.1
 
   '@kamilkisiela/fast-url-parser@1.1.4': {}
 
