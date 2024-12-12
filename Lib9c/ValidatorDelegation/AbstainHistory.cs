@@ -42,7 +42,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public static int WindowSize => 10;
 
-        public static int MaxAbstainAllowance => 3;
+        public static int MaxAbstainAllowance => 9;
 
         public static Address Address => new Address(
             ImmutableArray.Create<byte>(
