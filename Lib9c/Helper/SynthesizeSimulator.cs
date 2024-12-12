@@ -384,7 +384,7 @@ namespace Nekoyume.Helper
                 throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, weightSheet, random, out var itemWeights);
+            var randomValue = GetRandomValueForItem(synthesizeResultPool, weightSheet, random, out var itemWeights);
             var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
@@ -440,7 +440,7 @@ namespace Nekoyume.Helper
                 throw new InvalidOperationException($"No available items to synthesize for grade {grade} and subtype {itemSubType}");
             }
 
-            var randomValue = GetRandomValueForItem(grade, synthesizeResultPool, weightSheet, random, out var itemWeights);
+            var randomValue = GetRandomValueForItem(synthesizeResultPool, weightSheet, random, out var itemWeights);
             var cumulativeWeight = 0;
             foreach (var (itemId, weight) in itemWeights)
             {
@@ -506,14 +506,14 @@ namespace Nekoyume.Helper
             throw new InvalidOperationException("Failed to select a synthesized item.");
         }
 
-        private static int GetRandomValueForItem(Grade grade, HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
+        private static int GetRandomValueForItem(HashSet<int> synthesizeResultPool, SynthesizeWeightSheet synthesizeWeightSheet,
                                           IRandom random, out List<(int ItemId, int Weight)> itemWeights)
         {
             var totalWeight = 0;
             itemWeights = new List<(int ItemId, int Weight)>();
             foreach (var itemId in synthesizeResultPool)
             {
-                var weight = GetWeight(grade, itemId, synthesizeWeightSheet);
+                var weight = GetWeight(itemId, synthesizeWeightSheet);
                 itemWeights.Add((itemId, weight));
                 totalWeight += weight;
             }
@@ -631,11 +631,11 @@ namespace Nekoyume.Helper
         /// <param name="itemId">item id of material item</param>
         /// <param name="sheet">SynthesizeWeightSheet to use</param>
         /// <returns>weight of the item that can be obtained by synthesizing the item</returns>
-        public static int GetWeight(Grade grade, int itemId, SynthesizeWeightSheet sheet)
+        public static int GetWeight(int itemId, SynthesizeWeightSheet sheet)
         {
             var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
-            var gradeRow = sheet.Values.FirstOrDefault(r => r.GradeId == (int)grade);
-            return gradeRow == null ? defaultWeight : gradeRow.WeightDict.GetValueOrDefault(itemId, defaultWeight);
+            var gradeRow = sheet.Values.FirstOrDefault(r => r.Key == itemId);
+            return gradeRow?.Weight ?? defaultWeight;
         }
 
         // TODO: move to ItemExtensions

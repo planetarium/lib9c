@@ -256,6 +256,14 @@ public class SynthesizeTest
             if (result.IsSuccess)
             {
                 Assert.Equal((int)grade + 1, result.ItemBase.Grade);
+
+                var weightSheet = TableSheets.SynthesizeWeightSheet;
+                var weightRow = weightSheet.Values.FirstOrDefault(r => r.ItemId == result.ItemBase.Id);
+
+                if (weightRow != null)
+                {
+                    Assert.True(weightRow.Weight != 0);
+                }
             }
             else
             {
