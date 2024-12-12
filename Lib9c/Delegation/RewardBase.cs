@@ -134,7 +134,7 @@ namespace Nekoyume.Delegation
         /// <param name="rewardPortion">
         /// Cumulative reward portion of <see cref="RewardBase"/>'s creation height.
         /// </param>
-        /// <param name="sigfig">
+        /// <param name="sigFig">
         /// Significant figure of <see cref="RewardBase"/>.
         /// </param>
         /// <param name="startHeight">
@@ -150,7 +150,7 @@ namespace Nekoyume.Delegation
             Address address,
             BigInteger totalShares,
             IEnumerable<(Currency, BigInteger)> rewardPortion,
-            int sigfig,
+            int sigFig,
             long? startHeight = null)
         {
             Address = address;
@@ -168,7 +168,7 @@ namespace Nekoyume.Delegation
             }
 
             RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Item1, f => f.Item2, _currencyComparer);
-            SigFig = sigfig;
+            SigFig = sigFig;
             StartHeight = startHeight;
         }
 
@@ -184,7 +184,7 @@ namespace Nekoyume.Delegation
         /// <param name="rewardPortion">
         /// Cumulative reward portion of <see cref="RewardBase"/>'s creation height.
         /// </param>
-        /// <param name="sigfig">
+        /// <param name="sigFig">
         /// Significant figure of <see cref="RewardBase"/>.
         /// </param>
         /// <param name="startHeight">
@@ -194,13 +194,13 @@ namespace Nekoyume.Delegation
             Address address,
             BigInteger totalShares,
             ImmutableSortedDictionary<Currency, BigInteger> rewardPortion,
-            int sigfig,
+            int sigFig,
             long? startHeight = null)
         {
             Address = address;
             TotalShares = totalShares;
             RewardPortion = rewardPortion;
-            SigFig = sigfig;
+            SigFig = sigFig;
             StartHeight = startHeight;
         }
 
