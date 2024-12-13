@@ -165,12 +165,32 @@ namespace Nekoyume.Delegation
         public Address RebondGraceAddress(Address delegatorAddress)
             => Metadata.RebondGraceAddress(delegatorAddress);
 
+        /// <summary>
+        /// Get the <see cref="Address"/> of the distribution pool
+        /// where the rewards are distributed from.
+        /// </summary>
+        /// <returns>
+        /// <see cref="Address"/> of the distribution pool.
+        /// </returns>
         public Address DistributionPoolAddress()
             => Metadata.DistributionPoolAddress();
 
+        /// <summary>
+        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </summary>
+        /// <returns>
+        /// <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </returns>
         public Address CurrentRewardBaseAddress()
             => Metadata.CurrentRewardBaseAddress();
 
+        /// <summary>
+        /// Get the <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </summary>
+        /// <param name="height"></param>
+        /// <returns>
+        /// <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </returns>
         public Address RewardBaseAddress(long height)
             => Metadata.RewardBaseAddress(height);
 
@@ -404,6 +424,13 @@ namespace Nekoyume.Delegation
             return reward;
         }
 
+        /// <summary>
+        /// Start a new reward period.
+        /// It generates a new <see cref="RewardBase"/> and archives the current one.
+        /// </summary>
+        /// <param name="height">
+        /// The height of the block where the new reward period starts.
+        /// </param>
         public void StartNewRewardPeriod(long height)
         {
             MigrateLumpSumRewardsRecords();

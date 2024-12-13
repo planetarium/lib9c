@@ -36,8 +36,31 @@ namespace Nekoyume.Delegation
 
         UnbondingSet GetUnbondingSet();
 
+        /// <summary>
+        /// Get the current <see cref="RewardBase"/> of the <paramref name="delegatee"/>.
+        /// </summary>
+        /// <param name="delegatee">
+        /// The <see cref="IDelegatee"/> to get the current <see cref="RewardBase"/>.
+        /// </param>
+        /// <returns>
+        /// The current <see cref="RewardBase"/> of the <paramref name="delegatee"/>.
+        /// </returns>
         RewardBase? GetCurrentRewardBase(IDelegatee delegatee);
 
+        /// <summary>
+        /// Get the <see cref="RewardBase"/> of the <paramref name="delegatee"/>
+        /// at the given <paramref name="height"/>.
+        /// </summary>
+        /// <param name="delegatee">
+        /// The <see cref="IDelegatee"/> to get the <see cref="RewardBase"/> of.
+        /// </param>
+        /// <param name="height">
+        /// The height to get the <see cref="RewardBase"/> at.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RewardBase"/> of the <paramref name="delegatee"/>
+        /// at the given <paramref name="height"/>.
+        /// </returns>
         RewardBase? GetRewardBase(IDelegatee delegatee, long height);
 
         LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(IDelegatee delegatee);
@@ -62,10 +85,24 @@ namespace Nekoyume.Delegation
 
         void SetUnbondingSet(UnbondingSet unbondingSet);
 
+        /// <summary>
+        /// Set the <see cref="RewardBase"/> of the <see cref="IDelegatee"/>.
+        /// </summary>
+        /// <param name="rewardBase">
+        /// The <see cref="RewardBase"/> to set.
+        /// </param>
         void SetRewardBase(RewardBase rewardBase);
 
         void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
 
+        /// <summary>
+        /// Remove the <see cref="LumpSumRewardsRecord"/> from the <see cref="IDelegatee"/>.
+        /// This is used when the <see cref="LumpSumRewardsRecord"/> is no longer needed.
+        /// This can be removed when the migration for <see cref="RewardBase"/> is done.
+        /// </summary>
+        /// <param name="lumpSumRewardsRecord">
+        /// The <see cref="LumpSumRewardsRecord"/> to remove.
+        /// </param>
         void RemoveLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord);
 
         void TransferAsset(Address sender, Address recipient, FungibleAssetValue value);

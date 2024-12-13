@@ -42,6 +42,9 @@ namespace Nekoyume.ValidatorDelegation
 
         public static int WindowSize => 10;
 
+        /// <summary>
+        /// Maximum abstain allowance to slash and jail.
+        /// </summary>
         public static int MaxAbstainAllowance => 9;
 
         public static Address Address => new Address(

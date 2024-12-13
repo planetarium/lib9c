@@ -7,6 +7,9 @@ using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
+    /// <summary>
+    /// Set the commission percentage of the validator.
+    /// </summary>
     [ActionType(TypeIdentifier)]
     public sealed class SetValidatorCommission : ActionBase
     {

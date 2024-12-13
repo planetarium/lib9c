@@ -74,26 +74,59 @@ namespace Nekoyume.Delegation
             .SetAccount(RewardBaseAccountAddress, rewardBaseAccount)
             .SetAccount(LumpSumRewardsRecordAccountAddress, lumpSumRewardsRecordAccount);
 
+        /// <summary>
+        /// <see cref="IActionContext"/> of the current action.
+        /// </summary>
         public IActionContext ActionContext { get; }
 
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="Delegatee{T, TSelf}"> account.
+        /// </summary>
         public Address DelegateeAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="Delegator{T, TSelf}"> account.
+        /// </summary>
         public Address DelegatorAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="DelegateeMetadata"/> account.
+        /// </summary>
         public Address DelegateeMetadataAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="DelegatorMetadata"> account.
+        /// </summary>
         public Address DelegatorMetadataAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="Bond"/> account.
+        /// </summary>
         public Address BondAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="UnbondLockIn"/> account.
+        /// </summary>
         public Address UnbondLockInAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="RebondGrace"/> account
+        /// </summary>
         public Address RebondGraceAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="UnbondingSet"/> account.
+        /// </summary>
         public Address UnbondingSetAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="RewardBase"/> account.
+        /// </summary>
         public Address RewardBaseAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="LumpSumRewardsRecord"/> account.
+        /// </summary>
         public Address LumpSumRewardsRecordAccountAddress { get; }
 
         public abstract IDelegatee GetDelegatee(Address address);
@@ -170,6 +203,7 @@ namespace Nekoyume.Delegation
                 ? new UnbondingSet(bencoded, this)
                 : new UnbondingSet(this);
 
+        /// <inheritdoc/>
         public RewardBase? GetCurrentRewardBase(IDelegatee delegatee)
         {
             Address address = delegatee.CurrentRewardBaseAddress();
@@ -179,6 +213,7 @@ namespace Nekoyume.Delegation
                 : null;
         }
 
+        /// <inheritdoc/>
         public RewardBase? GetRewardBase(IDelegatee delegatee, long height)
         {
             Address address = delegatee.RewardBaseAddress(height);
@@ -251,6 +286,7 @@ namespace Nekoyume.Delegation
                 : unbondingSetAccount.SetState(UnbondingSet.Address, unbondingSet.Bencoded);
         }
 
+        /// <inheritdoc/>
         public void SetRewardBase(RewardBase rewardBase)
         {
             rewardBaseAccount = rewardBaseAccount.SetState(rewardBase.Address, rewardBase.Bencoded);
@@ -262,6 +298,7 @@ namespace Nekoyume.Delegation
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
         }
 
+        /// <inheritdoc/>
         public void RemoveLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord)
         {
             lumpSumRewardsRecordAccount = lumpSumRewardsRecordAccount.RemoveState(lumpSumRewardsRecord.Address);
