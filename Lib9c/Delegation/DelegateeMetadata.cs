@@ -108,7 +108,7 @@ namespace Nekoyume.Delegation
             List bencoded)
         {
             Currency delegationCurrency;
-            IEnumerable< Currency > rewardCurrencies;
+            IEnumerable<Currency> rewardCurrencies;
             Address delegationPoolAddress;
             Address rewardPoolAddress;
             Address rewardRemainderPoolAddress;
