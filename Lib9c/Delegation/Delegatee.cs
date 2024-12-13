@@ -285,7 +285,7 @@ namespace Nekoyume.Delegation
             var rewards = RewardCurrencies.Select(c => Repository.GetBalance(RewardPoolAddress, c));
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
-                rewardBase = rewardBase.AddRewards(rewards);
+                rewardBase = rewardBase.AddRewards(rewards, TotalShares);
 
                 foreach (var rewardsEach in rewards)
                 {
@@ -411,7 +411,7 @@ namespace Nekoyume.Delegation
             RewardBase newRewardBase;
             if (Repository.GetCurrentRewardBase(this) is RewardBase rewardBase)
             {
-                newRewardBase = rewardBase.UpdateTotalShares(TotalShares);
+                newRewardBase = rewardBase.UpdateSigFig(TotalShares);
                 if (Repository.GetRewardBase(this, height) is not null)
                 {
                     Repository.SetRewardBase(newRewardBase);
@@ -542,7 +542,6 @@ namespace Nekoyume.Delegation
             }
 
             RewardBase? rewardBase = null;
-            RewardBase? newRewardBase = null;
             for (var i = records.Count - 1; i >= 0; i--)
             {
                 var recordEach = records[i];
@@ -556,7 +555,7 @@ namespace Nekoyume.Delegation
                 }
                 else
                 {
-                    newRewardBase = rewardBase.UpdateTotalShares(recordEach.TotalShares);
+                    var newRewardBase = rewardBase.UpdateSigFig(recordEach.TotalShares);
                     if (Repository.GetRewardBase(this, recordEach.StartHeight) is not null)
                     {
                         Repository.SetRewardBase(newRewardBase);
@@ -571,7 +570,7 @@ namespace Nekoyume.Delegation
                     rewardBase = newRewardBase;
                 }
 
-                rewardBase = rewardBase.AddRewards(recordEach.LumpSumRewards.Values);
+                rewardBase = rewardBase.AddRewards(recordEach.LumpSumRewards.Values, recordEach.TotalShares);
                 foreach (var r in recordEach.LumpSumRewards)
                 {
                     var toTransfer = Repository.GetBalance(recordEach.Address, r.Key);

@@ -48,7 +48,6 @@ namespace Nekoyume.Delegation
             IEnumerable<Currency> currencies)
             : this(
                   address,
-                  totalShares,
                   currencies.Select(c => (c, BigInteger.Zero)),
                   RecommendedSigFig(totalShares),
                   null)
@@ -99,8 +98,7 @@ namespace Nekoyume.Delegation
             }
 
             Address = address;
-            TotalShares = (Integer)bencoded[2];
-            var bencodedRewardPortion = ((List)bencoded[3]).Select(v => (List)v);
+            var bencodedRewardPortion = ((List)bencoded[2]).Select(v => (List)v);
             var rewardPortion = bencodedRewardPortion.Select(
                 p => (Currency: new Currency(p[0]), Portion: (BigInteger)(Integer)p[1]));
 
@@ -110,11 +108,11 @@ namespace Nekoyume.Delegation
             }
 
             RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f.Portion, _currencyComparer);
-            SigFig = (Integer)bencoded[4];
+            SigFig = (Integer)bencoded[3];
 
             try
             {
-                StartHeight = (Integer)bencoded[5];
+                StartHeight = (Integer)bencoded[4];
             }
             catch (IndexOutOfRangeException)
             {
@@ -124,12 +122,34 @@ namespace Nekoyume.Delegation
 
         /// <summary>
         /// Constructor for new <see cref="RewardBase"/>.
+        /// This constructor is used only for the initial reward base creation.
         /// </summary>
         /// <param name="address">
         /// <see cref="Address"> of <see cref="RewardBase"/>.
         /// </param>
-        /// <param name="totalShares">
-        /// <see cref="IDelegatee.TotalShares"/> of <see cref="RewardBase"/>'s creation height.
+        /// <param name="currencies">
+        /// <see cref="IDelegatee.RewardCurrencies"/> of <see cref="RewardBase"/>'s creation height.
+        /// It initializes the reward portion with 0.
+        /// <param name="sigFig">
+        /// Significant figure of <see cref="RewardBase"/>.
+        /// </param>
+        private RewardBase(
+            Address address,
+            IEnumerable<Currency> currencies,
+            int sigFig)
+            : this(
+                  address,
+                  currencies.Select(c => (c, BigInteger.Zero)),
+                  sigFig,
+                  null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor for new <see cref="RewardBase"/>.
+        /// </summary>
+        /// <param name="address">
+        /// <see cref="Address"> of <see cref="RewardBase"/>.
         /// </param>
         /// <param name="rewardPortion">
         /// Cumulative reward portion of <see cref="RewardBase"/>'s creation height.
@@ -148,19 +168,11 @@ namespace Nekoyume.Delegation
         /// </exception>
         private RewardBase(
             Address address,
-            BigInteger totalShares,
             IEnumerable<(Currency, BigInteger)> rewardPortion,
             int sigFig,
             long? startHeight = null)
         {
             Address = address;
-
-            if (totalShares.Sign <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(totalShares));
-            }
-
-            TotalShares = totalShares;
 
             if (!rewardPortion.Select(f => f.Item1).All(new HashSet<Currency>().Add))
             {
@@ -178,9 +190,6 @@ namespace Nekoyume.Delegation
         /// <param name="address">
         /// <see cref="Address"> of <see cref="RewardBase"/>.
         /// </param>
-        /// <param name="totalShares">
-        /// <see cref="IDelegatee.TotalShares"/> of <see cref="RewardBase"/>'s creation height.
-        /// </param>
         /// <param name="rewardPortion">
         /// Cumulative reward portion of <see cref="RewardBase"/>'s creation height.
         /// </param>
@@ -192,13 +201,11 @@ namespace Nekoyume.Delegation
         /// </param>
         private RewardBase(
             Address address,
-            BigInteger totalShares,
             ImmutableSortedDictionary<Currency, BigInteger> rewardPortion,
             int sigFig,
             long? startHeight = null)
         {
             Address = address;
-            TotalShares = totalShares;
             RewardPortion = rewardPortion;
             SigFig = sigFig;
             StartHeight = startHeight;
@@ -208,11 +215,6 @@ namespace Nekoyume.Delegation
         /// <see cref="Address"> of <see cref="RewardBase"/>.
         /// </summary>
         public Address Address { get; }
-
-        /// <summary>
-        /// <see cref="IDelegatee.TotalShares"/> of <see cref="RewardBase"/>'s creation height.
-        /// </summary>
-        public BigInteger TotalShares { get; }
 
         /// <summary>
         /// Cumulative reward portion of <see cref="RewardBase"/>.
@@ -237,7 +239,6 @@ namespace Nekoyume.Delegation
                 var bencoded = List.Empty
                     .Add(StateTypeName)
                     .Add(StateVersion)
-                    .Add(TotalShares)
                     .Add(new List(RewardPortion
                         .OrderBy(r => r.Key, _currencyComparer)
                         .Select(r => new List(r.Key.Serialize(), new Integer(r.Value)))))
@@ -257,11 +258,13 @@ namespace Nekoyume.Delegation
         /// <param name="rewards">
         /// Rewards to add.
         /// </param>
+        /// <param name="totalShares">
+        /// <see cref="IDelegatee.TotalShares"/> used as denominator of the portion.</param>
         /// <returns>
         /// New <see cref="RewardBase"/> with added rewards.
         /// </returns>
-        public RewardBase AddRewards(IEnumerable<FungibleAssetValue> rewards)
-            => rewards.Aggregate(this, (accum, next) => AddReward(accum, next));
+        public RewardBase AddRewards(IEnumerable<FungibleAssetValue> rewards, BigInteger totalShares)
+            => rewards.Aggregate(this, (accum, next) => AddReward(accum, next, totalShares));
 
         /// <summary>
         /// Add reward to the <see cref="RewardBase"/>.
@@ -269,23 +272,26 @@ namespace Nekoyume.Delegation
         /// <param name="reward">
         /// Reward to add.
         /// </param>
+        /// <param name="totalShares">
+        /// <see cref="IDelegatee.TotalShares"/> used as denominator of the portion.</param>
+        /// <returns>
         /// <returns>
         /// New <see cref="RewardBase"/> with added reward.
         /// </returns>
-        public RewardBase AddReward(FungibleAssetValue reward)
-            => AddReward(this, reward);
+        public RewardBase AddReward(FungibleAssetValue reward, BigInteger totalShares)
+            => AddReward(this, reward, totalShares);
 
         /// <summary>
         /// Update the total shares of the <see cref="RewardBase"/>.
         /// </summary>
         /// <param name="totalShares">
-        /// New <see cref="IDelegatee.TotalShares"/> of the height that <see cref="RewardBase"/> created.
+        /// <see cref="IDelegatee.TotalShares"/> used as denominator of the portion.</param>
         /// </param>
         /// <returns>
         /// New <see cref="RewardBase"/> with updated total shares.
         /// </returns>
-        public RewardBase UpdateTotalShares(BigInteger totalShares)
-            => UpdateTotalShares(this, totalShares);
+        public RewardBase UpdateSigFig(BigInteger totalShares)
+            => UpdateSigFig(this, totalShares);
 
         /// <summary>
         /// Attach the start height to the <see cref="RewardBase"/> to be archived.
@@ -306,7 +312,6 @@ namespace Nekoyume.Delegation
             => StartHeight is null
                 ? new RewardBase(
                     address,
-                    TotalShares,
                     RewardPortion,
                     SigFig,
                     startHeight)
@@ -345,7 +350,7 @@ namespace Nekoyume.Delegation
                 ? FungibleAssetValue.FromRawValue(currency, (portion * share) / (Multiplier(SigFig)))
                 : throw new ArgumentException($"Invalid reward currency: {currency}");
 
-        private static RewardBase AddReward(RewardBase rewardBase, FungibleAssetValue reward)
+        private static RewardBase AddReward(RewardBase rewardBase, FungibleAssetValue reward, BigInteger totalShares)
         {
             if (!rewardBase.RewardPortion.TryGetValue(reward.Currency, out var portion))
             {
@@ -354,17 +359,16 @@ namespace Nekoyume.Delegation
             }
 
             var portionNumerator = reward.RawValue * Multiplier(rewardBase.SigFig);
-            var updatedPortion = portion + (portionNumerator / rewardBase.TotalShares);
+            var updatedPortion = portion + (portionNumerator / totalShares);
 
             return new RewardBase(
                 rewardBase.Address,
-                rewardBase.TotalShares,
                 rewardBase.RewardPortion.SetItem(reward.Currency, updatedPortion),
                 rewardBase.SigFig,
                 rewardBase.StartHeight);
         }
 
-        private static RewardBase UpdateTotalShares(RewardBase rewardBase, BigInteger totalShares)
+        private static RewardBase UpdateSigFig(RewardBase rewardBase, BigInteger totalShares)
         {
             var newSigFig = Math.Max(rewardBase.SigFig, RecommendedSigFig(totalShares));
             var multiplier = Multiplier(newSigFig - rewardBase.SigFig);
@@ -375,12 +379,11 @@ namespace Nekoyume.Delegation
 
             return new RewardBase(
                 rewardBase.Address,
-                totalShares,
                 newPortion,
                 newSigFig);
         }
 
-        private static int RecommendedSigFig(BigInteger totalShares)
+        public static int RecommendedSigFig(BigInteger totalShares)
             => (int)Math.Floor(BigInteger.Log10(totalShares)) + Margin;
 
         private static BigInteger Multiplier(int sigFig)
@@ -393,7 +396,6 @@ namespace Nekoyume.Delegation
             => ReferenceEquals(this, other)
             || (other is RewardBase rewardBase
             && Address == rewardBase.Address
-            && TotalShares == rewardBase.TotalShares
             && RewardPortion.SequenceEqual(rewardBase.RewardPortion)
             && SigFig == rewardBase.SigFig
             && StartHeight == rewardBase.StartHeight);
