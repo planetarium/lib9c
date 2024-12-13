@@ -281,6 +281,10 @@ namespace Lib9c.Tests
 
         public ClaimableGiftsSheet ClaimableGiftsSheet { get; private set; }
 
+        public SynthesizeSheet SynthesizeSheet { get; private set; }
+
+        public SynthesizeWeightSheet SynthesizeWeightSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();
