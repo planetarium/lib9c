@@ -46,7 +46,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             var unbondingSet = repository.GetUnbondingSet();
             var unbondings = unbondingSet.UnbondingsToRelease(context.BlockIndex);
 
-            foreach (var unbonding in unbondings)
+            unbondings = unbondings.Select<IUnbonding, IUnbonding>(unbonding =>
             {
                 switch (unbonding)
                 {
@@ -55,15 +55,15 @@ namespace Nekoyume.Action.ValidatorDelegation
                         repository.SetUnbondLockIn(unbondLockIn);
                         repository.UpdateWorld(
                             Unstake(repository.World, context, unbondLockIn, releasedFAV));
-                        break;
+                        return unbondLockIn;
                     case RebondGrace rebondGrace:
                         rebondGrace = rebondGrace.Release(context.BlockIndex, out _);
                         repository.SetRebondGrace(rebondGrace);
-                        break;
+                        return rebondGrace;
                     default:
                         throw new InvalidOperationException("Invalid unbonding type.");
                 }
-            }
+            }).ToImmutableArray();
 
             repository.SetUnbondingSet(unbondingSet.SetUnbondings(unbondings));
 
