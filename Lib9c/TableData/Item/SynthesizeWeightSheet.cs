@@ -6,6 +6,9 @@ namespace Nekoyume.TableData
 {
     using System.Linq;
 
+    /// <summary>
+    /// Represents a SynthesizeWeightSheet.
+    /// </summary>
     [Serializable]
     public class SynthesizeWeightSheet : Sheet<int, SynthesizeWeightSheet.Row>
     {
@@ -14,42 +17,20 @@ namespace Nekoyume.TableData
         [Serializable]
         public class Row : SheetRow<int>
         {
-            public override int Key => GradeId;
+            public override int Key => ItemId;
 
-            public int GradeId { get; private set; }
-
-            public Dictionary<int, int> WeightDict { get; private set; }
+            public int ItemId { get; private set; }
+            public int Weight { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
-                GradeId = ParseInt(fields[0]);
-
-                WeightDict = new Dictionary<int, int>();
-                var itemId = ParseInt(fields[1]);
-                var weight = ParseInt(fields[2], DefaultWeight);
-                WeightDict.Add(itemId, weight);
+                ItemId = ParseInt(fields[0]);
+                Weight = TryParseInt(fields[1], out var weight) ? weight : DefaultWeight;
             }
         }
 
         public SynthesizeWeightSheet() : base(nameof(SynthesizeWeightSheet))
         {
-        }
-
-        protected override void AddRow(int key, Row value)
-        {
-            if (!TryGetValue(key, out var row))
-            {
-                Add(key, value);
-
-                return;
-            }
-
-            if (!value.WeightDict.Any())
-            {
-                return;
-            }
-
-            row.WeightDict.TryAdd(value.WeightDict.First().Key, value.WeightDict.First().Value);
         }
     }
 }

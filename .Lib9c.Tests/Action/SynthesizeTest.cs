@@ -14,6 +14,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 using Xunit;
 
 using Sheets = System.Collections.Generic.Dictionary<System.Type, (Libplanet.Crypto.Address, Nekoyume.TableData.ISheet)>;
@@ -32,6 +33,14 @@ public class SynthesizeTest
     private readonly Currency _goldCurrency = Currency.Legacy("NCG", 2, null);
 #pragma warning restore CS0618
 
+    /// <summary>
+    /// Initializes the game state for testing.
+    /// Sets up an initial agent, avatar, and world state with relevant table sheets.
+    /// </summary>
+    /// <param name="agentAddress">The address of the agent to be created.</param>
+    /// <param name="avatarAddress">The address of the avatar to be created.</param>
+    /// <param name="blockIndex">The initial block index.</param>
+    /// <returns>The initialized world state.</returns>
     public IWorld Init(out Address agentAddress, out Address avatarAddress, out long blockIndex)
     {
         agentAddress = new PrivateKey().Address;
@@ -47,7 +56,9 @@ public class SynthesizeTest
             .SetAgentState(agentAddress, new AgentState(agentAddress));
 
         foreach (var (key, value) in Sheets)
+        {
             state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+        }
 
         var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
         var avatarState = AvatarState.Create(
@@ -61,6 +72,12 @@ public class SynthesizeTest
         return state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
     }
 
+    /// <summary>
+    /// Tests the synthesis process for a single item.
+    /// Verifies that the resulting item matches the expected grade and type.
+    /// </summary>
+    /// <param name="grade">The grade of the material used in synthesis.</param>
+    /// <param name="itemSubType">The subtype of the item to synthesize.</param>
     [Theory]
     [InlineData((Grade)3, ItemSubType.FullCostume)]
     [InlineData((Grade)4, ItemSubType.FullCostume)]
@@ -80,8 +97,7 @@ public class SynthesizeTest
     [InlineData((Grade)6, ItemSubType.Aura)]
     public void ExecuteSingle(Grade grade, ItemSubType itemSubType)
     {
-        var context = new ActionContext();
-        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(grade));
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
@@ -90,7 +106,10 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -122,7 +141,7 @@ public class SynthesizeTest
                 }
 
                 resultGrade = (Grade)costume.Grade;
-                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
+                expectedGrade = SynthesizeSimulator.GetUpgradeGrade(grade, subType, TableSheets.CostumeItemSheet);
                 break;
             case ItemSubType.Aura:
             case ItemSubType.Grimoire:
@@ -132,22 +151,143 @@ public class SynthesizeTest
                 }
 
                 resultGrade = (Grade)itemUsable.Grade;
-                expectedGrade = Synthesize.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
+                expectedGrade = SynthesizeSimulator.GetUpgradeGrade(grade, subType, TableSheets.EquipmentItemSheet);
                 break;
         }
 
-        // TODO: if success, grade should be exceptedGrade, but sometimes it is not.
-        // Assert.Equal(expectedGrade, resultGrade);
-        Assert.True(expectedGrade == resultGrade || resultGrade == grade);
+        var inputData = new SynthesizeSimulator.InputData()
+        {
+            Grade = grade,
+            ItemSubType = itemSubType,
+            MaterialCount = itemSubTypes.Length,
+            SynthesizeSheet = TableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
+            RandomObject = new TestRandom(),
+        };
+
+        var result = SynthesizeSimulator.Simulate(inputData)[0];
+        if (result.IsSuccess)
+        {
+            Assert.Equal(expectedGrade, resultGrade);
+        }
+        else
+        {
+            Assert.Equal(resultGrade, grade);
+        }
     }
 
+    /// <summary>
+    /// Tests the synthesis process for multiple items.
+    /// Verifies that the resulting items match the expected grades and types.
+    /// The test case also checks whether the equipment has a recipe.
+    /// </summary>
+    /// <param name="grade">The grade of the material used in synthesis.</param>
+    /// <param name="itemSubType">The subtype of the items to synthesize.</param>
+    [Theory]
+    [InlineData((Grade)3, ItemSubType.FullCostume)]
+    [InlineData((Grade)4, ItemSubType.FullCostume)]
+    [InlineData((Grade)5, ItemSubType.FullCostume)]
+    [InlineData((Grade)3, ItemSubType.Title)]
+    [InlineData((Grade)4, ItemSubType.Title)]
+    [InlineData((Grade)5, ItemSubType.Title)]
+    [InlineData((Grade)3, ItemSubType.Grimoire)]
+    [InlineData((Grade)4, ItemSubType.Grimoire)]
+    [InlineData((Grade)5, ItemSubType.Grimoire)]
+    [InlineData((Grade)6, ItemSubType.Grimoire)]
+    [InlineData((Grade)1, ItemSubType.Aura)]
+    [InlineData((Grade)2, ItemSubType.Aura)]
+    [InlineData((Grade)3, ItemSubType.Aura)]
+    [InlineData((Grade)4, ItemSubType.Aura)]
+    [InlineData((Grade)5, ItemSubType.Aura)]
+    [InlineData((Grade)6, ItemSubType.Aura)]
+    public void ExecuteMultiple(Grade grade, ItemSubType itemSubType)
+    {
+        var testCount = 100;
+        var itemSubTypes = GetSubTypeArray(itemSubType, testCount * GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
+
+        var action = new Synthesize()
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        action.Execute(ctx);
+        var inputData = new SynthesizeSimulator.InputData()
+        {
+            Grade = grade,
+            ItemSubType = itemSubType,
+            MaterialCount = itemSubTypes.Length,
+            SynthesizeSheet = TableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
+            RandomObject = new TestRandom(),
+        };
+
+        var resultList = SynthesizeSimulator.Simulate(inputData);
+        foreach (var result in resultList)
+        {
+            // Check Grade
+            if (result.IsSuccess)
+            {
+                Assert.Equal((int)grade + 1, result.ItemBase.Grade);
+
+                var weightSheet = TableSheets.SynthesizeWeightSheet;
+                var weightRow = weightSheet.Values.FirstOrDefault(r => r.ItemId == result.ItemBase.Id);
+
+                if (weightRow != null)
+                {
+                    Assert.True(weightRow.Weight != 0);
+                }
+            }
+            else
+            {
+                Assert.Equal((int)grade, result.ItemBase.Grade);
+            }
+
+            if (result.IsEquipment)
+            {
+                Assert.True(result.RecipeId != 0);
+                Assert.True(result.SubRecipeId != 0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Tests the synthesis action when there are not enough action points.
+    /// Verifies that the action throws a NotEnoughActionPointException.
+    /// </summary>
     [Fact]
     public void ExecuteNotEnoughActionPoint()
     {
         var grade = Grade.Rare;
         var itemSubType = ItemSubType.FullCostume;
-        var context = new ActionContext();
-        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(grade));
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
@@ -155,7 +295,10 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -169,6 +312,11 @@ public class SynthesizeTest
         Assert.Throws<NotEnoughActionPointException>(() => action.Execute(ctx));
     }
 
+    /// <summary>
+    /// Tests the synthesis of multiple items of the same type.
+    /// Verifies that the resulting items are of the correct type and grade.
+    /// </summary>
+    /// <param name="testCount">The number of items to synthesize.</param>
     [Theory]
     [InlineData(2)]
     [InlineData(3)]
@@ -177,7 +325,7 @@ public class SynthesizeTest
     {
         var grade = Grade.Rare;
         var itemSubType = ItemSubType.FullCostume;
-        var materialCount = GetSucceededMaterialCount(grade) * testCount;
+        var materialCount = GetSucceededMaterialCount(itemSubType, grade) * testCount;
         var itemSubTypes = GetSubTypeArray(itemSubType, materialCount);
 
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
@@ -187,7 +335,10 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
         };
 
         var ctx = new ActionContext
@@ -206,14 +357,17 @@ public class SynthesizeTest
         foreach (var item in inventory.Items.Select(i => i.item))
         {
             Assert.Equal(itemSubType, item.ItemSubType);
-            var expectedGrade = Synthesize.GetTargetGrade((int)grade);
+            var expectedGrade = SynthesizeSimulator.GetTargetGrade((int)grade);
             Assert.True(item.Grade == expectedGrade || item.Grade == (int)grade);
         }
     }
 
-    // TODO: Add Simulator for test and client
-    // TODO: Exception Tests
-    // TODO: ExecuteMultiple
+    /// <summary>
+    /// Tests the synthesis action with invalid material combinations.
+    /// Verifies that the action throws an InvalidMaterialException.
+    /// </summary>
+    /// <param name="grade">The grade of the material used in synthesis.</param>
+    /// <param name="itemSubTypes">An array of invalid item subtypes to use in synthesis.</param>
     [Theory]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
     [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]
@@ -221,7 +375,6 @@ public class SynthesizeTest
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Grimoire })]
     public void ExecuteInvalidMaterial(Grade grade, ItemSubType[] itemSubTypes)
     {
-        var context = new ActionContext();
         var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
         state = state.SetActionPoint(avatarAddress, 120);
@@ -229,7 +382,10 @@ public class SynthesizeTest
         var action = new Synthesize()
         {
             AvatarAddress = avatarAddress,
-            MaterialIds = Synthesize.GetItemGuids(items),
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubTypes[0],
         };
 
         var ctx = new ActionContext
@@ -340,10 +496,10 @@ public class SynthesizeTest
         return subTypes;
     }
 
-    private static int GetSucceededMaterialCount(Grade grade)
+    private static int GetSucceededMaterialCount(ItemSubType itemSubType, Grade grade)
     {
         var synthesizeSheet = TableSheets.SynthesizeSheet;
         var row = synthesizeSheet.Values.First(r => (Grade)r.GradeId == grade);
-        return row.RequiredCount;
+        return row.RequiredCountDict[itemSubType].RequiredCount;
     }
 }

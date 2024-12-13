@@ -43,8 +43,34 @@ jobs:
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   jsr:
-    uses: planetarium/.github/.github/workflows/publish_jsr.yaml@bfb34283b538003768d19bff9ea05bcbd709d643
-    with:
-      workspace_directory: "integrations/javascript/@planetarium"
-      working_directory: "integrations/javascript/@planetarium/lib9c"
-      pnpm_version: "9"
+    strategy:
+      matrix:
+        package: [ "lib9c", "9c-headless-provider" ]
+    name: "jsr (@planetarium/${{ matrix.package }})"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: "9"
+          run_install: |
+            cwd: "integrations/javascript/@planetarium/"
+            recursive: true
+      - run: pnpm -r codegen
+        working-directory: "integrations/javascript/@planetarium"
+      - run: pnpm -r build
+        working-directory: "integrations/javascript/@planetarium"
+      - name: choose version
+        working-directory: "integrations/javascript/@planetarium/${{ matrix.package }}"
+        run: |
+          if [[ ! "$GITHUB_REF" =~ ^refs/tags/[0-9]+.[0-9]+.[0-9]+$ ]]; then
+            timestamp=$(date -u "+%Y%m%d%H%M%S%4N")
+            suffix="-dev.$timestamp+${{ github.sha }}"
+            jq ".version = .version + \"$suffix\"" jsr.json > jsr.json.tmp
+            mv jsr.json.tmp jsr.json
+          fi
+      - run: npx jsr publish --allow-dirty
+        working-directory: "integrations/javascript/@planetarium/${{ matrix.package }}"

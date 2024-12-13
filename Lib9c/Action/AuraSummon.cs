@@ -134,7 +134,6 @@ namespace Nekoyume.Action
                 );
 
                 AddAndUnlockOption(
-                    agentState,
                     equipment,
                     random,
                     subRecipeRow,
@@ -262,7 +261,6 @@ namespace Nekoyume.Action
         }
 
         public static void AddAndUnlockOption(
-            AgentState agentState,
             Equipment equipment,
             IRandom random,
             EquipmentItemSubRecipeSheetV2.Row subRecipe,
