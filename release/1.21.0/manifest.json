@@ -3962,6 +3962,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.RewardBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.RewardBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Delegation.UnbondLockIn.yml",
       "output": {
         ".html": {
