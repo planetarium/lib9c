@@ -124,20 +124,9 @@ namespace Nekoyume.Action
             // Check Invalid Item
             foreach (var materialItem in materialItems)
             {
-                switch (materialItem)
+                if (InvalidMaterialItemId.Contains(materialItem.Id))
                 {
-                    case Equipment equipment:
-                        if (InvalidMaterialItemId.Contains(equipment.Id))
-                        {
-                            throw new InvalidItemIdException($"{equipment.Id} is invalid item id.");
-                        }
-                        break;
-                    case Costume costume:
-                        if (InvalidMaterialItemId.Contains(costume.Id))
-                        {
-                            throw new InvalidItemIdException($"{costume.Id} is invalid item id.");
-                        }
-                        break;
+                    throw new InvalidItemIdException($"{materialItem.Id} is invalid item id.");
                 }
             }
 
