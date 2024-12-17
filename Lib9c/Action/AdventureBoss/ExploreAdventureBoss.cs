@@ -272,6 +272,17 @@ namespace Nekoyume.Action.AdventureBoss
                     break;
                 }
 
+                // just validate
+                foreach (var runeSlotInfo in runeSlotState.GetRuneSlot())
+                {
+                    if (runeSlotInfo.RuneId is null)
+                    {
+                        continue;
+                    }
+
+                    runeStates.GetRuneState(runeSlotInfo.RuneId.Value);
+                }
+
                 exploreBoard.UsedApPotion += exploreAp;
                 explorer.UsedApPotion += exploreAp;
 
