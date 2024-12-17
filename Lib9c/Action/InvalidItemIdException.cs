@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Represents an exception that is thrown when an invalid item ID is used.
+    /// </summary>
     [Serializable]
     public class InvalidItemIdException : ArgumentOutOfRangeException
     {
