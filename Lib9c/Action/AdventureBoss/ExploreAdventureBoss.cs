@@ -210,6 +210,12 @@ namespace Nekoyume.Action.AdventureBoss
                 states = states.SetRuneState(AvatarAddress, runeStates);
             }
 
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
+            }
+
             var collectionExist =
                 states.TryGetCollectionState(AvatarAddress, out var collectionState) &&
                 collectionState.Ids.Any();
@@ -270,17 +276,6 @@ namespace Nekoyume.Action.AdventureBoss
                         exploreAp))
                 {
                     break;
-                }
-
-                // just validate
-                foreach (var runeSlotInfo in runeSlotState.GetRuneSlot())
-                {
-                    if (runeSlotInfo.RuneId is null)
-                    {
-                        continue;
-                    }
-
-                    runeStates.GetRuneState(runeSlotInfo.RuneId.Value);
                 }
 
                 exploreBoard.UsedApPotion += exploreAp;
