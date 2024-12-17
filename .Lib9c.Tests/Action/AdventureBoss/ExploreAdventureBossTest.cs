@@ -225,6 +225,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 previousAvatarState.inventory.AddItem(equipment);
             }
 
+            state = state.SetAvatarState(TesterAvatarAddress, previousAvatarState);
+
             var expectedItemRewards = new List<(int, int)>();
             var expectedFavRewards = new List<(int, int)>();
             var firstRewardSheet = TableSheets.AdventureBossFloorFirstRewardSheet;

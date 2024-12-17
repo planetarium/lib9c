@@ -199,6 +199,13 @@ namespace Lib9c.Tests.Action.Scenario
                 avatarState.inventory.AddItem(equipment, iLock: iLock);
             }
 
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            initialState = initialState.SetAvatarState(avatarAddress, avatarState);
+
             var action = new HackAndSlash
             {
                 Costumes = costumes,

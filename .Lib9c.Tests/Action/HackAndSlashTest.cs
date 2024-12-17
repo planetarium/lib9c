@@ -1571,6 +1571,19 @@ namespace Lib9c.Tests.Action
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(worldId.Serialize()));
 
+            var allRuneState = state.GetRuneState(_avatarAddress, out _);
+            if (!allRuneState.TryGetRuneState(30001, out _))
+            {
+                allRuneState.AddRuneState(new RuneState(30001));
+            }
+
+            if (!allRuneState.TryGetRuneState(10002, out _))
+            {
+                allRuneState.AddRuneState(new RuneState(10002));
+            }
+
+            state = state.SetRuneState(_avatarAddress, allRuneState);
+
             var action = new HackAndSlash
             {
                 Costumes = costumes,
