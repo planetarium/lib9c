@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <NoWarn>$(NoWarn);LAA1002</NoWarn>
         <UseLocalLibplanet Condition="Exists('$(LibplanetDirectory)')">true</UseLocalLibplanet>
         <UseLocalLibplanet Condition=" '$(UseLocalLibplanet)' == '' ">false</UseLocalLibplanet>
     </PropertyGroup>
