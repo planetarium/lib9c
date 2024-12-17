@@ -622,7 +622,7 @@ namespace Nekoyume.Model.State
             {
                 if (!inventory.TryGetNonFungibleItem(itemId, out ItemUsable outNonFungibleItem))
                 {
-                    continue;
+                    throw new ItemDoesNotExistException($"Equipment {itemId} does not exist.");
                 }
 
                 var equipment = (Equipment) outNonFungibleItem;
@@ -673,7 +673,7 @@ namespace Nekoyume.Model.State
             {
                 if (!inventory.TryGetNonFungibleItem(itemId, out ItemUsable outNonFungibleItem))
                 {
-                    continue;
+                    throw new ItemDoesNotExistException($"Equipment {itemId} does not exist.");
                 }
 
                 var equipment = (Equipment)outNonFungibleItem;
