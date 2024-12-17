@@ -30,6 +30,9 @@ namespace Nekoyume.Action
     [ActionType(TypeIdentifier)]
     public class Synthesize : GameAction
     {
+        /// <summary>
+        /// The list of invalid item ids for material.
+        /// </summary>
         public static readonly int[] InvalidMaterialItemId = { 10660004, 10760009, 40100042, 40100043, };
 
         private const string TypeIdentifier = "synthesize";
