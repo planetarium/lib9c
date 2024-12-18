@@ -37,8 +37,8 @@ namespace Nekoyume.Action.Guild
 
             var guildParticipant = repository.GetGuildParticipant(context.Signer);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            var guildDelegatee = repository.GetGuildDelegatee(guild.ValidatorAddress);
-            var guildDelegator = repository.GetGuildDelegator(context.Signer);
+            var guildDelegatee = repository.GetDelegatee(guild.ValidatorAddress);
+            var guildDelegator = repository.GetDelegator(context.Signer);
             guildDelegator.ClaimReward(guildDelegatee, context.BlockIndex);
 
             return repository.World;

@@ -18,7 +18,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         {
             try
             {
-                validatorDelegatee = repository.GetValidatorDelegatee(address);
+                validatorDelegatee = repository.GetDelegatee(address);
                 return true;
             }
             catch
@@ -46,7 +46,7 @@ namespace Nekoyume.Module.ValidatorDelegation
                 new Currency[] { repository.World.GetGoldCurrency(), Currencies.Mead },
                 repository);
 
-            repository.SetValidatorDelegatee(validatorDelegatee);
+            repository.SetDelegatee(validatorDelegatee);
 
             return validatorDelegatee;
         }

@@ -9,7 +9,8 @@ using Nekoyume.Model.Stake;
 
 namespace Nekoyume.Model.Guild
 {
-    public class GuildRepository : DelegationRepository
+    public class GuildRepository
+        : DelegationRepository<GuildRepository, GuildDelegatee, GuildDelegator>
     {
         private readonly Address guildAddress = Addresses.Guild;
         private readonly Address guildParticipantAddress = Addresses.GuildParticipant;
@@ -45,13 +46,10 @@ namespace Nekoyume.Model.Guild
             .SetAccount(guildAddress, _guildAccount)
             .SetAccount(guildParticipantAddress, _guildParticipantAccount);
 
-        public GuildDelegatee GetGuildDelegatee(Address address)
+        public override GuildDelegatee GetDelegatee(Address address)
             => new GuildDelegatee(address, this);
 
-        public override IDelegatee GetDelegatee(Address address)
-            => GetGuildDelegatee(address);
-
-        public GuildDelegator GetGuildDelegator(Address address)
+        public override GuildDelegator GetDelegator(Address address)
         {
             try
             {
@@ -65,24 +63,12 @@ namespace Nekoyume.Model.Guild
                     this);
             }
         }
-        public override IDelegator GetDelegator(Address address)
-            => GetGuildDelegator(address);
 
-        public void SetGuildDelgatee(GuildDelegatee guildDelegatee)
-        {
-            SetDelegateeMetadata(guildDelegatee.Metadata);
-        }
+        public override void SetDelegatee(GuildDelegatee delegatee)
+            => SetDelegateeMetadata(delegatee.Metadata);
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetGuildDelgatee(delegatee as GuildDelegatee);
-
-        public void SetGuildDelegator(GuildDelegator guildDelegator)
-        {
-            SetDelegatorMetadata(guildDelegator.Metadata);
-        }
-
-        public override void SetDelegator(IDelegator delegator)
-            => SetGuildDelegator(delegator as GuildDelegator);
+        public override void SetDelegator(GuildDelegator delegator)
+            => SetDelegatorMetadata(delegator.Metadata);
 
         public Guild GetGuild(Address address)
             => _guildAccount.GetState(address) is IValue bencoded

@@ -60,8 +60,8 @@ namespace Nekoyume.Module.Guild
             var srcGuild = repository.GetGuild(guildParticipant1.GuildAddress);
             var dstGuild = repository.GetGuild(dstGuildAddress);
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var srcValidatorDelegatee = validatorRepository.GetValidatorDelegatee(srcGuild.ValidatorAddress);
-            var dstValidatorDelegatee = validatorRepository.GetValidatorDelegatee(dstGuild.ValidatorAddress);
+            var srcValidatorDelegatee = validatorRepository.GetDelegatee(srcGuild.ValidatorAddress);
+            var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);
             if (dstValidatorDelegatee.Tombstoned)
             {
                 throw new InvalidOperationException("The validator of the guild to move to has been tombstoned.");
@@ -103,7 +103,7 @@ namespace Nekoyume.Module.Guild
             }
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
             var bond = validatorRepository.GetBond(validatorDelegatee, agentAddress);
 
             repository.RemoveGuildParticipant(agentAddress);
@@ -156,10 +156,9 @@ namespace Nekoyume.Module.Guild
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            var share = repository.GetBond(
-                new ValidatorRepository(repository.World, repository.ActionContext)
-                    .GetValidatorDelegatee(guild.ValidatorAddress),
-                guildParticipantAddress).Share;
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
+            var share = validatorRepository.GetBond(validatorDelegatee, guild.Address).Share;
             guildParticipant.Undelegate(guild, share, height);
 
             return repository;
@@ -186,10 +185,9 @@ namespace Nekoyume.Module.Guild
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
-            var share = repository.GetBond(
-                new ValidatorRepository(repository.World, repository.ActionContext)
-                    .GetValidatorDelegatee(guild.ValidatorAddress),
-                guildParticipantAddress).Share;
+            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
+            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
+            var share = validatorRepository.GetBond(validatorDelegatee, guild.Address).Share;
             var dstGuild = repository.GetGuild(dstGuildAddress);
             guildParticipant.Redelegate(guild, dstGuild, share, height);
 

@@ -226,15 +226,15 @@ namespace Nekoyume.Action
                 if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                    var guildDelegatee = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                    var guildDelegatee = guildRepository.GetDelegatee(guild.ValidatorAddress);
                     var share = guildDelegatee.ShareFromFAV(gg);
 
-                    var guildDelegator = guildRepository.GetGuildDelegator(agentAddress);
+                    var guildDelegator = guildRepository.GetDelegator(agentAddress);
                     guildDelegatee.Unbond(guildDelegator, share, height);
 
                     var validatorRepository = new ValidatorRepository(guildRepository);
-                    var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
-                    var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+                    var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
+                    var validatorDelegator = validatorRepository.GetDelegator(guild.Address);
                     validatorDelegatee.Unbond(validatorDelegator, share, height);
 
                     state = validatorRepository.World;
