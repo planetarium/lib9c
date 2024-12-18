@@ -9,7 +9,8 @@ using Nekoyume.Delegation;
 
 namespace Nekoyume.ValidatorDelegation
 {
-    public sealed class ValidatorRepository : DelegationRepository
+    public sealed class ValidatorRepository
+        : DelegationRepository<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>
     {
         private readonly Address validatorListAddress = Addresses.ValidatorList;
 
@@ -41,7 +42,7 @@ namespace Nekoyume.ValidatorDelegation
         public override IWorld World => base.World
             .SetAccount(validatorListAddress, _validatorListAccount);
 
-        public ValidatorDelegatee GetValidatorDelegatee(Address address)
+        public override ValidatorDelegatee GetDelegatee(Address address)
             => delegateeAccount.GetState(address) is IValue bencoded
                 ? new ValidatorDelegatee(
                     address,
@@ -49,10 +50,7 @@ namespace Nekoyume.ValidatorDelegation
                     this)
                 : throw new FailedLoadStateException("Delegatee does not exist.");
 
-        public override IDelegatee GetDelegatee(Address address)
-            => GetValidatorDelegatee(address);
-
-        public ValidatorDelegator GetValidatorDelegator(Address address)
+        public override ValidatorDelegator GetDelegator(Address address)
         {
             try
             {
@@ -67,9 +65,6 @@ namespace Nekoyume.ValidatorDelegation
             }
         }
 
-        public override IDelegator GetDelegator(Address address)
-            => new ValidatorDelegator(address, this);
-
         public ValidatorList GetValidatorList()
         {
             IValue? value = _validatorListAccount.GetState(ValidatorList.Address);
@@ -78,23 +73,15 @@ namespace Nekoyume.ValidatorDelegation
                 : new ValidatorList();
         }
 
-        public void SetValidatorDelegatee(ValidatorDelegatee validatorDelegatee)
+        public override void SetDelegatee(ValidatorDelegatee delegatee)
         {
             delegateeAccount = delegateeAccount.SetState(
-                validatorDelegatee.Address, validatorDelegatee.Bencoded);
-            SetDelegateeMetadata(validatorDelegatee.Metadata);
+                delegatee.Address, delegatee.Bencoded);
+            SetDelegateeMetadata(delegatee.Metadata);
         }
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetValidatorDelegatee((ValidatorDelegatee)delegatee);
-
-        public void SetValidatorDelegator(ValidatorDelegator validatorDelegator)
-        {
-            SetDelegatorMetadata(validatorDelegator.Metadata);
-        }
-
-        public override void SetDelegator(IDelegator delegator)
-            => SetValidatorDelegator((ValidatorDelegator)delegator);
+        public override void SetDelegator(ValidatorDelegator delegator)
+            => SetDelegatorMetadata(delegator.Metadata);
 
         public void SetValidatorList(ValidatorList validatorList)
         {
@@ -104,9 +91,9 @@ namespace Nekoyume.ValidatorDelegation
 
         public void SetCommissionPercentage(Address address, BigInteger commissionPercentage, long height)
         {
-            ValidatorDelegatee validatorDelegatee = GetValidatorDelegatee(address);
+            ValidatorDelegatee validatorDelegatee = GetDelegatee(address);
             validatorDelegatee.SetCommissionPercentage(commissionPercentage, height);
-            SetValidatorDelegatee(validatorDelegatee);
+            SetDelegatee(validatorDelegatee);
         }
 
         public override void UpdateWorld(IWorld world)

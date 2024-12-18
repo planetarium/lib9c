@@ -214,12 +214,12 @@ namespace Nekoyume.Action
                 var validatorRepository = new ValidatorRepository(states, ctx);
                 var validatorDelegatee = validatorRepository.CreateValidatorDelegatee(
                     validator.PublicKey, ValidatorDelegatee.DefaultCommissionPercentage);
-                var validatorDelegator = validatorRepository.GetValidatorDelegator(validator.OperatorAddress);
+                var validatorDelegator = validatorRepository.GetDelegator(validator.OperatorAddress);
                 validatorDelegatee.Bond(validatorDelegator, delegationFAV, context.BlockIndex);
 
                 var guildRepository = new GuildRepository(validatorRepository);
                 var guildDelegatee = guildRepository.CreateGuildDelegatee(validator.OperatorAddress);
-                var guildDelegator = guildRepository.GetGuildDelegator(validator.OperatorAddress);
+                var guildDelegator = guildRepository.GetDelegator(validator.OperatorAddress);
                 guildDelegator.Delegate(guildDelegatee, delegationFAV, context.BlockIndex);
                 states = guildRepository.World;
             }

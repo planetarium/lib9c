@@ -95,7 +95,7 @@ namespace Nekoyume.Module.Guild
             }
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
+            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
             var bond = validatorRepository.GetBond(validatorDelegatee, guild.Address);
             if (bond.Share > 0)
             {
