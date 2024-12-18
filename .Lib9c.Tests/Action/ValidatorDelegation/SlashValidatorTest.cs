@@ -49,7 +49,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedValidatorShare = expectedRepository.GetBond(
             expectedDelegatee, validatorKey.Address).Share;
 
@@ -96,7 +96,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         // Then
         var balance = GetBalance(world, validatorKey.Address);
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualValidatorShare = actualRepository.GetBond(actualDelegatee, validatorKey.Address).Share;
 
         Assert.True(actualDelegatee.Jailed);
@@ -165,7 +165,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         Assert.True(delegatee.Jailed);
         Assert.False(delegatee.Tombstoned);
     }
@@ -184,7 +184,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedJailed = expectedDelegatee.Jailed;
         var evidence = CreateDuplicateVoteEvidence(validatorKey, height - 1);
         var lastCommit = new BlockCommit(
@@ -205,7 +205,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualJailed = actualDelegatee.Jailed;
 
         Assert.Equal(expectedJailed, actualJailed);
@@ -224,7 +224,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedTotalDelegated = expectedDelegatee.TotalDelegated;
 
         // When
@@ -249,7 +249,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepisitory = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepisitory.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepisitory.GetDelegatee(validatorKey.Address);
         var actualTotalDelegated = actualDelegatee.TotalDelegated;
 
         Assert.True(actualDelegatee.Jailed);

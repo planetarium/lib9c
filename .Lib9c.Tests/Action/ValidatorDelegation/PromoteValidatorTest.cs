@@ -45,7 +45,7 @@ public class PromoteValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var repository = new ValidatorRepository(world, actionContext);
-        var validator = repository.GetValidatorDelegatee(validatorKey.Address);
+        var validator = repository.GetDelegatee(validatorKey.Address);
         var bond = repository.GetBond(validator, validatorKey.Address);
         var validatorList = repository.GetValidatorList();
 

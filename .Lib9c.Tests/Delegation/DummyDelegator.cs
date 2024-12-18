@@ -1,9 +1,9 @@
 using Libplanet.Crypto;
 using Nekoyume.Delegation;
 
-public sealed class DummyDelegator : Delegator<DummyDelegatee, DummyDelegator>
+public sealed class DummyDelegator : Delegator<DummyRepository, DummyDelegatee, DummyDelegator>
 {
-    public DummyDelegator(Address address, IDelegationRepository repository)
+    public DummyDelegator(Address address, DummyRepository repository)
         : base(address, repository)
     {
     }

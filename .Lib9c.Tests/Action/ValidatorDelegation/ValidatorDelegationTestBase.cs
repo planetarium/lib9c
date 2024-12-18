@@ -261,7 +261,7 @@ public class ValidatorDelegationTestBase
         }
 
         var repository = new ValidatorRepository(world, new ActionContext());
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         if (delegatee.Jailed)
         {
             throw new ArgumentException(
@@ -280,7 +280,7 @@ public class ValidatorDelegationTestBase
                 world, validatorKey.PublicKey, lastCommit, blockHeight);
             blockHeight++;
             repository = new ValidatorRepository(world, new ActionContext());
-            delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+            delegatee = repository.GetDelegatee(validatorKey.Address);
             if (delegatee.Jailed)
             {
                 break;
@@ -326,7 +326,7 @@ public class ValidatorDelegationTestBase
         }
 
         var repository = new ValidatorRepository(world, new ActionContext());
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         if (!delegatee.Jailed)
         {
             throw new ArgumentException(
@@ -437,7 +437,7 @@ public class ValidatorDelegationTestBase
 
         var cooldown = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
         var repository = new ValidatorRepository(world, new ActionContext());
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         var currentCommission = delegatee.CommissionPercentage;
         var increment = commissionPercentage > currentCommission ? 1 : -1;
         var preferredHeight = delegatee.CommissionPercentageLastUpdateHeight + cooldown;

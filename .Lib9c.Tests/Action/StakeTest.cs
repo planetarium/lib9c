@@ -569,7 +569,7 @@ namespace Lib9c.Tests.Action
             if (guildRepository.TryGetGuildParticipant(new AgentAddress(signer), out var guildParticipant))
             {
                 var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                var validator = guildRepository.GetGuildDelegatee(guild.ValidatorAddress);
+                var validator = guildRepository.GetDelegatee(guild.ValidatorAddress);
                 var bond = guildRepository.GetBond(validator, signer);
                 var amountNCG = _ncg * amount;
                 var expectedGG = DelegationUtil.GetGuildCoinFromNCG(amountNCG);
