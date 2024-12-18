@@ -16,8 +16,19 @@ using Nekoyume.Action;
 
 namespace Lib9c.DevExtensions.Manager.Contents
 {
+    /// <summary>
+    /// Manager class for creating an avatar for testing.
+    /// </summary>
     public static class CreateAvatarManager
     {
+        /// <summary>
+        /// Create an avatar and world state for testing.
+        /// </summary>
+        /// <param name="ctx">action context</param>
+        /// <param name="avatarAddress">avatar address</param>
+        /// <param name="states">base world state</param>
+        /// <param name="avatarState">avatar state</param>
+        /// <returns>world state with dev avatar</returns>
         public static IWorld ExecuteDevExtensions(IActionContext ctx, Address avatarAddress, IWorld states, AvatarState avatarState)
         {
             // prepare for test when executing on editor mode.
@@ -138,6 +149,9 @@ namespace Lib9c.DevExtensions.Manager.Contents
             }
         }
 
+        /// <summary>
+        /// Add test items to the avatar.
+        /// </summary>
         public static void AddTestItems(
             IActionContext ctx,
             AvatarState avatarState,

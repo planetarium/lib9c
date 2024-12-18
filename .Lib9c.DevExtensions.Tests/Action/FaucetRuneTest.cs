@@ -113,6 +113,10 @@ namespace Lib9c.DevExtensions.Tests.Action
                 },
             };
 
+            /// <summary>
+            /// Returns an enumerator that iterates through the collection.
+            /// </summary>
+            /// <returns>data for each test case</returns>
             public IEnumerator<object[]> GetEnumerator()
             {
                 return _data.GetEnumerator();
