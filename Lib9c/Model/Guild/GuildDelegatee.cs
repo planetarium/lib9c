@@ -10,7 +10,7 @@ using Nekoyume.ValidatorDelegation;
 namespace Nekoyume.Model.Guild
 {
     public class GuildDelegatee
-        : Delegatee<GuildDelegator, GuildDelegatee>, IEquatable<GuildDelegatee>
+        : Delegatee<GuildRepository, GuildDelegatee, GuildDelegator>, IEquatable<GuildDelegatee>
     {
         public GuildDelegatee(
             Address address,
