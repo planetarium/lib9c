@@ -16,7 +16,7 @@ namespace Nekoyume.Model.Guild
         }
 
         public GuildRejoinCooldown(AgentAddress agentAddress, IValue bencoded)
-            : this(agentAddress, ((Integer)bencoded))
+            : this(agentAddress, (Integer)bencoded)
         {
         }
 
@@ -40,7 +40,7 @@ namespace Nekoyume.Model.Guild
         }
 
         public bool Equals(GuildRejoinCooldown? other)
-        { 
+        {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return AgentAddress.Equals(other.AgentAddress)
