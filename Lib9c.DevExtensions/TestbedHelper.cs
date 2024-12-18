@@ -74,7 +74,7 @@ namespace Lib9c.DevExtensions
                 case ItemSubType.EyeCostume:
                 case ItemSubType.TailCostume:
                 case ItemSubType.Title:
-                    if (costumeItemSheet.TryGetValue(item.ID, out var costumeRow))
+                    if (costumeItemSheet.TryGetValue(item.Id, out var costumeRow))
                     {
                         var costume =
                             ItemFactory.CreateCostume(costumeRow, addedItemInfo.TradableId);
@@ -88,7 +88,7 @@ namespace Lib9c.DevExtensions
                 case ItemSubType.Belt:
                 case ItemSubType.Necklace:
                 case ItemSubType.Ring:
-                    if (equipmentItemSheet.TryGetValue(item.ID, out var equipmentRow))
+                    if (equipmentItemSheet.TryGetValue(item.Id, out var equipmentRow))
                     {
                         var equipment = (Equipment)ItemFactory.CreateItemUsable(equipmentRow,
                             addedItemInfo.TradableId,
@@ -118,7 +118,7 @@ namespace Lib9c.DevExtensions
 
                 case ItemSubType.Hourglass:
                 case ItemSubType.ApStone:
-                    if (materialItemSheet.TryGetValue(item.ID, out var materialRow))
+                    if (materialItemSheet.TryGetValue(item.Id, out var materialRow))
                     {
                         var material = ItemFactory.CreateTradableMaterial(materialRow);
                         avatarState.inventory.AddItem(material, item.Count);
@@ -128,7 +128,7 @@ namespace Lib9c.DevExtensions
                     break;
 
                 case ItemSubType.Food:
-                    if (consumableItemSheet.TryGetValue(item.ID, out var consumableRow))
+                    if (consumableItemSheet.TryGetValue(item.Id, out var consumableRow))
                     {
                         var consumable = (Consumable)ItemFactory.CreateItemUsable(consumableRow,
                             addedItemInfo.TradableId,
@@ -237,8 +237,5 @@ namespace Lib9c.DevExtensions
             return result;
 #endif
         }
-
-
-
     }
 }

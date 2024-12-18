@@ -82,14 +82,14 @@ namespace Lib9c.DevExtensions.Tests.Action
                     (200000, 1),
                     (201010, 2),
                 },
-                new[] { 40100000 },
+                new[] { 40100000, },
                 new[]
                 {
                     (10001, 0),
                     (20001, 1),
                     (30001, 10),
                 },
-                (1, new[] { 1, 2, 3 }),
+                (1, new[] { 1, 2, 3, }),
             };
         }
 
@@ -221,7 +221,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 0, 0, "AB", 0, 0, 0, 0, 1,
                 null,
                 null,
-                new[] { -1 },
+                new[] { -1, },
                 null,
                 null,
             };
@@ -273,7 +273,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 null,
                 null,
                 null,
-                (0, new[] { -1 }),
+                (0, new[] { -1, }),
             };
         }
 
@@ -304,6 +304,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                     equipments.Add((row.ResultEquipmentId, data.level));
                 }
             }
+
             var action = new CreateOrReplaceAvatar(
                 avatarIndex,
                 name,
@@ -371,6 +372,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                     equipments.Add((row.ResultEquipmentId, data.level));
                 }
             }
+
             var agentAddr = new PrivateKey().Address;
             Execute(
                 _initialStates,
@@ -521,7 +523,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                     Assert.Contains(
                         equipment.StatsMap.GetAdditionalStats(false),
                         stat => stat.statType == statOption.Key &&
-                                stat.additionalValue == statOption.Value);
+                            stat.additionalValue == statOption.Value);
                 }
 
                 var skillOptions = options

@@ -1,4 +1,3 @@
-using Bencodex.Types;
 using Lib9c.DevExtensions.Action.Craft;
 using Lib9c.Tests;
 using Lib9c.Tests.Action;
@@ -7,8 +6,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume;
-using Nekoyume.Action;
-using Nekoyume.Model;
 using Nekoyume.Module;
 using Xunit;
 
@@ -45,14 +42,14 @@ namespace Lib9c.DevExtensions.Tests.Action.Craft
             var action = new UnlockCraftAction
             {
                 AvatarAddress = _avatarAddress,
-                ActionType = new ActionTypeAttribute(typeIdentifier)
+                ActionType = new ActionTypeAttribute(typeIdentifier),
             };
 
             var state = action.Execute(new ActionContext
             {
                 PreviousState = _initialStateV2,
                 Signer = _agentAddress,
-                BlockIndex = 0L
+                BlockIndex = 0L,
             });
 
             var avatarState = state.GetAvatarState(_avatarAddress);
