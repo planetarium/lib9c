@@ -64,7 +64,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var repository = new ValidatorRepository(world, actionContext);
-        var validator = repository.GetValidatorDelegatee(validatorKey.Address);
+        var validator = repository.GetDelegatee(validatorKey.Address);
         var bond = repository.GetBond(validator, validatorKey.Address);
         var validatorList = repository.GetValidatorList();
 
@@ -222,7 +222,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, new ActionContext());
-        var expectedValidator = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedValidator = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedValidatorBalance = validatorBalance - validatorCash - validatorCashToDelegate;
         var expectedPower = validatorCash.RawValue + validatorCashToDelegate.RawValue;
 
@@ -237,7 +237,7 @@ public class DelegateValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualValidator = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualValidator = actualRepository.GetDelegatee(validatorKey.Address);
         var actualValidatorBalance = GetBalance(world, validatorKey.Address);
         var actualPower = actualValidator.Power;
         var actualBond = actualRepository.GetBond(actualValidator, validatorKey.Address);

@@ -36,8 +36,8 @@ namespace Lib9c.Tests.Action.Guild.Migration
 
             var guildRepository = new GuildRepository(world, new ActionContext { });
             var validatorRepository = new ValidatorRepository(world, new ActionContext { });
-            var guildDelegatee = guildRepository.GetGuildDelegatee(validatorAddress);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            var guildDelegatee = guildRepository.GetDelegatee(validatorAddress);
+            var validatorDelegatee = validatorRepository.GetDelegatee(validatorAddress);
 
             Assert.False(validatorDelegatee.IsActive);
             Assert.Equal(ValidatorDelegatee.InactiveDelegationPoolAddress, guildDelegatee.DelegationPoolAddress);
@@ -55,10 +55,10 @@ namespace Lib9c.Tests.Action.Guild.Migration
 
             guildRepository = new GuildRepository(world, new ActionContext { });
             validatorRepository = new ValidatorRepository(world, new ActionContext { });
-            guildDelegatee = guildRepository.GetGuildDelegatee(validatorAddress);
-            validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
+            guildDelegatee = guildRepository.GetDelegatee(validatorAddress);
+            validatorDelegatee = validatorRepository.GetDelegatee(validatorAddress);
 
-            Assert.True(validatorRepository.GetValidatorDelegatee(validatorAddress).IsActive);
+            Assert.True(validatorRepository.GetDelegatee(validatorAddress).IsActive);
             Assert.Equal(ValidatorDelegatee.ActiveDelegationPoolAddress, guildDelegatee.DelegationPoolAddress);
             Assert.Equal(ValidatorDelegatee.ActiveDelegationPoolAddress, validatorDelegatee.DelegationPoolAddress);
             Assert.Equal(delegated, world.GetBalance(ValidatorDelegatee.ActiveDelegationPoolAddress, Currencies.GuildGold));

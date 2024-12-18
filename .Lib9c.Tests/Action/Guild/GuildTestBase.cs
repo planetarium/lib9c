@@ -97,7 +97,7 @@ public abstract class GuildTestBase
 
         var guildRepository = new GuildRepository(
             validatorRepository.World, validatorRepository.ActionContext);
-        var guildDelegatee = guildRepository.GetGuildDelegatee(validatorAddress);
+        var guildDelegatee = guildRepository.GetDelegatee(validatorAddress);
         guildDelegatee.Slash(slashFactor, blockHeight, blockHeight);
 
         return guildRepository.World;

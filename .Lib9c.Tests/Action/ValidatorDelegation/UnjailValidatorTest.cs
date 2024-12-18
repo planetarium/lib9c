@@ -44,7 +44,7 @@ public class UnjailValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         Assert.False(delegatee.Jailed);
         Assert.Equal(-1, delegatee.JailedUntil);
         Assert.False(delegatee.Tombstoned);
