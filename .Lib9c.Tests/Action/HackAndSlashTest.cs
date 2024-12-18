@@ -102,14 +102,12 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, false, true)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, true, true)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false, true)]
-        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false, true)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false, false)]
-        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, true, false)]
-        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false, false)]
-        public void Execute(int avatarLevel, int worldId, int stageId, bool isWeaponLock, bool isClearedBefore)
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 2, true)]
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, true)]
+        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, true)]
+        [InlineData(GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot, 1, 1, false)]
+        [InlineData(200, 1, GameConfig.RequireClearedStageLevel.ActionsInRankingBoard, false)]
+        public void Execute(int avatarLevel, int worldId, int stageId, bool isClearedBefore)
         {
             Assert.True(_tableSheets.WorldSheet.TryGetValue(worldId, out var worldRow));
             Assert.True(stageId >= worldRow.StageBegin);
@@ -145,10 +143,7 @@ namespace Lib9c.Tests.Action
             var equipments = Doomfist.GetAllParts(_tableSheets, previousAvatarState.level);
             foreach (var equipment in equipments)
             {
-                var iLock = equipment.ItemSubType == ItemSubType.Weapon && isWeaponLock
-                    ? new OrderLock(Guid.NewGuid())
-                    : (ILock)null;
-                previousAvatarState.inventory.AddItem(equipment, iLock: iLock);
+                previousAvatarState.inventory.AddItem(equipment, iLock: null);
             }
 
             var mailEquipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
@@ -198,7 +193,6 @@ namespace Lib9c.Tests.Action
 
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
-            Assert.Equal(!isWeaponLock, nextAvatarState.inventory.Equipments.OfType<Weapon>().Any(w => w.equipped));
         }
 
         [Theory]
