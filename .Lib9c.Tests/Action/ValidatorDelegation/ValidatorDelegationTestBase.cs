@@ -24,7 +24,6 @@ using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Delegation;
 
 public class ValidatorDelegationTestBase
@@ -46,8 +45,7 @@ public class ValidatorDelegationTestBase
         var world = new World(MockUtil.MockModernWorldState);
         var goldCurrencyState = new GoldCurrencyState(GoldCurrency);
         World = world
-            .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-            .SetDelegationMigrationHeight(0);
+            .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
     }
 
     protected static BlockHash EmptyBlockHash { get; }

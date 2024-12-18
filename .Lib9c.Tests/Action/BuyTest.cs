@@ -15,7 +15,6 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
-    using Nekoyume.Action.Guild.Migration.LegacyModels;
     using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
@@ -105,8 +104,7 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(_buyerAgentAddress, buyerAgentState)
                 .SetAvatarState(_buyerAvatarAddress, _buyerAvatarState)
                 .SetLegacyState(Addresses.Shop, new ShopState().Serialize())
-                .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100)
-                .SetDelegationMigrationHeight(0);
+                .MintAsset(context, _buyerAgentAddress, _goldCurrencyState.Currency * 100);
         }
 
         public static IEnumerable<object[]> GetExecuteMemberData()

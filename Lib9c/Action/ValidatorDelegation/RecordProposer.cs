@@ -1,7 +1,6 @@
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Extensions;
 using Nekoyume.ValidatorDelegation;
 using static Nekoyume.Model.WorldInformation;
@@ -33,11 +32,6 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-
-            if (world.GetDelegationMigrationHeight() is null)
-            {
-                return world;
-            }
 
             return world.MutateAccount(
                 Addresses.ValidatorList,

@@ -11,7 +11,6 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -92,15 +91,6 @@ namespace Nekoyume.Action
             if (summonRow.CostNcg > 0L)
             {
                 var feeAddress = Addresses.RewardPool;
-                // TODO: [GuildMigration] Remove this after migration
-                if (states.GetDelegationMigrationHeight() is long migrationHeight
-                    && context.BlockIndex < migrationHeight)
-                {
-                    var arenaSheet = states.GetSheet<ArenaSheet>();
-                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                    feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                }
-
                 states = states.TransferAsset(
                     context,
                     context.Signer,

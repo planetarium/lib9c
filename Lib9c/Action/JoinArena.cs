@@ -8,7 +8,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.Arena;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
@@ -92,7 +91,7 @@ namespace Nekoyume.Action
                     $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
             }
 
-            // check the avatar already joined the arena. 
+            // check the avatar already joined the arena.
             if (states.GetArenaParticipant(championshipId, round, avatarAddress) is not null)
             {
                 throw new AlreadyJoinedArenaException(championshipId, round, avatarAddress);
@@ -175,13 +174,6 @@ namespace Nekoyume.Action
                 }
 
                 var feeAddress = Addresses.RewardPool;
-                // TODO: [GuildMigration] Remove this after migration
-                if (states.GetDelegationMigrationHeight() is long migrationHeight
-                    && context.BlockIndex < migrationHeight)
-                {
-                    feeAddress = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                }
-
                 states = states.TransferAsset(context, context.Signer, feeAddress, fee);
             }
 

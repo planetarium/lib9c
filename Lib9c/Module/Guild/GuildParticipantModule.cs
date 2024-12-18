@@ -5,7 +5,6 @@ using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
@@ -143,13 +142,6 @@ namespace Nekoyume.Module.Guild
             FungibleAssetValue fav)
         {
             var height = repository.ActionContext.BlockIndex;
-
-            // TODO: Remove below unnecessary height condition after migration.
-            if (repository.World.GetDelegationMigrationHeight() is long migrationHeight)
-            {
-                height = Math.Max(height, migrationHeight);
-            }
-
             var guildParticipant = repository.GetGuildParticipant(guildParticipantAddress);
             var guild = repository.GetGuild(guildParticipant.GuildAddress);
             guildParticipant.Delegate(guild, fav, height);
