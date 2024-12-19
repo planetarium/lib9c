@@ -25,6 +25,7 @@ using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Nekoyume.Delegation;
 
 public class ValidatorDelegationTestBase
 {
@@ -452,8 +453,7 @@ public class ValidatorDelegationTestBase
                 BlockIndex = blockHeight,
                 Signer = validatorKey.Address,
             };
-            var setValidatorCommission = new SetValidatorCommission(
-                validatorKey.Address, currentCommission + increment);
+            var setValidatorCommission = new SetValidatorCommission(currentCommission + increment);
             world = setValidatorCommission.Execute(actionContext);
             currentCommission += increment;
             preferredHeight = blockHeight + cooldown;
@@ -593,7 +593,10 @@ public class ValidatorDelegationTestBase
     }
 
     protected static FungibleAssetValue CalculateClaim(BigInteger share, BigInteger totalShare, FungibleAssetValue totalClaim)
-        => (totalClaim * share).DivRem(totalShare).Quotient;
+    {
+        var multiplier = BigInteger.Pow(10, (int)Math.Floor(BigInteger.Log10(totalShare)) + RewardBase.Margin);
+        return ((totalClaim * multiplier).DivRem(totalShare).Quotient * share).DivRem(multiplier).Quotient;
+    }
 
     protected static FungibleAssetValue CalculateCommunityFund(ImmutableArray<Vote> votes, FungibleAssetValue reward)
     {

@@ -65,29 +65,77 @@ namespace Nekoyume.Delegation
                 delegateeMetadataAddress,
                 delegatorAddress.ByteArray);
 
-        public static Address CurrentLumpSumRewardsRecordAddress(
+        /// <summary>
+        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>. 
+        /// </summary>
+        /// <param name="delegateeAddress">
+        /// <see cref="Address"/> of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <param name="delegateeAccountAddress">
+        /// <see cref="Address"/> of the account of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </returns>
+        public static Address CurrentRewardBaseAddress(
             Address delegateeAddress, Address delegateeAccountAddress)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress));
 
-        public static Address CurrentLumpSumRewardsRecordAddress(
+        /// <summary>
+        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </summary>
+        /// <param name="delegateeMetadataAddress">
+        /// <see cref="Address"/> of the <see cref="DelegateeMetadata"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </returns>
+        public static Address CurrentRewardBaseAddress(
             Address delegateeMetadataAddress)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 delegateeMetadataAddress);
 
-        public static Address LumpSumRewardsRecordAddress(
+        /// <summary>
+        /// Get the <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </summary>
+        /// <param name="delegateeAddress">
+        /// <see cref="Address"/> of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <param name="delegateeAccountAddress">
+        /// <see cref="Address"/> of the account of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <param name="height">
+        /// The height of the <see cref="RewardBase"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </returns>
+        public static Address RewardBaseAddress(
             Address delegateeAddress, Address delegateeAccountAddress, long height)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress),
                 BitConverter.GetBytes(height));
 
-        public static Address LumpSumRewardsRecordAddress(
+        /// <summary>
+        /// Get the <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </summary>
+        /// <param name="delegateeMetadataAddress">
+        /// <see cref="Address"/> of the <see cref="DelegateeMetadata"/>.
+        /// </param>
+        /// <param name="height">
+        /// The height of the <see cref="RewardBase"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </returns>
+        public static Address RewardBaseAddress(
             Address delegateeMetadataAddress, long height)
             => DeriveAddress(
-                DelegationElementType.LumpSumRewardsRecord,
+                DelegationElementType.RewardBase,
                 delegateeMetadataAddress,
                 BitConverter.GetBytes(height));
 
@@ -101,6 +149,41 @@ namespace Nekoyume.Delegation
             Address delegateeMetadataAddress)
             => DeriveAddress(
                 DelegationElementType.RewardPool,
+                delegateeMetadataAddress);
+
+        /// <summary>
+        /// Get the <see cref="Address"/> of the distribution pool
+        /// where the rewards are distributed from.
+        /// </summary>
+        /// <param name="delegateeAddress">
+        /// <see cref="Address"/> of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <param name="delegateeAccountAddress">
+        /// <see cref="Address"/> of the account of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the distribution pool.
+        /// </returns>
+        public static Address DistributionPoolAddress(
+            Address delegateeAddress, Address delegateeAccountAddress)
+            => DeriveAddress(
+                DelegationElementType.DistributionPool,
+                DelegateeMetadataAddress(delegateeAddress, delegateeAccountAddress));
+
+        /// <summary>
+        /// Get the <see cref="Address"/> of the distribution pool
+        /// where the rewards are distributed from.
+        /// </summary>
+        /// <param name="delegateeMetadataAddress">
+        /// <see cref="Address"/> of the <see cref="DelegateeMetadata"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the distribution pool.
+        /// </returns>
+        public static Address DistributionPoolAddress(
+            Address delegateeMetadataAddress)
+            => DeriveAddress(
+                DelegationElementType.DistributionPool,
                 delegateeMetadataAddress);
 
         public static Address DelegationPoolAddress(
@@ -138,9 +221,10 @@ namespace Nekoyume.Delegation
             Bond,
             UnbondLockIn,
             RebondGrace,
-            LumpSumRewardsRecord,
+            RewardBase,
             RewardPool,
             DelegationPool,
+            DistributionPool,
         }
     }
 }

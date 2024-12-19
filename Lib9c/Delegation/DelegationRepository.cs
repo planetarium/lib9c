@@ -19,6 +19,8 @@ namespace Nekoyume.Delegation
         protected IAccount unbondLockInAccount;
         protected IAccount rebondGraceAccount;
         protected IAccount unbondingSetAccount;
+        protected IAccount rewardBaseAccount;
+        // TODO: [Migration] Remove this field after migration.
         protected IAccount lumpSumRewardsRecordAccount;
 
         public DelegationRepository(
@@ -32,6 +34,7 @@ namespace Nekoyume.Delegation
             Address unbondLockInAccountAddress,
             Address rebondGraceAccountAddress,
             Address unbondingSetAccountAddress,
+            Address rewardBaseAccountAddress,
             Address lumpSumRewardRecordAccountAddress)
         {
             previousWorld = world;
@@ -44,6 +47,7 @@ namespace Nekoyume.Delegation
             UnbondLockInAccountAddress = unbondLockInAccountAddress;
             RebondGraceAccountAddress = rebondGraceAccountAddress;
             UnbondingSetAccountAddress = unbondingSetAccountAddress;
+            RewardBaseAccountAddress = rewardBaseAccountAddress;
             LumpSumRewardsRecordAccountAddress = lumpSumRewardRecordAccountAddress;
 
             delegateeAccount = world.GetAccount(DelegateeAccountAddress);
@@ -54,6 +58,7 @@ namespace Nekoyume.Delegation
             unbondLockInAccount = world.GetAccount(UnbondLockInAccountAddress);
             rebondGraceAccount = world.GetAccount(RebondGraceAccountAddress);
             unbondingSetAccount = world.GetAccount(UnbondingSetAccountAddress);
+            rewardBaseAccount = world.GetAccount(RewardBaseAccountAddress);
             lumpSumRewardsRecordAccount = world.GetAccount(LumpSumRewardsRecordAccountAddress);
         }
 
@@ -66,27 +71,63 @@ namespace Nekoyume.Delegation
             .SetAccount(UnbondLockInAccountAddress, unbondLockInAccount)
             .SetAccount(RebondGraceAccountAddress, rebondGraceAccount)
             .SetAccount(UnbondingSetAccountAddress, unbondingSetAccount)
+            .SetAccount(RewardBaseAccountAddress, rewardBaseAccount)
             .SetAccount(LumpSumRewardsRecordAccountAddress, lumpSumRewardsRecordAccount);
 
+        /// <summary>
+        /// <see cref="IActionContext"/> of the current action.
+        /// </summary>
         public IActionContext ActionContext { get; }
 
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="Delegatee{T, TSelf}"> account.
+        /// </summary>
         public Address DelegateeAccountAddress { get; }
 
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="Delegator{T, TSelf}"> account.
+        /// </summary>
         public Address DelegatorAccountAddress { get; }
 
-        private Address DelegateeMetadataAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="DelegateeMetadata"/> account.
+        /// </summary>
+        public Address DelegateeMetadataAccountAddress { get; }
 
-        private Address DelegatorMetadataAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"> of the <see cref="DelegatorMetadata"> account.
+        /// </summary>
+        public Address DelegatorMetadataAccountAddress { get; }
 
-        private Address BondAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="Bond"/> account.
+        /// </summary>
+        public Address BondAccountAddress { get; }
 
-        private Address UnbondLockInAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="UnbondLockIn"/> account.
+        /// </summary>
+        public Address UnbondLockInAccountAddress { get; }
 
-        private Address RebondGraceAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="RebondGrace"/> account
+        /// </summary>
+        public Address RebondGraceAccountAddress { get; }
 
-        private Address UnbondingSetAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="UnbondingSet"/> account.
+        /// </summary>
+        public Address UnbondingSetAccountAddress { get; }
 
-        private Address LumpSumRewardsRecordAccountAddress { get; }
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="RewardBase"/> account.
+        /// </summary>
+        public Address RewardBaseAccountAddress { get; }
+
+        /// <summary>
+        /// <see cref="Address"/> of the <see cref="LumpSumRewardsRecord"/> account.
+        /// </summary>
+        public Address LumpSumRewardsRecordAccountAddress { get; }
 
         public abstract IDelegatee GetDelegatee(Address address);
 
@@ -162,6 +203,26 @@ namespace Nekoyume.Delegation
                 ? new UnbondingSet(bencoded, this)
                 : new UnbondingSet(this);
 
+        /// <inheritdoc/>
+        public RewardBase? GetCurrentRewardBase(IDelegatee delegatee)
+        {
+            Address address = delegatee.CurrentRewardBaseAddress();
+            IValue? value = rewardBaseAccount.GetState(address);
+            return value is IValue bencoded
+                ? new RewardBase(address, bencoded)
+                : null;
+        }
+
+        /// <inheritdoc/>
+        public RewardBase? GetRewardBase(IDelegatee delegatee, long height)
+        {
+            Address address = delegatee.RewardBaseAddress(height);
+            IValue? value = rewardBaseAccount.GetState(address);
+            return value is IValue bencoded
+                ? new RewardBase(address, bencoded)
+                : null;
+        }
+
         public LumpSumRewardsRecord? GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
         {
             Address address = delegatee.LumpSumRewardsRecordAddress(height);
@@ -225,10 +286,22 @@ namespace Nekoyume.Delegation
                 : unbondingSetAccount.SetState(UnbondingSet.Address, unbondingSet.Bencoded);
         }
 
+        /// <inheritdoc/>
+        public void SetRewardBase(RewardBase rewardBase)
+        {
+            rewardBaseAccount = rewardBaseAccount.SetState(rewardBase.Address, rewardBase.Bencoded);
+        }
+
         public void SetLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord)
         {
             lumpSumRewardsRecordAccount = lumpSumRewardsRecordAccount.SetState(
                 lumpSumRewardsRecord.Address, lumpSumRewardsRecord.Bencoded);
+        }
+
+        /// <inheritdoc/>
+        public void RemoveLumpSumRewardsRecord(LumpSumRewardsRecord lumpSumRewardsRecord)
+        {
+            lumpSumRewardsRecordAccount = lumpSumRewardsRecordAccount.RemoveState(lumpSumRewardsRecord.Address);
         }
 
         public void TransferAsset(Address sender, Address recipient, FungibleAssetValue value)
@@ -245,6 +318,7 @@ namespace Nekoyume.Delegation
             unbondLockInAccount = world.GetAccount(UnbondLockInAccountAddress);
             rebondGraceAccount = world.GetAccount(RebondGraceAccountAddress);
             unbondingSetAccount = world.GetAccount(UnbondingSetAccountAddress);
+            rewardBaseAccount = world.GetAccount(RewardBaseAccountAddress);
             lumpSumRewardsRecordAccount = world.GetAccount(LumpSumRewardsRecordAccountAddress);
         }
     }

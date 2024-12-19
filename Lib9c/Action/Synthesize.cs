@@ -30,6 +30,11 @@ namespace Nekoyume.Action
     [ActionType(TypeIdentifier)]
     public class Synthesize : GameAction
     {
+        /// <summary>
+        /// The list of invalid item ids for material.
+        /// </summary>
+        public static readonly int[] InvalidMaterialItemId = { 10660004, 10760009, 40100042, 40100043, };
+
         private const string TypeIdentifier = "synthesize";
 
         private const string MaterialsKey = "m";
@@ -115,6 +120,15 @@ namespace Nekoyume.Action
                 materialItemSubType,
                 addressesHex
             );
+
+            // Check Invalid Item
+            foreach (var materialItem in materialItems)
+            {
+                if (InvalidMaterialItemId.Contains(materialItem.Id))
+                {
+                    throw new InvalidItemIdException($"{materialItem.Id} is invalid item id.");
+                }
+            }
 
             // Unequip items (if necessary)
             foreach (var materialItem in materialItems)

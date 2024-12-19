@@ -40,12 +40,18 @@ namespace Lib9c.Tests.Delegation
                 new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), TestRepository.DelegateeAccountAddress, TestRepository);
             TestDelegatee2 = new TestDelegatee(
                 new Address("0xea1C4eedEfC99691DEfc6eF2753FAfa8C17F4584"), TestRepository.DelegateeAccountAddress, TestRepository);
+            TestRepository.SetDelegator(TestDelegator1);
+            TestRepository.SetDelegator(TestDelegator2);
+            TestRepository.SetDelegatee(TestDelegatee1);
+            TestRepository.SetDelegatee(TestDelegatee2);
 
             DummyRepository = new DummyRepository(world, context);
             DummyDelegatee1 = new DummyDelegatee(
                 new Address("0x67A44E11506b8f0Bb625fEECccb205b33265Bb48"), DummyRepository.DelegateeAccountAddress, DummyRepository);
             DummyDelegator1 = new DummyDelegator(
                 new Address("0x0054E98312C47E7Fa0ABed45C23Fa187e31C373a"), DummyRepository.DelegateeAccountAddress, DummyRepository);
+            DummyRepository.SetDelegator(DummyDelegator1);
+            DummyRepository.SetDelegatee(DummyDelegatee1);
         }
 
         public TestRepository TestRepository { get; }

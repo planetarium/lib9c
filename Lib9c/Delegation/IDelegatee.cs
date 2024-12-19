@@ -65,6 +65,25 @@ namespace Nekoyume.Delegation
 
         Address RebondGraceAddress(Address delegatorAddress);
 
+        /// <summary>
+        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </returns>
+        Address CurrentRewardBaseAddress();
+
+        /// <summary>
+        /// Get the <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </summary>
+        /// <param name="height">
+        /// The height of the <see cref="RewardBase"/>.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </returns>
+        Address RewardBaseAddress(long height);
+
         Address CurrentLumpSumRewardsRecordAddress();
 
         Address LumpSumRewardsRecordAddress(long height);

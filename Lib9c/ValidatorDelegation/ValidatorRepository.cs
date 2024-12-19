@@ -32,6 +32,7 @@ namespace Nekoyume.ValidatorDelegation
                   Addresses.ValidatorUnbondLockIn,
                   Addresses.ValidatorRebondGrace,
                   Addresses.ValidatorUnbondingSet,
+                  Addresses.ValidatorRewardBase,
                   Addresses.ValidatorLumpSumRewardsRecord)
         {
             _validatorListAccount = world.GetAccount(validatorListAddress);
