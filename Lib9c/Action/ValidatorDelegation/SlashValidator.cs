@@ -6,7 +6,6 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
@@ -34,12 +33,6 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-
-            if (world.GetDelegationMigrationHeight() is null)
-            {
-                return world;
-            }
-
             var repository = new ValidatorRepository(world, context);
 
             var abstainHistory = repository.GetAbstainHistory();
@@ -51,7 +44,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             foreach (var abstain in abstainsToSlash)
             {
-                var validatorDelegatee = repository.GetValidatorDelegatee(abstain.Address);
+                var validatorDelegatee = repository.GetDelegatee(abstain.Address);
                 if (validatorDelegatee.Jailed)
                 {
                     continue;
@@ -61,7 +54,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 validatorDelegatee.Jail(context.BlockIndex + AbstainJailTime);
 
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var guildDelegatee = guildRepository.GetGuildDelegatee(abstain.Address);
+                var guildDelegatee = guildRepository.GetDelegatee(abstain.Address);
                 guildDelegatee.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
                 repository.UpdateWorld(guildRepository.World);
             }
@@ -76,12 +69,12 @@ namespace Nekoyume.Action.ValidatorDelegation
                             throw new Exception("Evidence height is greater than block index.");
                         }
 
-                        var validatorDelegatee = repository.GetValidatorDelegatee(e.TargetAddress);
+                        var validatorDelegatee = repository.GetDelegatee(e.TargetAddress);
                         validatorDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
                         validatorDelegatee.Tombstone();
 
                         var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                        var guildDelegatee = guildRepository.GetGuildDelegatee(e.TargetAddress);
+                        var guildDelegatee = guildRepository.GetDelegatee(e.TargetAddress);
                         guildDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
                         repository.UpdateWorld(guildRepository.World);
                         break;

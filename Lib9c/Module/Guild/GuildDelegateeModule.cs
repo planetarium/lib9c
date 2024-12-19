@@ -19,7 +19,7 @@ namespace Nekoyume.Module.Guild
         {
             try
             {
-                guildDelegatee = repository.GetGuildDelegatee(address);
+                guildDelegatee = repository.GetDelegatee(address);
                 return true;
             }
             catch
@@ -49,7 +49,7 @@ namespace Nekoyume.Module.Guild
                 new Currency[] { repository.World.GetGoldCurrency() },
                 repository);
 
-            repository.SetGuildDelgatee(guildDelegatee);
+            repository.SetDelegatee(guildDelegatee);
 
             return guildDelegatee;
         }

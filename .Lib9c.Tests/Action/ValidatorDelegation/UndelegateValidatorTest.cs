@@ -53,7 +53,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
         var undelegateValidator = new UndelegateValidator(expectedBond.Share);
         actionContext = new ActionContext
@@ -66,7 +66,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
         world = undelegateValidator.Execute(actionContext);
 
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualValidatorList = actualRepository.GetValidatorList();
         var actualBond = actualRepository.GetBond(actualDelegatee, validatorKey.Address);
 
@@ -182,7 +182,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             BlockIndex = height,
         };
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
 
         var undelegateValidator = new UndelegateValidator(10);
@@ -190,7 +190,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualBond = actualRepository.GetBond(actualDelegatee, validatorKey.Address);
 
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
@@ -215,7 +215,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
             BlockIndex = height,
         };
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedBond = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address);
 
         var undelegateValidator = new UndelegateValidator(10);
@@ -223,7 +223,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualBond = actualRepository.GetBond(actualDelegatee, validatorKey.Address);
 
         Assert.Equal(expectedBond.Share - 10, actualBond.Share);
@@ -244,7 +244,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedJailed = expectedDelegatee.Jailed;
 
         var undelegateValidator = new UndelegateValidator(10);
@@ -258,7 +258,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualJailed = actualDelegatee.Jailed;
         var actualJailedUntil = actualDelegatee.JailedUntil;
 
@@ -280,7 +280,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, new ActionContext());
-        var expectedValidator = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedValidator = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedValidatorBalance = validatorBalance - validatorCash;
         var expectedValidatorPower = expectedValidator.Power - fixture.ValidatorInfo.SubtractShare;
 
@@ -296,7 +296,7 @@ public class UndelegateValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualValidator = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualValidator = actualRepository.GetDelegatee(validatorKey.Address);
         var actualValidatorBalance = GetBalance(world, validatorKey.Address);
         var actualValiatorPower = actualValidator.Power;
 

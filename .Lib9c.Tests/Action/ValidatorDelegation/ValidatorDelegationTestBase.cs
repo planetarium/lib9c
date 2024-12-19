@@ -24,7 +24,6 @@ using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Delegation;
 
 public class ValidatorDelegationTestBase
@@ -46,8 +45,7 @@ public class ValidatorDelegationTestBase
         var world = new World(MockUtil.MockModernWorldState);
         var goldCurrencyState = new GoldCurrencyState(GoldCurrency);
         World = world
-            .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize())
-            .SetDelegationMigrationHeight(0);
+            .SetLegacyState(Addresses.GoldCurrency, goldCurrencyState.Serialize());
     }
 
     protected static BlockHash EmptyBlockHash { get; }
@@ -263,7 +261,7 @@ public class ValidatorDelegationTestBase
         }
 
         var repository = new ValidatorRepository(world, new ActionContext());
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         if (delegatee.Jailed)
         {
             throw new ArgumentException(
@@ -282,7 +280,7 @@ public class ValidatorDelegationTestBase
                 world, validatorKey.PublicKey, lastCommit, blockHeight);
             blockHeight++;
             repository = new ValidatorRepository(world, new ActionContext());
-            delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+            delegatee = repository.GetDelegatee(validatorKey.Address);
             if (delegatee.Jailed)
             {
                 break;
@@ -328,7 +326,7 @@ public class ValidatorDelegationTestBase
         }
 
         var repository = new ValidatorRepository(world, new ActionContext());
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         if (!delegatee.Jailed)
         {
             throw new ArgumentException(
@@ -439,7 +437,7 @@ public class ValidatorDelegationTestBase
 
         var cooldown = ValidatorDelegatee.CommissionPercentageUpdateCooldown;
         var repository = new ValidatorRepository(world, new ActionContext());
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         var currentCommission = delegatee.CommissionPercentage;
         var increment = commissionPercentage > currentCommission ? 1 : -1;
         var preferredHeight = delegatee.CommissionPercentageLastUpdateHeight + cooldown;

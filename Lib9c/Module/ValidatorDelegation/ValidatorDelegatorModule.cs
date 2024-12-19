@@ -14,7 +14,7 @@ namespace Nekoyume.Module.ValidatorDelegation
         {
             try
             {
-                validatorDelegator = repository.GetValidatorDelegator(address);
+                validatorDelegator = repository.GetDelegator(address);
                 return true;
             }
             catch

@@ -38,7 +38,7 @@ public class ReleaseValidatorUnbondingsTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new GuildRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetGuildDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedUnbondingSet = expectedRepository.GetUnbondingSet();
         var expectedReleaseCount = expectedUnbondingSet.UnbondingRefs.Count;
         var expectedDepositGold = expectedDelegatee.FAVFromShare(share);

@@ -90,7 +90,7 @@ public class UpdateValidatorsTest : ValidatorDelegationTestBase
         var actualRepository = new ValidatorRepository(world, actionContext);
         var actualValidators = actualRepository.GetValidatorList()
             .ActiveSet().OrderBy(item => item.OperatorAddress).ToList();
-        var tombstonedValidator = actualRepository.GetValidatorDelegatee(validatorKeys[0].Address);
+        var tombstonedValidator = actualRepository.GetDelegatee(validatorKeys[0].Address);
 
         Assert.True(tombstonedValidator.Tombstoned);
         Assert.Equal(expectedValidators.Count - 1, actualValidators.Count);

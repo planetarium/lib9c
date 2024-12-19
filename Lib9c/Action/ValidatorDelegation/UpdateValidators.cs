@@ -5,7 +5,6 @@ using Libplanet.Action;
 using Libplanet.Types.Consensus;
 using Nekoyume.ValidatorDelegation;
 using Nekoyume.Model.Guild;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -22,12 +21,6 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
-
-            if (world.GetDelegationMigrationHeight() is null)
-            {
-                return world;
-            }
-
             var prevValidators = world.GetValidatorSet().Validators;
             var repository = new ValidatorRepository(world, context);
             var validators = repository.GetValidatorList().ActiveSet();
@@ -35,26 +28,26 @@ namespace Nekoyume.Action.ValidatorDelegation
             foreach (var deactivated in prevValidators.Select(v => v.OperatorAddress)
                 .Except(validators.Select(v => v.OperatorAddress)))
             {
-                var validatorDelegatee = repository.GetValidatorDelegatee(deactivated);
+                var validatorDelegatee = repository.GetDelegatee(deactivated);
                 validatorDelegatee.Deactivate();
-                repository.SetValidatorDelegatee(validatorDelegatee);
+                repository.SetDelegatee(validatorDelegatee);
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var guildDelegatee = guildRepository.GetGuildDelegatee(deactivated);
+                var guildDelegatee = guildRepository.GetDelegatee(deactivated);
                 guildDelegatee.Deactivate();
-                guildRepository.SetGuildDelgatee(guildDelegatee);
+                guildRepository.SetDelegatee(guildDelegatee);
                 repository.UpdateWorld(guildRepository.World);
             }
 
             foreach (var activated in validators.Select(v => v.OperatorAddress)
                 .Except(prevValidators.Select(v => v.OperatorAddress)))
             {
-                var validatorDelegatee = repository.GetValidatorDelegatee(activated);
+                var validatorDelegatee = repository.GetDelegatee(activated);
                 validatorDelegatee.Activate();
-                repository.SetValidatorDelegatee(validatorDelegatee);
+                repository.SetDelegatee(validatorDelegatee);
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var guildDelegatee = guildRepository.GetGuildDelegatee(activated);
+                var guildDelegatee = guildRepository.GetDelegatee(activated);
                 guildDelegatee.Activate();
-                guildRepository.SetGuildDelgatee(guildDelegatee);
+                guildRepository.SetDelegatee(guildDelegatee);
                 repository.UpdateWorld(guildRepository.World);
             }
 
