@@ -1,18 +1,17 @@
 #nullable enable
-using System;
-using System.Collections.Immutable;
-using System.Numerics;
-using Bencodex.Types;
-using Libplanet.Crypto;
-using Libplanet.Types.Assets;
-
-namespace Nekoyume.Delegation
+namespace Lib9c.Tests.Delegation.Migration
 {
-    public abstract class Delegator<T, TSelf> : IDelegator
-        where T : Delegatee<TSelf, T>
-        where TSelf : Delegator<T, TSelf>
+    using System;
+    using System.Collections.Immutable;
+    using System.Numerics;
+    using Bencodex.Types;
+    using Libplanet.Crypto;
+    using Libplanet.Types.Assets;
+    using Nekoyume.Delegation;
+
+    public class LegacyTestDelegator : IDelegator
     {
-        public Delegator(
+        public LegacyTestDelegator(
             Address address,
             Address accountAddress,
             Address delegationPoolAddress,
@@ -28,14 +27,14 @@ namespace Nekoyume.Delegation
         {
         }
 
-        public Delegator(
+        public LegacyTestDelegator(
             Address address,
             IDelegationRepository repository)
             : this(repository.GetDelegatorMetadata(address), repository)
         {
         }
 
-        private Delegator(DelegatorMetadata metadata, IDelegationRepository repository)
+        private LegacyTestDelegator(DelegatorMetadata metadata, IDelegationRepository repository)
         {
             Metadata = metadata;
             Repository = repository;
@@ -59,8 +58,8 @@ namespace Nekoyume.Delegation
 
         public List MetadataBencoded => Metadata.Bencoded;
 
-        public virtual void Delegate(
-            T delegatee, FungibleAssetValue fav, long height)
+        public void Delegate(
+            LegacyTestDelegatee delegatee, FungibleAssetValue fav, long height)
         {
             if (fav.Sign <= 0)
             {
@@ -76,15 +75,15 @@ namespace Nekoyume.Delegation
             delegatee.Bond(this, fav, height);
             Metadata.AddDelegatee(delegatee.Address);
             Repository.TransferAsset(DelegationPoolAddress, delegatee.DelegationPoolAddress, fav);
-            Repository.SetDelegator(this);
+            Repository.SetDelegatorMetadata(Metadata);
         }
 
         void IDelegator.Delegate(
             IDelegatee delegatee, FungibleAssetValue fav, long height)
-            => Delegate((T)delegatee, fav, height);
+            => Delegate((LegacyTestDelegatee)delegatee, fav, height);
 
-        public virtual void Undelegate(
-            T delegatee, BigInteger share, long height)
+        public void Undelegate(
+            LegacyTestDelegatee delegatee, BigInteger share, long height)
         {
             if (share.Sign <= 0)
             {
@@ -119,16 +118,15 @@ namespace Nekoyume.Delegation
             Repository.SetUnbondLockIn(unbondLockIn);
             Repository.SetUnbondingSet(
                 Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
-            Repository.SetDelegator(this);
+            Repository.SetDelegatorMetadata(Metadata);
         }
 
         void IDelegator.Undelegate(
             IDelegatee delegatee, BigInteger share, long height)
-            => Undelegate((T)delegatee, share, height);
+            => Undelegate((LegacyTestDelegatee)delegatee, share, height);
 
-
-        public virtual void Redelegate(
-            T srcDelegatee, T dstDelegatee, BigInteger share, long height)
+        public void Redelegate(
+            LegacyTestDelegatee srcDelegatee, LegacyTestDelegatee dstDelegatee, BigInteger share, long height)
         {
             if (share.Sign <= 0)
             {
@@ -169,15 +167,15 @@ namespace Nekoyume.Delegation
             Repository.SetRebondGrace(srcRebondGrace);
             Repository.SetUnbondingSet(
                 Repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
-            Repository.SetDelegator(this);
+            Repository.SetDelegatorMetadata(Metadata);
         }
 
         void IDelegator.Redelegate(
             IDelegatee srcDelegatee, IDelegatee dstDelegatee, BigInteger share, long height)
-            => Redelegate((T)srcDelegatee, (T)dstDelegatee, share, height);
+            => Redelegate((LegacyTestDelegatee)srcDelegatee, (LegacyTestDelegatee)dstDelegatee, share, height);
 
         public void CancelUndelegate(
-            T delegatee, FungibleAssetValue fav, long height)
+            LegacyTestDelegatee delegatee, FungibleAssetValue fav, long height)
         {
             if (fav.Sign <= 0)
             {
@@ -210,22 +208,21 @@ namespace Nekoyume.Delegation
             Repository.SetUnbondLockIn(unbondLockIn);
             Repository.SetUnbondingSet(
                 Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
-            Repository.SetDelegator(this);
+            Repository.SetDelegatorMetadata(Metadata);
         }
 
         void IDelegator.CancelUndelegate(
             IDelegatee delegatee, FungibleAssetValue fav, long height)
-            => CancelUndelegate((T)delegatee, fav, height);
+            => CancelUndelegate((LegacyTestDelegatee)delegatee, fav, height);
 
         public void ClaimReward(
-            T delegatee, long height)
+            LegacyTestDelegatee delegatee, long height)
         {
             delegatee.DistributeReward(this, height);
-            delegatee.StartNewRewardPeriod(height);
-            Repository.SetDelegator(this);
+            Repository.SetDelegatorMetadata(Metadata);
         }
 
         void IDelegator.ClaimReward(IDelegatee delegatee, long height)
-            => ClaimReward((T)delegatee, height);
+            => ClaimReward((LegacyTestDelegatee)delegatee, height);
     }
 }
