@@ -9,8 +9,7 @@ using Nekoyume.TypedAddress;
 
 namespace Nekoyume.Action.Guild
 {
-    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
-    // [ActionType(TypeIdentifier)]
+    [ActionType(TypeIdentifier)]
     public class BanGuildMember : ActionBase
     {
         public const string TypeIdentifier = "ban_guild_member";
@@ -52,12 +51,7 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
-            {
-                throw new InvalidOperationException("The signer does not have a guild.");
-            }
-
-            repository.Ban(guildAddress, signer, Target);
+            repository.Ban(signer, Target);
 
             return repository.World;
         }

@@ -199,7 +199,7 @@ public class ValidatorDelegationTestBase
             RandomSeed = seed,
         };
         var makeGuild = new MakeGuild(validatorAddress);
-        return makeGuild.ExecutePublic(actionContext);
+        return makeGuild.Execute(actionContext);
     }
 
     protected static IWorld EnsureJoinGuild(
