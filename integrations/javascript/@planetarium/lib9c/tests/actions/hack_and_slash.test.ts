@@ -1,6 +1,5 @@
 import { describe } from "vitest";
-import { HackAndSlash } from "../../src/actions/hack_and_slash.js";
-import { RuneSlotInfo, uuidToGuidBytes } from "../../src/index.js";
+import { HackAndSlash, RuneSlotInfo, uuidToGuidBytes } from "../../src/index.js";
 import { runTests } from "./common.js";
 import { avatarAddress } from "./fixtures.js";
 
