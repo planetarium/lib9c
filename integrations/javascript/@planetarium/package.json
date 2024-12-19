@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "workspaces": [
+    "lib9c",
+    "9c-headless-provider"
+  ]
+}

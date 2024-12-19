@@ -10,6 +10,10 @@ namespace Nekoyume.Action
         {
         }
 
+        public ActivatedAccountsDoesNotExistsException(string message) : base(message)
+        {
+        }
+
         public ActivatedAccountsDoesNotExistsException(
             SerializationInfo info, StreamingContext context
         ) : base(info, context)

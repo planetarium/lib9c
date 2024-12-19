@@ -20,6 +20,47 @@ namespace Nekoyume.Delegation
         private Address? _address;
         private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
+        /// <summary>
+        /// Create a new instance of DelegateeMetadata.
+        /// </summary>
+        /// <param name="delegateeAddress">
+        /// The <see cref="Address"/> of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <param name="delegateeAccountAddress">
+        /// The <see cref="Address"/> of the account of the <see cref="Delegatee{T, TSelf}"/>.
+        /// </param>
+        /// <param name="delegationCurrency">
+        /// The <see cref="Currency"/> used for delegation.
+        /// </param>
+        /// <param name="rewardCurrencies">
+        /// The enumerable of <see cref="Currency"/>s used for reward.
+        /// </param>
+        /// <param name="delegationPoolAddress">
+        /// The <see cref="Address"/> of the delegation pool that stores
+        /// delegated <see cref="FungibleAssetValue"/>s.
+        /// </param>
+        /// <param name="rewardPoolAddress">
+        /// The <see cref="Address"/> of the reward pool that gathers
+        /// rewards to be distributed.
+        /// </param>
+        /// <param name="rewardRemainderPoolAddress">
+        /// The <see cref="Address"/> of the reward remainder pool to
+        /// sends the remainder of the rewards to.
+        /// </param>
+        /// <param name="slashedPoolAddress">
+        /// The <see cref="Address"/> of the pool that sends the slashed
+        /// <see cref="FungibleAssetValue"/>s to.
+        /// </param>
+        /// <param name="unbondingPeriod">
+        /// The period in blocks that the unbonded <see cref="FungibleAssetValue"/>s
+        /// can be withdrawn.
+        /// </param>
+        /// <param name="maxUnbondLockInEntries">
+        /// The maximum number of entries that can be locked in for unbonding.
+        /// </param>
+        /// <param name="maxRebondGraceEntries">
+        /// The maximum number of entries that can be locked in for rebonding.
+        /// </param>
         public DelegateeMetadata(
             Address delegateeAddress,
             Address delegateeAccountAddress,
@@ -62,12 +103,12 @@ namespace Nekoyume.Delegation
         }
 
         public DelegateeMetadata(
-            Address address,
-            Address accountAddress,
+            Address delegateeAddress,
+            Address delegateeAccountAddress,
             List bencoded)
         {
             Currency delegationCurrency;
-            IEnumerable< Currency > rewardCurrencies;
+            IEnumerable<Currency> rewardCurrencies;
             Address delegationPoolAddress;
             Address rewardPoolAddress;
             Address rewardRemainderPoolAddress;
@@ -152,8 +193,8 @@ namespace Nekoyume.Delegation
                     "Total shares must be non-negative.");
             }
 
-            DelegateeAddress = address;
-            DelegateeAccountAddress = accountAddress;
+            DelegateeAddress = delegateeAddress;
+            DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
             RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
             DelegationPoolAddress = delegationPoolAddress;
@@ -340,11 +381,57 @@ namespace Nekoyume.Delegation
         public virtual Address RebondGraceAddress(Address delegatorAddress)
             => DelegationAddress.RebondGraceAddress(Address, delegatorAddress);
 
-        public virtual Address CurrentLumpSumRewardsRecordAddress()
-            => DelegationAddress.CurrentLumpSumRewardsRecordAddress(Address);
+        /// <summary>
+        /// Get the <see cref="Address"/> of the distribution pool
+        /// where the rewards are distributed from.
+        /// </summary>
+        /// <returns>
+        /// <see cref="Address"/> of the distribution pool.
+        /// </returns>
+        public virtual Address DistributionPoolAddress()
+            => DelegationAddress.DistributionPoolAddress(Address);
 
+        /// <summary>
+        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </summary>
+        /// <returns>
+        /// <see cref="Address"/> of the current <see cref="RewardBase"/>.
+        /// </returns>
+        public virtual Address CurrentRewardBaseAddress()
+            => DelegationAddress.CurrentRewardBaseAddress(Address);
+
+        /// <summary>
+        /// Get the <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </summary>
+        /// <param name="height"></param>
+        /// <returns>
+        /// <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
+        /// </returns>
+        public virtual Address RewardBaseAddress(long height)
+            => DelegationAddress.RewardBaseAddress(Address, height);
+
+        /// <summary>
+        /// Get the <see cref="Address"/> of the current lump sum rewards record.
+        /// This will be removed after the migration is done.
+        /// </summary>
+        /// <returns>
+        /// <see cref="Address"/> of the current lump sum rewards record.
+        /// </returns>
+        public virtual Address CurrentLumpSumRewardsRecordAddress()
+            => DelegationAddress.CurrentRewardBaseAddress(Address);
+
+        /// <summary>
+        /// Get the <see cref="Address"/> of the lump sum rewards record at the given height.
+        /// This will be removed after the migration is done.
+        /// </summary>
+        /// <param name="height">
+        /// The height of the lump sum rewards record.
+        /// </param>
+        /// <returns>
+        /// <see cref="Address"/> of the lump sum rewards record at the given height.
+        /// </returns>
         public virtual Address LumpSumRewardsRecordAddress(long height)
-            => DelegationAddress.LumpSumRewardsRecordAddress(Address, height);
+            => DelegationAddress.RewardBaseAddress(Address, height);
 
         public override bool Equals(object? obj)
             => obj is IDelegateeMetadata other && Equals(other);

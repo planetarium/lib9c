@@ -221,6 +221,7 @@ namespace Nekoyume.Delegation
             T delegatee, long height)
         {
             delegatee.DistributeReward(this, height);
+            delegatee.StartNewRewardPeriod(height);
             Repository.SetDelegator(this);
         }
 

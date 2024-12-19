@@ -20,27 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Check if .Libplanet refers to a tagged commit
-      if: |
-        github.event_name == 'push' && (
-          github.ref == 'refs/heads/main' ||
-          startsWith(github.ref, 'refs/heads/rc-') ||
-          startsWith(github.ref, 'refs/tags/')
-        ) ||
-        github.event_name == 'pull_request' && (
-          github.head_ref == 'refs/heads/main' ||
-          startsWith(github.head_ref, 'refs/heads/rc-') ||
-          startsWith(github.head_ref, 'refs/tags/')
-        )
-      run: |
-        set -e
-        pushd .Libplanet/
-        git fetch origin 'refs/tags/*:refs/tags/*'
-        if ! git describe --tags --exact-match; then
-          echo "The unreleased Libplanet shouldn't be used." > /dev/stderr
-          exit 1
-        fi
-        popd
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
@@ -85,12 +64,14 @@ jobs:
             cwd: "integrations/javascript/@planetarium"
       - name: Build Lib9c.Tools
         run: dotnet build .Lib9c.Tools/Lib9c.Tools.csproj
+      - run: pnpm -r codegen
+        working-directory: "integrations/javascript/@planetarium"
       - run: pnpm -r build
-        working-directory: "integrations/javascript/@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium"
       - run: pnpm -r fmt:ci
-        working-directory: "integrations/javascript/@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium"
       - run: pnpm -r test
-        working-directory: "integrations/javascript/@planetarium/lib9c"
+        working-directory: "integrations/javascript/@planetarium"
 
   release:
     if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')

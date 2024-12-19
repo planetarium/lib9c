@@ -706,6 +706,35 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        [Fact]
+        public void Execute_Throw_When_Validator_Tries_To_Claim()
+        {
+            // When
+            var world = _initialState;
+            var validatorKey = new PrivateKey().PublicKey;
+            var validatorAddress = validatorKey.Address;
+            var height = 0L;
+            world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height);
+            var stakeAddr = StakeState.DeriveAddress(AgentAddr);
+            var stakeStateV2 = PrepareStakeStateV2(
+                _stakePolicySheet,
+                0,
+                LegacyStakeState.RewardInterval);
+            var action = new ClaimStakeReward(validatorAddress);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = validatorAddress,
+                BlockIndex = height,
+            };
+
+            // When
+            var e = Assert.Throws<InvalidOperationException>(() => action.Execute(actionContext));
+
+            // Then
+            Assert.Equal("The validator cannot claim the stake reward.", e.Message);
+        }
+
         private static StakeState PrepareStakeStateV2(
             StakePolicySheet stakePolicySheet,
             long startedBlockIndex,
