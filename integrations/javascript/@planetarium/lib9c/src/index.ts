@@ -63,11 +63,6 @@ export {
   MakeGuild,
   type MakeGuildArgs,
 } from "./actions/make_guild.js";
-export { MigratePlanetariumGuild } from "./actions/migrate_planetarium_guild.js";
-export {
-  MigrateDelegation,
-  type MigrateDelegationArgs,
-} from "./actions/migrate_delegation.js";
 export {
   MintAssets,
   type MintAssetsArgs,
