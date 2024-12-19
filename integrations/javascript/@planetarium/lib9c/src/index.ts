@@ -19,6 +19,10 @@ export {
   type TransferAssetsArgs,
 } from "./actions/transfer_assets.js";
 export {
+  HackAndSlash,
+  type HackAndSlashArgs,
+} from "./actions/hack_and_slash.js";
+export {
   DeliverToOtherGarages,
   type DeliverToOtherGaragesArgs,
 } from "./actions/deliver_to_others_garages.js";
