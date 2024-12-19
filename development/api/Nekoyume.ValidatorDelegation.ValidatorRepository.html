@@ -137,6 +137,30 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_DelegatorAccountAddress">DelegationRepository.DelegatorAccountAddress</a>
     </div>
     <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_DelegateeMetadataAccountAddress">DelegationRepository.DelegateeMetadataAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_DelegatorMetadataAccountAddress">DelegationRepository.DelegatorMetadataAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_BondAccountAddress">DelegationRepository.BondAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_UnbondLockInAccountAddress">DelegationRepository.UnbondLockInAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_RebondGraceAccountAddress">DelegationRepository.RebondGraceAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_UnbondingSetAccountAddress">DelegationRepository.UnbondingSetAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_RewardBaseAccountAddress">DelegationRepository.RewardBaseAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_LumpSumRewardsRecordAccountAddress">DelegationRepository.LumpSumRewardsRecordAccountAddress</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_GetDelegateeMetadata_Libplanet_Crypto_Address_">DelegationRepository.GetDelegateeMetadata(Address)</a>
     </div>
     <div>
@@ -159,6 +183,12 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
     </div>
     <div>
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_GetUnbondingSet">DelegationRepository.GetUnbondingSet()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_GetCurrentRewardBase_Nekoyume_Delegation_IDelegatee_">DelegationRepository.GetCurrentRewardBase(IDelegatee)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_GetRewardBase_Nekoyume_Delegation_IDelegatee_System_Int64_">DelegationRepository.GetRewardBase(IDelegatee, long)</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_GetLumpSumRewardsRecord_Nekoyume_Delegation_IDelegatee_System_Int64_">DelegationRepository.GetLumpSumRewardsRecord(IDelegatee, long)</a>
@@ -188,7 +218,13 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_SetUnbondingSet_Nekoyume_Delegation_UnbondingSet_">DelegationRepository.SetUnbondingSet(UnbondingSet)</a>
     </div>
     <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_SetRewardBase_Nekoyume_Delegation_RewardBase_">DelegationRepository.SetRewardBase(RewardBase)</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_SetLumpSumRewardsRecord_Nekoyume_Delegation_LumpSumRewardsRecord_">DelegationRepository.SetLumpSumRewardsRecord(LumpSumRewardsRecord)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_RemoveLumpSumRewardsRecord_Nekoyume_Delegation_LumpSumRewardsRecord_">DelegationRepository.RemoveLumpSumRewardsRecord(LumpSumRewardsRecord)</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Delegation.DelegationRepository.html#Nekoyume_Delegation_DelegationRepository_TransferAsset_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Types_Assets_FungibleAssetValue_">DelegationRepository.TransferAsset(Address, Address, FungibleAssetValue)</a>
@@ -328,7 +364,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_World" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.World">
   World
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -363,7 +399,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_GetDelegatee_Libplanet_Crypto_Address_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.GetDelegatee(Libplanet.Crypto.Address)">
   GetDelegatee(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -399,7 +435,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_GetDelegator_Libplanet_Crypto_Address_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.GetDelegator(Libplanet.Crypto.Address)">
   GetDelegator(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -435,7 +471,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_GetValidatorDelegatee_Libplanet_Crypto_Address_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.GetValidatorDelegatee(Libplanet.Crypto.Address)">
   GetValidatorDelegatee(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -471,7 +507,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_GetValidatorDelegator_Libplanet_Crypto_Address_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.GetValidatorDelegator(Libplanet.Crypto.Address)">
   GetValidatorDelegator(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -507,7 +543,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_GetValidatorList" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.GetValidatorList">
   GetValidatorList()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -538,7 +574,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_SetCommissionPercentage_Libplanet_Crypto_Address_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.SetCommissionPercentage(Libplanet.Crypto.Address,System.Numerics.BigInteger,System.Int64)">
   SetCommissionPercentage(Address, BigInteger, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -573,7 +609,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_SetDelegatee_Nekoyume_Delegation_IDelegatee_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.SetDelegatee(Nekoyume.Delegation.IDelegatee)">
   SetDelegatee(IDelegatee)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L88"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -604,7 +640,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_SetDelegator_Nekoyume_Delegation_IDelegator_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.SetDelegator(Nekoyume.Delegation.IDelegator)">
   SetDelegator(IDelegator)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -635,7 +671,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_SetValidatorDelegatee_Nekoyume_ValidatorDelegation_ValidatorDelegatee_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.SetValidatorDelegatee(Nekoyume.ValidatorDelegation.ValidatorDelegatee)">
   SetValidatorDelegatee(ValidatorDelegatee)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -666,7 +702,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_SetValidatorDelegator_Nekoyume_ValidatorDelegation_ValidatorDelegator_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.SetValidatorDelegator(Nekoyume.ValidatorDelegation.ValidatorDelegator)">
   SetValidatorDelegator(ValidatorDelegator)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -697,7 +733,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_SetValidatorList_Nekoyume_ValidatorDelegation_ValidatorList_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.SetValidatorList(Nekoyume.ValidatorDelegation.ValidatorList)">
   SetValidatorList(ValidatorList)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -728,7 +764,7 @@ Class ValidatorRepository  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_ValidatorDelegation_ValidatorRepository_UpdateWorld_Libplanet_Action_State_IWorld_" data-uid="Nekoyume.ValidatorDelegation.ValidatorRepository.UpdateWorld(Libplanet.Action.State.IWorld)">
   UpdateWorld(IWorld)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/ValidatorDelegation/ValidatorRepository.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
