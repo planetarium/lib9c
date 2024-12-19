@@ -210,6 +210,12 @@ namespace Nekoyume.Action.AdventureBoss
                 states = states.SetRuneState(AvatarAddress, runeStates);
             }
 
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
+            }
+
             var collectionExist =
                 states.TryGetCollectionState(AvatarAddress, out var collectionState) &&
                 collectionState.Ids.Any();

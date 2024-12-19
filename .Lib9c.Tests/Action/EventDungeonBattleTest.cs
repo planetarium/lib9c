@@ -533,6 +533,21 @@ namespace Lib9c.Tests.Action
                 previousAvatarState.inventory.AddItem(equipment, iLock: null);
             }
 
+            previousStates = previousStates.SetAvatarState(_avatarAddress, previousAvatarState);
+
+            var allRuneState = previousStates.GetRuneState(_avatarAddress, out _);
+            if (!allRuneState.TryGetRuneState(runeId, out _))
+            {
+                allRuneState.AddRuneState(new RuneState(runeId, 1));
+            }
+
+            if (!allRuneState.TryGetRuneState(runeId2, out _))
+            {
+                allRuneState.AddRuneState(new RuneState(runeId2, 1));
+            }
+
+            previousStates = previousStates.SetRuneState(_avatarAddress, allRuneState);
+
             var action = new EventDungeonBattle
             {
                 AvatarAddress = _avatarAddress,

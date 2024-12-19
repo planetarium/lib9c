@@ -92,8 +92,13 @@ namespace Lib9c.Tests.Action
 
         public (List<Guid> Equipments, List<Guid> Costumes) GetDummyItems(AvatarState avatarState)
         {
-            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level)
-                .Select(e => e.NonFungibleId).ToList();
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            var equipmentGuids = equipments.Select(e => e.NonFungibleId).ToList();
             var random = new TestRandom();
             var costumes = new List<Guid>();
             if (avatarState.level >= GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot)
@@ -111,7 +116,7 @@ namespace Lib9c.Tests.Action
                 costumes.Add(costume.ItemId);
             }
 
-            return (equipments, costumes);
+            return (equipmentGuids, costumes);
         }
 
         [Fact]
@@ -349,6 +354,7 @@ namespace Lib9c.Tests.Action
                     (int)playCount);
 
                 var (equipments, costumes) = GetDummyItems(avatarState);
+                state = state.SetAvatarState(_avatarAddress, avatarState);
 
                 var action = new HackAndSlashSweep
                 {
@@ -405,6 +411,8 @@ namespace Lib9c.Tests.Action
                     (int)playCount);
 
                 var (equipments, costumes) = GetDummyItems(avatarState);
+                state = state.SetAvatarState(_avatarAddress, avatarState);
+
                 var action = new HackAndSlashSweep
                 {
                     runeInfos = new List<RuneSlotInfo>(),
@@ -461,6 +469,7 @@ namespace Lib9c.Tests.Action
                     (int)playCount);
 
                 var (equipments, costumes) = GetDummyItems(avatarState);
+                state = state.SetAvatarState(_avatarAddress, avatarState);
                 var action = new HackAndSlashSweep
                 {
                     costumes = costumes,

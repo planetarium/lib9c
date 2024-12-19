@@ -227,6 +227,12 @@ namespace Nekoyume.Action
                 states = states.SetRuneState(AvatarAddress, runeStates);
             }
 
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
+            }
+
             var collectionModifiers = new List<StatModifier>();
             if (collectionExist)
             {
