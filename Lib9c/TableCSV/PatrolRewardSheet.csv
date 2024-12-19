@@ -1,0 +1,4 @@
+id,start,end,interval,min_level,max_level,reward_count,reward_item_id,reward_ticker,reward_count,reward_item_id,reward_ticker,reward_count,reward_item_id,reward_ticker,reward_count,reward_item_id,reward_ticker
+1,0,100,8400,1,200,1,500000,,1,600201,
+2,100,200,8400,201,350,1,500000,,2,600201,,100000,,CRYSTAL
+3,200,300,8400,351,,2,500000,,3,600201,,200000,,CRYSTAL,1,600202,

@@ -54,6 +54,7 @@ namespace Nekoyume
 
         public static readonly Address CombinationSlot       = new("0000000000000000000000000000000000000024");
         public static readonly Address ClaimedGiftIds        = new("0000000000000000000000000000000000000025");
+        public static readonly Address PatrolReward          = new("0000000000000000000000000000000000000026");
 
         // Adventure Boss
         public static readonly Address AdventureBoss         = new("0000000000000000000000000000000000000100");
@@ -106,7 +107,7 @@ namespace Nekoyume
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
-        /// </summary> 
+        /// </summary>
         public static readonly Address GuildDelegateeMetadata
             = new Address("0000000000000000000000000000000000000210");
 

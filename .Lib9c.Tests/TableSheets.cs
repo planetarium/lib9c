@@ -285,6 +285,8 @@ namespace Lib9c.Tests
 
         public SynthesizeWeightSheet SynthesizeWeightSheet { get; private set; }
 
+        public PatrolRewardSheet PatrolRewardSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

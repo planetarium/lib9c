@@ -45,6 +45,7 @@ namespace Nekoyume.Model.Mail
                 [nameof(ClaimItemsMail)] = d => new ClaimItemsMail(d),
                 [nameof(AdventureBossRaffleWinnerMail)] = d => new AdventureBossRaffleWinnerMail(d),
                 [nameof(CustomCraftMail)] = d => new CustomCraftMail(d),
+                [nameof(PatrolRewardMail)] = d => new PatrolRewardMail(d),
             };
 
         public Guid id;

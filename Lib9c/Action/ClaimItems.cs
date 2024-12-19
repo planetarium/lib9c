@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
@@ -134,22 +135,7 @@ namespace Nekoyume.Action
                         // it's only right that this is fixed in Inventory.
                         var itemRow = itemSheet[itemId];
                         var itemCount = (int)fungibleAssetValue.RawValue;
-                        if (itemRow is MaterialItemSheet.Row materialRow)
-                        {
-                            var item = tradable
-                                ? ItemFactory.CreateTradableMaterial(materialRow)
-                                : ItemFactory.CreateMaterial(materialRow);
-                            avatarState.inventory.AddItem(item, itemCount);
-                        }
-                        else
-                        {
-                            foreach (var _ in Enumerable.Range(0, itemCount))
-                            {
-                                var item = ItemFactory.CreateItem(itemRow, random);
-                                avatarState.inventory.AddItem(item);
-                            }
-                        }
-
+                        avatarState.inventory.MintItem(itemRow, itemCount, tradable, random);
                         items.Add((itemRow.Id, itemCount));
                     }
                 }
