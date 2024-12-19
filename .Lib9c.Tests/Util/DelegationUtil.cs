@@ -65,7 +65,7 @@ namespace Lib9c.Tests.Util
                 RandomSeed = Random.Shared.Next(),
             };
             var makeGuild = new MakeGuild(validatorAddress);
-            return makeGuild.ExecutePublic(actionContext);
+            return makeGuild.Execute(actionContext);
         }
 
         public static FungibleAssetValue GetGuildCoinFromNCG(FungibleAssetValue balance)

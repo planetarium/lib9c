@@ -9,10 +9,12 @@ namespace Nekoyume.Model.Guild
 {
     public class GuildRejoinCooldown : IBencodable, IEquatable<GuildRejoinCooldown>
     {
+        public static readonly long CooldownPeriod = ValidatorDelegatee.ValidatorUnbondingPeriod;
+
         public GuildRejoinCooldown(AgentAddress agentAddress, long quitHeight)
         {
             AgentAddress = agentAddress;
-            ReleaseHeight = quitHeight + ValidatorDelegatee.ValidatorUnbondingPeriod;
+            ReleaseHeight = quitHeight + CooldownPeriod;
         }
 
         public GuildRejoinCooldown(AgentAddress agentAddress, IValue bencoded)

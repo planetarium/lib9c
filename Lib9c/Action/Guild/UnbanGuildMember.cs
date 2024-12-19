@@ -52,12 +52,7 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
-            {
-                throw new InvalidOperationException("The signer does not join any guild.");
-            }
-
-            repository.Unban(guildAddress, signer, Target);
+            repository.Unban(signer, Target);
             return repository.World;
         }
     }

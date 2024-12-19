@@ -76,31 +76,34 @@ namespace Nekoyume.Action.ValidatorDelegation
             var agentAddress = new AgentAddress(unbondLockIn.DelegatorAddress);
             var guildRepository = new GuildRepository(world, context);
             var goldCurrency = world.GetGoldCurrency();
-            if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
+            if (!IsValidator(world, context, unbondLockIn.DelegateeAddress))
             {
-                var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
-                var stakeStateAddress = guildParticipant.DelegationPoolAddress;
-                var gg = world.GetBalance(stakeStateAddress, ValidatorDelegatee.ValidatorDelegationCurrency);
-                if (gg.Sign > 0)
+                if (guildRepository.TryGetGuildParticipant(agentAddress, out var guildParticipant))
                 {
-                    var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
-                    world = world.BurnAsset(context, stakeStateAddress, gg);
-                    world = world.TransferAsset(
-                        context, stakeStateAddress, agentAddress, ncg);
+                    var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    var stakeStateAddress = guildParticipant.DelegationPoolAddress;
+                    var gg = world.GetBalance(stakeStateAddress, ValidatorDelegatee.ValidatorDelegationCurrency);
+                    if (gg.Sign > 0)
+                    {
+                        var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
+                        world = world.BurnAsset(context, stakeStateAddress, gg);
+                        world = world.TransferAsset(
+                            context, stakeStateAddress, agentAddress, ncg);
+                    }
                 }
-            }
-            else if (!IsValidator(world, context, unbondLockIn.DelegateeAddress))
-            {
-                if (releasedFAV is not FungibleAssetValue gg || gg.Sign < 1)
+                else
                 {
-                    return world;
-                }
+                    if (releasedFAV is not FungibleAssetValue gg || gg.Sign < 1)
+                    {
+                        return world;
+                    }
 
-                var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
-                var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
-                world = world
-                    .TransferAsset(context, stakeStateAddress, agentAddress, ncg)
-                    .BurnAsset(context, stakeStateAddress, gg);
+                    var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
+                    var (ncg, _) = ConvertToGoldCurrency(gg, goldCurrency);
+                    world = world
+                        .TransferAsset(context, stakeStateAddress, agentAddress, ncg)
+                        .BurnAsset(context, stakeStateAddress, gg);
+                }
             }
 
             return world;
