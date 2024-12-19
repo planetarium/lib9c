@@ -64,16 +64,16 @@ namespace Lib9c.DevExtensions.Tests.Action
                 FaucetNcg = faucetNcg,
                 FaucetCrystal = faucetCrystal,
             };
-            var state = action.Execute(new ActionContext { PreviousState = _initialState });
-            AgentState agentState = state.GetAgentState(_agentAddress);
-            FungibleAssetValue expectedNcgAsset =
+            var state = action.Execute(new ActionContext { PreviousState = _initialState, });
+            var agentState = state.GetAgentState(_agentAddress);
+            var expectedNcgAsset =
                 new FungibleAssetValue(_ncg, expectedNcg, 0);
-            FungibleAssetValue ncg = state.GetBalance(_agentAddress, state.GetGoldCurrency());
+            var ncg = state.GetBalance(_agentAddress, state.GetGoldCurrency());
             Assert.Equal(expectedNcgAsset, ncg);
 
-            FungibleAssetValue expectedCrystalAsset =
+            var expectedCrystalAsset =
                 new FungibleAssetValue(_crystal, expectedCrystal, 0);
-            FungibleAssetValue crystal = state.GetBalance(_agentAddress, _crystal);
+            var crystal = state.GetBalance(_agentAddress, _crystal);
             Assert.Equal(expectedCrystalAsset, crystal);
         }
     }
