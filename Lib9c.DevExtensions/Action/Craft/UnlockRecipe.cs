@@ -38,7 +38,7 @@ namespace Lib9c.DevExtensions.Action.Craft
             new Dictionary<string, IValue>
             {
                 ["avatarAddress"] = AvatarAddress.Serialize(),
-                ["targetStage"] = TargetStage.Serialize()
+                ["targetStage"] = TargetStage.Serialize(),
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
