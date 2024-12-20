@@ -1,6 +1,8 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
 using Libplanet.Crypto;
@@ -42,6 +44,11 @@ namespace Nekoyume.Delegation
             Repository = repository;
         }
 
+        public event EventHandler<(
+            long Height,
+            IUnbonding ReleasedUnbonding,
+            FungibleAssetValue? ReleasedFAV)>? UnbondingReleased;
+
         public DelegatorMetadata Metadata { get; }
 
         public TRepository Repository { get; }
@@ -74,6 +81,8 @@ namespace Nekoyume.Delegation
                 throw new InvalidOperationException("Delegatee is tombstoned.");
             }
 
+            ReleaseUnbondings(height);
+
             delegatee.Bond((TDelegator)this, fav, height);
             Metadata.AddDelegatee(delegatee.Address);
             Repository.TransferAsset(DelegationPoolAddress, delegatee.DelegationPoolAddress, fav);
@@ -99,6 +108,8 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
+            ReleaseUnbondings(height);
+
             UnbondLockIn unbondLockIn = Repository.GetUnbondLockIn(delegatee, Address);
 
             if (unbondLockIn.IsFull)
@@ -115,11 +126,9 @@ namespace Nekoyume.Delegation
                 Metadata.RemoveDelegatee(delegatee.Address);
             }
 
-            delegatee.AddUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
+            AddUnbondingRef(delegatee, UnbondingFactory.ToReference(unbondLockIn));
 
             Repository.SetUnbondLockIn(unbondLockIn);
-            Repository.SetUnbondingSet(
-                Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
             Repository.SetDelegator((TDelegator)this);
         }
 
@@ -143,16 +152,31 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
+            if (srcDelegatee.Equals(dstDelegatee))
+            {
+                throw new InvalidOperationException("Source and destination delegatees are the same.");
+            }
+
             if (dstDelegatee.Tombstoned)
             {
                 throw new InvalidOperationException("Destination delegatee is tombstoned.");
+            }
+
+            ReleaseUnbondings(height);
+
+            RebondGrace srcRebondGrace = Repository.GetRebondGrace(srcDelegatee, Address);
+
+            if (srcRebondGrace.IsFull)
+            {
+                throw new InvalidOperationException("Rebonding is full.");
             }
 
             FungibleAssetValue fav = srcDelegatee.Unbond(
                 (TDelegator)this, share, height);
             dstDelegatee.Bond(
                 (TDelegator)this, fav, height);
-            RebondGrace srcRebondGrace = Repository.GetRebondGrace(srcDelegatee, Address).Grace(
+
+            srcRebondGrace = srcRebondGrace.Grace(
                 dstDelegatee.Address,
                 fav,
                 height,
@@ -165,11 +189,9 @@ namespace Nekoyume.Delegation
 
             Metadata.AddDelegatee(dstDelegatee.Address);
 
-            srcDelegatee.AddUnbondingRef(UnbondingFactory.ToReference(srcRebondGrace));
+            AddUnbondingRef(srcDelegatee, UnbondingFactory.ToReference(srcRebondGrace));
 
             Repository.SetRebondGrace(srcRebondGrace);
-            Repository.SetUnbondingSet(
-                Repository.GetUnbondingSet().SetUnbonding(srcRebondGrace));
             Repository.SetDelegator((TDelegator)this);
         }
 
@@ -192,6 +214,8 @@ namespace Nekoyume.Delegation
                     nameof(height), height, "Height must be positive.");
             }
 
+            ReleaseUnbondings(height);
+
             UnbondLockIn unbondLockIn = Repository.GetUnbondLockIn(delegatee, Address);
 
             if (unbondLockIn.IsFull)
@@ -205,12 +229,10 @@ namespace Nekoyume.Delegation
 
             if (unbondLockIn.IsEmpty)
             {
-                delegatee.RemoveUnbondingRef(UnbondingFactory.ToReference(unbondLockIn));
+                RemoveUnbondingRef(delegatee, UnbondingFactory.ToReference(unbondLockIn));
             }
 
             Repository.SetUnbondLockIn(unbondLockIn);
-            Repository.SetUnbondingSet(
-                Repository.GetUnbondingSet().SetUnbonding(unbondLockIn));
             Repository.SetDelegator((TDelegator)this);
         }
 
@@ -228,5 +250,68 @@ namespace Nekoyume.Delegation
 
         void IDelegator.ClaimReward(IDelegatee delegatee, long height)
             => ClaimReward((TDelegatee)delegatee, height);
+
+        public void ReleaseUnbondings(long height)
+        {
+            var unbondings = Metadata.UnbondingRefs.Select(
+                unbondingRef => UnbondingFactory.GetUnbondingFromRef(unbondingRef, Repository));
+            ReleaseUnbondings(unbondings, height);
+        }
+
+        private void ReleaseUnbondings(IEnumerable<IUnbonding> unbondings, long height)
+        {
+            foreach (var unbonding in unbondings)
+            {
+                ReleaseUnbonding(unbonding, height);
+            }
+        }
+
+        private void ReleaseUnbonding(IUnbonding unbonding, long height)
+        {
+            FungibleAssetValue? releasedFAV;
+            switch (unbonding)
+            {
+                case UnbondLockIn unbondLockIn:
+                    unbondLockIn = unbondLockIn.Release(height, out releasedFAV);
+                    Repository.SetUnbondLockIn(unbondLockIn);
+                    unbonding = unbondLockIn;
+                    break;
+                case RebondGrace rebondGrace:
+                    rebondGrace = rebondGrace.Release(height, out releasedFAV);
+                    Repository.SetRebondGrace(rebondGrace);
+                    unbonding = rebondGrace;
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid unbonding type.");
+            }
+
+            if (unbonding.IsEmpty)
+            {
+                TDelegatee delegatee = Repository.GetDelegatee(unbonding.DelegateeAddress);
+                RemoveUnbondingRef(delegatee, UnbondingFactory.ToReference(unbonding));
+            }
+
+            UnbondingReleased?.Invoke(this, (height, unbonding, releasedFAV));
+        }
+
+        private void AddUnbondingRef(TDelegatee delegatee, UnbondingRef reference)
+        {
+            AddUnbondingRef(reference);
+            delegatee.AddUnbondingRef(reference);
+            Repository.SetDelegatee(delegatee);
+        }
+
+        private void RemoveUnbondingRef(TDelegatee delegatee, UnbondingRef reference)
+        {
+            RemoveUnbondingRef(reference);
+            delegatee.RemoveUnbondingRef(reference);
+            Repository.SetDelegatee(delegatee);
+        }
+
+        private void AddUnbondingRef(UnbondingRef reference)
+            => Metadata.AddUnbondingRef(reference);
+
+        private void RemoveUnbondingRef(UnbondingRef reference)
+            => Metadata.RemoveUnbondingRef(reference);
     }
 }

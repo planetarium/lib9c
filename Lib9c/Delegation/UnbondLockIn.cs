@@ -8,7 +8,6 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.Stake;
 
 namespace Nekoyume.Delegation
 {
@@ -170,15 +169,12 @@ namespace Nekoyume.Delegation
 
             if (releasedFAV.HasValue)
             {
-                if (DelegateeAddress != Addresses.NonValidatorDelegatee)
-                {
-                    var delegateeMetadata = _repository!.GetDelegateeMetadata(DelegateeAddress);
-                    var delegatorMetadata = _repository.GetDelegatorMetadata(DelegatorAddress);
-                    _repository!.TransferAsset(
-                        delegateeMetadata.DelegationPoolAddress,
-                        delegatorMetadata.DelegationPoolAddress,
-                        releasedFAV.Value);
-                }
+                var delegateeMetadata = _repository!.GetDelegateeMetadata(DelegateeAddress);
+                var delegatorMetadata = _repository.GetDelegatorMetadata(DelegatorAddress);
+                _repository!.TransferAsset(
+                    delegateeMetadata.DelegationPoolAddress,
+                    delegatorMetadata.DelegationPoolAddress,
+                    releasedFAV.Value);
             }
 
             return UpdateEntries(updatedEntries);
