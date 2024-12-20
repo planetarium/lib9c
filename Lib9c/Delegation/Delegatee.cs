@@ -393,10 +393,10 @@ namespace Nekoyume.Delegation
         void IDelegatee.Slash(BigInteger slashFactor, long infractionHeight, long height)
             => Slash(slashFactor, infractionHeight, height);
 
-        public void AddUnbondingRef(UnbondingRef reference)
+        internal void AddUnbondingRef(UnbondingRef reference)
             => Metadata.AddUnbondingRef(reference);
 
-        public void RemoveUnbondingRef(UnbondingRef reference)
+        internal void RemoveUnbondingRef(UnbondingRef reference)
             => Metadata.RemoveUnbondingRef(reference);
 
         public ImmutableDictionary<Currency, FungibleAssetValue> CalculateReward(
