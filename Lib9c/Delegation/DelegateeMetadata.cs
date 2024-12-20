@@ -107,109 +107,50 @@ namespace Nekoyume.Delegation
             Address delegateeAccountAddress,
             List bencoded)
         {
-            Currency delegationCurrency;
-            IEnumerable<Currency> rewardCurrencies;
-            Address delegationPoolAddress;
-            Address rewardPoolAddress;
-            Address rewardRemainderPoolAddress;
-            Address slashedPoolAddress;
-            long unbondingPeriod;
-            int maxUnbondLockInEntries;
-            int maxRebondGraceEntries;
-            FungibleAssetValue totalDelegated;
-            BigInteger totalShares;
-            bool jailed;
-            long jailedUntil;
-            bool tombstoned;
-            IEnumerable<UnbondingRef> unbondingRefs;
-
-            // TODO: Remove this if block after migration to state version 1 is done.
-            if (bencoded[0] is not Text)
+            if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
             {
-                // Assume state version 0
-                delegationCurrency = new Currency(bencoded[0]);
-                rewardCurrencies = ((List)bencoded[1]).Select(v => new Currency(v));
-                delegationPoolAddress = new Address(bencoded[2]);
-                rewardPoolAddress = new Address(bencoded[3]);
-                rewardRemainderPoolAddress = new Address(bencoded[4]);
-                slashedPoolAddress = new Address(bencoded[5]);
-                unbondingPeriod = (Integer)bencoded[6];
-                maxUnbondLockInEntries = (Integer)bencoded[7];
-                maxRebondGraceEntries = (Integer)bencoded[8];
-                totalDelegated = new FungibleAssetValue(bencoded[10]);
-                totalShares = (Integer)bencoded[11];
-                jailed = (Bencodex.Types.Boolean)bencoded[12];
-                jailedUntil = (Integer)bencoded[13];
-                tombstoned = (Bencodex.Types.Boolean)bencoded[14];
-                unbondingRefs = ((List)bencoded[15]).Select(item => new UnbondingRef(item));
-            }
-            else
-            {
-                if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
-                {
-                    throw new InvalidCastException();
-                }
-
-                if (integer > StateVersion)
-                {
-                    throw new FailedLoadStateException("Un-deserializable state.");
-                }
-
-                delegationCurrency = new Currency(bencoded[2]);
-                rewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v));
-                delegationPoolAddress = new Address(bencoded[4]);
-                rewardPoolAddress = new Address(bencoded[5]);
-                rewardRemainderPoolAddress = new Address(bencoded[6]);
-                slashedPoolAddress = new Address(bencoded[7]);
-                unbondingPeriod = (Integer)bencoded[8];
-                maxUnbondLockInEntries = (Integer)bencoded[9];
-                maxRebondGraceEntries = (Integer)bencoded[10];
-                totalDelegated = new FungibleAssetValue(bencoded[11]);
-                totalShares = (Integer)bencoded[12];
-                jailed = (Bencodex.Types.Boolean)bencoded[13];
-                jailedUntil = (Integer)bencoded[14];
-                tombstoned = (Bencodex.Types.Boolean)bencoded[15];
-                unbondingRefs = ((List)bencoded[16]).Select(item => new UnbondingRef(item));
+                throw new InvalidCastException();
             }
 
-            if (!totalDelegated.Currency.Equals(delegationCurrency))
+            if (integer > StateVersion)
             {
-                throw new InvalidOperationException("Invalid currency.");
-            }
-
-            if (totalDelegated.Sign < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(totalDelegated),
-                    totalDelegated,
-                    "Total delegated must be non-negative.");
-            }
-
-            if (totalShares.Sign < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(totalShares),
-                    totalShares,
-                    "Total shares must be non-negative.");
+                throw new FailedLoadStateException("Un-deserializable state.");
             }
 
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
-            DelegationCurrency = delegationCurrency;
-            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
-            DelegationPoolAddress = delegationPoolAddress;
-            RewardPoolAddress = rewardPoolAddress;
-            RewardRemainderPoolAddress = rewardRemainderPoolAddress;
-            SlashedPoolAddress = slashedPoolAddress;
-            UnbondingPeriod = unbondingPeriod;
-            MaxUnbondLockInEntries = maxUnbondLockInEntries;
-            MaxRebondGraceEntries = maxRebondGraceEntries;
-            TotalDelegatedFAV = totalDelegated;
-            TotalShares = totalShares;
-            Jailed = jailed;
-            JailedUntil = jailedUntil;
-            Tombstoned = tombstoned;
-            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
+            DelegationCurrency = new Currency(bencoded[2]);
+            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableSortedSet();
+            DelegationPoolAddress = new Address(bencoded[4]);
+            RewardPoolAddress = new Address(bencoded[5]);
+            RewardRemainderPoolAddress = new Address(bencoded[6]);
+            SlashedPoolAddress = new Address(bencoded[7]);
+            UnbondingPeriod = (Integer)bencoded[8];
+            MaxUnbondLockInEntries = (Integer)bencoded[9];
+            MaxRebondGraceEntries = (Integer)bencoded[10];
+            TotalDelegatedFAV = new FungibleAssetValue(bencoded[11]);
+            TotalShares = (Integer)bencoded[12];
+            Jailed = (Bencodex.Types.Boolean)bencoded[13];
+            JailedUntil = (Integer)bencoded[14];
+            Tombstoned = (Bencodex.Types.Boolean)bencoded[15];
+            UnbondingRefs = ((List)bencoded[16]).Select(item => new UnbondingRef(item)).ToImmutableSortedSet();
+
+            if (!TotalDelegatedFAV.Currency.Equals(DelegationCurrency))
+            {
+                throw new InvalidOperationException("Invalid currency.");
+            }
+
+            if (TotalDelegatedFAV.Sign < 0)
+            {
+                throw new InvalidOperationException(
+                    "Total delegated must be non-negative.");
+            }
+
+            if (TotalShares.Sign < 0)
+            {
+                throw new InvalidOperationException(
+                    "Total shares must be non-negative.");
+            }
         }
 
         private DelegateeMetadata(

@@ -8,6 +8,10 @@ namespace Nekoyume.Delegation
     {
         Address Address { get; }
 
+        Address DelegateeAddress { get; }
+
+        Address DelegatorAddress { get; }
+
         long LowestExpireHeight { get; }
 
         bool IsFull { get; }

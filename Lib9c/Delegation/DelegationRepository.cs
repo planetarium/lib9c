@@ -190,7 +190,7 @@ namespace Nekoyume.Delegation
             IValue? value = rebondGraceAccount.GetState(address);
             return value is IValue bencoded
                 ? new RebondGrace(address, delegatee.MaxRebondGraceEntries, bencoded, this)
-                : new RebondGrace(address, delegatee.MaxRebondGraceEntries, this);
+                : new RebondGrace(address, delegatee.MaxRebondGraceEntries, delegatee.Address, delegatorAddress, this);
         }
 
         public RebondGrace GetUnlimitedRebondGrace(Address address)
@@ -200,11 +200,6 @@ namespace Nekoyume.Delegation
                 ? new RebondGrace(address, int.MaxValue, bencoded, this)
                 : throw new FailedLoadStateException("RebondGrace not found.");
         }
-
-        public UnbondingSet GetUnbondingSet()
-            => unbondingSetAccount.GetState(UnbondingSet.Address) is IValue bencoded
-                ? new UnbondingSet(bencoded, this)
-                : new UnbondingSet(this);
 
         /// <inheritdoc/>
         public RewardBase? GetCurrentRewardBase(TDelegatee delegatee)
@@ -280,13 +275,6 @@ namespace Nekoyume.Delegation
             rebondGraceAccount = rebondGrace.IsEmpty
                 ? rebondGraceAccount.RemoveState(rebondGrace.Address)
                 : rebondGraceAccount.SetState(rebondGrace.Address, rebondGrace.Bencoded);
-        }
-
-        public void SetUnbondingSet(UnbondingSet unbondingSet)
-        {
-            unbondingSetAccount = unbondingSet.IsEmpty
-                ? unbondingSetAccount.RemoveState(UnbondingSet.Address)
-                : unbondingSetAccount.SetState(UnbondingSet.Address, unbondingSet.Bencoded);
         }
 
         /// <inheritdoc/>
