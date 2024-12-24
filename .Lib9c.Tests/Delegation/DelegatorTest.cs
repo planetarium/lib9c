@@ -104,14 +104,12 @@ namespace Lib9c.Tests.Delegation
             var delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
             var share1 = repo.GetBond(delegatee, delegator.Address).Share;
             var unbondLockIn = repo.GetUnbondLockIn(delegatee, delegator.Address);
-            var unbondingSet = repo.GetUnbondingSet();
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
             Assert.Equal(delegatingFAV, delegateeBalance);
             Assert.Equal(initialShare - undelegatingShare, share1);
             Assert.Equal(delegatingFAV - undelegatingFAV, delegatee.TotalDelegated);
             Assert.Equal(initialShare - undelegatingShare, delegatee.TotalShares);
             Assert.Equal(delegatee.Address, Assert.Single(delegator.Delegatees));
-            Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             var entriesByExpireHeight = Assert.Single(unbondLockIn.Entries);
             Assert.Equal(10L + delegatee.UnbondingPeriod, entriesByExpireHeight.Key);
             var entry = Assert.Single(entriesByExpireHeight.Value);
@@ -127,14 +125,12 @@ namespace Lib9c.Tests.Delegation
             delegateeBalance = repo.World.GetBalance(delegatee.DelegationPoolAddress, delegatee.DelegationCurrency);
             var share2 = repo.GetBond(delegatee, delegator.Address).Share;
             unbondLockIn = repo.GetUnbondLockIn(delegatee, delegator.Address);
-            unbondingSet = repo.GetUnbondingSet();
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
             Assert.Equal(delegatingFAV, delegateeBalance);
             Assert.Equal(share1 - undelegatingShare, share2);
             Assert.Equal(delegatee.DelegationCurrency * 0, delegatee.TotalDelegated);
             Assert.Equal(System.Numerics.BigInteger.Zero, delegatee.TotalShares);
             Assert.Empty(delegator.Delegatees);
-            Assert.Equal(unbondLockIn.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, unbondLockIn.Entries.Count);
 
             unbondLockIn = unbondLockIn.Release(10L + delegatee.UnbondingPeriod - 1, out _);
@@ -202,7 +198,6 @@ namespace Lib9c.Tests.Delegation
             var share1 = repo.GetBond(delegatee1, delegator.Address).Share;
             var share2 = repo.GetBond(delegatee2, delegator.Address).Share;
             var rebondGrace = repo.GetRebondGrace(delegatee1, delegator.Address);
-            var unbondingSet = repo.GetUnbondingSet();
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
             Assert.Equal(delegatingFAV, delegatee1Balance);
             Assert.Equal(initialShare - redelegatingShare, share1);
@@ -212,7 +207,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatingFAV - redelegatingFAV, delegatee1.TotalDelegated);
             Assert.Equal(redelegatingFAV, delegatee2.TotalDelegated);
             Assert.Equal(2, delegator.Delegatees.Count);
-            Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             var entriesByExpireHeight = Assert.Single(rebondGrace.Entries);
             Assert.Equal(10L + delegatee1.UnbondingPeriod, entriesByExpireHeight.Key);
             var entry = Assert.Single(entriesByExpireHeight.Value);
@@ -232,7 +226,6 @@ namespace Lib9c.Tests.Delegation
             share1 = repo.GetBond(delegatee1, delegator.Address).Share;
             share2 = repo.GetBond(delegatee2, delegator.Address).Share;
             rebondGrace = repo.GetRebondGrace(delegatee1, delegator.Address);
-            unbondingSet = repo.GetUnbondingSet();
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
             Assert.Equal(delegatingFAV, delegatee1Balance);
             Assert.Equal(initialShare - redelegatingShare - redelegatingShare2, share1);
@@ -242,7 +235,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(delegatingFAV - redelegatingFAV - redelegatingFAV2, delegatee1.TotalDelegated);
             Assert.Equal(redelegatingFAV + redelegatingFAV2, delegatee2.TotalDelegated);
             Assert.Equal(delegatee2.Address, Assert.Single(delegator.Delegatees));
-            Assert.Equal(rebondGrace.Address, Assert.Single(unbondingSet.FlattenedUnbondingRefs).Address);
             Assert.Equal(2, rebondGrace.Entries.Count);
 
             rebondGrace = rebondGrace.Release(10L + delegatee1.UnbondingPeriod - 1, out _);
