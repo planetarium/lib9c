@@ -39,8 +39,8 @@ namespace Nekoyume.Module.Guild
             GuildAddress guildAddress,
             Address validatorAddress)
         {
-            var signer = new AgentAddress(repository.ActionContext.Signer);
-            if (repository.GetJoinedGuild(signer) is not null)
+            var signer = repository.ActionContext.Signer;
+            if (repository.GetJoinedGuild(new AgentAddress(signer)) is not null)
             {
                 throw new InvalidOperationException("The signer already has a guild.");
             }
@@ -56,9 +56,16 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("The validator does not exist.");
             }
 
-            var guild = new Model.Guild.Guild(guildAddress, signer, validatorAddress, repository);
+            if (validatorRepository.TryGetValidatorDelegatee(signer, out var _))
+            {
+                throw new InvalidOperationException("Validator cannot make a guild.");
+            }
+
+            var guildMasterAddress = new AgentAddress(signer);
+            var guild = new Model.Guild.Guild(
+                guildAddress, guildMasterAddress, validatorAddress, repository);
             repository.SetGuild(guild);
-            repository.JoinGuild(guildAddress, signer);
+            repository.JoinGuild(guildAddress, guildMasterAddress);
 
             return repository;
         }
@@ -89,7 +96,7 @@ namespace Nekoyume.Module.Guild
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
             var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
-            var bond = validatorRepository.GetBond(validatorDelegatee, signer);
+            var bond = validatorRepository.GetBond(validatorDelegatee, guild.Address);
             if (bond.Share > 0)
             {
                 throw new InvalidOperationException("The signer has a bond with the validator.");

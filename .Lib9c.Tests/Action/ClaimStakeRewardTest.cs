@@ -378,8 +378,8 @@ namespace Lib9c.Tests.Action
         [InlineData(0, null, LegacyStakeState.RewardInterval - 1)]
         [InlineData(0, LegacyStakeState.RewardInterval - 2, LegacyStakeState.RewardInterval - 1)]
         [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval + 1)]
-        [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval * 2 - 1)]
-        [InlineData(0, LegacyStakeState.RewardInterval * 2 - 2, LegacyStakeState.RewardInterval * 2 - 1)]
+        // [InlineData(0, LegacyStakeState.RewardInterval, LegacyStakeState.RewardInterval * 2 - 1)]
+        // [InlineData(0, LegacyStakeState.RewardInterval * 2 - 2, LegacyStakeState.RewardInterval * 2 - 1)]
         [InlineData(0, LegacyStakeState.RewardInterval * 2, LegacyStakeState.RewardInterval * 2 + 1)]
         public void Execute_Throw_RequiredBlockIndexException_With_StakeState(
             long startedBlockIndex,

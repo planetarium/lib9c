@@ -11,8 +11,7 @@ namespace Nekoyume.Action.Guild
     /// <summary>
     /// An action to remove the guild.
     /// </summary>
-    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
-    // [ActionType(TypeIdentifier)]
+    [ActionType(TypeIdentifier)]
     public class RemoveGuild : ActionBase
     {
         public const string TypeIdentifier = "remove_guild";
@@ -38,7 +37,6 @@ namespace Nekoyume.Action.Guild
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
 
-            // TODO: Do something to return 'Power' token;
             repository.RemoveGuild();
             return repository.World;
         }
