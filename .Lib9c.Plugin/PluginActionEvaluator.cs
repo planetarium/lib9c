@@ -29,7 +29,6 @@ namespace Lib9c.Plugin
                         new UpdateValidators(),
                         new RecordProposer(),
                         new RewardGold(),
-                        new ReleaseValidatorUnbondings(),
                     }.ToImmutableArray(),
                     beginTxActions: new IAction[] {
                         new Mortgage(),
