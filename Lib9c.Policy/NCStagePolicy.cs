@@ -38,7 +38,7 @@ namespace Nekoyume.Blockchain
             _accessControlService = accessControlService;
         }
 
-        public Transaction Get(BlockChain blockChain, TxId id, bool filtered = true)
+        public Transaction? Get(BlockChain blockChain, TxId id, bool filtered = true)
             => _impl.Get(blockChain, id, filtered);
 
         public long GetNextTxNonce(BlockChain blockChain, Address address)
@@ -79,9 +79,9 @@ namespace Nekoyume.Blockchain
                         txQuotaPerSigner = _quotaPerSigner;
                     }
 
-                    if (s.Count > txQuotaPerSigner)
+                    if (s.Count > txQuotaPerSigner && s.Max is { } max)
                     {
-                        s.Remove(s.Max);
+                        s.Remove(max);
                     }
                 }
 
@@ -141,8 +141,23 @@ namespace Nekoyume.Blockchain
 
         private class TxComparer : IComparer<Transaction>
         {
-            public int Compare(Transaction x, Transaction y)
+            public int Compare(Transaction? x, Transaction? y)
             {
+                if (x == null && y == null)
+                {
+                    return 0;
+                }
+
+                if (x == null)
+                {
+                    return -1;
+                }
+
+                if (y == null)
+                {
+                    return 1;
+                }
+
                 if (x.Nonce < y.Nonce)
                 {
                     return -1;
