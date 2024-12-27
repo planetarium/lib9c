@@ -34,6 +34,7 @@ namespace Nekoyume.Model.Guild
                   unbondLockInAccountAddress: Addresses.GuildUnbondLockIn,
                   rebondGraceAccountAddress: Addresses.GuildRebondGrace,
                   unbondingSetAccountAddress: Addresses.GuildUnbondingSet,
+                  rewardBaseAccountAddress: Addresses.GuildRewardBase,
                   lumpSumRewardRecordAccountAddress: Addresses.GuildLumpSumRewardsRecord)
         {
             _guildAccount = world.GetAccount(guildAddress);

@@ -16,7 +16,9 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TableData;
+using Nekoyume.ValidatorDelegation;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action
@@ -58,6 +60,16 @@ namespace Nekoyume.Action
             var states = context.PreviousState;
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var stakeStateAddr = LegacyStakeState.DeriveAddress(context.Signer);
+
+            var validatorRepository = new ValidatorRepository(states, context);
+            var isValidator = validatorRepository.TryGetValidatorDelegatee(
+                context.Signer, out var _);
+            if (isValidator)
+            {
+                throw new InvalidOperationException(
+                    "The validator cannot claim the stake reward.");
+            }
+
             if (!states.TryGetStakeState(context.Signer, out var stakeStateV2))
             {
                 throw new FailedLoadStateException(

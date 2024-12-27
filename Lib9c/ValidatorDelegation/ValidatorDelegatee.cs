@@ -162,6 +162,12 @@ namespace Nekoyume.ValidatorDelegation
 
         public void SetCommissionPercentage(BigInteger percentage, long height)
         {
+            if (CommissionPercentage == percentage)
+            {
+                throw new InvalidOperationException(
+                    "The commission percentage is already set to the requested value.");
+            }
+
             if (height - CommissionPercentageLastUpdateHeight < CommissionPercentageUpdateCooldown)
             {
                 throw new InvalidOperationException(
