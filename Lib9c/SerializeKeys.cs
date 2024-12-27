@@ -182,5 +182,8 @@ namespace Lib9c
         // ClaimItems
         public const string ClaimDataKey = "cd";
         public const string MemoKey = "m";
+
+        // Battle
+        public const string SignedMemoKey = "sgm";
     }
 }
