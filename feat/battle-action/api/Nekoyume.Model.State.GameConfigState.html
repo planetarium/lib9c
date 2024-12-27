@@ -1,0 +1,1849 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class GameConfigState | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class GameConfigState | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/feat/battle-action/apiSpec/new?filename=Nekoyume_Model_State_GameConfigState.md&amp;value=---%0Auid%3A%20Nekoyume.Model.State.GameConfigState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.State.GameConfigState">
+
+
+
+  <h1 id="Nekoyume_Model_State_GameConfigState" data-uid="Nekoyume.Model.State.GameConfigState" class="text-break">
+Class GameConfigState  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.State.html">State</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class GameConfigState : State, IState</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Model.State.State.html">State</a></div>
+      <div><span class="xref">GameConfigState</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.State.IState.html">IState</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_address">State.address</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_SerializeBase">State.SerializeBase()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_SerializeV2Base">State.SerializeV2Base()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.State.State.html#Nekoyume_Model_State_State_SerializeListBase">State.SerializeListBase()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_State_GameConfigState__ctor_" data-uid="Nekoyume.Model.State.GameConfigState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState__ctor" data-uid="Nekoyume.Model.State.GameConfigState.#ctor">
+  GameConfigState()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GameConfigState()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState__ctor_" data-uid="Nekoyume.Model.State.GameConfigState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.State.GameConfigState.#ctor(Bencodex.Types.Dictionary)">
+  GameConfigState(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GameConfigState(Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState__ctor_" data-uid="Nekoyume.Model.State.GameConfigState.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState__ctor_System_String_" data-uid="Nekoyume.Model.State.GameConfigState.#ctor(System.String)">
+  GameConfigState(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L323"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GameConfigState(string csv)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>csv</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_Address" data-uid="Nekoyume.Model.State.GameConfigState.Address">
+  Address
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Address Address</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_ActionPointMax_" data-uid="Nekoyume.Model.State.GameConfigState.ActionPointMax*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_ActionPointMax" data-uid="Nekoyume.Model.State.GameConfigState.ActionPointMax">
+  ActionPointMax
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ActionPointMax { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossActiveInterval_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossActiveInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossActiveInterval" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossActiveInterval">
+  AdventureBossActiveInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdventureBossActiveInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossClaimInterval_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossClaimInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossClaimInterval" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossClaimInterval">
+  AdventureBossClaimInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdventureBossClaimInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossInactiveInterval_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossInactiveInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossInactiveInterval" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossInactiveInterval">
+  AdventureBossInactiveInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdventureBossInactiveInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossMinBounty_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossMinBounty*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossMinBounty" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossMinBounty">
+  AdventureBossMinBounty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BigInteger AdventureBossMinBounty { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossNcgApRatio_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossNcgApRatio*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossNcgApRatio" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossNcgApRatio">
+  AdventureBossNcgApRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public decimal AdventureBossNcgApRatio { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossNcgRuneRatio_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossNcgRuneRatio*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossNcgRuneRatio" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossNcgRuneRatio">
+  AdventureBossNcgRuneRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public decimal AdventureBossNcgRuneRatio { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_AdventureBossWantedRequiredStakingLevel_" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossWantedRequiredStakingLevel*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_AdventureBossWantedRequiredStakingLevel" data-uid="Nekoyume.Model.State.GameConfigState.AdventureBossWantedRequiredStakingLevel">
+  AdventureBossWantedRequiredStakingLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int AdventureBossWantedRequiredStakingLevel { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_BattleArenaInterval_" data-uid="Nekoyume.Model.State.GameConfigState.BattleArenaInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_BattleArenaInterval" data-uid="Nekoyume.Model.State.GameConfigState.BattleArenaInterval">
+  BattleArenaInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int BattleArenaInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_CustomEquipmentCraftIconCostMultiplier_" data-uid="Nekoyume.Model.State.GameConfigState.CustomEquipmentCraftIconCostMultiplier*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_CustomEquipmentCraftIconCostMultiplier" data-uid="Nekoyume.Model.State.GameConfigState.CustomEquipmentCraftIconCostMultiplier">
+  CustomEquipmentCraftIconCostMultiplier
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long CustomEquipmentCraftIconCostMultiplier { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_DailyArenaInterval_" data-uid="Nekoyume.Model.State.GameConfigState.DailyArenaInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_DailyArenaInterval" data-uid="Nekoyume.Model.State.GameConfigState.DailyArenaInterval">
+  DailyArenaInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DailyArenaInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_DailyRewardInterval_" data-uid="Nekoyume.Model.State.GameConfigState.DailyRewardInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_DailyRewardInterval" data-uid="Nekoyume.Model.State.GameConfigState.DailyRewardInterval">
+  DailyRewardInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DailyRewardInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_DailyRuneRewardAmount_" data-uid="Nekoyume.Model.State.GameConfigState.DailyRuneRewardAmount*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_DailyRuneRewardAmount" data-uid="Nekoyume.Model.State.GameConfigState.DailyRuneRewardAmount">
+  DailyRuneRewardAmount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DailyRuneRewardAmount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_DailyWorldBossInterval_" data-uid="Nekoyume.Model.State.GameConfigState.DailyWorldBossInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_DailyWorldBossInterval" data-uid="Nekoyume.Model.State.GameConfigState.DailyWorldBossInterval">
+  DailyWorldBossInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DailyWorldBossInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_HourglassPerBlock_" data-uid="Nekoyume.Model.State.GameConfigState.HourglassPerBlock*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_HourglassPerBlock" data-uid="Nekoyume.Model.State.GameConfigState.HourglassPerBlock">
+  HourglassPerBlock
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int HourglassPerBlock { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot1_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot1*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot1" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot1">
+  RequireCharacterLevel_ConsumableSlot1
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_ConsumableSlot1 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot2_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot2*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot2" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot2">
+  RequireCharacterLevel_ConsumableSlot2
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_ConsumableSlot2 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot3_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot3*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot3" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot3">
+  RequireCharacterLevel_ConsumableSlot3
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_ConsumableSlot3 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot4_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot4*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot4" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot4">
+  RequireCharacterLevel_ConsumableSlot4
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_ConsumableSlot4 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot5_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot5*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_ConsumableSlot5" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_ConsumableSlot5">
+  RequireCharacterLevel_ConsumableSlot5
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_ConsumableSlot5 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EarCostumeSlot_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EarCostumeSlot*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EarCostumeSlot" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EarCostumeSlot">
+  RequireCharacterLevel_EarCostumeSlot
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EarCostumeSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotArmor_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotArmor*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotArmor" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotArmor">
+  RequireCharacterLevel_EquipmentSlotArmor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotArmor { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotAura_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotAura*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotAura" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotAura">
+  RequireCharacterLevel_EquipmentSlotAura
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotAura { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotBelt_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotBelt*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotBelt" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotBelt">
+  RequireCharacterLevel_EquipmentSlotBelt
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotBelt { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotGrimoire_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotGrimoire*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotGrimoire" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotGrimoire">
+  RequireCharacterLevel_EquipmentSlotGrimoire
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotGrimoire { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotNecklace_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotNecklace*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotNecklace" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotNecklace">
+  RequireCharacterLevel_EquipmentSlotNecklace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotNecklace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotRing1_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotRing1*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotRing1" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotRing1">
+  RequireCharacterLevel_EquipmentSlotRing1
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotRing1 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotRing2_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotRing2*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotRing2" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotRing2">
+  RequireCharacterLevel_EquipmentSlotRing2
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotRing2 { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotWeapon_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotWeapon*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EquipmentSlotWeapon" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EquipmentSlotWeapon">
+  RequireCharacterLevel_EquipmentSlotWeapon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EquipmentSlotWeapon { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EyeCostumeSlot_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EyeCostumeSlot*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_EyeCostumeSlot" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_EyeCostumeSlot">
+  RequireCharacterLevel_EyeCostumeSlot
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_EyeCostumeSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_FullCostumeSlot_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_FullCostumeSlot*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_FullCostumeSlot" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_FullCostumeSlot">
+  RequireCharacterLevel_FullCostumeSlot
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_FullCostumeSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_HairCostumeSlot_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_HairCostumeSlot*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_HairCostumeSlot" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_HairCostumeSlot">
+  RequireCharacterLevel_HairCostumeSlot
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_HairCostumeSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_TailCostumeSlot_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_TailCostumeSlot*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_TailCostumeSlot" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_TailCostumeSlot">
+  RequireCharacterLevel_TailCostumeSlot
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_TailCostumeSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_TitleSlot_" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_TitleSlot*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RequireCharacterLevel_TitleSlot" data-uid="Nekoyume.Model.State.GameConfigState.RequireCharacterLevel_TitleSlot">
+  RequireCharacterLevel_TitleSlot
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RequireCharacterLevel_TitleSlot { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RuneSkillSlotCrystalUnlockCost_" data-uid="Nekoyume.Model.State.GameConfigState.RuneSkillSlotCrystalUnlockCost*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RuneSkillSlotCrystalUnlockCost" data-uid="Nekoyume.Model.State.GameConfigState.RuneSkillSlotCrystalUnlockCost">
+  RuneSkillSlotCrystalUnlockCost
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RuneSkillSlotCrystalUnlockCost { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RuneSkillSlotUnlockCost_" data-uid="Nekoyume.Model.State.GameConfigState.RuneSkillSlotUnlockCost*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RuneSkillSlotUnlockCost" data-uid="Nekoyume.Model.State.GameConfigState.RuneSkillSlotUnlockCost">
+  RuneSkillSlotUnlockCost
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RuneSkillSlotUnlockCost { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RuneStatSlotCrystalUnlockCost_" data-uid="Nekoyume.Model.State.GameConfigState.RuneStatSlotCrystalUnlockCost*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RuneStatSlotCrystalUnlockCost" data-uid="Nekoyume.Model.State.GameConfigState.RuneStatSlotCrystalUnlockCost">
+  RuneStatSlotCrystalUnlockCost
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RuneStatSlotCrystalUnlockCost { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_RuneStatSlotUnlockCost_" data-uid="Nekoyume.Model.State.GameConfigState.RuneStatSlotUnlockCost*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_RuneStatSlotUnlockCost" data-uid="Nekoyume.Model.State.GameConfigState.RuneStatSlotUnlockCost">
+  RuneStatSlotUnlockCost
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RuneStatSlotUnlockCost { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_ShatterStrikeMaxDamage_" data-uid="Nekoyume.Model.State.GameConfigState.ShatterStrikeMaxDamage*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_ShatterStrikeMaxDamage" data-uid="Nekoyume.Model.State.GameConfigState.ShatterStrikeMaxDamage">
+  ShatterStrikeMaxDamage
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long ShatterStrikeMaxDamage { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_StakeRegularFixedRewardSheet_V2_StartBlockIndex_" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularFixedRewardSheet_V2_StartBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_StakeRegularFixedRewardSheet_V2_StartBlockIndex" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularFixedRewardSheet_V2_StartBlockIndex">
+  StakeRegularFixedRewardSheet_V2_StartBlockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long StakeRegularFixedRewardSheet_V2_StartBlockIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V2_StartBlockIndex_" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V2_StartBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V2_StartBlockIndex" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V2_StartBlockIndex">
+  StakeRegularRewardSheet_V2_StartBlockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long StakeRegularRewardSheet_V2_StartBlockIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V3_StartBlockIndex_" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V3_StartBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V3_StartBlockIndex" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V3_StartBlockIndex">
+  StakeRegularRewardSheet_V3_StartBlockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long StakeRegularRewardSheet_V3_StartBlockIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V4_StartBlockIndex_" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V4_StartBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V4_StartBlockIndex" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V4_StartBlockIndex">
+  StakeRegularRewardSheet_V4_StartBlockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long StakeRegularRewardSheet_V4_StartBlockIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V5_StartBlockIndex_" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V5_StartBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_StakeRegularRewardSheet_V5_StartBlockIndex" data-uid="Nekoyume.Model.State.GameConfigState.StakeRegularRewardSheet_V5_StartBlockIndex">
+  StakeRegularRewardSheet_V5_StartBlockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long StakeRegularRewardSheet_V5_StartBlockIndex { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_WeeklyArenaInterval_" data-uid="Nekoyume.Model.State.GameConfigState.WeeklyArenaInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_WeeklyArenaInterval" data-uid="Nekoyume.Model.State.GameConfigState.WeeklyArenaInterval">
+  WeeklyArenaInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int WeeklyArenaInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_WorldBossRequiredInterval_" data-uid="Nekoyume.Model.State.GameConfigState.WorldBossRequiredInterval*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_WorldBossRequiredInterval" data-uid="Nekoyume.Model.State.GameConfigState.WorldBossRequiredInterval">
+  WorldBossRequiredInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int WorldBossRequiredInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_Serialize_" data-uid="Nekoyume.Model.State.GameConfigState.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_Serialize" data-uid="Nekoyume.Model.State.GameConfigState.Serialize">
+  Serialize()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L333"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IValue Serialize()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_Set_" data-uid="Nekoyume.Model.State.GameConfigState.Set*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_Set_Nekoyume_TableData_GameConfigSheet_" data-uid="Nekoyume.Model.State.GameConfigState.Set(Nekoyume.TableData.GameConfigSheet)">
+  Set(GameConfigSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L619"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Set(GameConfigSheet sheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.GameConfigSheet.html">GameConfigSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_GameConfigState_Update_" data-uid="Nekoyume.Model.State.GameConfigState.Update*"></a>
+
+  <h3 id="Nekoyume_Model_State_GameConfigState_Update_Nekoyume_TableData_GameConfigSheet_Row_" data-uid="Nekoyume.Model.State.GameConfigState.Update(Nekoyume.TableData.GameConfigSheet.Row)">
+  Update(Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L632"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Update(GameConfigSheet.Row row)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>row</code> <a class="xref" href="Nekoyume.TableData.GameConfigSheet.html">GameConfigSheet</a>.<a class="xref" href="Nekoyume.TableData.GameConfigSheet.Row.html">Row</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/feat/battle-action/Lib9c/Model/State/GameConfigState.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
