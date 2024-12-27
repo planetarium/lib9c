@@ -722,7 +722,7 @@ namespace Lib9c.Tests.Action
                 );
                 _initialState.SetAvatarState(orderData.SellerAvatarAddress, sellerAvatarState);
 
-                var sellItem = order.Sell3(sellerAvatarState);
+                var sellItem = order.Sell(sellerAvatarState);
                 var orderDigest = order.Digest(sellerAvatarState, _tableSheets.CostumeStatSheet);
 
                 var digestListAddress = OrderDigestListState.DeriveAddress(firstData.SellerAvatarAddress);
@@ -765,9 +765,10 @@ namespace Lib9c.Tests.Action
                     .SetLegacyState(orderDigestListState.Address, orderDigestListState.Serialize());
             }
 
-            var sumCount = orderDataList.Sum(x => x.ItemCount);
-            Assert.Equal(1, sellerAvatarState.inventory.Items.Count);
-            Assert.Equal(sumCount, sellerAvatarState.inventory.Items.First().count);
+            // 2 -> because Locked item see AddFungibleItem(ItemBase itemBase, int count = 1, ILock iLock = null)
+            Assert.Equal(2, sellerAvatarState.inventory.Items.Count);
+            Assert.Equal(orderDataList[0].ItemCount, sellerAvatarState.inventory.Items.First().count);
+            Assert.Equal(orderDataList[1].ItemCount, sellerAvatarState.inventory.Items.Last().count);
 
             var buyAction = new Buy
             {
