@@ -51,7 +51,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             foreach (var abstain in abstainsToSlash)
             {
-                var validatorDelegatee = repository.GetValidatorDelegatee(abstain.Address);
+                var validatorDelegatee = repository.GetDelegatee(abstain.Address);
                 if (validatorDelegatee.Jailed)
                 {
                     continue;
@@ -61,7 +61,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 validatorDelegatee.Jail(context.BlockIndex + AbstainJailTime);
 
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                var guildDelegatee = guildRepository.GetGuildDelegatee(abstain.Address);
+                var guildDelegatee = guildRepository.GetDelegatee(abstain.Address);
                 guildDelegatee.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
                 repository.UpdateWorld(guildRepository.World);
             }
@@ -76,12 +76,12 @@ namespace Nekoyume.Action.ValidatorDelegation
                             throw new Exception("Evidence height is greater than block index.");
                         }
 
-                        var validatorDelegatee = repository.GetValidatorDelegatee(e.TargetAddress);
+                        var validatorDelegatee = repository.GetDelegatee(e.TargetAddress);
                         validatorDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
                         validatorDelegatee.Tombstone();
 
                         var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
-                        var guildDelegatee = guildRepository.GetGuildDelegatee(e.TargetAddress);
+                        var guildDelegatee = guildRepository.GetDelegatee(e.TargetAddress);
                         guildDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
                         repository.UpdateWorld(guildRepository.World);
                         break;

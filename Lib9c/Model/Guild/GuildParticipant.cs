@@ -63,10 +63,10 @@ namespace Nekoyume.Model.Guild
         public AgentAddress Address { get; }
 
         public Address DelegationPoolAddress
-            => Repository.GetGuildDelegator(Address).DelegationPoolAddress;
+            => Repository.GetDelegator(Address).DelegationPoolAddress;
 
         public Address RewardAddress
-            => Repository.GetGuildDelegator(Address).RewardAddress;
+            => Repository.GetDelegator(Address).RewardAddress;
 
         public GuildRepository Repository { get; }
 
@@ -85,13 +85,13 @@ namespace Nekoyume.Model.Guild
                     nameof(fav), fav, "Fungible asset value must be positive.");
             }
 
-            var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
-            var guildDelegator = Repository.GetGuildDelegator(Address);
+            var guildDelegatee = Repository.GetDelegatee(guild.ValidatorAddress);
+            var guildDelegator = Repository.GetDelegator(Address);
             guildDelegator.Delegate(guildDelegatee, fav, height);
 
             var validatorRepository = new ValidatorRepository(Repository);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
-            var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
+            var validatorDelegator = validatorRepository.GetDelegator(guild.Address);
             validatorDelegatee.Bond(validatorDelegator, fav, height);
 
             Repository.UpdateWorld(validatorRepository.World);
@@ -111,13 +111,13 @@ namespace Nekoyume.Model.Guild
                     nameof(height), height, "Height must be positive.");
             }
 
-            var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
-            var guildDelegator = Repository.GetGuildDelegator(Address);
+            var guildDelegatee = Repository.GetDelegatee(guild.ValidatorAddress);
+            var guildDelegator = Repository.GetDelegator(Address);
             guildDelegator.Undelegate(guildDelegatee, share, height);
 
             var validatorRepository = new ValidatorRepository(Repository);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(guild.ValidatorAddress);
-            var validatorDelegator = validatorRepository.GetValidatorDelegator(guild.Address);
+            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
+            var validatorDelegator = validatorRepository.GetDelegator(guild.Address);
             validatorDelegatee.Unbond(validatorDelegator, share, height);
 
             Repository.UpdateWorld(validatorRepository.World);
@@ -138,17 +138,17 @@ namespace Nekoyume.Model.Guild
                     nameof(height), height, "Height must be positive.");
             }
 
-            var srcGuildDelegatee = Repository.GetGuildDelegatee(srcGuild.ValidatorAddress);
-            var dstGuildDelegator = Repository.GetGuildDelegatee(dstGuild.ValidatorAddress);
-            var guildDelegator = Repository.GetGuildDelegator(Address);
+            var srcGuildDelegatee = Repository.GetDelegatee(srcGuild.ValidatorAddress);
+            var dstGuildDelegator = Repository.GetDelegatee(dstGuild.ValidatorAddress);
+            var guildDelegator = Repository.GetDelegator(Address);
             guildDelegator.Redelegate(srcGuildDelegatee, dstGuildDelegator, share, height);
 
             var validatorRepository = new ValidatorRepository(Repository);
-            var srcValidatorDelegatee = validatorRepository.GetValidatorDelegatee(srcGuild.ValidatorAddress);
-            var srcValidatorDelegator = validatorRepository.GetValidatorDelegator(srcGuild.Address);
+            var srcValidatorDelegatee = validatorRepository.GetDelegatee(srcGuild.ValidatorAddress);
+            var srcValidatorDelegator = validatorRepository.GetDelegator(srcGuild.Address);
             var fav = srcValidatorDelegatee.Unbond(srcValidatorDelegator, share, height);
-            var dstValidatorDelegatee = validatorRepository.GetValidatorDelegatee(dstGuild.ValidatorAddress);
-            var dstValidatorDelegator = validatorRepository.GetValidatorDelegator(dstGuild.Address);
+            var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);
+            var dstValidatorDelegator = validatorRepository.GetDelegator(dstGuild.Address);
             dstValidatorDelegatee.Bond(dstValidatorDelegator, fav, height);
 
             Repository.UpdateWorld(validatorRepository.World);
@@ -156,8 +156,8 @@ namespace Nekoyume.Model.Guild
 
         public void ClaimReward(Guild guild, long height)
         {
-            var guildDelegatee = Repository.GetGuildDelegatee(guild.ValidatorAddress);
-            var guildDelegator = Repository.GetGuildDelegator(Address);
+            var guildDelegatee = Repository.GetDelegatee(guild.ValidatorAddress);
+            var guildDelegator = Repository.GetDelegator(Address);
             guildDelegator.ClaimReward(guildDelegatee, height);
         }
 

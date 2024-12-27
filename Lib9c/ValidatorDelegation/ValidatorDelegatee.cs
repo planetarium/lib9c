@@ -15,7 +15,8 @@ using Nekoyume.Model.State;
 namespace Nekoyume.ValidatorDelegation
 {
     public sealed class ValidatorDelegatee
-        : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
+        : Delegatee<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>,
+        IEquatable<ValidatorDelegatee>, IBencodable
     {
         public ValidatorDelegatee(
             Address address,
@@ -139,7 +140,7 @@ namespace Nekoyume.ValidatorDelegation
             Address RewardSource,
             long height)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
 
             FungibleAssetValue rewardAllocated
                 = (rewardToAllocate * validatorPower).DivRem(validatorSetPower).Quotient;
@@ -193,7 +194,7 @@ namespace Nekoyume.ValidatorDelegation
         }
         public new void Unjail(long height)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
             if (MinSelfDelegation > selfDelegation)
             {
@@ -210,7 +211,7 @@ namespace Nekoyume.ValidatorDelegation
                 throw new InvalidOperationException("The validator is already active.");
             }
 
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             IsActive = true;
             Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
 
@@ -230,7 +231,7 @@ namespace Nekoyume.ValidatorDelegation
                 throw new InvalidOperationException("The validator is already inactive.");
             }
 
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             IsActive = false;
             Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
 
@@ -245,7 +246,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public void OnDelegationChanged(object? sender, long height)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
 
             if (Jailed)
             {
@@ -270,13 +271,13 @@ namespace Nekoyume.ValidatorDelegation
 
         public void OnEnjailed(object? sender, EventArgs e)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
         }
 
         public void OnUnjailed(object? sender, EventArgs e)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
         }
 

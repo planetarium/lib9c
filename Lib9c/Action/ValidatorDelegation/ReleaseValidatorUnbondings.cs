@@ -114,7 +114,7 @@ namespace Nekoyume.Action.ValidatorDelegation
             var repository = new ValidatorRepository(world, context);
             try
             {
-                repository.GetValidatorDelegatee(address);
+                repository.GetDelegatee(address);
                 return true;
             }
             catch (FailedLoadStateException)
