@@ -75,6 +75,7 @@ namespace Lib9c.Model.Order
             }
         }
 
+        [Obsolete("Not Used")]
         public override ITradableItem Sell(AvatarState avatarState)
         {
             if (!avatarState.inventory.TryGetTradableItems(
