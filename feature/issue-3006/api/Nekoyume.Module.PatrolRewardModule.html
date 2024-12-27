@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class PatrolRewardModule | Lib9c ">
       
-      
+      <meta name="description" content="Provides utility methods for handling patrol reward states.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Module_PatrolRewardModule" data-uid="Nekoyume.Module.PatrolRewardModule" class="text-break">
-Class PatrolRewardModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class PatrolRewardModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides utility methods for handling patrol reward states.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,10 +157,11 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_Module_PatrolRewardModule_GetPatrolRewardClaimedBlockIndex_Libplanet_Action_State_IWorldState_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.PatrolRewardModule.GetPatrolRewardClaimedBlockIndex(Libplanet.Action.State.IWorldState,Libplanet.Crypto.Address)">
   GetPatrolRewardClaimedBlockIndex(IWorldState, Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Retrieves the block index at which the patrol reward was last claimed for a given avatar.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -169,15 +171,18 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>worldState</code> <span class="xref">IWorldState</span></dt>
-    <dd></dd>
+    <dd><p>The current world state.</p>
+</dd>
     <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The address of the avatar.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The block index when the patrol reward was last claimed.</p>
+</dd>
   </dl>
 
 
@@ -187,6 +192,12 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.FailedLoadStateException.html">FailedLoadStateException</a></dt>
+    <dd><p>Thrown if the state could not be loaded.</p>
+</dd>
+  </dl>
 
 
 
@@ -194,10 +205,11 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_Module_PatrolRewardModule_SetPatrolRewardClaimedBlockIndex_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int64_" data-uid="Nekoyume.Module.PatrolRewardModule.SetPatrolRewardClaimedBlockIndex(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int64)">
   SetPatrolRewardClaimedBlockIndex(IWorld, Address, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sets the block index at which the patrol reward was last claimed for a given avatar.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -207,17 +219,21 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>world</code> <span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The current world instance.</p>
+</dd>
     <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The address of the avatar.</p>
+</dd>
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The block index to set.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The updated world instance.</p>
+</dd>
   </dl>
 
 
@@ -234,10 +250,11 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
 
   <h3 id="Nekoyume_Module_PatrolRewardModule_TryGetPatrolRewardClaimedBlockIndex_Libplanet_Action_State_IWorldState_Libplanet_Crypto_Address_System_Int64__" data-uid="Nekoyume.Module.PatrolRewardModule.TryGetPatrolRewardClaimedBlockIndex(Libplanet.Action.State.IWorldState,Libplanet.Crypto.Address,System.Int64@)">
   TryGetPatrolRewardClaimedBlockIndex(IWorldState, Address, out long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Tries to retrieve the block index at which the patrol reward was last claimed for a given avatar.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -247,17 +264,21 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>worldState</code> <span class="xref">IWorldState</span></dt>
-    <dd></dd>
+    <dd><p>The current world state.</p>
+</dd>
     <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The address of the avatar.</p>
+</dd>
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>Outputs the block index when the patrol reward was last claimed.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p><code>true</code> if the block index was successfully retrieved; otherwise, <code>false</code>.</p>
+</dd>
   </dl>
 
 
@@ -274,7 +295,7 @@ Class PatrolRewardModule  <a class="header-action link-secondary" title="View so
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Module/PatrolRewardModule.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

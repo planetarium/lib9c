@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class PatrolRewardMail | Lib9c ">
       
-      
+      <meta name="description" content="Represents a patrol reward mail that contains rewards such as fungible assets and items.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Mail_PatrolRewardMail" data-uid="Nekoyume.Model.Mail.PatrolRewardMail" class="text-break">
-Class PatrolRewardMail  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Class PatrolRewardMail  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a patrol reward mail that contains rewards such as fungible assets and items.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -178,10 +179,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.#ctor(Bencodex.Types.Dictionary)">
   PatrolRewardMail(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserializing a PatrolRewardMail from a Bencodex dictionary.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -191,7 +193,8 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dd><p>The serialized dictionary representation of the mail.</p>
+</dd>
   </dl>
 
 
@@ -209,10 +212,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail__ctor_System_Int64_System_Guid_System_Int64_System_Collections_Generic_List_Libplanet_Types_Assets_FungibleAssetValue__System_Collections_Generic_List_System_ValueTuple_System_Int32_System_Int32___" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.#ctor(System.Int64,System.Guid,System.Int64,System.Collections.Generic.List{Libplanet.Types.Assets.FungibleAssetValue},System.Collections.Generic.List{System.ValueTuple{System.Int32,System.Int32}})">
   PatrolRewardMail(long, Guid, long, List&lt;FungibleAssetValue&gt;, List&lt;(int id, int count)&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for creating a PatrolRewardMail with specified parameters.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -222,15 +226,20 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The block index at which the mail is created.</p>
+</dd>
     <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
-    <dd></dd>
+    <dd><p>The unique identifier for the mail.</p>
+</dd>
     <dt><code>requiredBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The block index required to claim the mail.</p>
+</dd>
     <dt><code>fungibleAssetValues</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">FungibleAssetValue</span>&gt;</dt>
-    <dd></dd>
+    <dd><p>The list of fungible asset rewards.</p>
+</dd>
     <dt><code>items</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.id">id</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.count">count</a>)&gt;</dt>
-    <dd></dd>
+    <dd><p>The list of item rewards.</p>
+</dd>
   </dl>
 
 
@@ -251,10 +260,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail_FungibleAssetValues" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.FungibleAssetValues">
   FungibleAssetValues
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A list of fungible asset values included in the reward.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -281,10 +291,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail_Items" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.Items">
   Items
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A list of item rewards where each entry contains the item ID and count.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -316,10 +327,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail_MailType" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.MailType">
   MailType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The type of mail. Defaults to Auction.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -347,10 +359,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail_TypeId" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.TypeId">
   TypeId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The type identifier for the PatrolRewardMail class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -382,10 +395,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail_Read_Nekoyume_Model_Mail_IMail_" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.Read(Nekoyume.Model.Mail.IMail)">
   Read(IMail)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L71"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Reads the mail contents into the specified mail object.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -395,7 +409,8 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>mail</code> <a class="xref" href="Nekoyume.Model.Mail.IMail.html">IMail</a></dt>
-    <dd></dd>
+    <dd><p>The mail object to populate with this mail's data.</p>
+</dd>
   </dl>
 
 
@@ -413,10 +428,11 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 
   <h3 id="Nekoyume_Model_Mail_PatrolRewardMail_Serialize" data-uid="Nekoyume.Model.Mail.PatrolRewardMail.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the PatrolRewardMail into a Bencodex-compatible format.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -427,7 +443,8 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>A serialized representation of the mail.</p>
+</dd>
   </dl>
 
 
@@ -444,7 +461,7 @@ Class PatrolRewardMail  <a class="header-action link-secondary" title="View sour
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/Model/Mail/PatrolRewardMail.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

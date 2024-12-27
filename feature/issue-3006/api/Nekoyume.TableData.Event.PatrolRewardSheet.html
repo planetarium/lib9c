@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class PatrolRewardSheet | Lib9c ">
       
-      
+      <meta name="description" content="Represents the PatrolRewardSheet, which defines patrol reward policies and rules.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_Event_PatrolRewardSheet" data-uid="Nekoyume.TableData.Event.PatrolRewardSheet" class="text-break">
-Class PatrolRewardSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Class PatrolRewardSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class PatrolRewardSheet  <a class="header-action link-secondary" title="View sou
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents the PatrolRewardSheet, which defines patrol reward policies and rules.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -240,10 +241,11 @@ public class PatrolRewardSheet : Sheet&lt;int, PatrolRewardSheet.Row&gt;, IDicti
 
   <h3 id="Nekoyume_TableData_Event_PatrolRewardSheet__ctor" data-uid="Nekoyume.TableData.Event.PatrolRewardSheet.#ctor">
   PatrolRewardSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Nekoyume.TableData.Event.PatrolRewardSheet.html">PatrolRewardSheet</a> class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -270,10 +272,10 @@ public class PatrolRewardSheet : Sheet&lt;int, PatrolRewardSheet.Row&gt;, IDicti
 
   <h3 id="Nekoyume_TableData_Event_PatrolRewardSheet_FindByLevel_System_Int32_System_Int64_" data-uid="Nekoyume.TableData.Event.PatrolRewardSheet.FindByLevel(System.Int32,System.Int64)">
   FindByLevel(int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Find reward policy row by avatar level. if it can't find level range, return lowest level policy.</p>
+  <div class="markdown level1 summary"><p>Finds the reward policy row based on avatar level and block index.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -284,17 +286,18 @@ public class PatrolRewardSheet : Sheet&lt;int, PatrolRewardSheet.Row&gt;, IDicti
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd><p>avatar level</p>
+    <dd><p>The avatar's level.</p>
 </dd>
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd><p>current block index</p>
+    <dd><p>The current block index.</p>
 </dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.TableData.Event.PatrolRewardSheet.html">PatrolRewardSheet</a>.<a class="xref" href="Nekoyume.TableData.Event.PatrolRewardSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>The corresponding reward policy row.</p>
+</dd>
   </dl>
 
 
@@ -307,7 +310,7 @@ public class PatrolRewardSheet : Sheet&lt;int, PatrolRewardSheet.Row&gt;, IDicti
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
-    <dd><p>can't find block index contains policy.</p>
+    <dd><p>Thrown if no activated policy matches the criteria.</p>
 </dd>
   </dl>
 
@@ -317,7 +320,7 @@ public class PatrolRewardSheet : Sheet&lt;int, PatrolRewardSheet.Row&gt;, IDicti
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3006/Lib9c/TableData/Event/PatrolRewardSheet.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 
