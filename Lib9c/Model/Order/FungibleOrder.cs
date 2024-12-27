@@ -141,7 +141,7 @@ namespace Lib9c.Model.Order
                 }
                 // Lock item.
                 copy.RequiredBlockIndex = ExpiredBlockIndex;
-                avatarState.inventory.AddItem2((ItemBase) copy, ItemCount);
+                avatarState.inventory.AddItem((ItemBase) copy, ItemCount);
                 return copy;
             }
 
@@ -170,7 +170,7 @@ namespace Lib9c.Model.Order
                 }
                 // Lock item.
                 copy.RequiredBlockIndex = ExpiredBlockIndex;
-                avatarState.inventory.AddItem2((ItemBase) copy, ItemCount, new OrderLock(OrderId));
+                avatarState.inventory.AddItem((ItemBase) copy, ItemCount, new OrderLock(OrderId));
                 return copy;
             }
 
@@ -259,7 +259,7 @@ namespace Lib9c.Model.Order
                 seller.inventory.RemoveTradableItemV1(tradableItem, ItemCount);
                 TradableMaterial copy = (TradableMaterial) tradableItem.Clone();
                 copy.RequiredBlockIndex = blockIndex;
-                buyer.UpdateFromAddItem2(copy, ItemCount, false);
+                buyer.UpdateFromAddItem(copy, ItemCount, false);
                 return new OrderReceipt(OrderId, buyer.agentAddress, buyer.address, blockIndex);
             }
             throw new ItemDoesNotExistException(
@@ -276,7 +276,7 @@ namespace Lib9c.Model.Order
 
                 var copy = (TradableMaterial) tradableItem.Clone();
                 copy.RequiredBlockIndex = blockIndex;
-                buyer.UpdateFromAddItem2(copy, ItemCount, false);
+                buyer.UpdateFromAddItem(copy, ItemCount, false);
                 return new OrderReceipt(OrderId, buyer.agentAddress, buyer.address, blockIndex);
             }
 
@@ -417,7 +417,7 @@ namespace Lib9c.Model.Order
                 ITradableFungibleItem copy = (ITradableFungibleItem) ((ITradableFungibleItem) inventoryItem.item).Clone();
                 avatarState.inventory.RemoveTradableItemV1(TradableId, ExpiredBlockIndex, ItemCount);
                 copy.RequiredBlockIndex = blockIndex;
-                avatarState.inventory.AddItem2((ItemBase) copy, ItemCount);
+                avatarState.inventory.AddItem((ItemBase) copy, ItemCount);
                 return copy;
             }
             throw new ItemDoesNotExistException(

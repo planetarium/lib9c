@@ -16,7 +16,6 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Guild.Migration.LegacyModels;
-    using Nekoyume.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
@@ -26,7 +25,6 @@ namespace Lib9c.Tests.Action
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class BuyTest
     {
@@ -685,7 +683,7 @@ namespace Lib9c.Tests.Action
 
             var dummyItem = ItemFactory.CreateTradableMaterial(
                 _tableSheets.MaterialItemSheet.OrderedList.First(r => r.ItemSubType == ItemSubType.Hourglass));
-            sellerAvatarState.inventory.AddItem2((ItemBase)dummyItem, orderDataList.Sum(x => x.ItemCount));
+            sellerAvatarState.inventory.AddItem((ItemBase)dummyItem, orderDataList.Sum(x => x.ItemCount));
 
             foreach (var orderData in orderDataList)
             {

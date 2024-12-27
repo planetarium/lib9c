@@ -180,7 +180,7 @@ namespace Lib9c.Model.Order
                 }
                 else
                 {
-                    buyer.UpdateFromAddItem2((ItemUsable) nonFungibleItem, false);
+                    buyer.UpdateFromAddItem((ItemUsable) nonFungibleItem, false);
                 }
 
                 return new OrderReceipt(OrderId, buyer.agentAddress, buyer.address, blockIndex);
@@ -206,7 +206,7 @@ namespace Lib9c.Model.Order
                     }
                     else
                     {
-                        buyer.UpdateFromAddItem2((ItemUsable)nonFungibleItem, false);
+                        buyer.UpdateFromAddItem((ItemUsable)nonFungibleItem, false);
                     }
                 }
 
