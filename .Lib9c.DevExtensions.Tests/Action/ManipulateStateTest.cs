@@ -29,7 +29,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         private static readonly Address AdminAddr = new PrivateKey().Address;
 
         // See also InitializeUtil.cs
-        private static readonly Currency Ncg = Currency.Legacy(
+        private static readonly Currency Ncg = Currency.Uncapped(
             "NCG",
             2,
             null
@@ -187,7 +187,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
             yield return new object[]
             {
-                tableSheets.WorldSheet.OrderedList.Last(world => world.Id < 100).StageEnd,
+                tableSheets.WorldSheet.OrderedList!.Last(world => world.Id < 100).StageEnd,
                 new WorldInformation(0L, worldSheet, true),
             };
         }
@@ -421,7 +421,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var inventoryState = new Inventory((List)state.GetAccount(Addresses.Inventory).GetState(_avatarAddress));
+            var inventoryState = new Inventory((List)state.GetAccount(Addresses.Inventory).GetState(_avatarAddress)!);
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
             {
