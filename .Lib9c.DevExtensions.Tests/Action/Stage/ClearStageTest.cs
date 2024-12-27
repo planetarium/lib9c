@@ -5,7 +5,6 @@ using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
-using Nekoyume.Action;
 using Nekoyume.Module;
 using Xunit;
 

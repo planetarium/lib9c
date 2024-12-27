@@ -28,6 +28,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly IWorld _initialState;
         private readonly Currency _ncg;
+        private readonly PublicKey _agentPublicKey = new PrivateKey().PublicKey;
         private readonly Address _agentAddr;
         private readonly StakePolicySheet _stakePolicySheet;
 
@@ -66,7 +67,9 @@ namespace Lib9c.Tests.Action
                 _agentAddr,
                 _,
                 _initialState
-            ) = InitializeUtil.InitializeStates(sheetsOverride: sheetsOverride);
+            ) = InitializeUtil.InitializeStates(
+                sheetsOverride: sheetsOverride,
+                agentAddr: _agentPublicKey.Address);
             _ncg = _initialState.GetGoldCurrency();
             _stakePolicySheet = _initialState.GetSheet<StakePolicySheet>();
         }
@@ -447,6 +450,80 @@ namespace Lib9c.Tests.Action
 
             var nextState = Execute(
                 height + interval,
+                world,
+                new TestRandom(),
+                _agentAddr,
+                amount);
+
+            if (amount > 0)
+            {
+                Assert.True(nextState.TryGetStakeState(_agentAddr, out StakeState nextStakeState));
+                Assert.Equal(3, nextStakeState.StateVersion);
+            }
+
+            world = DelegationUtil.EnsureStakeReleased(
+                nextState, height + LegacyStakeState.LockupInterval);
+
+            var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
+            var actualBalance = world.GetBalance(_agentAddr, _ncg);
+            var nonValidatorDelegateeBalance = world.GetBalance(
+                Addresses.NonValidatorDelegatee, Currencies.GuildGold);
+            var stakeBalance = world.GetBalance(stakeStateAddr, Currencies.GuildGold);
+            Assert.Equal(expectedBalance, actualBalance);
+            Assert.Equal(Currencies.GuildGold * 0, nonValidatorDelegateeBalance);
+            Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
+        }
+
+        [Theory]
+        [InlineData(0, 500, false)]
+        [InlineData(50, 100, false)]
+        [InlineData(0, long.MaxValue, false)]
+        [InlineData(0, 500, true)]
+        [InlineData(50, 100, true)]
+        [InlineData(0, long.MaxValue, true)]
+        public void Execute_Success_When_Validator_Tries_To_Increase_Amount_Without_Claim(
+            long previousAmount,
+            long amount,
+            bool withoutInterval)
+        {
+            if (previousAmount >= amount)
+            {
+                throw new ArgumentException(
+                    "previousAmount should be less than amount.", nameof(previousAmount));
+            }
+
+            var interval = LegacyStakeState.RewardInterval;
+            var stakeStateAddr = StakeState.DeriveAddress(_agentAddr);
+            var stakeState = new StakeState(
+                contract: new Contract(_stakePolicySheet),
+                startedBlockIndex: 0L,
+                receivedBlockIndex: interval,
+                stateVersion: 3);
+            var world = _initialState;
+            var height = 0L;
+
+            world = DelegationUtil.EnsureValidatorPromotionReady(world, _agentPublicKey, height++);
+
+            if (previousAmount > 0)
+            {
+                var ncgToStake = _ncg * previousAmount;
+                var gg = FungibleAssetValue.Parse(Currencies.GuildGold, ncgToStake.GetQuantityString(true));
+                world = DelegationUtil.MintGuildGold(world, _agentAddr, gg, height);
+                world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
+                world = world.TransferAsset(
+                    new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
+            }
+
+            world = world.SetLegacyState(stakeStateAddr, stakeState.Serialize());
+
+            if (amount - previousAmount > 0)
+            {
+                var ncgToStake = _ncg * (amount - previousAmount);
+                world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
+            }
+
+            var nextState = Execute(
+                height + (withoutInterval ? 1 : interval),
                 world,
                 new TestRandom(),
                 _agentAddr,

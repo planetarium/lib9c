@@ -34,6 +34,7 @@ namespace Lib9c.DevExtensions
             {
                 logConfig = logConfig.WriteTo.Console();
             }
+
             return logConfig.CreateLogger();
         }
 
@@ -42,29 +43,30 @@ namespace Lib9c.DevExtensions
             IStore Store,
             IKeyValueStore StateKVStore,
             IStateStore StateStore
-        ) GetBlockChain(
-            ILogger logger,
-            string storePath,
-            Guid? chainId = null,
-            IKeyValueStore stateKeyValueStore = null
-        )
+            ) GetBlockChain(
+                ILogger logger,
+                string storePath,
+                Guid? chainId = null,
+                IKeyValueStore stateKeyValueStore = null
+            )
         {
             var policySource = new BlockPolicySource();
-            IBlockPolicy policy = policySource.GetPolicy();
+            var policy = policySource.GetPolicy();
             IStagePolicy stagePolicy = new VolatileStagePolicy();
             IStore store = new RocksDBStore(storePath);
             if (stateKeyValueStore is null)
             {
                 stateKeyValueStore = new RocksDBKeyValueStore(Path.Combine(storePath, "states"));
             }
+
             IStateStore stateStore = new TrieStateStore(stateKeyValueStore);
-            Guid chainIdValue
+            var chainIdValue
                 = chainId ??
-                  store.GetCanonicalChainId() ??
-                  throw new CommandExitedException(
-                      "No canonical chain ID.  Available chain IDs:\n    " +
-                      string.Join<Guid>("\n    ", store.ListChainIds()),
-                      1);
+                store.GetCanonicalChainId() ??
+                throw new CommandExitedException(
+                    "No canonical chain ID.  Available chain IDs:\n    " +
+                    string.Join<Guid>("\n    ", store.ListChainIds()),
+                    1);
 
             BlockHash genesisBlockHash;
             try
@@ -75,16 +77,17 @@ namespace Lib9c.DevExtensions
             {
                 throw new CommandExitedException(
                     $"The chain {chainIdValue} seems empty; try with another chain ID:\n    " +
-                        string.Join<Guid>("\n    ", store.ListChainIds()),
+                    string.Join<Guid>("\n    ", store.ListChainIds()),
                     1
                 );
             }
-            Block genesis = store.GetBlock(
+
+            var genesis = store.GetBlock(
                 genesisBlockHash
             );
             var blockChainStates = new BlockChainStates(store, stateStore);
             var actionLoader = new NCDevActionLoader();
-            ActionEvaluator actionEvaluator = new ActionEvaluator(
+            var actionEvaluator = new ActionEvaluator(
                 policy.PolicyActionsRegistry,
                 stateStore,
                 actionLoader);
@@ -93,27 +96,28 @@ namespace Lib9c.DevExtensions
             if (store.GetCanonicalChainId() is null)
             {
                 chain = BlockChain.Create(
-                    policy: policy,
-                    stagePolicy: stagePolicy,
-                    store: store,
-                    stateStore: stateStore,
-                    genesisBlock: genesis,
-                    actionEvaluator: actionEvaluator
+                    policy,
+                    stagePolicy,
+                    store,
+                    stateStore,
+                    genesis,
+                    actionEvaluator
                 );
             }
             else
             {
                 chain = new BlockChain(
-                    policy: policy,
-                    stagePolicy: stagePolicy,
-                    store: store,
-                    stateStore: stateStore,
-                    genesisBlock: genesis,
+                    policy,
+                    stagePolicy,
+                    store,
+                    stateStore,
+                    genesis,
                     renderers: null,
                     blockChainStates: blockChainStates,
                     actionEvaluator: actionEvaluator
                 );
             }
+
             return (chain, store, stateKeyValueStore, stateStore);
         }
 
@@ -154,8 +158,8 @@ namespace Lib9c.DevExtensions
                 return chain[defaultIndex];
             }
 
-            if (long.TryParse(blockStr, out long idx) ||
-                blockStr.StartsWith("#") && long.TryParse(blockStr.Substring(1), out idx))
+            if (long.TryParse(blockStr, out var idx) ||
+                (blockStr.StartsWith("#") && long.TryParse(blockStr.Substring(1), out idx)))
             {
                 try
                 {
@@ -167,7 +171,7 @@ namespace Lib9c.DevExtensions
                 }
             }
 
-            BlockHash blockHash = ParseBlockHash(blockStr);
+            var blockHash = ParseBlockHash(blockStr);
             return chain[blockHash];
         }
 
@@ -184,11 +188,12 @@ namespace Lib9c.DevExtensions
                         $"Lib9c{Path.DirectorySeparatorChar}" +
                         $"TableCSV{Path.DirectorySeparatorChar}");
             }
+
             var files = Directory.GetFiles(dir, "*.csv", SearchOption.AllDirectories);
             var sheets = new Dictionary<string, string>();
             foreach (var filePath in files)
             {
-                string fileName = Path.GetFileName(filePath);
+                var fileName = Path.GetFileName(filePath);
                 if (fileName.EndsWith(".csv"))
                 {
                     fileName = fileName.Replace(".csv", "");
@@ -211,7 +216,7 @@ namespace Lib9c.DevExtensions
             {
                 var pendingKey = new PrivateKey();
                 var nonce = pendingKey.PublicKey.Address.ToByteArray();
-                (ActivationKey ak, PendingActivationState s) =
+                (var ak, var s) =
                     ActivationKey.Create(pendingKey, nonce);
                 ps.Add(s);
                 ks.Add(ak);
@@ -229,12 +234,12 @@ namespace Lib9c.DevExtensions
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
 
-            string json = File.ReadAllText(configPath);
+            var json = File.ReadAllText(configPath);
             var config = JsonSerializer.Deserialize<AuthorizedMinersStateConfig>(json, options);
             return new AuthorizedMinersState(
-                miners: config.Miners.Select(addr => new Address(addr)),
-                interval: config.Interval,
-                validUntil: config.ValidUntil);
+                config.Miners.Select(addr => new Address(addr)),
+                config.Interval,
+                config.ValidUntil);
         }
 
         public static AdminState GetAdminState(string configPath)
@@ -245,11 +250,11 @@ namespace Lib9c.DevExtensions
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
 
-            string json = File.ReadAllText(configPath);
+            var json = File.ReadAllText(configPath);
             var config = JsonSerializer.Deserialize<AdminStateConfig>(json, options);
             return new AdminState(
-                adminAddress: new Address(config.AdminAddress),
-                validUntil: config.ValidUntil);
+                new Address(config.AdminAddress),
+                config.ValidUntil);
         }
 
         public static ImmutableHashSet<Address> GetActivatedAccounts(string listPath)
@@ -260,8 +265,8 @@ namespace Lib9c.DevExtensions
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
 
-            string json = File.ReadAllText(listPath);
-            ActivatedAccounts activatedAccounts = JsonSerializer.Deserialize<ActivatedAccounts>(json, options);
+            var json = File.ReadAllText(listPath);
+            var activatedAccounts = JsonSerializer.Deserialize<ActivatedAccounts>(json, options);
 
             return activatedAccounts.Accounts
                 .Select(account => new Address(account))
@@ -270,8 +275,8 @@ namespace Lib9c.DevExtensions
 
         public static void ExportBlock(Block block, string path)
         {
-            Bencodex.Types.Dictionary dict = block.MarshalBlock();
-            byte[] encoded = new Codec().Encode(dict);
+            var dict = block.MarshalBlock();
+            var encoded = new Codec().Encode(dict);
             File.WriteAllBytes(path, encoded);
         }
 

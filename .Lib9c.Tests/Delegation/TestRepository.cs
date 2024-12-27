@@ -24,7 +24,8 @@ namespace Nekoyume.Delegation
                   unbondLockInAccountAddress: new Address("0000000000000000000000000000000000000005"),
                   rebondGraceAccountAddress: new Address("0000000000000000000000000000000000000006"),
                   unbondingSetAccountAddress: new Address("0000000000000000000000000000000000000007"),
-                  lumpSumRewardRecordAccountAddress: new Address("0000000000000000000000000000000000000008"))
+                  rewardBaseAccountAddress: new Address("0000000000000000000000000000000000000008"),
+                  lumpSumRewardRecordAccountAddress: new Address("0000000000000000000000000000000000000009"))
         {
             _context = context;
         }
