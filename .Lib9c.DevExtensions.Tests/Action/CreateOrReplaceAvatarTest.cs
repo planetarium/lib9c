@@ -466,7 +466,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 RandomSeed = 0,
                 BlockIndex = blockIndex,
             });
-            var agent = nextStates.GetAgentState(agentAddr);
+            var agent = nextStates.GetAgentState(agentAddr)!;
             Assert.Single(agent.avatarAddresses);
             Assert.True(agent.avatarAddresses.ContainsKey(action.AvatarIndex));
             avatarAddr ??= agent.avatarAddresses[action.AvatarIndex];
