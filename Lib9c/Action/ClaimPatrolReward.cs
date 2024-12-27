@@ -8,11 +8,9 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
-using Nekoyume.TableData;
 using Nekoyume.TableData.Event;
 
 namespace Nekoyume.Action
@@ -25,6 +23,10 @@ namespace Nekoyume.Action
     public class ClaimPatrolReward : ActionBase
     {
         public const string TypeIdentifier = "claim_patrol_reward";
+
+        /// <summary>
+        /// The address of the avatar to receive the patrol reward.
+        /// </summary>
         public Address AvatarAddress;
 
         public ClaimPatrolReward()
@@ -40,6 +42,9 @@ namespace Nekoyume.Action
             GasTracer.UseGas(1);
             var signer = context.Signer;
             var states = context.PreviousState;
+
+            // Validate that the avatar address belongs to the signer.
+            // This ensures that only the owner of the avatar can claim the patrol reward for it.
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(signer, AvatarAddress))
             {
                 throw new InvalidAddressException();
@@ -61,14 +66,17 @@ namespace Nekoyume.Action
             // validate
             states.TryGetPatrolRewardClaimedBlockIndex(AvatarAddress, out var claimedBlockIndex);
             var row = patrolRewardSheet.FindByLevel(avatarLevel, context.BlockIndex);
+
+            // Ensure rewards cannot be claimed too frequently.
+            // If the last claimed block index is set and the current block index is less than the allowed interval, throw an exception.
             if (claimedBlockIndex > 0L && claimedBlockIndex + row.Interval > context.BlockIndex)
             {
                 throw new RequiredBlockIndexException();
             }
 
-            // mit rewards
+            // mint rewards
             var random = context.GetRandom();
-            var favs = new List<FungibleAssetValue>();
+            var fav = new List<FungibleAssetValue>();
             var items = new List<(int id, int count)>();
             foreach (var reward in row.Rewards)
             {
@@ -83,23 +91,22 @@ namespace Nekoyume.Action
                 {
                     var currency = Currencies.GetMinterlessCurrency(ticker);
                     var recipient = Currencies.PickAddress(currency, signer, AvatarAddress);
-                    var fav = currency * reward.Count;
-                    states = states.MintAsset(context, recipient, fav);
-                    favs.Add(fav);
+                    var asset = currency * reward.Count;
+                    states = states.MintAsset(context, recipient, asset);
+                    fav.Add(asset);
                 }
             }
 
             var mailBox = avatarState.mailBox;
-            var mail = new PatrolRewardMail(context.BlockIndex, random.GenerateRandomGuid(), context.BlockIndex, favs, items);
+            var mail = new PatrolRewardMail(context.BlockIndex, random.GenerateRandomGuid(), context.BlockIndex, fav, items);
             mailBox.Add(mail);
             mailBox.CleanUp();
             avatarState.mailBox = mailBox;
 
             // set states
-            states = states
+            return states
                 .SetAvatarState(AvatarAddress, avatarState, setAvatar: true, setInventory: true, setWorldInformation: false, setQuestList: false)
                 .SetPatrolRewardClaimedBlockIndex(AvatarAddress, context.BlockIndex);
-            return states;
         }
 
         public override IValue PlainValue => Dictionary.Empty
