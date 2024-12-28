@@ -63,7 +63,7 @@ importers:
   lib9c:
     dependencies:
       '@planetarium/account':
-        specifier: ^5.4.1
+        specifier: '>=5.0.0 <6.0.0'
         version: 5.4.1
       '@planetarium/bencodex':
         specifier: ^0.2.2

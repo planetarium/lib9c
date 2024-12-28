@@ -1,6 +1,6 @@
 {
   "name": "@planetarium/lib9c",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "",
   "module": "dist/index.js",
   "exports": {
@@ -40,7 +40,7 @@
     "vitest": "^1.5.2"
   },
   "dependencies": {
-    "@planetarium/account": "^5.4.1",
+    "@planetarium/account": ">=5.0.0 <6.0.0",
     "@planetarium/bencodex": "^0.2.2",
     "@planetarium/tx": "^5.4.1",
     "buffer": "^6.0.3",
