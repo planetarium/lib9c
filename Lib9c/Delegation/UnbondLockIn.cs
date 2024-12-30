@@ -112,6 +112,8 @@ namespace Nekoyume.Delegation
 
         public Address DelegatorAddress { get; }
 
+        public IDelegationRepository? Repository => _repository;
+
         // TODO: Use better custom collection type
         public ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> Entries { get; }
 
@@ -186,9 +188,12 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV)
+            Address slashedPoolAddress)
         {
-            slashedFAV = null;
+            // TODO: Extract common logic to abstract class
+            CannotMutateRelationsWithoutRepository();
+
+            var slashed = new SortedDictionary<Address, FungibleAssetValue>();
             var updatedEntries = Entries;
             var entriesToSlash = Entries.TakeWhile(e => e.Key >= infractionHeight);
             foreach (var (expireHeight, entries) in entriesToSlash)
@@ -199,12 +204,35 @@ namespace Nekoyume.Delegation
                     var slashedEntry = entry.Slash(slashFactor, infractionHeight, out var slashedSingle);
                     int index = slashedEntries.BinarySearch(slashedEntry, _entryComparer);
                     slashedEntries = slashedEntries.Insert(index < 0 ? ~index : index, slashedEntry);
-                    slashedFAV = slashedFAV.HasValue
-                        ? slashedFAV.Value + slashedSingle
-                        : slashedSingle;
+                    if (slashed.TryGetValue(entry.UnbondeeAddress, out var value))
+                    {
+                        slashed[entry.UnbondeeAddress] = value + slashedSingle;
+                    }
+                    else
+                    {
+                        slashed[entry.UnbondeeAddress] = slashedSingle;
+                    }
                 }
 
                 updatedEntries = Entries.SetItem(expireHeight, slashedEntries);
+            }
+
+            foreach (var (address, slashedEach) in slashed)
+            {
+                var delegatee = Repository!.GetDelegatee(address);
+                var delegator = Repository!.GetDelegator(DelegatorAddress);
+
+                var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
+                var slashAmount = slashedEach;
+                if (delegationBalance < slashedEach)
+                {
+                    slashAmount = delegationBalance;
+                }
+
+                if (slashAmount > slashedEach.Currency * 0)
+                {
+                    Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
+                }
             }
 
             return UpdateEntries(updatedEntries);
@@ -214,8 +242,8 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV)
-            => Slash(slashFactor, infractionHeight, height, out slashedFAV);
+            Address slashedPoolAddress)
+            => Slash(slashFactor, infractionHeight, height, slashedPoolAddress);
 
         public override bool Equals(object? obj)
             => obj is UnbondLockIn other && Equals(other);

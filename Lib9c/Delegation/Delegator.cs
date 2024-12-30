@@ -192,6 +192,7 @@ namespace Nekoyume.Delegation
             AddUnbondingRef(srcDelegatee, UnbondingFactory.ToReference(srcRebondGrace));
 
             Repository.SetRebondGrace(srcRebondGrace);
+            Repository.TransferAsset(srcDelegatee.DelegationPoolAddress, dstDelegatee.DelegationPoolAddress, fav);
             Repository.SetDelegator((TDelegator)this);
         }
 
