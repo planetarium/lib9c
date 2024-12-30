@@ -21,6 +21,9 @@ namespace Lib9c.DevExtensions.Manager.Contents
     /// </summary>
     public static class CreateAvatarManager
     {
+        // TODO: Costume과 Grimoire, Aura에 한해 하드코딩같은 형태로 구현되어 있음. 추후 수정 필요. 
+        private const int AddItemCount = 10;
+
         /// <summary>
         /// Create an avatar and world state for testing.
         /// </summary>
@@ -252,17 +255,19 @@ namespace Lib9c.DevExtensions.Manager.Contents
             int tradableMaterialCount,
             int foodCount)
         {
-            foreach (var row in costumeItemSheet.OrderedList)
+            for (var i = 0; i < AddItemCount; ++i)
             {
-                avatarState.inventory.AddItem(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
+                foreach (var row in costumeItemSheet.OrderedList)
+                {
+                    avatarState.inventory.AddItem(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
+                }
             }
 
             foreach (var row in materialItemSheet.OrderedList)
             {
                 avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), materialCount);
 
-                if (row.ItemSubType == ItemSubType.Hourglass ||
-                    row.ItemSubType == ItemSubType.ApStone)
+                if (row.ItemSubType is ItemSubType.Hourglass or ItemSubType.ApStone)
                 {
                     avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), tradableMaterialCount);
                 }
@@ -271,8 +276,14 @@ namespace Lib9c.DevExtensions.Manager.Contents
             foreach (var row in equipmentItemSheet.OrderedList.Where(row =>
                 row.Id > GameConfig.DefaultAvatarWeaponId))
             {
-                var itemId = random.GenerateRandomGuid();
-                avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, itemId, default));
+                if (row.ItemSubType is ItemSubType.Grimoire or ItemSubType.Aura)
+                {
+                    for (var i = 0; i < AddItemCount; ++i)
+                    {
+                        avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, random.GenerateRandomGuid(), default));
+                    }
+                }
+                avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, random.GenerateRandomGuid(), default));
             }
 
             foreach (var row in consumableItemSheet.OrderedList)
