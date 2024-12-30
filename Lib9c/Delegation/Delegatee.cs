@@ -267,20 +267,9 @@ namespace Nekoyume.Delegation
                 if (Repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
                 {
                     var lastRewardBase = Repository.GetRewardBase((TDelegatee)this, bond.LastDistributeHeight.Value);
-                    TransferReward(delegator, share, rewardBase, lastRewardBase);
+                    var rewards = CalculateRewards(share, rewardBase, lastRewardBase);
+                    TransferRewards(delegator, rewards);
                     // TransferRemainders(newRecord);
-                }
-                else
-                {
-                    IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords
-                        = GetLumpSumRewardsRecords(bond.LastDistributeHeight);
-
-                    foreach (LumpSumRewardsRecord record in lumpSumRewardsRecords)
-                    {
-                        TransferReward(delegator, share, record);
-                        // TransferRemainders(newRecord);
-                        Repository.SetLumpSumRewardsRecord(record);
-                    }
                 }
             }
 
@@ -309,26 +298,6 @@ namespace Nekoyume.Delegation
 
                 Repository.SetRewardBase(rewardBase);
             }
-            else
-            {
-                LumpSumRewardsRecord record = Repository.GetCurrentLumpSumRewardsRecord((TDelegatee)this)
-                    ?? new LumpSumRewardsRecord(
-                        CurrentLumpSumRewardsRecordAddress(),
-                        height,
-                        TotalShares,
-                        RewardCurrencies);
-                record = record.AddLumpSumRewards(rewards);
-
-                foreach (var rewardsEach in rewards)
-                {
-                    if (rewardsEach.Sign > 0)
-                    {
-                        Repository.TransferAsset(RewardPoolAddress, record.Address, rewardsEach);
-                    }
-                }
-
-                Repository.SetLumpSumRewardsRecord(record);
-            }
         }
 
         public virtual void Slash(BigInteger slashFactor, long infractionHeight, long height)
@@ -350,12 +319,7 @@ namespace Nekoyume.Delegation
             {
                 var unbonding = UnbondingFactory.GetUnbondingFromRef(item, Repository);
 
-                unbonding = unbonding.Slash(slashFactor, infractionHeight, height, out var slashedFAV);
-
-                if (slashedFAV.HasValue)
-                {
-                    slashed += slashedFAV.Value;
-                }
+                unbonding = unbonding.Slash(slashFactor, infractionHeight, height, SlashedPoolAddress);
 
                 if (unbonding.IsEmpty)
                 {
@@ -399,23 +363,6 @@ namespace Nekoyume.Delegation
         internal void RemoveUnbondingRef(UnbondingRef reference)
             => Metadata.RemoveUnbondingRef(reference);
 
-        public ImmutableDictionary<Currency, FungibleAssetValue> CalculateReward(
-            BigInteger share,
-            IEnumerable<LumpSumRewardsRecord> lumpSumRewardsRecords)
-        {
-            ImmutableDictionary<Currency, FungibleAssetValue> reward
-                = RewardCurrencies.ToImmutableDictionary(c => c, c => c * 0);
-
-            foreach (LumpSumRewardsRecord record in lumpSumRewardsRecords)
-            {
-                var rewardDuringPeriod = record.RewardsDuringPeriod(share);
-                reward = rewardDuringPeriod.Aggregate(reward, (acc, pair)
-                    => acc.SetItem(pair.Key, acc[pair.Key] + pair.Value));
-            }
-
-            return reward;
-        }
-
         /// <summary>
         /// Start a new reward period.
         /// It generates a new <see cref="RewardBase"/> and archives the current one.
@@ -425,8 +372,6 @@ namespace Nekoyume.Delegation
         /// </param>
         public void StartNewRewardPeriod(long height)
         {
-            MigrateLumpSumRewardsRecords();
-
             RewardBase newRewardBase;
             if (Repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
             {
@@ -457,46 +402,7 @@ namespace Nekoyume.Delegation
             Repository.SetRewardBase(newRewardBase);
         }
 
-        private List<LumpSumRewardsRecord> GetLumpSumRewardsRecords(long? lastRewardHeight)
-        {
-            List<LumpSumRewardsRecord> records = new();
-            if (lastRewardHeight is null
-                || !(Repository.GetCurrentLumpSumRewardsRecord((TDelegatee)this) is LumpSumRewardsRecord record))
-            {
-                return records;
-            }
-
-            while (record.StartHeight >= lastRewardHeight)
-            {
-                records.Add(record);
-
-                if (!(record.LastStartHeight is long lastStartHeight))
-                {
-                    break;
-                }
-
-                record = Repository.GetLumpSumRewardsRecord((TDelegatee)this, lastStartHeight)
-                    ?? throw new InvalidOperationException(
-                        $"Lump sum rewards record for #{lastStartHeight} is missing");
-            }
-
-            return records;
-        }
-
-        private void TransferReward(TDelegator delegator, BigInteger share, LumpSumRewardsRecord record)
-        {
-            ImmutableSortedDictionary<Currency, FungibleAssetValue> reward = record.RewardsDuringPeriod(share);
-            foreach (var rewardEach in reward)
-            {
-                if (rewardEach.Value.Sign > 0)
-                {
-                    Repository.TransferAsset(record.Address, delegator.RewardAddress, rewardEach.Value);
-                }
-            }
-        }
-
-        private void TransferReward(
-            TDelegator delegator,
+        public IEnumerable<FungibleAssetValue> CalculateRewards(
             BigInteger share,
             RewardBase currentRewardBase,
             RewardBase? lastRewardBase)
@@ -515,96 +421,18 @@ namespace Nekoyume.Delegation
                 }
 
                 var reward = c.Value - lastCumulativeEach;
+                yield return reward;          
+            }
+        }
 
+        private void TransferRewards(TDelegator delegator, IEnumerable<FungibleAssetValue> rewards)
+        {
+            foreach (var reward in rewards)
+            {
                 if (reward.Sign > 0)
                 {
                     Repository.TransferAsset(DistributionPoolAddress(), delegator.RewardAddress, reward);
                 }
-            }
-        }
-
-        private void TransferRemainders(LumpSumRewardsRecord record)
-        {
-            foreach (var rewardCurrency in RewardCurrencies)
-            {
-                FungibleAssetValue remainder = Repository.GetBalance(record.Address, rewardCurrency);
-
-                if (remainder.Sign > 0)
-                {
-                    Repository.TransferAsset(record.Address, RewardRemainderPoolAddress, remainder);
-                }
-            }
-        }
-
-        private void MigrateLumpSumRewardsRecords()
-        {
-            var growSize = 100;
-            var capacity = 5000;
-            List<LumpSumRewardsRecord> records = new(capacity);
-            if (!(Repository.GetCurrentLumpSumRewardsRecord((TDelegatee)this) is LumpSumRewardsRecord record))
-            {
-                return;
-            }
-
-            while (record.LastStartHeight is long lastStartHeight)
-            {
-                if (records.Count == capacity)
-                {
-                    capacity += growSize;
-                    records.Capacity = capacity;
-                }
-
-                records.Add(record);
-                record = Repository.GetLumpSumRewardsRecord((TDelegatee)this, lastStartHeight)
-                    ?? throw new InvalidOperationException(
-                            $"Lump sum rewards record for #{lastStartHeight} is missing");
-            }
-
-            RewardBase? rewardBase = null;
-            for (var i = records.Count - 1; i >= 0; i--)
-            {
-                var recordEach = records[i];
-
-                if (rewardBase is null)
-                {
-                    rewardBase = new RewardBase(
-                        CurrentRewardBaseAddress(),
-                        recordEach.TotalShares,
-                        recordEach.LumpSumRewards.Keys);
-                }
-                else
-                {
-                    var newRewardBase = rewardBase.UpdateSigFig(recordEach.TotalShares);
-                    if (Repository.GetRewardBase((TDelegatee)this, recordEach.StartHeight) is not null)
-                    {
-                        Repository.SetRewardBase(newRewardBase);
-                    }
-                    else
-                    {
-                        Address archiveAddress = RewardBaseAddress(recordEach.StartHeight);
-                        var archivedRewardBase = rewardBase.AttachHeight(archiveAddress, recordEach.StartHeight);
-                        Repository.SetRewardBase(archivedRewardBase);
-                    }
-
-                    rewardBase = newRewardBase;
-                }
-
-                rewardBase = rewardBase.AddRewards(recordEach.LumpSumRewards.Values, recordEach.TotalShares);
-                foreach (var r in recordEach.LumpSumRewards)
-                {
-                    var toTransfer = Repository.GetBalance(recordEach.Address, r.Key);
-                    if (toTransfer.Sign > 0)
-                    {
-                        Repository.TransferAsset(recordEach.Address, DistributionPoolAddress(), toTransfer);
-                    }
-                }
-
-                Repository.RemoveLumpSumRewardsRecord(recordEach);
-            }
-
-            if (rewardBase is RewardBase rewardBaseToSet)
-            {
-                Repository.SetRewardBase(rewardBaseToSet);
             }
         }
     }

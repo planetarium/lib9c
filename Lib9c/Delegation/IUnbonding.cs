@@ -24,6 +24,6 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV);
+            Address slashedPoolAddress);
     }
 }
