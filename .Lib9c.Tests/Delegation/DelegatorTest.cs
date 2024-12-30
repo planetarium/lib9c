@@ -282,13 +282,6 @@ namespace Lib9c.Tests.Delegation
             repo.MintAsset(delegator2.Address, delegatorInitialBalance);
 
             var rewards = delegatee.RewardCurrencies.Select(r => r * 100);
-            foreach (var reward in rewards)
-            {
-                repo.MintAsset(delegatee.RewardPoolAddress, reward);
-            }
-
-            // EndBlock after delegatee's reward
-            delegatee.CollectRewards(10L);
 
             var delegatingFAV1 = delegatee.DelegationCurrency * 10;
             delegator1.Delegate(delegatee, delegatingFAV1, 10L);
@@ -322,14 +315,12 @@ namespace Lib9c.Tests.Delegation
                 c => repo.World.GetBalance(delegator1.Address, c));
             var collectedRewards = delegatee.RewardCurrencies.Select(
                c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            var legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards1 = rewards.Select(r => (r * share1).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1 * 2, delegator1Balance);
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards.Zip(rewards1, (f, s) => f - s), collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
 
             delegator2.Delegate(delegatee, delegatingFAV2, 11L);
             delegator2Balance = repo.World.GetBalance(delegator2.Address, delegatee.DelegationCurrency);
@@ -339,7 +330,6 @@ namespace Lib9c.Tests.Delegation
                 c => repo.World.GetBalance(delegator2.Address, c));
             collectedRewards = delegatee.RewardCurrencies.Select(
                c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards2 = rewards.Select(r => (r * share2).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1 * 2, delegator1Balance);
@@ -352,7 +342,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(
                 rewards.Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
                 collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
         }
 
         [Fact]
@@ -367,13 +356,6 @@ namespace Lib9c.Tests.Delegation
             repo.MintAsset(delegator2.Address, delegatorInitialBalance);
 
             var rewards = delegatee.RewardCurrencies.Select(r => r * 100);
-            foreach (var reward in rewards)
-            {
-                repo.MintAsset(delegatee.RewardPoolAddress, reward);
-            }
-
-            // BeginBlock after delegatee's reward
-            delegatee.CollectRewards(10L);
 
             var delegatingFAV1 = delegatee.DelegationCurrency * 10;
             delegator1.Delegate(delegatee, delegatingFAV1, 10L);
@@ -406,14 +388,12 @@ namespace Lib9c.Tests.Delegation
                 c => repo.World.GetBalance(delegator1.Address, c));
             var collectedRewards = delegatee.RewardCurrencies.Select(
                 c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            var legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards1 = rewards.Select(r => (r * share1).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1, delegator1Balance);
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards.Zip(rewards1, (f, s) => f - s), collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
 
             shareToUndelegate = repo.GetBond(delegatee, delegator2.Address).Share / 2;
             delegator2.Undelegate(delegatee, shareToUndelegate, 11L);
@@ -424,7 +404,6 @@ namespace Lib9c.Tests.Delegation
                 c => repo.World.GetBalance(delegator2.Address, c));
             collectedRewards = delegatee.RewardCurrencies.Select(
                 c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards2 = rewards.Select(r => (r * share2).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1, delegator1Balance);
@@ -436,9 +415,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(
                 rewards.Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
                 collectedRewards);
-            Assert.Equal(
-                rewards,
-                legacyRewards);
         }
 
         [Fact]
@@ -454,13 +430,6 @@ namespace Lib9c.Tests.Delegation
             repo.MintAsset(delegator2.Address, delegatorInitialBalance);
 
             var rewards = delegatee.RewardCurrencies.Select(r => r * 100);
-            foreach (var reward in rewards)
-            {
-                repo.MintAsset(delegatee.RewardPoolAddress, reward);
-            }
-
-            // EndBlock after delegatee's reward
-            delegatee.CollectRewards(10L);
 
             var delegatingFAV1 = delegatee.DelegationCurrency * 10;
             delegator1.Delegate(delegatee, delegatingFAV1, 10L);
@@ -493,14 +462,12 @@ namespace Lib9c.Tests.Delegation
                c => repo.World.GetBalance(delegator1.Address, c));
             var collectedRewards = delegatee.RewardCurrencies.Select(
                c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            var legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards1 = rewards.Select(r => (r * share1).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1, delegator1Balance);
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards.Zip(rewards1, (f, s) => f - s), collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
 
             shareToRedelegate = repo.GetBond(delegatee, delegator2.Address).Share / 2;
             delegator2.Redelegate(delegatee, dstDelegatee, shareToRedelegate, 11L);
@@ -511,7 +478,6 @@ namespace Lib9c.Tests.Delegation
                 c => repo.World.GetBalance(delegator2.Address, c));
             collectedRewards = delegatee.RewardCurrencies.Select(
                c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards2 = rewards.Select(r => (r * share2).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1, delegator1Balance);
@@ -524,7 +490,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(
                 rewards.Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
                 collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
         }
 
         [Fact]
@@ -540,13 +505,6 @@ namespace Lib9c.Tests.Delegation
             repo.MintAsset(delegator2.Address, delegatorInitialBalance);
 
             var rewards = delegatee.RewardCurrencies.Select(r => r * 100);
-            foreach (var reward in rewards)
-            {
-                repo.MintAsset(delegatee.RewardPoolAddress, reward);
-            }
-
-            // EndBlock after delegatee's reward
-            delegatee.CollectRewards(10L);
 
             var delegatingFAV1 = delegatee.DelegationCurrency * 10;
             delegator1.Delegate(delegatee, delegatingFAV1, 10L);
@@ -579,14 +537,12 @@ namespace Lib9c.Tests.Delegation
                c => repo.World.GetBalance(delegator1.Address, c));
             var collectedRewards = delegatee.RewardCurrencies.Select(
                c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            var legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards1 = rewards.Select(r => (r * share1).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1, delegator1Balance);
             Assert.Equal(delegatorInitialBalance - delegatingFAV2, delegator2Balance);
             Assert.Equal(rewards1, delegator1RewardBalances);
             Assert.Equal(rewards.Zip(rewards1, (f, s) => f - s), collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
 
             shareToRedelegate = repo.GetBond(delegatee, delegator2.Address).Share / 2;
             delegator2.ClaimReward(delegatee, 11L);
@@ -597,7 +553,6 @@ namespace Lib9c.Tests.Delegation
                 c => repo.World.GetBalance(delegator2.Address, c));
             collectedRewards = delegatee.RewardCurrencies.Select(
                c => repo.World.GetBalance(delegatee.DistributionPoolAddress(), c));
-            legacyRewards = DelegationFixture.TotalRewardsOfRecords(delegatee, repo);
 
             var rewards2 = rewards.Select(r => (r * share2).DivRem(totalShares, out _));
             Assert.Equal(delegatorInitialBalance - delegatingFAV1, delegator1Balance);
@@ -610,7 +565,6 @@ namespace Lib9c.Tests.Delegation
             Assert.Equal(
                 rewards.Zip(rewards1.Zip(rewards2, (f, s) => f + s), (f, s) => f - s).ToArray(),
                 collectedRewards);
-            Assert.Equal(rewards, legacyRewards);
         }
     }
 }
