@@ -120,6 +120,8 @@ namespace Nekoyume.Delegation
 
         public List Bencoded
             => List.Empty
+                .Add(StateTypeName)
+                .Add(StateVersion)
                 .Add(DelegationPoolAddress.Bencoded)
                 .Add(RewardAddress.Bencoded)
                 .Add(new List(Delegatees.Select(a => a.Bencoded)))
