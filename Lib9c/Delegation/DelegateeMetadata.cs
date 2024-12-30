@@ -233,7 +233,7 @@ namespace Nekoyume.Delegation
 
         public Address SlashedPoolAddress { get; }
 
-        public long UnbondingPeriod { get; private set; }
+        public long UnbondingPeriod { get; internal set; }
 
         public int MaxUnbondLockInEntries { get; }
 

@@ -10,7 +10,6 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.Delegation;
-using Nekoyume.Model.State;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -83,6 +82,7 @@ namespace Nekoyume.ValidatorDelegation
             IsActive = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
+            Metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
             DelegationChanged += OnDelegationChanged;
             Enjailed += OnEnjailed;
             Unjailed += OnUnjailed;
@@ -90,8 +90,7 @@ namespace Nekoyume.ValidatorDelegation
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        // TODO: [MigrateGuild] Change unbonding period after migration.
-        public static long ValidatorUnbondingPeriod => LegacyStakeState.LockupInterval;
+        public static long ValidatorUnbondingPeriod => 75600L;
 
         public static int ValidatorMaxUnbondLockInEntries => 2;
 
