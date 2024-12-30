@@ -113,16 +113,20 @@ namespace Lib9c.Tests.Action.Scenario
             state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
             state = DelegationUtil.MakeGuild(state, _agentAddr, validatorKey.Address, 0L);
 
+            var withdrawHeight = stake2BlockIndex + LegacyStakeState.LockupInterval + 1;
             // Withdraw stake via stake3.
-            state = Stake3(state, _agentAddr, 0, stake2BlockIndex + LegacyStakeState.LockupInterval + 1);
+            state = Stake3(state, _agentAddr, _avatarAddr, 0, withdrawHeight);
 
-            state = DelegationUtil.EnsureStakeReleased(state, stake2BlockIndex + ValidatorDelegatee.ValidatorUnbondingPeriod);
+            var unbondedHeight = withdrawHeight + ValidatorDelegatee.ValidatorUnbondingPeriod;
+            state = DelegationUtil.EnsureUnbondedClaimed(
+                state, _agentAddr, unbondedHeight);
 
             // Stake 50 NCG via stake3 before patching.
-            const long firstStake3BlockIndex = stake2BlockIndex + LegacyStakeState.LockupInterval + 1;
+            var firstStake3BlockIndex = unbondedHeight;
             state = Stake3(
                 state,
                 _agentAddr,
+                _avatarAddr,
                 stakedAmount,
                 firstStake3BlockIndex);
 
@@ -146,6 +150,7 @@ namespace Lib9c.Tests.Action.Scenario
             state = Stake3(
                 state,
                 _agentAddr,
+                _avatarAddr,
                 stakedAmount,
                 firstStake3BlockIndex + 1);
 
@@ -197,10 +202,11 @@ namespace Lib9c.Tests.Action.Scenario
         private static IWorld Stake3(
             IWorld state,
             Address agentAddr,
+            Address avatarAddr,
             long stakingAmount,
             long blockIndex)
         {
-            var stake3 = new Stake(stakingAmount);
+            var stake3 = new Stake(stakingAmount, avatarAddr);
             return stake3.Execute(
                 new ActionContext
                 {
