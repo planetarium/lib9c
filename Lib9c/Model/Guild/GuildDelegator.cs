@@ -9,7 +9,6 @@ using Nekoyume.Action;
 using Nekoyume.Delegation;
 using Nekoyume.Model.Stake;
 using Nekoyume.Module;
-using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 
@@ -37,13 +36,14 @@ namespace Nekoyume.Model.Guild
             GuildRepository repository)
             : base(address: address, repository: repository)
         {
+            UnbondingReleased += OnUnbondingReleased;
         }
 
         public void OnUnbondingReleased(object? sender, (long Height, IUnbonding ReleasedUnbonding, FungibleAssetValue? ReleasedFAV) e)
         {
             if (e.ReleasedUnbonding is UnbondLockIn unbondLockIn)
             {
-                if (IsValidator(unbondLockIn.DelegateeAddress))
+                if (IsValidator(unbondLockIn.DelegatorAddress))
                 {
                     return;
                 }
@@ -55,7 +55,7 @@ namespace Nekoyume.Model.Guild
         private void Unstake(UnbondLockIn unbondLockIn, FungibleAssetValue? releasedFAV)
         {
             if (releasedFAV is not FungibleAssetValue gg
-                || gg.Currency.Equals(Currencies.GuildGold)
+                || !gg.Currency.Equals(Currencies.GuildGold)
                 || gg.Sign < 1)
             {
                 return;
