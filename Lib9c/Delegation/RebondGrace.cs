@@ -168,8 +168,9 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV)
+            Address slashedPoolAddress)
         {
+            // TODO: Extract common logic to abstract class
             CannotMutateRelationsWithoutRepository();
 
             var slashed = new SortedDictionary<Address, FungibleAssetValue>();
@@ -196,13 +197,23 @@ namespace Nekoyume.Delegation
                 updatedEntries = Entries.SetItem(expireHeight, slashedEntries);
             }
 
-            slashedFAV = null;
             foreach (var (address, slashedEach) in slashed)
             {
-                var delegatee = _repository!.GetDelegatee(address);
-                var delegator = _repository!.GetDelegator(DelegatorAddress);
+                var delegatee = Repository!.GetDelegatee(address);
+                var delegator = Repository!.GetDelegator(DelegatorAddress);
                 delegatee.Unbond(delegator, delegatee.ShareFromFAV(slashedEach), height);
-                slashedFAV = slashedFAV.HasValue ? slashedFAV + slashedEach : slashedEach;
+
+                var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
+                var slashAmount = slashedEach;
+                if (delegationBalance < slashedEach)
+                {
+                    slashAmount = delegationBalance;
+                }
+
+                if (slashAmount > slashedEach.Currency * 0)
+                {
+                    Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
+                }              
             }
 
 
@@ -213,8 +224,8 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV)
-            => Slash(slashFactor, infractionHeight, height, out slashedFAV);
+            Address slashedPoolAddress)
+            => Slash(slashFactor, infractionHeight, height, slashedPoolAddress);
 
         public override bool Equals(object? obj)
             => obj is RebondGrace other && Equals(other);
