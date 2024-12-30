@@ -428,7 +428,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public BigInteger Bond(TDelegator delegator, FungibleAssetValue fav, long height)</code></pre>
+    <pre><code class="lang-csharp hljs">public Bond Bond(TDelegator delegator, FungibleAssetValue fav, long height)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -443,7 +443,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dt><a class="xref" href="Nekoyume.Delegation.Bond.html">Bond</a></dt>
     <dd></dd>
   </dl>
 
@@ -461,7 +461,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
 
   <h3 id="Nekoyume_Delegation_Delegatee_3_CalculateReward_System_Numerics_BigInteger_System_Collections_Generic_IEnumerable_Nekoyume_Delegation_LumpSumRewardsRecord__" data-uid="Nekoyume.Delegation.Delegatee`3.CalculateReward(System.Numerics.BigInteger,System.Collections.Generic.IEnumerable{Nekoyume.Delegation.LumpSumRewardsRecord})">
   CalculateReward(BigInteger, IEnumerable&lt;LumpSumRewardsRecord&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L272"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L265"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -499,7 +499,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
 
   <h3 id="Nekoyume_Delegation_Delegatee_3_CollectRewards_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`3.CollectRewards(System.Int64)">
   CollectRewards(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L162"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -530,7 +530,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
 
   <h3 id="Nekoyume_Delegation_Delegatee_3_DistributeReward__2_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`3.DistributeReward(`2,System.Int64)">
   DistributeReward(TDelegator, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L127"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -635,7 +635,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
 
   <h3 id="Nekoyume_Delegation_Delegatee_3_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`3.Slash(System.Numerics.BigInteger,System.Int64,System.Int64)">
   Slash(BigInteger, long, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L205"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -670,7 +670,7 @@ Class Delegatee&lt;TRepository, TDelegatee, TDelegator&gt;  <a class="header-act
 
   <h3 id="Nekoyume_Delegation_Delegatee_3_StartNewRewardPeriod_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`3.StartNewRewardPeriod(System.Int64)">
   StartNewRewardPeriod(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L297"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L290"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Start a new reward period.
@@ -704,14 +704,14 @@ It generates a new <a class="xref" href="Nekoyume.Delegation.RewardBase.html">Re
 
   <h3 id="Nekoyume_Delegation_Delegatee_3_Unbond__2_System_Numerics_BigInteger_System_Int64_" data-uid="Nekoyume.Delegation.Delegatee`3.Unbond(`2,System.Numerics.BigInteger,System.Int64)">
   Unbond(TDelegator, BigInteger, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/Delegatee.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public FungibleAssetValue Unbond(TDelegator delegator, BigInteger share, long height)</code></pre>
+    <pre><code class="lang-csharp hljs">public Bond Unbond(TDelegator delegator, BigInteger share, long height)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -726,7 +726,7 @@ It generates a new <a class="xref" href="Nekoyume.Delegation.RewardBase.html">Re
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dt><a class="xref" href="Nekoyume.Delegation.Bond.html">Bond</a></dt>
     <dd></dd>
   </dl>
 
