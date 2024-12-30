@@ -39,6 +39,7 @@ namespace Nekoyume.Model.Guild
                   address: address,
                   repository: repository)
         {
+            Metadata.UnbondingPeriod = ValidatorDelegatee.ValidatorUnbondingPeriod;
         }
 
         public override void Slash(BigInteger slashFactor, long infractionHeight, long height)
