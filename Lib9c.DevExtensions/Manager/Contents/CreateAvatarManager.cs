@@ -267,7 +267,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
             {
                 avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), materialCount);
 
-                if (row.ItemSubType is ItemSubType.Hourglass or ItemSubType.ApStone)
+                if (row.ItemSubType is ItemSubType.Hourglass || row.ItemSubType is ItemSubType.ApStone)
                 {
                     avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), tradableMaterialCount);
                 }
@@ -276,7 +276,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
             foreach (var row in equipmentItemSheet.OrderedList.Where(row =>
                 row.Id > GameConfig.DefaultAvatarWeaponId))
             {
-                if (row.ItemSubType is ItemSubType.Grimoire or ItemSubType.Aura)
+                if (row.ItemSubType is ItemSubType.Grimoire || row.ItemSubType is ItemSubType.Aura)
                 {
                     for (var i = 0; i < AddItemCount; ++i)
                     {
