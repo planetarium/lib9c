@@ -257,7 +257,7 @@ namespace Nekoyume.Delegation
             var unbondings = Metadata.UnbondingRefs.Select(
                 unbondingRef => UnbondingFactory.GetUnbondingFromRef(unbondingRef, Repository));
             ReleaseUnbondings(unbondings, height);
-            Repository.SetDelegator(this);
+            Repository.SetDelegator((TDelegator)this);
         }
 
         private void ReleaseUnbondings(IEnumerable<IUnbonding> unbondings, long height)

@@ -44,7 +44,7 @@ namespace Nekoyume.Action.Guild
             }
 
             var repository = new ValidatorRepository(guildRepository);
-            var validatorDelegator = repository.GetValidatorDelegator(guild.Address);
+            var validatorDelegator = repository.GetDelegator(guild.Address);
             validatorDelegator.ReleaseUnbondings(context.BlockIndex);
 
             return repository.World;
