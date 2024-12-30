@@ -79,7 +79,7 @@ namespace Nekoyume.Model.Guild
             var repository = new ValidatorRepository(Repository);
             try
             {
-                repository.GetValidatorDelegatee(address);
+                repository.GetDelegatee(address);
                 return true;
             }
             catch (FailedLoadStateException)
