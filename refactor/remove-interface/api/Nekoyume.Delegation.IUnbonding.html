@@ -275,6 +275,37 @@ Interface IUnbonding  <a class="header-action link-secondary" title="View source
 
 
 
+  <a id="Nekoyume_Delegation_IUnbonding_Reference_" data-uid="Nekoyume.Delegation.IUnbonding.Reference*"></a>
+
+  <h3 id="Nekoyume_Delegation_IUnbonding_Reference" data-uid="Nekoyume.Delegation.IUnbonding.Reference">
+  Reference
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/IUnbonding.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">UnbondingRef Reference { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Delegation.UnbondingRef.html">UnbondingRef</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -283,7 +314,7 @@ Interface IUnbonding  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Delegation_IUnbonding_Release_System_Int64_System_Nullable_Libplanet_Types_Assets_FungibleAssetValue___" data-uid="Nekoyume.Delegation.IUnbonding.Release(System.Int64,System.Nullable{Libplanet.Types.Assets.FungibleAssetValue}@)">
   Release(long, out FungibleAssetValue?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/IUnbonding.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/IUnbonding.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -319,16 +350,16 @@ Interface IUnbonding  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Delegation_IUnbonding_Slash_" data-uid="Nekoyume.Delegation.IUnbonding.Slash*"></a>
 
-  <h3 id="Nekoyume_Delegation_IUnbonding_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_System_Collections_Generic_SortedDictionary_Libplanet_Crypto_Address_Libplanet_Types_Assets_FungibleAssetValue___" data-uid="Nekoyume.Delegation.IUnbonding.Slash(System.Numerics.BigInteger,System.Int64,System.Int64,System.Collections.Generic.SortedDictionary{Libplanet.Crypto.Address,Libplanet.Types.Assets.FungibleAssetValue}@)">
-  Slash(BigInteger, long, long, out SortedDictionary&lt;Address, FungibleAssetValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/IUnbonding.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Delegation_IUnbonding_Slash_System_Numerics_BigInteger_System_Int64_System_Collections_Generic_SortedDictionary_Libplanet_Crypto_Address_Libplanet_Types_Assets_FungibleAssetValue___" data-uid="Nekoyume.Delegation.IUnbonding.Slash(System.Numerics.BigInteger,System.Int64,System.Collections.Generic.SortedDictionary{Libplanet.Crypto.Address,Libplanet.Types.Assets.FungibleAssetValue}@)">
+  Slash(BigInteger, long, out SortedDictionary&lt;Address, FungibleAssetValue&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Delegation/IUnbonding.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IUnbonding Slash(BigInteger slashFactor, long infractionHeight, long height, out SortedDictionary&lt;Address, FungibleAssetValue&gt; slashed)</code></pre>
+    <pre><code class="lang-csharp hljs">IUnbonding Slash(BigInteger slashFactor, long infractionHeight, out SortedDictionary&lt;Address, FungibleAssetValue&gt; slashed)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -336,8 +367,6 @@ Interface IUnbonding  <a class="header-action link-secondary" title="View source
     <dt><code>slashFactor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
     <dd></dd>
     <dt><code>infractionHeight</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
-    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
     <dt><code>slashed</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.sorteddictionary-2">SortedDictionary</a>&lt;<span class="xref">Address</span>, <span class="xref">FungibleAssetValue</span>&gt;</dt>
     <dd></dd>

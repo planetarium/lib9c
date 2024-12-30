@@ -3892,16 +3892,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.UnbondingFactory.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Delegation.UnbondingFactory.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Delegation.UnbondingRef.yml",
       "output": {
         ".html": {
