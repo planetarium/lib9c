@@ -199,7 +199,7 @@ namespace Lib9c.Tests.Delegation
             var share2 = repo.GetBond(delegatee2, delegator.Address).Share;
             var rebondGrace = repo.GetRebondGrace(delegatee1, delegator.Address);
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
-            Assert.Equal(delegatingFAV, delegatee1Balance);
+            Assert.Equal(delegatingFAV - redelegatingFAV, delegatee1Balance);
             Assert.Equal(initialShare - redelegatingShare, share1);
             Assert.Equal(initialShare - redelegatingShare, delegatee1.TotalShares);
             Assert.Equal(redelegatedDstShare, share2);
@@ -227,7 +227,7 @@ namespace Lib9c.Tests.Delegation
             share2 = repo.GetBond(delegatee2, delegator.Address).Share;
             rebondGrace = repo.GetRebondGrace(delegatee1, delegator.Address);
             Assert.Equal(delegatorInitialBalance - delegatingFAV, delegatorBalance);
-            Assert.Equal(delegatingFAV, delegatee1Balance);
+            Assert.Equal(delegatingFAV - redelegatingFAV - redelegatingFAV2, delegatee1Balance);
             Assert.Equal(initialShare - redelegatingShare - redelegatingShare2, share1);
             Assert.Equal(initialShare - redelegatingShare - redelegatingShare2, delegatee1.TotalShares);
             Assert.Equal(redelegatedDstShare + redelegatedDstShare2, share2);

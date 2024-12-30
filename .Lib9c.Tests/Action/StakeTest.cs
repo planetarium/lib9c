@@ -239,11 +239,7 @@ namespace Lib9c.Tests.Action
         [Theory]
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
         [InlineData(0, 50, LegacyStakeState.RewardInterval)]
-        [InlineData(
-            long.MaxValue - LegacyStakeState.RewardInterval,
-            long.MaxValue,
-            long.MaxValue)]
-        public void Execute_Throw_StakeExistingClaimableException_With_StakeState(
+        public void Execute_Success_When_Claimable_With_StakeState(
             long previousStartedBlockIndex,
             long previousAmount,
             long blockIndex)
@@ -259,24 +255,22 @@ namespace Lib9c.Tests.Action
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            Assert.Throws<StakeExistingClaimableException>(
-                () =>
-                    Execute(
-                        blockIndex,
-                        previousState,
-                        new TestRandom(),
-                        _agentAddr,
-                        previousAmount));
+
+            var nextState = Execute(
+                blockIndex,
+                previousState,
+                new TestRandom(),
+                _agentAddr,
+                previousAmount);
+
+            Assert.True(nextState.TryGetStakeState(_agentAddr, out var newStakeState));
+            Assert.Equal(blockIndex, newStakeState.ClaimedBlockIndex);
         }
 
         [Theory]
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
         // NOTE: RewardInterval of StakePolicySheetFixtures.V2 is 50,400.
         [InlineData(0, 50, 50400)]
-        [InlineData(
-            long.MaxValue - 50400,
-            long.MaxValue,
-            long.MaxValue)]
         public void Execute_Throw_StakeExistingClaimableException_With_StakeStateV2(
             long previousStartedBlockIndex,
             long previousAmount,
@@ -292,14 +286,15 @@ namespace Lib9c.Tests.Action
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            Assert.Throws<StakeExistingClaimableException>(
-                () =>
-                    Execute(
-                        blockIndex,
-                        previousState,
-                        new TestRandom(),
-                        _agentAddr,
-                        previousAmount));
+            var nextState = Execute(
+                blockIndex,
+                previousState,
+                new TestRandom(),
+                _agentAddr,
+                previousAmount);
+
+            Assert.True(nextState.TryGetStakeState(_agentAddr, out var newStakeState));
+            Assert.Equal(blockIndex, newStakeState.ClaimedBlockIndex);
         }
 
         [Theory]
