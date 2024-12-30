@@ -1,0 +1,3022 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class StateExtensions | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class StateExtensions | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/feature/fix-create-avatar-random/apiSpec/new?filename=Nekoyume_Model_State_StateExtensions.md&amp;value=---%0Auid%3A%20Nekoyume.Model.State.StateExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.State.StateExtensions">
+
+
+
+  <h1 id="Nekoyume_Model_State_StateExtensions" data-uid="Nekoyume.Model.State.StateExtensions" class="text-break">
+Class StateExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.State.html">State</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class StateExtensions</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">StateExtensions</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Deserialize_" data-uid="Nekoyume.Model.State.StateExtensions.Deserialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Deserialize__1_System_Func_Bencodex_Types_IValue___0__Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.Deserialize``1(System.Func{Bencodex.Types.IValue,``0},Bencodex.Types.IValue)">
+  Deserialize&lt;T&gt;(Func&lt;IValue, T&gt;, IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T? Deserialize&lt;T&gt;(Func&lt;IValue, T&gt; deserializer, IValue serialized) where T : struct</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>deserializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">IValue</span>, T&gt;</dt>
+    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetAddress_" data-uid="Nekoyume.Model.State.StateExtensions.GetAddress*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetAddress_Bencodex_Types_Dictionary_System_String_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.State.StateExtensions.GetAddress(Bencodex.Types.Dictionary,System.String,Libplanet.Crypto.Address)">
+  GetAddress(Dictionary, string, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L335"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address GetAddress(this Dictionary serialized, string key, Address defaultValue = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetBoolean_" data-uid="Nekoyume.Model.State.StateExtensions.GetBoolean*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetBoolean_Bencodex_Types_Dictionary_System_String_System_Boolean_" data-uid="Nekoyume.Model.State.StateExtensions.GetBoolean(Bencodex.Types.Dictionary,System.String,System.Boolean)">
+  GetBoolean(Dictionary, string, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L342"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool GetBoolean(this Dictionary serialized, string key, bool defaultValue = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetDateTimeOffset_" data-uid="Nekoyume.Model.State.StateExtensions.GetDateTimeOffset*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetDateTimeOffset_Bencodex_Types_Dictionary_System_String_System_DateTimeOffset_" data-uid="Nekoyume.Model.State.StateExtensions.GetDateTimeOffset(Bencodex.Types.Dictionary,System.String,System.DateTimeOffset)">
+  GetDateTimeOffset(Dictionary, string, DateTimeOffset)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DateTimeOffset GetDateTimeOffset(this Dictionary serialized, string key, DateTimeOffset defaultValue = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetDecimal_" data-uid="Nekoyume.Model.State.StateExtensions.GetDecimal*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetDecimal_Bencodex_Types_Dictionary_System_String_System_Decimal_" data-uid="Nekoyume.Model.State.StateExtensions.GetDecimal(Bencodex.Types.Dictionary,System.String,System.Decimal)">
+  GetDecimal(Dictionary, string, decimal)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L363"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static decimal GetDecimal(this Dictionary serialized, string key, decimal defaultValue = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetDecimalStat_" data-uid="Nekoyume.Model.State.StateExtensions.GetDecimalStat*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetDecimalStat_Bencodex_Types_Dictionary_System_String_Nekoyume_Model_Stat_DecimalStat_" data-uid="Nekoyume.Model.State.StateExtensions.GetDecimalStat(Bencodex.Types.Dictionary,System.String,Nekoyume.Model.Stat.DecimalStat)">
+  GetDecimalStat(Dictionary, string, DecimalStat)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L391"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DecimalStat GetDecimalStat(this Dictionary serialized, string key, DecimalStat defaultValue = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="Nekoyume.Model.Stat.DecimalStat.html">DecimalStat</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.DecimalStat.html">DecimalStat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetGuid_" data-uid="Nekoyume.Model.State.StateExtensions.GetGuid*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetGuid_Bencodex_Types_Dictionary_System_String_System_Guid_" data-uid="Nekoyume.Model.State.StateExtensions.GetGuid(Bencodex.Types.Dictionary,System.String,System.Guid)">
+  GetGuid(Dictionary, string, Guid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L384"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Guid GetGuid(this Dictionary serialized, string key, Guid defaultValue = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetInteger_" data-uid="Nekoyume.Model.State.StateExtensions.GetInteger*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetInteger_Bencodex_Types_Dictionary_System_String_System_Int32_" data-uid="Nekoyume.Model.State.StateExtensions.GetInteger(Bencodex.Types.Dictionary,System.String,System.Int32)">
+  GetInteger(Dictionary, string, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GetInteger(this Dictionary serialized, string key, int defaultValue = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetLong_" data-uid="Nekoyume.Model.State.StateExtensions.GetLong*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetLong_Bencodex_Types_Dictionary_System_String_System_Int64_" data-uid="Nekoyume.Model.State.StateExtensions.GetLong(Bencodex.Types.Dictionary,System.String,System.Int64)">
+  GetLong(Dictionary, string, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long GetLong(this Dictionary serialized, string key, long defaultValue = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetStat_" data-uid="Nekoyume.Model.State.StateExtensions.GetStat*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetStat_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.State.StateExtensions.GetStat(Bencodex.Types.Dictionary)">
+  GetStat(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L217"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (StatType statType, decimal baseValue, decimal additionalValue) GetStat(this Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="Nekoyume.Model.Stat.StatType.html">StatType</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.decimal,system.decimal-.stattype">statType</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.decimal,system.decimal-.basevalue">baseValue</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.decimal,system.decimal-.additionalvalue">additionalValue</a>)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetString_" data-uid="Nekoyume.Model.State.StateExtensions.GetString*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetString_Bencodex_Types_Dictionary_System_String_System_String_" data-uid="Nekoyume.Model.State.StateExtensions.GetString(Bencodex.Types.Dictionary,System.String,System.String)">
+  GetString(Dictionary, string, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string GetString(this Dictionary serialized, string key, string defaultValue = &quot;&quot;)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_GetValue_" data-uid="Nekoyume.Model.State.StateExtensions.GetValue*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_GetValue__1_Bencodex_Types_Dictionary_System_String___0_Nekoyume_Model_State_StateExtensions_IValueTryParseDelegate___0__" data-uid="Nekoyume.Model.State.StateExtensions.GetValue``1(Bencodex.Types.Dictionary,System.String,``0,Nekoyume.Model.State.StateExtensions.IValueTryParseDelegate{``0})">
+  GetValue&lt;T&gt;(Dictionary, string, T, IValueTryParseDelegate&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T GetValue&lt;T&gt;(this Dictionary serialized, string key, T defaultValue, StateExtensions.IValueTryParseDelegate&lt;T&gt; tryParser)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+    <dt><code>key</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>defaultValue</code> <span class="xref">T</span></dt>
+    <dd></dd>
+    <dt><code>tryParser</code> <a class="xref" href="Nekoyume.Model.State.StateExtensions.html">StateExtensions</a>.<a class="xref" href="Nekoyume.Model.State.StateExtensions.IValueTryParseDelegate-1.html">IValueTryParseDelegate</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256})">
+  Serialize(HashDigest&lt;SHA256&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L422"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this HashDigest&lt;SHA256&gt; hashDigest)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>hashDigest</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(Libplanet.Crypto.Address)">
+  Serialize(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this Address address)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_Libplanet_Crypto_PublicKey_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(Libplanet.Crypto.PublicKey)">
+  Serialize(PublicKey)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L402"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this PublicKey key)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>key</code> <span class="xref">PublicKey</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(Libplanet.Types.Assets.FungibleAssetValue)">
+  Serialize(FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L434"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this FungibleAssetValue value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Boolean_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Boolean)">
+  Serialize(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this bool boolean)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>boolean</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Collections_Generic_Dictionary_Nekoyume_Model_Item_Material_System_Int32__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Collections.Generic.Dictionary{Nekoyume.Model.Item.Material,System.Int32})">
+  Serialize(Dictionary&lt;Material, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this Dictionary&lt;Material, int&gt; value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Material.html">Material</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Collections_Generic_IEnumerable_System_ValueTuple_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Bencodex_Types_IValue___" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Collections.Generic.IEnumerable{System.ValueTuple{Libplanet.Crypto.Address,Libplanet.Crypto.Address,Bencodex.Types.IValue}})">
+  Serialize(IEnumerable&lt;(Address, Address, IValue)&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L280"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this IEnumerable&lt;(Address, Address, IValue)&gt; value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<span class="xref">Address</span>, <span class="xref">Address</span>, <span class="xref">IValue</span>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_DateTimeOffset_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.DateTimeOffset)">
+  Serialize(DateTimeOffset)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this DateTimeOffset dateTime)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dateTime</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Decimal_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Decimal)">
+  Serialize(decimal)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this decimal number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Enum_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Enum)">
+  Serialize(Enum)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L411"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this Enum type)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>type</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.enum">Enum</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Guid_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Guid)">
+  Serialize(Guid)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this Guid number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Int32_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Int32)">
+  Serialize(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this int number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Int64_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Int64)">
+  Serialize(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this long number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_Libplanet_Crypto_Address__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{Libplanet.Crypto.Address})">
+  Serialize(Address?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this Address? address)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{Libplanet.Types.Assets.FungibleAssetValue})">
+  Serialize(FungibleAssetValue?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L441"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this FungibleAssetValue? value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <span class="xref">FungibleAssetValue</span>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_Boolean__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.Boolean})">
+  Serialize(bool?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this bool? boolean)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>boolean</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_DateTimeOffset__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.DateTimeOffset})">
+  Serialize(DateTimeOffset?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this DateTimeOffset? dateTime)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dateTime</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_Decimal__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.Decimal})">
+  Serialize(decimal?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this decimal? number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_Guid__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.Guid})">
+  Serialize(Guid?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this Guid? number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_Int32__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.Int32})">
+  Serialize(int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this int? number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_Int64__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.Int64})">
+  Serialize(long?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this long? number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Nullable_System_Numerics_BigInteger__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Nullable{System.Numerics.BigInteger})">
+  Serialize(BigInteger?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this BigInteger? number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_Numerics_BigInteger_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.Numerics.BigInteger)">
+  Serialize(BigInteger)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this BigInteger number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize_System_String_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize(System.String)">
+  Serialize(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize(this string text)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>text</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_SerializeForLegacyEquipmentStat_" data-uid="Nekoyume.Model.State.StateExtensions.SerializeForLegacyEquipmentStat*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_SerializeForLegacyEquipmentStat_Nekoyume_Model_Stat_DecimalStat_" data-uid="Nekoyume.Model.State.StateExtensions.SerializeForLegacyEquipmentStat(Nekoyume.Model.Stat.DecimalStat)">
+  SerializeForLegacyEquipmentStat(DecimalStat)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue SerializeForLegacyEquipmentStat(this DecimalStat decimalStat)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>decimalStat</code> <a class="xref" href="Nekoyume.Model.Stat.DecimalStat.html">DecimalStat</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize__1_System_Collections_Generic_IEnumerable___0__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize``1(System.Collections.Generic.IEnumerable{``0})">
+  Serialize&lt;T&gt;(IEnumerable&lt;T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize&lt;T&gt;(this IEnumerable&lt;T&gt; values) where T : IValue</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>values</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_Serialize_" data-uid="Nekoyume.Model.State.StateExtensions.Serialize*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_Serialize__1_System_Func___0_Bencodex_Types_IValue__System_Nullable___0__" data-uid="Nekoyume.Model.State.StateExtensions.Serialize``1(System.Func{``0,Bencodex.Types.IValue},System.Nullable{``0})">
+  Serialize&lt;T&gt;(Func&lt;T, IValue&gt;, T?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IValue Serialize&lt;T&gt;(Func&lt;T, IValue&gt; serializer, T? value) where T : struct</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;T, <span class="xref">IValue</span>&gt;</dt>
+    <dd></dd>
+    <dt><code>value</code> T?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToAddress_" data-uid="Nekoyume.Model.State.StateExtensions.ToAddress*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToAddress_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToAddress(Bencodex.Types.IValue)">
+  ToAddress(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address ToAddress(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToArray_" data-uid="Nekoyume.Model.State.StateExtensions.ToArray*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToArray__1_Bencodex_Types_IValue_System_Func_Bencodex_Types_IValue___0__" data-uid="Nekoyume.Model.State.StateExtensions.ToArray``1(Bencodex.Types.IValue,System.Func{Bencodex.Types.IValue,``0})">
+  ToArray&lt;T&gt;(IValue, Func&lt;IValue, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T[] ToArray&lt;T&gt;(this IValue serialized, Func&lt;IValue, T&gt; deserializer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>deserializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">IValue</span>, T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>T[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToBigInteger_" data-uid="Nekoyume.Model.State.StateExtensions.ToBigInteger*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToBigInteger_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToBigInteger(Bencodex.Types.IValue)">
+  ToBigInteger(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger ToBigInteger(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToBoolean_" data-uid="Nekoyume.Model.State.StateExtensions.ToBoolean*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToBoolean_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToBoolean(Bencodex.Types.IValue)">
+  ToBoolean(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool ToBoolean(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToDateTimeOffset_" data-uid="Nekoyume.Model.State.StateExtensions.ToDateTimeOffset*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToDateTimeOffset_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToDateTimeOffset(Bencodex.Types.IValue)">
+  ToDateTimeOffset(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DateTimeOffset ToDateTimeOffset(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToDecimal_" data-uid="Nekoyume.Model.State.StateExtensions.ToDecimal*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToDecimal_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToDecimal(Bencodex.Types.IValue)">
+  ToDecimal(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L153"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static decimal ToDecimal(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToDecimalStat_" data-uid="Nekoyume.Model.State.StateExtensions.ToDecimalStat*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToDecimalStat_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.State.StateExtensions.ToDecimalStat(Bencodex.Types.Dictionary)">
+  ToDecimalStat(Dictionary)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DecimalStat ToDecimalStat(this Dictionary serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.DecimalStat.html">DecimalStat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToDecimalStat_" data-uid="Nekoyume.Model.State.StateExtensions.ToDecimalStat*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToDecimalStat_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToDecimalStat(Bencodex.Types.IValue)">
+  ToDecimalStat(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L214"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DecimalStat ToDecimalStat(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.DecimalStat.html">DecimalStat</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToDictionary_Material_int_" data-uid="Nekoyume.Model.State.StateExtensions.ToDictionary_Material_int*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToDictionary_Material_int_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToDictionary_Material_int(Bencodex.Types.IValue)">
+  ToDictionary_Material_int(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Dictionary&lt;Material, int&gt; ToDictionary_Material_int(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Material.html">Material</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToDotnetString_" data-uid="Nekoyume.Model.State.StateExtensions.ToDotnetString*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToDotnetString_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToDotnetString(Bencodex.Types.IValue)">
+  ToDotnetString(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string ToDotnetString(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToEnum_" data-uid="Nekoyume.Model.State.StateExtensions.ToEnum*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToEnum__1_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToEnum``1(Bencodex.Types.IValue)">
+  ToEnum&lt;T&gt;(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L413"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T ToEnum&lt;T&gt;(this IValue serialized) where T : struct</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToEnumerable_" data-uid="Nekoyume.Model.State.StateExtensions.ToEnumerable*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToEnumerable__1_Bencodex_Types_IValue_System_Func_Bencodex_Types_IValue___0__" data-uid="Nekoyume.Model.State.StateExtensions.ToEnumerable``1(Bencodex.Types.IValue,System.Func{Bencodex.Types.IValue,``0})">
+  ToEnumerable&lt;T&gt;(IValue, Func&lt;IValue, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IEnumerable&lt;T&gt; ToEnumerable&lt;T&gt;(this IValue serialized, Func&lt;IValue, T&gt; deserializer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>deserializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">IValue</span>, T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToFungibleAssetValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToFungibleAssetValue*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToFungibleAssetValue_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToFungibleAssetValue(Bencodex.Types.IValue)">
+  ToFungibleAssetValue(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L444"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue ToFungibleAssetValue(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToGuid_" data-uid="Nekoyume.Model.State.StateExtensions.ToGuid*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToGuid_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToGuid(Bencodex.Types.IValue)">
+  ToGuid(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Guid ToGuid(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToHashSet_" data-uid="Nekoyume.Model.State.StateExtensions.ToHashSet*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToHashSet__1_Bencodex_Types_IValue_System_Func_Bencodex_Types_IValue___0__" data-uid="Nekoyume.Model.State.StateExtensions.ToHashSet``1(Bencodex.Types.IValue,System.Func{Bencodex.Types.IValue,``0})">
+  ToHashSet&lt;T&gt;(IValue, Func&lt;IValue, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HashSet&lt;T&gt; ToHashSet&lt;T&gt;(this IValue serialized, Func&lt;IValue, T&gt; deserializer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>deserializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">IValue</span>, T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1">HashSet</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToImmutableHashSet_" data-uid="Nekoyume.Model.State.StateExtensions.ToImmutableHashSet*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToImmutableHashSet__1_Bencodex_Types_IValue_System_Func_Bencodex_Types_IValue___0__" data-uid="Nekoyume.Model.State.StateExtensions.ToImmutableHashSet``1(Bencodex.Types.IValue,System.Func{Bencodex.Types.IValue,``0})">
+  ToImmutableHashSet&lt;T&gt;(IValue, Func&lt;IValue, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ImmutableHashSet&lt;T&gt; ToImmutableHashSet&lt;T&gt;(this IValue serialized, Func&lt;IValue, T&gt; deserializer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>deserializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">IValue</span>, T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablehashset-1">ImmutableHashSet</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToInteger_" data-uid="Nekoyume.Model.State.StateExtensions.ToInteger*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToInteger_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToInteger(Bencodex.Types.IValue)">
+  ToInteger(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ToInteger(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToItemId_" data-uid="Nekoyume.Model.State.StateExtensions.ToItemId*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToItemId_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToItemId(Bencodex.Types.IValue)">
+  ToItemId(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L425"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static HashDigest&lt;SHA256&gt; ToItemId(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToList_" data-uid="Nekoyume.Model.State.StateExtensions.ToList*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToList__1_Bencodex_Types_IValue_System_Func_Bencodex_Types_IValue___0__" data-uid="Nekoyume.Model.State.StateExtensions.ToList``1(Bencodex.Types.IValue,System.Func{Bencodex.Types.IValue,``0})">
+  ToList&lt;T&gt;(IValue, Func&lt;IValue, T&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;T&gt; ToList&lt;T&gt;(this IValue serialized, Func&lt;IValue, T&gt; deserializer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+    <dt><code>deserializer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<span class="xref">IValue</span>, T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;T&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToLock_" data-uid="Nekoyume.Model.State.StateExtensions.ToLock*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToLock_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToLock(Bencodex.Types.IValue)">
+  ToLock(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L473"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ILock ToLock(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToLong_" data-uid="Nekoyume.Model.State.StateExtensions.ToLong*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToLong_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToLong(Bencodex.Types.IValue)">
+  ToLong(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long ToLong(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableAddress_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableAddress*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableAddress_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableAddress(Bencodex.Types.IValue)">
+  ToNullableAddress(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address? ToNullableAddress(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableBigInteger_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableBigInteger*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableBigInteger_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableBigInteger(Bencodex.Types.IValue)">
+  ToNullableBigInteger(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BigInteger? ToNullableBigInteger(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableBoolean_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableBoolean*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableBoolean_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableBoolean(Bencodex.Types.IValue)">
+  ToNullableBoolean(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool? ToNullableBoolean(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableDateTimeOffset_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableDateTimeOffset*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableDateTimeOffset_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableDateTimeOffset(Bencodex.Types.IValue)">
+  ToNullableDateTimeOffset(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static DateTimeOffset? ToNullableDateTimeOffset(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.datetimeoffset">DateTimeOffset</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableDecimal_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableDecimal*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableDecimal_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableDecimal(Bencodex.Types.IValue)">
+  ToNullableDecimal(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static decimal? ToNullableDecimal(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableFungibleAssetValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableFungibleAssetValue*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableFungibleAssetValue_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableFungibleAssetValue(Bencodex.Types.IValue)">
+  ToNullableFungibleAssetValue(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L449"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue? ToNullableFungibleAssetValue(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableGuid_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableGuid*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableGuid_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableGuid(Bencodex.Types.IValue)">
+  ToNullableGuid(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Guid? ToNullableGuid(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableInteger_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableInteger*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableInteger_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableInteger(Bencodex.Types.IValue)">
+  ToNullableInteger(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int? ToNullableInteger(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToNullableLong_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableLong*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToNullableLong_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToNullableLong(Bencodex.Types.IValue)">
+  ToNullableLong(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long? ToNullableLong(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToPublicKey_" data-uid="Nekoyume.Model.State.StateExtensions.ToPublicKey*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToPublicKey_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToPublicKey(Bencodex.Types.IValue)">
+  ToPublicKey(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L404"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PublicKey ToPublicKey(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">PublicKey</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToPurchaseInfo_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseInfo*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToPurchaseInfo_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseInfo(Bencodex.Types.IValue)">
+  ToPurchaseInfo(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L456"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static PurchaseInfo0 ToPurchaseInfo(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.PurchaseInfo0.html">PurchaseInfo0</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToPurchaseInfoLegacy_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseInfoLegacy*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToPurchaseInfoLegacy_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseInfoLegacy(Bencodex.Types.IValue)">
+  ToPurchaseInfoLegacy(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L459"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BuyMultiple.PurchaseInfo ToPurchaseInfoLegacy(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.html">BuyMultiple</a>.<a class="xref" href="Nekoyume.Action.BuyMultiple.PurchaseInfo.html">PurchaseInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToPurchaseResult_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseResult*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToPurchaseResult_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseResult(Bencodex.Types.IValue)">
+  ToPurchaseResult(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L462"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Buy7.PurchaseResult ToPurchaseResult(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.Buy7.html">Buy7</a>.<a class="xref" href="Nekoyume.Action.Buy7.PurchaseResult.html">PurchaseResult</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToPurchaseResultLegacy_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseResultLegacy*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToPurchaseResultLegacy_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToPurchaseResultLegacy(Bencodex.Types.IValue)">
+  ToPurchaseResultLegacy(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L465"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BuyMultiple.PurchaseResult ToPurchaseResultLegacy(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.BuyMultiple.html">BuyMultiple</a>.<a class="xref" href="Nekoyume.Action.BuyMultiple.PurchaseResult.html">PurchaseResult</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToSellerResult_" data-uid="Nekoyume.Model.State.StateExtensions.ToSellerResult*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToSellerResult_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToSellerResult(Bencodex.Types.IValue)">
+  ToSellerResult(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L468"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Buy7.SellerResult ToSellerResult(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.Buy7.html">Buy7</a>.<a class="xref" href="Nekoyume.Action.Buy7.SellerResult.html">SellerResult</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_State_StateExtensions_ToStateList_" data-uid="Nekoyume.Model.State.StateExtensions.ToStateList*"></a>
+
+  <h3 id="Nekoyume_Model_State_StateExtensions_ToStateList_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.State.StateExtensions.ToStateList(Bencodex.Types.IValue)">
+  ToStateList(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L297"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;(Address, Address, IValue)&gt; ToStateList(this IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<span class="xref">Address</span>, <span class="xref">Address</span>, <span class="xref">IValue</span>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/feature/fix-create-avatar-random/Lib9c/Model/State/StateExtensions.cs/#L19" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
