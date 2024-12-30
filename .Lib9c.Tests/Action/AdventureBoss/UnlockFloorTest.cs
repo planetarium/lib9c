@@ -227,7 +227,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private IWorld Stake(IWorld world, Address agentAddress)
         {
-            var action = new Stake(new BigInteger(500_000));
+            var action = new Stake(new BigInteger(500_000), TesterAvatarAddress);
             var state = action.Execute(
                 new ActionContext
                 {

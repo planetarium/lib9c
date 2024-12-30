@@ -91,22 +91,41 @@ namespace Lib9c.Tests.Util
             return world;
         }
 
-        public static IWorld EnsureStakeReleased(
-            IWorld world, long blockHeight)
+        public static IWorld EnsureUnbondedClaimed(
+            IWorld world, Address agentAddress, long blockHeight)
         {
             if (blockHeight < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(blockHeight));
             }
 
-            // TODO : [GuildMigration] Revive below code when the migration is done.
-            // var actionContext = new ActionContext
-            // {
-            //     PreviousState = world,
-            //     BlockIndex = blockHeight,
-            // };
-            // var releaseValidatorUnbondings = new ReleaseValidatorUnbondings();
-            // return releaseValidatorUnbondings.Execute(actionContext);
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = agentAddress,
+                BlockIndex = blockHeight,
+            };
+            var claimUnbonded = new ClaimUnbonded();
+            return claimUnbonded.Execute(actionContext);
+            return world;
+        }
+
+        public static IWorld EnsureValidatorUnbondedClaimed(
+            IWorld world, Address agentAddress, long blockHeight)
+        {
+            if (blockHeight < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(blockHeight));
+            }
+
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = agentAddress,
+                BlockIndex = blockHeight,
+            };
+            var claimUnbonded = new ClaimValidatorUnbonded();
+            return claimUnbonded.Execute(actionContext);
             return world;
         }
     }

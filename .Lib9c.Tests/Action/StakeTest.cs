@@ -30,6 +30,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _ncg;
         private readonly PublicKey _agentPublicKey = new PrivateKey().PublicKey;
         private readonly Address _agentAddr;
+        private readonly Address _avatarAddr;
         private readonly StakePolicySheet _stakePolicySheet;
 
         public StakeTest(ITestOutputHelper outputHelper)
@@ -65,7 +66,7 @@ namespace Lib9c.Tests.Action
             (
                 _,
                 _agentAddr,
-                _,
+                _avatarAddr,
                 _initialState
             ) = InitializeUtil.InitializeStates(
                 sheetsOverride: sheetsOverride,
@@ -80,13 +81,15 @@ namespace Lib9c.Tests.Action
         [InlineData(long.MaxValue, true)]
         public void Constructor(long amount, bool success)
         {
+            var avatarAddress = new PrivateKey().Address;
+
             if (success)
             {
-                var stake = new Stake(amount);
+                var stake = new Stake(amount, _avatarAddr);
             }
             else
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() => new Stake(amount));
+                Assert.Throws<ArgumentOutOfRangeException>(() => new Stake(amount, _avatarAddr));
             }
         }
 
@@ -95,7 +98,7 @@ namespace Lib9c.Tests.Action
         [InlineData(long.MaxValue)]
         public void Serialization(long amount)
         {
-            var action = new Stake(amount);
+            var action = new Stake(amount, _avatarAddr);
             var ser = action.PlainValue;
             var de = new Stake();
             de.LoadPlainValue(ser);
@@ -322,8 +325,8 @@ namespace Lib9c.Tests.Action
                 _agentAddr,
                 amount);
 
-            world = DelegationUtil.EnsureStakeReleased(
-                world, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+            world = DelegationUtil.EnsureUnbondedClaimed(
+                world, _agentAddr, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
         }
 
         [Theory]
@@ -394,8 +397,8 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureStakeReleased(
-                nextState, height + LegacyStakeState.LockupInterval);
+            world = DelegationUtil.EnsureUnbondedClaimed(
+                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
@@ -461,16 +464,10 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureStakeReleased(
-                nextState, height + LegacyStakeState.LockupInterval);
-
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
-            var actualBalance = world.GetBalance(_agentAddr, _ncg);
-            var nonValidatorDelegateeBalance = world.GetBalance(
-                Addresses.NonValidatorDelegatee, Currencies.GuildGold);
-            var stakeBalance = world.GetBalance(stakeStateAddr, Currencies.GuildGold);
+            var actualBalance = nextState.GetBalance(_agentAddr, _ncg);
+            var stakeBalance = nextState.GetBalance(stakeStateAddr, Currencies.GuildGold);
             Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(Currencies.GuildGold * 0, nonValidatorDelegateeBalance);
             Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
         }
 
@@ -535,8 +532,8 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureStakeReleased(
-                nextState, height + LegacyStakeState.LockupInterval);
+            world = DelegationUtil.EnsureValidatorUnbondedClaimed(
+                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
@@ -555,7 +552,7 @@ namespace Lib9c.Tests.Action
             Address signer,
             long amount)
         {
-            var action = new Stake(amount);
+            var action = new Stake(amount, _avatarAddr);
             var nextState = action.Execute(
                 new ActionContext
                 {
