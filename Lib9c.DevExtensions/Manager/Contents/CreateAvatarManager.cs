@@ -28,8 +28,9 @@ namespace Lib9c.DevExtensions.Manager.Contents
         /// <param name="avatarAddress">avatar address</param>
         /// <param name="states">base world state</param>
         /// <param name="avatarState">avatar state</param>
+        /// <param name="random">random object</param>
         /// <returns>world state with dev avatar</returns>
-        public static IWorld ExecuteDevExtensions(IActionContext ctx, Address avatarAddress, IWorld states, AvatarState avatarState)
+        public static IWorld ExecuteDevExtensions(IActionContext ctx, Address avatarAddress, IWorld states, AvatarState avatarState, IRandom random)
         {
             // prepare for test when executing on editor mode.
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -49,7 +50,6 @@ namespace Lib9c.DevExtensions.Manager.Contents
             var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
             var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
             var materialItemSheet = states.GetSheet<MaterialItemSheet>();
-            var random = ctx.GetRandom();
 
             AddTestItems(ctx, avatarState, random, materialItemSheet);
 
