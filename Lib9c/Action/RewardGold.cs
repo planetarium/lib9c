@@ -23,7 +23,7 @@ namespace Nekoyume.Action
     [Serializable]
     public class RewardGold : ActionBase
     {
-        // Start filtering inactivate ArenaInfo
+        // Start filtering deactivate ArenaInfo
         // https://github.com/planetarium/lib9c/issues/946
         public const long FilterInactiveArenaInfoBlockIndex = 3_976_000L;
         public override IValue PlainValue =>
