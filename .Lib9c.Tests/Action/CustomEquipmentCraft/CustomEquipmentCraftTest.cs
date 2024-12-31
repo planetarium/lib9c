@@ -1,7 +1,7 @@
-#nullable enable
-
 namespace Lib9c.Tests.Action.CustomEquipmentCraft
 {
+#nullable enable
+
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
     using Nekoyume.Action.CustomEquipmentCraft;
     using Nekoyume.Action.Exceptions;
     using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
+    using Nekoyume.Action.Guild.Migration.LegacyModels;
     using Nekoyume.Battle;
     using Nekoyume.Exceptions;
     using Nekoyume.Model.Elemental;
@@ -75,6 +76,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                         GameConfigState.Address,
                         new GameConfigState(sheets["GameConfigSheet"]).Serialize()
                     )
+                    .SetDelegationMigrationHeight(0)
                 ;
 
             for (var i = 0; i < 4; i++)
@@ -371,6 +373,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
 
             var gameConfig = state.GetGameConfigState();
             var materialList = new List<int> { ScrollItemId, CircleItemId, };
+            bool costExist = false;
             if (enoughMaterials)
             {
                 var relationshipSheet = _tableSheets.CustomEquipmentCraftRelationshipSheet;
@@ -411,6 +414,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                     {
                         if (nextRow.GoldAmount > 0)
                         {
+                            costExist = true;
                             state = state.MintAsset(
                                 context,
                                 _agentAddress,
@@ -488,6 +492,10 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 // Test
                 var gold = resultState.GetGoldCurrency();
                 Assert.Equal(0 * gold, resultState.GetBalance(_agentAddress, gold));
+                if (costExist)
+                {
+                    Assert.True(resultState.GetBalance(Addresses.RewardPool, gold) > 0 * gold);
+                }
 
                 var inventory = resultState.GetInventoryV2(_avatarAddress);
                 foreach (var material in materialList)

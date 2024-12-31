@@ -6,6 +6,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
@@ -192,11 +193,16 @@ namespace Nekoyume.Action.CustomEquipmentCraft
 
                 if (ncgCost > 0)
                 {
-                    var arenaData = sheets.GetSheet<ArenaSheet>()
-                        .GetRoundByBlockIndex(context.BlockIndex);
-                    states = states.TransferAsset(context, context.Signer,
-                        ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round),
-                        ncgCost * states.GetGoldCurrency());
+                    var feeAddress = Addresses.RewardPool;
+                    // TODO: [GuildMigration] Remove this after migration
+                    if (states.GetDelegationMigrationHeight() is long migrationHeight
+                        && context.BlockIndex < migrationHeight)
+                    {
+                        var arenaSheet = states.GetSheet<ArenaSheet>();
+                        var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
+                        feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                    }
+                    states = states.TransferAsset(context, context.Signer, feeAddress, ncgCost * states.GetGoldCurrency());
                 }
 
                 foreach (var (itemId, amount) in materialCosts)
