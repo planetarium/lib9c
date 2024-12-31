@@ -7,6 +7,7 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
@@ -89,9 +90,9 @@ namespace Nekoyume.Action
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             var agentAddress = avatarState.agentAddress;
-            
+
             var useMaterial = false;
 
             MaterialItemSheet materialSheet = null;
@@ -177,15 +178,20 @@ namespace Nekoyume.Action
 
         private Address GetFeeStoreAddress(IWorld states, long blockIndex)
         {
-            var sheets = states.GetSheets(
-                sheetTypes: new[]
-                {
-                    typeof(ArenaSheet),
-                });
+            if (states.GetDelegationMigrationHeight() is long migrationHeight
+                && blockIndex < migrationHeight)
+            {
+                var sheets = states.GetSheets(
+                    sheetTypes: new[]
+                    {
+                        typeof(ArenaSheet),
+                    });
 
-            var arenaSheet = sheets.GetSheet<ArenaSheet>();
-            var arenaData = arenaSheet.GetRoundByBlockIndex(blockIndex);
-            return ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                var arenaSheet = sheets.GetSheet<ArenaSheet>();
+                var arenaData = arenaSheet.GetRoundByBlockIndex(blockIndex);
+                return ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+            }
+            return Addresses.RewardPool;
         }
     }
 }
