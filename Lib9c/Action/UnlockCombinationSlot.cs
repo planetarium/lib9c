@@ -75,7 +75,7 @@ namespace Nekoyume.Action
                 throw new SlotAlreadyUnlockedException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
 
-            var feeStoreAddress = GetFeeStoreAddress(states, context.BlockIndex);
+            var feeStoreAddress = states.GetFeeAddress(context.BlockIndex);
             var costSheet = sheets.GetSheet<UnlockCombinationSlotCostSheet>();
 
             if (!costSheet.ContainsKey(SlotIndex))
@@ -174,24 +174,6 @@ namespace Nekoyume.Action
 
             allSlotState.UnlockSlot(AvatarAddress, SlotIndex);
             return states.SetCombinationSlotState(AvatarAddress, allSlotState);
-        }
-
-        private Address GetFeeStoreAddress(IWorld states, long blockIndex)
-        {
-            if (states.GetDelegationMigrationHeight() is long migrationHeight
-                && blockIndex < migrationHeight)
-            {
-                var sheets = states.GetSheets(
-                    sheetTypes: new[]
-                    {
-                        typeof(ArenaSheet),
-                    });
-
-                var arenaSheet = sheets.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(blockIndex);
-                return ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-            }
-            return Addresses.RewardPool;
         }
     }
 }
