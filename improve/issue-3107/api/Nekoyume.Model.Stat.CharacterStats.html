@@ -1,0 +1,2066 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class CharacterStats | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class CharacterStats | Lib9c ">
+      
+      <meta name="description" content="Stat is built with _baseStats based on level, _equipmentStats based on equipments, _consumableStats based on consumables, _buffStats based on buffs and _optionalStats for runes, etc... Stat of character is built with total of these stats.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/improve/issue-3107/apiSpec/new?filename=Nekoyume_Model_Stat_CharacterStats.md&amp;value=---%0Auid%3A%20Nekoyume.Model.Stat.CharacterStats%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.Stat.CharacterStats">
+
+
+
+  <h1 id="Nekoyume_Model_Stat_CharacterStats" data-uid="Nekoyume.Model.Stat.CharacterStats" class="text-break">
+Class CharacterStats  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.Stat.html">Stat</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Stat is built with _baseStats based on level,
+_equipmentStats based on equipments,
+_consumableStats based on consumables,
+_buffStats based on buffs
+and _optionalStats for runes, etc...
+Stat of character is built with total of these stats.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Model.Stat.Stats.html">Stats</a></div>
+      <div><span class="xref">CharacterStats</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></div>
+      <div><a class="xref" href="Nekoyume.Model.Stat.IBaseAndAdditionalStats.html">IBaseAndAdditionalStats</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.icloneable">ICloneable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats__statMap">Stats._statMap</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_HP">Stats.HP</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_ATK">Stats.ATK</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_DEF">Stats.DEF</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_CRI">Stats.CRI</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_HIT">Stats.HIT</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_SPD">Stats.SPD</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_DRV">Stats.DRV</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_DRR">Stats.DRR</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_CDMG">Stats.CDMG</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_ArmorPenetration">Stats.ArmorPenetration</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_Thorn">Stats.Thorn</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_LegacyDecimalStatTypes">Stats.LegacyDecimalStatTypes</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_Reset">Stats.Reset()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_Set_Nekoyume_Model_Stat_StatMap_Nekoyume_Model_Stat_Stats___">Stats.Set(StatMap, params Stats[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_Set_Nekoyume_Model_Stat_StatsMap_">Stats.Set(StatsMap)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_Modify_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__">Stats.Modify(IEnumerable&lt;StatModifier&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_Set_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__Nekoyume_Model_Stat_Stats___">Stats.Set(IEnumerable&lt;StatModifier&gt;, params Stats[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_GetStatAsLong_Nekoyume_Model_Stat_StatType_">Stats.GetStatAsLong(StatType)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_GetStat_Nekoyume_Model_Stat_StatType_">Stats.GetStat(StatType)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_SetStatForTest_Nekoyume_Model_Stat_StatType_System_Decimal_">Stats.SetStatForTest(StatType, decimal)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Stat.Stats.html#Nekoyume_Model_Stat_Stats_GetStats_System_Boolean_">Stats.GetStats(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats__ctor_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats__ctor_Nekoyume_Model_Stat_CharacterStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor(Nekoyume.Model.Stat.CharacterStats)">
+  CharacterStats(CharacterStats)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats(CharacterStats value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats__ctor_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats__ctor_Nekoyume_TableData_CharacterSheet_Row_System_Int32_System_Collections_Generic_IReadOnlyList_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor(Nekoyume.TableData.CharacterSheet.Row,System.Int32,System.Collections.Generic.IReadOnlyList{Nekoyume.Model.Stat.StatModifier})">
+  CharacterStats(Row, int, IReadOnlyList&lt;StatModifier&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats(CharacterSheet.Row row, int level, IReadOnlyList&lt;StatModifier&gt; initialStatModifiers = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>row</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a>.<a class="xref" href="Nekoyume.TableData.CharacterSheet.Row.html">Row</a></dt>
+    <dd></dd>
+    <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>initialStatModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats__ctor_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats__ctor_Nekoyume_TableData_WorldBossCharacterSheet_WaveStatData_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor(Nekoyume.TableData.WorldBossCharacterSheet.WaveStatData)">
+  CharacterStats(WaveStatData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats(WorldBossCharacterSheet.WaveStatData stat)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>stat</code> <a class="xref" href="Nekoyume.TableData.WorldBossCharacterSheet.html">WorldBossCharacterSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldBossCharacterSheet.WaveStatData.html">WaveStatData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_StatWithoutBuffs" data-uid="Nekoyume.Model.Stat.CharacterStats.StatWithoutBuffs">
+  StatWithoutBuffs
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly StatMap StatWithoutBuffs</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.StatMap.html">StatMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalATK_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalATK*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalATK" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalATK">
+  AdditionalATK
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalATK { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalArmorPenetration_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalArmorPenetration*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalArmorPenetration" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalArmorPenetration">
+  AdditionalArmorPenetration
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalArmorPenetration { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalCDMG_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalCDMG*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalCDMG" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalCDMG">
+  AdditionalCDMG
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalCDMG { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalCRI_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalCRI*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalCRI" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalCRI">
+  AdditionalCRI
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalCRI { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalDEF_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDEF*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalDEF" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDEF">
+  AdditionalDEF
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalDEF { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalDRR_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDRR*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalDRR" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDRR">
+  AdditionalDRR
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalDRR { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalDRV_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDRV*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalDRV" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDRV">
+  AdditionalDRV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalDRV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalHIT_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalHIT*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalHIT" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalHIT">
+  AdditionalHIT
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalHIT { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalHP_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalHP*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalHP" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalHP">
+  AdditionalHP
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalHP { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalSPD_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalSPD*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalSPD" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalSPD">
+  AdditionalSPD
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalSPD { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AdditionalThorn_" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalThorn*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalThorn" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalThorn">
+  AdditionalThorn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long AdditionalThorn { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseATK_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseATK*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseATK" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseATK">
+  BaseATK
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseATK { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseArmorPenetration_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseArmorPenetration*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseArmorPenetration" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseArmorPenetration">
+  BaseArmorPenetration
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseArmorPenetration { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseCDMG_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseCDMG*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseCDMG" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseCDMG">
+  BaseCDMG
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseCDMG { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseCRI_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseCRI*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseCRI" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseCRI">
+  BaseCRI
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseCRI { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseDEF_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDEF*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseDEF" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDEF">
+  BaseDEF
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseDEF { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseDRR_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDRR*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseDRR" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDRR">
+  BaseDRR
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseDRR { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseDRV_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDRV*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseDRV" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDRV">
+  BaseDRV
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseDRV { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseHIT_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseHIT*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseHIT" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseHIT">
+  BaseHIT
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseHIT { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseHP_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseHP*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseHP" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseHP">
+  BaseHP
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseHP { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseSPD_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseSPD*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseSPD" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseSPD">
+  BaseSPD
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseSPD { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseStats" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseStats">
+  BaseStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats BaseStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BaseThorn_" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseThorn*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseThorn" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseThorn">
+  BaseThorn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long BaseThorn { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_BuffStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.BuffStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_BuffStats" data-uid="Nekoyume.Model.Stat.CharacterStats.BuffStats">
+  BuffStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats BuffStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_CollectionStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.CollectionStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_CollectionStats" data-uid="Nekoyume.Model.Stat.CharacterStats.CollectionStats">
+  CollectionStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats CollectionStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_ConsumableStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.ConsumableStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_ConsumableStats" data-uid="Nekoyume.Model.Stat.CharacterStats.ConsumableStats">
+  ConsumableStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats ConsumableStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_CostumeStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.CostumeStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_CostumeStats" data-uid="Nekoyume.Model.Stat.CharacterStats.CostumeStats">
+  CostumeStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats CostumeStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_EquipmentStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.EquipmentStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_EquipmentStats" data-uid="Nekoyume.Model.Stat.CharacterStats.EquipmentStats">
+  EquipmentStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats EquipmentStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_HpIncreasingModifier_" data-uid="Nekoyume.Model.Stat.CharacterStats.HpIncreasingModifier*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_HpIncreasingModifier" data-uid="Nekoyume.Model.Stat.CharacterStats.HpIncreasingModifier">
+  HpIncreasingModifier
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long HpIncreasingModifier { set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_IsArenaCharacter_" data-uid="Nekoyume.Model.Stat.CharacterStats.IsArenaCharacter*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_IsArenaCharacter" data-uid="Nekoyume.Model.Stat.CharacterStats.IsArenaCharacter">
+  IsArenaCharacter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsArenaCharacter { set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_Level_" data-uid="Nekoyume.Model.Stat.CharacterStats.Level*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_Level" data-uid="Nekoyume.Model.Stat.CharacterStats.Level">
+  Level
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Level { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_RuneStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.RuneStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_RuneStats" data-uid="Nekoyume.Model.Stat.CharacterStats.RuneStats">
+  RuneStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats RuneStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AddBuff_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddBuff*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AddBuff_Nekoyume_Model_Buff_StatBuff_Nekoyume_TableData_BuffLimitSheet_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddBuff(Nekoyume.Model.Buff.StatBuff,Nekoyume.TableData.BuffLimitSheet,System.Boolean)">
+  AddBuff(StatBuff, BuffLimitSheet, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddBuff(StatBuff buff, BuffLimitSheet buffLimitSheet, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buff</code> <a class="xref" href="Nekoyume.Model.Buff.StatBuff.html">StatBuff</a></dt>
+    <dd></dd>
+    <dt><code>buffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AddCostume_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddCostume*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AddCostume_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.AddCostume(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
+  AddCostume(IEnumerable&lt;StatModifier&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddCostume(IEnumerable&lt;StatModifier&gt; statModifiers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>statModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AddRune_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddRune*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AddRune_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.AddRune(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
+  AddRune(IEnumerable&lt;StatModifier&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddRune(IEnumerable&lt;StatModifier&gt; statModifiers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>statModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_AddRuneStat_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddRuneStat*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_AddRuneStat_Nekoyume_TableData_RuneOptionSheet_Row_RuneOptionInfo_System_Int32_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddRuneStat(Nekoyume.TableData.RuneOptionSheet.Row.RuneOptionInfo,System.Int32)">
+  AddRuneStat(RuneOptionInfo, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L588"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddRuneStat(RuneOptionSheet.Row.RuneOptionInfo optionInfo, int runeLevelBonus)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>optionInfo</code> <a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneOptionSheet.Row.html">Row</a>.<a class="xref" href="Nekoyume.TableData.RuneOptionSheet.Row.RuneOptionInfo.html">RuneOptionInfo</a></dt>
+    <dd></dd>
+    <dt><code>runeLevelBonus</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_Clone_" data-uid="Nekoyume.Model.Stat.CharacterStats.Clone*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_Clone" data-uid="Nekoyume.Model.Stat.CharacterStats.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L530"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override object Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_ConfigureStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.ConfigureStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_ConfigureStats_System_Collections_Generic_IReadOnlyCollection_Nekoyume_Model_Item_Equipment__System_Collections_Generic_IReadOnlyCollection_Nekoyume_Model_Item_Costume__System_Collections_Generic_IReadOnlyCollection_Nekoyume_TableData_RuneOptionSheet_Row_RuneOptionInfo__Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__System_Int32_" data-uid="Nekoyume.Model.Stat.CharacterStats.ConfigureStats(System.Collections.Generic.IReadOnlyCollection{Nekoyume.Model.Item.Equipment},System.Collections.Generic.IReadOnlyCollection{Nekoyume.Model.Item.Costume},System.Collections.Generic.IReadOnlyCollection{Nekoyume.TableData.RuneOptionSheet.Row.RuneOptionInfo},Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},System.Int32)">
+  ConfigureStats(IReadOnlyCollection&lt;Equipment&gt;, IReadOnlyCollection&lt;Costume&gt;, IReadOnlyCollection&lt;RuneOptionInfo&gt;, CostumeStatSheet, List&lt;StatModifier&gt;, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L601"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ConfigureStats(IReadOnlyCollection&lt;Equipment&gt; equipments, IReadOnlyCollection&lt;Costume&gt; costumes, IReadOnlyCollection&lt;RuneOptionSheet.Row.RuneOptionInfo&gt; runeOptions, CostumeStatSheet costumeStatSheet, List&lt;StatModifier&gt; collectionStatModifiers, int runeLevelBonus)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipments</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>costumes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>runeOptions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneOptionSheet.Row.html">Row</a>.<a class="xref" href="Nekoyume.TableData.RuneOptionSheet.Row.RuneOptionInfo.html">RuneOptionInfo</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+    <dt><code>collectionStatModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>runeLevelBonus</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_GetAdditionalStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetAdditionalStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_GetAdditionalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetAdditionalStats(System.Boolean)">
+  GetAdditionalStats(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L541"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;(StatType statType, long additionalValue)&gt; GetAdditionalStats(bool ignoreZero = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ignoreZero</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<a class="xref" href="Nekoyume.Model.Stat.StatType.html">StatType</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64-.stattype">statType</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64-.basevalue">baseValue</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_GetBaseAndAdditionalStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetBaseAndAdditionalStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_GetBaseAndAdditionalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetBaseAndAdditionalStats(System.Boolean)">
+  GetBaseAndAdditionalStats(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L555"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;(StatType statType, long baseValue, long additionalValue)&gt; GetBaseAndAdditionalStats(bool ignoreZero = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ignoreZero</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<a class="xref" href="Nekoyume.Model.Stat.StatType.html">StatType</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64,system.int64-.stattype">statType</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64,system.int64-.basevalue">baseValue</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64,system.int64-.additionalvalue">additionalValue</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_GetBaseStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetBaseStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_GetBaseStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetBaseStats(System.Boolean)">
+  GetBaseStats(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L535"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;(StatType statType, long baseValue)&gt; GetBaseStats(bool ignoreZero = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ignoreZero</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;(<a class="xref" href="Nekoyume.Model.Stat.StatType.html">StatType</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64-.stattype">statType</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-nekoyume.model.stat.stattype,system.int64-.basevalue">baseValue</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_IncreaseHpForArena_" data-uid="Nekoyume.Model.Stat.CharacterStats.IncreaseHpForArena*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_IncreaseHpForArena" data-uid="Nekoyume.Model.Stat.CharacterStats.IncreaseHpForArena">
+  IncreaseHpForArena()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L386"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Increases the HP of the character for the arena.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void IncreaseHpForArena()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_RemoveBuff_" data-uid="Nekoyume.Model.Stat.CharacterStats.RemoveBuff*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_RemoveBuff_Nekoyume_Model_Buff_StatBuff_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.RemoveBuff(Nekoyume.Model.Buff.StatBuff,System.Boolean)">
+  RemoveBuff(StatBuff, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveBuff(StatBuff buff, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>buff</code> <a class="xref" href="Nekoyume.Model.Buff.StatBuff.html">StatBuff</a></dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetBuffs_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetBuffs*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetBuffs_System_Collections_Generic_IEnumerable_Nekoyume_Model_Buff_StatBuff__Nekoyume_TableData_BuffLimitSheet_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetBuffs(System.Collections.Generic.IEnumerable{Nekoyume.Model.Buff.StatBuff},Nekoyume.TableData.BuffLimitSheet,System.Boolean)">
+  SetBuffs(IEnumerable&lt;StatBuff&gt;, BuffLimitSheet, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set stats based on buffs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetBuffs(IEnumerable&lt;StatBuff&gt; value, BuffLimitSheet buffLimitSheet, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Buff.StatBuff.html">StatBuff</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>buffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetCollections_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCollections*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetCollections_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCollections(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier},System.Boolean)">
+  SetCollections(IEnumerable&lt;StatModifier&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetCollections(IEnumerable&lt;StatModifier&gt; statModifiers, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>statModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetConsumables_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetConsumables*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetConsumables_System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_Consumable__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetConsumables(System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.Consumable},System.Boolean)">
+  SetConsumables(IEnumerable&lt;Consumable&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set stats based on consumables. Also recalculates stats from buffs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetConsumables(IEnumerable&lt;Consumable&gt; consumables, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>consumables</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Consumable.html">Consumable</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetCostume_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCostume*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetCostume_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCostume(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
+  SetCostume(IEnumerable&lt;StatModifier&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCostume(IEnumerable&lt;StatModifier&gt; statModifiers)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>statModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetCostumeStat_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCostumeStat*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetCostumeStat_System_Collections_Generic_IReadOnlyCollection_Nekoyume_Model_Item_Costume__Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCostumeStat(System.Collections.Generic.IReadOnlyCollection{Nekoyume.Model.Item.Costume},Nekoyume.TableData.CostumeStatSheet)">
+  SetCostumeStat(IReadOnlyCollection&lt;Costume&gt;, CostumeStatSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L571"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCostumeStat(IReadOnlyCollection&lt;Costume&gt; costumes, CostumeStatSheet costumeStatSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>costumes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetEquipments_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetEquipments*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetEquipments_System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_Equipment__Nekoyume_TableData_EquipmentItemSetEffectSheet_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetEquipments(System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.Equipment},Nekoyume.TableData.EquipmentItemSetEffectSheet,System.Boolean)">
+  SetEquipments(IEnumerable&lt;Equipment&gt;, EquipmentItemSetEffectSheet, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set stats based on equipments. Also recalculates stats from consumables and buffs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetEquipments(IEnumerable&lt;Equipment&gt; equipments, EquipmentItemSetEffectSheet sheet, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>equipments</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.EquipmentItemSetEffectSheet.html">EquipmentItemSetEffectSheet</a></dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetRunes_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetRunes*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetRunes_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetRunes(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier},System.Boolean)">
+  SetRunes(IEnumerable&lt;StatModifier&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L243"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set stats based on runes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetRunes(IEnumerable&lt;StatModifier&gt; value, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetStats_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetStats(System.Int32,System.Boolean)">
+  SetStats(int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set base stats based on character level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetStats(int level, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/improve/issue-3107/Lib9c/Model/Stat/CharacterStats.cs/#L17" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
