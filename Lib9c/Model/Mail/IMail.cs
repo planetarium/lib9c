@@ -22,5 +22,6 @@ namespace Nekoyume.Model.Mail
         void Read(ClaimItemsMail claimItemsMail);
         void Read(AdventureBossRaffleWinnerMail adventureBossRaffleWinnerMail);
         void Read(CustomCraftMail customCraftMail);
+        void Read(PatrolRewardMail patrolRewardMail);
     }
 }

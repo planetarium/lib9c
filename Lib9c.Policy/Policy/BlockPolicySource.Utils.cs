@@ -89,7 +89,7 @@ namespace Nekoyume.Blockchain.Policy
                     : null;
         }
 
-        private static InvalidBlockBytesLengthException ValidateTransactionsBytesRaw(
+        private static InvalidBlockBytesLengthException? ValidateTransactionsBytesRaw(
             Block block,
             IVariableSubPolicy<long> maxTransactionsBytesPolicy)
         {
@@ -108,7 +108,7 @@ namespace Nekoyume.Blockchain.Policy
             return null;
         }
 
-        private static BlockPolicyViolationException ValidateTxCountPerBlockRaw(
+        private static BlockPolicyViolationException? ValidateTxCountPerBlockRaw(
             Block block,
             IVariableSubPolicy<int> minTransactionsPerBlockPolicy,
             IVariableSubPolicy<int> maxTransactionsPerBlockPolicy)
@@ -138,7 +138,7 @@ namespace Nekoyume.Blockchain.Policy
             return null;
         }
 
-        private static BlockPolicyViolationException ValidateTxCountPerSignerPerBlockRaw(
+        private static BlockPolicyViolationException? ValidateTxCountPerSignerPerBlockRaw(
             Block block,
             IVariableSubPolicy<int> maxTransactionsPerSignerPerBlockPolicy)
         {

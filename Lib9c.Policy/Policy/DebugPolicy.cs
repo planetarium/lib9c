@@ -34,13 +34,13 @@ namespace Nekoyume.Blockchain.Policy
                     new Reward(), new Refund(),
                 }.ToImmutableArray());
 
-        public TxPolicyViolationException ValidateNextBlockTx(
+        public TxPolicyViolationException? ValidateNextBlockTx(
             BlockChain blockChain, Transaction transaction)
         {
             return null;
         }
 
-        public BlockPolicyViolationException ValidateNextBlock(
+        public BlockPolicyViolationException? ValidateNextBlock(
             BlockChain blockChain, Block nextBlock)
         {
             return null;

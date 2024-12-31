@@ -6,7 +6,6 @@ using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Rune;
-using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Model.State
@@ -18,7 +17,7 @@ namespace Nekoyume.Model.State
 
         public BattleType BattleType { get; }
 
-        private readonly List<RuneSlot> _slots = new List<RuneSlot>();
+        private readonly List<RuneSlot> _slots = new();
 
         public RuneSlotState(BattleType battleType)
         {

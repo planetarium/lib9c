@@ -149,6 +149,19 @@ namespace Lib9c.Tests.Action
                 state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
+            var allRuneState = state.GetRuneState(_avatarAddress, out _);
+            if (!allRuneState.TryGetRuneState(runeId, out _))
+            {
+                allRuneState.AddRuneState(new RuneState(runeId, 1));
+            }
+
+            if (!allRuneState.TryGetRuneState(runeId2, out _))
+            {
+                allRuneState.AddRuneState(new RuneState(runeId2, 1));
+            }
+
+            state = state.SetRuneState(_avatarAddress, allRuneState);
+
             var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             var avatarState = AvatarState.Create(
                 _avatarAddress,

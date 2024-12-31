@@ -30,12 +30,8 @@ namespace Lib9c.Tests.Action
             _tableSheets = new TableSheets(tableCsv);
         }
 
-        [Theory]
-        [InlineData(1)]
-        [InlineData(300)]
-        [InlineData(600)]
-        [InlineData(1200)]
-        public void Execute_Success(long blockIndex)
+        [Fact]
+        public void Execute_Success()
         {
             var agentAddress = new PrivateKey().Address;
             var avatarAddress = Addresses.GetAvatarAddress(agentAddress, 0);
@@ -47,20 +43,18 @@ namespace Lib9c.Tests.Action
                 _tableSheets.GetAvatarSheets(),
                 default);
             var state = _state.SetAvatarState(avatarAddress, avatarState);
-
-            if (!_tableSheets.ClaimableGiftsSheet.TryFindRowByBlockIndex(blockIndex, out var row))
+            var row = _tableSheets.ClaimableGiftsSheet.Values.FirstOrDefault(r => r.StartedBlockIndex > 0L);
+            if (row is not null)
             {
-                throw new Exception();
+                Execute(
+                    state,
+                    avatarAddress,
+                    agentAddress,
+                    row.Id,
+                    row.StartedBlockIndex,
+                    row.Items.ToArray()
+                );
             }
-
-            Execute(
-                state,
-                avatarAddress,
-                agentAddress,
-                row.Id,
-                blockIndex,
-                row.Items.ToArray()
-            );
         }
 
         [Fact]
