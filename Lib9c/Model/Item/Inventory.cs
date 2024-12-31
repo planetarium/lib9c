@@ -180,6 +180,36 @@ namespace Nekoyume.Model.Item
                 throw new InvalidItemCountException();
             }
 
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+            foreach (var item in _items)
+            {
+                Guid? inventoryItemGuid;
+                Guid? createItemGuid;
+                {
+                    inventoryItemGuid = item.item switch
+                    {
+                        ItemUsable itemUsable => itemUsable.ItemId,
+                        Costume costume => costume.ItemId,
+                        _ => null,
+                    };
+                }
+                {
+                    createItemGuid = itemBase switch
+                    {
+                        ItemUsable itemUsable => itemUsable.ItemId,
+                        Costume costume => costume.ItemId,
+                        _ => null,
+                    };
+                }
+                if (inventoryItemGuid.HasValue && createItemGuid.HasValue && inventoryItemGuid.Value == createItemGuid.Value)
+                {
+                    throw new ArgumentException(
+                        $"Aborted because {nameof(itemBase)} is already in the inventory."
+                    );
+                }
+            }
+#endif
+
             switch (itemBase.ItemType)
             {
                 case ItemType.Consumable:

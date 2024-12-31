@@ -80,6 +80,7 @@ namespace Nekoyume.Action
                 )
             );
 
+            var random = ctx.GetRandom();
             var addressesHex = GetSignerAndOtherAddressesHex(context, avatarAddress);
             ValidateName(addressesHex);
 
@@ -110,7 +111,7 @@ namespace Nekoyume.Action
             avatarState.UpdateQuestRewards(materialItemSheet);
 
 #if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
-            states = CreateAvatarManager.ExecuteDevExtensions(ctx, avatarAddress, states, avatarState);
+            states = CreateAvatarManager.ExecuteDevExtensions(ctx, avatarAddress, states, avatarState, random);
 #endif
 
             var sheets = ctx.PreviousState.GetSheets(containItemSheet: true,
@@ -120,7 +121,7 @@ namespace Nekoyume.Action
                 });
             var itemSheet = sheets.GetItemSheet();
             var createAvatarItemSheet = sheets.GetSheet<CreateAvatarItemSheet>();
-            AddItem(itemSheet, createAvatarItemSheet, avatarState, context.GetRandom());
+            AddItem(itemSheet, createAvatarItemSheet, avatarState, random);
             var createAvatarFavSheet = sheets.GetSheet<CreateAvatarFavSheet>();
             states = MintAsset(createAvatarFavSheet, avatarState, states, context);
 
@@ -257,7 +258,6 @@ namespace Nekoyume.Action
             Address rankingMapAddress)
         {
             var state = ctx.PreviousState;
-            var random = ctx.GetRandom();
             var avatarState = AvatarState.Create(
                 avatarAddress,
                 ctx.Signer,
