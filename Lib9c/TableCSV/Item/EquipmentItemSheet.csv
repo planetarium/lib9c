@@ -211,6 +211,9 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10640004,Ymir Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
 10650007,Ymir Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
 10660000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10660001,Beast Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10660002,Aegis Aura,Aura,6,Normal,0,HP,10,0,10620001,130000
+10660003,Barrage Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
 10660004,1주년 아우라,Aura,6,Normal,0,HIT,10,0,10620001,1
 10730000,공격의 그리모어 (A),Grimoire,3,Normal,0,ATK,10,0,10730000,600
 10730001,공격의 그리모어 (H),Grimoire,3,Normal,0,ATK,10,0,10730001,600

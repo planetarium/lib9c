@@ -49,6 +49,8 @@ id,_name,item_sub_type,grade,elemental_type
 800113,레드 오렌지,FoodMaterial,3,Normal
 800114,맛있는 오렌지,FoodMaterial,4,Normal
 800115,오렌지 메달,NormalMaterial,5,Normal
+800116,라그나로크 베리,FoodMaterial,3,Normal
+800117,어노잉 오렌지,FoodMaterial,4,Normal
 800201,Silver Dust,FoodMaterial,4,Normal
 800202,Golden Meat,FoodMaterial,4,Normal
 303000,녹슨 칼,EquipmentMaterial,1,Normal
