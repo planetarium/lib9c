@@ -117,7 +117,9 @@ namespace Nekoyume.Delegation
         // TODO: Use better custom collection type
         public ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> Entries { get; }
 
-        public long LowestExpireHeight => Entries.First().Key;
+        public long LowestExpireHeight => IsEmpty
+            ? -1
+            : Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
