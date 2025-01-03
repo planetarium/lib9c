@@ -110,7 +110,9 @@ namespace Nekoyume.Delegation
 
         public IDelegationRepository? Repository => _repository;
 
-        public long LowestExpireHeight => Entries.First().Key;
+        public long LowestExpireHeight => IsEmpty
+            ? -1
+            : Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
