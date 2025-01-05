@@ -6,6 +6,10 @@ using Nekoyume.Model.Guild;
 
 namespace Nekoyume.Action.Guild
 {
+    /// <summary>
+    /// An action to claim unbonded assets.
+    /// This action can be executed only when the unbonding period is over.
+    /// </summary>
     [ActionType(TypeIdentifier)]
     public sealed class ClaimUnbonded : ActionBase
     {
@@ -34,9 +38,6 @@ namespace Nekoyume.Action.Guild
 
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
-
-            var guildParticipant = repository.GetGuildParticipant(context.Signer);
-            var guild = repository.GetGuild(guildParticipant.GuildAddress);
             var guildDelegator = repository.GetDelegator(context.Signer);
             guildDelegator.ReleaseUnbondings(context.BlockIndex);
 
