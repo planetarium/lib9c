@@ -33,9 +33,17 @@ namespace Nekoyume.Action
 
         internal BigInteger Amount { get; set; }
 
-        internal Address AvatarAddress { get; private set; }
+        internal Address? AvatarAddress { get; private set; }
 
         BigInteger IStakeV1.Amount => Amount;
+
+        public Stake(BigInteger amount)
+        {
+            Amount = amount >= 0
+                ? amount
+                : throw new ArgumentOutOfRangeException(nameof(amount));
+            AvatarAddress = null;
+        }
 
         public Stake(BigInteger amount, Address avatarAddress)
         {
@@ -49,16 +57,30 @@ namespace Nekoyume.Action
         {
         }
 
-        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
-            ImmutableDictionary<string, IValue>.Empty
-                .Add(AmountKey, (IValue)(Integer)Amount)
-                .Add(StakeAvatarAddressKey, AvatarAddress.Bencoded);
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal
+        {
+            get
+            {
+                var plainValue = ImmutableDictionary<string, IValue>.Empty
+                    .Add(AmountKey, (IValue)(Integer)Amount);
+                if (AvatarAddress.HasValue)
+                {
+                    plainValue = plainValue.Add(StakeAvatarAddressKey, AvatarAddress.Value.Bencoded);
+                }
+
+                return plainValue;
+            }
+        }
 
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
             Amount = plainValue[AmountKey].ToBigInteger();
-            AvatarAddress = new Address(plainValue[StakeAvatarAddressKey]);
+            AvatarAddress = null;
+            if (plainValue.TryGetValue(StakeAvatarAddressKey, out var avatarAddress))
+            {
+                AvatarAddress = new Address(avatarAddress);
+            }
         }
 
         public override IWorld Execute(IActionContext context)
@@ -154,21 +176,29 @@ namespace Nekoyume.Action
                 var validatorRepository = new ValidatorRepository(states, context);
                 var isValidator = validatorRepository.TryGetValidatorDelegatee(
                     context.Signer, out var validatorDelegatee);
-                if (!isValidator)
+                if (!isValidator && AvatarAddress.HasValue)
                 {
                     if (!states.TryGetAvatarState(
                         context.Signer,
-                        AvatarAddress,
+                        AvatarAddress.Value,
                         out var avatarState))
                     {
                         throw new FailedLoadStateException(
                             ActionTypeText,
                             addressesHex,
                             typeof(AvatarState),
-                            AvatarAddress);
+                            AvatarAddress.Value);
                     }
 
-                    states = ClaimStakeReward.Claim(states, context, AvatarAddress, stakeStateAddress, avatarState, stakeStateV2);
+                    states = ClaimStakeReward.Claim(states, context, AvatarAddress.Value, stakeStateAddress, avatarState, stakeStateV2);
+                }
+                else if (isValidator)
+                {
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        $"For non-validators, {nameof(AvatarAddress)} is required.");
                 }
             }
 
