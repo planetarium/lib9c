@@ -9,5 +9,9 @@ describe("Stake", () => {
       amount: 1n,
       avatarAddress: avatarAddress,
     }),
+    new Stake({
+      amount: 1n,
+      avatarAddress: null,
+    }),
   ]);
 });

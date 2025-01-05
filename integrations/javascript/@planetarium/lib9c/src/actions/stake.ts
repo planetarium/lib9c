@@ -7,7 +7,7 @@ import { GameAction, type GameActionArgs } from "./common.js";
  */
 export type StakeArgs = {
   amount: bigint;
-  avatarAddress: Address;
+  avatarAddress: Address | null;
 } & GameActionArgs;
 
 /**
@@ -24,7 +24,7 @@ export class Stake extends GameAction {
   /**
    * The address of avatar to claim reward.
    */
-  public readonly avatarAddress: Address;
+  public readonly avatarAddress: Address | null;
 
   /**
    * Create a new `Stake` action.
@@ -34,10 +34,13 @@ export class Stake extends GameAction {
     super({ id });
 
     this.amount = amount;
-    this.avatarAddress = avatarAddress;
+    this.avatarAddress = avatarAddress || null;
   }
 
   protected plain_value_internal(): Dictionary {
+    if (this.avatarAddress == null) {
+      return new BencodexDictionary([["am", this.amount]]);
+    }
     return new BencodexDictionary([
       ["am", this.amount],
       ["saa", this.avatarAddress.toBytes()],
