@@ -54,9 +54,6 @@ namespace Nekoyume.ValidatorDelegation
             IsActive = false;
             CommissionPercentage = commissionPercentage;
             CommissionPercentageLastUpdateHeight = creationHeight;
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
 
         public ValidatorDelegatee(
@@ -83,9 +80,6 @@ namespace Nekoyume.ValidatorDelegation
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
             Metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
@@ -243,7 +237,7 @@ namespace Nekoyume.ValidatorDelegation
             }
         }
 
-        public void OnDelegationChanged(object? sender, long height)
+        protected override void OnDelegationChanged(long height)
         {
             ValidatorRepository repository = Repository;
 
@@ -268,13 +262,13 @@ namespace Nekoyume.ValidatorDelegation
             }
         }
 
-        public void OnEnjailed(object? sender, EventArgs e)
+        protected override void OnEnjailed()
         {
             ValidatorRepository repository = Repository;
             repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
         }
 
-        public void OnUnjailed(object? sender, EventArgs e)
+        protected override void OnUnjailed()
         {
             ValidatorRepository repository = Repository;
             repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
