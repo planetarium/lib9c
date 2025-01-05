@@ -527,7 +527,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureValidatorUnbondedClaimed(
+            world = DelegationUtil.EnsureUnbondedClaimed(
                 nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
