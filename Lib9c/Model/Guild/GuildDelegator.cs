@@ -28,7 +28,6 @@ namespace Nekoyume.Model.Guild
                   rewardAddress: address,
                   repository: repository)
         {
-            UnbondingReleased += OnUnbondingReleased;
         }
 
         public GuildDelegator(
@@ -36,19 +35,18 @@ namespace Nekoyume.Model.Guild
             GuildRepository repository)
             : base(address: address, repository: repository)
         {
-            UnbondingReleased += OnUnbondingReleased;
         }
 
-        public void OnUnbondingReleased(object? sender, (long Height, IUnbonding ReleasedUnbonding, FungibleAssetValue? ReleasedFAV) e)
+        protected override void OnUnbondingReleased(long height, IUnbonding releasedUnbonding, FungibleAssetValue? releasedFAV)
         {
-            if (e.ReleasedUnbonding is UnbondLockIn unbondLockIn)
+            if (releasedUnbonding is UnbondLockIn unbondLockIn)
             {
                 if (IsValidator(unbondLockIn.DelegatorAddress))
                 {
                     return;
                 }
 
-                Unstake(unbondLockIn, e.ReleasedFAV);
+                Unstake(unbondLockIn, releasedFAV);
             }
         }
 
@@ -62,7 +60,7 @@ namespace Nekoyume.Model.Guild
             }
 
             var agentAddress = new AgentAddress(unbondLockIn.DelegatorAddress);
-            var repository = (GuildRepository)Repository;
+            var repository = Repository;
             var goldCurrency = repository.World.GetGoldCurrency();
             var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
             var (ncg, _) = ConvertCurrency(gg, goldCurrency);

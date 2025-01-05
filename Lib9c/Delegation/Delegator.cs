@@ -44,11 +44,6 @@ namespace Nekoyume.Delegation
             Repository = repository;
         }
 
-        public event EventHandler<(
-            long Height,
-            IUnbonding ReleasedUnbonding,
-            FungibleAssetValue? ReleasedFAV)>? UnbondingReleased;
-
         public DelegatorMetadata Metadata { get; }
 
         public TRepository Repository { get; }
@@ -260,6 +255,11 @@ namespace Nekoyume.Delegation
             Repository.SetDelegator((TDelegator)this);
         }
 
+        protected virtual void OnUnbondingReleased(
+            long height, IUnbonding releasedUnbonding, FungibleAssetValue? releasedFAV)
+        {
+        }
+
         private void ReleaseUnbondings(IEnumerable<IUnbonding> unbondings, long height)
         {
             foreach (var unbonding in unbondings)
@@ -293,7 +293,7 @@ namespace Nekoyume.Delegation
                 RemoveUnbondingRef(delegatee, UnbondingFactory.ToReference(unbonding));
             }
 
-            UnbondingReleased?.Invoke(this, (height, unbonding, releasedFAV));
+            OnUnbondingReleased(height, unbonding, releasedFAV);
         }
 
         private void AddUnbondingRef(TDelegatee delegatee, UnbondingRef reference)

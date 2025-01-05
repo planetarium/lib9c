@@ -87,7 +87,5 @@ namespace Nekoyume.Delegation
         Address CurrentLumpSumRewardsRecordAddress();
 
         Address LumpSumRewardsRecordAddress(long height);
-
-        event EventHandler<long>? DelegationChanged;
     }
 }
