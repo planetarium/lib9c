@@ -109,24 +109,5 @@ namespace Lib9c.Tests.Util
             return claimUnbonded.Execute(actionContext);
             return world;
         }
-
-        public static IWorld EnsureValidatorUnbondedClaimed(
-            IWorld world, Address agentAddress, long blockHeight)
-        {
-            if (blockHeight < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(blockHeight));
-            }
-
-            var actionContext = new ActionContext
-            {
-                PreviousState = world,
-                Signer = agentAddress,
-                BlockIndex = blockHeight,
-            };
-            var claimUnbonded = new ClaimValidatorUnbonded();
-            return claimUnbonded.Execute(actionContext);
-            return world;
-        }
     }
 }
