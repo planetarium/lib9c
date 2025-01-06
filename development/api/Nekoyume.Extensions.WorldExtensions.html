@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Extensions_WorldExtensions" data-uid="Nekoyume.Extensions.WorldExtensions" class="text-break">
-Class WorldExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class WorldExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -152,11 +152,53 @@ Class WorldExtensions  <a class="header-action link-secondary" title="View sourc
 </h2>
 
 
+  <a id="Nekoyume_Extensions_WorldExtensions_GetFeeAddress_" data-uid="Nekoyume.Extensions.WorldExtensions.GetFeeAddress*"></a>
+
+  <h3 id="Nekoyume_Extensions_WorldExtensions_GetFeeAddress_Libplanet_Action_State_IWorld_System_Int64_" data-uid="Nekoyume.Extensions.WorldExtensions.GetFeeAddress(Libplanet.Action.State.IWorld,System.Int64)">
+  GetFeeAddress(IWorld, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the fee address based on the block index and migration height.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Address GetFeeAddress(this IWorld world, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd><p>The current world instance.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block index for which the fee address is required.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd><p>The fee address, which may vary based on migration height and arena data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Extensions_WorldExtensions_MutateAccount_" data-uid="Nekoyume.Extensions.WorldExtensions.MutateAccount*"></a>
 
   <h3 id="Nekoyume_Extensions_WorldExtensions_MutateAccount_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Func_Libplanet_Action_State_IAccount_Libplanet_Action_State_IAccount__" data-uid="Nekoyume.Extensions.WorldExtensions.MutateAccount(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Func{Libplanet.Action.State.IAccount,Libplanet.Action.State.IAccount})">
   MutateAccount(IWorld, Address, Func&lt;IAccount, IAccount&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -196,7 +238,7 @@ Class WorldExtensions  <a class="header-action link-secondary" title="View sourc
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Extensions/WorldExtensions.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 
