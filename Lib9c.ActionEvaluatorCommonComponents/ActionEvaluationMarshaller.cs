@@ -4,7 +4,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Common;
 
-namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
+namespace Lib9c.ActionEvaluatorCommonComponents;
 
 public static class ActionEvaluationMarshaller
 {

@@ -5,7 +5,7 @@ using Libplanet.Action;
 using Libplanet.Common;
 using Libplanet.Crypto;
 
-namespace Libplanet.Extensions.ActionEvaluatorCommonComponents.Tests;
+namespace Lib9c.ActionEvaluatorCommonComponents.Tests;
 
 public class ActionEvaluationSerializerTest
 {

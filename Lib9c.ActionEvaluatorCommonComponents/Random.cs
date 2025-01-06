@@ -1,6 +1,6 @@
 using Libplanet.Action;
 
-namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
+namespace Lib9c.ActionEvaluatorCommonComponents;
 
 public class Random : System.Random, IRandom
 {

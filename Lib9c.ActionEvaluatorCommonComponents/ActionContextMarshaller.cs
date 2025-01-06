@@ -7,7 +7,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Tx;
 using Boolean = Bencodex.Types.Boolean;
 
-namespace Libplanet.Extensions.ActionEvaluatorCommonComponents;
+namespace Lib9c.ActionEvaluatorCommonComponents;
 
 public static class ActionContextMarshaller
 {
