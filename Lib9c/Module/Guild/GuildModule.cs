@@ -51,12 +51,12 @@ namespace Nekoyume.Module.Guild
             }
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            if (!validatorRepository.TryGetValidatorDelegatee(validatorAddress, out _))
+            if (!validatorRepository.TryGetDelegatee(validatorAddress, out _))
             {
                 throw new InvalidOperationException("The validator does not exist.");
             }
 
-            if (validatorRepository.TryGetValidatorDelegatee(signer, out var _))
+            if (validatorRepository.TryGetDelegatee(signer, out var _))
             {
                 throw new InvalidOperationException("Validator cannot make a guild.");
             }
