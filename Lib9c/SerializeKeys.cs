@@ -184,6 +184,7 @@ namespace Lib9c
         public const string MemoKey = "m";
 
         // Battle
-        public const string SignedMemoKey = "sgm";
+        public const string ArenaProviderKey = "arp";
+        public const string ChargeApKey = "cha";
     }
 }

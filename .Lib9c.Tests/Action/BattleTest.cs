@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Arena;
     using Nekoyume.Model;
     using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
@@ -90,6 +91,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(_preset1Avatar, preset1.AvatarState)
                 .SetAgentState(_preset2Agent, preset2.AgentState)
                 .SetAvatarState(_preset2Avatar, preset2.AvatarState)
+                .SetActionPoint(_preset1Avatar, 120)
                 .SetLegacyState(
                     Addresses.GameConfig,
                     new GameConfigState(_sheets[nameof(GameConfigSheet)]).Serialize()
@@ -107,13 +109,13 @@ namespace Lib9c.Tests.Action
             var previousStates = _initialStates;
             var random = new TestRandom();
 
-            var signedMemo = SignMemo(_preset1, "test");
-
             var action = new Battle
             {
                 myAvatarAddress = _preset1Avatar,
                 enemyAvatarAddress = _preset2Avatar,
-                signedMemo = signedMemo,
+                memo = "my memo",
+                arenaProvider = ArenaProvider.PLANETARIUM,
+                chargeAp = false,
                 costumes = new List<Guid>(),
                 equipments = new List<Guid>(),
                 runeInfos = new List<RuneSlotInfo>(),
@@ -134,11 +136,13 @@ namespace Lib9c.Tests.Action
                 }
             );
 
-            var accountAddress = Addresses.Battle.Derive(_preset1Agent.ToHex());
+            var accountAddress = Addresses.Battle.Derive(ArenaProvider.PLANETARIUM.ToString());
             var account = nextStates.GetAccountState(accountAddress);
             var resultState = account.GetState(_preset1Avatar.Derive(txid.ToString()));
+            var resultActionPoint = nextStates.GetActionPoint(_preset1Avatar);
 
             Assert.IsType<Integer>(resultState);
+            Assert.Equal(115, resultActionPoint);
         }
 
         private static (
@@ -172,21 +176,6 @@ namespace Lib9c.Tests.Action
             agentState.avatarAddresses.Add(0, avatarAddress);
 
             return (privateKey, agentState, avatarState);
-        }
-
-        private static string SignMemo(PrivateKey signer, string memo)
-        {
-            Address address = signer.PublicKey.Address;
-            byte[] memoBytes = _codec.Encode((Text)memo);
-            ImmutableArray<byte> signature = ImmutableArray.Create(signer.Sign(memoBytes));
-            string encodedSignature = Convert
-                .ToBase64String(signature.ToArray(), Base64FormattingOptions.None)
-                .Replace('/', '.');
-            string encodedMemo = Convert
-                .ToBase64String(memoBytes, Base64FormattingOptions.None)
-                .Replace('/', '.');
-
-            return $"{address.ToHex()}/{encodedSignature}/{encodedMemo}";
         }
     }
 }
