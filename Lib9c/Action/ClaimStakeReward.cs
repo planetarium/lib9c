@@ -57,7 +57,7 @@ namespace Nekoyume.Action
             var stakeStateAddr = LegacyStakeState.DeriveAddress(context.Signer);
 
             var validatorRepository = new ValidatorRepository(states, context);
-            var isValidator = validatorRepository.TryGetValidatorDelegatee(
+            var isValidator = validatorRepository.TryGetDelegatee(
                 context.Signer, out var _);
             if (isValidator)
             {

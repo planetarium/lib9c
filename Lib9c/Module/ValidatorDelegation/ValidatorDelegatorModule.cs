@@ -7,7 +7,7 @@ namespace Nekoyume.Module.ValidatorDelegation
 {
     public static class ValidatorDelegatorModule
     {
-        public static bool TryGetValidatorDelegator(
+        public static bool TryGetDelegator(
             this ValidatorRepository repository,
             Address address,
             [NotNullWhen(true)] out ValidatorDelegator? validatorDelegator)
