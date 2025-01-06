@@ -49,11 +49,5 @@ namespace Nekoyume.Delegation
                 return new DummyDelegator(address, DelegatorAccountAddress, this);
             }
         }
-
-        public override void SetDelegatee(DummyDelegatee delegatee)
-            => SetDelegateeMetadata(delegatee.Metadata);
-
-        public override void SetDelegator(DummyDelegator delegator)
-            => SetDelegatorMetadata(delegator.Metadata);
     }
 }

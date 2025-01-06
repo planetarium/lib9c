@@ -6,7 +6,7 @@ using System;
 
 namespace Nekoyume.Delegation
 {
-    public class UnbondingRef : IEquatable<UnbondingRef>, IComparable<UnbondingRef>, IComparable, IBencodable
+    public readonly struct UnbondingRef : IComparable, IBencodable
     {
         public UnbondingRef(Address address, UnbondingType unbondingType)
         {
@@ -32,10 +32,10 @@ namespace Nekoyume.Delegation
             .Add(Address.Bencoded)
             .Add((int)UnbondingType);
 
-        public static bool operator ==(UnbondingRef? left, UnbondingRef? right)
-            => left?.Equals(right) ?? right is null;
+        public static bool operator ==(UnbondingRef left, UnbondingRef right)
+            => left.Equals(right);
 
-        public static bool operator !=(UnbondingRef? left, UnbondingRef? right)
+        public static bool operator !=(UnbondingRef left, UnbondingRef right)
             => !(left == right);
 
         public static bool operator <(UnbondingRef left, UnbondingRef right)
@@ -59,33 +59,29 @@ namespace Nekoyume.Delegation
 
         public int CompareTo(UnbondingRef? other)
         {
-            if (ReferenceEquals(this, other))
-            {
-                return 0;
-            }
-
-            if (other is null)
+            if (other is not { } otherRef)
             {
                 return 1;
             }
 
-            int addressComparison = Address.CompareTo(other.Address);
+            int addressComparison = Address.CompareTo(otherRef.Address);
             if (addressComparison != 0)
             {
                 return addressComparison;
             }
 
-            return UnbondingType.CompareTo(other.UnbondingType);
+            return UnbondingType.CompareTo(otherRef.UnbondingType);
         }
 
         public override bool Equals(object? obj)
-            => obj is UnbondingRef other && Equals(other);
+        {
+            if (obj is not UnbondingRef other)
+            {
+                return false;
+            }
 
-        public bool Equals(UnbondingRef? other)
-            => ReferenceEquals(this, other)
-            || (other is UnbondingRef unbondingRef
-            && Address.Equals(unbondingRef.Address)
-            && UnbondingType == unbondingRef.UnbondingType);
+            return Address == other.Address && UnbondingType == other.UnbondingType;
+        }
 
         public override int GetHashCode()
         {

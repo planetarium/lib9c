@@ -1,4 +1,8 @@
 #nullable enable
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using Bencodex;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -8,7 +12,7 @@ using Nekoyume.Action;
 
 namespace Nekoyume.Delegation
 {
-    public abstract class DelegationRepository<TRepository, TDelegatee, TDelegator> : IDelegationRepository
+    public abstract class DelegationRepository<TRepository, TDelegatee, TDelegator>
         where TRepository : DelegationRepository<TRepository, TDelegatee, TDelegator>
         where TDelegatee : Delegatee<TRepository, TDelegatee, TDelegator>
         where TDelegator : Delegator<TRepository, TDelegatee, TDelegator>
@@ -136,9 +140,25 @@ namespace Nekoyume.Delegation
 
         public abstract TDelegator GetDelegator(Address address);
 
-        public abstract void SetDelegatee(TDelegatee delegatee);
+        public void SetDelegatee(TDelegatee delegatee)
+        {
+            if (delegatee is IBencodable bencodable)
+            {
+                delegateeAccount = delegateeAccount.SetState(delegatee.Address, bencodable.Bencoded);
+            }
 
-        public abstract void SetDelegator(TDelegator delegator);
+            SetDelegateeMetadata(delegatee.Metadata);
+        }
+
+        public void SetDelegator(TDelegator delegator)
+        {
+            if (delegator is IBencodable bencodable)
+            {
+                delegatorAccount = delegatorAccount.SetState(delegator.Address, bencodable.Bencoded);
+            }
+
+            SetDelegatorMetadata(delegator.Metadata);
+        }
 
         public DelegateeMetadata GetDelegateeMetadata(Address delegateeAddress)
         {
@@ -160,51 +180,55 @@ namespace Nekoyume.Delegation
 
         public Bond GetBond(TDelegatee delegatee, Address delegatorAddress)
         {
-            Address address = delegatee.BondAddress(delegatorAddress);
-            IValue? value = bondAccount.GetState(address);
-            return value is IValue bencoded
-                ? new Bond(address, bencoded)
-                : new Bond(address);
+            var delegateeMetadata = delegatee.Metadata;
+            var bondAddress = delegateeMetadata.BondAddress(delegatorAddress);
+            return bondAccount.GetState(bondAddress) is { } bencoded
+                ? new Bond(bondAddress, bencoded) : new Bond(bondAddress);
         }
 
         public UnbondLockIn GetUnbondLockIn(TDelegatee delegatee, Address delegatorAddress)
         {
-            Address address = delegatee.UnbondLockInAddress(delegatorAddress);
+            var delegateeMetadata = delegatee.Metadata;
+            var maxUnbondLockInEntries = delegateeMetadata.MaxUnbondLockInEntries;
+            Address address = delegateeMetadata.UnbondLockInAddress(delegatorAddress);
             IValue? value = unbondLockInAccount.GetState(address);
             return value is IValue bencoded
-                ? new UnbondLockIn(address, delegatee.MaxUnbondLockInEntries, bencoded, this)
-                : new UnbondLockIn(address, delegatee.MaxUnbondLockInEntries, delegatee.Address, delegatorAddress, this);
+                ? new UnbondLockIn(address, maxUnbondLockInEntries, bencoded)
+                : new UnbondLockIn(address, maxUnbondLockInEntries, delegatee.Address, delegatorAddress);
         }
 
         public UnbondLockIn GetUnlimitedUnbondLockIn(Address address)
         {
             IValue? value = unbondLockInAccount.GetState(address);
             return value is IValue bencoded
-                ? new UnbondLockIn(address, int.MaxValue, bencoded, this)
+                ? new UnbondLockIn(address, int.MaxValue, bencoded)
                 : throw new FailedLoadStateException("UnbondLockIn not found.");
         }
 
         public RebondGrace GetRebondGrace(TDelegatee delegatee, Address delegatorAddress)
         {
-            Address address = delegatee.RebondGraceAddress(delegatorAddress);
+            var delegateeMetadata = delegatee.Metadata;
+            Address address = delegateeMetadata.RebondGraceAddress(delegatorAddress);
             IValue? value = rebondGraceAccount.GetState(address);
+            var maxRebondGraceEntries = delegateeMetadata.MaxRebondGraceEntries;
             return value is IValue bencoded
-                ? new RebondGrace(address, delegatee.MaxRebondGraceEntries, bencoded, this)
-                : new RebondGrace(address, delegatee.MaxRebondGraceEntries, delegatee.Address, delegatorAddress, this);
+                ? new RebondGrace(address, maxRebondGraceEntries, bencoded)
+                : new RebondGrace(address, maxRebondGraceEntries, delegatee.Address, delegatorAddress);
         }
 
         public RebondGrace GetUnlimitedRebondGrace(Address address)
         {
             IValue? value = rebondGraceAccount.GetState(address);
             return value is IValue bencoded
-                ? new RebondGrace(address, int.MaxValue, bencoded, this)
+                ? new RebondGrace(address, int.MaxValue, bencoded)
                 : throw new FailedLoadStateException("RebondGrace not found.");
         }
 
         /// <inheritdoc/>
         public RewardBase? GetCurrentRewardBase(TDelegatee delegatee)
         {
-            Address address = delegatee.CurrentRewardBaseAddress();
+            var delegateeMetadata = delegatee.Metadata;
+            Address address = delegateeMetadata.CurrentRewardBaseAddress();
             IValue? value = rewardBaseAccount.GetState(address);
             return value is IValue bencoded
                 ? new RewardBase(address, bencoded)
@@ -214,7 +238,8 @@ namespace Nekoyume.Delegation
         /// <inheritdoc/>
         public RewardBase? GetRewardBase(TDelegatee delegatee, long height)
         {
-            Address address = delegatee.RewardBaseAddress(height);
+            var delegateeMetadata = delegatee.Metadata;
+            Address address = delegateeMetadata.RewardBaseAddress(height);
             IValue? value = rewardBaseAccount.GetState(address);
             return value is IValue bencoded
                 ? new RewardBase(address, bencoded)
@@ -223,7 +248,8 @@ namespace Nekoyume.Delegation
 
         public LumpSumRewardsRecord? GetLumpSumRewardsRecord(TDelegatee delegatee, long height)
         {
-            Address address = delegatee.LumpSumRewardsRecordAddress(height);
+            var delegateeMetadata = delegatee.Metadata;
+            Address address = delegateeMetadata.LumpSumRewardsRecordAddress(height);
             IValue? value = lumpSumRewardsRecordAccount.GetState(address);
             return value is IValue bencoded
                 ? new LumpSumRewardsRecord(address, bencoded)
@@ -232,7 +258,8 @@ namespace Nekoyume.Delegation
 
         public LumpSumRewardsRecord? GetCurrentLumpSumRewardsRecord(TDelegatee delegatee)
         {
-            Address address = delegatee.CurrentLumpSumRewardsRecordAddress();
+            var delegateeMetadata = delegatee.Metadata;
+            Address address = delegateeMetadata.CurrentLumpSumRewardsRecordAddress();
             IValue? value = lumpSumRewardsRecordAccount.GetState(address);
             return value is IValue bencoded
                 ? new LumpSumRewardsRecord(address, bencoded)
@@ -242,14 +269,14 @@ namespace Nekoyume.Delegation
         public FungibleAssetValue GetBalance(Address address, Currency currency)
             => previousWorld.GetBalance(address, currency);
 
-        public void SetDelegateeMetadata(DelegateeMetadata delegateeMetadata)
+        private void SetDelegateeMetadata(DelegateeMetadata delegateeMetadata)
         {
             delegateeMetadataAccount
                 = delegateeMetadataAccount.SetState(
                     delegateeMetadata.Address, delegateeMetadata.Bencoded);
         }
 
-        public void SetDelegatorMetadata(DelegatorMetadata delegatorMetadata)
+        private void SetDelegatorMetadata(DelegatorMetadata delegatorMetadata)
         {
             delegatorMetadataAccount
                 = delegatorMetadataAccount.SetState(
@@ -263,14 +290,14 @@ namespace Nekoyume.Delegation
                 : bondAccount.SetState(bond.Address, bond.Bencoded);
         }
 
-        public void SetUnbondLockIn(UnbondLockIn unbondLockIn)
+        private void SetUnbondLockIn(UnbondLockIn unbondLockIn)
         {
             unbondLockInAccount = unbondLockIn.IsEmpty
                 ? unbondLockInAccount.RemoveState(unbondLockIn.Address)
                 : unbondLockInAccount.SetState(unbondLockIn.Address, unbondLockIn.Bencoded);
         }
 
-        public void SetRebondGrace(RebondGrace rebondGrace)
+        private void SetRebondGrace(RebondGrace rebondGrace)
         {
             rebondGraceAccount = rebondGrace.IsEmpty
                 ? rebondGraceAccount.RemoveState(rebondGrace.Address)
@@ -313,35 +340,39 @@ namespace Nekoyume.Delegation
             lumpSumRewardsRecordAccount = world.GetAccount(LumpSumRewardsRecordAccountAddress);
         }
 
-        IDelegatee IDelegationRepository.GetDelegatee(Address address) => GetDelegatee(address);
+        public void Release(UnbondLockIn unbondLockIn, FungibleAssetValue? releasedFAV)
+        {
+            if (releasedFAV.HasValue)
+            {
+                var delegateeMetadata = GetDelegateeMetadata(unbondLockIn.DelegateeAddress);
+                var delegatorMetadata = GetDelegatorMetadata(unbondLockIn.DelegatorAddress);
+                TransferAsset(
+                    delegateeMetadata.DelegationPoolAddress,
+                    delegatorMetadata.DelegationPoolAddress,
+                    releasedFAV.Value);
+            }
+        }
 
-        IDelegator IDelegationRepository.GetDelegator(Address address) => GetDelegator(address);
+        internal IUnbonding GetUnbonding(UnbondingRef reference) => reference.UnbondingType switch
+        {
+            UnbondingType.UnbondLockIn => GetUnlimitedUnbondLockIn(reference.Address),
+            UnbondingType.RebondGrace => GetUnlimitedRebondGrace(reference.Address),
+            _ => throw new ArgumentException("Invalid unbonding type.")
+        };
 
-        Bond IDelegationRepository.GetBond(IDelegatee delegatee, Address delegatorAddress)
-            => GetBond((TDelegatee)delegatee, delegatorAddress);
-
-        UnbondLockIn IDelegationRepository.GetUnbondLockIn(IDelegatee delegatee, Address delegatorAddress)
-            => GetUnbondLockIn((TDelegatee)delegatee, delegatorAddress);
-
-        RebondGrace IDelegationRepository.GetRebondGrace(IDelegatee delegatee, Address delegatorAddress)
-            => GetRebondGrace((TDelegatee)delegatee, delegatorAddress);
-
-        RewardBase? IDelegationRepository.GetCurrentRewardBase(IDelegatee delegatee)
-            => GetCurrentRewardBase((TDelegatee)delegatee);
-
-        RewardBase? IDelegationRepository.GetRewardBase(IDelegatee delegatee, long height)
-            => GetRewardBase((TDelegatee)delegatee, height);
-
-        LumpSumRewardsRecord? IDelegationRepository.GetCurrentLumpSumRewardsRecord(IDelegatee delegatee)
-            => GetCurrentLumpSumRewardsRecord((TDelegatee)delegatee);
-
-        LumpSumRewardsRecord? IDelegationRepository.GetLumpSumRewardsRecord(IDelegatee delegatee, long height)
-            => GetLumpSumRewardsRecord((TDelegatee)delegatee, height);
-
-        void IDelegationRepository.SetDelegatee(IDelegatee delegatee)
-            => SetDelegatee((TDelegatee)delegatee);
-
-        void IDelegationRepository.SetDelegator(IDelegator delegator)
-            => SetDelegator((TDelegator)delegator);
+        internal void SetUnbonding(IUnbonding unbonding)
+        {
+            switch (unbonding)
+            {
+                case UnbondLockIn unbondLockIn:
+                    SetUnbondLockIn(unbondLockIn);
+                    break;
+                case RebondGrace rebondGrace:
+                    SetRebondGrace(rebondGrace);
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid unbonding type.");
+            }
+        }
     }
 }

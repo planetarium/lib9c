@@ -6,6 +6,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Delegation;
+using Nekoyume.Model.Guild;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -16,7 +17,7 @@ namespace Nekoyume.ValidatorDelegation
 
         private IAccount _validatorListAccount;
 
-        public ValidatorRepository(IDelegationRepository repository)
+        public ValidatorRepository(GuildRepository repository)
             : this(repository.World, repository.ActionContext)
         {
         }
@@ -73,15 +74,17 @@ namespace Nekoyume.ValidatorDelegation
                 : new ValidatorList();
         }
 
-        public override void SetDelegatee(ValidatorDelegatee delegatee)
-        {
-            delegateeAccount = delegateeAccount.SetState(
-                delegatee.Address, delegatee.Bencoded);
-            SetDelegateeMetadata(delegatee.Metadata);
-        }
+        // public override void SetDelegatee(ValidatorDelegatee delegatee)
+        // {
+        //     delegateeAccount = delegateeAccount.SetState(
+        //         delegatee.Address, delegatee.Bencoded);
+        //     SetDelegateeMetadata(delegatee.Metadata);
+        // }
 
-        public override void SetDelegator(ValidatorDelegator delegator)
-            => SetDelegatorMetadata(delegator.Metadata);
+        // public override void SetDelegator(ValidatorDelegator delegator)
+        // {
+        //     SetDelegatorMetadata(delegator.Metadata);
+        // }
 
         public void SetValidatorList(ValidatorList validatorList)
         {

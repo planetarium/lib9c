@@ -79,7 +79,9 @@ namespace Nekoyume.ValidatorDelegation
             IsActive = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
-            Metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
+            var metadata = Metadata;
+            metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
+            UpdateMetadata(metadata);
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
@@ -120,11 +122,70 @@ namespace Nekoyume.ValidatorDelegation
 
         public bool IsActive { get; private set; }
 
-        public BigInteger Power => TotalDelegated.RawValue;
+        public BigInteger Power => Metadata.TotalDelegatedFAV.RawValue;
 
         public Validator Validator => new(PublicKey, Power);
 
-        public FungibleAssetValue MinSelfDelegation => DelegationCurrency * 10;
+        public bool Jailed => Metadata.Jailed;
+
+        public long JailedUntil => Metadata.JailedUntil;
+
+        public bool Tombstoned => Metadata.Tombstoned;
+
+        public FungibleAssetValue MinSelfDelegation => Metadata.DelegationCurrency * 10;
+
+        public void Jail(long releaseHeight)
+        {
+            var metadata = Metadata;
+            metadata.JailedUntil = releaseHeight;
+            metadata.Jailed = true;
+            UpdateMetadata(metadata);
+            Repository.SetDelegatee(this);
+            Repository.SetValidatorList(Repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
+        }
+
+        public void Unjail(long height)
+        {
+            var repository = Repository;
+            var metadata = Metadata;
+            var selfDelegation = metadata.FAVFromShare(repository.GetBond(this, Address).Share);
+            if (MinSelfDelegation > selfDelegation)
+            {
+                throw new InvalidOperationException("The self-delegation is still below the minimum.");
+            }
+
+            if (!metadata.Jailed)
+            {
+                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
+            }
+
+            if (metadata.Tombstoned)
+            {
+                throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
+            }
+
+            if (metadata.JailedUntil >= height)
+            {
+                throw new InvalidOperationException("Cannot unjail before jailed until.");
+            }
+
+            metadata.JailedUntil = -1L;
+            metadata.Jailed = false;
+            UpdateMetadata(metadata);
+            Repository.SetDelegatee(this);
+            // Unjailed?.Invoke(this, EventArgs.Empty);
+            // ValidatorRepository repository = Repository;
+            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
+        }
+
+        public void Tombstone()
+        {
+            Jail(long.MaxValue);
+            var metadata = Metadata;
+            metadata.Tombstoned = true;
+            UpdateMetadata(metadata);
+            Repository.SetDelegatee(this);
+        }
 
         public void AllocateReward(
             FungibleAssetValue rewardToAllocate,
@@ -148,7 +209,7 @@ namespace Nekoyume.ValidatorDelegation
 
             if (delegationRewards.Sign > 0)
             {
-                repository.TransferAsset(RewardSource, RewardPoolAddress, delegationRewards);
+                repository.TransferAsset(RewardSource, Metadata.RewardPoolAddress, delegationRewards);
             }
 
             CollectRewards(height);
@@ -185,17 +246,6 @@ namespace Nekoyume.ValidatorDelegation
             CommissionPercentage = percentage;
             CommissionPercentageLastUpdateHeight = height;
         }
-        public new void Unjail(long height)
-        {
-            ValidatorRepository repository = Repository;
-            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
-            if (MinSelfDelegation > selfDelegation)
-            {
-                throw new InvalidOperationException("The self-delegation is still below the minimum.");
-            }
-
-            base.Unjail(height);
-        }
 
         public void Activate()
         {
@@ -204,16 +254,19 @@ namespace Nekoyume.ValidatorDelegation
                 throw new InvalidOperationException("The validator is already active.");
             }
 
-            ValidatorRepository repository = Repository;
+            var repository = Repository;
+            var metadata = Metadata;
+            var totalDelegated = Metadata.TotalDelegatedFAV;
+            metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
+            UpdateMetadata(metadata);
             IsActive = true;
-            Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
 
-            if (TotalDelegated.Sign > 0)
+            if (totalDelegated.Sign > 0)
             {
                 repository.TransferAsset(
                     InactiveDelegationPoolAddress,
                     ActiveDelegationPoolAddress,
-                    TotalDelegated);
+                    totalDelegated);
             }
         }
 
@@ -224,22 +277,26 @@ namespace Nekoyume.ValidatorDelegation
                 throw new InvalidOperationException("The validator is already inactive.");
             }
 
-            ValidatorRepository repository = Repository;
+            var repository = Repository;
+            var metadata = Metadata;
+            var totalDelegated = metadata.TotalDelegatedFAV;
+            metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
+            UpdateMetadata(metadata);
             IsActive = false;
-            Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
 
-            if (TotalDelegated.Sign > 0)
+            if (totalDelegated.Sign > 0)
             {
                 repository.TransferAsset(
                     ActiveDelegationPoolAddress,
                     InactiveDelegationPoolAddress,
-                    TotalDelegated);
+                    totalDelegated);
             }
         }
 
         protected override void OnDelegationChanged(long height)
         {
             ValidatorRepository repository = Repository;
+            var metadata = Metadata;
 
             if (Jailed)
             {
@@ -255,23 +312,11 @@ namespace Nekoyume.ValidatorDelegation
                 repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
             }
 
-            var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
+            var selfDelegation = metadata.FAVFromShare(repository.GetBond(this, Address).Share);
             if (MinSelfDelegation > selfDelegation && !Jailed)
             {
                 Jail(height);
             }
-        }
-
-        protected override void OnEnjailed()
-        {
-            ValidatorRepository repository = Repository;
-            repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
-        }
-
-        protected override void OnUnjailed()
-        {
-            ValidatorRepository repository = Repository;
-            repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
         }
 
         public bool Equals(ValidatorDelegatee? other)
@@ -282,14 +327,11 @@ namespace Nekoyume.ValidatorDelegation
             && CommissionPercentage == validatorDelegatee.CommissionPercentage
             && CommissionPercentageLastUpdateHeight == validatorDelegatee.CommissionPercentageLastUpdateHeight;
 
-        public bool Equals(IDelegatee? other)
-            => Equals(other as ValidatorDelegatee);
-
         public override bool Equals(object? obj)
             => Equals(obj as ValidatorDelegatee);
 
         public override int GetHashCode()
-            => HashCode.Combine(Address, AccountAddress);
+            => HashCode.Combine(Address, Metadata.DelegateeAccountAddress);
 
         public static Address ActiveDelegationPoolAddress => new Address(
             ImmutableArray.Create<byte>(

@@ -276,7 +276,8 @@ namespace Nekoyume.Action
                 {
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                     var guildDelegatee = guildRepository.GetDelegatee(guild.ValidatorAddress);
-                    var share = guildDelegatee.ShareFromFAV(gg);
+                    var guildDelegateeMetadata = guildDelegatee.Metadata;
+                    var share = guildDelegateeMetadata.ShareFromFAV(gg);
                     guildParticipant.Undelegate(guild, share, height);
                     state = guildRepository.World;
                 }

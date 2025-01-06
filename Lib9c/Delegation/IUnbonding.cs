@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
@@ -18,12 +19,13 @@ namespace Nekoyume.Delegation
 
         bool IsEmpty { get; }
 
+        UnbondingRef Reference { get; }
+
         IUnbonding Release(long height, out FungibleAssetValue? releasedFAV);
 
         IUnbonding Slash(
             BigInteger slashFactor,
             long infractionHeight,
-            long height,
-            Address slashedPoolAddress);
+            out SortedDictionary<Address, FungibleAssetValue> slashed);
     }
 }

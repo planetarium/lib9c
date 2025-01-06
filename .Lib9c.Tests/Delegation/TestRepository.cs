@@ -54,12 +54,6 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public override void SetDelegatee(TestDelegatee delegatee)
-            => SetDelegateeMetadata(delegatee.Metadata);
-
-        public override void SetDelegator(TestDelegator delegator)
-            => SetDelegatorMetadata(delegator.Metadata);
-
         public void MintAsset(Address recipient, FungibleAssetValue value)
             => previousWorld = previousWorld.MintAsset(_context, recipient, value);
     }

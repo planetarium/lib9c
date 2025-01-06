@@ -10,12 +10,10 @@ using Nekoyume.Action;
 
 namespace Nekoyume.Delegation
 {
-    public class DelegatorMetadata : IDelegatorMetadata
+    public struct DelegatorMetadata : IBencodable
     {
         private const string StateTypeName = "delegator_metadata";
         private const long StateVersion = 1;
-
-        private Address? _address;
 
         public DelegatorMetadata(
             Address address,
@@ -27,8 +25,8 @@ namespace Nekoyume.Delegation
                   accountAddress,
                   delegationPoolAddress,
                   rewardAddress,
-                  ImmutableSortedSet<Address>.Empty,
-                  ImmutableSortedSet<UnbondingRef>.Empty)
+                  ImmutableArray<Address>.Empty,
+                  ImmutableArray<UnbondingRef>.Empty)
         {
         }
 
@@ -81,8 +79,8 @@ namespace Nekoyume.Delegation
             DelegatorAccountAddress = delegatorAccountAddress;
             DelegationPoolAddress = delegationPoolAddress;
             RewardAddress = rewardAddress;
-            Delegatees = delegatees.ToImmutableSortedSet();
-            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
+            Delegatees = delegatees.ToImmutableArray();
+            UnbondingRefs = unbondingRefs.ToImmutableArray();
         }
 
         private DelegatorMetadata(
@@ -97,16 +95,16 @@ namespace Nekoyume.Delegation
             DelegatorAccountAddress = accountAddress;
             DelegationPoolAddress = delegationPoolAddress;
             RewardAddress = rewardAddress;
-            Delegatees = delegatees.ToImmutableSortedSet();
-            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
+            Delegatees = delegatees.ToImmutableArray();
+            UnbondingRefs = unbondingRefs.ToImmutableArray();
         }
 
         public Address DelegatorAddress { get; }
 
         public Address DelegatorAccountAddress { get; }
 
-        public Address Address
-            => _address ??= DelegationAddress.DelegatorMetadataAddress(
+        public readonly Address Address
+            => DelegationAddress.DelegatorMetadataAddress(
                 DelegatorAddress,
                 DelegatorAccountAddress);
 
@@ -114,11 +112,11 @@ namespace Nekoyume.Delegation
 
         public Address RewardAddress { get; }
 
-        public ImmutableSortedSet<Address> Delegatees { get; private set; }
+        public ImmutableArray<Address> Delegatees { get; private set; }
 
-        public ImmutableSortedSet<UnbondingRef> UnbondingRefs { get; private set; }
+        public ImmutableArray<UnbondingRef> UnbondingRefs { get; private set; }
 
-        public List Bencoded
+        public readonly List Bencoded
             => List.Empty
                 .Add(StateTypeName)
                 .Add(StateVersion)
@@ -127,43 +125,50 @@ namespace Nekoyume.Delegation
                 .Add(new List(Delegatees.Select(a => a.Bencoded)))
                 .Add(new List(UnbondingRefs.Select(unbondingRef => unbondingRef.Bencoded)));
 
-        IValue IBencodable.Bencoded => Bencoded;
+        readonly IValue IBencodable.Bencoded => Bencoded;
 
-        public void AddDelegatee(Address delegatee)
+        public readonly DelegatorMetadata AddDelegatee(Address delegatee)
         {
-            Delegatees = Delegatees.Add(delegatee);
+            var metadata = this;
+            if (!Delegatees.Contains(delegatee))
+            {
+                metadata.Delegatees = Delegatees.Add(delegatee);
+            }
+
+            return metadata;
         }
 
-        public void RemoveDelegatee(Address delegatee)
+        public readonly DelegatorMetadata RemoveDelegatee(Address delegatee)
         {
-            Delegatees = Delegatees.Remove(delegatee);
+            var metadata = this;
+            if (Delegatees.Contains(delegatee))
+            {
+                metadata.Delegatees = Delegatees.Remove(delegatee);
+            }
+
+            return metadata;
         }
 
-        public void AddUnbondingRef(UnbondingRef unbondingRef)
+        public readonly DelegatorMetadata AddUnbondingRef(UnbondingRef unbondingRef)
         {
-            UnbondingRefs = UnbondingRefs.Add(unbondingRef);
+            var metadata = this;
+            if (!UnbondingRefs.Contains(unbondingRef))
+            {
+                metadata.UnbondingRefs = UnbondingRefs.Add(unbondingRef);
+            }
+
+            return metadata;
         }
 
-        public void RemoveUnbondingRef(UnbondingRef unbondingRef)
+        public readonly DelegatorMetadata RemoveUnbondingRef(UnbondingRef unbondingRef)
         {
-            UnbondingRefs = UnbondingRefs.Remove(unbondingRef);
+            var metadata = this;
+            if (UnbondingRefs.Contains(unbondingRef))
+            {
+                metadata.UnbondingRefs = UnbondingRefs.Remove(unbondingRef);
+            }
+
+            return metadata;
         }
-
-        public override bool Equals(object? obj)
-            => obj is IDelegator other && Equals(other);
-
-        public virtual bool Equals(IDelegator? other)
-            => ReferenceEquals(this, other)
-            || (other is DelegatorMetadata delegator
-            && GetType() != delegator.GetType()
-            && DelegatorAddress.Equals(delegator.DelegatorAddress)
-            && DelegatorAccountAddress.Equals(delegator.DelegatorAccountAddress)
-            && DelegationPoolAddress.Equals(delegator.DelegationPoolAddress)
-            && RewardAddress.Equals(delegator.RewardAddress)
-            && Delegatees.SequenceEqual(delegator.Delegatees)
-            && UnbondingRefs.SequenceEqual(delegator.UnbondingRefs));
-
-        public override int GetHashCode()
-            => DelegatorAddress.GetHashCode();
     }
 }

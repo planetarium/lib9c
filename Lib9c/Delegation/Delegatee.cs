@@ -4,17 +4,18 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    public abstract class Delegatee<TRepository, TDelegatee, TDelegator> : IDelegatee
+    public abstract class Delegatee<TRepository, TDelegatee, TDelegator>
         where TRepository : DelegationRepository<TRepository, TDelegatee, TDelegator>
         where TDelegatee : Delegatee<TRepository, TDelegatee, TDelegator>
         where TDelegator : Delegator<TRepository, TDelegatee, TDelegator>
     {
+        private readonly TRepository? _repository;
+
         public Delegatee(
             Address address,
             Address accountAddress,
@@ -52,215 +53,92 @@ namespace Nekoyume.Delegation
         {
         }
 
-        private Delegatee(DelegateeMetadata metadata, TRepository repository)
+        private Delegatee(DelegateeMetadata metadata, TRepository? repository = null)
         {
             Metadata = metadata;
-            Repository = repository;
+            _repository = repository;
         }
 
-        public DelegateeMetadata Metadata { get; }
-
-        public TRepository Repository { get; }
+        public DelegateeMetadata Metadata { get; private set; }
 
         public Address Address => Metadata.DelegateeAddress;
-
-        public Address AccountAddress => Metadata.DelegateeAccountAddress;
-
-        public Address MetadataAddress => Metadata.Address;
-
-        public Currency DelegationCurrency => Metadata.DelegationCurrency;
-
-        public ImmutableSortedSet<Currency> RewardCurrencies => Metadata.RewardCurrencies;
-
-        public Address DelegationPoolAddress => Metadata.DelegationPoolAddress;
-
-        public Address RewardPoolAddress => Metadata.RewardPoolAddress;
-
-        public Address RewardRemainderPoolAddress => Metadata.RewardRemainderPoolAddress;
-
-        public Address SlashedPoolAddress => Metadata.SlashedPoolAddress;
-
-        public long UnbondingPeriod => Metadata.UnbondingPeriod;
-
-        public int MaxUnbondLockInEntries => Metadata.MaxUnbondLockInEntries;
-
-        public int MaxRebondGraceEntries => Metadata.MaxRebondGraceEntries;
 
         public FungibleAssetValue TotalDelegated => Metadata.TotalDelegatedFAV;
 
         public BigInteger TotalShares => Metadata.TotalShares;
 
-        public bool Jailed => Metadata.Jailed;
+        protected TRepository Repository
+            => _repository ?? throw new InvalidOperationException("Repository is not set.");
 
-        public long JailedUntil => Metadata.JailedUntil;
-
-        public bool Tombstoned => Metadata.Tombstoned;
-
-        public List MetadataBencoded => Metadata.Bencoded;
-
-        public BigInteger ShareFromFAV(FungibleAssetValue fav)
-            => Metadata.ShareFromFAV(fav);
-
-        public FungibleAssetValue FAVFromShare(BigInteger share)
-            => Metadata.FAVFromShare(share);
-
-        BigInteger IDelegatee.Bond(IDelegator delegator, FungibleAssetValue fav, long height)
-            => Bond((TDelegator)delegator, fav, height);
-
-        FungibleAssetValue IDelegatee.Unbond(IDelegator delegator, BigInteger share, long height)
-            => Unbond((TDelegator)delegator, share, height);
-
-        void IDelegatee.DistributeReward(IDelegator delegator, long height)
-            => DistributeReward((TDelegator)delegator, height);
-
-        public void Jail(long releaseHeight)
+        public BondResult Bond(TDelegator delegator, FungibleAssetValue fav, long height)
         {
-            Metadata.JailedUntil = releaseHeight;
-            Metadata.Jailed = true;
-            Repository.SetDelegateeMetadata(Metadata);
-            OnEnjailed();
-        }
-
-        public void Unjail(long height)
-        {
-            if (!Jailed)
-            {
-                throw new InvalidOperationException("Cannot unjail non-jailed delegatee.");
-            }
-
-            if (Tombstoned)
-            {
-                throw new InvalidOperationException("Cannot unjail tombstoned delegatee.");
-            }
-
-            if (JailedUntil >= height)
-            {
-                throw new InvalidOperationException("Cannot unjail before jailed until.");
-            }
-
-            Metadata.JailedUntil = -1L;
-            Metadata.Jailed = false;
-            Repository.SetDelegateeMetadata(Metadata);
-            OnUnjailed();
-        }
-
-        public void Tombstone()
-        {
-            Jail(long.MaxValue);
-            Metadata.Tombstoned = true;
-            Repository.SetDelegateeMetadata(Metadata);
-        }
-
-        public Address BondAddress(Address delegatorAddress)
-            => Metadata.BondAddress(delegatorAddress);
-
-        public Address UnbondLockInAddress(Address delegatorAddress)
-            => Metadata.UnbondLockInAddress(delegatorAddress);
-
-        public Address RebondGraceAddress(Address delegatorAddress)
-            => Metadata.RebondGraceAddress(delegatorAddress);
-
-        /// <summary>
-        /// Get the <see cref="Address"/> of the distribution pool
-        /// where the rewards are distributed from.
-        /// </summary>
-        /// <returns>
-        /// <see cref="Address"/> of the distribution pool.
-        /// </returns>
-        public Address DistributionPoolAddress()
-            => Metadata.DistributionPoolAddress();
-
-        /// <summary>
-        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>.
-        /// </summary>
-        /// <returns>
-        /// <see cref="Address"/> of the current <see cref="RewardBase"/>.
-        /// </returns>
-        public Address CurrentRewardBaseAddress()
-            => Metadata.CurrentRewardBaseAddress();
-
-        /// <summary>
-        /// Get the <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
-        /// </summary>
-        /// <param name="height"></param>
-        /// <returns>
-        /// <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
-        /// </returns>
-        public Address RewardBaseAddress(long height)
-            => Metadata.RewardBaseAddress(height);
-
-        public Address CurrentLumpSumRewardsRecordAddress()
-            => Metadata.CurrentLumpSumRewardsRecordAddress();
-
-        public Address LumpSumRewardsRecordAddress(long height)
-            => Metadata.LumpSumRewardsRecordAddress(height);
-
-        public virtual BigInteger Bond(TDelegator delegator, FungibleAssetValue fav, long height)
-        {
+            var repository = Repository;
+            var delegationCurrency = Metadata.DelegationCurrency;
+            var metadata = Metadata;
             DistributeReward(delegator, height);
 
-            if (!fav.Currency.Equals(DelegationCurrency))
+            if (!fav.Currency.Equals(delegationCurrency))
             {
-                throw new InvalidOperationException(
-                    "Cannot bond with invalid currency.");
+                throw new InvalidOperationException("Cannot bond with invalid currency.");
             }
 
-            if (Tombstoned)
+            if (metadata.Tombstoned)
             {
-                throw new InvalidOperationException(
-                    "Cannot bond to tombstoned delegatee.");
+                throw new InvalidOperationException("Cannot bond to tombstoned delegatee.");
             }
 
-            Bond bond = Repository.GetBond((TDelegatee)this, delegator.Address);
-            BigInteger share = ShareFromFAV(fav);
-            bond = bond.AddShare(share);
-            Metadata.AddShare(share);
-            Metadata.AddDelegatedFAV(fav);
-            Repository.SetBond(bond);
+            var oldBond = repository.GetBond((TDelegatee)this, delegator.Address);
+            var share = metadata.ShareFromFAV(fav);
+            var newBond = oldBond.AddShare(share);
+            metadata = metadata.AddShare(share)
+                .AddDelegatedFAV(fav);
+
+            UpdateMetadata(metadata);
+            repository.SetBond(newBond);
             StartNewRewardPeriod(height);
-            Repository.SetDelegateeMetadata(Metadata);
+            repository.SetDelegatee((TDelegatee)this);
             OnDelegationChanged(height);
 
-            return share;
+            return new BondResult(share, newBond);
         }
 
-        public FungibleAssetValue Unbond(TDelegator delegator, BigInteger share, long height)
+        public UnbondResult Unbond(TDelegator delegator, BigInteger share, long height)
         {
+            var repository = Repository;
+            var metadata = Metadata;
             DistributeReward(delegator, height);
-            if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
+            if (metadata.TotalShares.IsZero || metadata.TotalDelegatedFAV.RawValue.IsZero)
             {
                 throw new InvalidOperationException(
                     "Cannot unbond without bonding.");
             }
 
-            Bond bond = Repository!.GetBond((TDelegatee)this, delegator.Address);
-            FungibleAssetValue fav = FAVFromShare(share);
-            bond = bond.SubtractShare(share);
-            if (bond.Share.IsZero)
-            {
-                bond = bond.ClearLastDistributeHeight();
-            }
+            var oldBond = repository.GetBond((TDelegatee)this, delegator.Address);
+            var fav = metadata.FAVFromShare(share);
+            var newBond = oldBond.SubtractShare(share);
+            metadata = metadata.RemoveShare(share)
+                .RemoveDelegatedFAV(fav);
 
-            Metadata.RemoveShare(share);
-            Metadata.RemoveDelegatedFAV(fav);
-            Repository.SetBond(bond);
+            UpdateMetadata(metadata);
+            repository.SetBond(newBond);
             StartNewRewardPeriod(height);
-            Repository.SetDelegateeMetadata(Metadata);
+            repository.SetDelegatee((TDelegatee)this);
             OnDelegationChanged(height);
 
-            return fav;
+            return new UnbondResult(fav, newBond);
         }
 
         public void DistributeReward(TDelegator delegator, long height)
         {
-            Bond bond = Repository.GetBond((TDelegatee)this, delegator.Address);
-            BigInteger share = bond.Share;
+            var repository = Repository;
+            var bond = repository.GetBond((TDelegatee)this, delegator.Address);
+            var share = bond.Share;
 
-            if (!share.IsZero && bond.LastDistributeHeight.HasValue)
+            if (!share.IsZero && bond.LastDistributeHeight is { } lastDistributeHeight)
             {
-                if (Repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
+                if (repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
                 {
-                    var lastRewardBase = Repository.GetRewardBase((TDelegatee)this, bond.LastDistributeHeight.Value);
+                    var lastRewardBase = repository.GetRewardBase((TDelegatee)this, lastDistributeHeight);
                     var rewards = CalculateRewards(share, rewardBase, lastRewardBase);
                     TransferRewards(delegator, rewards);
                     // TransferRemainders(newRecord);
@@ -272,84 +150,93 @@ namespace Nekoyume.Delegation
                 bond = bond.UpdateLastDistributeHeight(height);
             }
 
-            Repository.SetBond(bond);
+            repository.SetBond(bond);
         }
 
         public void CollectRewards(long height)
         {
-            var rewards = RewardCurrencies.Select(c => Repository.GetBalance(RewardPoolAddress, c));
-            if (Repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
+            var repository = Repository;
+            var rewardCurrencies = Metadata.RewardCurrencies;
+            var totalShares = Metadata.TotalShares;
+            var rewards = rewardCurrencies.Select(c => repository.GetBalance(Metadata.RewardPoolAddress, c));
+            if (repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
             {
-                rewardBase = rewardBase.AddRewards(rewards, TotalShares);
+                var distributionPoolAddress = Metadata.DistributionPoolAddress();
+                rewardBase = rewardBase.AddRewards(rewards, totalShares);
 
                 foreach (var rewardsEach in rewards)
                 {
                     if (rewardsEach.Sign > 0)
                     {
-                        Repository.TransferAsset(RewardPoolAddress, DistributionPoolAddress(), rewardsEach);
+                        repository.TransferAsset(Metadata.RewardPoolAddress, distributionPoolAddress, rewardsEach);
                     }
                 }
 
-                Repository.SetRewardBase(rewardBase);
+                repository.SetRewardBase(rewardBase);
             }
         }
 
         public virtual void Slash(BigInteger slashFactor, long infractionHeight, long height)
         {
-            FungibleAssetValue slashed = TotalDelegated.DivRem(slashFactor, out var rem);
+            var repository = Repository;
+            var totalDelegated = Metadata.TotalDelegatedFAV;
+            var delegationCurrency = Metadata.DelegationCurrency;
+            FungibleAssetValue slashed = totalDelegated.DivRem(slashFactor, out var rem);
             if (rem.Sign > 0)
             {
                 slashed += FungibleAssetValue.FromRawValue(rem.Currency, 1);
             }
 
-            if (slashed > Metadata.TotalDelegatedFAV)
+            if (slashed > totalDelegated)
             {
-                slashed = Metadata.TotalDelegatedFAV;
+                slashed = totalDelegated;
             }
 
             Metadata.RemoveDelegatedFAV(slashed);
 
             foreach (var item in Metadata.UnbondingRefs)
             {
-                var unbonding = UnbondingFactory.GetUnbondingFromRef(item, Repository);
+                var unbonding = repository.GetUnbonding(item);
 
-                unbonding = unbonding.Slash(slashFactor, infractionHeight, height, SlashedPoolAddress);
+                unbonding = unbonding.Slash(slashFactor, infractionHeight, out var slashed1);
+
+                FungibleAssetValue? slashedFAV = null;
+                foreach (var (address, slashedEach) in slashed1)
+                {
+                    var delegatee = repository.GetDelegatee(address);
+                    var delegator = repository.GetDelegator(unbonding.DelegatorAddress);
+                    var delegateeMetadata = delegatee.Metadata;
+                    delegatee.Unbond(delegator, delegateeMetadata.ShareFromFAV(slashedEach), height);
+                    slashedFAV = slashedFAV.HasValue ? slashedFAV + slashedEach : slashedEach;
+                }
+
+                if (slashedFAV.HasValue)
+                {
+                    slashed += slashedFAV.Value;
+                }
 
                 if (unbonding.IsEmpty)
                 {
                     Metadata.RemoveUnbondingRef(item);
                 }
 
-                switch (unbonding)
-                {
-                    case UnbondLockIn unbondLockIn:
-                        Repository.SetUnbondLockIn(unbondLockIn);
-                        break;
-                    case RebondGrace rebondGrace:
-                        Repository.SetRebondGrace(rebondGrace);
-                        break;
-                    default:
-                        throw new InvalidOperationException("Invalid unbonding type.");
-                }
+                repository.SetUnbonding(unbonding);
             }
 
-            var delegationBalance = Repository.GetBalance(DelegationPoolAddress, DelegationCurrency);
+            var delegationBalance = repository.GetBalance(Metadata.DelegationPoolAddress, delegationCurrency);
             if (delegationBalance < slashed)
             {
                 slashed = delegationBalance;
             }
 
-            if (slashed > DelegationCurrency * 0)
+            if (slashed > delegationCurrency * 0)
             {
-                Repository.TransferAsset(DelegationPoolAddress, SlashedPoolAddress, slashed);
+                repository.TransferAsset(Metadata.DelegationPoolAddress, Metadata.SlashedPoolAddress, slashed);
             }
 
-            Repository.SetDelegateeMetadata(Metadata);
+            repository.SetDelegatee((TDelegatee)this);
             OnDelegationChanged(height);
         }
-
-        void IDelegatee.Slash(BigInteger slashFactor, long infractionHeight, long height)
-            => Slash(slashFactor, infractionHeight, height);
 
         /// <summary>
         /// Start a new reward period.
@@ -360,34 +247,38 @@ namespace Nekoyume.Delegation
         /// </param>
         public void StartNewRewardPeriod(long height)
         {
+            var repository = Repository;
+            var rewardCurrencies = Metadata.RewardCurrencies;
+            var totalShares = Metadata.TotalShares;
+
             RewardBase newRewardBase;
-            if (Repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
+            if (repository.GetCurrentRewardBase((TDelegatee)this) is RewardBase rewardBase)
             {
-                newRewardBase = rewardBase.UpdateSigFig(TotalShares);
-                if (Repository.GetRewardBase((TDelegatee)this, height) is not null)
+                newRewardBase = rewardBase.UpdateSigFig(totalShares);
+                if (repository.GetRewardBase((TDelegatee)this, height) is not null)
                 {
-                    Repository.SetRewardBase(newRewardBase);
+                    repository.SetRewardBase(newRewardBase);
                     return;
                 }
 
-                Address archiveAddress = RewardBaseAddress(height);
+                Address archiveAddress = Metadata.RewardBaseAddress(height);
                 var archivedRewardBase = rewardBase.AttachHeight(archiveAddress, height);
-                Repository.SetRewardBase(archivedRewardBase);
+                repository.SetRewardBase(archivedRewardBase);
             }
             else
             {
-                if (TotalShares.IsZero)
+                if (totalShares.IsZero)
                 {
                     return;
                 }
 
                 newRewardBase = new(
-                    CurrentRewardBaseAddress(),
-                    TotalShares,
-                    RewardCurrencies);
+                    Metadata.CurrentRewardBaseAddress(),
+                    totalShares,
+                    rewardCurrencies);
             }
 
-            Repository.SetRewardBase(newRewardBase);
+            repository.SetRewardBase(newRewardBase);
         }
 
         public IEnumerable<FungibleAssetValue> CalculateRewards(
@@ -409,35 +300,39 @@ namespace Nekoyume.Delegation
                 }
 
                 var reward = c.Value - lastCumulativeEach;
-                yield return reward;          
+                yield return reward;
             }
+        }
+
+        internal void AddUnbondingRef(UnbondingRef reference)
+        {
+            var metaData = Metadata.AddUnbondingRef(reference);
+            UpdateMetadata(metaData);
+        }
+
+        internal void RemoveUnbondingRef(UnbondingRef reference)
+        {
+            var metaData = Metadata.RemoveUnbondingRef(reference);
+            UpdateMetadata(metaData);
         }
 
         protected virtual void OnDelegationChanged(long height)
         {
         }
 
-        protected virtual void OnEnjailed()
+        protected void UpdateMetadata(DelegateeMetadata metadata)
         {
+            Metadata = metadata;
         }
-
-        protected virtual void OnUnjailed()
-        {
-        }
-
-        internal void AddUnbondingRef(UnbondingRef reference)
-            => Metadata.AddUnbondingRef(reference);
-
-        internal void RemoveUnbondingRef(UnbondingRef reference)
-            => Metadata.RemoveUnbondingRef(reference);
 
         private void TransferRewards(TDelegator delegator, IEnumerable<FungibleAssetValue> rewards)
         {
+            var repository = Repository;
             foreach (var reward in rewards)
             {
                 if (reward.Sign > 0)
                 {
-                    Repository.TransferAsset(DistributionPoolAddress(), delegator.RewardAddress, reward);
+                    repository.TransferAsset(Metadata.DistributionPoolAddress(), delegator.Metadata.RewardAddress, reward);
                 }
             }
         }

@@ -347,7 +347,7 @@ public class ClaimRewardTest : ValidatorDelegationTestBase
         var validatorRepository = new ValidatorRepository(world, actionContext);
         var guildRepository = new GuildRepository(world, actionContext);
         var delegatee = validatorRepository.GetDelegatee(validatorKey.Address);
-        var actualRemainGuildReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, GuildAllocateRewardCurrency);
+        var actualRemainGuildReward = world.GetBalance(delegatee.Metadata.RewardRemainderPoolAddress, GuildAllocateRewardCurrency);
         var actualValidatorBalance = world.GetBalance(StakeState.DeriveAddress(validatorKey.Address), DelegationCurrency);
         var actualValidatorGuildReward = world.GetBalance(validatorKey.Address, GuildAllocateRewardCurrency);
         var actualDelegatorBalances = delegatorKeys
@@ -361,7 +361,7 @@ public class ClaimRewardTest : ValidatorDelegationTestBase
                 GuildAllocateRewardCurrency))
             .ToArray();
 
-        var actualRemainReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, AllocateRewardCurrency);
+        var actualRemainReward = world.GetBalance(delegatee.Metadata.RewardRemainderPoolAddress, AllocateRewardCurrency);
         var actualValidatorReward = world.GetBalance(validatorKey.Address, AllocateRewardCurrency);
         var actualGuildRewards = delegatorKeys
             .Select(item => world.GetBalance(

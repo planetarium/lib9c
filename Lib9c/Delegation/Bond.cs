@@ -7,7 +7,7 @@ using Libplanet.Crypto;
 
 namespace Nekoyume.Delegation
 {
-    public sealed class Bond : IBencodable, IEquatable<Bond>
+    public readonly struct Bond : IBencodable
     {
         public Bond(Address address)
             : this(address, BigInteger.Zero, null)
@@ -66,43 +66,55 @@ namespace Nekoyume.Delegation
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public override bool Equals(object? obj)
-            => obj is Bond other && Equals(other);
+        public static bool operator ==(Bond left, Bond right)
+            => left.Equals(right);
 
-        public bool Equals(Bond? other)
-            => ReferenceEquals(this, other)
-            || (other is Bond bond
-            && Address.Equals(bond.Address)
-            && Share.Equals(bond.Share)
-            && LastDistributeHeight.Equals(bond.LastDistributeHeight));
+        public static bool operator !=(Bond left, Bond right)
+            => !left.Equals(right);
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Bond other)
+            {
+                return false;
+            }
+
+            return Address == other.Address
+                && Share == other.Share
+                && LastDistributeHeight == other.LastDistributeHeight;
+        }
 
         public override int GetHashCode()
-            => Address.GetHashCode();
+            => HashCode.Combine(Address, Share, LastDistributeHeight);
 
-        internal Bond AddShare(BigInteger share)
+        internal Bond AddShare(BigInteger value)
         {
-            if (share.Sign <= 0)
+            if (value.Sign <= 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(share),
-                    share,
+                    nameof(value),
+                    value,
                     "share must be positive.");
             }
 
-            return new Bond(Address, Share + share, LastDistributeHeight);
+            var share = Share + value;
+            var lastDistributeHeight = LastDistributeHeight;
+            return new Bond(Address, share, lastDistributeHeight);
         }
 
-        internal Bond SubtractShare(BigInteger share)
+        internal Bond SubtractShare(BigInteger value)
         {
-            if (share > Share)
+            if (value > Share)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(share),
-                    share,
+                    nameof(value),
+                    value,
                     "share must be less than or equal to the current share.");
             }
 
-            return new Bond(Address, Share - share, LastDistributeHeight);
+            var share = Share - value;
+            var lastDistributeHeight = share.IsZero ? null : LastDistributeHeight;
+            return new Bond(Address, share, lastDistributeHeight);
         }
 
         internal Bond UpdateLastDistributeHeight(long height)

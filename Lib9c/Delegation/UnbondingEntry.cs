@@ -38,11 +38,11 @@ namespace Nekoyume.Delegation
         }
 
         public UnbondingEntry(
-                Address unbondeeAddress,
-                FungibleAssetValue initialUnbondingFAV,
-                FungibleAssetValue unbondingFAV,
-                long creationHeight,
-                long expireHeight)
+            Address unbondeeAddress,
+            FungibleAssetValue initialUnbondingFAV,
+            FungibleAssetValue unbondingFAV,
+            long creationHeight,
+            long expireHeight)
         {
             if (initialUnbondingFAV.Sign <= 0)
             {

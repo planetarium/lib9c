@@ -16,30 +16,26 @@ namespace Nekoyume.Delegation
         private static readonly IComparer<UnbondingEntry> _entryComparer
             = new UnbondingEntry.Comparer();
 
-        private readonly IDelegationRepository? _repository;
-
         public RebondGrace(
             Address address,
             int maxEntries,
             Address delegateeAddress,
-            Address delegatorAddress,
-            IDelegationRepository? repository = null)
+            Address delegatorAddress)
             : this(
                   address,
                   maxEntries,
                   delegateeAddress,
                   delegatorAddress,
-                  ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>>.Empty,
-                  repository)
+                  ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>>.Empty)
         {
         }
 
-        public RebondGrace(Address address, int maxEntries, IValue bencoded, IDelegationRepository? repository = null)
-            : this(address, maxEntries, (List)bencoded, repository)
+        public RebondGrace(Address address, int maxEntries, IValue bencoded)
+            : this(address, maxEntries, (List)bencoded)
         {
         }
 
-        public RebondGrace(Address address, int maxEntries, List bencoded, IDelegationRepository? repository = null)
+        public RebondGrace(Address address, int maxEntries, List bencoded)
             : this(
                   address,
                   maxEntries,
@@ -51,8 +47,7 @@ namespace Nekoyume.Delegation
                           ((List)list[1]).Select(e => new UnbondingEntry(e)).ToImmutableList())
                       : throw new InvalidCastException(
                           $"Unable to cast object of type '{kv.GetType()}' to type '{typeof(List)}'."))
-                  .ToImmutableSortedDictionary(),
-                  repository)
+                  .ToImmutableSortedDictionary())
         {
         }
 
@@ -61,14 +56,12 @@ namespace Nekoyume.Delegation
             int maxEntries,
             Address delegateeAddress,
             Address delegatorAddress,
-            IEnumerable<UnbondingEntry> entries,
-            IDelegationRepository? repository = null)
+            IEnumerable<UnbondingEntry> entries)
             : this(
                   address,
                   maxEntries,
                   delegateeAddress,
-                  delegatorAddress,
-                  repository)
+                  delegatorAddress)
         {
             foreach (var entry in entries)
             {
@@ -81,8 +74,7 @@ namespace Nekoyume.Delegation
             int maxEntries,
             Address delegateeAddress,
             Address delegatorAddress,
-            ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries,
-            IDelegationRepository? repository)
+            ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries)
         {
             if (maxEntries < 0)
             {
@@ -97,7 +89,6 @@ namespace Nekoyume.Delegation
             Entries = entries;
             DelegateeAddress = delegateeAddress;
             DelegatorAddress = delegatorAddress;
-            _repository = repository;
         }
 
         public Address Address { get; }
@@ -107,8 +98,6 @@ namespace Nekoyume.Delegation
         public Address DelegateeAddress { get; }
 
         public Address DelegatorAddress { get; }
-
-        public IDelegationRepository? Repository => _repository;
 
         public long LowestExpireHeight => IsEmpty
             ? -1
@@ -135,6 +124,8 @@ namespace Nekoyume.Delegation
                             new List(sortedDict.Value.Select(e => e.Bencoded))))));
 
         IValue IBencodable.Bencoded => Bencoded;
+
+        public UnbondingRef Reference => new UnbondingRef(Address, UnbondingType.RebondGrace);
 
         public RebondGrace Release(long height, out FungibleAssetValue? releasedFAV)
         {
@@ -169,13 +160,9 @@ namespace Nekoyume.Delegation
         public RebondGrace Slash(
             BigInteger slashFactor,
             long infractionHeight,
-            long height,
-            Address slashedPoolAddress)
+            out SortedDictionary<Address, FungibleAssetValue> slashed)
         {
-            // TODO: Extract common logic to abstract class
-            CannotMutateRelationsWithoutRepository();
-
-            var slashed = new SortedDictionary<Address, FungibleAssetValue>();
+            slashed = new SortedDictionary<Address, FungibleAssetValue>();
             var updatedEntries = Entries;
             var entriesToSlash = Entries.TakeWhile(e => e.Key >= infractionHeight);
             foreach (var (expireHeight, entries) in entriesToSlash)
@@ -199,24 +186,24 @@ namespace Nekoyume.Delegation
                 updatedEntries = Entries.SetItem(expireHeight, slashedEntries);
             }
 
-            foreach (var (address, slashedEach) in slashed)
-            {
-                var delegatee = Repository!.GetDelegatee(address);
-                var delegator = Repository!.GetDelegator(DelegatorAddress);
-                delegatee.Unbond(delegator, delegatee.ShareFromFAV(slashedEach), height);
+            // foreach (var (address, slashedEach) in slashed)
+            // {
+            //     var delegatee = Repository!.GetDelegatee(address);
+            //     var delegator = Repository!.GetDelegator(DelegatorAddress);
+            //     delegatee.Unbond(delegator, delegatee.ShareFromFAV(slashedEach), height);
 
-                var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
-                var slashAmount = slashedEach;
-                if (delegationBalance < slashedEach)
-                {
-                    slashAmount = delegationBalance;
-                }
+            //     var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
+            //     var slashAmount = slashedEach;
+            //     if (delegationBalance < slashedEach)
+            //     {
+            //         slashAmount = delegationBalance;
+            //     }
 
-                if (slashAmount > slashedEach.Currency * 0)
-                {
-                    Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
-                }              
-            }
+            //     if (slashAmount > slashedEach.Currency * 0)
+            //     {
+            //         Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
+            //     }
+            // }
 
 
             return UpdateEntries(updatedEntries);
@@ -225,9 +212,8 @@ namespace Nekoyume.Delegation
         IUnbonding IUnbonding.Slash(
             BigInteger slashFactor,
             long infractionHeight,
-            long height,
-            Address slashedPoolAddress)
-            => Slash(slashFactor, infractionHeight, height, slashedPoolAddress);
+            out SortedDictionary<Address, FungibleAssetValue> slashed)
+            => Slash(slashFactor, infractionHeight, out slashed);
 
         public override bool Equals(object? obj)
             => obj is RebondGrace other && Equals(other);
@@ -282,15 +268,6 @@ namespace Nekoyume.Delegation
 
         private RebondGrace UpdateEntries(
             ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries)
-            => new RebondGrace(Address, MaxEntries, DelegateeAddress, DelegatorAddress, entries, _repository);
-
-        private void CannotMutateRelationsWithoutRepository()
-        {
-            if (_repository is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot mutate without repository.");
-            }
-        }
+            => new RebondGrace(Address, MaxEntries, DelegateeAddress, DelegatorAddress, entries);
     }
 }

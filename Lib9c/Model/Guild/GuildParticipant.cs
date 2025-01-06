@@ -63,10 +63,10 @@ namespace Nekoyume.Model.Guild
         public AgentAddress Address { get; }
 
         public Address DelegationPoolAddress
-            => Repository.GetDelegator(Address).DelegationPoolAddress;
+            => Repository.GetDelegator(Address).Metadata.DelegationPoolAddress;
 
         public Address RewardAddress
-            => Repository.GetDelegator(Address).RewardAddress;
+            => Repository.GetDelegator(Address).Metadata.RewardAddress;
 
         public GuildRepository Repository { get; }
 
@@ -146,7 +146,8 @@ namespace Nekoyume.Model.Guild
             var validatorRepository = new ValidatorRepository(Repository);
             var srcValidatorDelegatee = validatorRepository.GetDelegatee(srcGuild.ValidatorAddress);
             var srcValidatorDelegator = validatorRepository.GetDelegator(srcGuild.Address);
-            var fav = srcValidatorDelegatee.Unbond(srcValidatorDelegator, share, height);
+            var unbondResult = srcValidatorDelegatee.Unbond(srcValidatorDelegator, share, height);
+            var fav = unbondResult.Fav;
             var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);
             var dstValidatorDelegator = validatorRepository.GetDelegator(dstGuild.Address);
             dstValidatorDelegatee.Bond(dstValidatorDelegator, fav, height);

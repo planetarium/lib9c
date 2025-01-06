@@ -6,6 +6,7 @@ using Nekoyume.Action;
 using Nekoyume.Delegation;
 using Nekoyume.TypedAddress;
 using Nekoyume.Model.Stake;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
@@ -18,7 +19,7 @@ namespace Nekoyume.Model.Guild
         private IAccount _guildAccount;
         private IAccount _guildParticipantAccount;
 
-        public GuildRepository(IDelegationRepository repository)
+        public GuildRepository(ValidatorRepository repository)
             : this(repository.World, repository.ActionContext)
         {
         }
@@ -64,11 +65,11 @@ namespace Nekoyume.Model.Guild
             }
         }
 
-        public override void SetDelegatee(GuildDelegatee delegatee)
-            => SetDelegateeMetadata(delegatee.Metadata);
+        // public override void SetDelegatee(GuildDelegatee delegatee)
+        //     => SetDelegateeMetadata(delegatee.Metadata);
 
-        public override void SetDelegator(GuildDelegator delegator)
-            => SetDelegatorMetadata(delegator.Metadata);
+        // public override void SetDelegator(GuildDelegator delegator)
+        //     => SetDelegatorMetadata(delegator.Metadata);
 
         public Guild GetGuild(Address address)
             => _guildAccount.GetState(address) is IValue bencoded

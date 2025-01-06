@@ -12,13 +12,10 @@ using System.Numerics;
 
 namespace Nekoyume.Delegation
 {
-    public class DelegateeMetadata : IDelegateeMetadata
+    public struct DelegateeMetadata : IBencodable
     {
         private const string StateTypeName = "delegatee_metadata";
         private const long StateVersion = 1;
-
-        private Address? _address;
-        private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         /// <summary>
         /// Create a new instance of DelegateeMetadata.
@@ -90,8 +87,8 @@ namespace Nekoyume.Delegation
                   false,
                   -1L,
                   false,
-                  ImmutableSortedSet<UnbondingRef>.Empty)
-        {   
+                  ImmutableArray<UnbondingRef>.Empty)
+        {
         }
 
         public DelegateeMetadata(
@@ -120,7 +117,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = new Currency(bencoded[2]);
-            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableSortedSet(_currencyComparer);
+            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableArray();
             DelegationPoolAddress = new Address(bencoded[4]);
             RewardPoolAddress = new Address(bencoded[5]);
             RewardRemainderPoolAddress = new Address(bencoded[6]);
@@ -133,7 +130,7 @@ namespace Nekoyume.Delegation
             Jailed = (Bencodex.Types.Boolean)bencoded[13];
             JailedUntil = (Integer)bencoded[14];
             Tombstoned = (Bencodex.Types.Boolean)bencoded[15];
-            UnbondingRefs = ((List)bencoded[16]).Select(item => new UnbondingRef(item)).ToImmutableSortedSet();
+            UnbondingRefs = ((List)bencoded[16]).Select(item => new UnbondingRef(item)).ToImmutableArray();
 
             if (!TotalDelegatedFAV.Currency.Equals(DelegationCurrency))
             {
@@ -196,7 +193,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
-            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
+            RewardCurrencies = rewardCurrencies.ToImmutableArray();
             DelegationPoolAddress = delegationPoolAddress;
             RewardPoolAddress = rewardPoolAddress;
             RewardRemainderPoolAddress = rewardRemainderPoolAddress;
@@ -209,21 +206,21 @@ namespace Nekoyume.Delegation
             Jailed = jailed;
             JailedUntil = jailedUntil;
             Tombstoned = tombstoned;
-            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
+            UnbondingRefs = unbondingRefs.ToImmutableArray();
         }
 
         public Address DelegateeAddress { get; }
 
         public Address DelegateeAccountAddress { get; }
 
-        public Address Address
-            => _address ??= DelegationAddress.DelegateeMetadataAddress(
+        public readonly Address Address
+            => DelegationAddress.DelegateeMetadataAddress(
                 DelegateeAddress,
                 DelegateeAccountAddress);
 
         public Currency DelegationCurrency { get; }
 
-        public ImmutableSortedSet<Currency> RewardCurrencies { get; }
+        public ImmutableArray<Currency> RewardCurrencies { get; }
 
         public Address DelegationPoolAddress { get; internal set; }
 
@@ -249,7 +246,7 @@ namespace Nekoyume.Delegation
 
         public bool Tombstoned { get; internal set; }
 
-        public ImmutableSortedSet<UnbondingRef> UnbondingRefs { get; private set; }
+        public ImmutableArray<UnbondingRef> UnbondingRefs { get; private set; }
 
         // TODO : Better serialization
         public List Bencoded => List.Empty
@@ -273,53 +270,65 @@ namespace Nekoyume.Delegation
 
         IValue IBencodable.Bencoded => Bencoded;
 
-        public BigInteger ShareFromFAV(FungibleAssetValue fav)
+        public readonly BigInteger ShareFromFAV(FungibleAssetValue fav)
             => TotalShares.IsZero
                 ? fav.RawValue
                 : TotalShares * fav.RawValue / TotalDelegatedFAV.RawValue;
 
-        public FungibleAssetValue FAVFromShare(BigInteger share)
+        public readonly FungibleAssetValue FAVFromShare(BigInteger share)
             => TotalShares == share
                 ? TotalDelegatedFAV
                 : (TotalDelegatedFAV * share).DivRem(TotalShares).Quotient;
 
-        public void AddDelegatedFAV(FungibleAssetValue fav)
+        public readonly DelegateeMetadata AddDelegatedFAV(FungibleAssetValue fav)
         {
-            TotalDelegatedFAV += fav;
+            var metadata = this;
+            metadata.TotalDelegatedFAV += fav;
+            return metadata;
         }
 
-        public void RemoveDelegatedFAV(FungibleAssetValue fav)
+        public readonly DelegateeMetadata RemoveDelegatedFAV(FungibleAssetValue fav)
         {
-            TotalDelegatedFAV -= fav;
+            var metadata = this;
+            metadata.TotalDelegatedFAV -= fav;
+            return metadata;
         }
 
-        public void AddShare(BigInteger share)
+        public readonly DelegateeMetadata AddShare(BigInteger share)
         {
-            TotalShares += share;
+            var metadata = this;
+            metadata.TotalShares += share;
+            return metadata;
         }
 
-        public void RemoveShare(BigInteger share)
+        public readonly DelegateeMetadata RemoveShare(BigInteger share)
         {
-            TotalShares -= share;
+            var metadata = this;
+            metadata.TotalShares -= share;
+            return metadata;
         }
 
-        public void AddUnbondingRef(UnbondingRef unbondingRef)
+        public readonly DelegateeMetadata AddUnbondingRef(UnbondingRef unbondingRef)
         {
-            UnbondingRefs = UnbondingRefs.Add(unbondingRef);
+            var metadata = this;
+            metadata.UnbondingRefs = UnbondingRefs.Add(unbondingRef);
+            return metadata;
         }
 
-        public void RemoveUnbondingRef(UnbondingRef unbondingRef)
+        public readonly DelegateeMetadata RemoveUnbondingRef(UnbondingRef unbondingRef)
         {
-            UnbondingRefs = UnbondingRefs.Remove(unbondingRef);
+            var metadata = this;
+            metadata.UnbondingRefs = UnbondingRefs.Remove(unbondingRef);
+            return metadata;
         }
 
-        public Address BondAddress(Address delegatorAddress)
+        public readonly Address BondAddress(Address delegatorAddress)
             => DelegationAddress.BondAddress(Address, delegatorAddress);
 
-        public Address UnbondLockInAddress(Address delegatorAddress)
+        public readonly Address UnbondLockInAddress(Address delegatorAddress)
             => DelegationAddress.UnbondLockInAddress(Address, delegatorAddress);
 
-        public virtual Address RebondGraceAddress(Address delegatorAddress)
+        public readonly Address RebondGraceAddress(Address delegatorAddress)
             => DelegationAddress.RebondGraceAddress(Address, delegatorAddress);
 
         /// <summary>
@@ -329,7 +338,7 @@ namespace Nekoyume.Delegation
         /// <returns>
         /// <see cref="Address"/> of the distribution pool.
         /// </returns>
-        public virtual Address DistributionPoolAddress()
+        public readonly Address DistributionPoolAddress()
             => DelegationAddress.DistributionPoolAddress(Address);
 
         /// <summary>
@@ -338,7 +347,7 @@ namespace Nekoyume.Delegation
         /// <returns>
         /// <see cref="Address"/> of the current <see cref="RewardBase"/>.
         /// </returns>
-        public virtual Address CurrentRewardBaseAddress()
+        public readonly Address CurrentRewardBaseAddress()
             => DelegationAddress.CurrentRewardBaseAddress(Address);
 
         /// <summary>
@@ -348,7 +357,7 @@ namespace Nekoyume.Delegation
         /// <returns>
         /// <see cref="Address"/> of the <see cref="RewardBase"/> at the given height.
         /// </returns>
-        public virtual Address RewardBaseAddress(long height)
+        public readonly Address RewardBaseAddress(long height)
             => DelegationAddress.RewardBaseAddress(Address, height);
 
         /// <summary>
@@ -358,7 +367,7 @@ namespace Nekoyume.Delegation
         /// <returns>
         /// <see cref="Address"/> of the current lump sum rewards record.
         /// </returns>
-        public virtual Address CurrentLumpSumRewardsRecordAddress()
+        public readonly Address CurrentLumpSumRewardsRecordAddress()
             => DelegationAddress.CurrentRewardBaseAddress(Address);
 
         /// <summary>
@@ -371,40 +380,41 @@ namespace Nekoyume.Delegation
         /// <returns>
         /// <see cref="Address"/> of the lump sum rewards record at the given height.
         /// </returns>
-        public virtual Address LumpSumRewardsRecordAddress(long height)
+        public readonly Address LumpSumRewardsRecordAddress(long height)
             => DelegationAddress.RewardBaseAddress(Address, height);
 
-        public override bool Equals(object? obj)
-            => obj is IDelegateeMetadata other && Equals(other);
+        // public override bool Equals(object? obj)
+        //     => obj is DelegateeMetadata other && Equals(other);
 
-        public virtual bool Equals(IDelegateeMetadata? other)
-            => ReferenceEquals(this, other)
-            || (other is DelegateeMetadata delegatee
-            && (GetType() != delegatee.GetType())
-            && DelegateeAddress.Equals(delegatee.DelegateeAddress)
-            && DelegateeAccountAddress.Equals(delegatee.DelegateeAccountAddress)
-            && DelegationCurrency.Equals(delegatee.DelegationCurrency)
-            && RewardCurrencies.SequenceEqual(delegatee.RewardCurrencies)
-            && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
-            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
-            && RewardRemainderPoolAddress.Equals(delegatee.RewardRemainderPoolAddress)
-            && SlashedPoolAddress.Equals(delegatee.SlashedPoolAddress)
-            && UnbondingPeriod == delegatee.UnbondingPeriod
-            && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
-            && TotalDelegatedFAV.Equals(delegatee.TotalDelegatedFAV)
-            && TotalShares.Equals(delegatee.TotalShares)
-            && Jailed == delegatee.Jailed
-            && UnbondingRefs.SequenceEqual(delegatee.UnbondingRefs));
+        // public bool Equals(DelegateeMetadata? other)
+        //     => ReferenceEquals(this, other)
+        //     || (other is DelegateeMetadata delegatee
+        //     && (GetType() != delegatee.GetType())
+        //     && DelegateeAddress.Equals(delegatee.DelegateeAddress)
+        //     && DelegateeAccountAddress.Equals(delegatee.DelegateeAccountAddress)
+        //     && DelegationCurrency.Equals(delegatee.DelegationCurrency)
+        //     && RewardCurrencies.SequenceEqual(delegatee.RewardCurrencies)
+        //     && DelegationPoolAddress.Equals(delegatee.DelegationPoolAddress)
+        //     && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
+        //     && RewardRemainderPoolAddress.Equals(delegatee.RewardRemainderPoolAddress)
+        //     && SlashedPoolAddress.Equals(delegatee.SlashedPoolAddress)
+        //     && UnbondingPeriod == delegatee.UnbondingPeriod
+        //     && RewardPoolAddress.Equals(delegatee.RewardPoolAddress)
+        //     && TotalDelegatedFAV.Equals(delegatee.TotalDelegatedFAV)
+        //     && TotalShares.Equals(delegatee.TotalShares)
+        //     && Jailed == delegatee.Jailed
+        //     && UnbondingRefs.SequenceEqual(delegatee.UnbondingRefs));
 
-        public override int GetHashCode()
-            => DelegateeAddress.GetHashCode();
+        // public override int GetHashCode()
+        //     => DelegateeAddress.GetHashCode();
 
         // TODO: [GuildMigration] Remove this method when the migration is done.
         // Remove private setter for UnbondingPeriod.
-        public void UpdateUnbondingPeriod(long unbondingPeriod)
+        public readonly DelegateeMetadata UpdateUnbondingPeriod(long unbondingPeriod)
         {
-            UnbondingPeriod = unbondingPeriod;
+            var metadata = this;
+            metadata.UnbondingPeriod = unbondingPeriod;
+            return metadata;
         }
-
     }
 }

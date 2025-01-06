@@ -39,34 +39,41 @@ namespace Nekoyume.Model.Guild
                   address: address,
                   repository: repository)
         {
-            Metadata.UnbondingPeriod = ValidatorDelegatee.ValidatorUnbondingPeriod;
+            var metadata = Metadata;
+            metadata.UnbondingPeriod = ValidatorDelegatee.ValidatorUnbondingPeriod;
+            UpdateMetadata(metadata);
         }
 
         public override void Slash(BigInteger slashFactor, long infractionHeight, long height)
         {
-            FungibleAssetValue slashed = TotalDelegated.DivRem(slashFactor, out var rem);
+            var totalDelegated = Metadata.TotalDelegatedFAV;
+            FungibleAssetValue slashed = totalDelegated.DivRem(slashFactor, out var rem);
             if (rem.Sign > 0)
             {
                 slashed += FungibleAssetValue.FromRawValue(rem.Currency, 1);
             }
 
-            if (slashed > Metadata.TotalDelegatedFAV)
+            if (slashed > totalDelegated)
             {
-                slashed = Metadata.TotalDelegatedFAV;
+                slashed = totalDelegated;
             }
 
             Metadata.RemoveDelegatedFAV(slashed);
-            Repository.SetDelegateeMetadata(Metadata);
+            Repository.SetDelegatee(this);
         }
 
         public void Activate()
         {
-            Metadata.DelegationPoolAddress = ValidatorDelegatee.ActiveDelegationPoolAddress;
+            var metadata = Metadata;
+            metadata.DelegationPoolAddress = ValidatorDelegatee.ActiveDelegationPoolAddress;
+            UpdateMetadata(metadata);
         }
 
         public void Deactivate()
         {
-            Metadata.DelegationPoolAddress = ValidatorDelegatee.InactiveDelegationPoolAddress;
+            var metadata = Metadata;
+            metadata.DelegationPoolAddress = ValidatorDelegatee.InactiveDelegationPoolAddress;
+            UpdateMetadata(metadata);
         }
 
         public bool Equals(GuildDelegatee? other)

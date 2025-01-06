@@ -565,7 +565,7 @@ namespace Lib9c.Tests.Action
                 var bond = guildRepository.GetBond(validator, signer);
                 var amountNCG = _ncg * amount;
                 var expectedGG = DelegationUtil.GetGuildCoinFromNCG(amountNCG);
-                var expectedShare = validator.ShareFromFAV(expectedGG);
+                var expectedShare = validator.Metadata.ShareFromFAV(expectedGG);
                 Assert.Equal(expectedShare, bond.Share);
             }
 

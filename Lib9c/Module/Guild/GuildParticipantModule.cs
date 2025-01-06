@@ -74,7 +74,7 @@ namespace Nekoyume.Module.Guild
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
             var srcValidatorDelegatee = validatorRepository.GetDelegatee(srcGuild.ValidatorAddress);
             var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);
-            if (dstValidatorDelegatee.Tombstoned)
+            if (dstValidatorDelegatee.Metadata.Tombstoned)
             {
                 throw new InvalidOperationException("The validator of the guild to move to has been tombstoned.");
             }

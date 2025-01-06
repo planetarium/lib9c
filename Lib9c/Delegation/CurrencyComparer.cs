@@ -6,6 +6,8 @@ namespace Nekoyume.Delegation
 {
     internal class CurrencyComparer : IComparer<Currency>
     {
+        public static CurrencyComparer Default { get; } = new CurrencyComparer();
+
         public int Compare(Currency x, Currency y)
             => ByteArrayCompare(x.Hash.ToByteArray(), y.Hash.ToByteArray());
 

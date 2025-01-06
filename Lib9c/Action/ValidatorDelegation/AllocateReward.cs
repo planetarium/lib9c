@@ -178,7 +178,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 if (rewardEach.Sign > 0)
                 {
                     repository.TransferAsset(
-                        Addresses.RewardPool, validatorDelegatee.RewardPoolAddress, rewardEach);
+                        Addresses.RewardPool, validatorDelegatee.Metadata.RewardPoolAddress, rewardEach);
                     validatorDelegatee.CollectRewards(blockHeight);
                     distributed += rewardEach;
                 }
@@ -237,7 +237,7 @@ namespace Nekoyume.Action.ValidatorDelegation
 
                 if (rewardEach.Sign > 0)
                 {
-                    repository.TransferAsset(Addresses.RewardPool, validatorDelegatee.RewardPoolAddress, rewardEach);
+                    repository.TransferAsset(Addresses.RewardPool, validatorDelegatee.Metadata.RewardPoolAddress, rewardEach);
                     validatorDelegatee.CollectRewards(blockHeight);
                 }
             }

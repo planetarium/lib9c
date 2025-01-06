@@ -16,33 +16,28 @@ namespace Nekoyume.Delegation
         private static readonly IComparer<UnbondingEntry> _entryComparer
             = new UnbondingEntry.Comparer();
 
-        private readonly IDelegationRepository? _repository;
-
         public UnbondLockIn(
             Address address,
             int maxEntries,
             Address delegateeAddress,
-            Address delegatorAddress,
-            IDelegationRepository? repository)
+            Address delegatorAddress)
             : this(
                   address,
                   maxEntries,
                   delegateeAddress,
                   delegatorAddress,
-                  ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>>.Empty,
-                  repository)
-        {
-            _repository = repository;
-        }
-
-        public UnbondLockIn(
-            Address address, int maxEntries, IValue bencoded, IDelegationRepository? repository = null)
-            : this(address, maxEntries, (List)bencoded, repository)
+                  ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>>.Empty)
         {
         }
 
         public UnbondLockIn(
-            Address address, int maxEntries, List bencoded, IDelegationRepository? repository = null)
+            Address address, int maxEntries, IValue bencoded)
+            : this(address, maxEntries, (List)bencoded)
+        {
+        }
+
+        public UnbondLockIn(
+            Address address, int maxEntries, List bencoded)
             : this(
                   address,
                   maxEntries,
@@ -55,8 +50,7 @@ namespace Nekoyume.Delegation
                       : throw new InvalidCastException(
                           $"Unable to cast object of type '{kv.GetType()}' " +
                           $"to type '{typeof(List)}'."))
-                  .ToImmutableSortedDictionary(),
-                  repository)
+                  .ToImmutableSortedDictionary())
         {
         }
 
@@ -65,14 +59,12 @@ namespace Nekoyume.Delegation
             int maxEntries,
             Address delegateeAddress,
             Address delegatorAddress,
-            IEnumerable<UnbondingEntry> entries,
-            IDelegationRepository? repository = null)
+            IEnumerable<UnbondingEntry> entries)
             : this(
                   address,
                   maxEntries,
                   delegateeAddress,
-                  delegatorAddress,
-                  repository)
+                  delegatorAddress)
         {
             foreach (var entry in entries)
             {
@@ -85,8 +77,7 @@ namespace Nekoyume.Delegation
             int maxEntries,
             Address delegateeAddress,
             Address delegatorAddress,
-            ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries,
-            IDelegationRepository? repository)
+            ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries)
         {
             if (maxEntries < 0)
             {
@@ -101,7 +92,6 @@ namespace Nekoyume.Delegation
             Entries = entries;
             DelegateeAddress = delegateeAddress;
             DelegatorAddress = delegatorAddress;
-            _repository = repository;
         }
 
         public Address Address { get; }
@@ -111,8 +101,6 @@ namespace Nekoyume.Delegation
         public Address DelegateeAddress { get; }
 
         public Address DelegatorAddress { get; }
-
-        public IDelegationRepository? Repository => _repository;
 
         // TODO: Use better custom collection type
         public ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> Entries { get; }
@@ -142,7 +130,6 @@ namespace Nekoyume.Delegation
 
         public UnbondLockIn Release(long height, out FungibleAssetValue? releasedFAV)
         {
-            CannotMutateRelationsWithoutRepository();
             if (height <= 0)
             {
                 throw new ArgumentOutOfRangeException(
@@ -171,31 +158,29 @@ namespace Nekoyume.Delegation
                 }
             }
 
-            if (releasedFAV.HasValue)
-            {
-                var delegateeMetadata = _repository!.GetDelegateeMetadata(DelegateeAddress);
-                var delegatorMetadata = _repository.GetDelegatorMetadata(DelegatorAddress);
-                _repository!.TransferAsset(
-                    delegateeMetadata.DelegationPoolAddress,
-                    delegatorMetadata.DelegationPoolAddress,
-                    releasedFAV.Value);
-            }
+            // if (releasedFAV.HasValue)
+            // {
+            //     var delegateeMetadata = _repository!.GetDelegateeMetadata(DelegateeAddress);
+            //     var delegatorMetadata = _repository.GetDelegatorMetadata(DelegatorAddress);
+            //     _repository!.TransferAsset(
+            //         delegateeMetadata.DelegationPoolAddress,
+            //         delegatorMetadata.DelegationPoolAddress,
+            //         releasedFAV.Value);
+            // }
 
             return UpdateEntries(updatedEntries);
         }
+
+        public UnbondingRef Reference => new UnbondingRef(Address, UnbondingType.UnbondLockIn);
 
         IUnbonding IUnbonding.Release(long height, out FungibleAssetValue? releasedFAV) => Release(height, out releasedFAV);
 
         public UnbondLockIn Slash(
             BigInteger slashFactor,
             long infractionHeight,
-            long height,
-            Address slashedPoolAddress)
+            out SortedDictionary<Address, FungibleAssetValue> slashed)
         {
-            // TODO: Extract common logic to abstract class
-            CannotMutateRelationsWithoutRepository();
-
-            var slashed = new SortedDictionary<Address, FungibleAssetValue>();
+            slashed = new SortedDictionary<Address, FungibleAssetValue>();
             var updatedEntries = Entries;
             var entriesToSlash = Entries.TakeWhile(e => e.Key >= infractionHeight);
             foreach (var (expireHeight, entries) in entriesToSlash)
@@ -219,23 +204,23 @@ namespace Nekoyume.Delegation
                 updatedEntries = Entries.SetItem(expireHeight, slashedEntries);
             }
 
-            foreach (var (address, slashedEach) in slashed)
-            {
-                var delegatee = Repository!.GetDelegatee(address);
-                var delegator = Repository!.GetDelegator(DelegatorAddress);
+            // foreach (var (address, slashedEach) in slashed)
+            // {
+            //     var delegatee = Repository!.GetDelegatee(address);
+            //     var delegator = Repository!.GetDelegator(DelegatorAddress);
 
-                var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
-                var slashAmount = slashedEach;
-                if (delegationBalance < slashedEach)
-                {
-                    slashAmount = delegationBalance;
-                }
+            //     var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
+            //     var slashAmount = slashedEach;
+            //     if (delegationBalance < slashedEach)
+            //     {
+            //         slashAmount = delegationBalance;
+            //     }
 
-                if (slashAmount > slashedEach.Currency * 0)
-                {
-                    Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
-                }
-            }
+            //     if (slashAmount > slashedEach.Currency * 0)
+            //     {
+            //         Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
+            //     }
+            // }
 
             return UpdateEntries(updatedEntries);
         }
@@ -243,9 +228,8 @@ namespace Nekoyume.Delegation
         IUnbonding IUnbonding.Slash(
             BigInteger slashFactor,
             long infractionHeight,
-            long height,
-            Address slashedPoolAddress)
-            => Slash(slashFactor, infractionHeight, height, slashedPoolAddress);
+            out SortedDictionary<Address, FungibleAssetValue> slashed)
+            => Slash(slashFactor, infractionHeight, out slashed);
 
         public override bool Equals(object? obj)
             => obj is UnbondLockIn other && Equals(other);
@@ -346,7 +330,7 @@ namespace Nekoyume.Delegation
 
         private UnbondLockIn UpdateEntries(
             ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries)
-            => new UnbondLockIn(Address, MaxEntries, DelegateeAddress, DelegatorAddress, entries, _repository);
+            => new UnbondLockIn(Address, MaxEntries, DelegateeAddress, DelegatorAddress, entries);
 
         private UnbondLockIn AddEntry(UnbondingEntry entry)
         {
@@ -367,15 +351,6 @@ namespace Nekoyume.Delegation
             return UpdateEntries(
                 Entries.Add(
                     entry.ExpireHeight, ImmutableList<UnbondingEntry>.Empty.Add(entry)));
-        }
-
-        private void CannotMutateRelationsWithoutRepository()
-        {
-            if (_repository is null)
-            {
-                throw new InvalidOperationException(
-                    "Cannot mutate without repository.");
-            }
         }
     }
 }
