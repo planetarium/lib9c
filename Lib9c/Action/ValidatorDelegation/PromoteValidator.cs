@@ -84,12 +84,12 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             var repository = new ValidatorRepository(world, context);
-            var validatorDelegatee = repository.CreateValidatorDelegatee(PublicKey, CommissionPercentage);
+            var validatorDelegatee = repository.CreateDelegatee(PublicKey, CommissionPercentage);
             var validatorDelegator = repository.GetDelegator(context.Signer);
             validatorDelegatee.Bond(validatorDelegator, FAV, context.BlockIndex);
 
             var guildRepository = new GuildRepository(repository);
-            var guildDelegatee = guildRepository.CreateGuildDelegatee(context.Signer);
+            var guildDelegatee = guildRepository.CreateDelegatee(context.Signer);
             var guildDelegator = guildRepository.GetDelegator(context.Signer);
             guildDelegator.Delegate(guildDelegatee, FAV, context.BlockIndex);
 

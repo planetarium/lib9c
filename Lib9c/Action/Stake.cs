@@ -144,7 +144,7 @@ namespace Nekoyume.Action
             if (stakeStateV2.ClaimableBlockIndex <= context.BlockIndex)
             {
                 var validatorRepository = new ValidatorRepository(states, context);
-                var isValidator = validatorRepository.TryGetValidatorDelegatee(
+                var isValidator = validatorRepository.TryGetDelegatee(
                     context.Signer, out var validatorDelegatee);
                 if (!isValidator)
                 {

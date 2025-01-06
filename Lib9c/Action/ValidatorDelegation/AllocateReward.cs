@@ -103,7 +103,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 }
 
                 var validatorAddress = vote.ValidatorPublicKey.Address;
-                if (!repository.TryGetGuildDelegatee(
+                if (!repository.TryGetDelegatee(
                     validatorAddress, out var validatorDelegatee))
                 {
                     continue;
@@ -165,7 +165,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 }
 
                 var validatorAddress = vote.ValidatorPublicKey.Address;
-                if (!repository.TryGetValidatorDelegatee(
+                if (!repository.TryGetDelegatee(
                     validatorAddress, out var validatorDelegatee))
                 {
                     continue;
@@ -226,7 +226,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 }
 
                 var validatorAddress = vote.ValidatorPublicKey.Address;
-                if (!repository.TryGetGuildDelegatee(
+                if (!repository.TryGetDelegatee(
                     validatorAddress, out var validatorDelegatee))
                 {
                     continue;
