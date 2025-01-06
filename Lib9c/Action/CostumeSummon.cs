@@ -8,6 +8,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
@@ -161,15 +162,12 @@ namespace Nekoyume.Action
             // Transfer Cost NCG first for fast-fail
             if (summonRow.CostNcg > 0L)
             {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                var feeStoreAddress =
-                    ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
+                var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
                 states = states.TransferAsset(
                     context,
                     context.Signer,
-                    feeStoreAddress,
+                    feeAddress,
                     states.GetGoldCurrency() * summonRow.CostNcg * SummonCount
                 );
             }

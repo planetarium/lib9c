@@ -331,13 +331,7 @@ namespace Nekoyume.Action
 
                 purchasedCountDuringInterval++;
 
-                var feeAddress = Addresses.RewardPool;
-                // TODO: [GuildMigration] Remove this after migration
-                if (states.GetDelegationMigrationHeight() is long migrationHeight
-                    && context.BlockIndex < migrationHeight)
-                {
-                    feeAddress = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                }
+                var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
                 states = states
                     .TransferAsset(context, context.Signer, feeAddress, ticketBalance)
