@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_ClaimStakeReward" data-uid="Nekoyume.Action.ClaimStakeReward" class="text-break">
-Class ClaimStakeReward  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L29"><i class="bi bi-code-slash"></i></a>
+Class ClaimStakeReward  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -189,7 +189,7 @@ public class ClaimStakeReward : GameAction, IClaimStakeReward, IAction, IClaimSt
 
   <h3 id="Nekoyume_Action_ClaimStakeReward__ctor" data-uid="Nekoyume.Action.ClaimStakeReward.#ctor">
   ClaimStakeReward()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -215,7 +215,7 @@ public class ClaimStakeReward : GameAction, IClaimStakeReward, IAction, IClaimSt
 
   <h3 id="Nekoyume_Action_ClaimStakeReward__ctor_Libplanet_Crypto_Address_" data-uid="Nekoyume.Action.ClaimStakeReward.#ctor(Libplanet.Crypto.Address)">
   ClaimStakeReward(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -250,7 +250,7 @@ public class ClaimStakeReward : GameAction, IClaimStakeReward, IAction, IClaimSt
 
   <h3 id="Nekoyume_Action_ClaimStakeReward_PlainValueInternal" data-uid="Nekoyume.Action.ClaimStakeReward.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -281,11 +281,57 @@ public class ClaimStakeReward : GameAction, IClaimStakeReward, IAction, IClaimSt
 </h2>
 
 
+  <a id="Nekoyume_Action_ClaimStakeReward_Claim_" data-uid="Nekoyume.Action.ClaimStakeReward.Claim*"></a>
+
+  <h3 id="Nekoyume_Action_ClaimStakeReward_Claim_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Nekoyume_Model_State_AvatarState_Nekoyume_Model_Stake_StakeState_" data-uid="Nekoyume.Action.ClaimStakeReward.Claim(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Stake.StakeState)">
+  Claim(IWorld, IActionContext, Address, Address, AvatarState, StakeState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IWorld Claim(IWorld states, IActionContext context, Address avatarAddress, Address stakeStateAddress, AvatarState avatarState, StakeState stakeStateV2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>states</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>stakeStateAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd></dd>
+    <dt><code>stakeStateV2</code> <a class="xref" href="Nekoyume.Model.Stake.StakeState.html">StakeState</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Action_ClaimStakeReward_Execute_" data-uid="Nekoyume.Action.ClaimStakeReward.Execute*"></a>
 
   <h3 id="Nekoyume_Action_ClaimStakeReward_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ClaimStakeReward.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -321,7 +367,7 @@ public class ClaimStakeReward : GameAction, IClaimStakeReward, IAction, IClaimSt
 
   <h3 id="Nekoyume_Action_ClaimStakeReward_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.ClaimStakeReward.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -352,7 +398,7 @@ public class ClaimStakeReward : GameAction, IClaimStakeReward, IAction, IClaimSt
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L29" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/refactor/remove-interface/Lib9c/Action/ClaimStakeReward.cs/#L24" class="edit-link">Edit this page</a>
         </div>
 
 
