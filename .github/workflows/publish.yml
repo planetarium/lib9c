@@ -33,7 +33,7 @@ jobs:
       run: |
         if [[ "$NUGET_API_KEY" != "" ]]; then
           for project in Lib9c Lib9c.Abstractions Lib9c.MessagePack Lib9c.Renderers \
-            Lib9c.Policy .Lib9c.Plugin.Shared Lib9c.ActionEvaluatorCommonComponents
+            Lib9c.Policy .Lib9c.Plugin.Shared .Lib9c.ActionEvaluatorCommonComponents
           do
             dotnet nuget push ./$project/.bin/Lib9c.*.nupkg \
               --api-key "$NUGET_API_KEY" \

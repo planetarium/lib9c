@@ -23,7 +23,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Lib9c.ActionEvaluatorCommonComponents\Lib9c.ActionEvaluatorCommonComponents.csproj" />
+    <ProjectReference Include="..\.Lib9c.ActionEvaluatorCommonComponents\Lib9c.ActionEvaluatorCommonComponents.csproj" />
   </ItemGroup>
   
 </Project>
