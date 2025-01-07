@@ -56,10 +56,10 @@ public abstract class GuildTestBase
         };
 
         var validatorRepository = new ValidatorRepository(world, actionContext);
-        validatorRepository.CreateValidatorDelegatee(validatorPublicKey, commissionPercentage);
+        validatorRepository.CreateDelegatee(validatorPublicKey, commissionPercentage);
 
         var guildRepository = new GuildRepository(validatorRepository);
-        guildRepository.CreateGuildDelegatee(validatorAddress);
+        guildRepository.CreateDelegatee(validatorAddress);
 
         return guildRepository.World;
     }
