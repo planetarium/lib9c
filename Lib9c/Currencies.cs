@@ -63,7 +63,7 @@ namespace Lib9c
             decimalPlaces: 0,
             minters: null);
 
-        public static readonly Currency Mead = Currency.Legacy("Mead", 18, null);
+        public static readonly Currency Mead = Currency.Legacy("Mead", 13, null);
 
         public static readonly Currency GuildGold = Currency.Uncapped(
             "GUILD_GOLD", 18, null);
