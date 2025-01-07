@@ -27,6 +27,9 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Action.Arena
 {
+    /// <summary>
+    /// Temp
+    /// </summary>
     [Serializable]
     [ActionType("battle")]
     public class Battle : GameAction
