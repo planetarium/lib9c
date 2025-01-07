@@ -2,22 +2,23 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Types.Tx;
 
-namespace Lib9c.ActionEvaluatorCommonComponents;
-
-public static class TransactionMarshaller
+namespace Lib9c.ActionEvaluatorCommonComponents
 {
-    private static readonly Codec Codec = new Codec();
-
-    // Copied from Libplanet/Tx/TxMarshaler.cs
-    private static readonly Binary SignatureKey = new Binary(new byte[] { 0x53 }); // 'S'
-
-    public static Dictionary Marshal(this ITransaction transaction)
+    public static class TransactionMarshaller
     {
-        return transaction.MarshalUnsignedTx().Add(SignatureKey, transaction.Signature);
-    }
+        private static readonly Codec Codec = new Codec();
 
-    public static byte[] Serialize(this ITransaction transaction)
-    {
-        return Codec.Encode(Marshal(transaction));
+        // Copied from Libplanet/Tx/TxMarshaler.cs
+        private static readonly Binary SignatureKey = new Binary(new byte[] { 0x53 }); // 'S'
+
+        public static Dictionary Marshal(this ITransaction transaction)
+        {
+            return transaction.MarshalUnsignedTx().Add(SignatureKey, transaction.Signature);
+        }
+
+        public static byte[] Serialize(this ITransaction transaction)
+        {
+            return Codec.Encode(Marshal(transaction));
+        }
     }
 }

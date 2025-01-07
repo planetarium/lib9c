@@ -4,42 +4,43 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Common;
 
-namespace Lib9c.ActionEvaluatorCommonComponents;
-
-public static class ActionEvaluationMarshaller
+namespace Lib9c.ActionEvaluatorCommonComponents
 {
-    private static readonly Codec Codec = new Codec();
-
-    public static byte[] Serialize(this ICommittedActionEvaluation actionEvaluation)
+    public static class ActionEvaluationMarshaller
     {
-        return Codec.Encode(Marshal(actionEvaluation));
-    }
+        private static readonly Codec Codec = new Codec();
 
-    public static Dictionary Marshal(this ICommittedActionEvaluation actionEvaluation) =>
-        Dictionary.Empty
-            .Add("action", actionEvaluation.Action)
-            .Add("output_states", actionEvaluation.OutputState.ByteArray)
-            .Add("input_context", actionEvaluation.InputContext.Marshal())
-            .Add("exception", actionEvaluation.Exception?.GetType().FullName is { } typeName ? (Text)typeName : Null.Value);
-
-    public static ICommittedActionEvaluation Unmarshal(IValue value)
-    {
-        if (value is not Dictionary dictionary)
+        public static byte[] Serialize(this ICommittedActionEvaluation actionEvaluation)
         {
-            throw new ArgumentException(nameof(value));
+            return Codec.Encode(Marshal(actionEvaluation));
         }
 
-        return new CommittedActionEvaluation(
-            dictionary["action"],
-            ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
-            new HashDigest<SHA256>(dictionary["output_states"]),
-            dictionary["exception"] is Text typeName ? new Exception(typeName) : null
-        );
-    }
+        public static Dictionary Marshal(this ICommittedActionEvaluation actionEvaluation) =>
+            Dictionary.Empty
+                .Add("action", actionEvaluation.Action)
+                .Add("output_states", actionEvaluation.OutputState.ByteArray)
+                .Add("input_context", actionEvaluation.InputContext.Marshal())
+                .Add("exception", actionEvaluation.Exception?.GetType().FullName is { } typeName ? (Text)typeName : Null.Value);
 
-    public static ICommittedActionEvaluation Deserialize(byte[] serialized)
-    {
-        var decoded = Codec.Decode(serialized);
-        return Unmarshal(decoded);
+        public static ICommittedActionEvaluation Unmarshal(IValue value)
+        {
+            if (value is not Dictionary dictionary)
+            {
+                throw new ArgumentException(nameof(value));
+            }
+
+            return new CommittedActionEvaluation(
+                dictionary["action"],
+                ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
+                new HashDigest<SHA256>(dictionary["output_states"]),
+                dictionary["exception"] is Text typeName ? new Exception(typeName) : null
+            );
+        }
+
+        public static ICommittedActionEvaluation Deserialize(byte[] serialized)
+        {
+            var decoded = Codec.Decode(serialized);
+            return Unmarshal(decoded);
+        }
     }
 }
