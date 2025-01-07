@@ -31,7 +31,7 @@ export const MINTERLESS_NCG: Currency = {
  */
 export const MEAD: Currency = {
   ticker: "Mead",
-  decimalPlaces: 18,
+  decimalPlaces: 13,
   minters: null,
   maximumSupply: null,
   totalSupplyTrackable: false,
