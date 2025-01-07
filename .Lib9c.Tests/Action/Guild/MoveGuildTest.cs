@@ -36,6 +36,7 @@ public class MoveGuildTest : GuildTestBase
         var guildAddress2 = AddressUtil.CreateGuildAddress();
         world = EnsureToCreateValidator(world, validatorKey1.PublicKey);
         world = EnsureToCreateValidator(world, validatorKey2.PublicKey);
+        world = EnsureToPrepareGuildGold(world, guildMasterAddress1, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress1, guildMasterAddress1, validatorKey1.Address);
         world = EnsureToMakeGuild(world, guildAddress2, guildMasterAddress2, validatorKey2.Address);
         world = EnsureToPrepareGuildGold(world, agentAddress, GG * 100);
@@ -62,8 +63,8 @@ public class MoveGuildTest : GuildTestBase
         var guildParticipant = guildRepository.GetGuildParticipant(agentAddress);
 
         Assert.Equal(guildAddress2, guildParticipant.GuildAddress);
-        Assert.Equal(0, guildDelegatee1.TotalShares);
-        Assert.Equal(0, validatorDelegatee1.TotalShares);
+        Assert.Equal(100 * SharePerGG, guildDelegatee1.TotalShares);
+        Assert.Equal(100 * SharePerGG, validatorDelegatee1.TotalShares);
         Assert.Equal(100 * SharePerGG, guildDelegatee2.TotalShares);
         Assert.Equal(100 * SharePerGG, validatorDelegatee2.TotalShares);
     }
