@@ -9,6 +9,8 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Exceptions;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Nekoyume.Arena;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Helper;
@@ -133,9 +135,16 @@ namespace Nekoyume.Action.AdventureBoss
                     states.GetBalance(seasonBountyBoardAddress, bountyBoard.totalBounty().Currency)
                    )
                 {
+                    var feeAddress = Addresses.RewardPool;
+                    // TODO: [GuildMigration] Remove this after migration
+                    if (states.GetDelegationMigrationHeight() is long migrationHeight
+                        && context.BlockIndex < migrationHeight)
+                    {
+                        feeAddress = AdventureBossGameData.AdventureBossOperationalAddress;
+                    }
+
                     states = states.TransferAsset(context, seasonBountyBoardAddress,
-                        // FIXME: Set operational account address
-                        AdventureBossGameData.AdventureBossOperationalAddress,
+                        feeAddress,
                         (bountyBoard.totalBounty() * 80).DivRem(100, out _)
                     );
                 }

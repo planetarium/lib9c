@@ -1,4 +1,5 @@
 using System.Linq;
+using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Action;
 using Nekoyume.Model.Item;
@@ -60,6 +61,34 @@ namespace Nekoyume.Helper
 
             originalAp -= requiredAp;
             return originalAp;
+        }
+
+        /// <summary>
+        /// Create and Add item.
+        /// </summary>
+        /// <param name="inventory"><see cref="Inventory"/>></param>
+        /// <param name="itemRow"><see cref="ItemSheet.Row"/></param>
+        /// <param name="quantity">create item count</param>
+        /// <param name="tradable">item is tradable</param>
+        /// <param name="random"><see cref="IRandom"/>></param>
+        public static void MintItem(this Inventory inventory, ItemSheet.Row itemRow, int quantity,
+            bool tradable, IRandom random)
+        {
+            if (itemRow is MaterialItemSheet.Row materialRow)
+            {
+                var item = tradable
+                    ? ItemFactory.CreateTradableMaterial(materialRow)
+                    : ItemFactory.CreateMaterial(materialRow);
+                inventory.AddItem(item, quantity);
+            }
+            else
+            {
+                foreach (var _ in Enumerable.Range(0, quantity))
+                {
+                    var item = ItemFactory.CreateItem(itemRow, random);
+                    inventory.AddItem(item);
+                }
+            }
         }
     }
 }

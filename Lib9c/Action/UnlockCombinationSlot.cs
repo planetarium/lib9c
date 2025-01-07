@@ -7,6 +7,7 @@ using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Item;
@@ -74,7 +75,7 @@ namespace Nekoyume.Action
                 throw new SlotAlreadyUnlockedException($"[{nameof(UnlockRuneSlot)}] Index : {SlotIndex}");
             }
 
-            var feeStoreAddress = GetFeeStoreAddress(states, context.BlockIndex);
+            var feeStoreAddress = states.GetFeeAddress(context.BlockIndex);
             var costSheet = sheets.GetSheet<UnlockCombinationSlotCostSheet>();
 
             if (!costSheet.ContainsKey(SlotIndex))
@@ -89,9 +90,9 @@ namespace Nekoyume.Action
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             var agentAddress = avatarState.agentAddress;
-            
+
             var useMaterial = false;
 
             MaterialItemSheet materialSheet = null;
@@ -173,19 +174,6 @@ namespace Nekoyume.Action
 
             allSlotState.UnlockSlot(AvatarAddress, SlotIndex);
             return states.SetCombinationSlotState(AvatarAddress, allSlotState);
-        }
-
-        private Address GetFeeStoreAddress(IWorld states, long blockIndex)
-        {
-            var sheets = states.GetSheets(
-                sheetTypes: new[]
-                {
-                    typeof(ArenaSheet),
-                });
-
-            var arenaSheet = sheets.GetSheet<ArenaSheet>();
-            var arenaData = arenaSheet.GetRoundByBlockIndex(blockIndex);
-            return ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
         }
     }
 }
