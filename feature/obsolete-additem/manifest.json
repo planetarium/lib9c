@@ -692,6 +692,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ClaimPatrolReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ClaimPatrolReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ClaimRaidReward.yml",
       "output": {
         ".html": {
@@ -6522,6 +6532,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Mail.PatrolRewardMail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Mail.PatrolRewardMail.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Mail.ProductBuyerMail.yml",
       "output": {
         ".html": {
@@ -8352,6 +8372,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.PatrolRewardModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.PatrolRewardModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Module.RelationshipModule.yml",
       "output": {
         ".html": {
@@ -9806,6 +9836,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.Event.EventScheduleSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.RewardModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.RewardModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.html"
         }
       },
       "version": ""
@@ -11734,11 +11794,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "api/toc.json"
-        },
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -11757,11 +11817,11 @@
       "type": "Toc",
       "source_relative_path": "articles/currencies/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/currencies/toc.json"
-        },
         ".html": {
           "relative_path": "articles/currencies/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/currencies/toc.json"
         }
       },
       "version": ""
@@ -11860,11 +11920,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/avatar/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/system/avatar/toc.json"
-        },
         ".html": {
           "relative_path": "articles/system/avatar/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/system/avatar/toc.json"
         }
       },
       "version": ""
@@ -11883,11 +11943,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/system/toc.json"
-        },
         ".html": {
           "relative_path": "articles/system/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/system/toc.json"
         }
       },
       "version": ""
@@ -11896,11 +11956,11 @@
       "type": "Toc",
       "source_relative_path": "articles/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/toc.json"
-        },
         ".html": {
           "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
         }
       },
       "version": ""
@@ -11929,11 +11989,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/documentation/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "contributing/documentation/toc.json"
-        },
         ".html": {
           "relative_path": "contributing/documentation/toc.html"
+        },
+        ".json": {
+          "relative_path": "contributing/documentation/toc.json"
         }
       },
       "version": ""
@@ -11942,11 +12002,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "contributing/toc.json"
-        },
         ".html": {
           "relative_path": "contributing/toc.html"
+        },
+        ".json": {
+          "relative_path": "contributing/toc.json"
         }
       },
       "version": ""
@@ -11965,11 +12025,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "toc.json"
-        },
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""
