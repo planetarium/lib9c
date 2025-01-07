@@ -699,6 +699,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 expectedRemainingNcg,
                 resultState.GetBalance(seasonBountyBoardAddress, NCG)
             );
+            Assert.True(resultState.GetBalance(Addresses.RewardPool, NCG) > 0 * NCG);
             Assert.True(resultState.GetExplorer(1, TesterAvatarAddress).Claimed);
 
             if (anotherExplorerCount > 0)

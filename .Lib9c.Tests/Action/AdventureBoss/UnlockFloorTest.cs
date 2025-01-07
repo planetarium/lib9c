@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.AdventureBoss;
+    using Nekoyume.Action.Guild.Migration.LegacyModels;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -84,7 +85,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             .SetAgentState(WantedAddress, WantedState)
             .SetAvatarState(TesterAvatarAddress, TesterAvatarState)
             .SetAgentState(TesterAddress, TesterState)
-            .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG);
+            .MintAsset(new ActionContext(), WantedAddress, 1_000_000 * NCG)
+            .SetDelegationMigrationHeight(0);
 
         [Theory]
         // Success
@@ -216,6 +218,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     var inventory = resultState.GetInventoryV2(TesterAvatarAddress);
                     Assert.Null(inventory.Items.FirstOrDefault(i => i.item.Id == 600202));
+                }
+                else
+                {
+                    Assert.True(resultState.GetBalance(Addresses.RewardPool, NCG) > 0 * NCG);
                 }
 
                 Assert.Equal(
