@@ -60,17 +60,6 @@
         }
 
         [Fact]
-        public Inventory AddItem2_Consumable()
-        {
-            var item = GetFirstConsumable();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            inventory.AddItem2(item);
-            return AddItem_Consumable_After(inventory);
-        }
-
-        [Fact]
         public Inventory AddItem_Costume()
         {
             var item = GetFirstCostume();
@@ -78,17 +67,6 @@
             Assert.Empty(inventory.Items);
 
             inventory.AddItem(item);
-            return AddItem_Costume_After(inventory);
-        }
-
-        [Fact]
-        public Inventory AddItem2_Costume()
-        {
-            var item = GetFirstCostume();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            inventory.AddItem2(item);
             return AddItem_Costume_After(inventory);
         }
 
@@ -109,23 +87,6 @@
             return AddItem_Material_After(inventory, count);
         }
 
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public Inventory AddItem2_Material(int count)
-        {
-            var item = GetFirstMaterial();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            for (var i = 0; i < count; i++)
-            {
-                inventory.AddItem2(item);
-            }
-
-            return AddItem_Material_After(inventory, count);
-        }
-
         [Fact]
         public Inventory AddItem_Equipment()
         {
@@ -134,17 +95,6 @@
             Assert.Empty(inventory.Items);
 
             inventory.AddItem(item);
-            return AddItem_Equipment_After(inventory);
-        }
-
-        [Fact]
-        public Inventory AddItem2_Equipment()
-        {
-            var item = GetFirstEquipment();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            inventory.AddItem2(item);
             return AddItem_Equipment_After(inventory);
         }
 
@@ -168,23 +118,6 @@
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
-        public Inventory AddItem2_TradableMaterial(int count)
-        {
-            var item = GetFirstTradableMaterial();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            for (var i = 0; i < count; i++)
-            {
-                inventory.AddItem2(item);
-            }
-
-            return AddItem_Material_After(inventory, count);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
         public Inventory AddFungibleItem_Material(int count)
         {
             var item = GetFirstMaterial();
@@ -198,19 +131,6 @@
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
-        public Inventory AddFungibleItem2_Material(int count)
-        {
-            var item = GetFirstMaterial();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            inventory.AddFungibleItem2(item, count);
-            return AddItem_Material_After(inventory, count);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
         public Inventory AddFungibleItem_TradableMaterial(int count)
         {
             var item = GetFirstTradableMaterial();
@@ -218,19 +138,6 @@
             Assert.Empty(inventory.Items);
 
             inventory.AddFungibleItem(item, count);
-            return AddItem_Material_After(inventory, count);
-        }
-
-        [Theory]
-        [InlineData(1)]
-        [InlineData(2)]
-        public Inventory AddFungibleItem2_TradableMaterial(int count)
-        {
-            var item = GetFirstTradableMaterial();
-            var inventory = new Inventory();
-            Assert.Empty(inventory.Items);
-
-            inventory.AddFungibleItem2(item, count);
             return AddItem_Material_After(inventory, count);
         }
 

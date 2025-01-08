@@ -236,13 +236,13 @@ namespace Nekoyume.Action
             );
             result.id = mail.id;
             avatarState.Update(mail);
-            avatarState.UpdateFromCombination2(itemUsable);
+            avatarState.UpdateFromCombination(itemUsable);
             sw.Stop();
             Log.Verbose("{AddressesHex}Combination Update AvatarState: {Elapsed}", addressesHex, sw.Elapsed);
             sw.Restart();
 
             var materialSheet = states.GetSheet<MaterialItemSheet>();
-            avatarState.UpdateQuestRewards2(materialSheet);
+            avatarState.UpdateQuestRewards(materialSheet);
 
             avatarState.updatedAt = ctx.BlockIndex;
             avatarState.blockIndex = ctx.BlockIndex;
