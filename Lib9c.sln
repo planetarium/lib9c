@@ -38,9 +38,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Utils", "Lib9c.Utils\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Proposer", "Lib9c.Proposer\Lib9c.Proposer.csproj", "{7DC1D595-095D-462A-864D-0CE57915901A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libplanet.Extensions.ActionEvaluatorCommonComponents", ".Libplanet.Extensions.ActionEvaluatorCommonComponents\Libplanet.Extensions.ActionEvaluatorCommonComponents.csproj", "{64C44AFB-1E14-44D3-B236-A4A37DF2C27A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.ActionEvaluatorCommonComponents", ".Lib9c.ActionEvaluatorCommonComponents\Lib9c.ActionEvaluatorCommonComponents.csproj", "{64C44AFB-1E14-44D3-B236-A4A37DF2C27A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Libplanet.Extensions.ActionEvaluatorCommonComponents.Tests", ".Libplanet.Extensions.ActionEvaluatorCommonComponents.Tests\Libplanet.Extensions.ActionEvaluatorCommonComponents.Tests.csproj", "{EACB2E8D-9A13-491C-BACD-5D79C6C13783}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.ActionEvaluatorCommonComponents.Tests", ".Lib9c.ActionEvaluatorCommonComponents.Tests\Lib9c.ActionEvaluatorCommonComponents.Tests.csproj", "{EACB2E8D-9A13-491C-BACD-5D79C6C13783}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lib9c.Plugin", ".Lib9c.Plugin\Lib9c.Plugin.csproj", "{484A5A5B-D610-42D4-9CAC-B19EA1A71281}"
 EndProject
