@@ -129,7 +129,7 @@ namespace Nekoyume.Model.Stake
                     stakeRegularFixedRewardSheetTableName: stakeRegularFixedRewardSheetTableName,
                     stakeRegularRewardSheetTableName: stakeRegularRewardSheetTableName,
                     rewardInterval: LegacyStakeState.RewardInterval,
-                    lockupInterval: LegacyStakeState.LockupInterval));
+                    unstakingInterval: 0));
         }
 
         public static bool TryMigrateV2ToV3(

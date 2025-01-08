@@ -204,7 +204,7 @@ namespace Nekoyume.Action
 
             // NOTE: When the staking state is locked up.
             // TODO: Remove this condition after the migration is done.
-            if (stakeStateV2.CancellableBlockIndex > context.BlockIndex)
+            if (stakeStateV2.UnstakableBlockIndex > context.BlockIndex)
             {
                 // NOTE: Cannot re-contract with less balance.
                 if (targetStakeBalance < stakedBalance)
@@ -246,8 +246,8 @@ namespace Nekoyume.Action
             FungibleAssetValue targetStakeBalance,
             Contract latestStakeContract)
         {
-            var stakeStateValue = new StakeState(latestStakeContract, context.BlockIndex).Serialize();
             var additionalBalance = targetStakeBalance - stakedBalance;
+            var stakeStateValue = new StakeState(latestStakeContract, context.BlockIndex, unstaked: additionalBalance.Sign < 0).Serialize();
             var height = context.BlockIndex;
             var agentAddress = new AgentAddress(context.Signer);
 

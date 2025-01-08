@@ -44,6 +44,7 @@ namespace Nekoyume.TableData.Stake
             }
         }
 
+        // Unstaking interval is omitted for backward compatibility.
         public static readonly string[] RequiredAttrNames =
         {
             "StakeRegularFixedRewardSheet",
@@ -69,6 +70,19 @@ namespace Nekoyume.TableData.Stake
 
         public long LockupIntervalValue =>
             long.Parse(this["LockupInterval"].Value, CultureInfo.InvariantCulture);
+
+        public long UnstakingIntervalValue
+        {
+            get
+            {
+                if (!ContainsKey("UnstakingInterval"))
+                {
+                    return 0;
+                }
+
+                return long.Parse(this["UnstakingInterval"].Value, CultureInfo.InvariantCulture);
+            }
+        }
 
         public StakePolicySheet() : base(nameof(StakePolicySheet))
         {

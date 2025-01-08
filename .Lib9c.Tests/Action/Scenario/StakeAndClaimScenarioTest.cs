@@ -107,7 +107,7 @@ namespace Lib9c.Tests.Action.Scenario
                 "StakeRegularFixedRewardSheet_V1",
                 "StakeRegularRewardSheet_V1",
                 LegacyStakeState.RewardInterval,
-                LegacyStakeState.LockupInterval);
+                0);
 
             var validatorKey = new PrivateKey().PublicKey;
             state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
@@ -139,7 +139,7 @@ namespace Lib9c.Tests.Action.Scenario
                 "StakeRegularFixedRewardSheet_V2",
                 "StakeRegularRewardSheet_V2",
                 50_400,
-                201_600);
+                75_600);
 
             // Patch StakePolicySheet and so on.
             state = state.SetLegacyState(
@@ -163,7 +163,7 @@ namespace Lib9c.Tests.Action.Scenario
                 "StakeRegularFixedRewardSheet_V1",
                 "StakeRegularRewardSheet_V1",
                 40,
-                150);
+                75_600);
         }
 
         private static IWorld MintAsset(
@@ -253,7 +253,7 @@ namespace Lib9c.Tests.Action.Scenario
             string expectStakeRegularFixedRewardSheetName,
             string expectStakeRegularRewardSheetName,
             long expectRewardInterval,
-            long expectLockupInterval)
+            long expectUnstakingInterval)
         {
             var stakeAddr = LegacyStakeState.DeriveAddress(agentAddr);
             var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
@@ -267,7 +267,7 @@ namespace Lib9c.Tests.Action.Scenario
                 expectStakeRegularRewardSheetName,
                 stakeState.Contract.StakeRegularRewardSheetTableName);
             Assert.Equal(expectRewardInterval, stakeState.Contract.RewardInterval);
-            Assert.Equal(expectLockupInterval, stakeState.Contract.LockupInterval);
+            Assert.Equal(expectUnstakingInterval, stakeState.Contract.UnstakingInterval);
         }
     }
 }

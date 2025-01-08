@@ -14,7 +14,7 @@ namespace Lib9c.Tests.TableData.Stake
         {
             var sheet = new StakePolicySheet();
             sheet.Set(StakePolicySheetFixtures.V1);
-            Assert.Equal(4, sheet.Count);
+            Assert.Equal(5, sheet.Count);
             var row = sheet["StakeRegularFixedRewardSheet"];
             Assert.Equal("StakeRegularFixedRewardSheet", row.AttrName);
             Assert.Equal("StakeRegularFixedRewardSheet_V1", row.Value);
@@ -27,6 +27,9 @@ namespace Lib9c.Tests.TableData.Stake
             row = sheet["LockupInterval"];
             Assert.Equal("LockupInterval", row.AttrName);
             Assert.Equal("201600", row.Value);
+            row = sheet["UnstakingInterval"];
+            Assert.Equal("UnstakingInterval", row.AttrName);
+            Assert.Equal("75600", row.Value);
         }
 
         [Theory]
