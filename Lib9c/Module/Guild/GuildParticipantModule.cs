@@ -71,8 +71,8 @@ namespace Nekoyume.Module.Guild
             var guildParticipant1 = repository.GetGuildParticipant(guildParticipantAddress);
             var srcGuild = repository.GetGuild(guildParticipant1.GuildAddress);
             var dstGuild = repository.GetGuild(dstGuildAddress);
+            var srcGuildDelegatee = repository.GetDelegatee(srcGuild.ValidatorAddress);
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var srcValidatorDelegatee = validatorRepository.GetDelegatee(srcGuild.ValidatorAddress);
             var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);
             if (dstValidatorDelegatee.Tombstoned)
             {
@@ -80,7 +80,7 @@ namespace Nekoyume.Module.Guild
             }
 
             var guildParticipant2 = new GuildParticipant(guildParticipantAddress, dstGuildAddress, repository);
-            var bond = validatorRepository.GetBond(srcValidatorDelegatee, srcGuild.Address);
+            var bond = repository.GetBond(srcGuildDelegatee, guildParticipantAddress);
             var share = bond.Share;
             repository.RemoveGuildParticipant(guildParticipantAddress);
             repository.DecreaseGuildMemberCount(guildParticipant1.GuildAddress);
