@@ -90,7 +90,7 @@ namespace Nekoyume.Action
                                 ItemBase item = ItemFactory.CreateItem(itemSheets[itemId], random);
                                 // We should fix count as 1 because ItemFactory.CreateItem
                                 // will create a new item every time.
-                                avatarState.inventory.AddItem2(item, count: 1);
+                                avatarState.inventory.AddItem(item, count: 1);
                             }
                         }
                         break;

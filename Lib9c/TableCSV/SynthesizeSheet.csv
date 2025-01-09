@@ -1,0 +1,12 @@
+grade_id,item_sub_type,required_count,succeed_rate
+_value of successful_rate is between 0 and 10000,,,
+1,Aura,10,8000
+2,Aura,10,7500
+3,Aura,12,5000
+3,Grimoire,8,8000
+4,Aura,10,4000
+4,Grimoire,6,6000
+5,Aura,6,2500
+5,Grimoire,5,2000
+6,Aura,3,0
+6,Grimoire,3,0

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using Lib9c.Plugin.Shared;
 using Libplanet.Action;
 using Libplanet.Common;
-using Libplanet.Extensions.ActionEvaluatorCommonComponents;
+using Lib9c.ActionEvaluatorCommonComponents;
 using Libplanet.Store;
 using Nekoyume.Action;
 using Nekoyume.Action.Loader;

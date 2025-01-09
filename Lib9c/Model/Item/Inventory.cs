@@ -180,6 +180,36 @@ namespace Nekoyume.Model.Item
                 throw new InvalidItemCountException();
             }
 
+#if LIB9C_DEV_EXTENSIONS || UNITY_EDITOR
+            foreach (var item in _items)
+            {
+                Guid? inventoryItemGuid;
+                Guid? createItemGuid;
+                {
+                    inventoryItemGuid = item.item switch
+                    {
+                        ItemUsable itemUsable => itemUsable.ItemId,
+                        Costume costume => costume.ItemId,
+                        _ => null,
+                    };
+                }
+                {
+                    createItemGuid = itemBase switch
+                    {
+                        ItemUsable itemUsable => itemUsable.ItemId,
+                        Costume costume => costume.ItemId,
+                        _ => null,
+                    };
+                }
+                if (inventoryItemGuid.HasValue && createItemGuid.HasValue && inventoryItemGuid.Value == createItemGuid.Value)
+                {
+                    throw new ArgumentException(
+                        $"Aborted because {nameof(itemBase)} is already in the inventory."
+                    );
+                }
+            }
+#endif
+
             switch (itemBase.ItemType)
             {
                 case ItemType.Consumable:
@@ -197,29 +227,9 @@ namespace Nekoyume.Model.Item
             return new KeyValuePair<int, int>(itemBase.Id, count);
         }
 
-        [Obsolete("Use AddItem")]
-        public KeyValuePair<int, int> AddItem2(ItemBase itemBase, int count = 1, ILock iLock = null)
-        {
-            switch (itemBase.ItemType)
-            {
-                case ItemType.Consumable:
-                case ItemType.Equipment:
-                case ItemType.Costume:
-                    AddNonFungibleItem(itemBase, iLock);
-                    break;
-                case ItemType.Material:
-                    AddFungibleItem2(itemBase, count, iLock);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            _items.Sort();
-            return new KeyValuePair<int, int>(itemBase.Id, count);
-        }
-
         public Item AddFungibleItem(ItemBase itemBase, int count = 1, ILock iLock = null)
         {
-            if (!(itemBase is IFungibleItem fungibleItem))
+            if (itemBase is not IFungibleItem fungibleItem)
             {
                 throw new ArgumentException(
                     $"Aborted because {nameof(itemBase)} cannot cast to {nameof(IFungibleItem)}");
@@ -236,35 +246,7 @@ namespace Nekoyume.Model.Item
                 item.count += count;
             }
 
-            if (!(iLock is null))
-            {
-                item.LockUp(iLock);
-            }
-
-            return item;
-        }
-
-        [Obsolete("Use AddFungibleItem")]
-        public Item AddFungibleItem2(ItemBase itemBase, int count = 1, ILock iLock = null)
-        {
-            if (!(itemBase is IFungibleItem fungibleItem))
-            {
-                throw new ArgumentException(
-                    $"Aborted because {nameof(itemBase)} cannot cast to {nameof(IFungibleItem)}");
-            }
-
-            var item = _items.FirstOrDefault(e => e.item.Equals(fungibleItem));
-            if (item is null)
-            {
-                item = new Item(itemBase, count);
-                _items.Add(item);
-            }
-            else
-            {
-                item.count += count;
-            }
-
-            if (!(iLock is null))
+            if (iLock is not null)
             {
                 item.LockUp(iLock);
             }
@@ -365,19 +347,20 @@ namespace Nekoyume.Model.Item
             {
                 foreach (var item in _items)
                 {
-                    if (item.item is ITradableItem tradableItem)
+                    switch (item.item)
                     {
-                        if (tradableItem.TradableId.Equals(TradableMaterial.DeriveTradableId(fungibleId)) &&
-                            tradableItem.RequiredBlockIndex <= blockIndex)
+                        case ITradableItem tradableItem:
                         {
-                            targetItems.Add(item);
+                            if (tradableItem.TradableId.Equals(TradableMaterial.DeriveTradableId(fungibleId)) &&
+                                tradableItem.RequiredBlockIndex <= blockIndex)
+                            {
+                                targetItems.Add(item);
+                            }
+                            continue;
                         }
-                        continue;
-                    }
-
-                    if (item.item is IFungibleItem fungibleItem && fungibleItem.FungibleId.Equals(fungibleId))
-                    {
-                        targetItems.Add(item);
+                        case IFungibleItem fungibleItem when fungibleItem.FungibleId.Equals(fungibleId):
+                            targetItems.Add(item);
+                            break;
                     }
                 }
 
@@ -432,18 +415,13 @@ namespace Nekoyume.Model.Item
                 return false;
             }
 
-            if (item.item is Material material && material.Id == id)
+            if (item.item is not Material material || material.Id != id)
             {
-                if (material is TradableMaterial tradableMaterial &&
-                    tradableMaterial.RequiredBlockIndex > blockIndex)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
-            return false;
+            return material is not TradableMaterial tradableMaterial ||
+                tradableMaterial.RequiredBlockIndex <= blockIndex;
         }
 
         /// <summary>
@@ -459,17 +437,12 @@ namespace Nekoyume.Model.Item
                 return false;
             }
 
-            if (item.item is Material material && material.Id == id)
+            if (item.item is not Material material || material.Id != id)
             {
-                if (material is TradableMaterial)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
-            return false;
+            return material is not TradableMaterial;
         }
 
         /// <summary>
@@ -486,7 +459,7 @@ namespace Nekoyume.Model.Item
                 return false;
             }
 
-            List<Item> targetItems = _items.Where(item => IsMaterialRemovable(item, id, blockIndex)).ToList();
+            var targetItems = _items.Where(item => IsMaterialRemovable(item, id, blockIndex)).ToList();
 
             targetItems = targetItems
                 .OrderBy(e => e.item is ITradableItem)
@@ -1136,13 +1109,13 @@ namespace Nekoyume.Model.Item
                 {
                     RequiredBlockIndex = requiredBlockIndex
                 };
-                AddItem2(material, count);
+                AddItem(material, count);
                 return material;
             }
 
             // NonFungibleItem case.
             tradableItem.RequiredBlockIndex = requiredBlockIndex;
-            AddItem2((ItemBase) tradableItem, count);
+            AddItem((ItemBase) tradableItem, count);
             return tradableItem;
         }
 

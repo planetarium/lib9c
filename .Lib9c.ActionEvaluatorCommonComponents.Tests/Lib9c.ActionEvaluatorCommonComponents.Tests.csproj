@@ -23,7 +23,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\.Libplanet.Extensions.ActionEvaluatorCommonComponents\Libplanet.Extensions.ActionEvaluatorCommonComponents.csproj" />
+    <ProjectReference Include="..\.Lib9c.ActionEvaluatorCommonComponents\Lib9c.ActionEvaluatorCommonComponents.csproj" />
   </ItemGroup>
   
 </Project>

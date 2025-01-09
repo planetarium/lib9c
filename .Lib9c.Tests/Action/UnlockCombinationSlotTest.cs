@@ -8,6 +8,8 @@
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild.Migration.LegacyModels;
+    using Nekoyume.Arena;
     using Nekoyume.Extensions;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -147,6 +149,7 @@
             var context = new ActionContext();
             var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
             state = MintAssetForCost(state, slotIndex, context, agentAddress, avatarAddress);
+            state = state.SetDelegationMigrationHeight(0);
             var action = new UnlockCombinationSlot()
             {
                 AvatarAddress = avatarAddress,
@@ -164,12 +167,24 @@
             state = action.Execute(ctx);
 
             // Check Items
+            var costSheet = state.GetSheet<UnlockCombinationSlotCostSheet>();
+            var costRow = costSheet[slotIndex];
             var ncgCurrency = state.GetGoldCurrency();
             var ncgBalance = state.GetBalance(agentAddress, ncgCurrency);
             var crystalBalance = state.GetBalance(agentAddress, Currencies.Crystal);
             var inventory = state.GetInventoryV2(avatarAddress);
             Assert.Equal("0", ncgBalance.GetQuantityString());
             Assert.Equal("0", crystalBalance.GetQuantityString());
+            if (costRow.CrystalPrice > 0)
+            {
+                Assert.True(state.GetBalance(Addresses.RewardPool, Currencies.Crystal) > 0 * Currencies.Crystal);
+            }
+
+            if (costRow.NcgPrice > 0)
+            {
+                Assert.True(state.GetBalance(ArenaHelper.DeriveArenaAddress(0, 0), ncgCurrency) > 0 * ncgCurrency);
+            }
+
             Assert.False(inventory.HasItem(GoldenDustId));
             Assert.False(inventory.HasItem(RubyDustId));
 

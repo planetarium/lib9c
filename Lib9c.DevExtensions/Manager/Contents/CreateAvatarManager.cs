@@ -21,6 +21,9 @@ namespace Lib9c.DevExtensions.Manager.Contents
     /// </summary>
     public static class CreateAvatarManager
     {
+        // TODO: Costume과 Grimoire, Aura에 한해 하드코딩같은 형태로 구현되어 있음. 추후 수정 필요. 
+        private const int AddItemCount = 10;
+
         /// <summary>
         /// Create an avatar and world state for testing.
         /// </summary>
@@ -28,8 +31,9 @@ namespace Lib9c.DevExtensions.Manager.Contents
         /// <param name="avatarAddress">avatar address</param>
         /// <param name="states">base world state</param>
         /// <param name="avatarState">avatar state</param>
+        /// <param name="random">random object</param>
         /// <returns>world state with dev avatar</returns>
-        public static IWorld ExecuteDevExtensions(IActionContext ctx, Address avatarAddress, IWorld states, AvatarState avatarState)
+        public static IWorld ExecuteDevExtensions(IActionContext ctx, Address avatarAddress, IWorld states, AvatarState avatarState, IRandom random)
         {
             // prepare for test when executing on editor mode.
             var data = TestbedHelper.LoadData<TestbedCreateAvatar>("TestbedCreateAvatar");
@@ -49,7 +53,6 @@ namespace Lib9c.DevExtensions.Manager.Contents
             var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
             var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
             var materialItemSheet = states.GetSheet<MaterialItemSheet>();
-            var random = ctx.GetRandom();
 
             AddTestItems(ctx, avatarState, random, materialItemSheet);
 
@@ -252,17 +255,19 @@ namespace Lib9c.DevExtensions.Manager.Contents
             int tradableMaterialCount,
             int foodCount)
         {
-            foreach (var row in costumeItemSheet.OrderedList)
+            for (var i = 0; i < AddItemCount; ++i)
             {
-                avatarState.inventory.AddItem(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
+                foreach (var row in costumeItemSheet.OrderedList)
+                {
+                    avatarState.inventory.AddItem(ItemFactory.CreateCostume(row, random.GenerateRandomGuid()));
+                }
             }
 
             foreach (var row in materialItemSheet.OrderedList)
             {
                 avatarState.inventory.AddItem(ItemFactory.CreateMaterial(row), materialCount);
 
-                if (row.ItemSubType == ItemSubType.Hourglass ||
-                    row.ItemSubType == ItemSubType.ApStone)
+                if (row.ItemSubType is ItemSubType.Hourglass || row.ItemSubType is ItemSubType.ApStone)
                 {
                     avatarState.inventory.AddItem(ItemFactory.CreateTradableMaterial(row), tradableMaterialCount);
                 }
@@ -271,8 +276,14 @@ namespace Lib9c.DevExtensions.Manager.Contents
             foreach (var row in equipmentItemSheet.OrderedList.Where(row =>
                 row.Id > GameConfig.DefaultAvatarWeaponId))
             {
-                var itemId = random.GenerateRandomGuid();
-                avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, itemId, default));
+                if (row.ItemSubType is ItemSubType.Grimoire || row.ItemSubType is ItemSubType.Aura)
+                {
+                    for (var i = 0; i < AddItemCount; ++i)
+                    {
+                        avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, random.GenerateRandomGuid(), default));
+                    }
+                }
+                avatarState.inventory.AddItem(ItemFactory.CreateItemUsable(row, random.GenerateRandomGuid(), default));
             }
 
             foreach (var row in consumableItemSheet.OrderedList)
