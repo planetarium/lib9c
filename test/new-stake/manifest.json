@@ -1452,16 +1452,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.ClaimGuildUnbonded.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.ClaimGuildUnbonded.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.ClaimReward.yml",
       "output": {
         ".html": {
@@ -3176,16 +3166,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ClaimValidatorRewardSelf.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ClaimValidatorUnbonded.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ClaimValidatorUnbonded.html"
         }
       },
       "version": ""
@@ -7386,6 +7366,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Stake.Contract.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Stake.LegacyContract.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Stake.LegacyContract.html"
         }
       },
       "version": ""
@@ -11744,11 +11734,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "api/toc.json"
-        },
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -11767,11 +11757,11 @@
       "type": "Toc",
       "source_relative_path": "articles/currencies/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/currencies/toc.json"
-        },
         ".html": {
           "relative_path": "articles/currencies/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/currencies/toc.json"
         }
       },
       "version": ""
@@ -11870,11 +11860,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/avatar/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/system/avatar/toc.json"
-        },
         ".html": {
           "relative_path": "articles/system/avatar/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/system/avatar/toc.json"
         }
       },
       "version": ""
@@ -11893,11 +11883,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/system/toc.json"
-        },
         ".html": {
           "relative_path": "articles/system/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/system/toc.json"
         }
       },
       "version": ""
@@ -11906,11 +11896,11 @@
       "type": "Toc",
       "source_relative_path": "articles/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/toc.json"
-        },
         ".html": {
           "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
         }
       },
       "version": ""
@@ -11939,11 +11929,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/documentation/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "contributing/documentation/toc.json"
-        },
         ".html": {
           "relative_path": "contributing/documentation/toc.html"
+        },
+        ".json": {
+          "relative_path": "contributing/documentation/toc.json"
         }
       },
       "version": ""
@@ -11952,11 +11942,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "contributing/toc.json"
-        },
         ".html": {
           "relative_path": "contributing/toc.html"
+        },
+        ".json": {
+          "relative_path": "contributing/toc.json"
         }
       },
       "version": ""
@@ -11975,11 +11965,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "toc.json"
-        },
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""
