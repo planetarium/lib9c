@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Security.Cryptography;
 using Lib9c.Plugin.Shared;
 using Libplanet.Action;
+using Libplanet.Action.Loader;
 using Libplanet.Common;
 using Libplanet.Extensions.ActionEvaluatorCommonComponents;
 using Libplanet.Store;
@@ -46,7 +47,12 @@ namespace Lib9c.Plugin
             var evals = _actionEvaluator.Evaluate(
                 PreEvaluationBlockMarshaller.Deserialize(blockBytes),
                 baseStateRootHashBytes is { } bytes ? new HashDigest<SHA256>(bytes) : null);
-            return evals.Select(eval => ActionEvaluationMarshaller.Serialize(eval)).ToArray();
+            return evals.Select(eval => eval.Serialize()).ToArray();
         }
+
+        public IActionLoader ActionLoader { get; }
+
+        public IPolicyActionsRegistry PolicyActionsRegistry { get; }
+
     }
 }

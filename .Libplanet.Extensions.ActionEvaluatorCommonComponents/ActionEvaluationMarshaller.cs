@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
@@ -33,7 +34,7 @@ public static class ActionEvaluationMarshaller
             dictionary["action"],
             ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
             new HashDigest<SHA256>(dictionary["output_states"]),
-            dictionary["exception"] is Text typeName ? new Exception(typeName) : null
+            GetException(dictionary)
         );
     }
 
@@ -41,5 +42,28 @@ public static class ActionEvaluationMarshaller
     {
         var decoded = Codec.Decode(serialized);
         return Unmarshal(decoded);
+    }
+
+    private static Exception? GetException(Dictionary dictionary)
+    {
+        if (dictionary["exception"] is not Text typeName)
+        {
+            return null;
+        }
+
+        Type? type = Assembly.GetCallingAssembly().GetType(typeName.Value);
+        if (type is null)
+        {
+            throw new ArgumentException($"Type {typeName.Value} not found in the calling assembly.");
+        }
+
+        object? instance = Activator.CreateInstance(type);
+
+        if (instance is null)
+        {
+            throw new ArgumentException($"Failed to create an instance of {type}.");
+        }
+
+        return instance as Exception;
     }
 }
