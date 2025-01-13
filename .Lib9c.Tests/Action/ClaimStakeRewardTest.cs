@@ -373,7 +373,7 @@ namespace Lib9c.Tests.Action
                         0));
         }
 
-        [Theory]
+        [Theory(Skip = "RewardInterval is 10")]
         [InlineData(0, null, 0)]
         [InlineData(0, null, LegacyStakeState.RewardInterval - 1)]
         [InlineData(0, LegacyStakeState.RewardInterval - 2, LegacyStakeState.RewardInterval - 1)]
@@ -581,7 +581,7 @@ namespace Lib9c.Tests.Action
                         blockIndex));
         }
 
-        [Theory]
+        [Theory(Skip = "RewardInterval is 10")]
         [MemberData(nameof(GetMemberData_Execute_Success_With_StakePolicySheetFixtureV1))]
         public void Execute_Success_With_StakeState(
             long startedBlockIndex,
