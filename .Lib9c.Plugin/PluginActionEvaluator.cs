@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Security.Cryptography;
 using Lib9c.Plugin.Shared;
 using Libplanet.Action;
+using Libplanet.Action.Loader;
 using Libplanet.Common;
 using Libplanet.Extensions.ActionEvaluatorCommonComponents;
 using Libplanet.Store;
@@ -15,30 +16,47 @@ namespace Lib9c.Plugin
     {
         private readonly IActionEvaluator _actionEvaluator;
 
+        public IActionLoader ActionLoader { get; }
+
+        public IPolicyActionsRegistry PolicyActionsRegistry { get; }
+
         public PluginActionEvaluator(IPluginKeyValueStore keyValueStore)
         {
             var stateStore = new TrieStateStore(new WrappedKeyValueStore(keyValueStore));
+            // Initialize ActionLoader
+            ActionLoader = new NCActionLoader();
+
+            // Initialize PolicyActionsRegistry
+            PolicyActionsRegistry = new PolicyActionsRegistry(
+                beginBlockActions: new IAction[]
+                {
+                    new SlashValidator(),
+                    new AllocateGuildReward(),
+                    new AllocateReward(),
+                }.ToImmutableArray(),
+                endBlockActions: new IAction[]
+                {
+                    new UpdateValidators(),
+                    new RecordProposer(),
+                    new RewardGold(),
+                    new ReleaseValidatorUnbondings(),
+                }.ToImmutableArray(),
+                beginTxActions: new IAction[]
+                {
+                    new Mortgage(),
+                }.ToImmutableArray(),
+                endTxActions: new IAction[]
+                {
+                    new Reward(),
+                    new Refund(),
+                }.ToImmutableArray()
+            );
+
             _actionEvaluator = new ActionEvaluator(
-                new PolicyActionsRegistry(
-                    beginBlockActions: new IAction[] {
-                        new SlashValidator(),
-                        new AllocateGuildReward(),
-                        new AllocateReward(),
-                    }.ToImmutableArray(),
-                    endBlockActions: new IAction[] {
-                        new UpdateValidators(),
-                        new RecordProposer(),
-                        new RewardGold(),
-                        new ReleaseValidatorUnbondings(),
-                    }.ToImmutableArray(),
-                    beginTxActions: new IAction[] {
-                        new Mortgage(),
-                    }.ToImmutableArray(),
-                    endTxActions: new IAction[] {
-                        new Reward(), new Refund(),
-                    }.ToImmutableArray()),
+                PolicyActionsRegistry,
                 stateStore,
-                new NCActionLoader());
+                ActionLoader
+            );
         }
 
         public byte[][] Evaluate(byte[] blockBytes, byte[]? baseStateRootHashBytes)
