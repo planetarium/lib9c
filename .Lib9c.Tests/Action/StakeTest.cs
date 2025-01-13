@@ -540,6 +540,32 @@ namespace Lib9c.Tests.Action
             Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
         }
 
+        [Fact]
+        public void Execute_Success_When_Validator_Slashed()
+        {
+            var world = _initialState;
+            var height = 0L;
+            var validatorKey = new PrivateKey();
+            var validatorAddress = validatorKey.PublicKey.Address;
+            var guildMasterKey = new PrivateKey();
+            var guildMasterAddress = new GuildAddress(guildMasterKey.Address);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, validatorKey.PublicKey, height++);
+            world = DelegationUtil.MakeGuild(
+                world, guildMasterAddress, validatorAddress, height++, out var guildAddress);
+            world = world.MintAsset(new ActionContext { }, _agentAddr, _ncg * 100);
+            world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 100, height++);
+            world = DelegationUtil.JoinGuild(world, _agentAddr, guildAddress, height++);
+            world = DelegationUtil.SlashValidator(world, validatorAddress, 10, height++);
+
+            Assert.True(world.TryGetStakeState(_agentAddr, out var stakeState));
+            height += stakeState.CancellableBlockIndex;
+            world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 0, height++);
+
+            var actualNCG = world.GetBalance(_agentAddr, _ncg);
+            Assert.Equal(_ncg * 90, actualNCG);
+        }
+
         private IWorld Execute(
             long blockIndex,
             IWorld previousState,
