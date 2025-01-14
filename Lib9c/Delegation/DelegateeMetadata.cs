@@ -235,9 +235,9 @@ namespace Nekoyume.Delegation
 
         public long UnbondingPeriod { get; internal set; }
 
-        public int MaxUnbondLockInEntries { get; }
+        public int MaxUnbondLockInEntries { get; internal set; }
 
-        public int MaxRebondGraceEntries { get; }
+        public int MaxRebondGraceEntries { get; internal set; }
 
         public FungibleAssetValue TotalDelegatedFAV { get; private set; }
 

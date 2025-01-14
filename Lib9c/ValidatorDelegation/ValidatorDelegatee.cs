@@ -80,15 +80,17 @@ namespace Nekoyume.ValidatorDelegation
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
             Metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
+            Metadata.MaxUnbondLockInEntries = ValidatorMaxUnbondLockInEntries;
+            Metadata.MaxRebondGraceEntries = ValidatorMaxRebondGraceEntries;
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
         public static long ValidatorUnbondingPeriod => 75600L;
 
-        public static int ValidatorMaxUnbondLockInEntries => 2;
+        public static int ValidatorMaxUnbondLockInEntries => 0;
 
-        public static int ValidatorMaxRebondGraceEntries => 2;
+        public static int ValidatorMaxRebondGraceEntries => 0;
 
         public static BigInteger BaseProposerRewardPercentage => 1;
 
