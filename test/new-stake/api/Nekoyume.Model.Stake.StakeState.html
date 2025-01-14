@@ -146,7 +146,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Stake.StakeState.#ctor(Bencodex.Types.IValue)">
   StakeState(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -175,16 +175,16 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <a id="Nekoyume_Model_Stake_StakeState__ctor_" data-uid="Nekoyume.Model.Stake.StakeState.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Stake_StakeState__ctor_Nekoyume_Model_Stake_Contract_System_Int64_System_Int64_System_Boolean_System_Int32_" data-uid="Nekoyume.Model.Stake.StakeState.#ctor(Nekoyume.Model.Stake.Contract,System.Int64,System.Int64,System.Boolean,System.Int32)">
-  StakeState(Contract, long, long, bool, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Stake_StakeState__ctor_Nekoyume_Model_Stake_Contract_System_Int64_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Stake.StakeState.#ctor(Nekoyume.Model.Stake.Contract,System.Int64,System.Int64,System.Int32)">
+  StakeState(Contract, long, long, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public StakeState(Contract contract, long startedBlockIndex, long receivedBlockIndex = 0, bool unstaked = false, int stateVersion = 3)</code></pre>
+    <pre><code class="lang-csharp hljs">public StakeState(Contract contract, long startedBlockIndex, long receivedBlockIndex = 0, int stateVersion = 3)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -194,8 +194,6 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
     <dt><code>startedBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
     <dt><code>receivedBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
-    <dt><code>unstaked</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
     <dd></dd>
     <dt><code>stateVersion</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd></dd>
@@ -216,7 +214,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState__ctor_Nekoyume_Model_State_LegacyStakeState_Nekoyume_Model_Stake_Contract_" data-uid="Nekoyume.Model.Stake.StakeState.#ctor(Nekoyume.Model.State.LegacyStakeState,Nekoyume.Model.Stake.Contract)">
   StakeState(LegacyStakeState, Contract)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -429,25 +427,31 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
 
 
+  <h2 class="section" id="properties">Properties
+</h2>
 
-  <h3 id="Nekoyume_Model_Stake_StakeState_Unstaked" data-uid="Nekoyume.Model.Stake.StakeState.Unstaked">
-  Unstaked
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L20"><i class="bi bi-code-slash"></i></a>
+
+  <a id="Nekoyume_Model_Stake_StakeState_CancellableBlockIndex_" data-uid="Nekoyume.Model.Stake.StakeState.CancellableBlockIndex*"></a>
+
+  <h3 id="Nekoyume_Model_Stake_StakeState_CancellableBlockIndex" data-uid="Nekoyume.Model.Stake.StakeState.CancellableBlockIndex">
+  CancellableBlockIndex
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly bool Unstaked</code></pre>
+    <pre><code class="lang-csharp hljs">public long CancellableBlockIndex { get; }</code></pre>
   </div>
 
 
 
 
-  <h4 class="section">Field Value</h4>
+
+  <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -458,16 +462,11 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
 
 
-
-  <h2 class="section" id="properties">Properties
-</h2>
-
-
   <a id="Nekoyume_Model_Stake_StakeState_ClaimableBlockIndex_" data-uid="Nekoyume.Model.Stake.StakeState.ClaimableBlockIndex*"></a>
 
   <h3 id="Nekoyume_Model_Stake_StakeState_ClaimableBlockIndex" data-uid="Nekoyume.Model.Stake.StakeState.ClaimableBlockIndex">
   ClaimableBlockIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -498,7 +497,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_ClaimedBlockIndex" data-uid="Nekoyume.Model.Stake.StakeState.ClaimedBlockIndex">
   ClaimedBlockIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -506,37 +505,6 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public long ClaimedBlockIndex { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="Nekoyume_Model_Stake_StakeState_UnstakableBlockIndex_" data-uid="Nekoyume.Model.Stake.StakeState.UnstakableBlockIndex*"></a>
-
-  <h3 id="Nekoyume_Model_Stake_StakeState_UnstakableBlockIndex" data-uid="Nekoyume.Model.Stake.StakeState.UnstakableBlockIndex">
-  UnstakableBlockIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L22"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long UnstakableBlockIndex { get; }</code></pre>
   </div>
 
 
@@ -600,7 +568,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_Equals_Nekoyume_Model_Stake_StakeState_" data-uid="Nekoyume.Model.Stake.StakeState.Equals(Nekoyume.Model.Stake.StakeState)">
   Equals(StakeState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -636,7 +604,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_Equals_System_Object_" data-uid="Nekoyume.Model.Stake.StakeState.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L120"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
@@ -675,7 +643,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_GetHashCode" data-uid="Nekoyume.Model.Stake.StakeState.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L125"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
@@ -708,7 +676,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_Serialize" data-uid="Nekoyume.Model.Stake.StakeState.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -743,7 +711,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_op_Equality_Nekoyume_Model_Stake_StakeState_Nekoyume_Model_Stake_StakeState_" data-uid="Nekoyume.Model.Stake.StakeState.op_Equality(Nekoyume.Model.Stake.StakeState,Nekoyume.Model.Stake.StakeState)">
   operator ==(StakeState, StakeState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L137"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -781,7 +749,7 @@ Struct StakeState  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Model_Stake_StakeState_op_Inequality_Nekoyume_Model_Stake_StakeState_Nekoyume_Model_Stake_StakeState_" data-uid="Nekoyume.Model.Stake.StakeState.op_Inequality(Nekoyume.Model.Stake.StakeState,Nekoyume.Model.Stake.StakeState)">
   operator !=(StakeState, StakeState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/StakeState.cs/#L142"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

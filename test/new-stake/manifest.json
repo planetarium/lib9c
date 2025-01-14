@@ -7372,16 +7372,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.Stake.LegacyContract.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Model.Stake.LegacyContract.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Stake.StakeState.yml",
       "output": {
         ".html": {

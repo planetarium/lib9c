@@ -150,7 +150,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Stake.Contract.#ctor(Bencodex.Types.IValue)">
   Contract(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -181,7 +181,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract__ctor_Nekoyume_TableData_Stake_StakePolicySheet_" data-uid="Nekoyume.Model.Stake.Contract.#ctor(Nekoyume.TableData.Stake.StakePolicySheet)">
   Contract(StakePolicySheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -212,14 +212,14 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract__ctor_System_String_System_String_System_Int64_System_Int64_" data-uid="Nekoyume.Model.Stake.Contract.#ctor(System.String,System.String,System.Int64,System.Int64)">
   Contract(string, string, long, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Contract(string stakeRegularFixedRewardSheetTableName, string stakeRegularRewardSheetTableName, long rewardInterval, long unstakingInterval)</code></pre>
+    <pre><code class="lang-csharp hljs">public Contract(string stakeRegularFixedRewardSheetTableName, string stakeRegularRewardSheetTableName, long rewardInterval, long lockupInterval)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -230,7 +230,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
     <dd></dd>
     <dt><code>rewardInterval</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
-    <dt><code>unstakingInterval</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dt><code>lockupInterval</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -349,7 +349,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const long StateTypeVersion = 2</code></pre>
+    <pre><code class="lang-csharp hljs">public const long StateTypeVersion = 1</code></pre>
   </div>
 
 
@@ -371,6 +371,38 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h2 class="section" id="properties">Properties
 </h2>
+
+
+  <a id="Nekoyume_Model_Stake_Contract_LockupInterval_" data-uid="Nekoyume.Model.Stake.Contract.LockupInterval*"></a>
+
+  <h3 id="Nekoyume_Model_Stake_Contract_LockupInterval" data-uid="Nekoyume.Model.Stake.Contract.LockupInterval">
+  LockupInterval
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Not used because of guild system&quot;)]
+public long LockupInterval { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
 
 
   <a id="Nekoyume_Model_Stake_Contract_RewardInterval_" data-uid="Nekoyume.Model.Stake.Contract.RewardInterval*"></a>
@@ -466,37 +498,6 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
 
 
-  <a id="Nekoyume_Model_Stake_Contract_UnstakingInterval_" data-uid="Nekoyume.Model.Stake.Contract.UnstakingInterval*"></a>
-
-  <h3 id="Nekoyume_Model_Stake_Contract_UnstakingInterval" data-uid="Nekoyume.Model.Stake.Contract.UnstakingInterval">
-  UnstakingInterval
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L21"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long UnstakingInterval { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -505,7 +506,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract_Equals_Nekoyume_Model_Stake_Contract_" data-uid="Nekoyume.Model.Stake.Contract.Equals(Nekoyume.Model.Stake.Contract)">
   Equals(Contract)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L127"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -541,7 +542,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract_Equals_System_Object_" data-uid="Nekoyume.Model.Stake.Contract.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L136"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -580,7 +581,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract_GetHashCode" data-uid="Nekoyume.Model.Stake.Contract.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L144"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -613,7 +614,7 @@ Class Contract  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Model_Stake_Contract_Serialize" data-uid="Nekoyume.Model.Stake.Contract.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L125"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/test/new-stake/Lib9c/Model/Stake/Contract.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
