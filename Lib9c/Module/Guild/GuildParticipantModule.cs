@@ -71,16 +71,15 @@ namespace Nekoyume.Module.Guild
             var guildParticipant1 = repository.GetGuildParticipant(guildParticipantAddress);
             var srcGuild = repository.GetGuild(guildParticipant1.GuildAddress);
             var dstGuild = repository.GetGuild(dstGuildAddress);
-            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var srcValidatorDelegatee = validatorRepository.GetDelegatee(srcGuild.ValidatorAddress);
-            var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);
-            if (dstValidatorDelegatee.Tombstoned)
+            var srcDelegatee = repository.GetDelegatee(srcGuild.ValidatorAddress);
+            var dstDelegatee = repository.GetDelegatee(dstGuild.ValidatorAddress);
+            if (dstDelegatee.Tombstoned)
             {
                 throw new InvalidOperationException("The validator of the guild to move to has been tombstoned.");
             }
 
             var guildParticipant2 = new GuildParticipant(guildParticipantAddress, dstGuildAddress, repository);
-            var bond = validatorRepository.GetBond(srcValidatorDelegatee, srcGuild.Address);
+            var bond = repository.GetBond(srcDelegatee, srcGuild.Address);
             var share = bond.Share;
             repository.RemoveGuildParticipant(guildParticipantAddress);
             repository.DecreaseGuildMemberCount(guildParticipant1.GuildAddress);
@@ -117,9 +116,8 @@ namespace Nekoyume.Module.Guild
 
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(agentAddress);
-            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
-            var bond = validatorRepository.GetBond(validatorDelegatee, guild.Address);
+            var delegatee = repository.GetDelegatee(guildAddress);
+            var bond = repository.GetBond(delegatee, agentAddress);
             var share = bond.Share;
 
             if (bond.Share > 0)
