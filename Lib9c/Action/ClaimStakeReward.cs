@@ -11,6 +11,7 @@ using Nekoyume.Extensions;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TableData;
 using Nekoyume.ValidatorDelegation;
@@ -148,7 +149,7 @@ namespace Nekoyume.Action
             var stakeRegularRewardSheet = sheets.GetSheet<StakeRegularRewardSheet>();
             // NOTE:
             var ncg = states.GetGoldCurrency();
-            var stakedNcg = states.GetBalance(stakeStateAddress, ncg);
+            var stakedNcg = states.GetStaked(stakeStateAddress);
             var stakingLevel = Math.Min(
                 stakeRegularRewardSheet.FindLevelByStakedAmount(
                     context.Signer,
