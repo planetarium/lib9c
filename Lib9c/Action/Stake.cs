@@ -220,6 +220,14 @@ namespace Nekoyume.Action
                 stakedBalance,
                 targetStakeBalance,
                 latestStakeContract);
+
+            var balanceGap = states.GetBalance(stakeStateAddress, currency)
+                - (states.GetStaked(context.Signer) + FungibleAssetValue.FromRawValue(currency, 1));
+            if (balanceGap.Sign > 0)
+            {
+                states = states.TransferAsset(context, stakeStateAddress, Addresses.CommunityPool, balanceGap);
+            }
+
             Log.Debug(
                 "{AddressesHex}Stake Total Executed Time: {Elapsed}",
                 addressesHex,

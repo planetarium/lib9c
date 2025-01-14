@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Numerics;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -12,6 +14,7 @@ using Libplanet.Types.Evidence;
 using Libplanet.Types.Tx;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
+using Nekoyume.Model.Stake;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
@@ -121,8 +124,9 @@ namespace Nekoyume.Module.Guild
         public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(
             this GuildRepository repository, Address agentAddress)
         {
-            var guild = repository.GetGuild(agentAddress);
-            var guildDelegatee = repository.GetDelegatee(guild.ValidatorAddress);
+            var guildDelegator = repository.GetDelegator(agentAddress);
+            var validatorAddress = guildDelegator.Delegatees.Single();
+            var guildDelegatee = repository.GetDelegatee(validatorAddress);
             var share = repository.GetBond(guildDelegatee, agentAddress).Share;
             return (share, guildDelegatee.TotalShares, guildDelegatee.TotalDelegated);
         }
@@ -140,16 +144,25 @@ namespace Nekoyume.Module.Guild
                 ? totalDelegated
                 : (totalDelegated * share).DivRem(totalShares).Quotient;
 
-        public static FungibleAssetValue GetStaked(BigInteger share, BigInteger totalShares, FungibleAssetValue totalDelegated, Currency goldCurrency)
+        public static FungibleAssetValue GetDelegated(this IWorld world, Address agentAddress)
         {
-            var delegated = FAVFromShare(share, totalShares, totalDelegated);
-            return ConvertCurrency(delegated, goldCurrency).TargetFAV;
+            var delegationInfo = world.GetDelegationInfo(agentAddress);
+            return FAVFromShare(delegationInfo.Share, delegationInfo.TotalShare, delegationInfo.TotalDelegated);
         }
 
         public static FungibleAssetValue GetStaked(this IWorld world, Address agentAddress)
         {
-            var delegationInfo = world.GetDelegationInfo(agentAddress);
-            return GetStaked(delegationInfo.Share, delegationInfo.TotalShare, delegationInfo.TotalDelegated, world.GetGoldCurrency());
+            var stakedGuildGold = world.GetBalance(StakeState.DeriveAddress(agentAddress), Currencies.GuildGold);
+
+            try
+            {
+                stakedGuildGold += GetDelegated(world, agentAddress);
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            return ConvertCurrency(stakedGuildGold, world.GetGoldCurrency()).TargetFAV;
         }
 
         public static (FungibleAssetValue TargetFAV, FungibleAssetValue Remainder)
