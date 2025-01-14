@@ -4,13 +4,11 @@ using Lib9c;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using Nekoyume.Delegation;
 using Nekoyume.Model.Stake;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
 {
@@ -41,7 +39,7 @@ namespace Nekoyume.Model.Guild
         {
             if (releasedUnbonding is UnbondLockIn unbondLockIn)
             {
-                if (IsValidator(unbondLockIn.DelegatorAddress))
+                if (Repository.GetJoinedGuild(new AgentAddress(unbondLockIn.DelegatorAddress)) is null)
                 {
                     return;
                 }
@@ -60,30 +58,13 @@ namespace Nekoyume.Model.Guild
             }
 
             var agentAddress = new AgentAddress(unbondLockIn.DelegatorAddress);
-            var repository = Repository;
-            var goldCurrency = repository.World.GetGoldCurrency();
+            var goldCurrency = Repository.World.GetGoldCurrency();
             var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
             var (ncg, _) = GuildModule.ConvertCurrency(gg, goldCurrency);
-            repository.TransferAsset(
+            Repository.TransferAsset(
                 stakeStateAddress, agentAddress, ncg);
-            repository.UpdateWorld(
-                repository.World.BurnAsset(repository.ActionContext, stakeStateAddress, gg));
-
-            Repository.UpdateWorld(repository.World);
-        }
-
-        private bool IsValidator(Address address)
-        {
-            var repository = new ValidatorRepository(Repository);
-            try
-            {
-                repository.GetDelegatee(address);
-                return true;
-            }
-            catch (FailedLoadStateException)
-            {
-                return false;
-            }
+            Repository.UpdateWorld(
+                Repository.World.BurnAsset(Repository.ActionContext, stakeStateAddress, gg));
         }
 
         public bool Equals(GuildDelegator? other)
