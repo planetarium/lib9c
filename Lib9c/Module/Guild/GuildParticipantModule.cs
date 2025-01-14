@@ -117,9 +117,8 @@ namespace Nekoyume.Module.Guild
 
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(agentAddress);
-            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
-            var bond = validatorRepository.GetBond(validatorDelegatee, guild.Address);
+            var delegatee = repository.GetDelegatee(guildAddress);
+            var bond = repository.GetBond(delegatee, agentAddress);
             var share = bond.Share;
 
             if (bond.Share > 0)
