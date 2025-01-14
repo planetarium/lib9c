@@ -414,7 +414,7 @@ namespace Lib9c.Tests.Action
                                 "StakeRegularFixedRewardSheet_V1",
                                 "StakeRegularRewardSheet_V1",
                                 50400,
-                                75600),
+                                201600),
                             0).Serialize()),
                 Signer = _sender,
                 BlockIndex = 1,

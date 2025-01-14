@@ -7,7 +7,7 @@ namespace Nekoyume.Model.Stake
     public class Contract
     {
         public const string StateTypeName = "stake_contract";
-        public const long StateTypeVersion = 2;
+        public const long StateTypeVersion = 1;
 
         public const string StakeRegularFixedRewardSheetPrefix
             = "StakeRegularFixedRewardSheet_";
@@ -18,7 +18,8 @@ namespace Nekoyume.Model.Stake
         public string StakeRegularFixedRewardSheetTableName { get; }
         public string StakeRegularRewardSheetTableName { get; }
         public long RewardInterval { get; }
-        public long UnstakingInterval { get; }
+        [Obsolete("Not used because of guild system")]
+        public long LockupInterval { get; }
 
         public Contract(StakePolicySheet stakePolicySheet) : this(
             stakePolicySheet?.StakeRegularFixedRewardSheetValue ?? throw new ArgumentNullException(
@@ -26,7 +27,7 @@ namespace Nekoyume.Model.Stake
                 $"{nameof(stakePolicySheet)} is null"),
             stakePolicySheet.StakeRegularRewardSheetValue,
             stakePolicySheet.RewardIntervalValue,
-            stakePolicySheet.UnstakingIntervalValue)
+            stakePolicySheet.LockupIntervalValue)
         {
         }
 
@@ -34,7 +35,7 @@ namespace Nekoyume.Model.Stake
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName,
             long rewardInterval,
-            long unstakingInterval)
+            long lockupInterval)
         {
             if (string.IsNullOrEmpty(stakeRegularFixedRewardSheetTableName))
             {
@@ -66,10 +67,17 @@ namespace Nekoyume.Model.Stake
                     $"{nameof(rewardInterval)} must be greater than 0");
             }
 
+            if (lockupInterval <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(lockupInterval),
+                    $"{nameof(lockupInterval)} must be greater than 0");
+            }
+
             StakeRegularFixedRewardSheetTableName = stakeRegularFixedRewardSheetTableName;
             StakeRegularRewardSheetTableName = stakeRegularRewardSheetTableName;
             RewardInterval = rewardInterval;
-            UnstakingInterval = unstakingInterval;
+            LockupInterval = lockupInterval;
         }
 
         public Contract(IValue serialized)
@@ -89,37 +97,19 @@ namespace Nekoyume.Model.Stake
                     $"State type name is not {StateTypeName}");
             }
 
-            if (list[1] is not Integer typeVersion)
-            {
-                throw new ArgumentException(
-                    nameof(serialized),
-                    $"State type version is not an integer");
-            }
-
-            if (typeVersion != StateTypeVersion
-                && typeVersion != 1)
+            if (list[1] is not Integer typeVersion ||
+                (long)typeVersion != StateTypeVersion)
             {
                 throw new ArgumentException(
                     nameof(serialized),
                     $"State type version is not {StateTypeVersion}");
             }
 
-            if (typeVersion == 1)
-            {
-                var legacyContract = new LegacyContract(serialized);
-                StakeRegularFixedRewardSheetTableName = legacyContract.StakeRegularFixedRewardSheetTableName;
-                StakeRegularRewardSheetTableName = legacyContract.StakeRegularRewardSheetTableName;
-                RewardInterval = legacyContract.RewardInterval;
-                UnstakingInterval = 0;
-            }
-            else
-            {
-                const int reservedCount = 2;
-                StakeRegularFixedRewardSheetTableName = (Text)list[reservedCount];
-                StakeRegularRewardSheetTableName = (Text)list[reservedCount + 1];
-                RewardInterval = (Integer)list[reservedCount + 2];
-                UnstakingInterval = (Integer)list[reservedCount + 3];
-            }
+            const int reservedCount = 2;
+            StakeRegularFixedRewardSheetTableName = (Text)list[reservedCount];
+            StakeRegularRewardSheetTableName = (Text)list[reservedCount + 1];
+            RewardInterval = (Integer)list[reservedCount + 2];
+            LockupInterval = (Integer)list[reservedCount + 3];
         }
 
         public List Serialize()
@@ -130,7 +120,7 @@ namespace Nekoyume.Model.Stake
                 (Text)StakeRegularFixedRewardSheetTableName,
                 (Text)StakeRegularRewardSheetTableName,
                 (Integer)RewardInterval,
-                (Integer)UnstakingInterval
+                (Integer)LockupInterval
             );
         }
 
@@ -140,7 +130,7 @@ namespace Nekoyume.Model.Stake
                    other.StakeRegularFixedRewardSheetTableName &&
                    StakeRegularRewardSheetTableName == other.StakeRegularRewardSheetTableName &&
                    RewardInterval == other.RewardInterval &&
-                   UnstakingInterval == other.UnstakingInterval;
+                   LockupInterval == other.LockupInterval;
         }
 
         public override bool Equals(object obj)
@@ -162,7 +152,7 @@ namespace Nekoyume.Model.Stake
                     ? StakeRegularRewardSheetTableName.GetHashCode()
                     : 0);
                 hashCode = (hashCode * 397) ^ RewardInterval.GetHashCode();
-                hashCode = (hashCode * 397) ^ UnstakingInterval.GetHashCode();
+                hashCode = (hashCode * 397) ^ LockupInterval.GetHashCode();
                 return hashCode;
             }
         }

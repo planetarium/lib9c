@@ -586,8 +586,8 @@ namespace Lib9c.Tests.Action
                     _stakePolicySheet.RewardIntervalValue,
                     stakeStateV2.Contract.RewardInterval);
                 Assert.Equal(
-                    _stakePolicySheet.UnstakingIntervalValue,
-                    stakeStateV2.Contract.UnstakingInterval);
+                    _stakePolicySheet.LockupIntervalValue,
+                    stakeStateV2.Contract.LockupInterval);
                 Assert.Equal(blockIndex, stakeStateV2.StartedBlockIndex);
                 Assert.Equal(0, stakeStateV2.ReceivedBlockIndex);
                 Assert.Equal(blockIndex, stakeStateV2.ClaimedBlockIndex);

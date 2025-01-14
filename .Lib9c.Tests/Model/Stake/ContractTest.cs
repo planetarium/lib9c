@@ -23,13 +23,13 @@ namespace Lib9c.Tests.Model.Stake
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName,
             long rewardInterval,
-            long unstakingInterval)
+            long lockupInterval)
         {
             var contract = new Contract(
                 stakeRegularFixedRewardSheetTableName,
                 stakeRegularRewardSheetTableName,
                 rewardInterval,
-                unstakingInterval);
+                lockupInterval);
             Assert.Equal(
                 stakeRegularFixedRewardSheetTableName,
                 contract.StakeRegularFixedRewardSheetTableName);
@@ -37,7 +37,7 @@ namespace Lib9c.Tests.Model.Stake
                 stakeRegularRewardSheetTableName,
                 contract.StakeRegularRewardSheetTableName);
             Assert.Equal(rewardInterval, contract.RewardInterval);
-            Assert.Equal(unstakingInterval, contract.UnstakingInterval);
+            Assert.Equal(lockupInterval, contract.LockupInterval);
         }
 
         [Theory]
@@ -75,14 +75,14 @@ namespace Lib9c.Tests.Model.Stake
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName,
             long rewardInterval,
-            long unstakingInterval)
+            long lockupInterval)
         {
             Assert.Throws<ArgumentException>(
                 () => new Contract(
                     stakeRegularFixedRewardSheetTableName,
                     stakeRegularRewardSheetTableName,
                     rewardInterval,
-                    unstakingInterval));
+                    lockupInterval));
         }
 
         [Theory]
@@ -96,18 +96,28 @@ namespace Lib9c.Tests.Model.Stake
             Contract.StakeRegularRewardSheetPrefix,
             0,
             1)]
+        [InlineData(
+            Contract.StakeRegularFixedRewardSheetPrefix,
+            Contract.StakeRegularRewardSheetPrefix,
+            1,
+            -1)]
+        [InlineData(
+            Contract.StakeRegularFixedRewardSheetPrefix,
+            Contract.StakeRegularRewardSheetPrefix,
+            1,
+            0)]
         public void Constructor_Throws_ArgumentOutOfRangeException(
             string stakeRegularFixedRewardSheetTableName,
             string stakeRegularRewardSheetTableName,
             long rewardInterval,
-            long unstakingInterval)
+            long lockupInterval)
         {
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => new Contract(
                     stakeRegularFixedRewardSheetTableName,
                     stakeRegularRewardSheetTableName,
                     rewardInterval,
-                    unstakingInterval));
+                    lockupInterval));
         }
 
         [Fact]
@@ -131,7 +141,7 @@ namespace Lib9c.Tests.Model.Stake
                 sheet.StakeRegularRewardSheetValue,
                 contract.StakeRegularRewardSheetTableName);
             Assert.Equal(sheet.RewardIntervalValue, contract.RewardInterval);
-            Assert.Equal(sheet.UnstakingIntervalValue, contract.UnstakingInterval);
+            Assert.Equal(sheet.LockupIntervalValue, contract.LockupInterval);
         }
 
         [Fact]
@@ -151,7 +161,7 @@ namespace Lib9c.Tests.Model.Stake
                 contract.StakeRegularRewardSheetTableName,
                 des.StakeRegularRewardSheetTableName);
             Assert.Equal(contract.RewardInterval, des.RewardInterval);
-            Assert.Equal(contract.UnstakingInterval, des.UnstakingInterval);
+            Assert.Equal(contract.LockupInterval, des.LockupInterval);
             var ser2 = des.Serialize();
             Assert.Equal(ser, ser2);
         }

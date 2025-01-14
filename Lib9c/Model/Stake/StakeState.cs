@@ -17,11 +17,9 @@ namespace Nekoyume.Model.Stake
         public readonly Contract Contract;
         public readonly long StartedBlockIndex;
         public readonly long ReceivedBlockIndex;
-        public readonly bool Unstaked;
 
-        public long UnstakableBlockIndex => Unstaked
-            ? StartedBlockIndex + Contract.UnstakingInterval
-            : StartedBlockIndex;
+        public long CancellableBlockIndex =>
+            StartedBlockIndex + Contract.LockupInterval;
 
         public long ClaimedBlockIndex => ReceivedBlockIndex == 0
             ? StartedBlockIndex
@@ -38,7 +36,6 @@ namespace Nekoyume.Model.Stake
             Contract contract,
             long startedBlockIndex,
             long receivedBlockIndex = 0,
-            bool unstaked = false,
             int stateVersion = LatestStateTypeVersion)
         {
             if (startedBlockIndex < 0)
@@ -60,7 +57,6 @@ namespace Nekoyume.Model.Stake
             Contract = contract ?? throw new ArgumentNullException(nameof(contract));
             StartedBlockIndex = startedBlockIndex;
             ReceivedBlockIndex = receivedBlockIndex;
-            Unstaked = unstaked;
             StateVersion = stateVersion;
         }
 
@@ -72,7 +68,6 @@ namespace Nekoyume.Model.Stake
             contract,
             legacyStakeState?.StartedBlockIndex ?? throw new ArgumentNullException(nameof(legacyStakeState)),
             legacyStakeState.ReceivedBlockIndex,
-            false,
             stateVersion: 2
         )
         {
@@ -104,15 +99,6 @@ namespace Nekoyume.Model.Stake
             Contract = new Contract(list[reservedCount]);
             StartedBlockIndex = (Integer)list[reservedCount + 1];
             ReceivedBlockIndex = (Integer)list[reservedCount + 2];
-
-            try
-            {
-                Unstaked = (Bencodex.Types.Boolean)list[reservedCount + 3];
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Unstaked = false;
-            }
         }
 
         public IValue Serialize() => new List(
@@ -120,8 +106,7 @@ namespace Nekoyume.Model.Stake
             (Integer)StateVersion,
             Contract.Serialize(),
             (Integer)StartedBlockIndex,
-            (Integer)ReceivedBlockIndex,
-            (Bencodex.Types.Boolean)Unstaked
+            (Integer)ReceivedBlockIndex
         );
 
         public bool Equals(StakeState other)
@@ -129,7 +114,6 @@ namespace Nekoyume.Model.Stake
             return Equals(Contract, other.Contract) &&
                    StartedBlockIndex == other.StartedBlockIndex &&
                    ReceivedBlockIndex == other.ReceivedBlockIndex &&
-                   Unstaked == other.Unstaked &&
                    StateVersion == other.StateVersion;
         }
 
@@ -145,7 +129,6 @@ namespace Nekoyume.Model.Stake
                 var hashCode = (Contract != null ? Contract.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ StartedBlockIndex.GetHashCode();
                 hashCode = (hashCode * 397) ^ ReceivedBlockIndex.GetHashCode();
-                hashCode = (hashCode * 397) ^ Unstaked.GetHashCode();
                 hashCode = (hashCode * 397) ^ StateVersion.GetHashCode();
                 return hashCode;
             }
