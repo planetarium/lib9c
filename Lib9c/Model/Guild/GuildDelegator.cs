@@ -1,6 +1,5 @@
 #nullable enable
 using System;
-using System.Numerics;
 using Lib9c;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -9,6 +8,7 @@ using Nekoyume.Action;
 using Nekoyume.Delegation;
 using Nekoyume.Model.Stake;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 
@@ -63,7 +63,7 @@ namespace Nekoyume.Model.Guild
             var repository = Repository;
             var goldCurrency = repository.World.GetGoldCurrency();
             var stakeStateAddress = StakeState.DeriveAddress(agentAddress);
-            var (ncg, _) = ConvertCurrency(gg, goldCurrency);
+            var (ncg, _) = GuildModule.ConvertCurrency(gg, goldCurrency);
             repository.TransferAsset(
                 stakeStateAddress, agentAddress, ncg);
             repository.UpdateWorld(
@@ -83,25 +83,6 @@ namespace Nekoyume.Model.Guild
             catch (FailedLoadStateException)
             {
                 return false;
-            }
-        }
-
-        private static (FungibleAssetValue TargetFAV, FungibleAssetValue Remainder)
-            ConvertCurrency(FungibleAssetValue sourceFAV, Currency targetCurrency)
-        {
-            var sourceCurrency = sourceFAV.Currency;
-            if (targetCurrency.DecimalPlaces < sourceCurrency.DecimalPlaces)
-            {
-                var d = BigInteger.Pow(10, sourceCurrency.DecimalPlaces - targetCurrency.DecimalPlaces);
-                var value = FungibleAssetValue.FromRawValue(targetCurrency, sourceFAV.RawValue / d);
-                var fav2 = FungibleAssetValue.FromRawValue(sourceCurrency, value.RawValue * d);
-                return (value, sourceFAV - fav2);
-            }
-            else
-            {
-                var d = BigInteger.Pow(10, targetCurrency.DecimalPlaces - sourceCurrency.DecimalPlaces);
-                var value = FungibleAssetValue.FromRawValue(targetCurrency, sourceFAV.RawValue * d);
-                return (value, targetCurrency * 0);
             }
         }
 
