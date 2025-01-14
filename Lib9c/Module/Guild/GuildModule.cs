@@ -1,9 +1,15 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
+using Libplanet.Types.Assets;
+using Libplanet.Types.Blocks;
+using Libplanet.Types.Evidence;
+using Libplanet.Types.Tx;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
@@ -110,6 +116,76 @@ namespace Nekoyume.Module.Guild
             repository.RemoveBanList(guildAddress);
 
             return repository;
+        }
+
+        public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(
+            this GuildRepository repository, Address agentAddress)
+        {
+            var guild = repository.GetGuild(agentAddress);
+            var guildDelegatee = repository.GetDelegatee(guild.ValidatorAddress);
+            var share = repository.GetBond(guildDelegatee, agentAddress).Share;
+            return (share, guildDelegatee.TotalShares, guildDelegatee.TotalDelegated);
+        }
+
+        public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(
+            this IWorld world, Address agentAddress)
+            => new GuildRepository(world, new HallowActionContext()).GetDelegationInfo(agentAddress);
+
+        public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(
+            this IWorldState worldState, Address agentAddress)
+            => GetDelegationInfo(new World(worldState), agentAddress);
+
+        public static FungibleAssetValue FAVFromShare(BigInteger share, BigInteger totalShares, FungibleAssetValue totalDelegated)
+            => totalShares == share
+                ? totalDelegated
+                : (totalDelegated * share).DivRem(totalShares).Quotient;
+
+        public static FungibleAssetValue GetStaked(BigInteger share, BigInteger totalShares, FungibleAssetValue totalDelegated, Currency goldCurrency)
+        {
+            var delegated = FAVFromShare(share, totalShares, totalDelegated);
+            return ConvertCurrency(delegated, goldCurrency).TargetFAV;
+        }
+
+        public static FungibleAssetValue GetStaked(this IWorld world, Address agentAddress)
+        {
+            var delegationInfo = world.GetDelegationInfo(agentAddress);
+            return GetStaked(delegationInfo.Share, delegationInfo.TotalShare, delegationInfo.TotalDelegated, world.GetGoldCurrency());
+        }
+
+        public static (FungibleAssetValue TargetFAV, FungibleAssetValue Remainder)
+            ConvertCurrency(FungibleAssetValue sourceFAV, Currency targetCurrency)
+        {
+            var sourceCurrency = sourceFAV.Currency;
+            if (targetCurrency.DecimalPlaces < sourceCurrency.DecimalPlaces)
+            {
+                var d = BigInteger.Pow(10, sourceCurrency.DecimalPlaces - targetCurrency.DecimalPlaces);
+                var value = FungibleAssetValue.FromRawValue(targetCurrency, sourceFAV.RawValue / d);
+                var fav2 = FungibleAssetValue.FromRawValue(sourceCurrency, value.RawValue * d);
+                return (value, sourceFAV - fav2);
+            }
+            else
+            {
+                var d = BigInteger.Pow(10, targetCurrency.DecimalPlaces - sourceCurrency.DecimalPlaces);
+                var value = FungibleAssetValue.FromRawValue(targetCurrency, sourceFAV.RawValue * d);
+                return (value, targetCurrency * 0);
+            }
+        }
+
+        private class HallowActionContext : IActionContext
+        {
+            public Address Signer => throw new NotImplementedException();
+            public TxId? TxId => throw new NotImplementedException();
+            public Address Miner => throw new NotImplementedException();
+            public long BlockIndex => throw new NotImplementedException();
+            public int BlockProtocolVersion => throw new NotImplementedException();
+            public IWorld PreviousState => throw new NotImplementedException();
+            public bool IsPolicyAction => throw new NotImplementedException();
+            public IReadOnlyList<ITransaction> Txs => throw new NotImplementedException();
+            public IReadOnlyList<EvidenceBase> Evidence => throw new NotImplementedException();
+            public BlockCommit LastCommit => throw new NotImplementedException();
+            public int RandomSeed => throw new NotImplementedException();
+            public FungibleAssetValue? MaxGasPrice => throw new NotImplementedException();
+            public IRandom GetRandom() => throw new NotImplementedException();
         }
     }
 }

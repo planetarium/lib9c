@@ -134,7 +134,7 @@ namespace Nekoyume.Action
             var stakeStateAddress = LegacyStakeState.DeriveAddress(context.Signer);
             var currency = states.GetGoldCurrency();
             var currentBalance = states.GetBalance(context.Signer, currency);
-            var stakedBalance = states.GetBalance(stakeStateAddress, currency);
+            var stakedBalance = states.GetStaked(context.Signer);
             var targetStakeBalance = currency * Amount;
             // NOTE: When the total balance is less than the target balance.
             if (currentBalance + stakedBalance < targetStakeBalance)
