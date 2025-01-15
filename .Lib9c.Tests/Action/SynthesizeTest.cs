@@ -1,4 +1,4 @@
-﻿namespace Lib9c.Tests.Action;
+namespace Lib9c.Tests.Action;
 
 using System;
 using System.Collections.Generic;
@@ -16,8 +16,6 @@ using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.Helper;
 using Xunit;
-
-using Sheets = System.Collections.Generic.Dictionary<System.Type, (Libplanet.Crypto.Address, Nekoyume.TableData.ISheet)>;
 
 public class SynthesizeTest
 {
@@ -82,6 +80,7 @@ public class SynthesizeTest
     [InlineData((Grade)3, ItemSubType.FullCostume)]
     [InlineData((Grade)4, ItemSubType.FullCostume)]
     [InlineData((Grade)5, ItemSubType.FullCostume)]
+    // TODO: use this data when enabled synthesize title
     // [InlineData((Grade)3, ItemSubType.Title)]
     // [InlineData((Grade)4, ItemSubType.Title)]
     // [InlineData((Grade)5, ItemSubType.Title)]
@@ -193,6 +192,7 @@ public class SynthesizeTest
     [InlineData((Grade)3, ItemSubType.FullCostume)]
     [InlineData((Grade)4, ItemSubType.FullCostume)]
     [InlineData((Grade)5, ItemSubType.FullCostume)]
+    // TODO: use this data when enabled synthesize title
     // [InlineData((Grade)3, ItemSubType.Title)]
     // [InlineData((Grade)4, ItemSubType.Title)]
     // [InlineData((Grade)5, ItemSubType.Title)]
@@ -370,6 +370,7 @@ public class SynthesizeTest
     /// <param name="itemSubTypes">An array of invalid item subtypes to use in synthesis.</param>
     [Theory]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.FullCostume, ItemSubType.FullCostume })]
+    // TODO: use this data when enabled synthesize title
     // [InlineData((Grade)3, new[] { ItemSubType.Title, ItemSubType.Grimoire, ItemSubType.Title })]
     // [InlineData((Grade)3, new[] { ItemSubType.Grimoire, ItemSubType.Title, ItemSubType.Grimoire })]
     [InlineData((Grade)3, new[] { ItemSubType.Aura, ItemSubType.Aura, ItemSubType.Grimoire })]
