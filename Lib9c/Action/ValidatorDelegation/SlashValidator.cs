@@ -63,6 +63,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
                 var guildDelegatee = guildRepository.GetDelegatee(abstain.Address);
                 guildDelegatee.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
+                guildDelegatee.Jail(context.BlockIndex + AbstainJailTime);
                 repository.UpdateWorld(guildRepository.World);
             }
 
@@ -83,6 +84,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                         var guildRepository = new GuildRepository(repository.World, repository.ActionContext);
                         var guildDelegatee = guildRepository.GetDelegatee(e.TargetAddress);
                         guildDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
+                        guildDelegatee.Tombstone();
                         repository.UpdateWorld(guildRepository.World);
                         break;
                     default:
