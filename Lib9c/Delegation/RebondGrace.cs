@@ -215,7 +215,7 @@ namespace Nekoyume.Delegation
                 if (slashAmount > slashedEach.Currency * 0)
                 {
                     Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
-                }              
+                }
             }
 
 

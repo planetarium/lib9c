@@ -91,7 +91,7 @@ namespace Nekoyume.Delegation
                   -1L,
                   false,
                   ImmutableSortedSet<UnbondingRef>.Empty)
-        {   
+        {
         }
 
         public DelegateeMetadata(
@@ -405,6 +405,5 @@ namespace Nekoyume.Delegation
         {
             UnbondingPeriod = unbondingPeriod;
         }
-
     }
 }
