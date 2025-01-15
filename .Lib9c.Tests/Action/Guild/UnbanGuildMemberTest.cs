@@ -32,7 +32,8 @@ public class UnbanGuildMemberTest : GuildTestBase
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
         var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
+        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
         world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
         world = EnsureToBanGuildMember(world, guildMasterAddress, targetGuildMemberAddress);
@@ -86,7 +87,8 @@ public class UnbanGuildMemberTest : GuildTestBase
         var guildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
         var unknownGuildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
+        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
         world = EnsureToSetGuildParticipant(world, guildMasterAddress, unknownGuildAddress);
 
@@ -113,7 +115,8 @@ public class UnbanGuildMemberTest : GuildTestBase
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
         var guildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
+        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
         world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
 
@@ -139,7 +142,8 @@ public class UnbanGuildMemberTest : GuildTestBase
         var validatorKey = new PrivateKey();
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
+        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
 
         // When
@@ -168,7 +172,8 @@ public class UnbanGuildMemberTest : GuildTestBase
 
         var action = new UnbanGuildMember(targetGuildMemberAddress);
 
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
+        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
         world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
         world = EnsureToBanGuildMember(world, guildMasterAddress, targetGuildMemberAddress);
@@ -201,7 +206,8 @@ public class UnbanGuildMemberTest : GuildTestBase
         var action = new UnbanGuildMember(targetGuildMemberAddress);
 
         IWorld world = World;
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
+        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
+        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
         world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
         world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
         world = EnsureToBanGuildMember(world, guildMasterAddress, targetGuildMemberAddress);
