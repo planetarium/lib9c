@@ -113,17 +113,20 @@ namespace Nekoyume.Delegation
             }
 
             FungibleAssetValue fav = delegatee.Unbond((TDelegator)this, share, height);
-            unbondLockIn = unbondLockIn.LockIn(
-                fav, height, height + delegatee.UnbondingPeriod);
+
+            if (fav.Sign > 0)
+            {
+                unbondLockIn = unbondLockIn.LockIn(
+                    fav, height, height + delegatee.UnbondingPeriod);
+                AddUnbondingRef(delegatee, UnbondingFactory.ToReference(unbondLockIn));
+                Repository.SetUnbondLockIn(unbondLockIn);
+            }
 
             if (Repository.GetBond(delegatee, Address).Share.IsZero)
             {
                 Metadata.RemoveDelegatee(delegatee.Address);
             }
 
-            AddUnbondingRef(delegatee, UnbondingFactory.ToReference(unbondLockIn));
-
-            Repository.SetUnbondLockIn(unbondLockIn);
             Repository.SetDelegator((TDelegator)this);
         }
 
