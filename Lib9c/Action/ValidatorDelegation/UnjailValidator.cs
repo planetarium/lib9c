@@ -3,6 +3,7 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Action;
 using Nekoyume.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -32,11 +33,16 @@ namespace Nekoyume.Action.ValidatorDelegation
             GasTracer.UseGas(1);
 
             var world = context.PreviousState;
-            var repository = new ValidatorRepository(world, context);
-            var delegatee = repository.GetDelegatee(context.Signer);
-            delegatee.Unjail(context.BlockIndex);
+            var validatorRepository = new ValidatorRepository(world, context);
+            var validatorDelegatee = validatorRepository.GetDelegatee(context.Signer);
+            validatorDelegatee.Unjail(context.BlockIndex);
 
-            return repository.World;
+            var guildRepository = new GuildRepository(
+                validatorRepository.World, validatorRepository.ActionContext);
+            var guildDelegatee = guildRepository.GetDelegatee(context.Signer);
+            guildDelegatee.Unjail(context.BlockIndex);
+
+            return guildRepository.World;
         }
     }
 }
