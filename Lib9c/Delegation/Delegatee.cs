@@ -227,7 +227,7 @@ namespace Nekoyume.Delegation
         public FungibleAssetValue Unbond(TDelegator delegator, BigInteger share, long height)
         {
             DistributeReward(delegator, height);
-            if (TotalShares.IsZero || TotalDelegated.RawValue.IsZero)
+            if (TotalShares.IsZero)
             {
                 throw new InvalidOperationException(
                     "Cannot unbond without bonding.");
