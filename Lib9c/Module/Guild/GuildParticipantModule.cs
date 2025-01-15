@@ -1,11 +1,8 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
-using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TypedAddress;
@@ -79,7 +76,7 @@ namespace Nekoyume.Module.Guild
             }
 
             var guildParticipant2 = new GuildParticipant(guildParticipantAddress, dstGuildAddress, repository);
-            var bond = repository.GetBond(srcDelegatee, srcGuild.Address);
+            var bond = repository.GetBond(srcDelegatee, guildParticipantAddress);
             var share = bond.Share;
             repository.RemoveGuildParticipant(guildParticipantAddress);
             repository.DecreaseGuildMemberCount(guildParticipant1.GuildAddress);
@@ -116,7 +113,7 @@ namespace Nekoyume.Module.Guild
 
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(agentAddress);
-            var delegatee = repository.GetDelegatee(guildAddress);
+            var delegatee = repository.GetDelegatee(guild.ValidatorAddress);
             var bond = repository.GetBond(delegatee, agentAddress);
             var share = bond.Share;
 
