@@ -103,9 +103,8 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("There are remained participants in the guild.");
             }
 
-            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
-            var bond = validatorRepository.GetBond(validatorDelegatee, guild.Address);
+            var delegatee = repository.GetDelegatee(guild.ValidatorAddress);
+            var bond = repository.GetBond(delegatee, signer);
             if (bond.Share > 0)
             {
                 throw new InvalidOperationException("The signer has a bond with the validator.");
