@@ -149,7 +149,7 @@ namespace Nekoyume.Action
             var stakeRegularRewardSheet = sheets.GetSheet<StakeRegularRewardSheet>();
             // NOTE:
             var ncg = states.GetGoldCurrency();
-            var stakedNcg = states.GetStaked(stakeStateAddress);
+            var stakedNcg = states.GetStaked(context.Signer);
             var stakingLevel = Math.Min(
                 stakeRegularRewardSheet.FindLevelByStakedAmount(
                     context.Signer,
