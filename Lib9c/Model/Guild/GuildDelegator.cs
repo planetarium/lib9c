@@ -65,6 +65,13 @@ namespace Nekoyume.Model.Guild
                 stakeStateAddress, agentAddress, ncg);
             Repository.UpdateWorld(
                 Repository.World.BurnAsset(Repository.ActionContext, stakeStateAddress, gg));
+
+            var balanceGap = Repository.World.GetBalance(stakeStateAddress, goldCurrency)
+                - (Repository.World.GetStaked(agentAddress) + FungibleAssetValue.FromRawValue(goldCurrency, 1));
+            if (balanceGap.Sign > 0)
+            {
+                Repository.TransferAsset(stakeStateAddress, Addresses.CommunityPool, balanceGap);
+            }
         }
 
         public bool Equals(GuildDelegator? other)
