@@ -409,7 +409,7 @@ namespace Nekoyume.Delegation
                 }
 
                 var reward = c.Value - lastCumulativeEach;
-                yield return reward;          
+                yield return reward;
             }
         }
 
