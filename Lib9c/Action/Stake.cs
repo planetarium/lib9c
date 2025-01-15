@@ -274,6 +274,11 @@ namespace Nekoyume.Action
                     var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
                     var guildDelegatee = guildRepository.GetDelegatee(guild.ValidatorAddress);
                     var share = guildDelegatee.ShareFromFAV(gg);
+                    if (targetStakeBalance.Sign == 0)
+                    {
+                        share = guildRepository.GetBond(guildDelegatee, agentAddress).Share;
+                    }
+
                     guildParticipant.Undelegate(guild, share, height);
                     state = guildRepository.World;
                 }
