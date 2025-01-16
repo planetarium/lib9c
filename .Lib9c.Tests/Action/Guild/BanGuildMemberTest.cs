@@ -20,7 +20,7 @@ public class BanGuildMemberTest : GuildTestBase
     {
         public PrivateKey ValidatorKey { get; }
 
-        public FungibleAssetValue ValidatorGG { get; }
+        public FungibleAssetValue ValidatorNCG { get; }
 
         public BigInteger SlashFactor { get; }
 
@@ -30,9 +30,9 @@ public class BanGuildMemberTest : GuildTestBase
 
         public GuildAddress GuildAddress { get; }
 
-        public AgentAddress GuildMasterAddress { get; }
+        public AgentAddress MasterAddress { get; }
 
-        public FungibleAssetValue GuildMasterNCG { get; }
+        public FungibleAssetValue MasterNCG { get; }
     }
 
     public static IEnumerable<object[]> RandomSeeds => new List<object[]>
@@ -61,10 +61,10 @@ public class BanGuildMemberTest : GuildTestBase
     {
         var fixture = new StaticFixture
         {
-            ValidatorGG = GG * 100,
+            ValidatorNCG = NCG * 100,
             SlashFactor = 0,
             AgentNCG = NCG * 100,
-            GuildMasterNCG = NCG * 100,
+            MasterNCG = NCG * 100,
         };
         ExecuteWithFixture(fixture);
     }
@@ -74,10 +74,10 @@ public class BanGuildMemberTest : GuildTestBase
     {
         var fixture = new StaticFixture
         {
-            ValidatorGG = GG * 100,
+            ValidatorNCG = NCG * 100,
             SlashFactor = 10,
             AgentNCG = NCG * 100,
-            GuildMasterNCG = NCG * 100,
+            MasterNCG = NCG * 100,
         };
         ExecuteWithFixture(fixture);
     }
@@ -91,9 +91,9 @@ public class BanGuildMemberTest : GuildTestBase
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
         var guildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
 
         // When
         var banGuildMember = new BanGuildMember(guildMemberAddress);
@@ -101,7 +101,7 @@ public class BanGuildMemberTest : GuildTestBase
         {
             PreviousState = world,
             Signer = guildMasterAddress,
-            BlockIndex = 2L,
+            BlockIndex = height,
         };
         world = banGuildMember.Execute(actionContext);
 
@@ -145,9 +145,9 @@ public class BanGuildMemberTest : GuildTestBase
         var guildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
         var unknownGuildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
         world = EnsureToSetGuildParticipant(world, guildMasterAddress, unknownGuildAddress);
 
         // When
@@ -165,7 +165,7 @@ public class BanGuildMemberTest : GuildTestBase
     }
 
     [Fact]
-    public void Execute_SignerIsNotGuildMaster_Throw()
+    public void Execute_SignerIsNotMaster_Throw()
     {
         // Given
         var world = World;
@@ -173,10 +173,10 @@ public class BanGuildMemberTest : GuildTestBase
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
         var guildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, height++);
 
         // When
         var banGuildMember = new BanGuildMember(guildMemberAddress);
@@ -184,6 +184,7 @@ public class BanGuildMemberTest : GuildTestBase
         {
             PreviousState = world,
             Signer = guildMemberAddress,
+            BlockIndex = height,
         };
 
         // Then
@@ -193,16 +194,16 @@ public class BanGuildMemberTest : GuildTestBase
     }
 
     [Fact]
-    public void Execute_TargetIsGuildMaster_Throw()
+    public void Execute_TargetIsMaster_Throw()
     {
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
 
         // When
         var banGuildMember = new BanGuildMember(guildMasterAddress);
@@ -220,23 +221,23 @@ public class BanGuildMemberTest : GuildTestBase
 
     // Expected use-case.
     [Fact]
-    public void Ban_By_GuildMaster()
+    public void Ban_By_Master()
     {
         var validatorKey = new PrivateKey();
         var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        var otherGuildMasterAddress = AddressUtil.CreateAgentAddress();
+        var otherMasterAddress = AddressUtil.CreateAgentAddress();
         var guildMemberAddress = AddressUtil.CreateAgentAddress();
         var otherGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
         var otherGuildAddress = AddressUtil.CreateGuildAddress();
+        var height = 0L;
 
         IWorld world = World;
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
-        world = EnsureToMakeGuild(world, otherGuildAddress, otherGuildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, otherGuildAddress, otherGuildMemberAddress, 1L);
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, height++);
+        world = EnsureToMakeGuild(world, otherGuildAddress, otherMasterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, otherGuildAddress, otherGuildMemberAddress, height++);
 
         var repository = new GuildRepository(world, new ActionContext());
         // Guild
@@ -245,8 +246,8 @@ public class BanGuildMemberTest : GuildTestBase
         Assert.False(repository.IsBanned(guildAddress, guildMemberAddress));
         Assert.Equal(guildAddress, repository.GetJoinedGuild(guildMemberAddress));
         // Other guild
-        Assert.False(repository.IsBanned(guildAddress, otherGuildMasterAddress));
-        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMasterAddress));
+        Assert.False(repository.IsBanned(guildAddress, otherMasterAddress));
+        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherMasterAddress));
         Assert.False(repository.IsBanned(guildAddress, otherGuildMemberAddress));
         Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMemberAddress));
 
@@ -264,12 +265,12 @@ public class BanGuildMemberTest : GuildTestBase
         Assert.True(repository.IsBanned(guildAddress, guildMemberAddress));
         Assert.Null(repository.GetJoinedGuild(guildMemberAddress));
         // Other guild
-        Assert.False(repository.IsBanned(guildAddress, otherGuildMasterAddress));
-        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMasterAddress));
+        Assert.False(repository.IsBanned(guildAddress, otherMasterAddress));
+        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherMasterAddress));
         Assert.False(repository.IsBanned(guildAddress, otherGuildMemberAddress));
         Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMemberAddress));
 
-        action = new BanGuildMember(otherGuildMasterAddress);
+        action = new BanGuildMember(otherMasterAddress);
         world = action.Execute(new ActionContext
         {
             PreviousState = repository.World,
@@ -283,8 +284,8 @@ public class BanGuildMemberTest : GuildTestBase
         Assert.True(repository.IsBanned(guildAddress, guildMemberAddress));
         Assert.Null(repository.GetJoinedGuild(guildMemberAddress));
         // Other guild
-        Assert.True(repository.IsBanned(guildAddress, otherGuildMasterAddress));
-        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMasterAddress));
+        Assert.True(repository.IsBanned(guildAddress, otherMasterAddress));
+        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherMasterAddress));
         Assert.False(repository.IsBanned(guildAddress, otherGuildMemberAddress));
         Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMemberAddress));
 
@@ -302,13 +303,13 @@ public class BanGuildMemberTest : GuildTestBase
         Assert.True(repository.IsBanned(guildAddress, guildMemberAddress));
         Assert.Null(repository.GetJoinedGuild(guildMemberAddress));
         // Other guild
-        Assert.True(repository.IsBanned(guildAddress, otherGuildMasterAddress));
-        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMasterAddress));
+        Assert.True(repository.IsBanned(guildAddress, otherMasterAddress));
+        Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherMasterAddress));
         Assert.True(repository.IsBanned(guildAddress, otherGuildMemberAddress));
         Assert.Equal(otherGuildAddress, repository.GetJoinedGuild(otherGuildMemberAddress));
 
         action = new BanGuildMember(guildMasterAddress);
-        // GuildMaster cannot ban itself.
+        // Master cannot ban itself.
         Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
         {
             PreviousState = repository.World,
@@ -325,15 +326,15 @@ public class BanGuildMemberTest : GuildTestBase
         var otherAddress = AddressUtil.CreateAgentAddress();
         var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
+        var height = 0L;
 
         var action = new BanGuildMember(targetGuildMemberAddress);
 
         IWorld world = World;
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
-        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, height++);
+        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, height++);
 
         var repository = new GuildRepository(world, new ActionContext());
 
@@ -371,12 +372,12 @@ public class BanGuildMemberTest : GuildTestBase
         var otherAddress = AddressUtil.CreateAgentAddress();
         var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
+        var height = 0L;
 
         IWorld world = World;
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, height++);
 
         var repository = new GuildRepository(world, new ActionContext());
 
@@ -388,7 +389,7 @@ public class BanGuildMemberTest : GuildTestBase
             Signer = otherAddress,
         }));
 
-        // Other tries to ban GuildMaster.
+        // Other tries to ban Master.
         action = new BanGuildMember(guildMasterAddress);
         Assert.Throws<InvalidOperationException>(
             () => action.Execute(
@@ -423,36 +424,31 @@ public class BanGuildMemberTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = fixture.ValidatorKey;
-        var validatorGG = fixture.ValidatorGG;
-        var guildMasterAddress = fixture.GuildMasterAddress;
-        var guildMasterNCG = fixture.GuildMasterNCG;
-        var guildMasterGG = NCGToGG(guildMasterNCG);
-        var guildMasterAmount = guildMasterNCG.MajorUnit;
+        var validatorNCG = fixture.ValidatorNCG;
+        var validatorGG = NCGToGG(validatorNCG);
+        var masterAddress = fixture.MasterAddress;
+        var masterNCG = fixture.MasterNCG;
+        var masterGG = NCGToGG(masterNCG);
         var agentAddress = fixture.AgentAddress;
         var agentNCG = fixture.AgentNCG;
-        var agentAmount = agentNCG.MajorUnit;
         var agentGG = NCGToGG(agentNCG);
         var guildAddress = fixture.GuildAddress;
         var height = 0L;
-        var avatarIndex = 0;
         var slashFactor = fixture.SlashFactor;
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, validatorGG);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, validatorGG);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToCreateAvatar(world, guildMasterAddress, avatarIndex);
-        world = EnsureToCreateAvatar(world, agentAddress, avatarIndex);
-        world = EnsureToMintAsset(world, guildMasterAddress, guildMasterNCG);
-        world = EnsureToMintAsset(world, agentAddress, agentNCG);
-        world = EnsureToStake(world, guildMasterAddress, avatarIndex, guildMasterAmount, height++);
-        world = EnsureToStake(world, agentAddress, avatarIndex: 0, agentAmount, height++);
+        world = EnsureToInitializeValidator(world, validatorKey, validatorNCG, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToInitializeAgent(world, masterAddress, masterNCG, height++);
+        world = EnsureToInitializeAgent(world, agentAddress, agentNCG, height++);
+        world = EnsureToStake(world, masterAddress, masterNCG, height++);
+        world = EnsureToStake(world, agentAddress, agentNCG, height++);
         world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
         if (slashFactor > 0)
         {
-            world = EnsureToSlashValidator(world, validatorKey.Address, slashFactor, height);
+            world = EnsureToSlashValidator(world, validatorKey.Address, slashFactor, height++);
         }
 
         // When
-        var totalGG = validatorGG + guildMasterGG + agentGG;
+        var totalGG = validatorGG + masterGG + agentGG;
         var slashedGG = SlashFAV(slashFactor, totalGG);
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * agentGG.RawValue / totalGG.RawValue;
@@ -463,8 +459,8 @@ public class BanGuildMemberTest : GuildTestBase
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
-            BlockIndex = 2L,
+            Signer = masterAddress,
+            BlockIndex = height,
         };
         world = banGuildMember.Execute(actionContext);
 
@@ -486,7 +482,7 @@ public class BanGuildMemberTest : GuildTestBase
     {
         public PrivateKey ValidatorKey { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue ValidatorGG { get; set; } = GG * 100;
+        public FungibleAssetValue ValidatorNCG { get; set; } = NCG * 100;
 
         public BigInteger SlashFactor { get; set; } = 0;
 
@@ -496,9 +492,9 @@ public class BanGuildMemberTest : GuildTestBase
 
         public GuildAddress GuildAddress { get; set; } = AddressUtil.CreateGuildAddress();
 
-        public AgentAddress GuildMasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
+        public AgentAddress MasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
 
-        public FungibleAssetValue GuildMasterNCG { get; set; } = NCG * 100;
+        public FungibleAssetValue MasterNCG { get; set; } = NCG * 100;
     }
 
     private class RandomFixture : IBanGuildMemberFixture
@@ -509,18 +505,18 @@ public class BanGuildMemberTest : GuildTestBase
         {
             _random = new Random(randomSeed);
             ValidatorKey = GetRandomKey(_random);
-            ValidatorGG = GetRandomGG(_random);
+            ValidatorNCG = GetRandomNCG(_random);
             SlashFactor = GetRandomSlashFactor(_random);
             AgentAddress = GetRandomAgentAddress(_random);
             AgentNCG = GetRandomNCG(_random);
             GuildAddress = GetRandomGuildAddress(_random);
-            GuildMasterAddress = GetRandomAgentAddress(_random);
-            GuildMasterNCG = GetRandomNCG(_random);
+            MasterAddress = GetRandomAgentAddress(_random);
+            MasterNCG = GetRandomNCG(_random);
         }
 
         public PrivateKey ValidatorKey { get; }
 
-        public FungibleAssetValue ValidatorGG { get; }
+        public FungibleAssetValue ValidatorNCG { get; }
 
         public BigInteger SlashFactor { get; }
 
@@ -530,8 +526,8 @@ public class BanGuildMemberTest : GuildTestBase
 
         public GuildAddress GuildAddress { get; }
 
-        public AgentAddress GuildMasterAddress { get; }
+        public AgentAddress MasterAddress { get; }
 
-        public FungibleAssetValue GuildMasterNCG { get; }
+        public FungibleAssetValue MasterNCG { get; }
     }
 }

@@ -21,11 +21,11 @@ public class MakeGuildTest : GuildTestBase
 
         public BigInteger SlashFactor { get; }
 
-        public FungibleAssetValue ValidatorGG { get; }
+        public FungibleAssetValue ValidatorNCG { get; }
 
-        public AgentAddress GuildMasterAddress { get; }
+        public AgentAddress MasterAddress { get; }
 
-        public FungibleAssetValue GuildMasterGG { get; }
+        public FungibleAssetValue MasterNCG { get; }
     }
 
     public static IEnumerable<object[]> RandomSeeds => new List<object[]>
@@ -69,10 +69,10 @@ public class MakeGuildTest : GuildTestBase
         var fixture = new StaticFixture
         {
             ValidatorKey = new PrivateKey(),
-            ValidatorGG = GG * 100,
+            ValidatorNCG = NCG * 100,
             SlashFactor = 0,
-            GuildMasterAddress = AddressUtil.CreateAgentAddress(),
-            GuildMasterGG = GG * 100,
+            MasterAddress = AddressUtil.CreateAgentAddress(),
+            MasterNCG = NCG * 100,
         };
         ExecuteWithFixture(fixture);
     }
@@ -83,10 +83,10 @@ public class MakeGuildTest : GuildTestBase
         var fixture = new StaticFixture
         {
             ValidatorKey = new PrivateKey(),
-            ValidatorGG = GG * 100,
+            ValidatorNCG = NCG * 100,
             SlashFactor = 10,
-            GuildMasterAddress = AddressUtil.CreateAgentAddress(),
-            GuildMasterGG = GG * 100,
+            MasterAddress = AddressUtil.CreateAgentAddress(),
+            MasterNCG = NCG * 100,
         };
         ExecuteWithFixture(fixture);
     }
@@ -97,18 +97,18 @@ public class MakeGuildTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
 
         // When
         var makeGuild = new MakeGuild(validatorKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
         };
 
         // Then
@@ -123,9 +123,9 @@ public class MakeGuildTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
 
         // When
         var makeGuild = new MakeGuild(validatorKey.Address);
@@ -133,6 +133,7 @@ public class MakeGuildTest : GuildTestBase
         {
             PreviousState = world,
             Signer = validatorKey.Address,
+            BlockIndex = height,
         };
 
         // Then
@@ -147,14 +148,14 @@ public class MakeGuildTest : GuildTestBase
         // Given
         var world = World;
         var validatorPrivateKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
 
         // When
         var makeGuild = new MakeGuild(validatorPrivateKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
         };
 
         // Then
@@ -187,31 +188,34 @@ public class MakeGuildTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = fixture.ValidatorKey;
-        var guildMasterAddress = fixture.GuildMasterAddress;
-        var validatorGG = fixture.ValidatorGG;
-        var guildMasterGG = fixture.GuildMasterGG;
+        var masterAddress = fixture.MasterAddress;
+        var validatorNCG = fixture.ValidatorNCG;
+        var validatorGG = NCGToGG(validatorNCG);
+        var masterNCG = fixture.MasterNCG;
+        var masterGG = NCGToGG(masterNCG);
         var slashFactor = fixture.SlashFactor;
         var height = 0L;
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, validatorGG);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, validatorGG);
-        world = EnsureToPrepareGuildGold(world, guildMasterAddress, guildMasterGG);
+        world = EnsureToInitializeValidator(world, validatorKey, validatorNCG, height++);
+        world = EnsureToInitializeAgent(world, masterAddress, masterNCG, height++);
+        world = EnsureToStake(world, masterAddress, masterNCG, height++);
         if (slashFactor > 0)
         {
-            world = EnsureToSlashValidator(world, validatorKey.Address, slashFactor, height);
+            world = EnsureToSlashValidator(world, validatorKey.Address, slashFactor, height++);
         }
 
         // When
         var totalGG = validatorGG;
         var slashedGG = SlashFAV(slashFactor, validatorGG);
         var totalShare = totalGG.RawValue;
-        var agentShare = totalShare * guildMasterGG.RawValue / slashedGG.RawValue;
-        var expectedTotalGG = slashedGG + guildMasterGG;
+        var agentShare = totalShare * masterGG.RawValue / slashedGG.RawValue;
+        var expectedTotalGG = slashedGG + masterGG;
         var expectedTotalShares = totalShare + agentShare;
         var makeGuild = new MakeGuild(validatorKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
+            BlockIndex = height,
         };
         world = makeGuild.Execute(actionContext);
 
@@ -220,10 +224,10 @@ public class MakeGuildTest : GuildTestBase
         var validatorRepository = new ValidatorRepository(world, new ActionContext());
         var guildDelegatee = guildRepository.GetDelegatee(validatorKey.Address);
         var validatorDelegatee = validatorRepository.GetDelegatee(validatorKey.Address);
-        var guildAddress = guildRepository.GetJoinedGuild(guildMasterAddress);
+        var guildAddress = guildRepository.GetJoinedGuild(masterAddress);
         Assert.NotNull(guildAddress);
         var guild = guildRepository.GetGuild(guildAddress.Value);
-        Assert.Equal(guildMasterAddress, guild.GuildMasterAddress);
+        Assert.Equal(masterAddress, guild.GuildMasterAddress);
         Assert.Equal(expectedTotalGG, guildDelegatee.TotalDelegated);
         Assert.Equal(expectedTotalShares, guildDelegatee.TotalShares);
         Assert.Equal(expectedTotalGG, validatorDelegatee.TotalDelegated);
@@ -234,13 +238,13 @@ public class MakeGuildTest : GuildTestBase
     {
         public PrivateKey ValidatorKey { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue ValidatorGG { get; set; } = GG * 100;
+        public FungibleAssetValue ValidatorNCG { get; set; } = NCG * 100;
 
         public BigInteger SlashFactor { get; set; }
 
-        public AgentAddress GuildMasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
+        public AgentAddress MasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
 
-        public FungibleAssetValue GuildMasterGG { get; set; } = GG * 100;
+        public FungibleAssetValue MasterNCG { get; set; } = GG * 100;
     }
 
     private class RandomFixture : IMakeGuildFixture
@@ -251,20 +255,20 @@ public class MakeGuildTest : GuildTestBase
         {
             _random = new Random(randomSeed);
             ValidatorKey = GetRandomKey(_random);
-            ValidatorGG = GetRandomGG(_random);
+            ValidatorNCG = GetRandomNCG(_random);
             SlashFactor = GetRandomSlashFactor(_random);
-            GuildMasterAddress = GetRandomAgentAddress(_random);
-            GuildMasterGG = GetRandomGG(_random);
+            MasterAddress = GetRandomAgentAddress(_random);
+            MasterNCG = GetRandomNCG(_random);
         }
 
         public PrivateKey ValidatorKey { get; }
 
-        public FungibleAssetValue ValidatorGG { get; }
+        public FungibleAssetValue ValidatorNCG { get; }
 
         public BigInteger SlashFactor { get; }
 
-        public AgentAddress GuildMasterAddress { get; }
+        public AgentAddress MasterAddress { get; }
 
-        public FungibleAssetValue GuildMasterGG { get; }
+        public FungibleAssetValue MasterNCG { get; }
     }
 }
