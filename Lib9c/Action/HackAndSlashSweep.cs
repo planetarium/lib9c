@@ -15,6 +15,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
 using Serilog;
@@ -320,7 +321,7 @@ namespace Nekoyume.Action
             states = states.SetActionPoint(avatarAddress, hasActionPoint - actionPoint);
             var costAp = sheets.GetSheet<StageSheet>()[stageId].CostAP;
             var goldCurrency = states.GetGoldCurrency();
-            var stakedAmount = states.GetStakedAmount(context.Signer);
+            var stakedAmount = states.GetStaked(context.Signer);
             if (stakedAmount > goldCurrency * 0)
             {
                 var actionPointCoefficientSheet =

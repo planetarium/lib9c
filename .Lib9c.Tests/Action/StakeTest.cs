@@ -478,9 +478,9 @@ namespace Lib9c.Tests.Action
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = nextState.GetBalance(_agentAddr, _ncg);
-            var stakeBalance = nextState.GetBalance(stakeStateAddr, _gg);
+            var stakeBalance = nextState.GetStaked(_agentAddr);
             Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(_gg * amount, stakeBalance);
+            Assert.Equal(_ncg * amount, stakeBalance);
         }
 
         [Theory]
@@ -552,11 +552,11 @@ namespace Lib9c.Tests.Action
                 nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var expectedBalance = _ncg * (Math.Max(0, previousAmount - amount) + promoteAmount);
-            var expectedGG = _gg * (amount - promoteAmount);
+            var expectedStaked = _ncg * amount;
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
-            var stakeBalance = world.GetBalance(stakeStateAddr, _gg);
+            var stakeBalance = world.GetStaked(_agentAddr);
             Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(expectedGG, stakeBalance);
+            Assert.Equal(expectedStaked, stakeBalance);
         }
 
         [Fact]
