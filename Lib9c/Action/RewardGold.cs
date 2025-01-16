@@ -300,7 +300,7 @@ namespace Nekoyume.Action
                 ctx,
                 GoldCurrencyState.Address,
                 Addresses.RewardPool,
-                states.GetGoldCurrency() * 1000000
+                states.GetGoldCurrency() * 1000
             );
 
             return states;
