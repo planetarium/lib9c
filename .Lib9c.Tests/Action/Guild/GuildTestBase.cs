@@ -14,13 +14,11 @@ using Nekoyume;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
 using Nekoyume.Model.Guild;
-using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
-using Xunit;
 
 public abstract class GuildTestBase
 {
@@ -410,6 +408,17 @@ public abstract class GuildTestBase
             throw new InvalidOperationException("Remainder must be zero.");
         }
 
+        return fav;
+    }
+
+    protected static FungibleAssetValue GGToNCG(FungibleAssetValue gg)
+    {
+        if (!gg.Currency.Equals(GG))
+        {
+            throw new ArgumentException("Currency must be NCG.", nameof(gg));
+        }
+
+        var (fav, _) = GuildModule.ConvertCurrency(gg, NCG);
         return fav;
     }
 
