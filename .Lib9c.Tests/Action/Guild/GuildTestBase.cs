@@ -90,9 +90,10 @@ public abstract class GuildTestBase
 
     protected static IWorld EnsureToTombstoneValidator(
         IWorld world,
-        Address validatorAddress,
+        PrivateKey validatorPrivateKey,
         long blockHeight)
     {
+        var validatorAddress = validatorPrivateKey.Address;
         var actionContext = new ActionContext
         {
             Signer = validatorAddress,
@@ -114,13 +115,7 @@ public abstract class GuildTestBase
     protected static IWorld EnsureToSlashValidator(
         IWorld world, PrivateKey validatorPrivateKey, BigInteger slashFactor, long blockHeight)
     {
-        return EnsureToSlashValidator(
-            world, validatorPrivateKey.Address, slashFactor, blockHeight);
-    }
-
-    protected static IWorld EnsureToSlashValidator(
-        IWorld world, Address validatorAddress, BigInteger slashFactor, long blockHeight)
-    {
+        var validatorAddress = validatorPrivateKey.Address;
         var actionContext = new ActionContext
         {
             Signer = validatorAddress,
@@ -136,6 +131,20 @@ public abstract class GuildTestBase
         guildDelegatee.Slash(slashFactor, blockHeight, blockHeight);
 
         return guildRepository.World;
+    }
+
+    protected static IWorld EnsureToUndelegateValidator(
+        IWorld world, PrivateKey validatorPrivateKey, BigInteger share, long blockHeight)
+    {
+        var validatorAddress = validatorPrivateKey.Address;
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = validatorAddress,
+            BlockIndex = blockHeight,
+        };
+        var undelegateValidator = new UndelegateValidator(share);
+        return undelegateValidator.Execute(actionContext);
     }
 
     protected static IWorld EnsureToMakeGuild(
@@ -236,16 +245,7 @@ public abstract class GuildTestBase
             throw new ArgumentException("Minor unit must be zero.", nameof(ncg));
         }
 
-        return EnsureToStake(world, agentAddress, avatarIndex, ncg.MajorUnit, blockHeight);
-    }
-
-    protected static IWorld EnsureToStake(
-        IWorld world,
-        AgentAddress agentAddress,
-        int avatarIndex,
-        BigInteger amount,
-        long blockHeight)
-    {
+        var amount = ncg.MajorUnit;
         var actionContext = new ActionContext
         {
             PreviousState = world,
@@ -256,12 +256,6 @@ public abstract class GuildTestBase
         var avatarAddress = agentState.avatarAddresses[avatarIndex];
         var stake = new Stake(amount, avatarAddress);
         return stake.Execute(actionContext);
-    }
-
-    protected static IWorld EnsureToStake(
-        IWorld world, PrivateKey privateKey, BigInteger amount, long blockHeight)
-    {
-        return EnsureToStake(world, privateKey.Address, amount, blockHeight);
     }
 
     protected static IWorld EnsureToStakeValidator(

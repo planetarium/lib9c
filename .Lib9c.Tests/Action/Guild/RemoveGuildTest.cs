@@ -282,7 +282,7 @@ public class RemoveGuildTest : GuildTestBase
         world = EnsureToInitializeValidator(world, validatorKey, validatorNCG, height++);
         if (slashFactor > 0)
         {
-            world = EnsureToSlashValidator(world, validatorKey.Address, slashFactor, height++);
+            world = EnsureToSlashValidator(world, validatorKey, slashFactor, height++);
         }
 
         world = EnsureToInitializeAgent(world, masterAddress, masterNCG, height++);

@@ -109,7 +109,7 @@ public class MoveGuildTest : GuildTestBase
         world = EnsureToMakeGuild(world, guildAddress2, masterAddress2, validatorKey2, height++);
         world = EnsureToInitializeAgent(world, agentAddress, NCG * 100, height++);
         world = EnsureToJoinGuild(world, guildAddress1, agentAddress, height++);
-        world = EnsureToTombstoneValidator(world, validatorKey2.Address, height++);
+        world = EnsureToTombstoneValidator(world, validatorKey2, height++);
 
         // When
         var moveGuild = new MoveGuild(guildAddress2);
@@ -184,12 +184,12 @@ public class MoveGuildTest : GuildTestBase
         world = EnsureToStake(world, agentAddress, agentNCG, height++);
         if (slashFactor1 > 0)
         {
-            world = EnsureToSlashValidator(world, validatorKey1.Address, slashFactor1, height++);
+            world = EnsureToSlashValidator(world, validatorKey1, slashFactor1, height++);
         }
 
         if (slashFactor2 > 0)
         {
-            world = EnsureToSlashValidator(world, validatorKey2.Address, slashFactor2, height++);
+            world = EnsureToSlashValidator(world, validatorKey2, slashFactor2, height++);
         }
 
         // When
