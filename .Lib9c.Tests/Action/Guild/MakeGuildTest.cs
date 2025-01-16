@@ -198,7 +198,7 @@ public class MakeGuildTest : GuildTestBase
         world = EnsureToInitializeValidator(world, validatorKey, validatorNCG, height++);
         world = EnsureToInitializeAgent(world, masterAddress, masterNCG, height++);
         world = EnsureToStake(world, masterAddress, masterNCG, height++);
-        if (slashFactor > 0)
+        if (slashFactor > 1)
         {
             world = EnsureToSlashValidator(world, validatorKey, slashFactor, height++);
         }

@@ -182,12 +182,12 @@ public class MoveGuildTest : GuildTestBase
         world = EnsureToStake(world, masterAddress2, masterNCG2, height++);
         world = EnsureToJoinGuild(world, guildAddress1, agentAddress, height++);
         world = EnsureToStake(world, agentAddress, agentNCG, height++);
-        if (slashFactor1 > 0)
+        if (slashFactor1 > 1)
         {
             world = EnsureToSlashValidator(world, validatorKey1, slashFactor1, height++);
         }
 
-        if (slashFactor2 > 0)
+        if (slashFactor2 > 1)
         {
             world = EnsureToSlashValidator(world, validatorKey2, slashFactor2, height++);
         }

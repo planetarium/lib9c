@@ -442,7 +442,7 @@ public class BanGuildMemberTest : GuildTestBase
         world = EnsureToStake(world, masterAddress, masterNCG, height++);
         world = EnsureToStake(world, agentAddress, agentNCG, height++);
         world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
-        if (slashFactor > 0)
+        if (slashFactor > 1)
         {
             world = EnsureToSlashValidator(world, validatorKey, slashFactor, height++);
         }

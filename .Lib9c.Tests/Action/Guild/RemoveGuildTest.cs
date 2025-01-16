@@ -280,7 +280,7 @@ public class RemoveGuildTest : GuildTestBase
         var height = 0L;
         var slashFactor = fixture.SlashFactor;
         world = EnsureToInitializeValidator(world, validatorKey, validatorNCG, height++);
-        if (slashFactor > 0)
+        if (slashFactor > 1)
         {
             world = EnsureToSlashValidator(world, validatorKey, slashFactor, height++);
         }
