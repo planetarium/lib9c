@@ -63,10 +63,8 @@ namespace Lib9c.Tests.Action
             var patron = MeadConfig.PatronAddress;
             var contractAddress = address.Derive(nameof(RequestPledge));
             var guildAddress = AddressUtil.CreateGuildAddress();
-            var states = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(
-                    Addresses.GoldCurrency,
-                    new GoldCurrencyState(Currency.Legacy("NCG", 2, null)).Serialize())
+            var (tables, agentAddr, avatarAddr, states) = InitializeUtil.InitializeStates();
+            states = states
                 .SetLegacyState(
                     contractAddress,
                     List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())

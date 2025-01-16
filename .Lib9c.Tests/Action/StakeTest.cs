@@ -28,6 +28,7 @@ namespace Lib9c.Tests.Action
     {
         private readonly IWorld _initialState;
         private readonly Currency _ncg;
+        private readonly Currency _gg = Currencies.GuildGold;
         private readonly PublicKey _agentPublicKey = new PrivateKey().PublicKey;
         private readonly Address _agentAddr;
         private readonly Address _avatarAddr;
@@ -254,6 +255,10 @@ namespace Lib9c.Tests.Action
                     new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
+                .MintAsset(
+                    new ActionContext { Signer = Addresses.Admin, },
+                    stakeStateAddr,
+                    _gg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
 
             var nextState = Execute(
@@ -285,6 +290,10 @@ namespace Lib9c.Tests.Action
                     new ActionContext { Signer = Addresses.Admin, },
                     stakeStateAddr,
                     _ncg * previousAmount)
+                .MintAsset(
+                    new ActionContext { Signer = Addresses.Admin, },
+                    stakeStateAddr,
+                    _gg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
             var nextState = Execute(
                 blockIndex,
@@ -308,9 +317,11 @@ namespace Lib9c.Tests.Action
                 _agentAddr,
                 _ncg * amount);
             var height = 0L;
+            var promoteAmount = 50;
 
             var validatorKey = new PrivateKey().PublicKey;
-            world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height++);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, validatorKey, promoteAmount, height++);
             world = DelegationUtil.MakeGuild(world, _agentAddr, validatorKey.Address, height++);
 
             Execute(
@@ -351,15 +362,19 @@ namespace Lib9c.Tests.Action
                 stateVersion: 3);
             var world = _initialState;
             var height = 0L;
+            var promoteAmount = 50;
 
             var validatorKey = new PrivateKey().PublicKey;
-            world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, height);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, validatorKey, promoteAmount, height);
             world = DelegationUtil.MakeGuild(world, _agentAddr, validatorKey.Address, height);
             if (previousAmount > 0)
             {
                 var ncgToStake = _ncg * previousAmount;
-                var gg = FungibleAssetValue.Parse(Currencies.GuildGold, ncgToStake.GetQuantityString(true));
-                world = DelegationUtil.MintGuildGold(world, _agentAddr, gg, height);
+                var gg = FungibleAssetValue.Parse(_gg, ncgToStake.GetQuantityString(true));
+                world = world.MintAsset(new ActionContext(), _agentAddr, gg);
+                world = world.TransferAsset(
+                    new ActionContext(), _agentAddr, stakeStateAddr, gg);
                 world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
                 world = world.TransferAsset(
                     new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
@@ -431,8 +446,10 @@ namespace Lib9c.Tests.Action
             if (previousAmount > 0)
             {
                 var ncgToStake = _ncg * previousAmount;
-                var gg = FungibleAssetValue.Parse(Currencies.GuildGold, ncgToStake.GetQuantityString(true));
-                world = DelegationUtil.MintGuildGold(world, _agentAddr, gg, height);
+                var gg = FungibleAssetValue.Parse(_gg, ncgToStake.GetQuantityString(true));
+                world = world.MintAsset(new ActionContext(), _agentAddr, gg);
+                world = world.TransferAsset(
+                    new ActionContext(), _agentAddr, stakeStateAddr, gg);
                 world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
                 world = world.TransferAsset(
                     new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
@@ -461,9 +478,9 @@ namespace Lib9c.Tests.Action
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = nextState.GetBalance(_agentAddr, _ncg);
-            var stakeBalance = nextState.GetBalance(stakeStateAddr, Currencies.GuildGold);
+            var stakeBalance = nextState.GetBalance(stakeStateAddr, _gg);
             Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
+            Assert.Equal(_gg * amount, stakeBalance);
         }
 
         [Theory]
@@ -493,14 +510,18 @@ namespace Lib9c.Tests.Action
                 stateVersion: 3);
             var world = _initialState;
             var height = 0L;
+            var promoteAmount = 50;
 
-            world = DelegationUtil.EnsureValidatorPromotionReady(world, _agentPublicKey, height++);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, _agentPublicKey, promoteAmount, height++);
 
             if (previousAmount > 0)
             {
                 var ncgToStake = _ncg * previousAmount;
-                var gg = FungibleAssetValue.Parse(Currencies.GuildGold, ncgToStake.GetQuantityString(true));
-                world = DelegationUtil.MintGuildGold(world, _agentAddr, gg, height);
+                var gg = GuildModule.ConvertCurrency(ncgToStake, _gg).TargetFAV;
+                world = world.MintAsset(new ActionContext(), _agentAddr, gg);
+                world = world.TransferAsset(
+                    new ActionContext(), _agentAddr, stakeStateAddr, gg);
                 world = world.MintAsset(new ActionContext(), _agentAddr, ncgToStake);
                 world = world.TransferAsset(
                     new ActionContext(), _agentAddr, stakeStateAddr, ncgToStake);
@@ -530,14 +551,12 @@ namespace Lib9c.Tests.Action
             world = DelegationUtil.EnsureUnbondedClaimed(
                 nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
-            var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
+            var expectedBalance = _ncg * (Math.Max(0, previousAmount - amount) + promoteAmount);
+            var expectedGG = _gg * (amount - promoteAmount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
-            var nonValidatorDelegateeBalance = world.GetBalance(
-                Addresses.NonValidatorDelegatee, Currencies.GuildGold);
-            var stakeBalance = world.GetBalance(stakeStateAddr, Currencies.GuildGold);
+            var stakeBalance = world.GetBalance(stakeStateAddr, _gg);
             Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(Currencies.GuildGold * 0, nonValidatorDelegateeBalance);
-            Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
+            Assert.Equal(expectedGG, stakeBalance);
         }
 
         [Fact]
@@ -545,15 +564,16 @@ namespace Lib9c.Tests.Action
         {
             var world = _initialState;
             var height = 0L;
+            var promoteAmount = 50;
             var validatorKey = new PrivateKey();
             var validatorAddress = validatorKey.PublicKey.Address;
             var guildMasterKey = new PrivateKey();
             var guildMasterAddress = new GuildAddress(guildMasterKey.Address);
             world = DelegationUtil.EnsureValidatorPromotionReady(
-                world, validatorKey.PublicKey, height++);
+                world, validatorKey.PublicKey, promoteAmount, height++);
             world = DelegationUtil.MakeGuild(
                 world, guildMasterAddress, validatorAddress, height++, out var guildAddress);
-            world = world.MintAsset(new ActionContext { }, _agentAddr, _ncg * 100);
+            world = DelegationUtil.MintNCG(world, _agentAddr, 100, height++);
             world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 100, height++);
             world = DelegationUtil.JoinGuild(world, _agentAddr, guildAddress, height++);
             world = DelegationUtil.SlashValidator(world, validatorAddress, 10, height++);
@@ -561,6 +581,8 @@ namespace Lib9c.Tests.Action
             Assert.True(world.TryGetStakeState(_agentAddr, out var stakeState));
             height += stakeState.CancellableBlockIndex;
             world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 0, height++);
+            world = DelegationUtil.EnsureUnbondedClaimed(
+                world, _agentAddr, height++ + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var actualNCG = world.GetBalance(_agentAddr, _ncg);
             Assert.Equal(_ncg * 90, actualNCG);

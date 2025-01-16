@@ -31,6 +31,7 @@ namespace Lib9c.Tests.Action
 
         private readonly IWorld _initialState;
         private readonly Currency _ncg;
+        private readonly Currency _gg = Currencies.GuildGold;
         private readonly StakePolicySheet _stakePolicySheet;
 
         public ClaimStakeRewardTest(ITestOutputHelper outputHelper)
@@ -511,6 +512,7 @@ namespace Lib9c.Tests.Action
             var prevState = _initialState
                 // NOTE: required_gold to receive Currency
                 // of StakeRegularRewardSheetFixtures.V2 is 10,000,000.
+                .MintAsset(new ActionContext(), stakeAddr, _gg * 10_000_000)
                 .MintAsset(new ActionContext(), stakeAddr, _ncg * 10_000_000)
                 .SetLegacyState(stakeAddr, stakeStateV2.Serialize());
             // NOTE: Set CurrencyTicker to string.Empty.
@@ -548,6 +550,7 @@ namespace Lib9c.Tests.Action
             var prevState = _initialState
                 // NOTE: required_gold to receive Currency
                 // of StakeRegularRewardSheetFixtures.V2 is 10,000,000.
+                .MintAsset(new ActionContext(), stakeAddr, _gg * 10_000_000)
                 .MintAsset(new ActionContext(), stakeAddr, _ncg * 10_000_000)
                 .SetLegacyState(stakeAddr, stakeStateV2.Serialize());
             // NOTE: Set CurrencyTicker to string.Empty.
@@ -633,10 +636,9 @@ namespace Lib9c.Tests.Action
                 startedBlockIndex,
                 receivedBlockIndex);
             var previousState = stakedBalance > 0
-                ? _initialState.MintAsset(
-                    new ActionContext(),
-                    stakeAddr,
-                    _ncg * stakedBalance)
+                ? _initialState
+                    .MintAsset(new ActionContext(), stakeAddr, _ncg * stakedBalance)
+                    .MintAsset(new ActionContext(), stakeAddr, _gg * stakedBalance)
                 : _initialState;
             previousState = previousState.SetLegacyState(stakeAddr, stakeStateV2.Serialize());
             var nextState = Execute(
@@ -676,7 +678,11 @@ namespace Lib9c.Tests.Action
                 .MintAsset(
                     new ActionContext(),
                     stakeAddr,
-                    _ncg * 10000000);
+                    _ncg * 10000000)
+                .MintAsset(
+                    new ActionContext(),
+                    stakeAddr,
+                    _gg * 10000000);
             var agentAddr = AgentAddr;
             var avatarAddr = AvatarAddr;
             var blockIndex = stakePolicySheet.RewardIntervalValue;

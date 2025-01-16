@@ -10,7 +10,6 @@ namespace Lib9c.Tests.Util
     using Nekoyume.Action.Guild;
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Model.Guild;
-    using Nekoyume.Model.Stake;
     using Nekoyume.Module;
     using Nekoyume.TableData.Stake;
     using Nekoyume.TypedAddress;
@@ -18,24 +17,30 @@ namespace Lib9c.Tests.Util
 
     public static class DelegationUtil
     {
-        public static IWorld MintGuildGold(
-            IWorld world, Address address, FungibleAssetValue amount, long blockHeight)
+        public static IWorld MintNCG(
+            IWorld world, Address address, BigInteger amount, long blockHeight)
         {
-            if (!amount.Currency.Equals(Currencies.GuildGold))
-            {
-                throw new ArgumentException(
-                    $"The currency of the amount must be {Currencies.GuildGold}.",
-                    nameof(amount)
-                );
-            }
+            var goldCurrency = world.GetGoldCurrency();
 
             var actionContext = new ActionContext
             {
                 PreviousState = world,
                 BlockIndex = blockHeight,
             };
-            var poolAddress = StakeState.DeriveAddress(address);
-            return world.MintAsset(actionContext, poolAddress, amount);
+            return world.MintAsset(actionContext, address, goldCurrency * amount);
+        }
+
+        public static IWorld Stake(
+            IWorld world, Address address, BigInteger amount, long blockHeight)
+        {
+            var actionContext = new ActionContext
+            {
+                PreviousState = world,
+                Signer = address,
+                BlockIndex = blockHeight,
+            };
+            var stake = new Stake(amount);
+            return stake.Execute(actionContext);
         }
 
         public static IWorld PromoteValidator(
@@ -143,19 +148,15 @@ namespace Lib9c.Tests.Util
 
         public static IWorld EnsureValidatorPromotionReady(
             IWorld world, PublicKey validatorPublicKey, long blockHeight)
-        {
-            world = MintGuildGold(world, validatorPublicKey.Address, Currencies.GuildGold * 10, blockHeight);
-            world = PromoteValidator(world, validatorPublicKey, Currencies.GuildGold * 10, blockHeight);
-            return world;
-        }
+            => EnsureValidatorPromotionReady(world, validatorPublicKey, 50, blockHeight);
 
-        public static IWorld EnsureGuildParticipentIsStaked(
-            IWorld world,
-            Address agentAddress,
-            FungibleAssetValue ncg,
-            StakePolicySheet stakePolicySheet,
-            long blockHeight)
+        public static IWorld EnsureValidatorPromotionReady(
+            IWorld world, PublicKey validatorPublicKey, BigInteger amount, long blockHeight)
         {
+            world = MintNCG(world, validatorPublicKey.Address, amount, blockHeight);
+            world = Stake(world, validatorPublicKey.Address, amount, blockHeight);
+            world = PromoteValidator(
+                world, validatorPublicKey, Currencies.GuildGold * amount, blockHeight);
             return world;
         }
 
@@ -175,7 +176,6 @@ namespace Lib9c.Tests.Util
             };
             var claimUnbonded = new ClaimUnbonded();
             return claimUnbonded.Execute(actionContext);
-            return world;
         }
 
         public static IWorld CreateAvatar(IWorld world, Address agentAddress, long blockHeight)
