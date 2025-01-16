@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
+    using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -43,11 +44,8 @@ namespace Lib9c.Tests.Action
             var pledgeAddress = pledgedAddress.GetPledgeAddress();
             var agentAddress = new Nekoyume.TypedAddress.AgentAddress(pledgedAddress);
             var context = new ActionContext();
-            var states = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(
-                    Addresses.GoldCurrency,
-                    new GoldCurrencyState(Libplanet.Types.Assets.Currency.Legacy("NCG", 2, null))
-                        .Serialize())
+            var (tables, agentAddr, avatarAddr, states) = InitializeUtil.InitializeStates();
+            states = states
                 .SetLegacyState(Addresses.Admin, adminState.Serialize())
                 .MintAsset(context, patronAddress, 4 * 500 * mead);
 
