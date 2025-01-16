@@ -106,7 +106,7 @@ namespace Nekoyume
 
         /// <summary>
         /// An address of an account having <see cref="Delegation.DelegateeMetadata"/>.
-        /// </summary> 
+        /// </summary>
         public static readonly Address GuildDelegateeMetadata
             = new Address("0000000000000000000000000000000000000210");
 
@@ -236,6 +236,7 @@ namespace Nekoyume
         /// <summary>
         /// An address for non validator.
         /// </summary>
+        [Obsolete("It is not used anymore.")]
         public static readonly Address NonValidatorDelegatee
             = new Address("0000000000000000000000000000000000000313");
 
