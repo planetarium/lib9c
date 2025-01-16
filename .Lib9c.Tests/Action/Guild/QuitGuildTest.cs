@@ -190,7 +190,6 @@ public class QuitGuildTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = fixture.ValidatorKey;
-        var validatorAddress = validatorKey.Address;
         var validatorNCG = fixture.ValidatorNCG;
         var validatorGG = NCGToGG(validatorNCG);
         var slashFactor = fixture.SlashFactor;
@@ -211,7 +210,7 @@ public class QuitGuildTest : GuildTestBase
         world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
         if (slashFactor > 0)
         {
-            world = EnsureToSlashValidator(world, validatorAddress, slashFactor, height++);
+            world = EnsureToSlashValidator(world, validatorKey, slashFactor, height++);
         }
 
         // When
