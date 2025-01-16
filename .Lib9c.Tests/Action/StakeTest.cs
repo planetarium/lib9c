@@ -30,6 +30,7 @@ namespace Lib9c.Tests.Action
         private readonly Currency _ncg;
         private readonly PublicKey _agentPublicKey = new PrivateKey().PublicKey;
         private readonly Address _agentAddr;
+        private readonly Address _avatarAddr;
         private readonly StakePolicySheet _stakePolicySheet;
 
         public StakeTest(ITestOutputHelper outputHelper)
@@ -65,7 +66,7 @@ namespace Lib9c.Tests.Action
             (
                 _,
                 _agentAddr,
-                _,
+                _avatarAddr,
                 _initialState
             ) = InitializeUtil.InitializeStates(
                 sheetsOverride: sheetsOverride,
@@ -80,13 +81,15 @@ namespace Lib9c.Tests.Action
         [InlineData(long.MaxValue, true)]
         public void Constructor(long amount, bool success)
         {
+            var avatarAddress = new PrivateKey().Address;
+
             if (success)
             {
-                var stake = new Stake(amount);
+                var stake = new Stake(amount, _avatarAddr);
             }
             else
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() => new Stake(amount));
+                Assert.Throws<ArgumentOutOfRangeException>(() => new Stake(amount, _avatarAddr));
             }
         }
 
@@ -95,7 +98,7 @@ namespace Lib9c.Tests.Action
         [InlineData(long.MaxValue)]
         public void Serialization(long amount)
         {
-            var action = new Stake(amount);
+            var action = new Stake(amount, _avatarAddr);
             var ser = action.PlainValue;
             var de = new Stake();
             de.LoadPlainValue(ser);
@@ -236,11 +239,7 @@ namespace Lib9c.Tests.Action
         [Theory]
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
         [InlineData(0, 50, LegacyStakeState.RewardInterval)]
-        [InlineData(
-            long.MaxValue - LegacyStakeState.RewardInterval,
-            long.MaxValue,
-            long.MaxValue)]
-        public void Execute_Throw_StakeExistingClaimableException_With_StakeState(
+        public void Execute_Success_When_Claimable_With_StakeState(
             long previousStartedBlockIndex,
             long previousAmount,
             long blockIndex)
@@ -256,24 +255,22 @@ namespace Lib9c.Tests.Action
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeState.Serialize());
-            Assert.Throws<StakeExistingClaimableException>(
-                () =>
-                    Execute(
-                        blockIndex,
-                        previousState,
-                        new TestRandom(),
-                        _agentAddr,
-                        previousAmount));
+
+            var nextState = Execute(
+                blockIndex,
+                previousState,
+                new TestRandom(),
+                _agentAddr,
+                previousAmount);
+
+            Assert.True(nextState.TryGetStakeState(_agentAddr, out var newStakeState));
+            Assert.Equal(blockIndex, newStakeState.ClaimedBlockIndex);
         }
 
         [Theory]
         // NOTE: minimum required_gold of StakeRegularRewardSheetFixtures.V2 is 50.
         // NOTE: RewardInterval of StakePolicySheetFixtures.V2 is 50,400.
         [InlineData(0, 50, 50400)]
-        [InlineData(
-            long.MaxValue - 50400,
-            long.MaxValue,
-            long.MaxValue)]
         public void Execute_Throw_StakeExistingClaimableException_With_StakeStateV2(
             long previousStartedBlockIndex,
             long previousAmount,
@@ -289,14 +286,15 @@ namespace Lib9c.Tests.Action
                     stakeStateAddr,
                     _ncg * previousAmount)
                 .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize());
-            Assert.Throws<StakeExistingClaimableException>(
-                () =>
-                    Execute(
-                        blockIndex,
-                        previousState,
-                        new TestRandom(),
-                        _agentAddr,
-                        previousAmount));
+            var nextState = Execute(
+                blockIndex,
+                previousState,
+                new TestRandom(),
+                _agentAddr,
+                previousAmount);
+
+            Assert.True(nextState.TryGetStakeState(_agentAddr, out var newStakeState));
+            Assert.Equal(blockIndex, newStakeState.ClaimedBlockIndex);
         }
 
         [Theory]
@@ -322,8 +320,8 @@ namespace Lib9c.Tests.Action
                 _agentAddr,
                 amount);
 
-            world = DelegationUtil.EnsureStakeReleased(
-                world, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+            world = DelegationUtil.EnsureUnbondedClaimed(
+                world, _agentAddr, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
         }
 
         [Theory]
@@ -394,8 +392,8 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureStakeReleased(
-                nextState, height + LegacyStakeState.LockupInterval);
+            world = DelegationUtil.EnsureUnbondedClaimed(
+                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
@@ -461,16 +459,10 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureStakeReleased(
-                nextState, height + LegacyStakeState.LockupInterval);
-
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
-            var actualBalance = world.GetBalance(_agentAddr, _ncg);
-            var nonValidatorDelegateeBalance = world.GetBalance(
-                Addresses.NonValidatorDelegatee, Currencies.GuildGold);
-            var stakeBalance = world.GetBalance(stakeStateAddr, Currencies.GuildGold);
+            var actualBalance = nextState.GetBalance(_agentAddr, _ncg);
+            var stakeBalance = nextState.GetBalance(stakeStateAddr, Currencies.GuildGold);
             Assert.Equal(expectedBalance, actualBalance);
-            Assert.Equal(Currencies.GuildGold * 0, nonValidatorDelegateeBalance);
             Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
         }
 
@@ -535,8 +527,8 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
-            world = DelegationUtil.EnsureStakeReleased(
-                nextState, height + LegacyStakeState.LockupInterval);
+            world = DelegationUtil.EnsureUnbondedClaimed(
+                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
@@ -548,6 +540,32 @@ namespace Lib9c.Tests.Action
             Assert.Equal(Currencies.GuildGold * amount, stakeBalance);
         }
 
+        [Fact]
+        public void Execute_Success_When_Validator_Slashed()
+        {
+            var world = _initialState;
+            var height = 0L;
+            var validatorKey = new PrivateKey();
+            var validatorAddress = validatorKey.PublicKey.Address;
+            var guildMasterKey = new PrivateKey();
+            var guildMasterAddress = new GuildAddress(guildMasterKey.Address);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, validatorKey.PublicKey, height++);
+            world = DelegationUtil.MakeGuild(
+                world, guildMasterAddress, validatorAddress, height++, out var guildAddress);
+            world = world.MintAsset(new ActionContext { }, _agentAddr, _ncg * 100);
+            world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 100, height++);
+            world = DelegationUtil.JoinGuild(world, _agentAddr, guildAddress, height++);
+            world = DelegationUtil.SlashValidator(world, validatorAddress, 10, height++);
+
+            Assert.True(world.TryGetStakeState(_agentAddr, out var stakeState));
+            height += stakeState.CancellableBlockIndex;
+            world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 0, height++);
+
+            var actualNCG = world.GetBalance(_agentAddr, _ncg);
+            Assert.Equal(_ncg * 90, actualNCG);
+        }
+
         private IWorld Execute(
             long blockIndex,
             IWorld previousState,
@@ -555,7 +573,7 @@ namespace Lib9c.Tests.Action
             Address signer,
             long amount)
         {
-            var action = new Stake(amount);
+            var action = new Stake(amount, _avatarAddr);
             var nextState = action.Execute(
                 new ActionContext
                 {

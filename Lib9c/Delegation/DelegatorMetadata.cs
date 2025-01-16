@@ -1,15 +1,20 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
+using Nekoyume.Action;
 
 namespace Nekoyume.Delegation
 {
     public class DelegatorMetadata : IDelegatorMetadata
     {
+        private const string StateTypeName = "delegator_metadata";
+        private const long StateVersion = 1;
+
         private Address? _address;
 
         public DelegatorMetadata(
@@ -22,7 +27,8 @@ namespace Nekoyume.Delegation
                   accountAddress,
                   delegationPoolAddress,
                   rewardAddress,
-                  ImmutableSortedSet<Address>.Empty)
+                  ImmutableSortedSet<Address>.Empty,
+                  ImmutableSortedSet<UnbondingRef>.Empty)
         {
         }
 
@@ -35,16 +41,48 @@ namespace Nekoyume.Delegation
         }
 
         public DelegatorMetadata(
-            Address address,
-            Address accountAddress,
+            Address delegatorAddress,
+            Address delegatorAccountAddress,
             List bencoded)
-            : this(
-                address,
-                accountAddress,
-                new Address(bencoded[0]),
-                new Address(bencoded[1]),
-                ((List)bencoded[2]).Select(item => new Address(item)).ToImmutableSortedSet())
         {
+            Address delegationPoolAddress;
+            Address rewardAddress;
+            IEnumerable<Address> delegatees;
+            IEnumerable<UnbondingRef> unbondingRefs;
+
+            // TODO: Remove this if block after migration to state version 1 is done.
+            if (bencoded[0] is not Text)
+            {
+                // Assume state version 0
+                delegationPoolAddress = new Address(bencoded[0]);
+                rewardAddress = new Address(bencoded[1]);
+                delegatees = ((List)bencoded[2]).Select(item => new Address(item));
+                unbondingRefs = ImmutableSortedSet<UnbondingRef>.Empty;
+            }
+            else
+            {
+                if (bencoded[0] is not Text text || text != StateTypeName || bencoded[1] is not Integer integer)
+                {
+                    throw new InvalidCastException();
+                }
+
+                if (integer > StateVersion)
+                {
+                    throw new FailedLoadStateException("Un-deserializable state.");
+                }
+
+                delegationPoolAddress = new Address(bencoded[2]);
+                rewardAddress = new Address(bencoded[3]);
+                delegatees = ((List)bencoded[4]).Select(item => new Address(item));
+                unbondingRefs = ((List)bencoded[5]).Select(item => new UnbondingRef(item));
+            }
+
+            DelegatorAddress = delegatorAddress;
+            DelegatorAccountAddress = delegatorAccountAddress;
+            DelegationPoolAddress = delegationPoolAddress;
+            RewardAddress = rewardAddress;
+            Delegatees = delegatees.ToImmutableSortedSet();
+            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
         }
 
         private DelegatorMetadata(
@@ -52,13 +90,15 @@ namespace Nekoyume.Delegation
             Address accountAddress,
             Address delegationPoolAddress,
             Address rewardAddress,
-            ImmutableSortedSet<Address> delegatees)
+            IEnumerable<Address> delegatees,
+            IEnumerable<UnbondingRef> unbondingRefs)
         {
             DelegatorAddress = address;
             DelegatorAccountAddress = accountAddress;
             DelegationPoolAddress = delegationPoolAddress;
             RewardAddress = rewardAddress;
-            Delegatees = delegatees;
+            Delegatees = delegatees.ToImmutableSortedSet();
+            UnbondingRefs = unbondingRefs.ToImmutableSortedSet();
         }
 
         public Address DelegatorAddress { get; }
@@ -76,11 +116,16 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedSet<Address> Delegatees { get; private set; }
 
+        public ImmutableSortedSet<UnbondingRef> UnbondingRefs { get; private set; }
+
         public List Bencoded
             => List.Empty
+                .Add(StateTypeName)
+                .Add(StateVersion)
                 .Add(DelegationPoolAddress.Bencoded)
                 .Add(RewardAddress.Bencoded)
-                .Add(new List(Delegatees.Select(a => a.Bencoded)));
+                .Add(new List(Delegatees.Select(a => a.Bencoded)))
+                .Add(new List(UnbondingRefs.Select(unbondingRef => unbondingRef.Bencoded)));
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -94,6 +139,16 @@ namespace Nekoyume.Delegation
             Delegatees = Delegatees.Remove(delegatee);
         }
 
+        public void AddUnbondingRef(UnbondingRef unbondingRef)
+        {
+            UnbondingRefs = UnbondingRefs.Add(unbondingRef);
+        }
+
+        public void RemoveUnbondingRef(UnbondingRef unbondingRef)
+        {
+            UnbondingRefs = UnbondingRefs.Remove(unbondingRef);
+        }
+
         public override bool Equals(object? obj)
             => obj is IDelegator other && Equals(other);
 
@@ -105,7 +160,8 @@ namespace Nekoyume.Delegation
             && DelegatorAccountAddress.Equals(delegator.DelegatorAccountAddress)
             && DelegationPoolAddress.Equals(delegator.DelegationPoolAddress)
             && RewardAddress.Equals(delegator.RewardAddress)
-            && Delegatees.SequenceEqual(delegator.Delegatees));
+            && Delegatees.SequenceEqual(delegator.Delegatees)
+            && UnbondingRefs.SequenceEqual(delegator.UnbondingRefs));
 
         public override int GetHashCode()
             => DelegatorAddress.GetHashCode();

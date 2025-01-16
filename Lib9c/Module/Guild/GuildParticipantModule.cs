@@ -1,11 +1,8 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using Bencodex.Types;
 using Lib9c;
-using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TypedAddress;
@@ -117,9 +114,8 @@ namespace Nekoyume.Module.Guild
 
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(agentAddress);
-            var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            var validatorDelegatee = validatorRepository.GetDelegatee(guild.ValidatorAddress);
-            var bond = validatorRepository.GetBond(validatorDelegatee, guild.Address);
+            var delegatee = repository.GetDelegatee(guild.ValidatorAddress);
+            var bond = repository.GetBond(delegatee, agentAddress);
             var share = bond.Share;
 
             if (bond.Share > 0)

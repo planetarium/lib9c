@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c;
@@ -8,14 +7,11 @@ using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
-using Nekoyume.Action.Garages;
 using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Item;
 using Nekoyume.Model.Stake;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.TableData;
 using Nekoyume.ValidatorDelegation;
@@ -115,6 +111,25 @@ namespace Nekoyume.Action
                     AvatarAddress);
             }
 
+            states = Claim(
+                states,
+                context,
+                AvatarAddress,
+                stakeStateAddr,
+                avatarState,
+                stakeStateV2);
+
+            return states;
+        }
+
+        public static IWorld Claim(
+            IWorld states,
+            IActionContext context,
+            Address avatarAddress,
+            Address stakeStateAddress,
+            AvatarState avatarState,
+            StakeState stakeStateV2)
+        {
             var sheets = states.GetSheets(sheetTuples: new[]
             {
                 (
@@ -134,7 +149,7 @@ namespace Nekoyume.Action
             var stakeRegularRewardSheet = sheets.GetSheet<StakeRegularRewardSheet>();
             // NOTE:
             var ncg = states.GetGoldCurrency();
-            var stakedNcg = states.GetBalance(stakeStateAddr, ncg);
+            var stakedNcg = states.GetStaked(context.Signer);
             var stakingLevel = Math.Min(
                 stakeRegularRewardSheet.FindLevelByStakedAmount(
                     context.Signer,
@@ -171,7 +186,7 @@ namespace Nekoyume.Action
             foreach (var fav in favResult)
             {
                 var rewardCurrency = fav.Currency;
-                var recipient = Currencies.PickAddress(rewardCurrency, context.Signer, AvatarAddress);
+                var recipient = Currencies.PickAddress(rewardCurrency, context.Signer, avatarAddress);
                 states = states.MintAsset(context, recipient, fav);
             }
 
@@ -182,8 +197,8 @@ namespace Nekoyume.Action
                 context.BlockIndex);
 
             return states
-                .SetLegacyState(stakeStateAddr, stakeStateV2.Serialize())
-                .SetAvatarState(AvatarAddress, avatarState);
+                .SetLegacyState(stakeStateAddress, stakeStateV2.Serialize())
+                .SetAvatarState(avatarAddress, avatarState);
         }
     }
 }

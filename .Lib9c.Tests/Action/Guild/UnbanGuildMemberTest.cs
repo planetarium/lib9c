@@ -14,13 +14,13 @@ public class UnbanGuildMemberTest : GuildTestBase
     [Fact]
     public void Serialization()
     {
-        var guildMemberAddress = new PrivateKey().Address;
-        var action = new UnbanGuildMember(guildMemberAddress);
+        var memberAddress = new PrivateKey().Address;
+        var action = new UnbanGuildMember(memberAddress);
         var plainValue = action.PlainValue;
 
         var deserialized = new UnbanGuildMember();
         deserialized.LoadPlainValue(plainValue);
-        Assert.Equal(guildMemberAddress, deserialized.Target);
+        Assert.Equal(memberAddress, deserialized.Target);
     }
 
     [Fact]
@@ -29,20 +29,21 @@ public class UnbanGuildMemberTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
         var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
-        world = EnsureToBanGuildMember(world, guildMasterAddress, targetGuildMemberAddress);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, height++);
+        world = EnsureToBanMember(world, masterAddress, targetGuildMemberAddress, height++);
 
         // When
         var unbanGuildMember = new UnbanGuildMember(targetGuildMemberAddress);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
         };
         world = unbanGuildMember.Execute(actionContext);
 
@@ -58,16 +59,16 @@ public class UnbanGuildMemberTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        var guildMemberAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var memberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
 
         // When
-        var unbanGuildMember = new UnbanGuildMember(guildMemberAddress);
+        var unbanGuildMember = new UnbanGuildMember(memberAddress);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
         };
 
         // Then
@@ -82,20 +83,21 @@ public class UnbanGuildMemberTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        var guildMemberAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var memberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
         var unknownGuildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToSetGuildParticipant(world, guildMasterAddress, unknownGuildAddress);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToSetGuildParticipant(world, masterAddress, unknownGuildAddress);
 
         // When
-        var unbanGuildMember = new UnbanGuildMember(guildMemberAddress);
+        var unbanGuildMember = new UnbanGuildMember(memberAddress);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
         };
 
         // Then
@@ -110,19 +112,21 @@ public class UnbanGuildMemberTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        var guildMemberAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var memberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, memberAddress, height++);
 
         // When
-        var unbanGuildMember = new UnbanGuildMember(guildMemberAddress);
+        var unbanGuildMember = new UnbanGuildMember(memberAddress);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMemberAddress,
+            Signer = memberAddress,
+            BlockIndex = height,
         };
 
         // Then
@@ -137,17 +141,19 @@ public class UnbanGuildMemberTest : GuildTestBase
         // Given
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
 
         // When
-        var unbanGuildMember = new UnbanGuildMember(guildMasterAddress);
+        var unbanGuildMember = new UnbanGuildMember(masterAddress);
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
+            BlockIndex = height,
         };
 
         // Then
@@ -161,17 +167,18 @@ public class UnbanGuildMemberTest : GuildTestBase
     {
         var world = World;
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        var guildMemberAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var memberAddress = AddressUtil.CreateAgentAddress();
         var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
+        var height = 0L;
 
         var action = new UnbanGuildMember(targetGuildMemberAddress);
 
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, guildMemberAddress, 1L);
-        world = EnsureToBanGuildMember(world, guildMasterAddress, targetGuildMemberAddress);
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, memberAddress, height++);
+        world = EnsureToBanMember(world, masterAddress, targetGuildMemberAddress, height++);
 
         var repository = new GuildRepository(world, new ActionContext());
 
@@ -179,7 +186,7 @@ public class UnbanGuildMemberTest : GuildTestBase
         Assert.Throws<InvalidOperationException>(() => action.Execute(new ActionContext
         {
             PreviousState = repository.World,
-            Signer = guildMemberAddress,
+            Signer = memberAddress,
         }));
 
         // GuildMember tries to ban itself.
@@ -194,17 +201,18 @@ public class UnbanGuildMemberTest : GuildTestBase
     public void Unban_By_GuildMaster()
     {
         var validatorKey = new PrivateKey();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
         var targetGuildMemberAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
+        var height = 0L;
 
         var action = new UnbanGuildMember(targetGuildMemberAddress);
 
         IWorld world = World;
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, 1L);
-        world = EnsureToBanGuildMember(world, guildMasterAddress, targetGuildMemberAddress);
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToJoinGuild(world, guildAddress, targetGuildMemberAddress, height++);
+        world = EnsureToBanMember(world, masterAddress, targetGuildMemberAddress, height++);
 
         var repository = new GuildRepository(world, new ActionContext());
 
@@ -214,7 +222,8 @@ public class UnbanGuildMemberTest : GuildTestBase
         world = action.Execute(new ActionContext
         {
             PreviousState = repository.World,
-            Signer = guildMasterAddress,
+            Signer = masterAddress,
+            BlockIndex = height,
         });
 
         repository.UpdateWorld(world);
