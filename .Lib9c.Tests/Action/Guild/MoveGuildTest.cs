@@ -53,15 +53,15 @@ public class MoveGuildTest : GuildTestBase
         {
             GuildInfo1 = new GuildInfo
             {
-                ValidatorGG = GG * 100,
+                ValidatorNCG = NCG * 100,
                 SlashFactor = 0,
-                GuildMasterNCG = NCG * 100,
+                MasterNCG = NCG * 100,
             },
             GuildInfo2 = new GuildInfo
             {
-                ValidatorGG = GG * 100,
+                ValidatorNCG = NCG * 100,
                 SlashFactor = 0,
-                GuildMasterNCG = NCG * 100,
+                MasterNCG = NCG * 100,
             },
             AgentNCG = NCG * 100,
         };
@@ -75,15 +75,15 @@ public class MoveGuildTest : GuildTestBase
         {
             GuildInfo1 = new GuildInfo
             {
-                ValidatorGG = GG * 100,
+                ValidatorNCG = NCG * 100,
                 SlashFactor = 10,
-                GuildMasterNCG = NCG * 100,
+                MasterNCG = NCG * 100,
             },
             GuildInfo2 = new GuildInfo
             {
-                ValidatorGG = GG * 100,
+                ValidatorNCG = NCG * 100,
                 SlashFactor = 10,
-                GuildMasterNCG = NCG * 100,
+                MasterNCG = NCG * 100,
             },
             AgentNCG = NCG * 100,
         };
@@ -98,19 +98,18 @@ public class MoveGuildTest : GuildTestBase
         var validatorKey1 = new PrivateKey();
         var validatorKey2 = new PrivateKey();
         var agentAddress = AddressUtil.CreateAgentAddress();
-        var guildMasterAddress1 = AddressUtil.CreateAgentAddress();
-        var guildMasterAddress2 = AddressUtil.CreateAgentAddress();
+        var masterAddress1 = AddressUtil.CreateAgentAddress();
+        var masterAddress2 = AddressUtil.CreateAgentAddress();
         var guildAddress1 = AddressUtil.CreateGuildAddress();
         var guildAddress2 = AddressUtil.CreateGuildAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey1.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey1.PublicKey, GG * 100);
-        world = EnsureToPrepareGuildGold(world, validatorKey2.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey2.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress1, guildMasterAddress1, validatorKey1.Address);
-        world = EnsureToMakeGuild(world, guildAddress2, guildMasterAddress2, validatorKey2.Address);
-        world = EnsureToPrepareGuildGold(world, agentAddress, GG * 100);
-        world = EnsureToJoinGuild(world, guildAddress1, agentAddress, 1L);
-        world = EnsureToTombstoneValidator(world, validatorKey2.Address);
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey1, NCG * 100, height++);
+        world = EnsureToInitializeValidator(world, validatorKey2, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress1, masterAddress1, validatorKey1, height++);
+        world = EnsureToMakeGuild(world, guildAddress2, masterAddress2, validatorKey2, height++);
+        world = EnsureToInitializeAgent(world, agentAddress, NCG * 100, height++);
+        world = EnsureToJoinGuild(world, guildAddress1, agentAddress, height++);
+        world = EnsureToTombstoneValidator(world, validatorKey2.Address, height++);
 
         // When
         var moveGuild = new MoveGuild(guildAddress2);
@@ -154,42 +153,35 @@ public class MoveGuildTest : GuildTestBase
         var world = World;
         var validatorKey1 = fixture.GuildInfo1.ValidatorKey;
         var validatorKey2 = fixture.GuildInfo2.ValidatorKey;
-        var validatorGG1 = fixture.GuildInfo1.ValidatorGG;
-        var validatorGG2 = fixture.GuildInfo2.ValidatorGG;
+        var validatorNCG1 = fixture.GuildInfo1.ValidatorNCG;
+        var validatorNCG2 = fixture.GuildInfo2.ValidatorNCG;
+        var validatorGG1 = NCGToGG(validatorNCG1);
+        var validatorGG2 = NCGToGG(validatorNCG2);
         var agentAddress = fixture.AgentAddress;
         var agentNCG = fixture.AgentNCG;
-        var agentAmount = agentNCG.MajorUnit;
         var agentGG = NCGToGG(agentNCG);
-        var guildMasterAddress1 = fixture.GuildInfo1.GuildMasterAddress;
-        var guildMasterAddress2 = fixture.GuildInfo2.GuildMasterAddress;
-        var guildMasterNCG1 = fixture.GuildInfo1.GuildMasterNCG;
-        var guildMasterNCG2 = fixture.GuildInfo2.GuildMasterNCG;
-        var guildMasterAmount1 = guildMasterNCG1.MajorUnit;
-        var guildMasterAmount2 = guildMasterNCG2.MajorUnit;
-        var guildMasterGG1 = NCGToGG(guildMasterNCG1);
-        var guildMasterGG2 = NCGToGG(guildMasterNCG2);
+        var masterAddress1 = fixture.GuildInfo1.MasterAddress;
+        var masterAddress2 = fixture.GuildInfo2.MasterAddress;
+        var masterNCG1 = fixture.GuildInfo1.MasterNCG;
+        var masterNCG2 = fixture.GuildInfo2.MasterNCG;
+        var masterGG1 = NCGToGG(masterNCG1);
+        var masterGG2 = NCGToGG(masterNCG2);
         var guildAddress1 = fixture.GuildInfo1.GuildAddress;
         var guildAddress2 = fixture.GuildInfo2.GuildAddress;
         var height = 0L;
-        var avatarIndex = 0;
         var slashFactor1 = fixture.GuildInfo1.SlashFactor;
         var slashFactor2 = fixture.GuildInfo2.SlashFactor;
-        world = EnsureToPrepareGuildGold(world, validatorKey1.Address, validatorGG1);
-        world = EnsureToCreateValidator(world, validatorKey1.PublicKey, validatorGG1);
-        world = EnsureToPrepareGuildGold(world, validatorKey2.Address, validatorGG2);
-        world = EnsureToCreateValidator(world, validatorKey2.PublicKey, validatorGG2);
-        world = EnsureToMakeGuild(world, guildAddress1, guildMasterAddress1, validatorKey1.Address);
-        world = EnsureToMakeGuild(world, guildAddress2, guildMasterAddress2, validatorKey2.Address);
-        world = EnsureToMintAsset(world, guildMasterAddress1, guildMasterNCG1);
-        world = EnsureToMintAsset(world, guildMasterAddress2, guildMasterNCG2);
-        world = EnsureToCreateAvatar(world, guildMasterAddress1, avatarIndex);
-        world = EnsureToCreateAvatar(world, guildMasterAddress2, avatarIndex);
-        world = EnsureToStake(world, guildMasterAddress1, avatarIndex, guildMasterAmount1, height++);
-        world = EnsureToStake(world, guildMasterAddress2, avatarIndex, guildMasterAmount2, height++);
-        world = EnsureToMintAsset(world, agentAddress, agentNCG);
+        world = EnsureToInitializeValidator(world, validatorKey1, validatorNCG1, height++);
+        world = EnsureToInitializeValidator(world, validatorKey2, validatorNCG2, height++);
+        world = EnsureToMakeGuild(world, guildAddress1, masterAddress1, validatorKey1, height++);
+        world = EnsureToMakeGuild(world, guildAddress2, masterAddress2, validatorKey2, height++);
+        world = EnsureToInitializeAgent(world, masterAddress1, masterNCG1, height++);
+        world = EnsureToInitializeAgent(world, masterAddress2, masterNCG2, height++);
+        world = EnsureToInitializeAgent(world, agentAddress, agentNCG, height++);
+        world = EnsureToStake(world, masterAddress1, masterNCG1, height++);
+        world = EnsureToStake(world, masterAddress2, masterNCG2, height++);
         world = EnsureToJoinGuild(world, guildAddress1, agentAddress, height++);
-        world = EnsureToCreateAvatar(world, agentAddress, avatarIndex);
-        world = EnsureToStake(world, agentAddress, avatarIndex, agentAmount, height++);
+        world = EnsureToStake(world, agentAddress, agentNCG, height++);
         if (slashFactor1 > 0)
         {
             world = EnsureToSlashValidator(world, validatorKey1.Address, slashFactor1, height++);
@@ -201,8 +193,8 @@ public class MoveGuildTest : GuildTestBase
         }
 
         // When
-        var totalGG1 = validatorGG1 + guildMasterGG1 + agentGG;
-        var totalGG2 = validatorGG2 + guildMasterGG2;
+        var totalGG1 = validatorGG1 + masterGG1 + agentGG;
+        var totalGG2 = validatorGG2 + masterGG2;
         var slashedGG1 = SlashFAV(slashFactor1, totalGG1);
         var slashedGG2 = SlashFAV(slashFactor2, totalGG2);
         var totalShare1 = totalGG1.RawValue;
@@ -253,24 +245,24 @@ public class MoveGuildTest : GuildTestBase
         public GuildInfo(Random random)
         {
             ValidatorKey = GetRandomKey(random);
-            ValidatorGG = GetRandomGG(random);
+            ValidatorNCG = GetRandomNCG(random);
             SlashFactor = GetRandomSlashFactor(random);
             GuildAddress = GetRandomGuildAddress(random);
-            GuildMasterAddress = GetRandomAgentAddress(random);
-            GuildMasterNCG = GetRandomNCG(random);
+            MasterAddress = GetRandomAgentAddress(random);
+            MasterNCG = GetRandomNCG(random);
         }
 
         public PrivateKey ValidatorKey { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue ValidatorGG { get; set; } = GG * 100;
+        public FungibleAssetValue ValidatorNCG { get; set; } = NCG * 100;
 
         public BigInteger SlashFactor { get; set; } = 0;
 
         public GuildAddress GuildAddress { get; set; } = AddressUtil.CreateGuildAddress();
 
-        public AgentAddress GuildMasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
+        public AgentAddress MasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
 
-        public FungibleAssetValue GuildMasterNCG { get; set; } = NCG * 100;
+        public FungibleAssetValue MasterNCG { get; set; } = NCG * 100;
     }
 
     private class StaticFixture : IMoveGuildFixture

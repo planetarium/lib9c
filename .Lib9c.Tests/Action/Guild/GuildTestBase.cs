@@ -29,6 +29,7 @@ public abstract class GuildTestBase
     protected static readonly FungibleAssetValue GGZero = GG * 0;
     protected static readonly Currency Mead = Currencies.Mead;
     protected static readonly Currency NCG = Currency.Uncapped("NCG", 2, null);
+    protected static readonly FungibleAssetValue NCGEpsilon = new FungibleAssetValue(NCG, 0, 1);
     protected static readonly BigInteger SharePerGG
         = BigInteger.Pow(10, Currencies.GuildGold.DecimalPlaces);
 
@@ -46,48 +47,56 @@ public abstract class GuildTestBase
 
     protected IWorld World { get; }
 
+    protected static IWorld EnsureToInitializeValidator(
+        IWorld world, PrivateKey validatorKey, FungibleAssetValue ncg, long blockHeight)
+    {
+        var validatorAddress = validatorKey.Address;
+        var validatorPublicKey = validatorKey.PublicKey;
+        world = EnsureToMintAsset(world, validatorAddress, ncg, blockHeight);
+        world = EnsureToStake(world, validatorAddress, ncg, blockHeight);
+        world = EnsureToCreateValidator(world, validatorPublicKey, NCGToGG(ncg));
+        return world;
+    }
+
+    protected static IWorld EnsureToInitializeAgent(
+        IWorld world, AgentAddress agentAddress, long blockHeight)
+    {
+        return EnsureToInitializeAgent(world, agentAddress, NCG * 0, blockHeight);
+    }
+
+    protected static IWorld EnsureToInitializeAgent(
+        IWorld world, AgentAddress agentAddress, FungibleAssetValue ncg, long blockHeight)
+    {
+        var avatarIndex = 0;
+        if (ncg.RawValue > 0)
+        {
+            world = EnsureToMintAsset(world, agentAddress, ncg, blockHeight);
+        }
+
+        world = EnsureToCreateAvatar(world, agentAddress, avatarIndex, blockHeight);
+        return world;
+    }
+
     protected static IWorld EnsureToMintAsset(
-        IWorld world, Address address, FungibleAssetValue amount)
+        IWorld world, Address address, FungibleAssetValue amount, long blockHeight)
     {
         var actionContext = new ActionContext
         {
             PreviousState = world,
+            BlockIndex = blockHeight,
         };
         return world.MintAsset(actionContext, address, amount);
     }
 
-    protected static IWorld EnsureToCreateValidator(
-        IWorld world,
-        PublicKey validatorPublicKey,
-        FungibleAssetValue gg)
-    {
-        if (!gg.Currency.Equals(GG))
-        {
-            throw new ArgumentException("Currency must be GG.", nameof(gg));
-        }
-
-        var validatorAddress = validatorPublicKey.Address;
-        var commissionPercentage = 10;
-        var actionContext = new ActionContext
-        {
-            PreviousState = world,
-            Signer = validatorAddress,
-        };
-        var promoteValidator = new PromoteValidator(
-            publicKey: validatorPublicKey,
-            fav: gg,
-            commissionPercentage: commissionPercentage);
-
-        return promoteValidator.Execute(actionContext);
-    }
-
     protected static IWorld EnsureToTombstoneValidator(
         IWorld world,
-        Address validatorAddress)
+        Address validatorAddress,
+        long blockHeight)
     {
         var actionContext = new ActionContext
         {
             Signer = validatorAddress,
+            BlockIndex = blockHeight,
         };
 
         var validatorRepository = new ValidatorRepository(world, actionContext);
@@ -103,10 +112,14 @@ public abstract class GuildTestBase
     }
 
     protected static IWorld EnsureToSlashValidator(
-        IWorld world,
-        Address validatorAddress,
-        BigInteger slashFactor,
-        long blockHeight)
+        IWorld world, PrivateKey validatorPrivateKey, BigInteger slashFactor, long blockHeight)
+    {
+        return EnsureToSlashValidator(
+            world, validatorPrivateKey.Address, slashFactor, blockHeight);
+    }
+
+    protected static IWorld EnsureToSlashValidator(
+        IWorld world, Address validatorAddress, BigInteger slashFactor, long blockHeight)
     {
         var actionContext = new ActionContext
         {
@@ -128,13 +141,15 @@ public abstract class GuildTestBase
     protected static IWorld EnsureToMakeGuild(
         IWorld world,
         GuildAddress guildAddress,
-        AgentAddress guildMasterAddress,
-        Address validatorAddress)
+        AgentAddress masterAddress,
+        PrivateKey validatorPrivateKey,
+        long blockHeight)
     {
+        var validatorAddress = validatorPrivateKey.Address;
         var actionContext = new ActionContext
         {
-            Signer = guildMasterAddress,
-            BlockIndex = 0L,
+            Signer = masterAddress,
+            BlockIndex = blockHeight,
         };
         var repository = new GuildRepository(world, actionContext);
         repository.MakeGuild(guildAddress, validatorAddress);
@@ -176,31 +191,20 @@ public abstract class GuildTestBase
         return repository.World;
     }
 
-    protected static IWorld EnsureToBanGuildMember(
+    protected static IWorld EnsureToBanMember(
         IWorld world,
-        AgentAddress guildMasterAddress,
-        AgentAddress agentAddress)
+        AgentAddress masterAddress,
+        AgentAddress agentAddress,
+        long blockHeight)
     {
         var actionContext = new ActionContext
         {
             Signer = agentAddress,
+            BlockIndex = blockHeight,
         };
         var repository = new GuildRepository(world, actionContext);
-        repository.Ban(guildMasterAddress, agentAddress);
+        repository.Ban(masterAddress, agentAddress);
         return repository.World;
-    }
-
-    protected static IWorld EnsureToPrepareGuildGold(
-        IWorld world,
-        Address address,
-        FungibleAssetValue amount)
-    {
-        if (!Equals(amount.Currency, Currencies.GuildGold))
-        {
-            throw new ArgumentException("Currency must be GG.", nameof(amount));
-        }
-
-        return EnsureToMintAsset(world, StakeState.DeriveAddress(address), amount);
     }
 
     protected static IWorld EnsureToSetGuildParticipant(
@@ -213,6 +217,26 @@ public abstract class GuildTestBase
             agentAddress, guildAddress, repository);
         repository.SetGuildParticipant(guildParticipant);
         return repository.World;
+    }
+
+    protected static IWorld EnsureToStake(
+        IWorld world,
+        AgentAddress agentAddress,
+        int avatarIndex,
+        FungibleAssetValue ncg,
+        long blockHeight)
+    {
+        if (!ncg.Currency.Equals(NCG))
+        {
+            throw new ArgumentException("Currency must be NCG.", nameof(ncg));
+        }
+
+        if (ncg.MinorUnit != 0)
+        {
+            throw new ArgumentException("Minor unit must be zero.", nameof(ncg));
+        }
+
+        return EnsureToStake(world, agentAddress, avatarIndex, ncg.MajorUnit, blockHeight);
     }
 
     protected static IWorld EnsureToStake(
@@ -235,49 +259,31 @@ public abstract class GuildTestBase
     }
 
     protected static IWorld EnsureToStake(
-        IWorld world,
-        Address address,
-        BigInteger amount,
-        long blockHeight)
+        IWorld world, PrivateKey privateKey, BigInteger amount, long blockHeight)
     {
-        var actionContext = new ActionContext
-        {
-            PreviousState = world,
-            Signer = address,
-            BlockIndex = blockHeight,
-        };
-        var stake = new Stake(amount);
-        return stake.Execute(actionContext);
+        return EnsureToStake(world, privateKey.Address, amount, blockHeight);
     }
 
-    protected static IWorld EnsureToCreateAvatar(
-        IWorld world,
-        AgentAddress agentAddress,
-        int avatarIndex)
+    protected static IWorld EnsureToStakeValidator(
+        IWorld world, PrivateKey privateKey, FungibleAssetValue ncg, long blockHeight)
     {
-        var actionContext = new ActionContext
-        {
-            PreviousState = world,
-            Signer = agentAddress,
-        };
-        var createAvatar = new CreateAvatar
-        {
-            index = avatarIndex,
-            name = $"avatar{avatarIndex}",
-        };
-        return createAvatar.Execute(actionContext);
+        return EnsureToStake(world, privateKey.Address, ncg, blockHeight);
     }
 
-    protected static IWorld EnsureToCreateAvatar(
-        IWorld world,
-        AgentAddress agentAddress,
-        int avatarIndex,
-        out Address avatarAddress)
+    protected static IWorld EnsureToStake(
+        IWorld world, Address address, FungibleAssetValue ncg, long blockHeight)
     {
-        var nextWorld = EnsureToCreateAvatar(world, agentAddress, avatarIndex);
-        var agentState = nextWorld.GetAgentState(agentAddress);
-        avatarAddress = agentState.avatarAddresses[avatarIndex];
-        return nextWorld;
+        if (!ncg.Currency.Equals(NCG))
+        {
+            throw new ArgumentException("Currency must be NCG.", nameof(ncg));
+        }
+
+        if (ncg.MinorUnit != 0)
+        {
+            throw new ArgumentException("Minor unit must be zero.", nameof(ncg));
+        }
+
+        return EnsureToStake(world, address, ncg.MajorUnit, blockHeight);
     }
 
     protected static IWorld EnsureToReleaseUnbonding(
@@ -411,6 +417,64 @@ public abstract class GuildTestBase
         }
 
         return fav;
+    }
+
+    private static IWorld EnsureToStake(
+        IWorld world, Address address, BigInteger amount, long blockHeight)
+    {
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = address,
+            BlockIndex = blockHeight,
+        };
+        var stake = new Stake(amount);
+        return stake.Execute(actionContext);
+    }
+
+    private static IWorld EnsureToCreateAvatar(
+        IWorld world,
+        AgentAddress agentAddress,
+        int avatarIndex,
+        long blockHeight)
+    {
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = agentAddress,
+            BlockIndex = blockHeight,
+        };
+        var createAvatar = new CreateAvatar
+        {
+            index = avatarIndex,
+            name = $"avatar{avatarIndex}",
+        };
+        return createAvatar.Execute(actionContext);
+    }
+
+    private static IWorld EnsureToCreateValidator(
+        IWorld world,
+        PublicKey validatorPublicKey,
+        FungibleAssetValue gg)
+    {
+        if (!gg.Currency.Equals(GG))
+        {
+            throw new ArgumentException("Currency must be GG.", nameof(gg));
+        }
+
+        var validatorAddress = validatorPublicKey.Address;
+        var commissionPercentage = 10;
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = validatorAddress,
+        };
+        var promoteValidator = new PromoteValidator(
+            publicKey: validatorPublicKey,
+            fav: gg,
+            commissionPercentage: commissionPercentage);
+
+        return promoteValidator.Execute(actionContext);
     }
 
     protected sealed class FungibleAssetValueEqualityComparer

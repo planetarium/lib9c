@@ -19,7 +19,7 @@ public class QuitGuildTest : GuildTestBase
     {
         public PrivateKey ValidatorKey { get; }
 
-        public FungibleAssetValue ValidatorGG { get; }
+        public FungibleAssetValue ValidatorNCG { get; }
 
         public BigInteger SlashFactor { get; }
 
@@ -29,9 +29,9 @@ public class QuitGuildTest : GuildTestBase
 
         public GuildAddress GuildAddress { get; }
 
-        public AgentAddress GuildMasterAddress { get; }
+        public AgentAddress MasterAddress { get; }
 
-        public FungibleAssetValue GuildMasterNCG { get; }
+        public FungibleAssetValue MasterNCG { get; }
     }
 
     public static IEnumerable<object[]> RandomSeeds => new List<object[]>
@@ -58,10 +58,10 @@ public class QuitGuildTest : GuildTestBase
     {
         var fixture = new StaticFixture
         {
-            ValidatorGG = GG * 100,
+            ValidatorNCG = NCG * 100,
             SlashFactor = 0,
             AgentNCG = NCG * 100,
-            GuildMasterNCG = NCG * 100,
+            MasterNCG = NCG * 100,
         };
         ExecuteWithFixture(fixture);
     }
@@ -71,10 +71,10 @@ public class QuitGuildTest : GuildTestBase
     {
         var fixture = new StaticFixture
         {
-            ValidatorGG = GG * 100,
+            ValidatorNCG = NCG * 100,
             SlashFactor = 10,
             AgentNCG = NCG * 100,
-            GuildMasterNCG = NCG * 100,
+            MasterNCG = NCG * 100,
         };
         ExecuteWithFixture(fixture);
     }
@@ -87,10 +87,10 @@ public class QuitGuildTest : GuildTestBase
         var validatorKey = new PrivateKey();
         var agentAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
 
         // When
         var quitGuild = new QuitGuild();
@@ -98,7 +98,7 @@ public class QuitGuildTest : GuildTestBase
         {
             PreviousState = world,
             Signer = agentAddress,
-            BlockIndex = 2L,
+            BlockIndex = height,
         };
 
         // Then
@@ -115,7 +115,7 @@ public class QuitGuildTest : GuildTestBase
         var validatorKey = new PrivateKey();
         var agentAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
         world = EnsureToSetGuildParticipant(world, agentAddress, guildAddress);
 
         // When
@@ -141,20 +141,20 @@ public class QuitGuildTest : GuildTestBase
         var validatorKey = new PrivateKey();
         var agentAddress = AddressUtil.CreateAgentAddress();
         var guildAddress = AddressUtil.CreateGuildAddress();
-        var guildMasterAddress = AddressUtil.CreateAgentAddress();
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, GG * 100);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, GG * 100);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToPrepareGuildGold(world, guildMasterAddress, GG * 100);
-        world = EnsureToJoinGuild(world, guildAddress, agentAddress, 1L);
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var height = 1L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToInitializeAgent(world, masterAddress, NCG * 100, height++);
+        world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
 
         // When
         var quitGuild = new QuitGuild();
         var actionContext = new ActionContext
         {
             PreviousState = world,
-            Signer = guildMasterAddress,
-            BlockIndex = 2L,
+            Signer = masterAddress,
+            BlockIndex = height,
         };
 
         // Then
@@ -191,28 +191,23 @@ public class QuitGuildTest : GuildTestBase
         var world = World;
         var validatorKey = fixture.ValidatorKey;
         var validatorAddress = validatorKey.Address;
-        var validatorGG = fixture.ValidatorGG;
+        var validatorNCG = fixture.ValidatorNCG;
+        var validatorGG = NCGToGG(validatorNCG);
         var slashFactor = fixture.SlashFactor;
         var agentAddress = fixture.AgentAddress;
         var agentNCG = fixture.AgentNCG;
-        var agentAmount = agentNCG.MajorUnit;
         var agentGG = NCGToGG(agentNCG);
-        var guildMasterAddress = fixture.GuildMasterAddress;
-        var guildMasterNCG = fixture.GuildMasterNCG;
-        var guildMasterAmount = guildMasterNCG.MajorUnit;
-        var guildMasterGG = NCGToGG(guildMasterNCG);
+        var masterAddress = fixture.MasterAddress;
+        var masterNCG = fixture.MasterNCG;
+        var masterGG = NCGToGG(masterNCG);
         var guildAddress = fixture.GuildAddress;
         var height = 0L;
-        var avatarIndex = 0;
-        world = EnsureToPrepareGuildGold(world, validatorKey.Address, validatorGG);
-        world = EnsureToMintAsset(world, guildMasterAddress, guildMasterNCG);
-        world = EnsureToMintAsset(world, agentAddress, agentNCG);
-        world = EnsureToCreateValidator(world, validatorKey.PublicKey, validatorGG);
-        world = EnsureToMakeGuild(world, guildAddress, guildMasterAddress, validatorKey.Address);
-        world = EnsureToCreateAvatar(world, guildMasterAddress, avatarIndex: 0);
-        world = EnsureToCreateAvatar(world, agentAddress, avatarIndex: 0);
-        world = EnsureToStake(world, guildMasterAddress, avatarIndex, guildMasterAmount, height++);
-        world = EnsureToStake(world, agentAddress, avatarIndex, agentAmount, height++);
+        world = EnsureToInitializeValidator(world, validatorKey, validatorNCG, height++);
+        world = EnsureToInitializeAgent(world, masterAddress, masterNCG, height++);
+        world = EnsureToInitializeAgent(world, agentAddress, agentNCG, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToStake(world, masterAddress, masterNCG, height++);
+        world = EnsureToStake(world, agentAddress, agentNCG, height++);
         world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
         if (slashFactor > 0)
         {
@@ -220,7 +215,7 @@ public class QuitGuildTest : GuildTestBase
         }
 
         // When
-        var totalGG = validatorGG + guildMasterGG + agentGG;
+        var totalGG = validatorGG + masterGG + agentGG;
         var slashedGG = SlashFAV(slashFactor, totalGG);
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * agentGG.RawValue / totalGG.RawValue;
@@ -256,7 +251,7 @@ public class QuitGuildTest : GuildTestBase
     {
         public PrivateKey ValidatorKey { get; set; } = new PrivateKey();
 
-        public FungibleAssetValue ValidatorGG { get; set; } = GG * 100;
+        public FungibleAssetValue ValidatorNCG { get; set; } = NCG * 100;
 
         public BigInteger SlashFactor { get; set; } = 0;
 
@@ -266,9 +261,9 @@ public class QuitGuildTest : GuildTestBase
 
         public GuildAddress GuildAddress { get; set; } = AddressUtil.CreateGuildAddress();
 
-        public AgentAddress GuildMasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
+        public AgentAddress MasterAddress { get; set; } = AddressUtil.CreateAgentAddress();
 
-        public FungibleAssetValue GuildMasterNCG { get; set; } = NCG * 100;
+        public FungibleAssetValue MasterNCG { get; set; } = NCG * 100;
     }
 
     private class RandomFixture : IQuitGuildFixture
@@ -279,18 +274,18 @@ public class QuitGuildTest : GuildTestBase
         {
             _random = new Random(randomSeed);
             ValidatorKey = GetRandomKey(_random);
-            ValidatorGG = GetRandomGG(_random);
+            ValidatorNCG = GetRandomNCG(_random);
             SlashFactor = GetRandomSlashFactor(_random);
             AgentAddress = GetRandomAgentAddress(_random);
             AgentNCG = GetRandomNCG(_random);
             GuildAddress = GetRandomGuildAddress(_random);
-            GuildMasterAddress = GetRandomAgentAddress(_random);
-            GuildMasterNCG = GetRandomNCG(_random);
+            MasterAddress = GetRandomAgentAddress(_random);
+            MasterNCG = GetRandomNCG(_random);
         }
 
         public PrivateKey ValidatorKey { get; }
 
-        public FungibleAssetValue ValidatorGG { get; }
+        public FungibleAssetValue ValidatorNCG { get; }
 
         public BigInteger SlashFactor { get; }
 
@@ -300,8 +295,8 @@ public class QuitGuildTest : GuildTestBase
 
         public GuildAddress GuildAddress { get; }
 
-        public AgentAddress GuildMasterAddress { get; }
+        public AgentAddress MasterAddress { get; }
 
-        public FungibleAssetValue GuildMasterNCG { get; }
+        public FungibleAssetValue MasterNCG { get; }
     }
 }
