@@ -296,6 +296,13 @@ namespace Nekoyume.Action
             states = states.TransferAsset(
                 ctx, Addresses.GasPool, Addresses.RewardPool, miningReward);
 
+            states = states.TransferAsset(
+                ctx,
+                GoldCurrencyState.Address,
+                Addresses.RewardPool,
+                states.GetGoldCurrency() * 1000000
+            );
+
             return states;
         }
 
