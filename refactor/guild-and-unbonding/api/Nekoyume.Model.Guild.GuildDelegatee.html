@@ -129,15 +129,6 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_DelegationChanged">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegationChanged</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Enjailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Enjailed</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Unjailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Unjailed</a>
-    </div>
-    <div>
       <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Metadata">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Metadata</a>
     </div>
     <div>
@@ -252,16 +243,19 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
       <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Slash(BigInteger, long, long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_AddUnbondingRef_Nekoyume_Delegation_UnbondingRef_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.AddUnbondingRef(UnbondingRef)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_RemoveUnbondingRef_Nekoyume_Delegation_UnbondingRef_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RemoveUnbondingRef(UnbondingRef)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_CalculateReward_System_Numerics_BigInteger_System_Collections_Generic_IEnumerable_Nekoyume_Delegation_LumpSumRewardsRecord__">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.CalculateReward(BigInteger, IEnumerable&lt;LumpSumRewardsRecord&gt;)</a>
-    </div>
-    <div>
       <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_StartNewRewardPeriod_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.StartNewRewardPeriod(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_CalculateRewards_System_Numerics_BigInteger_Nekoyume_Delegation_RewardBase_Nekoyume_Delegation_RewardBase_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.CalculateRewards(BigInteger, RewardBase, RewardBase)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_OnDelegationChanged_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.OnDelegationChanged(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_OnEnjailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.OnEnjailed()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_OnUnjailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.OnUnjailed()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -363,6 +357,72 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
 
 
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxRebondGraceEntries_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxRebondGraceEntries*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxRebondGraceEntries" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxRebondGraceEntries">
+  GuildMaxRebondGraceEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GuildMaxRebondGraceEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxUnbondLockInEntries_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxUnbondLockInEntries*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxUnbondLockInEntries" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxUnbondLockInEntries">
+  GuildMaxUnbondLockInEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GuildMaxUnbondLockInEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -371,7 +431,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Activate" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Activate">
   Activate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -397,7 +457,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Deactivate" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Deactivate">
   Deactivate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -423,7 +483,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Equals_Nekoyume_Model_Guild_GuildDelegatee_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Equals(Nekoyume.Model.Guild.GuildDelegatee)">
   Equals(GuildDelegatee?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -462,7 +522,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Slash(System.Numerics.BigInteger,System.Int64,System.Int64)">
   Slash(BigInteger, long, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Guild/GuildDelegatee.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

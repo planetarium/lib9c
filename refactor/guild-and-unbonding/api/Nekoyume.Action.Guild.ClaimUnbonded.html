@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class ReleaseValidatorUnbondings | Lib9c </title>
+      <title>Class ClaimUnbonded | Lib9c </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class ReleaseValidatorUnbondings | Lib9c ">
+      <meta name="title" content="Class ClaimUnbonded | Lib9c ">
       
-      
+      <meta name="description" content="An action to claim unbonded assets. This action can be executed only when the unbonding period is over.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/refactor/guild-and-unbonding/apiSpec/new?filename=Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings.md&amp;value=---%0Auid%3A%20Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/refactor/guild-and-unbonding/apiSpec/new?filename=Nekoyume_Action_Guild_ClaimUnbonded.md&amp;value=---%0Auid%3A%20Nekoyume.Action.Guild.ClaimUnbonded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,24 +84,27 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings">
+        <article data-uid="Nekoyume.Action.Guild.ClaimUnbonded">
 
 
 
-  <h1 id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings" class="text-break">
-Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Nekoyume_Action_Guild_ClaimUnbonded" data-uid="Nekoyume.Action.Guild.ClaimUnbonded" class="text-break">
+Class ClaimUnbonded  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a>.<a class="xref" href="Nekoyume.Action.ValidatorDelegation.html">ValidatorDelegation</a></dd></dl>
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a>.<a class="xref" href="Nekoyume.Action.Guild.html">Guild</a></dd></dl>
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>An action to claim unbonded assets.
+This action can be executed only when the unbonding period is over.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class ReleaseValidatorUnbondings : ActionBase, IAction</code></pre>
+    <pre><code class="lang-csharp hljs">[ActionType(&quot;claim_unbonded&quot;)]
+public sealed class ClaimUnbonded : ActionBase, IAction</code></pre>
   </div>
 
 
@@ -112,7 +115,7 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="Nekoyume.Action.ActionBase.html">ActionBase</a></div>
-      <div><span class="xref">ReleaseValidatorUnbondings</span></div>
+      <div><span class="xref">ClaimUnbonded</span></div>
     </dd>
   </dl>
 
@@ -156,18 +159,18 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
 </h2>
 
 
-  <a id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings__ctor_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.#ctor*"></a>
+  <a id="Nekoyume_Action_Guild_ClaimUnbonded__ctor_" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.#ctor*"></a>
 
-  <h3 id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings__ctor" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.#ctor">
-  ReleaseValidatorUnbondings()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_Guild_ClaimUnbonded__ctor" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.#ctor">
+  ClaimUnbonded()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ReleaseValidatorUnbondings()</code></pre>
+    <pre><code class="lang-csharp hljs">public ClaimUnbonded()</code></pre>
   </div>
 
 
@@ -182,28 +185,31 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
 
 
 
-  <a id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings__ctor_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.#ctor*"></a>
+  <h2 class="section" id="fields">Fields
+</h2>
 
-  <h3 id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings__ctor_Libplanet_Crypto_Address_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.#ctor(Libplanet.Crypto.Address)">
-  ReleaseValidatorUnbondings(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L26"><i class="bi bi-code-slash"></i></a>
+
+
+  <h3 id="Nekoyume_Action_Guild_ClaimUnbonded_TypeIdentifier" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.TypeIdentifier">
+  TypeIdentifier
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ReleaseValidatorUnbondings(Address validatorDelegatee)</code></pre>
+    <pre><code class="lang-csharp hljs">public const string TypeIdentifier = &quot;claim_unbonded&quot;</code></pre>
   </div>
 
-  <h4 class="section">Parameters</h4>
+
+
+
+  <h4 class="section">Field Value</h4>
   <dl class="parameters">
-    <dt><code>validatorDelegatee</code> <span class="xref">Address</span></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
     <dd></dd>
   </dl>
-
-
-
 
 
 
@@ -217,11 +223,11 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
 </h2>
 
 
-  <a id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings_PlainValue_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.PlainValue*"></a>
+  <a id="Nekoyume_Action_Guild_ClaimUnbonded_PlainValue_" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.PlainValue*"></a>
 
-  <h3 id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings_PlainValue" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.PlainValue">
+  <h3 id="Nekoyume_Action_Guild_ClaimUnbonded_PlainValue" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.PlainValue">
   PlainValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -252,11 +258,11 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
 </h2>
 
 
-  <a id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings_Execute_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.Execute*"></a>
+  <a id="Nekoyume_Action_Guild_ClaimUnbonded_Execute_" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.Execute*"></a>
 
-  <h3 id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.Execute(Libplanet.Action.IActionContext)">
+  <h3 id="Nekoyume_Action_Guild_ClaimUnbonded_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -288,11 +294,11 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
 
 
 
-  <a id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings_LoadPlainValue_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.LoadPlainValue*"></a>
+  <a id="Nekoyume_Action_Guild_ClaimUnbonded_LoadPlainValue_" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.LoadPlainValue*"></a>
 
-  <h3 id="Nekoyume_Action_ValidatorDelegation_ReleaseValidatorUnbondings_LoadPlainValue_Bencodex_Types_IValue_" data-uid="Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.LoadPlainValue(Bencodex.Types.IValue)">
+  <h3 id="Nekoyume_Action_Guild_ClaimUnbonded_LoadPlainValue_Bencodex_Types_IValue_" data-uid="Nekoyume.Action.Guild.ClaimUnbonded.LoadPlainValue(Bencodex.Types.IValue)">
   LoadPlainValue(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -323,7 +329,7 @@ Class ReleaseValidatorUnbondings  <a class="header-action link-secondary" title=
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/ValidatorDelegation/ReleaseValidatorUnbondings.cs/#L22" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Action/Guild/ClaimUnbonded.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -1452,6 +1452,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.ClaimUnbonded.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.ClaimUnbonded.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.GuildConfig.yml",
       "output": {
         ".html": {
@@ -3192,16 +3202,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.Reward.yml",
       "output": {
         ".html": {
@@ -3956,16 +3956,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Delegation.UnbondingRef.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.UnbondingSet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Delegation.UnbondingSet.html"
         }
       },
       "version": ""
