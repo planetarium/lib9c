@@ -15,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
     using Nekoyume.TableData.Stake;
     using Serilog;
     using Xunit;
@@ -761,7 +762,7 @@ namespace Lib9c.Tests.Action
             var stakeAddr = StakeState.DeriveAddress(agentAddr);
             var ncg = prevState.GetGoldCurrency();
             var prevBalance = prevState.GetBalance(agentAddr, ncg);
-            var prevStakedBalance = prevState.GetBalance(stakeAddr, ncg);
+            var prevStakedBalance = prevState.GetStaked(agentAddr);
             var action = new ClaimStakeReward(avatarAddr);
             var nextState = action.Execute(
                 new ActionContext
@@ -772,7 +773,7 @@ namespace Lib9c.Tests.Action
                 });
             var nextBalance = nextState.GetBalance(agentAddr, ncg);
             Assert.Equal(prevBalance, nextBalance);
-            var nextStakedBalance = nextState.GetBalance(stakeAddr, ncg);
+            var nextStakedBalance = nextState.GetStaked(agentAddr);
             Assert.Equal(prevStakedBalance, nextStakedBalance);
             Assert.True(nextState.TryGetStakeState(agentAddr, out var stakeStateV2));
             Assert.Equal(blockIndex, stakeStateV2.ReceivedBlockIndex);

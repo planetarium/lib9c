@@ -13,6 +13,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
 using Nekoyume.TableData.Stake;
@@ -114,7 +115,7 @@ namespace Nekoyume.Action.AdventureBoss
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
             
-            var stakedAmount = states.GetStakedAmount(avatarState.agentAddress);
+            var stakedAmount = states.GetStaked(avatarState.agentAddress);
             if (stakedAmount < requiredStakingAmount * currency)
             {
                 throw new InsufficientStakingException(

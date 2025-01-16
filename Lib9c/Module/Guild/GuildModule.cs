@@ -151,6 +151,12 @@ namespace Nekoyume.Module.Guild
 
         public static FungibleAssetValue GetStaked(this IWorld world, Address agentAddress)
         {
+            if (world.TryGetStakeState(agentAddress, out var stakeState)
+                && stakeState.StateVersion <= 2)
+            {
+                return world.GetBalance(StakeState.DeriveAddress(agentAddress), world.GetGoldCurrency());
+            }
+
             var stakedGuildGold = world.GetBalance(StakeState.DeriveAddress(agentAddress), Currencies.GuildGold);
 
             try
@@ -163,6 +169,9 @@ namespace Nekoyume.Module.Guild
 
             return ConvertCurrency(stakedGuildGold, world.GetGoldCurrency()).TargetFAV;
         }
+
+        public static FungibleAssetValue GetStaked(this IWorldState worldState, Address agentAddress)
+            => GetStaked(new World(worldState), agentAddress);
 
         public static (FungibleAssetValue TargetFAV, FungibleAssetValue Remainder)
             ConvertCurrency(FungibleAssetValue sourceFAV, Currency targetCurrency)

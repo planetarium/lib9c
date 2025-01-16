@@ -13,6 +13,7 @@ namespace Lib9c.Tests.Action.Scenario
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Stake;
     using Nekoyume.ValidatorDelegation;
@@ -239,7 +240,7 @@ namespace Lib9c.Tests.Action.Scenario
             long expectStartedBlockIndex)
         {
             var stakeAddr = LegacyStakeState.DeriveAddress(agentAddr);
-            var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
+            var actualStakedAmount = state.GetStaked(agentAddr);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
             var stakeState = new LegacyStakeState((Dictionary)state.GetLegacyState(stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
@@ -256,7 +257,7 @@ namespace Lib9c.Tests.Action.Scenario
             long expectLockupInterval)
         {
             var stakeAddr = LegacyStakeState.DeriveAddress(agentAddr);
-            var actualStakedAmount = state.GetBalance(stakeAddr, expectStakedAmount.Currency);
+            var actualStakedAmount = state.GetStaked(agentAddr);
             Assert.Equal(expectStakedAmount, actualStakedAmount);
             var stakeState = new StakeState(state.GetLegacyState(stakeAddr));
             Assert.Equal(expectStartedBlockIndex, stakeState.StartedBlockIndex);
