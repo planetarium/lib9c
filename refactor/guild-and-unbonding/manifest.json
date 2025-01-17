@@ -692,6 +692,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ClaimPatrolReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ClaimPatrolReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ClaimRaidReward.yml",
       "output": {
         ".html": {
@@ -1786,6 +1796,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.InvalidItemCountException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.InvalidItemIdException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.InvalidItemIdException.html"
         }
       },
       "version": ""
@@ -6442,6 +6462,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Mail.PatrolRewardMail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Mail.PatrolRewardMail.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Mail.ProductBuyerMail.yml",
       "output": {
         ".html": {
@@ -8272,6 +8302,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.PatrolRewardModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.PatrolRewardModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Module.RelationshipModule.yml",
       "output": {
         ".html": {
@@ -9726,6 +9766,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.Event.EventScheduleSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.RewardModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.RewardModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.html"
         }
       },
       "version": ""

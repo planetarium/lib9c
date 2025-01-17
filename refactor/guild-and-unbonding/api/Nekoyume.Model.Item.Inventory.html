@@ -152,6 +152,9 @@ public class Inventory : IState, ICloneable</code></pre>
       <a class="xref" href="Nekoyume.Helper.InventoryExtensions.html#Nekoyume_Helper_InventoryExtensions_GetEquippedFullCostumeOrArmorId_Nekoyume_Model_Item_Inventory_">InventoryExtensions.GetEquippedFullCostumeOrArmorId(Inventory)</a>
   </div>
   <div>
+      <a class="xref" href="Nekoyume.Helper.InventoryExtensions.html#Nekoyume_Helper_InventoryExtensions_MintItem_Nekoyume_Model_Item_Inventory_Nekoyume_TableData_ItemSheet_Row_System_Int32_System_Boolean_Libplanet_Action_IRandom_">InventoryExtensions.MintItem(Inventory, ItemSheet.Row, int, bool, IRandom)</a>
+  </div>
+  <div>
       <a class="xref" href="Nekoyume.Helper.InventoryExtensions.html#Nekoyume_Helper_InventoryExtensions_UseActionPoint_Nekoyume_Model_Item_Inventory_System_Int64_System_Int32_System_Boolean_Nekoyume_TableData_MaterialItemSheet_System_Int64_">InventoryExtensions.UseActionPoint(Inventory, long, int, bool, MaterialItemSheet, long)</a>
   </div>
   </dd></dl>
@@ -388,7 +391,7 @@ public class Inventory : IState, ICloneable</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_AddFungibleItem_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
   AddFungibleItem(ItemBase, int, ILock)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L230"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -396,47 +399,6 @@ public class Inventory : IState, ICloneable</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public Inventory.Item AddFungibleItem(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
-    <dd></dd>
-    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
-    <dd></dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a>.<a class="xref" href="Nekoyume.Model.Item.Inventory.Item.html">Item</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Nekoyume_Model_Item_Inventory_AddFungibleItem2_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem2*"></a>
-
-  <h3 id="Nekoyume_Model_Item_Inventory_AddFungibleItem2_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddFungibleItem2(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
-  AddFungibleItem2(ItemBase, int, ILock)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L247"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use AddFungibleItem&quot;)]
-public Inventory.Item AddFungibleItem2(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -505,52 +467,11 @@ public Inventory.Item AddFungibleItem2(ItemBase itemBase, int count = 1, ILock i
 
 
 
-  <a id="Nekoyume_Model_Item_Inventory_AddItem2_" data-uid="Nekoyume.Model.Item.Inventory.AddItem2*"></a>
-
-  <h3 id="Nekoyume_Model_Item_Inventory_AddItem2_Nekoyume_Model_Item_ItemBase_System_Int32_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddItem2(Nekoyume.Model.Item.ItemBase,System.Int32,Nekoyume.Model.Item.ILock)">
-  AddItem2(ItemBase, int, ILock)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L200"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use AddItem&quot;)]
-public KeyValuePair&lt;int, int&gt; AddItem2(ItemBase itemBase, int count = 1, ILock iLock = null)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>itemBase</code> <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
-    <dd></dd>
-    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-    <dt><code>iLock</code> <a class="xref" href="Nekoyume.Model.Item.ILock.html">ILock</a></dt>
-    <dd></dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
   <a id="Nekoyume_Model_Item_Inventory_AddNonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.AddNonFungibleItem*"></a>
 
   <h3 id="Nekoyume_Model_Item_Inventory_AddNonFungibleItem_Nekoyume_Model_Item_ItemBase_Nekoyume_Model_Item_ILock_" data-uid="Nekoyume.Model.Item.Inventory.AddNonFungibleItem(Nekoyume.Model.Item.ItemBase,Nekoyume.Model.Item.ILock)">
   AddNonFungibleItem(ItemBase, ILock)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L257"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -588,7 +509,7 @@ public KeyValuePair&lt;int, int&gt; AddItem2(ItemBase itemBase, int count = 1, I
 
   <h3 id="Nekoyume_Model_Item_Inventory_AddTradableFungibleItem_Nekoyume_Model_Item_ITradableFungibleItem_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.AddTradableFungibleItem(Nekoyume.Model.Item.ITradableFungibleItem,System.Int32)">
   AddTradableFungibleItem(ITradableFungibleItem, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L295"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L277"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Add tradable fungible item.
@@ -746,7 +667,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_FilterConsumables_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.FilterConsumables(System.Int32,System.Int64)">
   FilterConsumables(int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L523"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L496"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -817,7 +738,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_HasFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int64,System.Int32)">
   HasFungibleItem(HashDigest&lt;SHA256&gt;, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1015"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L988"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -857,7 +778,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_HasItem_System_Int32_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasItem(System.Int32,System.Int32)">
   HasItem(int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1010"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L983"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -895,7 +816,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_HasNonFungibleItem_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.HasNonFungibleItem(System.Guid)">
   HasNonFungibleItem(Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1038"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1011"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -931,7 +852,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_HasTradableFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Nullable_System_Int64__System_Nullable_System_Int64__System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasTradableFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Nullable{System.Int64},System.Nullable{System.Int64},System.Int32)">
   HasTradableFungibleItem(HashDigest&lt;SHA256&gt;, long?, long?, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1050"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1023"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -973,7 +894,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_HasTradableItem_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.HasTradableItem(System.Guid,System.Int64,System.Int32)">
   HasTradableItem(Guid, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1043"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1016"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1013,7 +934,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_IsMaterialRemovable_Nekoyume_Model_Item_Inventory_Item_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.IsMaterialRemovable(Nekoyume.Model.Item.Inventory.Item,System.Int32)">
   IsMaterialRemovable(Item, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L455"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L433"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks if the given item is non-tradable material and can be removed from the inventory.</p>
@@ -1055,7 +976,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_IsMaterialRemovable_Nekoyume_Model_Item_Inventory_Item_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.IsMaterialRemovable(Nekoyume.Model.Item.Inventory.Item,System.Int32,System.Int64)">
   IsMaterialRemovable(Item, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L428"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L411"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks if the given item is material and can be removed from the inventory.</p>
@@ -1100,7 +1021,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_LockByReferringToDigestList_Lib9c_Model_Order_OrderDigestListState_System_Guid_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.LockByReferringToDigestList(Lib9c.Model.Order.OrderDigestListState,System.Guid,System.Int64)">
   LockByReferringToDigestList(OrderDigestListState, Guid, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1228"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1201"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1135,7 +1056,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_ReconfigureFungibleItem_Lib9c_Model_Order_OrderDigestListState_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.ReconfigureFungibleItem(Lib9c.Model.Order.OrderDigestListState,System.Guid)">
   ReconfigureFungibleItem(OrderDigestListState, Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1178"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1151"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1168,7 +1089,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveConsumable_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveConsumable(System.Int32,System.Int64,System.Int32)">
   RemoveConsumable(int, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L535"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L508"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1208,7 +1129,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int64_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int64,System.Int32,System.Boolean)">
   RemoveFungibleItem(HashDigest&lt;SHA256&gt;, long, int, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L322"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1250,7 +1171,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem_Nekoyume_Model_Item_IFungibleItem_System_Int64_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem(Nekoyume.Model.Item.IFungibleItem,System.Int64,System.Int32,System.Boolean)">
   RemoveFungibleItem(IFungibleItem, long, int, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L333"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L315"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1292,7 +1213,7 @@ If there is no same item, add new item.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem2_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem2(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Int32,System.Boolean)">
   RemoveFungibleItem2(HashDigest&lt;SHA256&gt;, int, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L563"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L536"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1333,7 +1254,7 @@ public bool RemoveFungibleItem2(HashDigest&lt;SHA256&gt; fungibleId, int count =
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveFungibleItem2_Nekoyume_Model_Item_IFungibleItem_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Item.Inventory.RemoveFungibleItem2(Nekoyume.Model.Item.IFungibleItem,System.Int32,System.Boolean)">
   RemoveFungibleItem2(IFungibleItem, int, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L556"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L529"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1374,7 +1295,7 @@ public bool RemoveFungibleItem2(IFungibleItem fungibleItem, int count = 1, bool 
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveItem_Nekoyume_Model_Item_Inventory_Item_" data-uid="Nekoyume.Model.Item.Inventory.RemoveItem(Nekoyume.Model.Item.Inventory.Item)">
   RemoveItem(Item)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1001"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L974"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1405,7 +1326,7 @@ public bool RemoveFungibleItem2(IFungibleItem fungibleItem, int count = 1, bool 
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveMaterial_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveMaterial(System.Int32,System.Int64,System.Int32)">
   RemoveMaterial(int, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L482"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L455"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Remove a material from the inventory. contains tradable materials.</p>
@@ -1450,7 +1371,7 @@ public bool RemoveFungibleItem2(IFungibleItem fungibleItem, int count = 1, bool 
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem_Nekoyume_Model_Item_INonFungibleItem_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem(Nekoyume.Model.Item.INonFungibleItem)">
   RemoveNonFungibleItem(INonFungibleItem)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L609"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L582"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1486,7 +1407,7 @@ public bool RemoveFungibleItem2(IFungibleItem fungibleItem, int count = 1, bool 
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem(System.Guid)">
   RemoveNonFungibleItem(Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L612"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L585"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1522,7 +1443,7 @@ public bool RemoveFungibleItem2(IFungibleItem fungibleItem, int count = 1, bool 
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonFungibleItem2_System_Guid_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonFungibleItem2(System.Guid)">
   RemoveNonFungibleItem2(Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L615"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L588"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1559,7 +1480,7 @@ public bool RemoveNonFungibleItem2(Guid nonFungibleId)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveNonTradableMaterial_System_Int32_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveNonTradableMaterial(System.Int32,System.Int32)">
   RemoveNonTradableMaterial(int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L737"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L710"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Remove a non-tradable material from the inventory.</p>
@@ -1601,7 +1522,7 @@ public bool RemoveNonFungibleItem2(Guid nonFungibleId)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableFungibleItem_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Nullable_System_Int64__System_Nullable_System_Int64__System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableFungibleItem(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Nullable{System.Int64},System.Nullable{System.Int64},System.Int32)">
   RemoveTradableFungibleItem(HashDigest&lt;SHA256&gt;, long?, long?, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L786"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L759"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Remove tradable item from inventory.
@@ -1654,7 +1575,7 @@ Do not use both requiredBlockIndex and blockIndex at the same time.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableItem_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItem(System.Guid,System.Int64,System.Int32)">
   RemoveTradableItem(Guid, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L659"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L632"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1694,7 +1615,7 @@ Do not use both requiredBlockIndex and blockIndex at the same time.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableItemV1_Nekoyume_Model_Item_ITradableItem_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItemV1(Nekoyume.Model.Item.ITradableItem,System.Int32)">
   RemoveTradableItemV1(ITradableItem, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L632"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L605"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1733,7 +1654,7 @@ public bool RemoveTradableItemV1(ITradableItem tradableItem, int count = 1)</cod
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableItemV1_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableItemV1(System.Guid,System.Int64,System.Int32)">
   RemoveTradableItemV1(Guid, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L636"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L609"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1774,7 +1695,7 @@ public bool RemoveTradableItemV1(Guid tradableId, long blockIndex, int count = 1
 
   <h3 id="Nekoyume_Model_Item_Inventory_RemoveTradableMaterial_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.RemoveTradableMaterial(System.Int32,System.Int64,System.Int32)">
   RemoveTradableMaterial(int, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L693"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L666"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Remove a tradable material from the inventory.</p>
@@ -1819,7 +1740,7 @@ public bool RemoveTradableItemV1(Guid tradableId, long blockIndex, int count = 1
 
   <h3 id="Nekoyume_Model_Item_Inventory_SellItem_System_Guid_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Item.Inventory.SellItem(System.Guid,System.Int64,System.Int32)">
   SellItem(Guid, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1078"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1051"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1890,7 +1811,7 @@ public bool RemoveTradableItemV1(Guid tradableId, long blockIndex, int count = 1
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetCostume_System_Int32_Nekoyume_Model_Item_Costume__" data-uid="Nekoyume.Model.Item.Inventory.TryGetCostume(System.Int32,Nekoyume.Model.Item.Costume@)">
   TryGetCostume(int, out Costume)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L828"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L801"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1929,7 +1850,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetFungibleItems_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Collections_Generic_List_Nekoyume_Model_Item_Inventory_Item___" data-uid="Nekoyume.Model.Item.Inventory.TryGetFungibleItems(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Collections.Generic.List{Nekoyume.Model.Item.Inventory.Item}@)">
   TryGetFungibleItems(HashDigest&lt;SHA256&gt;, out List&lt;Item&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L853"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L826"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1967,7 +1888,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetItem_System_Int32_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetItem(System.Int32,Nekoyume.Model.Item.Inventory.Item@)">
   TryGetItem(int, out Item)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L847"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L820"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2005,7 +1926,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetLockedItem_Nekoyume_Model_Item_ILock_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetLockedItem(Nekoyume.Model.Item.ILock,Nekoyume.Model.Item.Inventory.Item@)">
   TryGetLockedItem(ILock, out Item)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L995"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L968"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2043,7 +1964,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem_System_Guid_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem(System.Guid,Nekoyume.Model.Item.Inventory.Item@)">
   TryGetNonFungibleItem(Guid, out Item)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L868"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L841"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2081,7 +2002,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem__1_System_Guid___0__System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem``1(System.Guid,``0@,System.Int64)">
   TryGetNonFungibleItem&lt;T&gt;(Guid, out T, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L899"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L872"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Tries to get a non-fungible item from the inventory with the specified item ID.</p>
@@ -2132,7 +2053,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetNonFungibleItem__1___0___0__" data-uid="Nekoyume.Model.Item.Inventory.TryGetNonFungibleItem``1(``0,``0@)">
   TryGetNonFungibleItem&lt;T&gt;(T, out T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L887"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L860"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2175,7 +2096,7 @@ public bool TryGetCostume(int rowId, out Costume outCostume)</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetTradableFungibleItems_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__System_Nullable_System_Int64__System_Nullable_System_Int64__System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_Inventory_Item___" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableFungibleItems(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256},System.Nullable{System.Int64},System.Nullable{System.Int64},System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.Inventory.Item}@)">
   TryGetTradableFungibleItems(HashDigest&lt;SHA256&gt;, long?, long?, out IEnumerable&lt;Item&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L970"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L943"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get ITradableFungibleItem from the inventory.
@@ -2226,7 +2147,7 @@ Do not use both requiredBlockIndex and blockIndex at the same time.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetTradableItem_System_Guid_System_Int64_System_Int32_Nekoyume_Model_Item_Inventory_Item__" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableItem(System.Guid,System.Int64,System.Int32,Nekoyume.Model.Item.Inventory.Item@)">
   TryGetTradableItem(Guid, long, int, out Item)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L952"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L925"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2268,7 +2189,7 @@ Do not use both requiredBlockIndex and blockIndex at the same time.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_TryGetTradableItems_System_Guid_System_Int64_System_Int32_System_Collections_Generic_List_Nekoyume_Model_Item_Inventory_Item___" data-uid="Nekoyume.Model.Item.Inventory.TryGetTradableItems(System.Guid,System.Int64,System.Int32,System.Collections.Generic.List{Nekoyume.Model.Item.Inventory.Item}@)">
   TryGetTradableItems(Guid, long, int, out List&lt;Item&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L921"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L894"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2310,7 +2231,7 @@ Do not use both requiredBlockIndex and blockIndex at the same time.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_UnlockInvalidSlot_Lib9c_Model_Order_OrderDigestListState_Libplanet_Crypto_Address_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Item.Inventory.UnlockInvalidSlot(Lib9c.Model.Order.OrderDigestListState,Libplanet.Crypto.Address,Libplanet.Crypto.Address)">
   UnlockInvalidSlot(OrderDigestListState, Address, Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1149"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -2345,7 +2266,7 @@ Do not use both requiredBlockIndex and blockIndex at the same time.</p>
 
   <h3 id="Nekoyume_Model_Item_Inventory_UpdateTradableItem_System_Guid_System_Int64_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.Inventory.UpdateTradableItem(System.Guid,System.Int64,System.Int32,System.Int64)">
   UpdateTradableItem(Guid, long, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/refactor/guild-and-unbonding/Lib9c/Model/Item/Inventory.cs/#L1081"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
