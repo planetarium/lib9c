@@ -133,6 +133,7 @@ public class MoveGuildTest : GuildTestBase
     [InlineData(793705868)]
     [InlineData(559431555)]
     [InlineData(1893396102)]
+    [InlineData(1808052899)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -195,8 +196,8 @@ public class MoveGuildTest : GuildTestBase
         // When
         var totalGG1 = validatorGG1 + masterGG1 + agentGG;
         var totalGG2 = validatorGG2 + masterGG2;
-        var slashedGG1 = SlashFAV(slashFactor1, totalGG1);
-        var slashedGG2 = SlashFAV(slashFactor2, totalGG2);
+        var slashedGG1 = slashFactor1 > 1 ? SlashFAV(slashFactor1, totalGG1) : totalGG1;
+        var slashedGG2 = slashFactor2 > 1 ? SlashFAV(slashFactor2, totalGG2) : totalGG2;
         var totalShare1 = totalGG1.RawValue;
         var totalShare2 = totalGG2.RawValue;
         var agentShare1 = totalShare1 * agentGG.RawValue / totalGG1.RawValue;

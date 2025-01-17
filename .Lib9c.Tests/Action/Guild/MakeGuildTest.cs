@@ -205,7 +205,7 @@ public class MakeGuildTest : GuildTestBase
 
         // When
         var totalGG = validatorGG;
-        var slashedGG = SlashFAV(slashFactor, validatorGG);
+        var slashedGG = slashFactor > 1 ? SlashFAV(slashFactor, validatorGG) : validatorGG;
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * masterGG.RawValue / slashedGG.RawValue;
         var expectedTotalGG = slashedGG + masterGG;

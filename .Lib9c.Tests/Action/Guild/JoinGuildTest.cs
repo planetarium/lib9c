@@ -177,6 +177,7 @@ public class JoinGuildTest : GuildTestBase
     [InlineData(1181126949)]
     [InlineData(793705868)]
     [InlineData(559431555)]
+    [InlineData(1105665634)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -220,7 +221,8 @@ public class JoinGuildTest : GuildTestBase
 
         // When
         var totalGG = validatorGG + masterGG;
-        var slashedGG = SlashFAV(slashFactor, validatorGG + masterGG);
+        var slashedGG = slashFactor > 1
+            ? SlashFAV(slashFactor, validatorGG + masterGG) : validatorGG + masterGG;
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * agentGG.RawValue / slashedGG.RawValue;
         var expectedTotalGG = slashedGG + agentGG;

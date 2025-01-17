@@ -405,6 +405,7 @@ public class BanGuildMemberTest : GuildTestBase
     [InlineData(1181126949)]
     [InlineData(793705868)]
     [InlineData(559431555)]
+    [InlineData(696266272)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -449,7 +450,7 @@ public class BanGuildMemberTest : GuildTestBase
 
         // When
         var totalGG = validatorGG + masterGG + agentGG;
-        var slashedGG = SlashFAV(slashFactor, totalGG);
+        var slashedGG = slashFactor > 1 ? SlashFAV(slashFactor, totalGG) : totalGG;
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * agentGG.RawValue / totalGG.RawValue;
         var expectedAgengGG = (slashedGG * agentShare).DivRem(totalShare).Quotient;

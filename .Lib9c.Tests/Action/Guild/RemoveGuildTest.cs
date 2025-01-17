@@ -292,7 +292,7 @@ public class RemoveGuildTest : GuildTestBase
 
         // When
         var totalGG = validatorGG;
-        var slashedGG = SlashFAV(slashFactor, totalGG);
+        var slashedGG = slashFactor > 1 ? SlashFAV(slashFactor, totalGG) : totalGG;
         var totalShare = totalGG.RawValue;
         var expectedTotalGG = slashedGG;
         var expectedTotalShares = totalGG.RawValue;

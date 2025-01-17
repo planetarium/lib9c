@@ -215,7 +215,7 @@ public class QuitGuildTest : GuildTestBase
 
         // When
         var totalGG = validatorGG + masterGG + agentGG;
-        var slashedGG = SlashFAV(slashFactor, totalGG);
+        var slashedGG = slashFactor > 1 ? SlashFAV(slashFactor, totalGG) : totalGG;
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * agentGG.RawValue / totalGG.RawValue;
         var expectedAgengGG = (slashedGG * agentShare).DivRem(totalShare).Quotient;

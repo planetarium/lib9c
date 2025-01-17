@@ -128,7 +128,7 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
         world = EnsureToUndelegateValidator(world, validatorKey, shareToUndelegate, height++);
 
         // When
-        var validatorSlashedGG = SlashFAV(slashFactor, validatorGG);
+        var validatorSlashedGG = slashFactor > 1 ? SlashFAV(slashFactor, validatorGG) : validatorGG;
         var validatorShare = validatorGG.RawValue;
         var totalGG = validatorSlashedGG + masterGG;
         var masterShare = validatorShare * masterGG.RawValue / validatorSlashedGG.RawValue;
