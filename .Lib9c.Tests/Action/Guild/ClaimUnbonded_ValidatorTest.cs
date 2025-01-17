@@ -70,8 +70,8 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
         var fixture = new StaticFixture
         {
             ValidatorNCG = NCG * 200,
-            SlashFactor = 10,
-            ShareToUndelegate = (GG * 100).RawValue,
+            SlashFactor = 6,
+            ShareToUndelegate = (GG * 33).RawValue,
             MasterNCG = NCG * 100,
         };
 
@@ -83,6 +83,7 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
     [InlineData(1181126949)]
     [InlineData(793705868)]
     [InlineData(559431555)]
+    [InlineData(1133637517)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -133,7 +134,10 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
         var masterShare = validatorShare * masterGG.RawValue / validatorSlashedGG.RawValue;
         var totalShare = validatorShare + masterShare;
         var validatorSlashedNCG = GGToNCG(validatorSlashedGG);
-        var expectedGG = (totalGG * shareToUndelegate).DivRem(totalShare).Quotient;
+        var expectedStakedGG = (totalGG * shareToUndelegate).DivRem(totalShare).Quotient;
+        var expectedValidatorShare = validatorShare - shareToUndelegate;
+        var expectedTotalShare = expectedValidatorShare + masterShare;
+        var expectedTotalGG = totalGG - expectedStakedGG;
 
         var claimUnbonded = new ClaimUnbonded();
         var actionContext = new ActionContext
@@ -145,21 +149,32 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
         world = claimUnbonded.Execute(actionContext);
 
         // Then
-        var actualGG = world.GetBalance(stateStateAddress, GG);
-        Assert.Equal(expectedGG, actualGG);
+        var actualStakedGG = world.GetBalance(stateStateAddress, GG);
+        var validatorRepository = new ValidatorRepository(world, new ActionContext());
+        var validatorDelegatee = validatorRepository.GetDelegatee(validatorKey.Address);
+        var bond = validatorRepository.GetBond(validatorDelegatee, validatorKey.Address);
+        var actualValidatorShare = bond.Share;
+        Assert.Equal(expectedStakedGG, actualStakedGG);
+        Assert.Equal(expectedValidatorShare, actualValidatorShare);
+        Assert.Equal(expectedTotalShare, validatorDelegatee.TotalShares);
+        Assert.Equal(expectedTotalGG, validatorDelegatee.TotalDelegated);
 
         // Check ncg after unstaking
-        var amountGG = validatorSlashedGG - expectedGG;
+        var amountGG = validatorSlashedGG - expectedStakedGG;
         const long minimumStakeAmount = 50;
         if (amountGG.MajorUnit >= minimumStakeAmount)
         {
             var ncg = GGToNCG(amountGG);
             var majorUnit = ncg.MinorUnit > 0 ? ncg.MajorUnit + 1 : ncg.MajorUnit;
             var amount = new FungibleAssetValue(NCG, majorUnit, 0);
-            var expectedNCG = validatorSlashedNCG - amount;
+            var expectedNCG1 = NCG * 0;
+            var expectedNCG2 = validatorSlashedNCG - amount;
+            var actualNCG1 = world.GetBalance(validatorKey.Address, NCG);
             world = EnsureToStakeValidator(world, validatorKey, amount, height++);
-            var actualNCG = world.GetBalance(validatorKey.Address, NCG);
-            Assert.Equal(expectedNCG, actualNCG);
+            var actualNCG2 = world.GetBalance(validatorKey.Address, NCG);
+            var comparerNCG = new FungibleAssetValueEqualityComparer(-NCGEpsilon);
+            Assert.Equal(expectedNCG1, actualNCG1);
+            Assert.Equal(expectedNCG2, actualNCG2, comparerNCG);
         }
     }
 
