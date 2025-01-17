@@ -1462,6 +1462,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.ClaimUnbonded.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.ClaimUnbonded.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.GuildConfig.yml",
       "output": {
         ".html": {
@@ -1492,46 +1502,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuild.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuild.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.MigrationModule.yml",
       "output": {
         ".html": {
@@ -1552,30 +1522,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegation.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.yml",
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.html"
         }
       },
       "version": ""
@@ -3272,16 +3222,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.Reward.yml",
       "output": {
         ".html": {
@@ -3842,10 +3782,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.Delegatee-2.yml",
+      "source_relative_path": "api/Nekoyume.Delegation.Delegatee-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Delegation.Delegatee-2.html"
+          "relative_path": "api/Nekoyume.Delegation.Delegatee-3.html"
         }
       },
       "version": ""
@@ -3872,20 +3812,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.DelegationRepository.yml",
+      "source_relative_path": "api/Nekoyume.Delegation.DelegationRepository-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Delegation.DelegationRepository.html"
+          "relative_path": "api/Nekoyume.Delegation.DelegationRepository-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.Delegator-2.yml",
+      "source_relative_path": "api/Nekoyume.Delegation.Delegator-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Delegation.Delegator-2.html"
+          "relative_path": "api/Nekoyume.Delegation.Delegator-3.html"
         }
       },
       "version": ""
@@ -4036,16 +3976,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Delegation.UnbondingRef.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.UnbondingSet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Delegation.UnbondingSet.html"
         }
       },
       "version": ""
