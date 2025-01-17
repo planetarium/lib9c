@@ -69,28 +69,5 @@ namespace Lib9c.Tests.Delegation
         public DummyDelegatee DummyDelegatee1 { get; }
 
         public DummyDelegator DummyDelegator1 { get; }
-
-        public static FungibleAssetValue[] TotalRewardsOfRecords(IDelegatee delegatee, IDelegationRepository repo)
-        {
-            var rewards = delegatee.RewardCurrencies.Select(r => r * 0).ToArray();
-            var record = repo.GetCurrentLumpSumRewardsRecord(delegatee);
-
-            while (true)
-            {
-                foreach (var reward in rewards.Select((v, i) => (v, i)))
-                {
-                    rewards[reward.i] += repo.World.GetBalance(record.Address, reward.v.Currency);
-                }
-
-                if (record.LastStartHeight is null)
-                {
-                    break;
-                }
-
-                record = repo.GetLumpSumRewardsRecord(delegatee, record.LastStartHeight.Value);
-            }
-
-            return rewards;
-        }
     }
 }

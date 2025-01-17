@@ -8,8 +8,7 @@ using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
 {
-    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
-    // [ActionType(TypeIdentifier)]
+    [ActionType(TypeIdentifier)]
     public class QuitGuild : ActionBase
     {
         public const string TypeIdentifier = "quit_guild";
@@ -36,7 +35,6 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            // TODO: Do something to return 'Power' token;
             repository.LeaveGuild(signer);
 
             return repository.World;

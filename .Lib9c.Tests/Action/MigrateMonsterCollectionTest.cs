@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -124,12 +125,14 @@ namespace Lib9c.Tests.Action
         {
             var collectionAddress = MonsterCollectionState.DeriveAddress(_signer, 0);
             var monsterCollectionState = new MonsterCollectionState(collectionAddress, collectionLevel, 0);
+            var gameConfig = new GameConfigState();
             var currency = _state.GetGoldCurrency();
 
             var context = new ActionContext();
             var states = _state
                 .SetLegacyState(collectionAddress, monsterCollectionState.Serialize())
-                .MintAsset(context, monsterCollectionState.address, stakedAmount * currency);
+                .MintAsset(context, monsterCollectionState.address, stakedAmount * currency)
+                .SetLegacyState(GameConfigState.Address, gameConfig.Serialize());
 
             Assert.Equal(0, states.GetAgentState(_signer).MonsterCollectionRound);
             Assert.Equal(0 * currency, states.GetBalance(_signer, currency));
@@ -149,7 +152,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 0 * currency,
                 states.GetBalance(monsterCollectionState.address, currency));
-            Assert.Equal(stakedAmount * currency, states.GetBalance(stakeState.address, currency));
+            Assert.Equal(stakedAmount * currency, states.GetStaked(_signer));
             Assert.Equal(receivedBlockIndex, stakeState.ReceivedBlockIndex);
             Assert.Equal(monsterCollectionState.StartedBlockIndex, stakeState.StartedBlockIndex);
             Assert.True(

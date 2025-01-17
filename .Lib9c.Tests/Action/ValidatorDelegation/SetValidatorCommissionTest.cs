@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             // Then
             var actualRepository = new ValidatorRepository(world, actionContext);
-            var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+            var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
             var actualPercentage = actualDelegatee.CommissionPercentage;
 
             Assert.Equal(11, actualPercentage);
@@ -119,7 +119,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             // Then
             var actualRepository = new ValidatorRepository(world, actionContext);
-            var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+            var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
             var actualPercentage = actualDelegatee.CommissionPercentage;
 
             Assert.Equal(newCommissionPercentage, actualPercentage);
@@ -235,7 +235,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             // Then
             var actualRepository = new ValidatorRepository(world, actionContext);
-            var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+            var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
             var actualPercentage = actualDelegatee.CommissionPercentage;
 
             Assert.Equal(expectedCommission, actualPercentage);
@@ -280,7 +280,7 @@ namespace Lib9c.Tests.Action.ValidatorDelegation
 
             // When
             var repository = new ValidatorRepository(world, new ActionContext());
-            var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+            var delegatee = repository.GetDelegatee(validatorKey.Address);
             var commissionPercentage = delegatee.CommissionPercentage;
             var setValidatorCommission = new SetValidatorCommission(
                 commissionPercentage: commissionPercentage);

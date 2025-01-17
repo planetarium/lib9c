@@ -106,6 +106,7 @@ namespace Lib9c
         public const string CancellableBlockIndexKey = "cbi";
         public const string AchievementsKey = "ach";
         public const string AmountKey = "am";
+        public const string StakeAvatarAddressKey = "saa";
 
         // State
         public const string AddressKey = "a";

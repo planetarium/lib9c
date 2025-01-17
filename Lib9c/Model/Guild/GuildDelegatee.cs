@@ -10,7 +10,7 @@ using Nekoyume.ValidatorDelegation;
 namespace Nekoyume.Model.Guild
 {
     public class GuildDelegatee
-        : Delegatee<GuildDelegator, GuildDelegatee>, IEquatable<GuildDelegatee>
+        : Delegatee<GuildRepository, GuildDelegatee, GuildDelegator>, IEquatable<GuildDelegatee>
     {
         public GuildDelegatee(
             Address address,
@@ -26,8 +26,8 @@ namespace Nekoyume.Model.Guild
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
                   unbondingPeriod: ValidatorDelegatee.ValidatorUnbondingPeriod,
-                  maxUnbondLockInEntries: ValidatorDelegatee.ValidatorMaxUnbondLockInEntries,
-                  maxRebondGraceEntries: ValidatorDelegatee.ValidatorMaxRebondGraceEntries,
+                  maxUnbondLockInEntries: GuildMaxUnbondLockInEntries,
+                  maxRebondGraceEntries: GuildMaxRebondGraceEntries,
                   repository: repository)
         {
         }
@@ -39,7 +39,14 @@ namespace Nekoyume.Model.Guild
                   address: address,
                   repository: repository)
         {
+            Metadata.UnbondingPeriod = ValidatorDelegatee.ValidatorUnbondingPeriod;
+            Metadata.MaxUnbondLockInEntries = GuildMaxUnbondLockInEntries;
+            Metadata.MaxRebondGraceEntries = GuildMaxRebondGraceEntries;
         }
+
+        public static int GuildMaxUnbondLockInEntries => 1;
+
+        public static int GuildMaxRebondGraceEntries => 1;
 
         public override void Slash(BigInteger slashFactor, long infractionHeight, long height)
         {

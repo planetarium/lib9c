@@ -10,8 +10,7 @@ using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
 {
-    // TODO(GUILD-FEATURE): Enable again when Guild features are enabled.
-    // [ActionType(TypeIdentifier)]
+    [ActionType(TypeIdentifier)]
     public class UnbanGuildMember : ActionBase
     {
         public const string TypeIdentifier = "unban_guild_member";
@@ -53,12 +52,7 @@ namespace Nekoyume.Action.Guild
             var repository = new GuildRepository(world, context);
             var signer = context.GetAgentAddress();
 
-            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
-            {
-                throw new InvalidOperationException("The signer does not join any guild.");
-            }
-
-            repository.Unban(guildAddress, signer, Target);
+            repository.Unban(signer, Target);
             return repository.World;
         }
     }

@@ -13,6 +13,7 @@ using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
 using Nekoyume.Action;
 using Nekoyume.Action.ValidatorDelegation;
+using Nekoyume.Model.Guild;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
 
@@ -49,7 +50,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedValidatorShare = expectedRepository.GetBond(
             expectedDelegatee, validatorKey.Address).Share;
 
@@ -96,12 +97,19 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         // Then
         var balance = GetBalance(world, validatorKey.Address);
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
         var actualValidatorShare = actualRepository.GetBond(actualDelegatee, validatorKey.Address).Share;
 
         Assert.True(actualDelegatee.Jailed);
         Assert.Equal(long.MaxValue, actualDelegatee.JailedUntil);
         Assert.True(actualDelegatee.Tombstoned);
+
+        // guild
+        var guildRepository = new GuildRepository(world, actionContext);
+        var guildDelegatee = guildRepository.GetDelegatee(validatorKey.Address);
+        Assert.True(guildDelegatee.Jailed);
+        Assert.Equal(long.MaxValue, guildDelegatee.JailedUntil);
+        Assert.True(guildDelegatee.Tombstoned);
     }
 
     [Fact]
@@ -165,9 +173,15 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var repository = new ValidatorRepository(world, actionContext);
-        var delegatee = repository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = repository.GetDelegatee(validatorKey.Address);
         Assert.True(delegatee.Jailed);
         Assert.False(delegatee.Tombstoned);
+
+        // guild
+        var guildRepository = new GuildRepository(world, actionContext);
+        var guildDelegatee = guildRepository.GetDelegatee(validatorKey.Address);
+        Assert.True(guildDelegatee.Jailed);
+        Assert.False(guildDelegatee.Tombstoned);
     }
 
     [Fact]
@@ -184,7 +198,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // When
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedJailed = expectedDelegatee.Jailed;
         var evidence = CreateDuplicateVoteEvidence(validatorKey, height - 1);
         var lastCommit = new BlockCommit(
@@ -205,10 +219,14 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepository = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepository.GetValidatorDelegatee(validatorKey.Address);
-        var actualJailed = actualDelegatee.Jailed;
+        var actualDelegatee = actualRepository.GetDelegatee(validatorKey.Address);
 
-        Assert.Equal(expectedJailed, actualJailed);
+        Assert.Equal(expectedJailed, actualDelegatee.Jailed);
+
+        // guild
+        var guildRepository = new GuildRepository(world, actionContext);
+        var guildDelegatee = guildRepository.GetDelegatee(validatorKey.Address);
+        Assert.Equal(expectedJailed, guildDelegatee.Jailed);
     }
 
     [Fact]
@@ -224,7 +242,7 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
         world = EnsureJailedValidator(world, validatorKey, ref height);
 
         var expectedRepository = new ValidatorRepository(world, actionContext);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedTotalDelegated = expectedDelegatee.TotalDelegated;
 
         // When
@@ -249,11 +267,17 @@ public class SlashValidatorTest : ValidatorDelegationTestBase
 
         // Then
         var actualRepisitory = new ValidatorRepository(world, actionContext);
-        var actualDelegatee = actualRepisitory.GetValidatorDelegatee(validatorKey.Address);
-        var actualTotalDelegated = actualDelegatee.TotalDelegated;
+        var actualDelegatee = actualRepisitory.GetDelegatee(validatorKey.Address);
 
         Assert.True(actualDelegatee.Jailed);
         Assert.False(actualDelegatee.Tombstoned);
-        Assert.Equal(expectedTotalDelegated, actualTotalDelegated);
+        Assert.Equal(expectedTotalDelegated, actualDelegatee.TotalDelegated);
+
+        // guild
+        var guildRepository = new GuildRepository(world, actionContext);
+        var guildDelegatee = guildRepository.GetDelegatee(validatorKey.Address);
+        Assert.True(guildDelegatee.Jailed);
+        Assert.False(guildDelegatee.Tombstoned);
+        Assert.Equal(expectedTotalDelegated, guildDelegatee.TotalDelegated);
     }
 }

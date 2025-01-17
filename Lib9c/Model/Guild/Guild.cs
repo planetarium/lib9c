@@ -75,13 +75,13 @@ namespace Nekoyume.Model.Guild
 
         public void ClaimReward(Address validatorAddress, long height)
         {
-            var guildDelegatee = Repository.GetGuildDelegatee(validatorAddress);
-            var guildDelegator = Repository.GetGuildDelegator(Address);
+            var guildDelegatee = Repository.GetDelegatee(validatorAddress);
+            var guildDelegator = Repository.GetDelegator(Address);
             guildDelegator.ClaimReward(guildDelegatee, height);
 
             var validatorRepository = new ValidatorRepository(Repository);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(validatorAddress);
-            var validatorDelegator = validatorRepository.GetValidatorDelegator(Address);
+            var validatorDelegatee = validatorRepository.GetDelegatee(validatorAddress);
+            var validatorDelegator = validatorRepository.GetDelegator(Address);
             validatorDelegator.ClaimReward(validatorDelegatee, height);
 
             Repository.UpdateWorld(validatorRepository.World);
