@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Module_Guild_GuildModule" data-uid="Nekoyume.Module.Guild.GuildModule" class="text-break">
-Class GuildModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class GuildModule  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -152,11 +152,241 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 </h2>
 
 
+  <a id="Nekoyume_Module_Guild_GuildModule_ConvertCurrency_" data-uid="Nekoyume.Module.Guild.GuildModule.ConvertCurrency*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_ConvertCurrency_Libplanet_Types_Assets_FungibleAssetValue_Libplanet_Types_Assets_Currency_" data-uid="Nekoyume.Module.Guild.GuildModule.ConvertCurrency(Libplanet.Types.Assets.FungibleAssetValue,Libplanet.Types.Assets.Currency)">
+  ConvertCurrency(FungibleAssetValue, Currency)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (FungibleAssetValue TargetFAV, FungibleAssetValue Remainder) ConvertCurrency(FungibleAssetValue sourceFAV, Currency targetCurrency)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sourceFAV</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+    <dt><code>targetCurrency</code> <span class="xref">Currency</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<span class="xref">FungibleAssetValue</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-libplanet.types.assets.fungibleassetvalue,libplanet.types.assets.fungibleassetvalue-.targetfav">TargetFAV</a>, <span class="xref">FungibleAssetValue</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-libplanet.types.assets.fungibleassetvalue,libplanet.types.assets.fungibleassetvalue-.remainder">Remainder</a>)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Module_Guild_GuildModule_FAVFromShare_" data-uid="Nekoyume.Module.Guild.GuildModule.FAVFromShare*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_FAVFromShare_System_Numerics_BigInteger_System_Numerics_BigInteger_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Module.Guild.GuildModule.FAVFromShare(System.Numerics.BigInteger,System.Numerics.BigInteger,Libplanet.Types.Assets.FungibleAssetValue)">
+  FAVFromShare(BigInteger, BigInteger, FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue FAVFromShare(BigInteger share, BigInteger totalShares, FungibleAssetValue totalDelegated)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>share</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>totalShares</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+    <dt><code>totalDelegated</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Module_Guild_GuildModule_GetDelegated_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegated*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetDelegated_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegated(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address)">
+  GetDelegated(IWorld, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue GetDelegated(this IWorld world, Address agentAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegationInfo*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegationInfo(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address)">
+  GetDelegationInfo(IWorld, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(this IWorld world, Address agentAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.share">Share</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.totalshare">TotalShare</a>, <span class="xref">FungibleAssetValue</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.totaldelegated">TotalDelegated</a>)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegationInfo*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_Libplanet_Action_State_IWorldState_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegationInfo(Libplanet.Action.State.IWorldState,Libplanet.Crypto.Address)">
+  GetDelegationInfo(IWorldState, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(this IWorldState worldState, Address agentAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldState</code> <span class="xref">IWorldState</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.share">Share</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.totalshare">TotalShare</a>, <span class="xref">FungibleAssetValue</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.totaldelegated">TotalDelegated</a>)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegationInfo*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_Nekoyume_Model_Guild_GuildRepository_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.GetDelegationInfo(Nekoyume.Model.Guild.GuildRepository,Libplanet.Crypto.Address)">
+  GetDelegationInfo(GuildRepository, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (BigInteger Share, BigInteger TotalShare, FungibleAssetValue TotalDelegated) GetDelegationInfo(this GuildRepository repository, Address agentAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.share">Share</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.totalshare">TotalShare</a>, <span class="xref">FungibleAssetValue</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.numerics.biginteger,system.numerics.biginteger,libplanet.types.assets.fungibleassetvalue-.totaldelegated">TotalDelegated</a>)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Module_Guild_GuildModule_GetGuildRepository_" data-uid="Nekoyume.Module.Guild.GuildModule.GetGuildRepository*"></a>
 
   <h3 id="Nekoyume_Module_Guild_GuildModule_GetGuildRepository_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Module.Guild.GuildModule.GetGuildRepository(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext)">
   GetGuildRepository(IWorld, IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -190,11 +420,87 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 
 
 
+  <a id="Nekoyume_Module_Guild_GuildModule_GetStaked_" data-uid="Nekoyume.Module.Guild.GuildModule.GetStaked*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetStaked_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.GetStaked(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address)">
+  GetStaked(IWorld, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue GetStaked(this IWorld world, Address agentAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Module_Guild_GuildModule_GetStaked_" data-uid="Nekoyume.Module.Guild.GuildModule.GetStaked*"></a>
+
+  <h3 id="Nekoyume_Module_Guild_GuildModule_GetStaked_Libplanet_Action_State_IWorldState_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.GetStaked(Libplanet.Action.State.IWorldState,Libplanet.Crypto.Address)">
+  GetStaked(IWorldState, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue GetStaked(this IWorldState worldState, Address agentAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>worldState</code> <span class="xref">IWorldState</span></dt>
+    <dd></dd>
+    <dt><code>agentAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Module_Guild_GuildModule_MakeGuild_" data-uid="Nekoyume.Module.Guild.GuildModule.MakeGuild*"></a>
 
   <h3 id="Nekoyume_Module_Guild_GuildModule_MakeGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildModule.MakeGuild(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress,Libplanet.Crypto.Address)">
   MakeGuild(GuildRepository, GuildAddress, Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -234,7 +540,7 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Module_Guild_GuildModule_RemoveGuild_Nekoyume_Model_Guild_GuildRepository_" data-uid="Nekoyume.Module.Guild.GuildModule.RemoveGuild(Nekoyume.Model.Guild.GuildRepository)">
   RemoveGuild(GuildRepository)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -270,7 +576,7 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="Nekoyume_Module_Guild_GuildModule_TryGetGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Nekoyume_Model_Guild_Guild__" data-uid="Nekoyume.Module.Guild.GuildModule.TryGetGuild(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress,Nekoyume.Model.Guild.Guild@)">
   TryGetGuild(GuildRepository, GuildAddress, out Guild?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -310,7 +616,7 @@ Class GuildModule  <a class="header-action link-secondary" title="View source" h
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Module/Guild/GuildModule.cs/#L24" class="edit-link">Edit this page</a>
         </div>
 
 

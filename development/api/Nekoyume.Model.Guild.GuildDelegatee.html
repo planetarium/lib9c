@@ -101,7 +101,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class GuildDelegatee : Delegatee&lt;GuildDelegator, GuildDelegatee&gt;, IDelegatee, IEquatable&lt;GuildDelegatee&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public class GuildDelegatee : Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;, IDelegatee, IEquatable&lt;GuildDelegatee&gt;</code></pre>
   </div>
 
 
@@ -111,7 +111,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-      <div><a class="xref" href="Nekoyume.Delegation.Delegatee-2.html">Delegatee</a>&lt;<a class="xref" href="Nekoyume.Model.Guild.GuildDelegator.html">GuildDelegator</a>, <a class="xref" href="Nekoyume.Model.Guild.GuildDelegatee.html">GuildDelegatee</a>&gt;</div>
+      <div><a class="xref" href="Nekoyume.Delegation.Delegatee-3.html">Delegatee</a>&lt;<a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a>, <a class="xref" href="Nekoyume.Model.Guild.GuildDelegatee.html">GuildDelegatee</a>, <a class="xref" href="Nekoyume.Model.Guild.GuildDelegator.html">GuildDelegator</a>&gt;</div>
       <div><span class="xref">GuildDelegatee</span></div>
     </dd>
   </dl>
@@ -129,148 +129,133 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DelegationChanged">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.DelegationChanged</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Metadata">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Metadata</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Enjailed">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Enjailed</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Repository">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Repository</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unjailed">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Unjailed</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Address">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Address</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Metadata">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Metadata</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_AccountAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.AccountAddress</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Repository">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Repository</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_MetadataAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.MetadataAddress</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Address">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Address</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_DelegationCurrency">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegationCurrency</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_AccountAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.AccountAddress</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_RewardCurrencies">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RewardCurrencies</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MetadataAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.MetadataAddress</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_DelegationPoolAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegationPoolAddress</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DelegationCurrency">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.DelegationCurrency</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_RewardPoolAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RewardPoolAddress</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardCurrencies">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.RewardCurrencies</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_RewardRemainderPoolAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RewardRemainderPoolAddress</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DelegationPoolAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.DelegationPoolAddress</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_SlashedPoolAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SlashedPoolAddress</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardPoolAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.RewardPoolAddress</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_UnbondingPeriod">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.UnbondingPeriod</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardRemainderPoolAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.RewardRemainderPoolAddress</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_MaxUnbondLockInEntries">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.MaxUnbondLockInEntries</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_SlashedPoolAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.SlashedPoolAddress</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_MaxRebondGraceEntries">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.MaxRebondGraceEntries</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_UnbondingPeriod">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.UnbondingPeriod</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_TotalDelegated">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.TotalDelegated</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MaxUnbondLockInEntries">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.MaxUnbondLockInEntries</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_TotalShares">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.TotalShares</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MaxRebondGraceEntries">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.MaxRebondGraceEntries</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Jailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Jailed</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_TotalDelegated">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.TotalDelegated</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_JailedUntil">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.JailedUntil</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_TotalShares">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.TotalShares</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Tombstoned">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Tombstoned</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Jailed">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Jailed</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_MetadataBencoded">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.MetadataBencoded</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_JailedUntil">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.JailedUntil</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_ShareFromFAV_Libplanet_Types_Assets_FungibleAssetValue_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.ShareFromFAV(FungibleAssetValue)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Tombstoned">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Tombstoned</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_FAVFromShare_System_Numerics_BigInteger_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.FAVFromShare(BigInteger)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_MetadataBencoded">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.MetadataBencoded</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Jail_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Jail(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_ShareFromFAV_Libplanet_Types_Assets_FungibleAssetValue_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.ShareFromFAV(FungibleAssetValue)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Unjail_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Unjail(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_FAVFromShare_System_Numerics_BigInteger_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.FAVFromShare(BigInteger)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Tombstone">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Tombstone()</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Bond_Nekoyume_Delegation_IDelegator_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Bond(IDelegator, FungibleAssetValue, long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_BondAddress_Libplanet_Crypto_Address_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.BondAddress(Address)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unbond_Nekoyume_Delegation_IDelegator_System_Numerics_BigInteger_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Unbond(IDelegator, BigInteger, long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_UnbondLockInAddress_Libplanet_Crypto_Address_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.UnbondLockInAddress(Address)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DistributeReward_Nekoyume_Delegation_IDelegator_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.DistributeReward(IDelegator, long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_RebondGraceAddress_Libplanet_Crypto_Address_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RebondGraceAddress(Address)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Jail_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Jail(long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_DistributionPoolAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DistributionPoolAddress()</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unjail_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Unjail(long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_CurrentRewardBaseAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.CurrentRewardBaseAddress()</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Tombstone">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Tombstone()</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_RewardBaseAddress_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RewardBaseAddress(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_BondAddress_Libplanet_Crypto_Address_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.BondAddress(Address)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_CurrentLumpSumRewardsRecordAddress">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.CurrentLumpSumRewardsRecordAddress()</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_UnbondLockInAddress_Libplanet_Crypto_Address_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.UnbondLockInAddress(Address)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_LumpSumRewardsRecordAddress_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.LumpSumRewardsRecordAddress(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RebondGraceAddress_Libplanet_Crypto_Address_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.RebondGraceAddress(Address)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Bond__2_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Bond(GuildDelegator, FungibleAssetValue, long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DistributionPoolAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.DistributionPoolAddress()</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Unbond__2_System_Numerics_BigInteger_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Unbond(GuildDelegator, BigInteger, long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CurrentRewardBaseAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.CurrentRewardBaseAddress()</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_DistributeReward__2_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DistributeReward(GuildDelegator, long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RewardBaseAddress_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.RewardBaseAddress(long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_CollectRewards_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.CollectRewards(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CurrentLumpSumRewardsRecordAddress">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.CurrentLumpSumRewardsRecordAddress()</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.Slash(BigInteger, long, long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_LumpSumRewardsRecordAddress_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.LumpSumRewardsRecordAddress(long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_StartNewRewardPeriod_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.StartNewRewardPeriod(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Bond__0_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Bond(GuildDelegator, FungibleAssetValue, long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_CalculateRewards_System_Numerics_BigInteger_Nekoyume_Delegation_RewardBase_Nekoyume_Delegation_RewardBase_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.CalculateRewards(BigInteger, RewardBase, RewardBase)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Unbond__0_System_Numerics_BigInteger_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Unbond(GuildDelegator, BigInteger, long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_OnDelegationChanged_System_Int64_">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.OnDelegationChanged(long)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_DistributeReward__0_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.DistributeReward(GuildDelegator, long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_OnEnjailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.OnEnjailed()</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CollectRewards_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.CollectRewards(long)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.Slash(BigInteger, long, long)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_AddUnbondingRef_Nekoyume_Delegation_UnbondingRef_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.AddUnbondingRef(UnbondingRef)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_RemoveUnbondingRef_Nekoyume_Delegation_UnbondingRef_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.RemoveUnbondingRef(UnbondingRef)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_CalculateReward_System_Numerics_BigInteger_System_Collections_Generic_IEnumerable_Nekoyume_Delegation_LumpSumRewardsRecord__">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.CalculateReward(BigInteger, IEnumerable&lt;LumpSumRewardsRecord&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="Nekoyume.Delegation.Delegatee-2.html#Nekoyume_Delegation_Delegatee_2_StartNewRewardPeriod_System_Int64_">Delegatee&lt;GuildDelegator, GuildDelegatee&gt;.StartNewRewardPeriod(long)</a>
+      <a class="xref" href="Nekoyume.Delegation.Delegatee-3.html#Nekoyume_Delegation_Delegatee_3_OnUnjailed">Delegatee&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.OnUnjailed()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -372,6 +357,72 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
 
 
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxRebondGraceEntries_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxRebondGraceEntries*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxRebondGraceEntries" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxRebondGraceEntries">
+  GuildMaxRebondGraceEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GuildMaxRebondGraceEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxUnbondLockInEntries_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxUnbondLockInEntries*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildDelegatee_GuildMaxUnbondLockInEntries" data-uid="Nekoyume.Model.Guild.GuildDelegatee.GuildMaxUnbondLockInEntries">
+  GuildMaxUnbondLockInEntries
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GuildMaxUnbondLockInEntries { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -380,7 +431,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Activate" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Activate">
   Activate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -406,7 +457,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Deactivate" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Deactivate">
   Deactivate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -432,7 +483,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Equals_Nekoyume_Model_Guild_GuildDelegatee_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Equals(Nekoyume.Model.Guild.GuildDelegatee)">
   Equals(GuildDelegatee?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -471,7 +522,7 @@ Class GuildDelegatee  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Model_Guild_GuildDelegatee_Slash_System_Numerics_BigInteger_System_Int64_System_Int64_" data-uid="Nekoyume.Model.Guild.GuildDelegatee.Slash(System.Numerics.BigInteger,System.Int64,System.Int64)">
   Slash(BigInteger, long, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Guild/GuildDelegatee.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
