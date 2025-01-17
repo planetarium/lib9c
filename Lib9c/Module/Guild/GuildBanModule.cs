@@ -30,10 +30,14 @@ namespace Nekoyume.Module.Guild
 
         public static void Ban(
             this GuildRepository repository,
-            GuildAddress guildAddress,
             AgentAddress signer,
             AgentAddress target)
         {
+            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
+            {
+                throw new InvalidOperationException("The signer does not have a guild.");
+            }
+
             if (!repository.TryGetGuild(guildAddress, out var guild))
             {
                 throw new InvalidOperationException("There is no such guild.");
@@ -60,8 +64,13 @@ namespace Nekoyume.Module.Guild
                     account => account.SetState(target, (Boolean)true)));
         }
 
-        public static void Unban(this GuildRepository repository, GuildAddress guildAddress, AgentAddress signer, Address target)
+        public static void Unban(this GuildRepository repository, AgentAddress signer, Address target)
         {
+            if (repository.GetJoinedGuild(signer) is not { } guildAddress)
+            {
+                throw new InvalidOperationException("The signer does not join any guild.");
+            }
+
             if (!repository.TryGetGuild(guildAddress, out var guild))
             {
                 throw new InvalidOperationException("There is no such guild.");

@@ -10,12 +10,12 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.Delegation;
-using Nekoyume.Model.State;
 
 namespace Nekoyume.ValidatorDelegation
 {
     public sealed class ValidatorDelegatee
-        : Delegatee<ValidatorDelegator, ValidatorDelegatee>, IEquatable<ValidatorDelegatee>, IBencodable
+        : Delegatee<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>,
+        IEquatable<ValidatorDelegatee>, IBencodable
     {
         public ValidatorDelegatee(
             Address address,
@@ -54,9 +54,6 @@ namespace Nekoyume.ValidatorDelegation
             IsActive = false;
             CommissionPercentage = commissionPercentage;
             CommissionPercentageLastUpdateHeight = creationHeight;
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
         }
 
         public ValidatorDelegatee(
@@ -82,19 +79,18 @@ namespace Nekoyume.ValidatorDelegation
             IsActive = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
-            DelegationChanged += OnDelegationChanged;
-            Enjailed += OnEnjailed;
-            Unjailed += OnUnjailed;
+            Metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
+            Metadata.MaxUnbondLockInEntries = ValidatorMaxUnbondLockInEntries;
+            Metadata.MaxRebondGraceEntries = ValidatorMaxRebondGraceEntries;
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        // TODO: [MigrateGuild] Change unbonding period after migration.
-        public static long ValidatorUnbondingPeriod => LegacyStakeState.LockupInterval;
+        public static long ValidatorUnbondingPeriod => 75600L;
 
-        public static int ValidatorMaxUnbondLockInEntries => 2;
+        public static int ValidatorMaxUnbondLockInEntries => 0;
 
-        public static int ValidatorMaxRebondGraceEntries => 2;
+        public static int ValidatorMaxRebondGraceEntries => 0;
 
         public static BigInteger BaseProposerRewardPercentage => 1;
 
@@ -139,7 +135,7 @@ namespace Nekoyume.ValidatorDelegation
             Address RewardSource,
             long height)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
 
             FungibleAssetValue rewardAllocated
                 = (rewardToAllocate * validatorPower).DivRem(validatorSetPower).Quotient;
@@ -193,7 +189,7 @@ namespace Nekoyume.ValidatorDelegation
         }
         public new void Unjail(long height)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             var selfDelegation = FAVFromShare(repository.GetBond(this, Address).Share);
             if (MinSelfDelegation > selfDelegation)
             {
@@ -210,7 +206,7 @@ namespace Nekoyume.ValidatorDelegation
                 throw new InvalidOperationException("The validator is already active.");
             }
 
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             IsActive = true;
             Metadata.DelegationPoolAddress = ActiveDelegationPoolAddress;
 
@@ -230,7 +226,7 @@ namespace Nekoyume.ValidatorDelegation
                 throw new InvalidOperationException("The validator is already inactive.");
             }
 
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             IsActive = false;
             Metadata.DelegationPoolAddress = InactiveDelegationPoolAddress;
 
@@ -243,9 +239,9 @@ namespace Nekoyume.ValidatorDelegation
             }
         }
 
-        public void OnDelegationChanged(object? sender, long height)
+        protected override void OnDelegationChanged(long height)
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
 
             if (Jailed)
             {
@@ -268,15 +264,15 @@ namespace Nekoyume.ValidatorDelegation
             }
         }
 
-        public void OnEnjailed(object? sender, EventArgs e)
+        protected override void OnEnjailed()
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             repository.SetValidatorList(repository.GetValidatorList().RemoveValidator(Validator.PublicKey));
         }
 
-        public void OnUnjailed(object? sender, EventArgs e)
+        protected override void OnUnjailed()
         {
-            ValidatorRepository repository = (ValidatorRepository)Repository;
+            ValidatorRepository repository = Repository;
             repository.SetValidatorList(repository.GetValidatorList().SetValidator(Validator));
         }
 

@@ -1,20 +1,21 @@
 using System;
 using Bencodex.Types;
-using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Extensions;
+using Libplanet.Action;
 using Nekoyume.Model.Guild;
-using Nekoyume.Module.Guild;
 
 namespace Nekoyume.Action.Guild
 {
     /// <summary>
-    /// An action to remove the guild.
+    /// An action to claim unbonded assets.
+    /// This action can be executed only when the unbonding period is over.
     /// </summary>
     [ActionType(TypeIdentifier)]
-    public class RemoveGuild : ActionBase
+    public sealed class ClaimUnbonded : ActionBase
     {
-        public const string TypeIdentifier = "remove_guild";
+        public const string TypeIdentifier = "claim_unbonded";
+
+        public ClaimUnbonded() { }
 
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
@@ -22,7 +23,8 @@ namespace Nekoyume.Action.Guild
 
         public override void LoadPlainValue(IValue plainValue)
         {
-            if (plainValue is not Dictionary root ||
+            var root = (Dictionary)plainValue;
+            if (plainValue is not Dictionary ||
                 !root.TryGetValue((Text)"values", out var rawValues) ||
                 rawValues is not Null)
             {
@@ -36,8 +38,9 @@ namespace Nekoyume.Action.Guild
 
             var world = context.PreviousState;
             var repository = new GuildRepository(world, context);
+            var guildDelegator = repository.GetDelegator(context.Signer);
+            guildDelegator.ReleaseUnbondings(context.BlockIndex);
 
-            repository.RemoveGuild();
             return repository.World;
         }
     }
