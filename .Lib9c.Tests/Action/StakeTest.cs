@@ -331,8 +331,9 @@ namespace Lib9c.Tests.Action
                 _agentAddr,
                 amount);
 
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                world, _agentAddr, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                world, _agentAddr, height + delegatee.UnbondingPeriod);
         }
 
         [Theory]
@@ -407,8 +408,9 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                nextState, _agentAddr, height + interval + delegatee.UnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
@@ -548,8 +550,9 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(_agentAddr);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                nextState, _agentAddr, height + interval + delegatee.UnbondingPeriod);
 
             var expectedBalance = _ncg * (Math.Max(0, previousAmount - amount) + promoteAmount);
             var expectedStaked = _ncg * amount;
@@ -581,8 +584,9 @@ namespace Lib9c.Tests.Action
             Assert.True(world.TryGetStakeState(_agentAddr, out var stakeState));
             height += stakeState.CancellableBlockIndex;
             world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 0, height++);
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                world, _agentAddr, height++ + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                world, _agentAddr, height++ + delegatee.UnbondingPeriod);
 
             var actualNCG = world.GetBalance(_agentAddr, _ncg);
             Assert.Equal(_ncg * 90, actualNCG);

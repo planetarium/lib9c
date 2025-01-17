@@ -125,11 +125,12 @@ public class ClaimUnbondedTest : GuildTestBase
         var expectedMasterNCG = masterNCG;
         var actualMasterNCGBefore = world.GetBalance(masterAddress, NCG);
         var claimUnbonded = new ClaimUnbonded();
+        var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
             Signer = masterAddress,
-            BlockIndex = height + ValidatorDelegatee.ValidatorUnbondingPeriod,
+            BlockIndex = height + delegatee.UnbondingPeriod,
         };
         world = claimUnbonded.Execute(actionContext);
 

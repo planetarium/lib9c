@@ -60,6 +60,8 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedSet<Address> Delegatees => Metadata.Delegatees;
 
+        public ImmutableSortedSet<UnbondingRef> UnbondingRefs => Metadata.UnbondingRefs;
+
         public List MetadataBencoded => Metadata.Bencoded;
 
         public virtual void Delegate(

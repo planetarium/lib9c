@@ -10,13 +10,13 @@ namespace Lib9c.Tests.Action.Scenario
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.Stake;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
     using Nekoyume.Module.Guild;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Stake;
-    using Nekoyume.ValidatorDelegation;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -118,7 +118,8 @@ namespace Lib9c.Tests.Action.Scenario
             // Withdraw stake via stake3.
             state = Stake3(state, _agentAddr, _avatarAddr, 0, withdrawHeight);
 
-            var unbondedHeight = withdrawHeight + ValidatorDelegatee.ValidatorUnbondingPeriod;
+            var delegatee = new GuildRepository(state, new ActionContext { }).GetDelegatee(validatorKey.Address);
+            var unbondedHeight = withdrawHeight + delegatee.UnbondingPeriod;
             state = DelegationUtil.EnsureUnbondedClaimed(
                 state, _agentAddr, unbondedHeight);
 

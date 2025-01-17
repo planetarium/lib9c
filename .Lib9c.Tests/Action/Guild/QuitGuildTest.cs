@@ -229,8 +229,9 @@ public class QuitGuildTest : GuildTestBase
             BlockIndex = height++,
         };
         world = quitGuild.Execute(actionContext);
+        var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
         world = EnsureToReleaseUnbonding(
-            world, agentAddress, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+            world, agentAddress, height + delegatee.UnbondingPeriod);
 
         // Then
         var guildRepository = new GuildRepository(world, actionContext);
