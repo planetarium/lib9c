@@ -38,13 +38,13 @@ namespace Nekoyume.Action.ValidatorDelegation
 
             var world = context.PreviousState;
             var repository = new ValidatorRepository(world, context);
-            var validatorDelegatee = repository.GetValidatorDelegatee(context.Signer);
-            var validatorDelegator = repository.GetValidatorDelegator(context.Signer);
+            var validatorDelegatee = repository.GetDelegatee(context.Signer);
+            var validatorDelegator = repository.GetDelegator(context.Signer);
             validatorDelegator.ClaimReward(validatorDelegatee, context.BlockIndex);
 
             var guildRepository = new GuildRepository(repository);
-            var guildDelegatee = guildRepository.GetGuildDelegatee(context.Signer);
-            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            var guildDelegatee = guildRepository.GetDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetDelegator(context.Signer);
             guildDelegator.ClaimReward(guildDelegatee, context.BlockIndex);
 
             return guildRepository.World;

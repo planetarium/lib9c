@@ -449,18 +449,6 @@ namespace Nekoyume.Model
             return map;
         }
 
-        [Obsolete("Use GetRewards")]
-        public CollectionMap GetRewards2(List<ItemBase> items)
-        {
-            var map = new CollectionMap();
-            foreach (var item in items)
-            {
-                map.Add(Inventory.AddItem2(item));
-            }
-
-            return map;
-        }
-
         public virtual void Spawn()
         {
             InitAI();

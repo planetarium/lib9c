@@ -155,7 +155,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                     continue;
                 }
 
-                if (!repository.TryGetValidatorDelegatee(
+                if (!repository.TryGetDelegatee(
                     vote.ValidatorPublicKey.Address, out var validatorDelegatee))
                 {
                     continue;

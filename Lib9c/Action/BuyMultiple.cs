@@ -384,7 +384,7 @@ namespace Nekoyume.Action
                 buyerAvatarState.Update(buyerMail);
                 if (purchaseResult.itemUsable != null)
                 {
-                    buyerAvatarState.UpdateFromAddItem2(purchaseResult.itemUsable, false);
+                    buyerAvatarState.UpdateFromAddItem(purchaseResult.itemUsable, false);
                 }
                 if (purchaseResult.costume != null)
                 {
@@ -398,7 +398,7 @@ namespace Nekoyume.Action
 
                 sellerAvatarState.updatedAt = ctx.BlockIndex;
                 sellerAvatarState.blockIndex = ctx.BlockIndex;
-                sellerAvatarState.UpdateQuestRewards2(materialSheet);
+                sellerAvatarState.UpdateQuestRewards(materialSheet);
 
                 sw.Restart();
                 states = states.SetAvatarState(productInfo.sellerAvatarAddress, sellerAvatarState);
@@ -412,7 +412,7 @@ namespace Nekoyume.Action
             buyerAvatarState.updatedAt = ctx.BlockIndex;
             buyerAvatarState.blockIndex = ctx.BlockIndex;
 
-            buyerAvatarState.UpdateQuestRewards2(materialSheet);
+            buyerAvatarState.UpdateQuestRewards(materialSheet);
 
             sw.Restart();
             states = states.SetAvatarState(buyerAvatarAddress, buyerAvatarState);

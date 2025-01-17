@@ -18,10 +18,17 @@ namespace Nekoyume.Delegation
 
         private readonly IDelegationRepository? _repository;
 
-        public RebondGrace(Address address, int maxEntries, IDelegationRepository? repository = null)
+        public RebondGrace(
+            Address address,
+            int maxEntries,
+            Address delegateeAddress,
+            Address delegatorAddress,
+            IDelegationRepository? repository = null)
             : this(
                   address,
                   maxEntries,
+                  delegateeAddress,
+                  delegatorAddress,
                   ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>>.Empty,
                   repository)
         {
@@ -36,7 +43,9 @@ namespace Nekoyume.Delegation
             : this(
                   address,
                   maxEntries,
-                  bencoded.Select(kv => kv is List list
+                  new Address(bencoded[0]),
+                  new Address(bencoded[1]),
+                  ((List)bencoded[2]).Select(kv => kv is List list
                       ? new KeyValuePair<long, ImmutableList<UnbondingEntry>>(
                           (Integer)list[0],
                           ((List)list[1]).Select(e => new UnbondingEntry(e)).ToImmutableList())
@@ -50,9 +59,16 @@ namespace Nekoyume.Delegation
         public RebondGrace(
             Address address,
             int maxEntries,
+            Address delegateeAddress,
+            Address delegatorAddress,
             IEnumerable<UnbondingEntry> entries,
             IDelegationRepository? repository = null)
-            : this(address, maxEntries, repository)
+            : this(
+                  address,
+                  maxEntries,
+                  delegateeAddress,
+                  delegatorAddress,
+                  repository)
         {
             foreach (var entry in entries)
             {
@@ -63,6 +79,8 @@ namespace Nekoyume.Delegation
         private RebondGrace(
             Address address,
             int maxEntries,
+            Address delegateeAddress,
+            Address delegatorAddress,
             ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries,
             IDelegationRepository? repository)
         {
@@ -77,6 +95,8 @@ namespace Nekoyume.Delegation
             Address = address;
             MaxEntries = maxEntries;
             Entries = entries;
+            DelegateeAddress = delegateeAddress;
+            DelegatorAddress = delegatorAddress;
             _repository = repository;
         }
 
@@ -90,7 +110,9 @@ namespace Nekoyume.Delegation
 
         public IDelegationRepository? Repository => _repository;
 
-        public long LowestExpireHeight => Entries.First().Key;
+        public long LowestExpireHeight => IsEmpty
+            ? -1
+            : Entries.First().Key;
 
         public bool IsFull => Entries.Values.Sum(e => e.Count) >= MaxEntries;
 
@@ -103,11 +125,14 @@ namespace Nekoyume.Delegation
             => Entries.Values.SelectMany(e => e).ToImmutableArray();
 
         public List Bencoded
-            => new List(
-                Entries.Select(
-                    sortedDict => new List(
-                        (Integer)sortedDict.Key,
-                        new List(sortedDict.Value.Select(e => e.Bencoded)))));
+            => List.Empty
+                .Add(DelegateeAddress.Bencoded)
+                .Add(DelegatorAddress.Bencoded)
+                .Add(new List(
+                    Entries.Select(
+                        sortedDict => new List(
+                            (Integer)sortedDict.Key,
+                            new List(sortedDict.Value.Select(e => e.Bencoded))))));
 
         IValue IBencodable.Bencoded => Bencoded;
 
@@ -145,8 +170,9 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV)
+            Address slashedPoolAddress)
         {
+            // TODO: Extract common logic to abstract class
             CannotMutateRelationsWithoutRepository();
 
             var slashed = new SortedDictionary<Address, FungibleAssetValue>();
@@ -173,13 +199,23 @@ namespace Nekoyume.Delegation
                 updatedEntries = Entries.SetItem(expireHeight, slashedEntries);
             }
 
-            slashedFAV = null;
             foreach (var (address, slashedEach) in slashed)
             {
-                var delegatee = _repository!.GetDelegatee(address);
-                var delegator = _repository!.GetDelegator(DelegatorAddress);
+                var delegatee = Repository!.GetDelegatee(address);
+                var delegator = Repository!.GetDelegator(DelegatorAddress);
                 delegatee.Unbond(delegator, delegatee.ShareFromFAV(slashedEach), height);
-                slashedFAV = slashedFAV.HasValue ? slashedFAV + slashedEach : slashedEach;
+
+                var delegationBalance = Repository!.GetBalance(delegatee.DelegationPoolAddress, slashedEach.Currency);
+                var slashAmount = slashedEach;
+                if (delegationBalance < slashedEach)
+                {
+                    slashAmount = delegationBalance;
+                }
+
+                if (slashAmount > slashedEach.Currency * 0)
+                {
+                    Repository.TransferAsset(delegatee.DelegationPoolAddress, slashedPoolAddress, slashAmount);
+                }
             }
 
 
@@ -190,8 +226,8 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV)
-            => Slash(slashFactor, infractionHeight, height, out slashedFAV);
+            Address slashedPoolAddress)
+            => Slash(slashFactor, infractionHeight, height, slashedPoolAddress);
 
         public override bool Equals(object? obj)
             => obj is RebondGrace other && Equals(other);
@@ -246,7 +282,7 @@ namespace Nekoyume.Delegation
 
         private RebondGrace UpdateEntries(
             ImmutableSortedDictionary<long, ImmutableList<UnbondingEntry>> entries)
-            => new RebondGrace(Address, MaxEntries, entries, _repository);
+            => new RebondGrace(Address, MaxEntries, DelegateeAddress, DelegatorAddress, entries, _repository);
 
         private void CannotMutateRelationsWithoutRepository()
         {

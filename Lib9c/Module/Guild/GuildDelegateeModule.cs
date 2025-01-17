@@ -12,14 +12,14 @@ namespace Nekoyume.Module.Guild
 {
     public static class GuildDelegateeModule
     {
-        public static bool TryGetGuildDelegatee(
+        public static bool TryGetDelegatee(
             this GuildRepository repository,
             Address address,
             [NotNullWhen(true)] out GuildDelegatee? guildDelegatee)
         {
             try
             {
-                guildDelegatee = repository.GetGuildDelegatee(address);
+                guildDelegatee = repository.GetDelegatee(address);
                 return true;
             }
             catch
@@ -29,17 +29,17 @@ namespace Nekoyume.Module.Guild
             }
         }
 
-        public static GuildDelegatee CreateGuildDelegatee(
+        public static GuildDelegatee CreateDelegatee(
             this GuildRepository repository,
             Address address)
         {
-            if (repository.TryGetGuildDelegatee(address, out _))
+            if (repository.TryGetDelegatee(address, out _))
             {
                 throw new InvalidOperationException("The signer already has a validator delegatee for guild.");
             }
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
-            if (!validatorRepository.TryGetValidatorDelegatee(address, out _))
+            if (!validatorRepository.TryGetDelegatee(address, out _))
             {
                 throw new InvalidOperationException("The signer does not have a validator delegatee.");
             }
@@ -49,7 +49,7 @@ namespace Nekoyume.Module.Guild
                 new Currency[] { repository.World.GetGoldCurrency() },
                 repository);
 
-            repository.SetGuildDelgatee(guildDelegatee);
+            repository.SetDelegatee(guildDelegatee);
 
             return guildDelegatee;
         }

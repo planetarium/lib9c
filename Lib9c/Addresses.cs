@@ -240,6 +240,7 @@ namespace Nekoyume
         /// <summary>
         /// An address for non validator.
         /// </summary>
+        [Obsolete("It is not used anymore.")]
         public static readonly Address NonValidatorDelegatee
             = new Address("0000000000000000000000000000000000000313");
 

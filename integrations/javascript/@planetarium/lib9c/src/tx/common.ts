@@ -34,6 +34,6 @@ export async function makeTx(
     publicKey: publicKey.toBytes("uncompressed"),
     timestamp: new Date(),
     gasLimit,
-    maxGasPrice: fav(MEAD, 1n),
+    maxGasPrice: fav(MEAD, 0.00001),
   };
 }

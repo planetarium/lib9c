@@ -51,13 +51,13 @@ namespace Nekoyume.Action.ValidatorDelegation
             }
 
             var guildRepository = new GuildRepository(context.PreviousState, context);
-            var guildDelegatee = guildRepository.GetGuildDelegatee(context.Signer);
-            var guildDelegator = guildRepository.GetGuildDelegator(context.Signer);
+            var guildDelegatee = guildRepository.GetDelegatee(context.Signer);
+            var guildDelegator = guildRepository.GetDelegator(context.Signer);
             guildDelegator.Delegate(guildDelegatee, FAV, context.BlockIndex);
 
             var validatorRepository = new ValidatorRepository(guildRepository);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(context.Signer);
-            var validatorDelegator = validatorRepository.GetValidatorDelegator(context.Signer);
+            var validatorDelegatee = validatorRepository.GetDelegatee(context.Signer);
+            var validatorDelegator = validatorRepository.GetDelegator(context.Signer);
             validatorDelegatee.Bond(validatorDelegator, FAV, context.BlockIndex);
 
             return validatorRepository.World;
