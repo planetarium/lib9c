@@ -10,6 +10,8 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
 using Nekoyume.Delegation;
+using Nekoyume.Module;
+using Nekoyume.TableData.Stake;
 
 namespace Nekoyume.ValidatorDelegation
 {
@@ -33,7 +35,9 @@ namespace Nekoyume.ValidatorDelegation
                   rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
-                  unbondingPeriod: ValidatorUnbondingPeriod,
+                  unbondingPeriod: repository.World.TryGetSheet<StakePolicySheet>(out var sheet)
+                    ? sheet.LockupIntervalValue
+                    : DefaultUnbondingPeriod,
                   maxUnbondLockInEntries: ValidatorMaxUnbondLockInEntries,
                   maxRebondGraceEntries: ValidatorMaxRebondGraceEntries,
                   repository: repository)
@@ -79,14 +83,16 @@ namespace Nekoyume.ValidatorDelegation
             IsActive = (Bencodex.Types.Boolean)bencoded[1];
             CommissionPercentage = (Integer)bencoded[2];
             CommissionPercentageLastUpdateHeight = (Integer)bencoded[3];
-            Metadata.UnbondingPeriod = ValidatorUnbondingPeriod;
+            Metadata.UnbondingPeriod = repository.World.TryGetSheet<StakePolicySheet>(out var sheet)
+                ? sheet.LockupIntervalValue
+                : DefaultUnbondingPeriod;
             Metadata.MaxUnbondLockInEntries = ValidatorMaxUnbondLockInEntries;
             Metadata.MaxRebondGraceEntries = ValidatorMaxRebondGraceEntries;
         }
 
         public static Currency ValidatorDelegationCurrency => Currencies.GuildGold;
 
-        public static long ValidatorUnbondingPeriod => 75600L;
+        public static long DefaultUnbondingPeriod => 75600L;
 
         public static int ValidatorMaxUnbondLockInEntries => 0;
 

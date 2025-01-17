@@ -8,6 +8,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Guild;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
@@ -138,13 +139,13 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
         var expectedValidatorShare = validatorShare - shareToUndelegate;
         var expectedTotalShare = expectedValidatorShare + masterShare;
         var expectedTotalGG = totalGG - expectedStakedGG;
-
         var claimUnbonded = new ClaimUnbonded();
+        var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
             Signer = validatorKey.Address,
-            BlockIndex = height + ValidatorDelegatee.ValidatorUnbondingPeriod,
+            BlockIndex = height + delegatee.UnbondingPeriod,
         };
         world = claimUnbonded.Execute(actionContext);
 

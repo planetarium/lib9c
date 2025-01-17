@@ -33,11 +33,11 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("The signer already joined a guild.");
             }
 
-            if (repository.GetGuildRejoinCooldown(target) is { } cooldown
-                && cooldown.Cooldown(repository.ActionContext.BlockIndex) > 0L)
+            if (repository.GetDelegator(target) is { } delegator
+                && delegator.UnbondingRefs.Count > 0)
             {
                 throw new InvalidOperationException(
-                    $"The signer is in the rejoin cooldown period until block {cooldown.ReleaseHeight}");
+                    $"The signer cannot join guild while unbonding");
             }
 
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
@@ -126,8 +126,6 @@ namespace Nekoyume.Module.Guild
             repository.RemoveGuildParticipant(agentAddress);
             repository.DecreaseGuildMemberCount(guild.Address);
 
-            repository.SetGuildRejoinCooldown(agentAddress, repository.ActionContext.BlockIndex);
-
             return repository;
         }
 
@@ -147,28 +145,5 @@ namespace Nekoyume.Module.Guild
                 return false;
             }
         }
-
-        private static GuildRepository SetGuildRejoinCooldown(
-            this GuildRepository repository,
-            AgentAddress guildParticipantAddress,
-            long height)
-        {
-            var guildRejoinCooldown = new GuildRejoinCooldown(guildParticipantAddress, height);
-            repository.UpdateWorld(
-                repository.World.SetAccount(
-                    Addresses.GuildRejoinCooldown,
-                    repository.World.GetAccount(Addresses.GuildRejoinCooldown)
-                        .SetState(guildParticipantAddress, guildRejoinCooldown.Bencoded)));
-            return repository;
-        }
-
-        private static GuildRejoinCooldown? GetGuildRejoinCooldown(
-            this GuildRepository repository,
-            AgentAddress guildParticipantAddress)
-            => repository.World
-                .GetAccount(Addresses.GuildRejoinCooldown)
-                .GetState(guildParticipantAddress) is Integer bencoded
-                    ? new GuildRejoinCooldown(guildParticipantAddress, bencoded)
-                    : null;
     }
 }

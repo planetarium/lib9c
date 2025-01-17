@@ -8,6 +8,7 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Guild;
 using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
 using Xunit;
@@ -111,7 +112,7 @@ public class JoinGuildTest : GuildTestBase
     }
 
     [Fact]
-    public void Execute_SignerHasRejoinCooldown_Throw()
+    public void Execute_After_Leave_Without_Stake_Success()
     {
         // Given
         var world = World;
@@ -128,19 +129,52 @@ public class JoinGuildTest : GuildTestBase
 
         // When
         var joinGuild = new JoinGuild(guildAddress);
+        var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
             Signer = agentAddress,
-            BlockIndex = height + GuildRejoinCooldown.CooldownPeriod - 1,
+            BlockIndex = height + delegatee.UnbondingPeriod - 1,
+        };
+
+        // Then
+        world = joinGuild.Execute(actionContext);
+        var repository = new GuildRepository(world, new ActionContext { });
+        Assert.NotNull(repository.GetJoinedGuild(agentAddress));
+    }
+
+    [Fact]
+    public void Execute_After_Leave_With_Stake_Throw()
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var agentAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var guildAddress = AddressUtil.CreateGuildAddress();
+        var height = 1L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToInitializeAgent(world, agentAddress, NCG * 100, height++);
+        world = EnsureToStake(world, agentAddress, NCG * 100, height++);
+        world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
+        world = EnsureToLeaveGuild(world, agentAddress, height);
+
+        // When
+        var joinGuild = new JoinGuild(guildAddress);
+        var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = agentAddress,
+            BlockIndex = height + delegatee.UnbondingPeriod - 1,
         };
 
         // Then
         var exception = Assert.Throws<InvalidOperationException>(
             () => joinGuild.Execute(actionContext));
-        var expectedReleaseHeight = height + GuildRejoinCooldown.CooldownPeriod;
         var expectedMessage
-            = $"The signer is in the rejoin cooldown period until block {expectedReleaseHeight}";
+            = $"The signer cannot join guild while unbonding";
         Assert.Equal(expectedMessage, exception.Message);
     }
 
