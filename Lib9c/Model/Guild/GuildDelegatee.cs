@@ -81,7 +81,12 @@ namespace Nekoyume.Model.Guild
             Metadata.DelegationPoolAddress = ValidatorDelegatee.InactiveDelegationPoolAddress;
         }
 
+        public override bool Equals(object? obj)
+            => obj is GuildDelegatee other && Equals(other);
+
         public bool Equals(GuildDelegatee? other)
             => Metadata.Equals(other?.Metadata);
+
+        public override int GetHashCode() => Metadata.GetHashCode();
     }
 }
