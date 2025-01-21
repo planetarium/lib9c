@@ -212,6 +212,19 @@ namespace Nekoyume.Action
                 states = result.Value.world;
             }
 
+            // NOTE: Exceptional case for late-migration due to the re-pledge.
+            var ggBalance = states.GetBalance(stakeStateAddress, Currencies.GuildGold);
+            if (ggBalance.Sign > 0)
+            {
+                var guildRepository = new GuildRepository(states, context);
+                if (guildRepository.TryGetGuildParticipant(new AgentAddress(context.Signer), out var guildParticipant))
+                {
+                    var guild = guildRepository.GetGuild(guildParticipant.GuildAddress);
+                    guildParticipant.Delegate(guild, ggBalance, context.BlockIndex);
+                    states = guildRepository.World;
+                }
+            }
+
             // NOTE: Contract a new staking.
             states = ContractNewStake(
                 context,
