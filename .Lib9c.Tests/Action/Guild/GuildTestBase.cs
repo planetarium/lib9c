@@ -56,6 +56,29 @@ public abstract class GuildTestBase
         return world;
     }
 
+    protected static IWorld EnsureToJailValidator(
+        IWorld world, PrivateKey validatorPrivateKey, long period, long blockHeight)
+    {
+        var validatorAddress = validatorPrivateKey.Address;
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            BlockIndex = blockHeight,
+            Signer = validatorAddress,
+        };
+
+        var validatorRepository = new ValidatorRepository(world, actionContext);
+        var validatorDelegatee = validatorRepository.GetDelegatee(validatorAddress);
+        validatorDelegatee.Jail(blockHeight + period);
+
+        var guildRepository = new GuildRepository(
+            validatorRepository.World, validatorRepository.ActionContext);
+        var guildDelegatee = guildRepository.GetDelegatee(validatorAddress);
+        guildDelegatee.Jail(blockHeight + period);
+
+        return guildRepository.World;
+    }
+
     protected static IWorld EnsureToInitializeAgent(
         IWorld world, AgentAddress agentAddress, long blockHeight)
     {
