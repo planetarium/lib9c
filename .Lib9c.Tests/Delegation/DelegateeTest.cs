@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Delegation
 {
     using System;
     using System.Numerics;
+    using Bencodex;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Nekoyume;
@@ -11,6 +12,7 @@ namespace Lib9c.Tests.Delegation
     public class DelegateeTest
     {
         private readonly DelegationFixture _fixture;
+        private readonly Codec _codec = new Codec();
 
         public DelegateeTest()
         {

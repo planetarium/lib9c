@@ -129,6 +129,43 @@ public class MoveGuildTest : GuildTestBase
 
     [Theory]
     [InlineData(0)]
+    [InlineData(100)]
+    public void Execute_ToSameGuild_Throw(long amountToStake)
+    {
+        // Given
+        var world = World;
+        var validatorKey = new PrivateKey();
+        var agentAddress = AddressUtil.CreateAgentAddress();
+        var masterAddress = AddressUtil.CreateAgentAddress();
+        var guildAddress = AddressUtil.CreateGuildAddress();
+        var height = 0L;
+        world = EnsureToInitializeValidator(world, validatorKey, NCG * 100, height++);
+        world = EnsureToMakeGuild(world, guildAddress, masterAddress, validatorKey, height++);
+        world = EnsureToInitializeAgent(world, agentAddress, NCG * 100, height++);
+        world = EnsureToJoinGuild(world, guildAddress, agentAddress, height++);
+        if (amountToStake > 0)
+        {
+            world = EnsureToStake(world, agentAddress, NCG * amountToStake, height++);
+        }
+
+        // When
+        var moveGuild = new MoveGuild(guildAddress);
+        var actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = agentAddress,
+            BlockIndex = height++,
+        };
+
+        // Then
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => moveGuild.Execute(actionContext));
+        Assert.Equal(
+            "The signer cannot move to the same guild.", exception.Message);
+    }
+
+    [Theory]
+    [InlineData(0)]
     [InlineData(1181126949)]
     [InlineData(793705868)]
     [InlineData(559431555)]
@@ -187,6 +224,8 @@ public class MoveGuildTest : GuildTestBase
         {
             world = EnsureToSlashValidator(world, validatorKey1, slashFactor1, height++);
         }
+
+        world = EnsureToJailValidator(world, validatorKey2, period: 100, height++);
 
         if (slashFactor2 > 1)
         {

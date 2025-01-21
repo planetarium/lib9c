@@ -374,13 +374,24 @@ namespace Nekoyume.Delegation
         public virtual Address LumpSumRewardsRecordAddress(long height)
             => DelegationAddress.RewardBaseAddress(Address, height);
 
+        /// <inheritdoc cref="Object.Equals(object?)"/>
         public override bool Equals(object? obj)
             => obj is IDelegateeMetadata other && Equals(other);
 
+        /// <summary>
+        /// Check if the given <see cref="IDelegateeMetadata"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">
+        /// The <see cref="IDelegateeMetadata"/> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if the given <see cref="IDelegateeMetadata"/> is equal to
+        /// this instance;
+        /// </returns>
         public virtual bool Equals(IDelegateeMetadata? other)
             => ReferenceEquals(this, other)
             || (other is DelegateeMetadata delegatee
-            && (GetType() != delegatee.GetType())
+            && (GetType() == delegatee.GetType())
             && DelegateeAddress.Equals(delegatee.DelegateeAddress)
             && DelegateeAccountAddress.Equals(delegatee.DelegateeAccountAddress)
             && DelegationCurrency.Equals(delegatee.DelegationCurrency)
@@ -396,11 +407,18 @@ namespace Nekoyume.Delegation
             && Jailed == delegatee.Jailed
             && UnbondingRefs.SequenceEqual(delegatee.UnbondingRefs));
 
+        /// <inheritdoc cref="Object.GetHashCode" />
         public override int GetHashCode()
             => DelegateeAddress.GetHashCode();
 
         // TODO: [GuildMigration] Remove this method when the migration is done.
         // Remove private setter for UnbondingPeriod.
+        /// <summary>
+        /// Update the unbonding period.
+        /// </summary>
+        /// <param name="unbondingPeriod">
+        /// The new unbonding period.
+        /// </param>
         public void UpdateUnbondingPeriod(long unbondingPeriod)
         {
             UnbondingPeriod = unbondingPeriod;

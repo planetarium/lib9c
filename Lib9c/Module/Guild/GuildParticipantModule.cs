@@ -68,6 +68,11 @@ namespace Nekoyume.Module.Guild
             var guildParticipant1 = repository.GetGuildParticipant(guildParticipantAddress);
             var srcGuild = repository.GetGuild(guildParticipant1.GuildAddress);
             var dstGuild = repository.GetGuild(dstGuildAddress);
+            if (srcGuild.Address == dstGuild.Address)
+            {
+                throw new InvalidOperationException("The signer cannot move to the same guild.");
+            }
+
             var srcGuildDelegatee = repository.GetDelegatee(srcGuild.ValidatorAddress);
             var validatorRepository = new ValidatorRepository(repository.World, repository.ActionContext);
             var dstValidatorDelegatee = validatorRepository.GetDelegatee(dstGuild.ValidatorAddress);

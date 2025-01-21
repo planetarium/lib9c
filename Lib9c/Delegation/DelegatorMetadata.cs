@@ -149,13 +149,24 @@ namespace Nekoyume.Delegation
             UnbondingRefs = UnbondingRefs.Remove(unbondingRef);
         }
 
+        /// <inheritdoc cref="Object.Equals(object?)" />
         public override bool Equals(object? obj)
-            => obj is IDelegator other && Equals(other);
+            => obj is IDelegatorMetadata other && Equals(other);
 
-        public virtual bool Equals(IDelegator? other)
+        /// <summary>
+        /// Check if the given <see cref="IDelegatorMetadata"/> is equal to this instance.
+        /// </summary>
+        /// <param name="other">
+        /// The <see cref="IDelegatorMetadata"/> to compare with this instance.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if the given <see cref="IDelegatorMetadata"/> is equal to
+        /// this instance;
+        /// </returns>
+        public virtual bool Equals(IDelegatorMetadata? other)
             => ReferenceEquals(this, other)
             || (other is DelegatorMetadata delegator
-            && GetType() != delegator.GetType()
+            && GetType() == delegator.GetType()
             && DelegatorAddress.Equals(delegator.DelegatorAddress)
             && DelegatorAccountAddress.Equals(delegator.DelegatorAccountAddress)
             && DelegationPoolAddress.Equals(delegator.DelegationPoolAddress)
