@@ -223,18 +223,22 @@ public class QuitGuildTest : GuildTestBase
         var expectedTotalShares = totalShare - agentShare;
         var quitGuild = new QuitGuild();
 
-        world = EnsureToStake(world, agentAddress, agentNCG.Currency * 50, height++);
-        var actionContext = new ActionContext
+        if (agentNCG.MajorUnit > 50)
         {
-            PreviousState = world,
-            Signer = agentAddress,
-            BlockIndex = height++,
-        };
+            world = EnsureToStake(world, agentAddress, agentNCG.Currency * 50, height++);
+            var actionContextToThrow = new ActionContext
+            {
+                PreviousState = world,
+                Signer = agentAddress,
+                BlockIndex = height++,
+            };
 
-        Assert.Throws<InvalidOperationException>(() => world = quitGuild.Execute(actionContext));
-        height += ValidatorDelegatee.DefaultUnbondingPeriod;
-        world = EnsureToReleaseUnbonding(world, agentAddress, height++);
-        actionContext = new ActionContext
+            Assert.Throws<InvalidOperationException>(() => world = quitGuild.Execute(actionContextToThrow));
+            height += ValidatorDelegatee.DefaultUnbondingPeriod;
+            world = EnsureToReleaseUnbonding(world, agentAddress, height++);
+        }
+
+        var actionContext = new ActionContext
         {
             PreviousState = world,
             Signer = agentAddress,
