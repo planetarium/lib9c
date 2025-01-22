@@ -117,6 +117,12 @@ namespace Nekoyume.Module.Guild
                     "The signer is a guild master. Guild master cannot quit the guild.");
             }
 
+            if (repository.GetDelegator(agentAddress).UnbondingRefs.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    $"The signer cannot leave guild while unbonding");
+            }
+
             var height = repository.ActionContext.BlockIndex;
             var guildParticipant = repository.GetGuildParticipant(agentAddress);
             var delegatee = repository.GetDelegatee(guild.ValidatorAddress);
