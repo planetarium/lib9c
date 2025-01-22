@@ -85,6 +85,7 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
     [InlineData(793705868)]
     [InlineData(559431555)]
     [InlineData(1133637517)]
+    [InlineData(52169708)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -162,12 +163,12 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
 
         // Check ncg after unstaking
         var amountGG = validatorSlashedGG - expectedStakedGG;
-        const long minimumStakeAmount = 50;
-        if (amountGG.MajorUnit >= minimumStakeAmount)
+        var minimumStakeAmount = NCG * 50;
+        var ncg = GGToNCG(amountGG);
+        var majorUnit = ncg.MinorUnit > 0 ? ncg.MajorUnit + 1 : ncg.MajorUnit;
+        var amount = new FungibleAssetValue(NCG, majorUnit, 0);
+        if (amount >= minimumStakeAmount && amount <= validatorSlashedNCG)
         {
-            var ncg = GGToNCG(amountGG);
-            var majorUnit = ncg.MinorUnit > 0 ? ncg.MajorUnit + 1 : ncg.MajorUnit;
-            var amount = new FungibleAssetValue(NCG, majorUnit, 0);
             var expectedNCG1 = NCG * 0;
             var expectedNCG2 = validatorSlashedNCG - amount;
             var actualNCG1 = world.GetBalance(validatorKey.Address, NCG);
