@@ -222,12 +222,25 @@ public class QuitGuildTest : GuildTestBase
         var expectedTotalGG = slashedGG - expectedAgengGG;
         var expectedTotalShares = totalShare - agentShare;
         var quitGuild = new QuitGuild();
+
+        world = EnsureToStake(world, agentAddress, agentNCG.Currency * 50, height++);
         var actionContext = new ActionContext
         {
             PreviousState = world,
             Signer = agentAddress,
             BlockIndex = height++,
         };
+
+        Assert.Throws<InvalidOperationException>(() => world = quitGuild.Execute(actionContext));
+        height += ValidatorDelegatee.DefaultUnbondingPeriod;
+        world = EnsureToReleaseUnbonding(world, agentAddress, height++);
+        actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = agentAddress,
+            BlockIndex = height++,
+        };
+
         world = quitGuild.Execute(actionContext);
         var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
         world = EnsureToReleaseUnbonding(
@@ -241,9 +254,10 @@ public class QuitGuildTest : GuildTestBase
 
         Assert.Throws<FailedLoadStateException>(
             () => guildRepository.GetGuildParticipant(agentAddress));
-        Assert.Equal(expectedTotalGG, guildDelegatee.TotalDelegated);
+        var comparerGG = new FungibleAssetValueEqualityComparer(GGEpsilon);
+        Assert.Equal(expectedTotalGG, guildDelegatee.TotalDelegated, comparerGG);
         Assert.Equal(expectedTotalShares, guildDelegatee.TotalShares);
-        Assert.Equal(expectedTotalGG, validatorDelegatee.TotalDelegated);
+        Assert.Equal(expectedTotalGG, validatorDelegatee.TotalDelegated, comparerGG);
         Assert.Equal(expectedTotalShares, validatorDelegatee.TotalShares);
     }
 
