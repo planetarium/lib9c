@@ -1,6 +1,12 @@
+#nullable enable
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
+using System.Linq;
 using System.Numerics;
+using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 
 namespace Nekoyume.TableData
 {
@@ -65,6 +71,156 @@ namespace Nekoyume.TableData
             }
 
             throw new ArgumentException(value);
+        }
+
+        public static Currency ParseCurrency(string value)
+        {
+            if (TryParseCurrency(value, out var result))
+            {
+                return result;
+            }
+
+            throw new ArgumentException(value);
+        }
+
+        public static bool TryParseCurrency(string value, out Currency currency)
+        {
+            currency = default;
+
+            List<string> currencyStrings = value.Split(";").Select(v => v.Trim()).ToList();
+            if (currencyStrings.Count != 5)
+            {
+                return false;
+            }
+
+            string ticker = currencyStrings[0];
+
+            if (!TryParseInt(currencyStrings[1], out var decimalPlacesInt))
+            {
+                return false;
+            }
+
+            byte decimalPlaces = (byte)decimalPlacesInt;
+
+            if (!TryParseMinters(currencyStrings[2], out var minters))
+            {
+                return false;
+            }
+
+            bool totalSupplyTractable = ParseBool(currencyStrings[3], true);
+
+            if (!TryParseMaximumSupply(currencyStrings[4], out var maximumSupply))
+            {
+                return false;
+            }
+
+            if (!totalSupplyTractable)
+            {
+                try
+                {
+                    currency = Currency.Legacy(ticker, decimalPlaces, minters);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            if (maximumSupply.HasValue)
+            {
+                try
+                {
+                    currency = Currency.Capped(ticker, decimalPlaces, maximumSupply.Value, minters);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            try
+            {
+                currency = Currency.Uncapped(ticker, decimalPlaces, minters);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryParseMinters(string value, out ImmutableHashSet<Address>? result)
+        {
+            result = null;
+
+            if (value.ToLowerInvariant() == "null")
+            {
+                return true;
+            }
+
+            List<string> mintersStrings = value.Split("/").ToList();
+
+            result = ImmutableHashSet<Address>.Empty;
+
+            foreach (string minterString in mintersStrings)
+            {
+                if (TryParseAddress(minterString, out var minter))
+                {
+                    result = result.Add(minter);
+                }
+                else
+                {
+                    result = null;
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TryParseMaximumSupply(string value, out (BigInteger Major, BigInteger Minor)? result)
+        {
+            result = null;
+
+            if (value.ToLowerInvariant() == "null")
+            {
+                return true;
+            }
+
+            List<string> maximumSupplyStrings = value.Split("/").ToList();
+            if (maximumSupplyStrings.Count != 2)
+            {
+                return false;
+            }
+
+            if (!BigInteger.TryParse(maximumSupplyStrings[0].Trim(), out var major))
+            {
+                return false;
+            }
+
+            if (!BigInteger.TryParse(maximumSupplyStrings[1].Trim(), out var minor))
+            {
+                return false;
+            }
+
+            result = (major, minor);
+            return true;
+        }
+
+        private static bool TryParseAddress(string value, out Address result)
+        {
+            try
+            {
+                result = new Address(value);
+                return true;
+            }
+            catch
+            {
+                result = default;
+                return false;
+            }
         }
     }
 }
