@@ -67,6 +67,7 @@ namespace Nekoyume
 
         public static readonly Address MortgagePool = new Address("0000000000000000000000000000000000100000");
         public static readonly Address GasPool = new Address("0000000000000000000000000000000000100001");
+        public static readonly Address SwapPool = new Address("0000000000000000000000000000000000100002");
 
         #region Guild
 
