@@ -1,0 +1,825 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class GuildRepository | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class GuildRepository | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/feature/swap-pool/apiSpec/new?filename=Nekoyume_Model_Guild_GuildRepository.md&amp;value=---%0Auid%3A%20Nekoyume.Model.Guild.GuildRepository%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.Guild.GuildRepository">
+
+
+
+  <h1 id="Nekoyume_Model_Guild_GuildRepository" data-uid="Nekoyume.Model.Guild.GuildRepository" class="text-break">
+Class GuildRepository  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.Guild.html">Guild</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class GuildRepository : DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;, IDelegationRepository</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html">DelegationRepository</a>&lt;<a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a>, <a class="xref" href="Nekoyume.Model.Guild.GuildDelegatee.html">GuildDelegatee</a>, <a class="xref" href="Nekoyume.Model.Guild.GuildDelegator.html">GuildDelegator</a>&gt;</div>
+      <div><span class="xref">GuildRepository</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Delegation.IDelegationRepository.html">IDelegationRepository</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_previousWorld">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.previousWorld</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_delegateeAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.delegateeAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_delegatorAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.delegatorAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_delegateeMetadataAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.delegateeMetadataAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_delegatorMetadataAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.delegatorMetadataAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_bondAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.bondAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_unbondLockInAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.unbondLockInAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_rebondGraceAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.rebondGraceAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_unbondingSetAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.unbondingSetAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_rewardBaseAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.rewardBaseAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_lumpSumRewardsRecordAccount">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.lumpSumRewardsRecordAccount</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_World">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.World</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_ActionContext">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.ActionContext</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_DelegateeAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegateeAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_DelegatorAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegatorAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_DelegateeMetadataAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegateeMetadataAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_DelegatorMetadataAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.DelegatorMetadataAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_BondAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.BondAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_UnbondLockInAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.UnbondLockInAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_RebondGraceAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RebondGraceAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_UnbondingSetAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.UnbondingSetAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_RewardBaseAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RewardBaseAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_LumpSumRewardsRecordAccountAddress">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.LumpSumRewardsRecordAccountAddress</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetDelegatee_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetDelegatee(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetDelegator_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetDelegator(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetDelegatee__1_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetDelegatee(GuildDelegatee)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetDelegator__2_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetDelegator(GuildDelegator)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetDelegateeMetadata_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetDelegateeMetadata(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetDelegatorMetadata_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetDelegatorMetadata(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetBond__1_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetBond(GuildDelegatee, Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetUnbondLockIn__1_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetUnbondLockIn(GuildDelegatee, Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetUnlimitedUnbondLockIn_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetUnlimitedUnbondLockIn(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetRebondGrace__1_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetRebondGrace(GuildDelegatee, Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetUnlimitedRebondGrace_Libplanet_Crypto_Address_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetUnlimitedRebondGrace(Address)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetCurrentRewardBase__1_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetCurrentRewardBase(GuildDelegatee)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetRewardBase__1_System_Int64_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetRewardBase(GuildDelegatee, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetLumpSumRewardsRecord__1_System_Int64_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetLumpSumRewardsRecord(GuildDelegatee, long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetCurrentLumpSumRewardsRecord__1_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetCurrentLumpSumRewardsRecord(GuildDelegatee)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_GetBalance_Libplanet_Crypto_Address_Libplanet_Types_Assets_Currency_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.GetBalance(Address, Currency)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetDelegateeMetadata_Nekoyume_Delegation_DelegateeMetadata_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetDelegateeMetadata(DelegateeMetadata)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetDelegatorMetadata_Nekoyume_Delegation_DelegatorMetadata_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetDelegatorMetadata(DelegatorMetadata)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetBond_Nekoyume_Delegation_Bond_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetBond(Bond)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetUnbondLockIn_Nekoyume_Delegation_UnbondLockIn_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetUnbondLockIn(UnbondLockIn)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetRebondGrace_Nekoyume_Delegation_RebondGrace_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetRebondGrace(RebondGrace)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetRewardBase_Nekoyume_Delegation_RewardBase_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetRewardBase(RewardBase)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_SetLumpSumRewardsRecord_Nekoyume_Delegation_LumpSumRewardsRecord_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.SetLumpSumRewardsRecord(LumpSumRewardsRecord)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_RemoveLumpSumRewardsRecord_Nekoyume_Delegation_LumpSumRewardsRecord_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.RemoveLumpSumRewardsRecord(LumpSumRewardsRecord)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_TransferAsset_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Types_Assets_FungibleAssetValue_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.TransferAsset(Address, Address, FungibleAssetValue)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Delegation.DelegationRepository-3.html#Nekoyume_Delegation_DelegationRepository_3_UpdateWorld_Libplanet_Action_State_IWorld_">DelegationRepository&lt;GuildRepository, GuildDelegatee, GuildDelegator&gt;.UpdateWorld(IWorld)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildBanModule.html#Nekoyume_Module_Guild_GuildBanModule_Ban_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_Nekoyume_TypedAddress_AgentAddress_">GuildBanModule.Ban(GuildRepository, AgentAddress, AgentAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildBanModule.html#Nekoyume_Module_Guild_GuildBanModule_IsBanned_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Libplanet_Crypto_Address_">GuildBanModule.IsBanned(GuildRepository, GuildAddress, Address)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildBanModule.html#Nekoyume_Module_Guild_GuildBanModule_RemoveBanList_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_">GuildBanModule.RemoveBanList(GuildRepository, GuildAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildBanModule.html#Nekoyume_Module_Guild_GuildBanModule_Unban_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_Libplanet_Crypto_Address_">GuildBanModule.Unban(GuildRepository, AgentAddress, Address)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildDelegateeModule.html#Nekoyume_Module_Guild_GuildDelegateeModule_CreateDelegatee_Nekoyume_Model_Guild_GuildRepository_Libplanet_Crypto_Address_">GuildDelegateeModule.CreateDelegatee(GuildRepository, Address)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildDelegateeModule.html#Nekoyume_Module_Guild_GuildDelegateeModule_TryGetDelegatee_Nekoyume_Model_Guild_GuildRepository_Libplanet_Crypto_Address_Nekoyume_Model_Guild_GuildDelegatee__">GuildDelegateeModule.TryGetDelegatee(GuildRepository, Address, out GuildDelegatee?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildMemberCounterModule.html#Nekoyume_Module_Guild_GuildMemberCounterModule_DecreaseGuildMemberCount_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_">GuildMemberCounterModule.DecreaseGuildMemberCount(GuildRepository, GuildAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildMemberCounterModule.html#Nekoyume_Module_Guild_GuildMemberCounterModule_GetGuildMemberCount_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_">GuildMemberCounterModule.GetGuildMemberCount(GuildRepository, GuildAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildMemberCounterModule.html#Nekoyume_Module_Guild_GuildMemberCounterModule_IncreaseGuildMemberCount_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_">GuildMemberCounterModule.IncreaseGuildMemberCount(GuildRepository, GuildAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildModule.html#Nekoyume_Module_Guild_GuildModule_GetDelegationInfo_Nekoyume_Model_Guild_GuildRepository_Libplanet_Crypto_Address_">GuildModule.GetDelegationInfo(GuildRepository, Address)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildModule.html#Nekoyume_Module_Guild_GuildModule_MakeGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Libplanet_Crypto_Address_">GuildModule.MakeGuild(GuildRepository, GuildAddress, Address)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildModule.html#Nekoyume_Module_Guild_GuildModule_RemoveGuild_Nekoyume_Model_Guild_GuildRepository_">GuildModule.RemoveGuild(GuildRepository)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildModule.html#Nekoyume_Module_Guild_GuildModule_TryGetGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Nekoyume_Model_Guild_Guild__">GuildModule.TryGetGuild(GuildRepository, GuildAddress, out Guild?)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildParticipantModule.html#Nekoyume_Module_Guild_GuildParticipantModule_GetJoinedGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_">GuildParticipantModule.GetJoinedGuild(GuildRepository, AgentAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildParticipantModule.html#Nekoyume_Module_Guild_GuildParticipantModule_JoinGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Nekoyume_TypedAddress_AgentAddress_">GuildParticipantModule.JoinGuild(GuildRepository, GuildAddress, AgentAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildParticipantModule.html#Nekoyume_Module_Guild_GuildParticipantModule_LeaveGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_">GuildParticipantModule.LeaveGuild(GuildRepository, AgentAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildParticipantModule.html#Nekoyume_Module_Guild_GuildParticipantModule_MoveGuild_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_Nekoyume_TypedAddress_GuildAddress_">GuildParticipantModule.MoveGuild(GuildRepository, AgentAddress, GuildAddress)</a>
+  </div>
+  <div>
+      <a class="xref" href="Nekoyume.Module.Guild.GuildParticipantModule.html#Nekoyume_Module_Guild_GuildParticipantModule_TryGetGuildParticipant_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_Nekoyume_Model_Guild_GuildParticipant__">GuildParticipantModule.TryGetGuildParticipant(GuildRepository, AgentAddress, out GuildParticipant?)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository__ctor_" data-uid="Nekoyume.Model.Guild.GuildRepository.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository__ctor_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Model.Guild.GuildRepository.#ctor(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext)">
+  GuildRepository(IWorld, IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuildRepository(IWorld world, IActionContext actionContext)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>actionContext</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository__ctor_" data-uid="Nekoyume.Model.Guild.GuildRepository.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository__ctor_Nekoyume_Delegation_IDelegationRepository_" data-uid="Nekoyume.Model.Guild.GuildRepository.#ctor(Nekoyume.Delegation.IDelegationRepository)">
+  GuildRepository(IDelegationRepository)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuildRepository(IDelegationRepository repository)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>repository</code> <a class="xref" href="Nekoyume.Delegation.IDelegationRepository.html">IDelegationRepository</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_World_" data-uid="Nekoyume.Model.Guild.GuildRepository.World*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_World" data-uid="Nekoyume.Model.Guild.GuildRepository.World">
+  World
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IWorld World { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_GetDelegatee_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetDelegatee*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_GetDelegatee_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetDelegatee(Libplanet.Crypto.Address)">
+  GetDelegatee(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override GuildDelegatee GetDelegatee(Address address)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildDelegatee.html">GuildDelegatee</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_GetDelegator_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetDelegator*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_GetDelegator_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetDelegator(Libplanet.Crypto.Address)">
+  GetDelegator(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override GuildDelegator GetDelegator(Address address)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildDelegator.html">GuildDelegator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_GetGuild_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetGuild*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_GetGuild_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetGuild(Libplanet.Crypto.Address)">
+  GetGuild(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Guild GetGuild(Address address)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_GetGuildParticipant_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetGuildParticipant*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_GetGuildParticipant_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Guild.GuildRepository.GetGuildParticipant(Libplanet.Crypto.Address)">
+  GetGuildParticipant(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GuildParticipant GetGuildParticipant(Address address)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Guild.GuildParticipant.html">GuildParticipant</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_RemoveGuildParticipant_" data-uid="Nekoyume.Model.Guild.GuildRepository.RemoveGuildParticipant*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_RemoveGuildParticipant_Libplanet_Crypto_Address_" data-uid="Nekoyume.Model.Guild.GuildRepository.RemoveGuildParticipant(Libplanet.Crypto.Address)">
+  RemoveGuildParticipant(Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RemoveGuildParticipant(Address guildParticipantAddress)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>guildParticipantAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_SetDelegatee_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetDelegatee*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_SetDelegatee_Nekoyume_Model_Guild_GuildDelegatee_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetDelegatee(Nekoyume.Model.Guild.GuildDelegatee)">
+  SetDelegatee(GuildDelegatee)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void SetDelegatee(GuildDelegatee delegatee)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegatee</code> <a class="xref" href="Nekoyume.Model.Guild.GuildDelegatee.html">GuildDelegatee</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_SetDelegator_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetDelegator*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_SetDelegator_Nekoyume_Model_Guild_GuildDelegator_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetDelegator(Nekoyume.Model.Guild.GuildDelegator)">
+  SetDelegator(GuildDelegator)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void SetDelegator(GuildDelegator delegator)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delegator</code> <a class="xref" href="Nekoyume.Model.Guild.GuildDelegator.html">GuildDelegator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_SetGuild_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetGuild*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_SetGuild_Nekoyume_Model_Guild_Guild_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetGuild(Nekoyume.Model.Guild.Guild)">
+  SetGuild(Guild)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetGuild(Guild guild)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>guild</code> <a class="xref" href="Nekoyume.Model.Guild.Guild.html">Guild</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_SetGuildParticipant_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetGuildParticipant*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_SetGuildParticipant_Nekoyume_Model_Guild_GuildParticipant_" data-uid="Nekoyume.Model.Guild.GuildRepository.SetGuildParticipant(Nekoyume.Model.Guild.GuildParticipant)">
+  SetGuildParticipant(GuildParticipant)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetGuildParticipant(GuildParticipant guildParticipant)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>guildParticipant</code> <a class="xref" href="Nekoyume.Model.Guild.GuildParticipant.html">GuildParticipant</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_Guild_GuildRepository_UpdateWorld_" data-uid="Nekoyume.Model.Guild.GuildRepository.UpdateWorld*"></a>
+
+  <h3 id="Nekoyume_Model_Guild_GuildRepository_UpdateWorld_Libplanet_Action_State_IWorld_" data-uid="Nekoyume.Model.Guild.GuildRepository.UpdateWorld(Libplanet.Action.State.IWorld)">
+  UpdateWorld(IWorld)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void UpdateWorld(IWorld world)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>world</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Guild/GuildRepository.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
