@@ -31,7 +31,8 @@ namespace Nekoyume.Action.Arena
     /// Temp
     /// </summary>
     [Serializable]
-    [ActionType("battle")]
+    // FIXME enable v200280
+    // [ActionType("battle")]
     public class Battle : GameAction
     {
         public const int HpIncreasingModifier = 5;
