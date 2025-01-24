@@ -74,7 +74,12 @@ namespace Nekoyume.Model.Guild
             }
         }
 
+        public override bool Equals(object? obj)
+            => obj is GuildDelegator other && Equals(other);
+
         public bool Equals(GuildDelegator? other)
             => Metadata.Equals(other?.Metadata);
+
+        public override int GetHashCode() => Metadata.GetHashCode();
     }
 }

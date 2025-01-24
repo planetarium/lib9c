@@ -103,6 +103,12 @@ namespace Nekoyume.Module.Guild
                 throw new InvalidOperationException("There are remained participants in the guild.");
             }
 
+            if (repository.GetDelegator(signer).UnbondingRefs.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    $"The signer cannot remove guild while unbonding");
+            }
+
             var delegatee = repository.GetDelegatee(guild.ValidatorAddress);
             var bond = repository.GetBond(delegatee, signer);
             if (bond.Share > 0)

@@ -31,7 +31,13 @@ namespace Nekoyume.ValidatorDelegation
         {
         }
 
+        public override bool Equals(object? obj)
+            => Equals(obj as ValidatorDelegator);
+
         public bool Equals(ValidatorDelegator? other)
             => Metadata.Equals(other?.Metadata);
+
+        public override int GetHashCode()
+            => HashCode.Combine(Address, AccountAddress);
     }
 }

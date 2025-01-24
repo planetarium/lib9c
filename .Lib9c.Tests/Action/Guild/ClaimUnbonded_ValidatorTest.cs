@@ -8,6 +8,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Action.Guild;
+using Nekoyume.Model.Guild;
 using Nekoyume.Model.Stake;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
@@ -84,6 +85,7 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
     [InlineData(793705868)]
     [InlineData(559431555)]
     [InlineData(1133637517)]
+    [InlineData(52169708)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -138,13 +140,13 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
         var expectedValidatorShare = validatorShare - shareToUndelegate;
         var expectedTotalShare = expectedValidatorShare + masterShare;
         var expectedTotalGG = totalGG - expectedStakedGG;
-
         var claimUnbonded = new ClaimUnbonded();
+        var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
         var actionContext = new ActionContext
         {
             PreviousState = world,
             Signer = validatorKey.Address,
-            BlockIndex = height + ValidatorDelegatee.ValidatorUnbondingPeriod,
+            BlockIndex = height + delegatee.UnbondingPeriod,
         };
         world = claimUnbonded.Execute(actionContext);
 
@@ -161,12 +163,12 @@ public class ClaimUnbonded_ValidatorTest : GuildTestBase
 
         // Check ncg after unstaking
         var amountGG = validatorSlashedGG - expectedStakedGG;
-        const long minimumStakeAmount = 50;
-        if (amountGG.MajorUnit >= minimumStakeAmount)
+        var minimumStakeAmount = NCG * 50;
+        var ncg = GGToNCG(amountGG);
+        var majorUnit = ncg.MinorUnit > 0 ? ncg.MajorUnit + 1 : ncg.MajorUnit;
+        var amount = new FungibleAssetValue(NCG, majorUnit, 0);
+        if (amount >= minimumStakeAmount && amount <= validatorSlashedNCG)
         {
-            var ncg = GGToNCG(amountGG);
-            var majorUnit = ncg.MinorUnit > 0 ? ncg.MajorUnit + 1 : ncg.MajorUnit;
-            var amount = new FungibleAssetValue(NCG, majorUnit, 0);
             var expectedNCG1 = NCG * 0;
             var expectedNCG2 = validatorSlashedNCG - amount;
             var actualNCG1 = world.GetBalance(validatorKey.Address, NCG);

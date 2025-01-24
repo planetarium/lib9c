@@ -5,6 +5,8 @@ using System.Numerics;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.Delegation;
+using Nekoyume.Module;
+using Nekoyume.TableData.Stake;
 using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Model.Guild
@@ -25,7 +27,9 @@ namespace Nekoyume.Model.Guild
                   rewardPoolAddress: DelegationAddress.RewardPoolAddress(address, repository.DelegateeAccountAddress),
                   rewardRemainderPoolAddress: Addresses.CommunityPool,
                   slashedPoolAddress: Addresses.CommunityPool,
-                  unbondingPeriod: ValidatorDelegatee.ValidatorUnbondingPeriod,
+                  unbondingPeriod: repository.World.TryGetSheet<StakePolicySheet>(out var sheet)
+                    ? sheet.LockupIntervalValue
+                    : ValidatorDelegatee.DefaultUnbondingPeriod,
                   maxUnbondLockInEntries: GuildMaxUnbondLockInEntries,
                   maxRebondGraceEntries: GuildMaxRebondGraceEntries,
                   repository: repository)
@@ -39,7 +43,9 @@ namespace Nekoyume.Model.Guild
                   address: address,
                   repository: repository)
         {
-            Metadata.UnbondingPeriod = ValidatorDelegatee.ValidatorUnbondingPeriod;
+            Metadata.UnbondingPeriod = repository.World.TryGetSheet<StakePolicySheet>(out var sheet)
+                ? sheet.LockupIntervalValue
+                : ValidatorDelegatee.DefaultUnbondingPeriod;
             Metadata.MaxUnbondLockInEntries = GuildMaxUnbondLockInEntries;
             Metadata.MaxRebondGraceEntries = GuildMaxRebondGraceEntries;
         }
@@ -75,7 +81,12 @@ namespace Nekoyume.Model.Guild
             Metadata.DelegationPoolAddress = ValidatorDelegatee.InactiveDelegationPoolAddress;
         }
 
+        public override bool Equals(object? obj)
+            => obj is GuildDelegatee other && Equals(other);
+
         public bool Equals(GuildDelegatee? other)
             => Metadata.Equals(other?.Metadata);
+
+        public override int GetHashCode() => Metadata.GetHashCode();
     }
 }

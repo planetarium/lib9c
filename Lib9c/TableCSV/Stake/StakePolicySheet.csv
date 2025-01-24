@@ -2,4 +2,4 @@ attr_name,value
 StakeRegularFixedRewardSheet,StakeRegularFixedRewardSheet_V3
 StakeRegularRewardSheet,StakeRegularRewardSheet_V9
 RewardInterval,75600
-LockupInterval,302400
+LockupInterval,75600

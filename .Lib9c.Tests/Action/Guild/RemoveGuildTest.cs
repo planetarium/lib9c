@@ -301,7 +301,18 @@ public class RemoveGuildTest : GuildTestBase
         {
             PreviousState = world,
             Signer = masterAddress,
-            BlockIndex = height,
+            BlockIndex = height++,
+        };
+        Assert.Throws<InvalidOperationException>(() => removeGuild.Execute(actionContext));
+
+        height += ValidatorDelegatee.DefaultUnbondingPeriod;
+        world = EnsureToReleaseUnbonding(world, masterAddress, height++);
+
+        actionContext = new ActionContext
+        {
+            PreviousState = world,
+            Signer = masterAddress,
+            BlockIndex = height++,
         };
         world = removeGuild.Execute(actionContext);
 

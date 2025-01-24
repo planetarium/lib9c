@@ -56,6 +56,9 @@ namespace Nekoyume
         public static readonly Address ClaimedGiftIds        = new("0000000000000000000000000000000000000025");
         public static readonly Address PatrolReward          = new("0000000000000000000000000000000000000026");
 
+        // Arena
+        public static readonly Address Battle                = new("0000000000000000000000000000000000000027");
+
         // Adventure Boss
         public static readonly Address AdventureBoss         = new("0000000000000000000000000000000000000100");
         public static readonly Address BountyBoard           = new("0000000000000000000000000000000000000101");

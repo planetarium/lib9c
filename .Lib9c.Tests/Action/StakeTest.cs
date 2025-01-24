@@ -331,8 +331,9 @@ namespace Lib9c.Tests.Action
                 _agentAddr,
                 amount);
 
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                world, _agentAddr, height + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                world, _agentAddr, height + delegatee.UnbondingPeriod);
         }
 
         [Theory]
@@ -407,8 +408,9 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                nextState, _agentAddr, height + interval + delegatee.UnbondingPeriod);
 
             var expectedBalance = _ncg * Math.Max(0, previousAmount - amount);
             var actualBalance = world.GetBalance(_agentAddr, _ncg);
@@ -548,8 +550,9 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(3, nextStakeState.StateVersion);
             }
 
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(_agentAddr);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                nextState, _agentAddr, height + interval + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                nextState, _agentAddr, height + interval + delegatee.UnbondingPeriod);
 
             var expectedBalance = _ncg * (Math.Max(0, previousAmount - amount) + promoteAmount);
             var expectedStaked = _ncg * amount;
@@ -581,11 +584,106 @@ namespace Lib9c.Tests.Action
             Assert.True(world.TryGetStakeState(_agentAddr, out var stakeState));
             height += stakeState.CancellableBlockIndex;
             world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 0, height++);
+            var delegatee = new GuildRepository(world, new ActionContext { }).GetDelegatee(validatorKey.Address);
             world = DelegationUtil.EnsureUnbondedClaimed(
-                world, _agentAddr, height++ + ValidatorDelegatee.ValidatorUnbondingPeriod);
+                world, _agentAddr, height++ + delegatee.UnbondingPeriod);
 
             var actualNCG = world.GetBalance(_agentAddr, _ncg);
             Assert.Equal(_ncg * 90, actualNCG);
+        }
+
+        [Fact]
+        public void Execute_Success_Exceptional_Unmigrated()
+        {
+            var world = _initialState;
+            var height = 0L;
+            var promoteAmount = 50;
+            var validatorKey = new PrivateKey();
+            var validatorAddress = validatorKey.PublicKey.Address;
+            var guildMasterKey = new PrivateKey();
+            var guildMasterAddress = new GuildAddress(guildMasterKey.Address);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, validatorKey.PublicKey, promoteAmount, height++);
+            world = DelegationUtil.MakeGuild(
+                world, guildMasterAddress, validatorAddress, height++, out var guildAddress);
+            world = DelegationUtil.JoinGuild(world, _agentAddr, guildAddress, height++);
+            world = DelegationUtil.MintNCG(world, _agentAddr, 100, height++);
+            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
+            var stakeState = new LegacyStakeState(
+                address: stakeStateAddr,
+                startedBlockIndex: height++);
+            world = world.TransferAsset(
+                new ActionContext { },
+                _agentAddr,
+                stakeStateAddr,
+                world.GetGoldCurrency() * 100);
+            world = world.SetLegacyState(stakeStateAddr, stakeState.Serialize());
+
+            Assert.True(world.TryGetStakeState(_agentAddr, out var stakeStateV2));
+            Assert.Equal(2, stakeStateV2.StateVersion);
+            Assert.Equal(Currencies.GuildGold * 0, world.GetBalance(stakeStateAddr, Currencies.GuildGold));
+            var repo = new GuildRepository(world, new ActionContext { });
+            var share = repo.GetBond(repo.GetDelegatee(validatorAddress), _agentAddr).Share;
+            Assert.Equal((Currencies.GuildGold * 0).RawValue, share);
+
+            if (!StakeStateUtils.TryMigrateV2ToV3(
+                new ActionContext { },
+                world,
+                stakeStateAddr,
+                stakeStateV2,
+                out var result))
+            {
+                throw new InvalidOperationException("Failed to migration. Unexpected situation.");
+            }
+
+            world = result.Value.world;
+            Assert.True(world.TryGetStakeState(_agentAddr, out var stakeStateV3));
+            Assert.Equal(3, stakeStateV3.StateVersion);
+            Assert.Equal(Currencies.GuildGold * 100, world.GetBalance(stakeStateAddr, Currencies.GuildGold));
+            repo.UpdateWorld(world);
+            share = repo.GetBond(repo.GetDelegatee(validatorAddress), _agentAddr).Share;
+            Assert.Equal((Currencies.GuildGold * 0).RawValue, share);
+
+            world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 100, height++);
+            Assert.Equal(Currencies.GuildGold * 0, world.GetBalance(stakeStateAddr, Currencies.GuildGold));
+            repo.UpdateWorld(world);
+            share = repo.GetBond(repo.GetDelegatee(validatorAddress), _agentAddr).Share;
+            Assert.Equal((Currencies.GuildGold * 100).RawValue, share);
+        }
+
+        [Fact]
+        public void Execute_Success_Unmigrated()
+        {
+            var world = _initialState;
+            var height = 0L;
+            var promoteAmount = 50;
+            var validatorKey = new PrivateKey();
+            var validatorAddress = validatorKey.PublicKey.Address;
+            var guildMasterKey = new PrivateKey();
+            var guildMasterAddress = new GuildAddress(guildMasterKey.Address);
+            world = DelegationUtil.EnsureValidatorPromotionReady(
+                world, validatorKey.PublicKey, promoteAmount, height++);
+            world = DelegationUtil.MakeGuild(
+                world, guildMasterAddress, validatorAddress, height++, out var guildAddress);
+            world = DelegationUtil.JoinGuild(world, _agentAddr, guildAddress, height++);
+            world = DelegationUtil.MintNCG(world, _agentAddr, 100, height++);
+            var stakeStateAddr = LegacyStakeState.DeriveAddress(_agentAddr);
+            var stakeState = new LegacyStakeState(
+                address: stakeStateAddr,
+                startedBlockIndex: height++);
+            world = world.TransferAsset(
+                new ActionContext { },
+                _agentAddr,
+                stakeStateAddr,
+                world.GetGoldCurrency() * 100);
+            world = world.SetLegacyState(stakeStateAddr, stakeState.Serialize());
+            var repo = new GuildRepository(world, new ActionContext { });
+            var share = repo.GetBond(repo.GetDelegatee(validatorAddress), _agentAddr).Share;
+            Assert.Equal((Currencies.GuildGold * 0).RawValue, share);
+            world = DelegationUtil.Stake(world, _agentAddr, _avatarAddr, 100, height++);
+            repo.UpdateWorld(world);
+            share = repo.GetBond(repo.GetDelegatee(validatorAddress), _agentAddr).Share;
+            Assert.Equal((Currencies.GuildGold * 100).RawValue, share);
         }
 
         private IWorld Execute(
