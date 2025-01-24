@@ -218,13 +218,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     : new ItemSlotState(BattleType.Adventure);
             Assert.True(itemSlotState.Equipments.Count == 0);
 
-            var previousAvatarState = _initialState.GetAvatarState(TesterAvatarAddress);
-            var equipments = Doomfist.GetAllParts(TableSheets, previousAvatarState.level);
-            foreach (var equipment in equipments)
-            {
-                previousAvatarState.inventory.AddItem(equipment);
-            }
-
             var expectedItemRewards = new List<(int, int)>();
             var expectedFavRewards = new List<(int, int)>();
             var firstRewardSheet = TableSheets.AdventureBossFloorFirstRewardSheet;
@@ -254,7 +247,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Season = 1,
                 AvatarAddress = TesterAvatarAddress,
                 Costumes = new List<Guid>(),
-                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Equipments = new List<Guid>(),
                 Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
             };
@@ -335,18 +328,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     Assert.True(
                         amount * currency <= state.GetBalance(TesterAvatarAddress, currency));
                 }
-
-                itemSlotState =
-                    state.TryGetLegacyState(itemSlotStateAddress, out rawItemSlotState)
-                        ? new ItemSlotState(rawItemSlotState)
-                        : new ItemSlotState(BattleType.Adventure);
-                Assert.True(itemSlotState.Equipments.Count > 0);
             }
         }
 
         private IWorld Stake(IWorld world, Address agentAddress)
         {
-            var action = new Stake(new BigInteger(500_000));
+            var action = new Stake(new BigInteger(500_000), TesterAvatarAddress);
             var state = action.Execute(
                 new ActionContext
                 {

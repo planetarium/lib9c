@@ -34,8 +34,6 @@ namespace Nekoyume.Delegation
 
         RebondGrace GetUnlimitedRebondGrace(Address address);
 
-        UnbondingSet GetUnbondingSet();
-
         /// <summary>
         /// Get the current <see cref="RewardBase"/> of the <paramref name="delegatee"/>.
         /// </summary>
@@ -82,8 +80,6 @@ namespace Nekoyume.Delegation
         void SetUnbondLockIn(UnbondLockIn unbondLockIn);
 
         void SetRebondGrace(RebondGrace rebondGrace);
-
-        void SetUnbondingSet(UnbondingSet unbondingSet);
 
         /// <summary>
         /// Set the <see cref="RewardBase"/> of the <see cref="IDelegatee"/>.

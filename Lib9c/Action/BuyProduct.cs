@@ -12,6 +12,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
+using Nekoyume.Extensions;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Mail;
@@ -176,15 +177,7 @@ namespace Nekoyume.Action
             var receipt = new ProductReceipt(productId, sellerAvatarAddress, buyerAvatarState.address, product.Price,
                 context.BlockIndex);
 
-            var feeAddress = Addresses.RewardPool;
-            // TODO: [GuildMigration] Remove this after migration
-            if (states.GetDelegationMigrationHeight() is long migrationHeight
-                && context.BlockIndex < migrationHeight)
-            {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-            }
+            var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
             states = states
                 .RemoveLegacyState(productAddress)
@@ -308,15 +301,7 @@ namespace Nekoyume.Action
             var taxedPrice = order.Price - tax;
 
             // Transfer tax.
-            var feeAddress = Addresses.RewardPool;
-            // TODO: [GuildMigration] Remove this after migration
-            if (states.GetDelegationMigrationHeight() is long migrationHeight
-                && context.BlockIndex < migrationHeight)
-            {
-                var arenaSheet = states.GetSheet<ArenaSheet>();
-                var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-            }
+            var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
             states = states.TransferAsset(
                 context,

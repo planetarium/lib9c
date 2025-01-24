@@ -14,6 +14,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
+using Nekoyume.Module.Guild;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Crystal;
 using Nekoyume.TableData.Rune;
@@ -218,7 +219,7 @@ namespace Nekoyume.Action
             StakeActionPointCoefficientSheet actionPointCoefficientSheet = null;
 
             var goldCurrency = states.GetGoldCurrency();
-            var stakedAmount = states.GetStakedAmount(signer);
+            var stakedAmount = states.GetStaked(signer);
             if (stakedAmount > goldCurrency * 0 &&
                 sheets.TryGetSheet(out actionPointCoefficientSheet))
             {
@@ -529,6 +530,12 @@ namespace Nekoyume.Action
             if (migrateRequired)
             {
                 states = states.SetRuneState(AvatarAddress, runeStates);
+            }
+
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
             }
 
             slotstateActivity?.Dispose();

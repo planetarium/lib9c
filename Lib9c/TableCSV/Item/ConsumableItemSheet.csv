@@ -57,3 +57,6 @@ id,_name,item_sub_type,grade,elemental_type,stat_type_1,stat_value_1,stat_type_2
 900110,오렌지 젤리,Food,3,Normal,HP,4545,DEF,909
 900111,오렌지 주스,Food,4,Normal,HP,11244,DEF,2248
 900112,오렌지 젤라또,Food,5,Normal,HP,27571,DEF,5514
+900113,라그나 데낄라,Food,3,Normal,DEF,836,ATK,557
+900114,짭쪼름한 엘릭서,Food,4,Normal,DEF,2068,ATK,1379
+900115,라글렌피딕 99년 산,Food,5,Normal,DEF,5073,ATK,3382

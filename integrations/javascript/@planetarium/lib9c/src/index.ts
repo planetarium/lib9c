@@ -19,6 +19,10 @@ export {
   type TransferAssetsArgs,
 } from "./actions/transfer_assets.js";
 export {
+  HackAndSlash,
+  type HackAndSlashArgs,
+} from "./actions/hack_and_slash.js";
+export {
   DeliverToOtherGarages,
   type DeliverToOtherGaragesArgs,
 } from "./actions/deliver_to_others_garages.js";
@@ -63,11 +67,6 @@ export {
   MakeGuild,
   type MakeGuildArgs,
 } from "./actions/make_guild.js";
-export { MigratePlanetariumGuild } from "./actions/migrate_planetarium_guild.js";
-export {
-  MigrateDelegation,
-  type MigrateDelegationArgs,
-} from "./actions/migrate_delegation.js";
 export {
   MintAssets,
   type MintAssetsArgs,

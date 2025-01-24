@@ -8,7 +8,7 @@ namespace Nekoyume.Delegation
     using Libplanet.Types.Assets;
     using Nekoyume.Action;
 
-    public class TestRepository : DelegationRepository
+    public class TestRepository : DelegationRepository<TestRepository, TestDelegatee, TestDelegator>
     {
         private readonly IActionContext _context;
 
@@ -54,11 +54,11 @@ namespace Nekoyume.Delegation
             }
         }
 
-        public override void SetDelegatee(IDelegatee delegatee)
-            => SetDelegateeMetadata(((TestDelegatee)delegatee).Metadata);
+        public override void SetDelegatee(TestDelegatee delegatee)
+            => SetDelegateeMetadata(delegatee.Metadata);
 
-        public override void SetDelegator(IDelegator delegator)
-            => SetDelegatorMetadata(((TestDelegator)delegator).Metadata);
+        public override void SetDelegator(TestDelegator delegator)
+            => SetDelegatorMetadata(delegator.Metadata);
 
         public void MintAsset(Address recipient, FungibleAssetValue value)
             => previousWorld = previousWorld.MintAsset(_context, recipient, value);

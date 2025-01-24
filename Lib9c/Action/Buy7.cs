@@ -427,7 +427,7 @@ namespace Nekoyume.Action
                 buyerAvatarState.Update(buyerMail);
                 if (purchaseResult.itemUsable != null)
                 {
-                    buyerAvatarState.UpdateFromAddItem2(purchaseResult.itemUsable, false);
+                    buyerAvatarState.UpdateFromAddItem(purchaseResult.itemUsable, false);
                 }
 
                 if (purchaseResult.costume != null)
@@ -437,7 +437,7 @@ namespace Nekoyume.Action
 
                 if (purchaseResult.tradableFungibleItem is TradableMaterial material)
                 {
-                    buyerAvatarState.UpdateFromAddItem2(material, shopItem.TradableFungibleItemCount, false);
+                    buyerAvatarState.UpdateFromAddItem(material, shopItem.TradableFungibleItemCount, false);
                 }
 
                 sellerAvatarState.Update(sellerMail);
@@ -449,8 +449,8 @@ namespace Nekoyume.Action
                 sellerAvatarState.updatedAt = ctx.BlockIndex;
                 sellerAvatarState.blockIndex = ctx.BlockIndex;
 
-                buyerAvatarState.UpdateQuestRewards2(materialSheet);
-                sellerAvatarState.UpdateQuestRewards2(materialSheet);
+                buyerAvatarState.UpdateQuestRewards(materialSheet);
+                sellerAvatarState.UpdateQuestRewards(materialSheet);
 
                 states = states.SetAvatarState(sellerAvatarAddress, sellerAvatarState);
                 sw.Stop();

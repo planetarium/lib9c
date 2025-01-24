@@ -35,6 +35,13 @@ namespace Nekoyume.Action
         /// </summary>
         public static readonly int[] InvalidMaterialItemId = { 10660004, 10760009, 40100042, 40100043, };
 
+        private static readonly ItemSubType[] EnableSubTypes =
+        {
+            ItemSubType.Aura,
+            ItemSubType.Grimoire,
+            ItemSubType.FullCostume,
+        };
+
         private const string TypeIdentifier = "synthesize";
 
         private const string MaterialsKey = "m";
@@ -77,6 +84,13 @@ namespace Nekoyume.Action
             var states = context.PreviousState;
             var materialGrade = (Grade)MaterialGradeId;
             var materialItemSubType = (ItemSubType)MaterialItemSubTypeId;
+
+            if (!EnableSubTypes.Contains(materialItemSubType))
+            {
+                throw new InvalidMaterialException(
+                    $"{materialItemSubType} is not a valid material item sub type."
+                );
+            }
 
             // Collect addresses
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);

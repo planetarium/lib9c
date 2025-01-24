@@ -29,7 +29,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         private static readonly Address AdminAddr = new PrivateKey().Address;
 
         // See also InitializeUtil.cs
-        private static readonly Currency Ncg = Currency.Legacy(
+        private static readonly Currency Ncg = Currency.Uncapped(
             "NCG",
             2,
             null
@@ -48,7 +48,7 @@ namespace Lib9c.DevExtensions.Tests.Action
         {
             (_tableSheets, _agentAddress, _avatarAddress, _initialStateV2) =
                 InitializeUtil.InitializeStates(
-                    adminAddr: AdminAddr,
+                    AdminAddr,
                     isDevEx: true);
             _recipeAddress = _avatarAddress.Derive("recipe_ids");
             _avatarState = _initialStateV2.GetAvatarState(_avatarAddress);
@@ -69,42 +69,42 @@ namespace Lib9c.DevExtensions.Tests.Action
             {
                 "newAvatar", null, null, null,
                 null, null,
-                null, null, null, null
+                null, null, null, null,
             };
             // Change level and exp
             yield return new object?[]
             {
                 null, random.Next(1, 300), (long)random.Next(0, 100), null,
                 null, null,
-                null, null, null, null
+                null, null, null, null,
             };
             // Change AP
             yield return new object?[]
             {
                 null, null, null, random.Next(0, 120),
                 null, null,
-                null, null, null, null
+                null, null, null, null,
             };
             // Change block indexes
             yield return new object?[]
             {
                 null, null, null, null,
                 blockIndex + 1700, blockIndex, // Get another daily reward
-                null, null, null, null
+                null, null, null, null,
             };
             // Change outfit
             yield return new object?[]
             {
                 null, null, null, null,
                 null, null,
-                random.Next(0, 4), random.Next(0, 4), random.Next(0, 4), random.Next(0, 4)
+                random.Next(0, 4), random.Next(0, 4), random.Next(0, 4), random.Next(0, 4),
             };
             // Change multiple things
             yield return new object?[]
             {
                 "newAvatar", random.Next(1, 300), (long)random.Next(0, 100), random.Next(0, 120),
                 blockIndex + 1700, blockIndex,
-                random.Next(0, 4), random.Next(0, 4), random.Next(0, 4), random.Next(0, 4)
+                random.Next(0, 4), random.Next(0, 4), random.Next(0, 4), random.Next(0, 4),
             };
         }
 
@@ -131,7 +131,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             // Clear Inventory
             yield return new object[]
             {
-                new Inventory()
+                new Inventory(),
             };
 
             // Equipment
@@ -139,7 +139,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             equipmentInventory.AddItem(equipment);
             yield return new object[]
             {
-                equipmentInventory
+                equipmentInventory,
             };
 
             // Material
@@ -147,14 +147,14 @@ namespace Lib9c.DevExtensions.Tests.Action
             materialInventory.AddItem(material);
             yield return new object[]
             {
-                materialInventory
+                materialInventory,
             };
             // Consumable
             var consumableInventory = new Inventory();
             consumableInventory.AddItem(equipment);
             yield return new object[]
             {
-                consumableInventory
+                consumableInventory,
             };
             // Mixed
             var inventory = new Inventory();
@@ -163,7 +163,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             inventory.AddItem(material);
             yield return new object[]
             {
-                inventory
+                inventory,
             };
         }
 
@@ -175,20 +175,20 @@ namespace Lib9c.DevExtensions.Tests.Action
             yield return new object[]
             {
                 0,
-                new WorldInformation(0L, worldSheet, 0)
+                new WorldInformation(0L, worldSheet, 0),
             };
 
             var targetStage = random.Next(1, 300);
             yield return new object[]
             {
                 targetStage,
-                new WorldInformation(0L, worldSheet, targetStage)
+                new WorldInformation(0L, worldSheet, targetStage),
             };
 
             yield return new object[]
             {
-                tableSheets.WorldSheet.OrderedList.Last(world => world.Id < 100).StageEnd,
-                new WorldInformation(0L, worldSheet, true)
+                tableSheets.WorldSheet.OrderedList!.Last(world => world.Id < 100).StageEnd,
+                new WorldInformation(0L, worldSheet, true),
             };
         }
 
@@ -213,7 +213,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                     tableSheets.QuestItemRewardSheet,
                     tableSheets.EquipmentItemRecipeSheet,
                     tableSheets.EquipmentItemSubRecipeSheet
-                )
+                ),
             };
 
             // Clear combination quest
@@ -231,7 +231,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             yield return new object[]
             {
                 combinationQuestList.completedQuestIds,
-                combinationQuestList
+                combinationQuestList,
             };
 
             // Clear trade quest
@@ -247,7 +247,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             yield return new object[]
             {
                 tradeQuestList.completedQuestIds,
-                tradeQuestList
+                tradeQuestList,
             };
 
             // Clear stage quest
@@ -269,7 +269,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             yield return new object[]
             {
                 stageQuestList.completedQuestIds,
-                stageQuestList
+                stageQuestList,
             };
 
             // Clear multiple
@@ -291,7 +291,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             yield return new object[]
             {
                 questList.completedQuestIds,
-                questList
+                questList,
             };
         }
 
@@ -355,7 +355,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             {
                 PreviousState = state,
                 Signer = _agentAddress,
-                BlockIndex = int.MaxValue / 2
+                BlockIndex = int.MaxValue / 2,
             });
         }
 
@@ -421,7 +421,7 @@ namespace Lib9c.DevExtensions.Tests.Action
 
         private void TestInventoryState(IWorld state, Inventory targetInventory)
         {
-            var inventoryState = new Inventory((List)state.GetAccount(Addresses.Inventory).GetState(_avatarAddress));
+            var inventoryState = new Inventory((List)state.GetAccount(Addresses.Inventory).GetState(_avatarAddress)!);
             Assert.Equal(targetInventory.Items.Count, inventoryState.Items.Count);
             foreach (var item in targetInventory.Items)
             {
@@ -455,7 +455,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _initialStateV2,
                 new List<(Address, Address, IValue)>
                 {
-                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList())
+                    (Addresses.Avatar, _avatarAddress, newAvatarState.SerializeList()),
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -547,7 +547,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 _initialStateV2,
                 new List<(Address, Address, IValue)>
                 {
-                    (Addresses.WorldInformation, _avatarAddress, targetInfo.Serialize())
+                    (Addresses.WorldInformation, _avatarAddress, targetInfo.Serialize()),
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -562,7 +562,7 @@ namespace Lib9c.DevExtensions.Tests.Action
             var state = Manipulate(_initialStateV2,
                 new List<(Address, Address, IValue)>
                 {
-                    (Addresses.QuestList, _avatarAddress, questList.Serialize())
+                    (Addresses.QuestList, _avatarAddress, questList.Serialize()),
                 },
                 new List<(Address, FungibleAssetValue)>()
             );
@@ -579,7 +579,7 @@ namespace Lib9c.DevExtensions.Tests.Action
                 new List<(Address, Address, IValue)>(),
                 new List<(Address, FungibleAssetValue)>
                 {
-                    (addr, fav)
+                    (addr, fav),
                 }
             );
 

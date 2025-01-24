@@ -596,7 +596,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             world = DelegationUtil.EnsureValidatorPromotionReady(world, validatorKey, 0L);
             world = DelegationUtil.MakeGuild(world, AgentAddress, validatorKey.Address, 0L);
 
-            var action = new Stake(new BigInteger(amount));
+            var action = new Stake(new BigInteger(amount), AvatarAddress);
             return action.Execute(
                 new ActionContext
                 {

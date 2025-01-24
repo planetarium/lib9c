@@ -12,6 +12,7 @@
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions;
+    using Nekoyume.Action.Guild.Migration.LegacyModels;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -66,7 +67,8 @@
                     Addresses.GoldCurrency,
                     _agentAddress,
                     gold.Currency * 1000
-                );
+                )
+                .SetDelegationMigrationHeight(0);
 
             Assert.Equal(
                 gold.Currency * 99999999000,
@@ -146,6 +148,12 @@
 
                 inventory.TryGetItem((int)materialId!, out var resultMaterial);
                 Assert.Equal(0, resultMaterial?.count ?? 0);
+
+                var row = _tableSheets.CostumeSummonSheet[groupId];
+                if (row.CostNcg > 0)
+                {
+                    Assert.True(nextState.GetBalance(Addresses.RewardPool, _currency) > 0 * _currency);
+                }
             }
             else
             {

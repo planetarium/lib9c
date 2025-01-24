@@ -96,7 +96,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                1, 100, 99, null, new[] { (600301, 3), (600302, 0), (600303, 0), (600304, 0), },
+                1, 100, 99, null, new[] { (600301, 5), (600302, 0), (600303, 0), (600304, 0), },
             };
             yield return new object[]
             {
@@ -108,7 +108,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                20, 20, 0, null, new[] { (600301, 9), (600302, 10), (600303, 8), (600304, 8), },
+                20, 20, 0, null, new[] { (600301, 15), (600302, 18), (600303, 14), (600304, 14), },
             };
         }
 
@@ -256,7 +256,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
         private IWorld Stake(IWorld world, Address agentAddress)
         {
-            var action = new Stake(new BigInteger(500_000));
+            var action = new Stake(new BigInteger(500_000), TesterAvatarAddress);
             var state = action.Execute(
                 new ActionContext
                 {

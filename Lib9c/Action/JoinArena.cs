@@ -92,7 +92,7 @@ namespace Nekoyume.Action
                     $"[{nameof(JoinArena)}] Aborted as the avatar state of the signer was failed to load.");
             }
 
-            // check the avatar already joined the arena. 
+            // check the avatar already joined the arena.
             if (states.GetArenaParticipant(championshipId, round, avatarAddress) is not null)
             {
                 throw new AlreadyJoinedArenaException(championshipId, round, avatarAddress);
@@ -174,13 +174,7 @@ namespace Nekoyume.Action
                         $"required {fee}, but balance is {crystalBalance}");
                 }
 
-                var feeAddress = Addresses.RewardPool;
-                // TODO: [GuildMigration] Remove this after migration
-                if (states.GetDelegationMigrationHeight() is long migrationHeight
-                    && context.BlockIndex < migrationHeight)
-                {
-                    feeAddress = ArenaHelper.DeriveArenaAddress(roundData.ChampionshipId, roundData.Round);
-                }
+                var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
                 states = states.TransferAsset(context, context.Signer, feeAddress, fee);
             }

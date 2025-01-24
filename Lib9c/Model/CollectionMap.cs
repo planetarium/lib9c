@@ -61,7 +61,7 @@ namespace Nekoyume.Model
         [SuppressMessage(
             "Libplanet.Analyzers.ActionAnalyzer",
             "LAA1002",
-            Justification = "It's serialzed into a dictionary in the end.")]
+            Justification = "It's serialized into a dictionary in the end.")]
         public IValue Serialize() => _serialized ?? new Dictionary(
             Dictionary.Select(kv =>
                 new KeyValuePair<IKey, IValue>(

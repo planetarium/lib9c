@@ -6,6 +6,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -123,21 +124,7 @@ namespace Nekoyume.Action
             foreach (var (itemId, quantity, tradable) in giftRow.Items)
             {
                 var itemRow = itemSheet[itemId];
-                if (itemRow is MaterialItemSheet.Row materialRow)
-                {
-                    var item = tradable
-                        ? ItemFactory.CreateTradableMaterial(materialRow)
-                        : ItemFactory.CreateMaterial(materialRow);
-                    inventory.AddItem(item, quantity);
-                }
-                else
-                {
-                    foreach (var _ in Enumerable.Range(0, quantity))
-                    {
-                        var item = ItemFactory.CreateItem(itemRow, random);
-                        inventory.AddItem(item);
-                    }
-                }
+                inventory.MintItem(itemRow, quantity, tradable, random);
             }
 
             claimedGiftIds.Add(giftRow.Id);

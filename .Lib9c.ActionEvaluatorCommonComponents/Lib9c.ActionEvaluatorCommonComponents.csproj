@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputPath>.bin</OutputPath>
+    <IntermediateOutputPath>.obj</IntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="!'$(UseLocalLibplanet)'">
+    <PackageReference Include="Libplanet" Version="$(LibplanetVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseLocalLibplanet)'">
+    <ProjectReference Include="$(LibplanetDirectory)\src\Libplanet\Libplanet.csproj" />
+  </ItemGroup>
+
+</Project>

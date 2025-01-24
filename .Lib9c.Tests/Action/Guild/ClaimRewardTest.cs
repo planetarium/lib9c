@@ -249,7 +249,7 @@ public class ClaimRewardTest : ValidatorDelegationTestBase
         // Calculate expected values for comparison with actual values.
         var expectedRepository = new ValidatorRepository(world, actionContext);
         var expectedGuildRepository = new GuildRepository(expectedRepository);
-        var expectedDelegatee = expectedRepository.GetValidatorDelegatee(validatorKey.Address);
+        var expectedDelegatee = expectedRepository.GetDelegatee(validatorKey.Address);
         var expectedTotalShares = expectedDelegatee.TotalShares;
         var expectedValidatorShare
             = expectedRepository.GetBond(expectedDelegatee, validatorKey.Address).Share;
@@ -346,7 +346,7 @@ public class ClaimRewardTest : ValidatorDelegationTestBase
         // Then
         var validatorRepository = new ValidatorRepository(world, actionContext);
         var guildRepository = new GuildRepository(world, actionContext);
-        var delegatee = validatorRepository.GetValidatorDelegatee(validatorKey.Address);
+        var delegatee = validatorRepository.GetDelegatee(validatorKey.Address);
         var actualRemainGuildReward = world.GetBalance(delegatee.RewardRemainderPoolAddress, GuildAllocateRewardCurrency);
         var actualValidatorBalance = world.GetBalance(StakeState.DeriveAddress(validatorKey.Address), DelegationCurrency);
         var actualValidatorGuildReward = world.GetBalance(validatorKey.Address, GuildAllocateRewardCurrency);

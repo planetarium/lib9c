@@ -80,7 +80,7 @@ namespace Nekoyume.Action
             result.id = mail.id;
             dailyRewardResult = result;
             avatarState.Update(mail);
-            avatarState.UpdateFromAddItem2(material, rewardItemCount, false);
+            avatarState.UpdateFromAddItem(material, rewardItemCount, false);
             return states.SetAvatarState(avatarAddress, avatarState);
         }
 

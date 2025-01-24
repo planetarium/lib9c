@@ -13,6 +13,7 @@ _100002,일격(전체),Normal,Attack,BlowAttack,Enemies,1,1 // 노멀 속성의 
 110006,Flame Attack (ATK),Fire,Attack,AreaAttack,Enemies,5,13,
 110007,Flame Attack (DEF),Fire,Attack,AreaAttack,Enemies,5,13,
 110008,Barrage Aura (ATK),Fire,Attack,AreaAttack,Enemies,5,14,
+110009,불꽃 일격 (Rune),Fire,Attack,BlowAttack,Enemy,1,5,
 120000,물 공격,Water,Attack,NormalAttack,Enemy,1,1,
 120001,얼음 일격,Water,Attack,BlowAttack,Enemy,1,5,
 120002,얼음 일격(전체),Water,Attack,BlowAttack,Enemies,1,13,

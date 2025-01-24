@@ -7,6 +7,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action.Exceptions.AdventureBoss;
+using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Data;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
@@ -129,7 +130,7 @@ namespace Nekoyume.Action.AdventureBoss
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             var agentAddress = avatarState.agentAddress;
             var balance = states.GetBalance(agentAddress, currency);
             var exploreBoard = states.GetExploreBoard(Season);
@@ -145,8 +146,15 @@ namespace Nekoyume.Action.AdventureBoss
 
                 explorer.UsedNcg += price.NcgPrice;
                 exploreBoard.UsedNcg += price.NcgPrice;
+                var feeAddress = Addresses.RewardPool;
+                // TODO: [GuildMigration] Remove this after migration
+                if (states.GetDelegationMigrationHeight() is long migrationHeight
+                    && context.BlockIndex < migrationHeight)
+                {
+                    feeAddress = AdventureBossGameData.AdventureBossOperationalAddress;
+                }
                 states = states.TransferAsset(context, agentAddress,
-                    AdventureBossGameData.AdventureBossOperationalAddress,
+                    feeAddress,
                     price.NcgPrice * currency);
             }
             else // Use GoldenDust

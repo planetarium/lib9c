@@ -151,15 +151,7 @@ namespace Nekoyume.Action
                     }
                     var goldCurrency = states.GetGoldCurrency();
 
-                    var feeAddress = Addresses.RewardPool;
-                    // TODO: [GuildMigration] Remove this after migration
-                    if (states.GetDelegationMigrationHeight() is long migrationHeight
-                        && context.BlockIndex < migrationHeight)
-                    {
-                        var arenaSheet = states.GetSheet<ArenaSheet>();
-                        var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                        feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                    }
+                    var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
                     states = states.TransferAsset(context, context.Signer, feeAddress,
                         WorldBossHelper.CalculateTicketPrice(row, raiderState, goldCurrency));
@@ -225,6 +217,12 @@ namespace Nekoyume.Action
             if (migrateRequired)
             {
                 states = states.SetRuneState(AvatarAddress, runeStates);
+            }
+
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
             }
 
             var collectionModifiers = new List<StatModifier>();

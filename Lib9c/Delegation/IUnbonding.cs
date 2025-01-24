@@ -8,6 +8,10 @@ namespace Nekoyume.Delegation
     {
         Address Address { get; }
 
+        Address DelegateeAddress { get; }
+
+        Address DelegatorAddress { get; }
+
         long LowestExpireHeight { get; }
 
         bool IsFull { get; }
@@ -20,6 +24,6 @@ namespace Nekoyume.Delegation
             BigInteger slashFactor,
             long infractionHeight,
             long height,
-            out FungibleAssetValue? slashedFAV);
+            Address slashedPoolAddress);
     }
 }

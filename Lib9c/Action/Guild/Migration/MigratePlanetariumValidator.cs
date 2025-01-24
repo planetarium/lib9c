@@ -53,7 +53,7 @@ namespace Nekoyume.Action.Guild.Migration
                 planetariumGuildAddress);
 
             var validatorRepository = new ValidatorRepository(guildRepository);
-            var validatorDelegatee = validatorRepository.GetValidatorDelegatee(
+            var validatorDelegatee = validatorRepository.GetDelegatee(
                 planetariumGuild.ValidatorAddress);
 
             var validatorSet = world.GetValidatorSet();
@@ -71,13 +71,13 @@ namespace Nekoyume.Action.Guild.Migration
             }
 
             validatorDelegatee.Activate();
-            validatorRepository.SetValidatorDelegatee(validatorDelegatee);
+            validatorRepository.SetDelegatee(validatorDelegatee);
 
             guildRepository.UpdateWorld(validatorRepository.World);
-            var guildDelegatee = guildRepository.GetGuildDelegatee(
+            var guildDelegatee = guildRepository.GetDelegatee(
                 planetariumGuild.ValidatorAddress);
             guildDelegatee.Activate();
-            guildRepository.SetGuildDelgatee(guildDelegatee);
+            guildRepository.SetDelegatee(guildDelegatee);
 
             return guildRepository.World;
         }

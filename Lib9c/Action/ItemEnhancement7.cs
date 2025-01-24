@@ -265,10 +265,10 @@ namespace Nekoyume.Action
             avatarState.inventory.RemoveNonFungibleItem(enhancementEquipment);
 
             avatarState.Update(mail);
-            avatarState.UpdateFromItemEnhancement2(enhancementEquipment);
+            avatarState.UpdateFromItemEnhancement(enhancementEquipment);
 
             var materialSheet = states.GetSheet<MaterialItemSheet>();
-            avatarState.UpdateQuestRewards2(materialSheet);
+            avatarState.UpdateQuestRewards(materialSheet);
 
             slotState.Update(result, ctx.BlockIndex, requiredBlockIndex);
 

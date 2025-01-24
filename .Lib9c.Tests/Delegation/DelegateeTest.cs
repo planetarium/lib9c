@@ -4,7 +4,6 @@ namespace Lib9c.Tests.Delegation
     using System.Numerics;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
     using Nekoyume.Delegation;
     using Xunit;
 

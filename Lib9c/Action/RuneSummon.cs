@@ -91,15 +91,7 @@ namespace Nekoyume.Action
             // Transfer Cost NCG first for fast-fail
             if (summonRow.CostNcg > 0L)
             {
-                var feeAddress = Addresses.RewardPool;
-                // TODO: [GuildMigration] Remove this after migration
-                if (states.GetDelegationMigrationHeight() is long migrationHeight
-                    && context.BlockIndex < migrationHeight)
-                {
-                    var arenaSheet = states.GetSheet<ArenaSheet>();
-                    var arenaData = arenaSheet.GetRoundByBlockIndex(context.BlockIndex);
-                    feeAddress = ArenaHelper.DeriveArenaAddress(arenaData.ChampionshipId, arenaData.Round);
-                }
+                var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
                 states = states.TransferAsset(
                     context,

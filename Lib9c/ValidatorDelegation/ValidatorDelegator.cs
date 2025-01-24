@@ -6,7 +6,8 @@ using Nekoyume.Delegation;
 namespace Nekoyume.ValidatorDelegation
 {
     public sealed class ValidatorDelegator
-        : Delegator<ValidatorDelegatee, ValidatorDelegator>, IEquatable<ValidatorDelegator>
+        : Delegator<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>,
+        IEquatable<ValidatorDelegator>
     {
         public ValidatorDelegator(
             Address address,
@@ -30,7 +31,13 @@ namespace Nekoyume.ValidatorDelegation
         {
         }
 
+        public override bool Equals(object? obj)
+            => Equals(obj as ValidatorDelegator);
+
         public bool Equals(ValidatorDelegator? other)
             => Metadata.Equals(other?.Metadata);
+
+        public override int GetHashCode()
+            => HashCode.Combine(Address, AccountAddress);
     }
 }
