@@ -73,6 +73,40 @@ namespace Nekoyume.TableData
             throw new ArgumentException(value);
         }
 
+        public static (BigInteger Numerator, BigInteger Denominator) ParseFraction(string value)
+        {
+            if (TryParseFraction(value, out var result))
+            {
+                return result;
+            }
+
+            throw new ArgumentException(value);
+        }
+
+        public static bool TryParseFraction(string value, out (BigInteger Numerator, BigInteger Denominator) result)
+        {
+            result = (BigInteger.One, BigInteger.One);
+
+            List<string> fractionStrings = value.Split("/").ToList();
+            if (fractionStrings.Count != 2)
+            {
+                return false;
+            }
+
+            if (!BigInteger.TryParse(fractionStrings[0].Trim(), out var numerator))
+            {
+                return false;
+            }
+
+            if (!BigInteger.TryParse(fractionStrings[1].Trim(), out var denominator))
+            {
+                return false;
+            }
+
+            result = (numerator, denominator);
+            return true;
+        }
+
         public static Currency ParseCurrency(string value)
         {
             if (TryParseCurrency(value, out var result))

@@ -23,8 +23,7 @@ namespace Nekoyume.TableData.Swap
                 var currencyFrom = ParseCurrency(fields[0]);
                 var currencyTo = ParseCurrency(fields[1]);
                 Pair = new CurrencyPair(currencyFrom, currencyTo);
-                RateNumerator = ParseBigInteger(fields[2]);
-                RateDenominator = ParseBigInteger(fields[3]);
+                (RateNumerator, RateDenominator) = ParseFraction(fields[2]);
             }
         }
 
