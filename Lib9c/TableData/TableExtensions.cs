@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
+using Nekoyume.TableData.Swap;
 
 namespace Nekoyume.TableData
 {
@@ -73,7 +74,7 @@ namespace Nekoyume.TableData
             throw new ArgumentException(value);
         }
 
-        public static (BigInteger Numerator, BigInteger Denominator) ParseFraction(string value)
+        public static SwapRateSheet.Fraction ParseFraction(string value)
         {
             if (TryParseFraction(value, out var result))
             {
@@ -83,9 +84,9 @@ namespace Nekoyume.TableData
             throw new ArgumentException(value);
         }
 
-        public static bool TryParseFraction(string value, out (BigInteger Numerator, BigInteger Denominator) result)
+        public static bool TryParseFraction(string value, out SwapRateSheet.Fraction result)
         {
-            result = (BigInteger.One, BigInteger.One);
+            result = new SwapRateSheet.Fraction(BigInteger.One, BigInteger.One);
 
             List<string> fractionStrings = value.Split("/").ToList();
             if (fractionStrings.Count != 2)
@@ -103,7 +104,7 @@ namespace Nekoyume.TableData
                 return false;
             }
 
-            result = (numerator, denominator);
+            result = new SwapRateSheet.Fraction(numerator, denominator);
             return true;
         }
 
@@ -150,6 +151,11 @@ namespace Nekoyume.TableData
 
             if (!totalSupplyTractable)
             {
+                if (maximumSupply.HasValue)
+                {
+                    return false;
+                }
+
                 try
                 {
                     currency = Currency.Legacy(ticker, decimalPlaces, minters);
@@ -194,7 +200,7 @@ namespace Nekoyume.TableData
                 return true;
             }
 
-            List<string> mintersStrings = value.Split("/").ToList();
+            List<string> mintersStrings = value.Split(":").ToList();
 
             result = ImmutableHashSet<Address>.Empty;
 
@@ -223,7 +229,7 @@ namespace Nekoyume.TableData
                 return true;
             }
 
-            List<string> maximumSupplyStrings = value.Split("/").ToList();
+            List<string> maximumSupplyStrings = value.Split(":").ToList();
             if (maximumSupplyStrings.Count != 2)
             {
                 return false;

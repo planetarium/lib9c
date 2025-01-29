@@ -51,7 +51,7 @@ namespace Nekoyume.Model.Swap
                 throw new SheetRowNotFoundException(nameof(SwapRateSheet), string.Join(from.Currency.ToString(), to.ToString()));
             }
 
-            return AmountToSwap(from, to, row.RateNumerator, row.RateDenominator, out remainder);
+            return AmountToSwap(from, to, row.Rate.Numerator, row.Rate.Denominator, out remainder);
         }
 
         public static FungibleAssetValue AmountToSwap(
