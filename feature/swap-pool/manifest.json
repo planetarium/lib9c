@@ -3822,6 +3822,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.CurrencyComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.CurrencyComparer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Delegation.Delegatee-3.yml",
       "output": {
         ".html": {
@@ -11226,6 +11236,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Fraction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html"
         }
       },
       "version": ""

@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair" class="text-break">
-Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L30"><i class="bi bi-code-slash"></i></a>
+Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -101,7 +101,7 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SwapRateSheet.CurrencyPair : IEquatable&lt;SwapRateSheet.CurrencyPair&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public class SwapRateSheet.CurrencyPair : IEquatable&lt;SwapRateSheet.CurrencyPair&gt;, IComparable&lt;SwapRateSheet.CurrencyPair&gt;</code></pre>
   </div>
 
 
@@ -119,6 +119,7 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.icomparable-1">IComparable</a>&lt;<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a>&gt;</div>
     </dd>
   </dl>
 
@@ -193,7 +194,7 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
 
   <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_From" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.From">
   From
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -255,11 +256,51 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
 </h2>
 
 
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_CompareTo_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.CompareTo*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_CompareTo_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.CompareTo(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  CompareTo(CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int CompareTo(SwapRateSheet.CurrencyPair other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd><p>An object to compare with this instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A value that indicates the relative order of the objects being compared. The return value has these meanings:</p>
+ <table><thead><tr><th class="term"> Value</th><th class="description"> Meaning</th></tr></thead><tbody><tr><td class="term"> Less than zero</td><td class="description"> This instance precedes <code class="paramref">other</code> in the sort order.</td></tr><tr><td class="term"> Zero</td><td class="description"> This instance occurs in the same position in the sort order as <code class="paramref">other</code>.</td></tr><tr><td class="term"> Greater than zero</td><td class="description"> This instance follows <code class="paramref">other</code> in the sort order.</td></tr></tbody></table>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Equals_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.Equals*"></a>
 
   <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Equals_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.Equals(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
   Equals(CurrencyPair)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -298,7 +339,7 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
 
   <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Equals_System_Object_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L71"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -337,7 +378,7 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
 
   <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_GetHashCode" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L84"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -366,11 +407,243 @@ Class SwapRateSheet.CurrencyPair  <a class="header-action link-secondary" title=
 
 
 
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_Equality_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_Equality*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_Equality_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_Equality(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair,Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  operator ==(CurrencyPair, CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(SwapRateSheet.CurrencyPair left, SwapRateSheet.CurrencyPair right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_GreaterThan_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_GreaterThan*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_GreaterThan_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_GreaterThan(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair,Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  operator &gt;(CurrencyPair, CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator &gt;(SwapRateSheet.CurrencyPair left, SwapRateSheet.CurrencyPair right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_GreaterThanOrEqual_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_GreaterThanOrEqual*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_GreaterThanOrEqual_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_GreaterThanOrEqual(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair,Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  operator &gt;=(CurrencyPair, CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator &gt;=(SwapRateSheet.CurrencyPair left, SwapRateSheet.CurrencyPair right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_Inequality_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_Inequality*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_Inequality_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_Inequality(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair,Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  operator !=(CurrencyPair, CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(SwapRateSheet.CurrencyPair left, SwapRateSheet.CurrencyPair right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_LessThan_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_LessThan*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_LessThan_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_LessThan(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair,Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  operator &lt;(CurrencyPair, CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator &lt;(SwapRateSheet.CurrencyPair left, SwapRateSheet.CurrencyPair right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_LessThanOrEqual_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_LessThanOrEqual*"></a>
+
+  <h3 id="Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_op_LessThanOrEqual_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_Nekoyume_TableData_Swap_SwapRateSheet_CurrencyPair_" data-uid="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.op_LessThanOrEqual(Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair,Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair)">
+  operator &lt;=(CurrencyPair, CurrencyPair)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator &lt;=(SwapRateSheet.CurrencyPair left, SwapRateSheet.CurrencyPair right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+    <dt><code>right</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html">CurrencyPair</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L30" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/Swap/SwapRateSheet.cs/#L29" class="edit-link">Edit this page</a>
         </div>
 
 
