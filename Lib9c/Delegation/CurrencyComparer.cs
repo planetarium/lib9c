@@ -4,9 +4,18 @@ using Libplanet.Types.Assets;
 
 namespace Nekoyume.Delegation
 {
-    internal class CurrencyComparer : IComparer<Currency>
+    public abstract class CurrencyComparer : IComparer<Currency>
     {
-        public int Compare(Currency x, Currency y)
+        private static readonly CurrencyComparer _byteComparer = new CurrencyByteComparer();
+
+        public static CurrencyComparer Byte => _byteComparer;
+
+        public abstract int Compare(Currency x, Currency y);
+    }
+
+    internal sealed class CurrencyByteComparer : CurrencyComparer
+    {
+        public override int Compare(Currency x, Currency y)
             => ByteArrayCompare(x.Hash.ToByteArray(), y.Hash.ToByteArray());
 
         private static int ByteArrayCompare(byte[] x, byte[] y)
