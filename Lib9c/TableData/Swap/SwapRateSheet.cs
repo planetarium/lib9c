@@ -19,17 +19,19 @@ namespace Nekoyume.TableData.Swap
         public class Row : SheetRow<CurrencyPair>
         {
             /// <inheritdoc/>
-            public override CurrencyPair Key => Pair;
+            /// <inheritdoc/>
+            public override CurrencyPair Key
+                => Pair ?? throw new InvalidOperationException("Pair is not set.");
 
             /// <summary>
             /// The currency pair for swap.
             /// </summary>
-            public CurrencyPair Pair { get; private set; }
+            public CurrencyPair? Pair { get; private set; }
 
             /// <summary>
             /// The swap rate represented by <see cref="Fraction"/>.
             /// </summary>
-            public Fraction Rate { get; private set; }
+            public Fraction? Rate { get; private set; }
 
             /// <inheritdoc/>
             public override void Set(IReadOnlyList<string> fields)
