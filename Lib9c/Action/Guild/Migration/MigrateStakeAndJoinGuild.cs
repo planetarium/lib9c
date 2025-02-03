@@ -22,26 +22,44 @@ namespace Nekoyume.Action.Guild.Migration
     [ActionType(TypeIdentifier)]
     public class MigrateStakeAndJoinGuild : ActionBase
     {
+        /// <summary>
+        /// The type identifier for this action.
+        /// </summary>
         public const string TypeIdentifier = "migrate_stake_and_join_guild";
 
+        /// <summary>
+        /// The key of the target address.
+        /// </summary>
         private const string TargetKey = "t";
 
+        /// <summary>
+        /// The target address to migrate.
+        /// </summary>
         public AgentAddress Target { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MigrateStakeAndJoinGuild"/> class.
+        /// </summary>
         public MigrateStakeAndJoinGuild()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MigrateStakeAndJoinGuild"/> class.
+        /// </summary>
+        /// <param name="target"></param>
         public MigrateStakeAndJoinGuild(AgentAddress target)
         {
             Target = target;
         }
 
+        /// <inheritdoc/>
         public override IValue PlainValue => Dictionary.Empty
             .Add("type_id", TypeIdentifier)
             .Add("values", Dictionary.Empty
                 .Add(TargetKey, Target.Bencoded));
 
+        /// <inheritdoc/>
         public override void LoadPlainValue(IValue plainValue)
         {
             if (plainValue is not Dictionary root ||
@@ -56,6 +74,7 @@ namespace Nekoyume.Action.Guild.Migration
             Target = new AgentAddress(target);
         }
 
+        /// <inheritdoc/>
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
