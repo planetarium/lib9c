@@ -42,7 +42,7 @@ namespace Lib9c.Tests.TableData.Swap
         {
             var sheet = new SwapRateSheet();
             sheet.Set(SwapRateSheetFixtures.Default);
-            Assert.Equal(3, sheet.Count);
+            Assert.Equal(4, sheet.Count);
             Assert.True(sheet.TryGetValue(new SwapRateSheet.CurrencyPair(testA, testB), out var rowAB));
             Assert.True(sheet.TryGetValue(new SwapRateSheet.CurrencyPair(testC, testD), out var rowCD));
             Assert.True(sheet.TryGetValue(new SwapRateSheet.CurrencyPair(testE, testF), out var rowEF));

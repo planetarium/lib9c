@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Model.Swap
         [InlineData(200)]
         [InlineData(4321)]
         [InlineData(12345)]
-        public void AmountToSwap(int amount)
+        public void ConvertToSwapFAV_Execute_Success(int amount)
         {
             // Arrange
             var sheet = new SwapRateSheet();
@@ -34,7 +34,7 @@ namespace Lib9c.Tests.Model.Swap
 
             // Act
             var fromFAV = from * amount;
-            var result = swapPool.AmountToSwap(fromFAV, to, out var rem);
+            var result = swapPool.convertToSwapFAV(fromFAV, to, out var rem);
             var rateApplied = (decimal)amount * (decimal)row.Rate.Numerator / (decimal)row.Rate.Denominator;
             var rateAppliedString = rateApplied.ToString();
             var headLength = rateAppliedString.Split(".")[0].Length;
@@ -49,7 +49,7 @@ namespace Lib9c.Tests.Model.Swap
         [InlineData(200)]
         [InlineData(4321)]
         [InlineData(12345)]
-        public void Swap(int amount)
+        public void Swap_Execute_Success(int amount)
         {
             // Arrange
             var sheet = new SwapRateSheet();
@@ -79,7 +79,7 @@ namespace Lib9c.Tests.Model.Swap
         }
 
         [Fact]
-        public void AmountToSwap_ThrowSheetRowNotFoundException()
+        public void ConvertToSwapFAV_ThrowSheetRowNotFoundException()
         {
             // Arrange
             var sheet = new SwapRateSheet();
@@ -93,7 +93,7 @@ namespace Lib9c.Tests.Model.Swap
             var fromFAV = from * 10;
 
             // Assert
-            Assert.Throws<SheetRowNotFoundException>(() => swapPool.AmountToSwap(fromFAV, to, out var rem));
+            Assert.Throws<SheetRowNotFoundException>(() => swapPool.convertToSwapFAV(fromFAV, to, out var rem));
         }
 
         internal static FungibleAssetValue ApplyDecimalRate(FungibleAssetValue fromFAV, Currency toCurrency, SwapRateSheet.Fraction rate)
