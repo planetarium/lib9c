@@ -34,7 +34,7 @@ namespace Nekoyume.Model.Swap
         /// <summary>
         /// Address of the swap pool.
         /// </summary>
-        public Address Address => Addresses.SwapPool;
+        public static Address Address => Addresses.SwapPool;
 
         /// <summary>
         /// Swap the currency from <paramref name="from"/> to <paramref name="to"/>.
@@ -59,12 +59,7 @@ namespace Nekoyume.Model.Swap
         /// </exception>
         public IWorld Swap(IWorld world, IActionContext context, FungibleAssetValue from, Currency to)
         {
-            if (from.Currency.Equals(to))
-            {
-                throw new ArgumentException("Cannot swap the same currency.", nameof(to));
-            }
-        
-            var swapFAV = convertToSwapFAV(from, to, out var remainder);
+            var swapFAV = ConvertToSwapFAV(from, to, out var remainder);
             var newWorld = world
                 .TransferAsset(context, context.Signer, Address, from - remainder)
                 .TransferAsset(context, Address, context.Signer, swapFAV);
@@ -89,23 +84,21 @@ namespace Nekoyume.Model.Swap
         /// <exception cref="SheetRowNotFoundException">
         /// Thrown when the swap rate sheet does not contain the rate for <paramref name="from"/> and <paramref name="to"/>.
         /// </exception>
-        public FungibleAssetValue convertToSwapFAV(
+        public FungibleAssetValue ConvertToSwapFAV(
             FungibleAssetValue from,
             Currency to,
             out FungibleAssetValue remainder)
         {
-            if (from.Currency.Equals(to))
+            if (!SwapRateSheet.TryGetValue(
+                new SwapRateSheet.CurrencyPair(from.Currency, to), out var row)
+                || row.Rate is not { } rate)
             {
-                remainder = FungibleAssetValue.FromRawValue(from.Currency, 0);
-                return from;
+                throw new SheetRowNotFoundException(
+                    nameof(SwapRateSheet),
+                    string.Join(from.Currency.ToString(), to.ToString()));
             }
 
-            if (!SwapRateSheet.TryGetValue(new SwapRateSheet.CurrencyPair(from.Currency, to), out var row))
-            {
-                throw new SheetRowNotFoundException(nameof(SwapRateSheet), string.Join(from.Currency.ToString(), to.ToString()));
-            }
-
-            return convertToSwapFAV(from, to, row.Rate.Numerator, row.Rate.Denominator, out remainder);
+            return ConvertToSwapFAV(from, to, rate.Numerator, rate.Denominator, out remainder);
         }
 
         /// <summary>
@@ -129,13 +122,21 @@ namespace Nekoyume.Model.Swap
         /// <returns>
         /// <see cref="FungibleAssetValue"/> after swapping.
         /// </returns>
-        public static FungibleAssetValue convertToSwapFAV(
+        /// <exception cref="ArgumentException">
+        /// Thrown when <paramref name="from"/> and <paramref name="to"/> are the same currency.
+        /// </exception>
+        public static FungibleAssetValue ConvertToSwapFAV(
             FungibleAssetValue from,
             Currency to,
             BigInteger rateNumerator,
             BigInteger rateDenominator,
             out FungibleAssetValue remainder)
         {
+            if (from.Currency.Equals(to))
+            {
+                throw new ArgumentException("Cannot swap the same currency.");
+            }
+
             var fromCurrency = from.Currency;
             var decimalDiff = to.DecimalPlaces - fromCurrency.DecimalPlaces;
 

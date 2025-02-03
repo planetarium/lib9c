@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Model.Swap
 {
     using System;
+    using System.Linq;
     using Lib9c.Tests.Action;
     using Lib9c.Tests.Fixtures.TableCSV.Swap;
     using Libplanet.Action.State;
@@ -17,28 +18,48 @@ namespace Lib9c.Tests.Model.Swap
     public class SwapPoolTest
     {
         [Theory]
-        [InlineData(10)]
-        [InlineData(200)]
-        [InlineData(4321)]
-        [InlineData(12345)]
-        public void ConvertToSwapFAV_Execute_Success(int amount)
+        [InlineData("TEST_A", "TEST_B", "10")]
+        [InlineData("TEST_A", "TEST_B", "200")]
+        [InlineData("TEST_A", "TEST_B", "4321")]
+        [InlineData("TEST_A", "TEST_B", "12345")]
+        [InlineData("TEST_A", "TEST_B", "1234567.89")]
+        [InlineData("TEST_B", "TEST_A", "1234567890.123456789012345678")]
+        public void ConvertToSwapFAV_Execute_Success(string from, string to, string amount)
         {
+            if (amount.Replace(".", string.Empty).Length > 29)
+            {
+                throw new ArgumentException("Given amount have to be less than precision of the decimal", nameof(amount));
+            }
+
             // Arrange
             var sheet = new SwapRateSheet();
             sheet.Set(SwapRateSheetFixtures.Default);
             var swapPool = new SwapPool(sheet);
-            var from = Currency.Legacy("TEST_A", 2, null);
-            var to = Currency.Uncapped("TEST_B", 18, null);
-            var currencyPair = new SwapRateSheet.CurrencyPair(from, to);
+
+            var testA = Currency.Legacy("TEST_A", 2, null);
+            var testB = Currency.Uncapped("TEST_B", 18, null);
+
+            var fromCurrency = from switch
+            {
+                "TEST_A" => testA,
+                "TEST_B" => testB,
+                _ => throw new InvalidOperationException(),
+            };
+
+            var toCurrency = to switch
+            {
+                "TEST_A" => testA,
+                "TEST_B" => testB,
+                _ => throw new InvalidOperationException(),
+            };
+
+            var currencyPair = new SwapRateSheet.CurrencyPair(fromCurrency, toCurrency);
             Assert.True(sheet.TryGetValue(currencyPair, out var row));
 
             // Act
-            var fromFAV = from * amount;
-            var result = swapPool.convertToSwapFAV(fromFAV, to, out var rem);
-            var rateApplied = (decimal)amount * (decimal)row.Rate.Numerator / (decimal)row.Rate.Denominator;
-            var rateAppliedString = rateApplied.ToString();
-            var headLength = rateAppliedString.Split(".")[0].Length;
-            var expected = ApplyDecimalRate(fromFAV, to, row.Rate);
+            var fromFAV = FungibleAssetValue.Parse(fromCurrency, amount);
+            var result = swapPool.ConvertToSwapFAV(fromFAV, toCurrency, out var rem);
+            var expected = ApplyDecimalRate(fromFAV, toCurrency, row.Rate);
 
             // Assert
             Assert.Equal(expected, result);
@@ -93,7 +114,7 @@ namespace Lib9c.Tests.Model.Swap
             var fromFAV = from * 10;
 
             // Assert
-            Assert.Throws<SheetRowNotFoundException>(() => swapPool.convertToSwapFAV(fromFAV, to, out var rem));
+            Assert.Throws<SheetRowNotFoundException>(() => swapPool.ConvertToSwapFAV(fromFAV, to, out var rem));
         }
 
         internal static FungibleAssetValue ApplyDecimalRate(FungibleAssetValue fromFAV, Currency toCurrency, SwapRateSheet.Fraction rate)

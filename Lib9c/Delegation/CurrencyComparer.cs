@@ -9,12 +9,12 @@ namespace Nekoyume.Delegation
     /// </summary>
     public abstract class CurrencyComparer : IComparer<Currency>
     {
-        private static readonly CurrencyComparer _byteComparer = new CurrencyByteComparer();
+        private static readonly CurrencyComparer _hashBytesComparer = new CurrencyHashBytesComparer();
 
         /// <summary>
-        /// Gets a <see cref="CurrencyComparer"/> that compares <see cref="Currency"/> by their byte representation.
+        /// Gets a <see cref="CurrencyComparer"/> that compares <see cref="Currency"/> by their hash byte representation.
         /// </summary>
-        public static CurrencyComparer Byte => _byteComparer;
+        public static CurrencyComparer HashBytes => _hashBytesComparer;
 
         /// <inheritdoc/>
         public abstract int Compare(Currency x, Currency y);
@@ -23,7 +23,7 @@ namespace Nekoyume.Delegation
     /// <summary>
     /// Represents a comparer for <see cref="Currency"/> that compares by their byte representation.
     /// </summary>
-    internal sealed class CurrencyByteComparer : CurrencyComparer
+    internal sealed class CurrencyHashBytesComparer : CurrencyComparer
     {
         /// <inheritdoc/>
         public override int Compare(Currency x, Currency y)

@@ -71,6 +71,18 @@ namespace Nekoyume.Action
         /// <inheritdoc/>
         public override void LoadPlainValue(IValue plainValue)
         {
+            if (!(plainValue is List list))
+            {
+                throw new ArgumentException("Invalid plain value.");
+            }
+
+            if (list.Count != 2)
+            {
+                throw new ArgumentException("Invalid list count.");
+            }
+
+            From = new FungibleAssetValue(list[0]);
+            To = new Currency(list[1]);
         }
     }
 }

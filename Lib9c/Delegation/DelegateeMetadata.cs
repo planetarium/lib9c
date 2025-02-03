@@ -119,7 +119,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = new Currency(bencoded[2]);
-            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableSortedSet(CurrencyComparer.Byte);
+            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableSortedSet(CurrencyComparer.HashBytes);
             DelegationPoolAddress = new Address(bencoded[4]);
             RewardPoolAddress = new Address(bencoded[5]);
             RewardRemainderPoolAddress = new Address(bencoded[6]);
@@ -195,7 +195,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
-            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(CurrencyComparer.Byte);
+            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(CurrencyComparer.HashBytes);
             DelegationPoolAddress = delegationPoolAddress;
             RewardPoolAddress = rewardPoolAddress;
             RewardRemainderPoolAddress = rewardRemainderPoolAddress;

@@ -41,6 +41,18 @@ Mead;18;null;true;null,NCG;2;null;false;null,1/1";
                 .SetLegacyState(Addresses.GetSheetAddress<SwapRateSheet>(), sheet.Serialize());
         }
 
+        [Fact]
+        public void Serialization()
+        {
+            var action = new Swap(_gold * 10, _mead);
+            var plainValue = action.PlainValue;
+
+            var deserialized = new Swap();
+            deserialized.LoadPlainValue(plainValue);
+            Assert.Equal(action.From, deserialized.From);
+            Assert.Equal(action.To, deserialized.To);
+        }
+
         [Theory]
         [InlineData(null, 100)]
         [InlineData(null, 1000)]
