@@ -106,7 +106,7 @@ namespace Nekoyume.Delegation
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f.Portion, CurrencyComparer.Byte);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f.Portion, CurrencyComparer.HashBytes);
             SigFig = (Integer)bencoded[3];
 
             try
@@ -178,7 +178,7 @@ namespace Nekoyume.Delegation
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Item1, f => f.Item2, CurrencyComparer.Byte);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Item1, f => f.Item2, CurrencyComparer.HashBytes);
             SigFig = sigFig;
             StartHeight = startHeight;
         }
@@ -239,7 +239,7 @@ namespace Nekoyume.Delegation
                     .Add(StateTypeName)
                     .Add(StateVersion)
                     .Add(new List(RewardPortion
-                        .OrderBy(r => r.Key, CurrencyComparer.Byte)
+                        .OrderBy(r => r.Key, CurrencyComparer.HashBytes)
                         .Select(r => new List(r.Key.Serialize(), new Integer(r.Value)))))
                     .Add(SigFig);
 
@@ -327,7 +327,7 @@ namespace Nekoyume.Delegation
         /// </returns>
         public ImmutableSortedDictionary<Currency, FungibleAssetValue> CumulativeRewardDuringPeriod(BigInteger share)
             => RewardPortion.Keys.Select(k => CumulativeRewardDuringPeriod(share, k))
-                .ToImmutableSortedDictionary(f => f.Currency, f => f, CurrencyComparer.Byte);
+                .ToImmutableSortedDictionary(f => f.Currency, f => f, CurrencyComparer.HashBytes);
 
         /// <summary>
         /// Calculate the cumulative reward during the period, for the specific currency.
@@ -374,7 +374,7 @@ namespace Nekoyume.Delegation
             var newPortion = rewardBase.RewardPortion.ToImmutableSortedDictionary(
                 kvp => kvp.Key,
                 kvp => kvp.Value * multiplier,
-                CurrencyComparer.Byte);
+                CurrencyComparer.HashBytes);
 
             return new RewardBase(
                 rewardBase.Address,

@@ -195,13 +195,13 @@ namespace Nekoyume.TableData.Swap
                     return 1;
                 }
 
-                var fromComparison = CurrencyComparer.Byte.Compare(From, other.From);
+                var fromComparison = CurrencyComparer.HashBytes.Compare(From, other.From);
                 if (fromComparison != 0)
                 {
                     return fromComparison;
                 }
         
-                return CurrencyComparer.Byte.Compare(To, other.To);
+                return CurrencyComparer.HashBytes.Compare(To, other.To);
             }
         }
 
