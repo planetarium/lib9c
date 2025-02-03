@@ -9,6 +9,9 @@ using Nekoyume.TableData.Swap;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Swap action swaps one currency to another currency.
+    /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class Swap : ActionBase
