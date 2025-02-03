@@ -61,7 +61,7 @@ namespace Nekoyume.Model.Swap
         {
             if (from.Currency.Equals(to))
             {
-                throw new ArgumentException("Cannot swap the same currency.");
+                throw new ArgumentException("Cannot swap the same currency.", nameof(to));
             }
         
             var swapFAV = convertToSwapFAV(from, to, out var remainder);
