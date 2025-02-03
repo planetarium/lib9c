@@ -230,10 +230,11 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseCurrency_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseCurrency(System.String)">
   ParseCurrency(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Parse a currency from a string.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -243,13 +244,16 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dd><p>The string to parse.
+Currency should be in the form of &quot;ticker;decimalPlaces;minters;totalSupplyTractable;maximumSupply&quot;.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">Currency</span></dt>
-    <dd></dd>
+    <dd><p>The parsed currency.</p>
+</dd>
   </dl>
 
 
@@ -259,6 +263,12 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The string is not a valid currency.</p>
+</dd>
+  </dl>
 
 
 
@@ -340,10 +350,11 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseFraction_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseFraction(System.String)">
   ParseFraction(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Parse a fraction from a string.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -353,13 +364,16 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dd><p>The string to parse.
+Fraction should be in the form of &quot;numerator/denominator&quot;.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html">Fraction</a></dt>
-    <dd></dd>
+    <dd><p>The parsed fraction.</p>
+</dd>
   </dl>
 
 
@@ -369,6 +383,12 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The string is not a valid fraction.</p>
+</dd>
+  </dl>
 
 
 
@@ -524,10 +544,11 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_TryParseCurrency_System_String_Libplanet_Types_Assets_Currency__" data-uid="Nekoyume.TableData.TableExtensions.TryParseCurrency(System.String,Libplanet.Types.Assets.Currency@)">
   TryParseCurrency(string, out Currency)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L171"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Try to parse a currency from a string.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -537,15 +558,19 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dd><p>The string to parse.
+Currency should be in the form of &quot;ticker;decimalPlaces;minters;totalSupplyTractable;maximumSupply&quot;.</p>
+</dd>
     <dt><code>currency</code> <span class="xref">Currency</span></dt>
-    <dd></dd>
+    <dd><p>The parsed currency.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>Whether the parsing is successful.</p>
+</dd>
   </dl>
 
 
@@ -638,10 +663,11 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_TryParseFraction_System_String_Nekoyume_TableData_Swap_SwapRateSheet_Fraction__" data-uid="Nekoyume.TableData.TableExtensions.TryParseFraction(System.String,Nekoyume.TableData.Swap.SwapRateSheet.Fraction@)">
   TryParseFraction(string, out Fraction)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/TableData/TableExtensions.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Try to parse a fraction from a string.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -651,9 +677,12 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dd><p>The string to parse.
+Fraction should be in the form of &quot;numerator/denominator&quot;.</p>
+</dd>
     <dt><code>result</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html">Fraction</a></dt>
-    <dd></dd>
+    <dd><p>The parsed fraction.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
