@@ -202,7 +202,7 @@ Class SwapPool  <a class="header-action link-secondary" title="View source" href
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Address Address { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public static Address Address { get; }</code></pre>
   </div>
 
 
@@ -258,6 +258,108 @@ Class SwapPool  <a class="header-action link-secondary" title="View source" href
 </h2>
 
 
+  <a id="Nekoyume_Model_Swap_SwapPool_ConvertToSwapFAV_" data-uid="Nekoyume.Model.Swap.SwapPool.ConvertToSwapFAV*"></a>
+
+  <h3 id="Nekoyume_Model_Swap_SwapPool_ConvertToSwapFAV_Libplanet_Types_Assets_FungibleAssetValue_Libplanet_Types_Assets_Currency_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Model.Swap.SwapPool.ConvertToSwapFAV(Libplanet.Types.Assets.FungibleAssetValue,Libplanet.Types.Assets.Currency,Libplanet.Types.Assets.FungibleAssetValue@)">
+  ConvertToSwapFAV(FungibleAssetValue, Currency, out FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Swap/SwapPool.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert <code class="paramref">from</code> to <code class="paramref">to</code> with swap rate.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FungibleAssetValue ConvertToSwapFAV(FungibleAssetValue from, Currency to, out FungibleAssetValue remainder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>from</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> to swap from.</p>
+</dd>
+    <dt><code>to</code> <span class="xref">Currency</span></dt>
+    <dd><p><span class="xref">Libplanet.Types.Assets.Currency</span> to swap to.</p>
+</dd>
+    <dt><code>remainder</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd><p>Remainder of the swap. This will be returned to the <a class="xref" href="Nekoyume.Model.Swap.SwapPool.html#Nekoyume_Model_Swap_SwapPool_Address">Address</a> who requested swap.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> after swapping.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.SheetRowNotFoundException.html">SheetRowNotFoundException</a></dt>
+    <dd><p>Thrown when the swap rate sheet does not contain the rate for <code class="paramref">from</code> and <code class="paramref">to</code>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_Swap_SwapPool_ConvertToSwapFAV_" data-uid="Nekoyume.Model.Swap.SwapPool.ConvertToSwapFAV*"></a>
+
+  <h3 id="Nekoyume_Model_Swap_SwapPool_ConvertToSwapFAV_Libplanet_Types_Assets_FungibleAssetValue_Libplanet_Types_Assets_Currency_System_Numerics_BigInteger_System_Numerics_BigInteger_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Model.Swap.SwapPool.ConvertToSwapFAV(Libplanet.Types.Assets.FungibleAssetValue,Libplanet.Types.Assets.Currency,System.Numerics.BigInteger,System.Numerics.BigInteger,Libplanet.Types.Assets.FungibleAssetValue@)">
+  ConvertToSwapFAV(FungibleAssetValue, Currency, BigInteger, BigInteger, out FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Swap/SwapPool.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert <code class="paramref">from</code> to <code class="paramref">to</code> with swap rate.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue ConvertToSwapFAV(FungibleAssetValue from, Currency to, BigInteger rateNumerator, BigInteger rateDenominator, out FungibleAssetValue remainder)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>from</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> to swap from.</p>
+</dd>
+    <dt><code>to</code> <span class="xref">Currency</span></dt>
+    <dd><p><span class="xref">Libplanet.Types.Assets.Currency</span> to swap to.</p>
+</dd>
+    <dt><code>rateNumerator</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd><p>Numerator of the swap rate.</p>
+</dd>
+    <dt><code>rateDenominator</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd><p>Denominator of the swap rate.</p>
+</dd>
+    <dt><code>remainder</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd><p>Remainder of the swap. This will be returned to the <a class="xref" href="Nekoyume.Model.Swap.SwapPool.html#Nekoyume_Model_Swap_SwapPool_Address">Address</a> who requested swap.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> after swapping.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Swap_SwapPool_Swap_" data-uid="Nekoyume.Model.Swap.SwapPool.Swap*"></a>
 
   <h3 id="Nekoyume_Model_Swap_SwapPool_Swap_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_Libplanet_Types_Assets_FungibleAssetValue_Libplanet_Types_Assets_Currency_" data-uid="Nekoyume.Model.Swap.SwapPool.Swap(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Types.Assets.FungibleAssetValue,Libplanet.Types.Assets.Currency)">
@@ -309,108 +411,6 @@ Class SwapPool  <a class="header-action link-secondary" title="View source" href
     <dd><p>Thrown when <code class="paramref">from</code> and <code class="paramref">to</code> are the same currency.</p>
 </dd>
   </dl>
-
-
-
-  <a id="Nekoyume_Model_Swap_SwapPool_convertToSwapFAV_" data-uid="Nekoyume.Model.Swap.SwapPool.convertToSwapFAV*"></a>
-
-  <h3 id="Nekoyume_Model_Swap_SwapPool_convertToSwapFAV_Libplanet_Types_Assets_FungibleAssetValue_Libplanet_Types_Assets_Currency_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Model.Swap.SwapPool.convertToSwapFAV(Libplanet.Types.Assets.FungibleAssetValue,Libplanet.Types.Assets.Currency,Libplanet.Types.Assets.FungibleAssetValue@)">
-  convertToSwapFAV(FungibleAssetValue, Currency, out FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Swap/SwapPool.cs/#L92"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Convert <code class="paramref">from</code> to <code class="paramref">to</code> with swap rate.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public FungibleAssetValue convertToSwapFAV(FungibleAssetValue from, Currency to, out FungibleAssetValue remainder)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>from</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> to swap from.</p>
-</dd>
-    <dt><code>to</code> <span class="xref">Currency</span></dt>
-    <dd><p><span class="xref">Libplanet.Types.Assets.Currency</span> to swap to.</p>
-</dd>
-    <dt><code>remainder</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd><p>Remainder of the swap. This will be returned to the <a class="xref" href="Nekoyume.Model.Swap.SwapPool.html#Nekoyume_Model_Swap_SwapPool_Address">Address</a> who requested swap.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><span class="xref">FungibleAssetValue</span></dt>
-    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> after swapping.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <h4 class="section">Exceptions</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="Nekoyume.TableData.SheetRowNotFoundException.html">SheetRowNotFoundException</a></dt>
-    <dd><p>Thrown when the swap rate sheet does not contain the rate for <code class="paramref">from</code> and <code class="paramref">to</code>.</p>
-</dd>
-  </dl>
-
-
-
-  <a id="Nekoyume_Model_Swap_SwapPool_convertToSwapFAV_" data-uid="Nekoyume.Model.Swap.SwapPool.convertToSwapFAV*"></a>
-
-  <h3 id="Nekoyume_Model_Swap_SwapPool_convertToSwapFAV_Libplanet_Types_Assets_FungibleAssetValue_Libplanet_Types_Assets_Currency_System_Numerics_BigInteger_System_Numerics_BigInteger_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Model.Swap.SwapPool.convertToSwapFAV(Libplanet.Types.Assets.FungibleAssetValue,Libplanet.Types.Assets.Currency,System.Numerics.BigInteger,System.Numerics.BigInteger,Libplanet.Types.Assets.FungibleAssetValue@)">
-  convertToSwapFAV(FungibleAssetValue, Currency, BigInteger, BigInteger, out FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/swap-pool/Lib9c/Model/Swap/SwapPool.cs/#L132"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Convert <code class="paramref">from</code> to <code class="paramref">to</code> with swap rate.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static FungibleAssetValue convertToSwapFAV(FungibleAssetValue from, Currency to, BigInteger rateNumerator, BigInteger rateDenominator, out FungibleAssetValue remainder)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>from</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> to swap from.</p>
-</dd>
-    <dt><code>to</code> <span class="xref">Currency</span></dt>
-    <dd><p><span class="xref">Libplanet.Types.Assets.Currency</span> to swap to.</p>
-</dd>
-    <dt><code>rateNumerator</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
-    <dd><p>Numerator of the swap rate.</p>
-</dd>
-    <dt><code>rateDenominator</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
-    <dd><p>Denominator of the swap rate.</p>
-</dd>
-    <dt><code>remainder</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd><p>Remainder of the swap. This will be returned to the <a class="xref" href="Nekoyume.Model.Swap.SwapPool.html#Nekoyume_Model_Swap_SwapPool_Address">Address</a> who requested swap.</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><span class="xref">FungibleAssetValue</span></dt>
-    <dd><p><span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> after swapping.</p>
-</dd>
-  </dl>
-
-
-
-
-
-
-
-
 
 
 
