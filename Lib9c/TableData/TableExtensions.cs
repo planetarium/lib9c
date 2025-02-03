@@ -74,6 +74,19 @@ namespace Nekoyume.TableData
             throw new ArgumentException(value);
         }
 
+        /// <summary>
+        /// Parse a fraction from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// Fraction should be in the form of "numerator/denominator".
+        /// </param>
+        /// <returns>
+        /// The parsed fraction.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// The string is not a valid fraction.
+        /// </exception>
         public static SwapRateSheet.Fraction ParseFraction(string value)
         {
             if (TryParseFraction(value, out var result))
@@ -84,6 +97,17 @@ namespace Nekoyume.TableData
             throw new ArgumentException(value);
         }
 
+        /// <summary>
+        /// Try to parse a fraction from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// Fraction should be in the form of "numerator/denominator".
+        /// </param>
+        /// <param name="result">
+        /// The parsed fraction.
+        /// </param>
+        /// <returns></returns>
         public static bool TryParseFraction(string value, out SwapRateSheet.Fraction result)
         {
             result = new SwapRateSheet.Fraction(BigInteger.One, BigInteger.One);
@@ -108,6 +132,19 @@ namespace Nekoyume.TableData
             return true;
         }
 
+        /// <summary>
+        /// Parse a currency from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// Currency should be in the form of "ticker;decimalPlaces;minters;totalSupplyTractable;maximumSupply".
+        /// </param>
+        /// <returns>
+        /// The parsed currency.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// The string is not a valid currency.
+        /// </exception>
         public static Currency ParseCurrency(string value)
         {
             if (TryParseCurrency(value, out var result))
@@ -118,6 +155,19 @@ namespace Nekoyume.TableData
             throw new ArgumentException(value);
         }
 
+        /// <summary>
+        /// Try to parse a currency from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// Currency should be in the form of "ticker;decimalPlaces;minters;totalSupplyTractable;maximumSupply".
+        /// </param>
+        /// <param name="currency">
+        /// The parsed currency.
+        /// </param>
+        /// <returns>
+        /// Whether the parsing is successful.
+        /// </returns>
         public static bool TryParseCurrency(string value, out Currency currency)
         {
             currency = default;
@@ -191,6 +241,19 @@ namespace Nekoyume.TableData
             }
         }
 
+        /// <summary>
+        /// Try to parse a set of minters from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// Minters should be in the form of "minter1:minter2:minter3...".
+        /// </param>
+        /// <param name="result">
+        /// The parsed minters.
+        /// </param>
+        /// <returns>
+        /// Whether the parsing is successful.
+        /// </returns>
         private static bool TryParseMinters(string value, out ImmutableHashSet<Address>? result)
         {
             result = null;
@@ -220,6 +283,19 @@ namespace Nekoyume.TableData
             return true;
         }
 
+        /// <summary>
+        /// Try to parse a maximum supply from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// Maximum supply should be in the form of "major:minor".
+        /// </param>
+        /// <param name="result">
+        /// The parsed maximum supply.
+        /// </param>
+        /// <returns>
+        /// Whether the parsing is successful.
+        /// </returns>
         private static bool TryParseMaximumSupply(string value, out (BigInteger Major, BigInteger Minor)? result)
         {
             result = null;
@@ -249,6 +325,18 @@ namespace Nekoyume.TableData
             return true;
         }
 
+        /// <summary>
+        /// Try to parse an address from a string.
+        /// </summary>
+        /// <param name="value">
+        /// The string to parse.
+        /// </param>
+        /// <param name="result">
+        /// The parsed address.
+        /// </param>
+        /// <returns>
+        /// Whether the parsing is successful.
+        /// </returns>
         private static bool TryParseAddress(string value, out Address result)
         {
             try
