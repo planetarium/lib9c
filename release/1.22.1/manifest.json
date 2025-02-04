@@ -1532,6 +1532,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.MigrationModule.yml",
       "output": {
         ".html": {
@@ -1566,6 +1576,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.html"
         }
       },
       "version": ""
