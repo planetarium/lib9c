@@ -432,6 +432,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Arena.ArenaProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Arena.ArenaProvider.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Arena.Battle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Arena.Battle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Arena.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Arena.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ArenaNotEndedException.yml",
       "output": {
         ".html": {
@@ -686,6 +716,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.ClaimItems.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ClaimPatrolReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ClaimPatrolReward.html"
         }
       },
       "version": ""
@@ -1452,6 +1492,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.ClaimUnbonded.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.ClaimUnbonded.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.GuildConfig.yml",
       "output": {
         ".html": {
@@ -1476,36 +1526,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.Guild.MakeGuild.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.FixToRefundFromNonValidator.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuild.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuild.html"
         }
       },
       "version": ""
@@ -1542,16 +1562,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegation.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegation.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.yml",
       "output": {
         ".html": {
@@ -1562,20 +1572,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumGuild.html"
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.yml",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html"
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.html"
         }
       },
       "version": ""
@@ -1836,6 +1846,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.InvalidItemCountException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.InvalidItemIdException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.InvalidItemIdException.html"
         }
       },
       "version": ""
@@ -3052,6 +3072,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Synthesize.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Synthesize.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.TotalSupplyDoesNotExistException.yml",
       "output": {
         ".html": {
@@ -3236,16 +3266,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.ValidatorDelegation.Refund.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Action.ValidatorDelegation.ReleaseValidatorUnbondings.html"
         }
       },
       "version": ""
@@ -3812,10 +3832,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.Delegatee-2.yml",
+      "source_relative_path": "api/Nekoyume.Delegation.Delegatee-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Delegation.Delegatee-2.html"
+          "relative_path": "api/Nekoyume.Delegation.Delegatee-3.html"
         }
       },
       "version": ""
@@ -3842,20 +3862,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.DelegationRepository.yml",
+      "source_relative_path": "api/Nekoyume.Delegation.DelegationRepository-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Delegation.DelegationRepository.html"
+          "relative_path": "api/Nekoyume.Delegation.DelegationRepository-3.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.Delegator-2.yml",
+      "source_relative_path": "api/Nekoyume.Delegation.Delegator-3.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Nekoyume.Delegation.Delegator-2.html"
+          "relative_path": "api/Nekoyume.Delegation.Delegator-3.html"
         }
       },
       "version": ""
@@ -3952,6 +3972,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.RewardBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.RewardBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Delegation.UnbondLockIn.yml",
       "output": {
         ".html": {
@@ -3996,16 +4026,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Delegation.UnbondingRef.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Delegation.UnbondingSet.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Delegation.UnbondingSet.html"
         }
       },
       "version": ""
@@ -4426,6 +4446,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Helper.SummonHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SynthesizeResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SynthesizeResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.InputData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.InputData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.SynthesizeSimulator.html"
         }
       },
       "version": ""
@@ -5902,16 +5952,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.Guild.GuildRejoinCooldown.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Model.Guild.GuildRejoinCooldown.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Guild.GuildRepository.yml",
       "output": {
         ".html": {
@@ -6456,6 +6496,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Mail.OrderSellerMail.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Mail.PatrolRewardMail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Mail.PatrolRewardMail.html"
         }
       },
       "version": ""
@@ -8292,6 +8342,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.PatrolRewardModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.PatrolRewardModule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Module.RelationshipModule.yml",
       "output": {
         ".html": {
@@ -9752,6 +9812,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.RewardModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.RewardModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Event.PatrolRewardSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.Event.yml",
       "output": {
         ".html": {
@@ -11142,6 +11232,56 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.SynthesizeSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.SynthesizeSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.SynthesizeSheet.SynthesizeData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.SynthesizeSheet.SynthesizeData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.SynthesizeSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.SynthesizeSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.SynthesizeWeightSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.SynthesizeWeightSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.SynthesizeWeightSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.SynthesizeWeightSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.TableExtensions.yml",
       "output": {
         ".html": {
@@ -11624,11 +11764,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "api/toc.json"
-        },
         ".html": {
           "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
         }
       },
       "version": ""
@@ -11647,11 +11787,11 @@
       "type": "Toc",
       "source_relative_path": "articles/currencies/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/currencies/toc.json"
-        },
         ".html": {
           "relative_path": "articles/currencies/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/currencies/toc.json"
         }
       },
       "version": ""
@@ -11672,6 +11812,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/system/account.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/system/account.html"
         }
       },
       "version": ""
@@ -11740,11 +11890,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/avatar/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/system/avatar/toc.json"
-        },
         ".html": {
           "relative_path": "articles/system/avatar/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/system/avatar/toc.json"
         }
       },
       "version": ""
@@ -11763,11 +11913,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/system/toc.json"
-        },
         ".html": {
           "relative_path": "articles/system/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/system/toc.json"
         }
       },
       "version": ""
@@ -11776,11 +11926,11 @@
       "type": "Toc",
       "source_relative_path": "articles/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "articles/toc.json"
-        },
         ".html": {
           "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
         }
       },
       "version": ""
@@ -11809,11 +11959,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/documentation/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "contributing/documentation/toc.json"
-        },
         ".html": {
           "relative_path": "contributing/documentation/toc.html"
+        },
+        ".json": {
+          "relative_path": "contributing/documentation/toc.json"
         }
       },
       "version": ""
@@ -11822,11 +11972,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "contributing/toc.json"
-        },
         ".html": {
           "relative_path": "contributing/toc.html"
+        },
+        ".json": {
+          "relative_path": "contributing/toc.json"
         }
       },
       "version": ""
@@ -11845,11 +11995,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".json": {
-          "relative_path": "toc.json"
-        },
         ".html": {
           "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
         }
       },
       "version": ""

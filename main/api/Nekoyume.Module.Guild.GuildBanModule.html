@@ -154,8 +154,8 @@ Class GuildBanModule  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Module_Guild_GuildBanModule_Ban_" data-uid="Nekoyume.Module.Guild.GuildBanModule.Ban*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildBanModule_Ban_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Nekoyume_TypedAddress_AgentAddress_Nekoyume_TypedAddress_AgentAddress_" data-uid="Nekoyume.Module.Guild.GuildBanModule.Ban(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress,Nekoyume.TypedAddress.AgentAddress,Nekoyume.TypedAddress.AgentAddress)">
-  Ban(GuildRepository, GuildAddress, AgentAddress, AgentAddress)
+  <h3 id="Nekoyume_Module_Guild_GuildBanModule_Ban_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_Nekoyume_TypedAddress_AgentAddress_" data-uid="Nekoyume.Module.Guild.GuildBanModule.Ban(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.AgentAddress,Nekoyume.TypedAddress.AgentAddress)">
+  Ban(GuildRepository, AgentAddress, AgentAddress)
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Module/Guild/GuildBanModule.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -163,14 +163,12 @@ Class GuildBanModule  <a class="header-action link-secondary" title="View source
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void Ban(this GuildRepository repository, GuildAddress guildAddress, AgentAddress signer, AgentAddress target)</code></pre>
+    <pre><code class="lang-csharp hljs">public static void Ban(this GuildRepository repository, AgentAddress signer, AgentAddress target)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
-    <dd></dd>
-    <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
     <dt><code>signer</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
     <dd></dd>
@@ -233,7 +231,7 @@ Class GuildBanModule  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Module_Guild_GuildBanModule_RemoveBanList_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_" data-uid="Nekoyume.Module.Guild.GuildBanModule.RemoveBanList(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress)">
   RemoveBanList(GuildRepository, GuildAddress)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Module/Guild/GuildBanModule.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Module/Guild/GuildBanModule.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -264,23 +262,21 @@ Class GuildBanModule  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Module_Guild_GuildBanModule_Unban_" data-uid="Nekoyume.Module.Guild.GuildBanModule.Unban*"></a>
 
-  <h3 id="Nekoyume_Module_Guild_GuildBanModule_Unban_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_GuildAddress_Nekoyume_TypedAddress_AgentAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildBanModule.Unban(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.GuildAddress,Nekoyume.TypedAddress.AgentAddress,Libplanet.Crypto.Address)">
-  Unban(GuildRepository, GuildAddress, AgentAddress, Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Module/Guild/GuildBanModule.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Module_Guild_GuildBanModule_Unban_Nekoyume_Model_Guild_GuildRepository_Nekoyume_TypedAddress_AgentAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Module.Guild.GuildBanModule.Unban(Nekoyume.Model.Guild.GuildRepository,Nekoyume.TypedAddress.AgentAddress,Libplanet.Crypto.Address)">
+  Unban(GuildRepository, AgentAddress, Address)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Module/Guild/GuildBanModule.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void Unban(this GuildRepository repository, GuildAddress guildAddress, AgentAddress signer, Address target)</code></pre>
+    <pre><code class="lang-csharp hljs">public static void Unban(this GuildRepository repository, AgentAddress signer, Address target)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>repository</code> <a class="xref" href="Nekoyume.Model.Guild.GuildRepository.html">GuildRepository</a></dt>
-    <dd></dd>
-    <dt><code>guildAddress</code> <a class="xref" href="Nekoyume.TypedAddress.GuildAddress.html">GuildAddress</a></dt>
     <dd></dd>
     <dt><code>signer</code> <a class="xref" href="Nekoyume.TypedAddress.AgentAddress.html">AgentAddress</a></dt>
     <dd></dd>

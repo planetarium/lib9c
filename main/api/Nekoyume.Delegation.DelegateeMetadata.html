@@ -157,7 +157,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata__ctor_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Bencodex_Types_IValue_" data-uid="Nekoyume.Delegation.DelegateeMetadata.#ctor(Libplanet.Crypto.Address,Libplanet.Crypto.Address,Bencodex.Types.IValue)">
   DelegateeMetadata(Address, Address, IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L97"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -192,21 +192,21 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata__ctor_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Bencodex_Types_List_" data-uid="Nekoyume.Delegation.DelegateeMetadata.#ctor(Libplanet.Crypto.Address,Libplanet.Crypto.Address,Bencodex.Types.List)">
   DelegateeMetadata(Address, Address, List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DelegateeMetadata(Address address, Address accountAddress, List bencoded)</code></pre>
+    <pre><code class="lang-csharp hljs">public DelegateeMetadata(Address delegateeAddress, Address delegateeAccountAddress, List bencoded)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>address</code> <span class="xref">Address</span></dt>
+    <dt><code>delegateeAddress</code> <span class="xref">Address</span></dt>
     <dd></dd>
-    <dt><code>accountAddress</code> <span class="xref">Address</span></dt>
+    <dt><code>delegateeAccountAddress</code> <span class="xref">Address</span></dt>
     <dd></dd>
     <dt><code>bencoded</code> <span class="xref">List</span></dt>
     <dd></dd>
@@ -227,10 +227,11 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata__ctor_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Types_Assets_Currency_System_Collections_Generic_IEnumerable_Libplanet_Types_Assets_Currency__Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Crypto_Address_System_Int64_System_Int32_System_Int32_" data-uid="Nekoyume.Delegation.DelegateeMetadata.#ctor(Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Types.Assets.Currency,System.Collections.Generic.IEnumerable{Libplanet.Types.Assets.Currency},Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Crypto.Address,System.Int64,System.Int32,System.Int32)">
   DelegateeMetadata(Address, Address, Currency, IEnumerable&lt;Currency&gt;, Address, Address, Address, Address, long, int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Create a new instance of DelegateeMetadata.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -240,27 +241,43 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>delegateeAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the Delegatee&lt;T, TSelf&gt;.</p>
+</dd>
     <dt><code>delegateeAccountAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the account of the Delegatee&lt;T, TSelf&gt;.</p>
+</dd>
     <dt><code>delegationCurrency</code> <span class="xref">Currency</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Types.Assets.Currency</span> used for delegation.</p>
+</dd>
     <dt><code>rewardCurrencies</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<span class="xref">Currency</span>&gt;</dt>
-    <dd></dd>
+    <dd><p>The enumerable of <span class="xref">Libplanet.Types.Assets.Currency</span>s used for reward.</p>
+</dd>
     <dt><code>delegationPoolAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the delegation pool that stores
+delegated <span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span>s.</p>
+</dd>
     <dt><code>rewardPoolAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the reward pool that gathers
+rewards to be distributed.</p>
+</dd>
     <dt><code>rewardRemainderPoolAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the reward remainder pool to
+sends the remainder of the rewards to.</p>
+</dd>
     <dt><code>slashedPoolAddress</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the pool that sends the slashed
+<span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span>s to.</p>
+</dd>
     <dt><code>unbondingPeriod</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The period in blocks that the unbonded <span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span>s
+can be withdrawn.</p>
+</dd>
     <dt><code>maxUnbondLockInEntries</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The maximum number of entries that can be locked in for unbonding.</p>
+</dd>
     <dt><code>maxRebondGraceEntries</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The maximum number of entries that can be locked in for rebonding.</p>
+</dd>
   </dl>
 
 
@@ -282,7 +299,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_Address" data-uid="Nekoyume.Delegation.DelegateeMetadata.Address">
   Address
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L237"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L219"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -313,7 +330,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_Bencoded" data-uid="Nekoyume.Delegation.DelegateeMetadata.Bencoded">
   Bencoded
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L255"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -344,7 +361,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_DelegateeAccountAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.DelegateeAccountAddress">
   DelegateeAccountAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L217"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -375,7 +392,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_DelegateeAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.DelegateeAddress">
   DelegateeAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L215"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -406,7 +423,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_DelegationCurrency" data-uid="Nekoyume.Delegation.DelegateeMetadata.DelegationCurrency">
   DelegationCurrency
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L224"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -437,7 +454,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_DelegationPoolAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.DelegationPoolAddress">
   DelegationPoolAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L246"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L228"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -468,7 +485,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_Jailed" data-uid="Nekoyume.Delegation.DelegateeMetadata.Jailed">
   Jailed
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L246"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -499,7 +516,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_JailedUntil" data-uid="Nekoyume.Delegation.DelegateeMetadata.JailedUntil">
   JailedUntil
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L266"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L248"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -530,7 +547,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_MaxRebondGraceEntries" data-uid="Nekoyume.Delegation.DelegateeMetadata.MaxRebondGraceEntries">
   MaxRebondGraceEntries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L258"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L240"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -561,7 +578,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_MaxUnbondLockInEntries" data-uid="Nekoyume.Delegation.DelegateeMetadata.MaxUnbondLockInEntries">
   MaxUnbondLockInEntries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L256"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L238"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -592,7 +609,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RewardCurrencies" data-uid="Nekoyume.Delegation.DelegateeMetadata.RewardCurrencies">
   RewardCurrencies
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L226"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -623,7 +640,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RewardPoolAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.RewardPoolAddress">
   RewardPoolAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L230"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -654,7 +671,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RewardRemainderPoolAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.RewardRemainderPoolAddress">
   RewardRemainderPoolAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L250"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L232"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -685,7 +702,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_SlashedPoolAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.SlashedPoolAddress">
   SlashedPoolAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L252"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L234"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -716,7 +733,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_Tombstoned" data-uid="Nekoyume.Delegation.DelegateeMetadata.Tombstoned">
   Tombstoned
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L268"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L250"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -747,7 +764,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_TotalDelegatedFAV" data-uid="Nekoyume.Delegation.DelegateeMetadata.TotalDelegatedFAV">
   TotalDelegatedFAV
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L260"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L242"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -778,7 +795,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_TotalShares" data-uid="Nekoyume.Delegation.DelegateeMetadata.TotalShares">
   TotalShares
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L244"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -809,7 +826,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_UnbondingPeriod" data-uid="Nekoyume.Delegation.DelegateeMetadata.UnbondingPeriod">
   UnbondingPeriod
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L236"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -840,7 +857,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_UnbondingRefs" data-uid="Nekoyume.Delegation.DelegateeMetadata.UnbondingRefs">
   UnbondingRefs
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L252"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -875,7 +892,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_AddDelegatedFAV_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Delegation.DelegateeMetadata.AddDelegatedFAV(Libplanet.Types.Assets.FungibleAssetValue)">
   AddDelegatedFAV(FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L304"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L286"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -906,7 +923,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_AddShare_System_Numerics_BigInteger_" data-uid="Nekoyume.Delegation.DelegateeMetadata.AddShare(System.Numerics.BigInteger)">
   AddShare(BigInteger)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L296"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -937,7 +954,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_AddUnbondingRef_Nekoyume_Delegation_UnbondingRef_" data-uid="Nekoyume.Delegation.DelegateeMetadata.AddUnbondingRef(Nekoyume.Delegation.UnbondingRef)">
   AddUnbondingRef(UnbondingRef)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L324"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L306"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -968,7 +985,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_BondAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.DelegateeMetadata.BondAddress(Libplanet.Crypto.Address)">
   BondAddress(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L334"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L316"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1004,10 +1021,12 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_CurrentLumpSumRewardsRecordAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.CurrentLumpSumRewardsRecordAddress">
   CurrentLumpSumRewardsRecordAddress()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L343"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L361"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Get the <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the current lump sum rewards record.
+This will be removed after the migration is done.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1018,7 +1037,75 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p><a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the current lump sum rewards record.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_DelegateeMetadata_CurrentRewardBaseAddress_" data-uid="Nekoyume.Delegation.DelegateeMetadata.CurrentRewardBaseAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_DelegateeMetadata_CurrentRewardBaseAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.CurrentRewardBaseAddress">
+  CurrentRewardBaseAddress()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L341"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the current <a class="xref" href="Nekoyume.Delegation.RewardBase.html">RewardBase</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Address CurrentRewardBaseAddress()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd><p><a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the current <a class="xref" href="Nekoyume.Delegation.RewardBase.html">RewardBase</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Delegation_DelegateeMetadata_DistributionPoolAddress_" data-uid="Nekoyume.Delegation.DelegateeMetadata.DistributionPoolAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_DelegateeMetadata_DistributionPoolAddress" data-uid="Nekoyume.Delegation.DelegateeMetadata.DistributionPoolAddress">
+  DistributionPoolAddress()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L332"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the distribution pool
+where the rewards are distributed from.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Address DistributionPoolAddress()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd><p><a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the distribution pool.</p>
+</dd>
   </dl>
 
 
@@ -1035,10 +1122,11 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_Equals_Nekoyume_Delegation_IDelegateeMetadata_" data-uid="Nekoyume.Delegation.DelegateeMetadata.Equals(Nekoyume.Delegation.IDelegateeMetadata)">
   Equals(IDelegateeMetadata?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L352"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L391"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Check if the given <a class="xref" href="Nekoyume.Delegation.IDelegateeMetadata.html">IDelegateeMetadata</a> is equal to this instance.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1048,13 +1136,16 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>other</code> <a class="xref" href="Nekoyume.Delegation.IDelegateeMetadata.html">IDelegateeMetadata</a></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="Nekoyume.Delegation.IDelegateeMetadata.html">IDelegateeMetadata</a> to compare with this instance.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the given <a class="xref" href="Nekoyume.Delegation.IDelegateeMetadata.html">IDelegateeMetadata</a> is equal to
+this instance;</p>
+</dd>
   </dl>
 
 
@@ -1071,7 +1162,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_Equals_System_Object_" data-uid="Nekoyume.Delegation.DelegateeMetadata.Equals(System.Object)">
   Equals(object?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L378"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -1110,7 +1201,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_FAVFromShare_System_Numerics_BigInteger_" data-uid="Nekoyume.Delegation.DelegateeMetadata.FAVFromShare(System.Numerics.BigInteger)">
   FAVFromShare(BigInteger)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L299"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L281"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1146,7 +1237,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_GetHashCode" data-uid="Nekoyume.Delegation.DelegateeMetadata.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L371"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L411"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -1179,10 +1270,12 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_LumpSumRewardsRecordAddress_System_Int64_" data-uid="Nekoyume.Delegation.DelegateeMetadata.LumpSumRewardsRecordAddress(System.Int64)">
   LumpSumRewardsRecordAddress(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L346"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L374"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Get the <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the lump sum rewards record at the given height.
+This will be removed after the migration is done.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1192,13 +1285,15 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The height of the lump sum rewards record.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p><a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the lump sum rewards record at the given height.</p>
+</dd>
   </dl>
 
 
@@ -1215,7 +1310,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RebondGraceAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.DelegateeMetadata.RebondGraceAddress(Libplanet.Crypto.Address)">
   RebondGraceAddress(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L322"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1251,7 +1346,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RemoveDelegatedFAV_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Delegation.DelegateeMetadata.RemoveDelegatedFAV(Libplanet.Types.Assets.FungibleAssetValue)">
   RemoveDelegatedFAV(FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L291"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1282,7 +1377,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RemoveShare_System_Numerics_BigInteger_" data-uid="Nekoyume.Delegation.DelegateeMetadata.RemoveShare(System.Numerics.BigInteger)">
   RemoveShare(BigInteger)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L319"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L301"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1313,7 +1408,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_RemoveUnbondingRef_Nekoyume_Delegation_UnbondingRef_" data-uid="Nekoyume.Delegation.DelegateeMetadata.RemoveUnbondingRef(Nekoyume.Delegation.UnbondingRef)">
   RemoveUnbondingRef(UnbondingRef)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L329"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L311"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1340,11 +1435,49 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
 
 
+  <a id="Nekoyume_Delegation_DelegateeMetadata_RewardBaseAddress_" data-uid="Nekoyume.Delegation.DelegateeMetadata.RewardBaseAddress*"></a>
+
+  <h3 id="Nekoyume_Delegation_DelegateeMetadata_RewardBaseAddress_System_Int64_" data-uid="Nekoyume.Delegation.DelegateeMetadata.RewardBaseAddress(System.Int64)">
+  RewardBaseAddress(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L351"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the <a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the <a class="xref" href="Nekoyume.Delegation.RewardBase.html">RewardBase</a> at the given height.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Address RewardBaseAddress(long height)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>height</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd><p><a class="xref" href="Nekoyume.Delegation.DelegateeMetadata.html#Nekoyume_Delegation_DelegateeMetadata_Address">Address</a> of the <a class="xref" href="Nekoyume.Delegation.RewardBase.html">RewardBase</a> at the given height.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Delegation_DelegateeMetadata_ShareFromFAV_" data-uid="Nekoyume.Delegation.DelegateeMetadata.ShareFromFAV*"></a>
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_ShareFromFAV_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.Delegation.DelegateeMetadata.ShareFromFAV(Libplanet.Types.Assets.FungibleAssetValue)">
   ShareFromFAV(FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L276"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1380,7 +1513,7 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_UnbondLockInAddress_Libplanet_Crypto_Address_" data-uid="Nekoyume.Delegation.DelegateeMetadata.UnbondLockInAddress(Libplanet.Crypto.Address)">
   UnbondLockInAddress(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L319"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1416,10 +1549,11 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
 
   <h3 id="Nekoyume_Delegation_DelegateeMetadata_UpdateUnbondingPeriod_System_Int64_" data-uid="Nekoyume.Delegation.DelegateeMetadata.UpdateUnbondingPeriod(System.Int64)">
   UpdateUnbondingPeriod(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L376"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Delegation/DelegateeMetadata.cs/#L422"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Update the unbonding period.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1429,7 +1563,8 @@ Class DelegateeMetadata  <a class="header-action link-secondary" title="View sou
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>unbondingPeriod</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>The new unbonding period.</p>
+</dd>
   </dl>
 
 

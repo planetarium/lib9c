@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class GuildMigrationFailedException | Lib9c </title>
+      <title>Class InvalidItemIdException | Lib9c </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class GuildMigrationFailedException | Lib9c ">
+      <meta name="title" content="Class InvalidItemIdException | Lib9c ">
       
-      <meta name="description" content="An exception to be thrown when guild migration failed.">
+      <meta name="description" content="Represents an exception that is thrown when an invalid item ID is used.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/main/apiSpec/new?filename=Nekoyume_Action_Guild_Migration_GuildMigrationFailedException.md&amp;value=---%0Auid%3A%20Nekoyume.Action.Guild.Migration.GuildMigrationFailedException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/main/apiSpec/new?filename=Nekoyume_Action_InvalidItemIdException.md&amp;value=---%0Auid%3A%20Nekoyume.Action.InvalidItemIdException%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,25 +84,26 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="Nekoyume.Action.Guild.Migration.GuildMigrationFailedException">
+        <article data-uid="Nekoyume.Action.InvalidItemIdException">
 
 
 
-  <h1 id="Nekoyume_Action_Guild_Migration_GuildMigrationFailedException" data-uid="Nekoyume.Action.Guild.Migration.GuildMigrationFailedException" class="text-break">
-Class GuildMigrationFailedException  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/Guild/Migration/GuildMigrationFailedException.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  <h1 id="Nekoyume_Action_InvalidItemIdException" data-uid="Nekoyume.Action.InvalidItemIdException" class="text-break">
+Class InvalidItemIdException  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InvalidItemIdException.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a>.<a class="xref" href="Nekoyume.Action.Guild.html">Guild</a>.<a class="xref" href="Nekoyume.Action.Guild.Migration.html">Migration</a></dd></dl>
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a></dd></dl>
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>An exception to be thrown when guild migration failed.</p>
+  <div class="markdown summary"><p>Represents an exception that is thrown when an invalid item ID is used.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class GuildMigrationFailedException : InvalidOperationException, ISerializable</code></pre>
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class InvalidItemIdException : ArgumentOutOfRangeException, ISerializable</code></pre>
   </div>
 
 
@@ -114,8 +115,9 @@ Class GuildMigrationFailedException  <a class="header-action link-secondary" tit
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception">Exception</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.systemexception">SystemException</a></div>
-      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></div>
-      <div><span class="xref">GuildMigrationFailedException</span></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></div>
+      <div><span class="xref">InvalidItemIdException</span></div>
     </dd>
   </dl>
 
@@ -131,10 +133,19 @@ Class GuildMigrationFailedException  <a class="header-action link-secondary" tit
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.getbaseexception">Exception.GetBaseException()</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception.getobjectdata">ArgumentOutOfRangeException.GetObjectData(SerializationInfo, StreamingContext)</a>
     </div>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.getobjectdata">Exception.GetObjectData(SerializationInfo, StreamingContext)</a>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception.actualvalue">ArgumentOutOfRangeException.ActualValue</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception.message">ArgumentOutOfRangeException.Message</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception.paramname">ArgumentException.ParamName</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.getbaseexception">Exception.GetBaseException()</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.gettype">Exception.GetType()</a>
@@ -153,9 +164,6 @@ Class GuildMigrationFailedException  <a class="header-action link-secondary" tit
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.innerexception">Exception.InnerException</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.message">Exception.Message</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.exception.source">Exception.Source</a>
@@ -195,24 +203,89 @@ Class GuildMigrationFailedException  <a class="header-action link-secondary" tit
 </h2>
 
 
-  <a id="Nekoyume_Action_Guild_Migration_GuildMigrationFailedException__ctor_" data-uid="Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.#ctor*"></a>
+  <a id="Nekoyume_Action_InvalidItemIdException__ctor_" data-uid="Nekoyume.Action.InvalidItemIdException.#ctor*"></a>
 
-  <h3 id="Nekoyume_Action_Guild_Migration_GuildMigrationFailedException__ctor_System_String_" data-uid="Nekoyume.Action.Guild.Migration.GuildMigrationFailedException.#ctor(System.String)">
-  GuildMigrationFailedException(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/Guild/Migration/GuildMigrationFailedException.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_InvalidItemIdException__ctor" data-uid="Nekoyume.Action.InvalidItemIdException.#ctor">
+  InvalidItemIdException()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InvalidItemIdException.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Nekoyume.Action.InvalidItemIdException.html">InvalidItemIdException</a> class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public GuildMigrationFailedException(string message)</code></pre>
+    <pre><code class="lang-csharp hljs">public InvalidItemIdException()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_InvalidItemIdException__ctor_" data-uid="Nekoyume.Action.InvalidItemIdException.#ctor*"></a>
+
+  <h3 id="Nekoyume_Action_InvalidItemIdException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Action.InvalidItemIdException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+  InvalidItemIdException(SerializationInfo, StreamingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InvalidItemIdException.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Nekoyume.Action.InvalidItemIdException.html">InvalidItemIdException</a> class with a specified error message</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected InvalidItemIdException(SerializationInfo info, StreamingContext context)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>message</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dt><code>info</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.serializationinfo">SerializationInfo</a></dt>
+    <dd><p>SerializationInfo</p>
+</dd>
+    <dt><code>context</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.streamingcontext">StreamingContext</a></dt>
+    <dd><p>StreamingContext</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_InvalidItemIdException__ctor_" data-uid="Nekoyume.Action.InvalidItemIdException.#ctor*"></a>
+
+  <h3 id="Nekoyume_Action_InvalidItemIdException__ctor_System_String_" data-uid="Nekoyume.Action.InvalidItemIdException.#ctor(System.String)">
+  InvalidItemIdException(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InvalidItemIdException.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Nekoyume.Action.InvalidItemIdException.html">InvalidItemIdException</a> class with a specified error message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InvalidItemIdException(string msg)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>msg</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The message that describes the error.</p>
+</dd>
   </dl>
 
 
@@ -230,7 +303,7 @@ Class GuildMigrationFailedException  <a class="header-action link-secondary" tit
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/Guild/Migration/GuildMigrationFailedException.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/InvalidItemIdException.cs/#L9" class="edit-link">Edit this page</a>
         </div>
 
 
