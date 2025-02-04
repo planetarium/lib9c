@@ -8,7 +8,7 @@
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
     <LangVersion>9</LangVersion>
     <CodeAnalysisRuleSet>..\Lib9c.Common.ruleset</CodeAnalysisRuleSet>
-    <VersionPrefix>1.21.1</VersionPrefix>
+    <VersionPrefix>1.22.1</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup Condition="!'$(UseLocalLibplanet)'">
