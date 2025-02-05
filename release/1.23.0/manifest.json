@@ -4652,6 +4652,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Arena.ArenaResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Arena.ArenaResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Arena.ArenaScore.yml",
       "output": {
         ".html": {
