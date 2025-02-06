@@ -4,10 +4,11 @@
 
         <!-- Fill with Libplanet's absolute path to debug with local Libplanet.
              Example: $(MSBuildThisFileDirectory).Libplanet -->
-        <LibplanetDirectory></LibplanetDirectory>
+        <LibplanetDirectory>$(MSBuildThisFileDirectory)..\Libplanet</LibplanetDirectory>
     </PropertyGroup>
 
     <PropertyGroup>
+        <NoWarn>$(NoWarn);LAA1002</NoWarn>
         <UseLocalLibplanet Condition="Exists('$(LibplanetDirectory)')">true</UseLocalLibplanet>
         <UseLocalLibplanet Condition=" '$(UseLocalLibplanet)' == '' ">false</UseLocalLibplanet>
     </PropertyGroup>
