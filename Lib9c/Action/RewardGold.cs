@@ -38,7 +38,6 @@ namespace Nekoyume.Action
         public override IWorld Execute(IActionContext context)
         {
             var states = context.PreviousState;
-            states = TransferMead(context, states);
             states = GenesisGoldDistribution(context, states);
             var addressesHex = GetSignerAndOtherAddressesHex(context, context.Signer);
             var started = DateTimeOffset.UtcNow;
@@ -298,31 +297,5 @@ namespace Nekoyume.Action
 
             return states;
         }
-
-        public static IWorld TransferMead(IActionContext context, IWorld states)
-        {
-            var targetAddresses = context.Txs
-                .Where(tx => tx.MaxGasPrice is { } price && price.Currency.Equals(Currencies.Mead))
-                .Select(tx => tx.Signer)
-                .Distinct();
-            foreach (var address in targetAddresses)
-            {
-                var contractAddress = address.GetPledgeAddress();
-                if (states.TryGetLegacyState(contractAddress, out List contract) &&
-                    contract[1].ToBoolean())
-                {
-                    try
-                    {
-                        states = states.Mead(context, address, contract[2].ToInteger());
-                    }
-                    catch (InsufficientBalanceException)
-                    {
-                    }
-                }
-            }
-
-            return states;
-        }
-
     }
 }
