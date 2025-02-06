@@ -1,8 +1,10 @@
-﻿using Bencodex.Types;
-using Lib9c;
+using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Libplanet.Types.Assets;
+using Nekoyume.Model.Guild;
+using Nekoyume.Module.Guild;
+using Nekoyume.TypedAddress;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -37,17 +39,23 @@ namespace Nekoyume.Action.ValidatorDelegation
                 return state;
             }
 
-            var gasOwned = state.GetBalance(context.Signer, realGasPrice.Currency);
             var gasRequired = realGasPrice * GasTracer.GasAvailable;
+            var guildRepo = new GuildRepository(state, context);
+            var joinedGuildAddress = guildRepo.GetJoinedGuild(new AgentAddress(context.Signer));
+            if (joinedGuildAddress is GuildAddress guildAddress)
+            {
+                var guildGasBalance = state.GetBalance(guildAddress, realGasPrice.Currency);
+                if (guildGasBalance >= gasRequired)
+                {
+                    return PayMaster.Mortgage(state, context, context.Signer, guildAddress, gasRequired);
+                }
+            }
+
+            var gasOwned = state.GetBalance(context.Signer, realGasPrice.Currency);
             var gasToMortgage = gasOwned < gasRequired ? gasOwned : gasRequired;
             if (gasOwned < gasRequired)
             {
-                // var msg =
-                //     $"The account {context.Signer}'s balance of {realGasPrice.Currency} is " +
-                //     "insufficient to pay gas fee: " +
-                //     $"{gasOwned} < {realGasPrice * gasLimit}.";
                 GasTracer.CancelTrace();
-                // throw new InsufficientBalanceException(msg, context.Signer, gasOwned);
             }
 
             if (gasToMortgage.Sign > 0)
