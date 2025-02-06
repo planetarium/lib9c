@@ -1,7 +1,8 @@
-﻿using Bencodex.Types;
+using Bencodex.Types;
 using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
+using Nekoyume.ValidatorDelegation;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -43,8 +44,7 @@ namespace Nekoyume.Action.ValidatorDelegation
                 return world;
             }
 
-            return world.TransferAsset(
-                context, Addresses.MortgagePool, context.Signer, remaining);
+            return PayMaster.Refund(world, context, context.Signer, remaining);
         }
     }
 }
