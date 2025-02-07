@@ -2,6 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Linq;
+    using System.Numerics;
     using Libplanet.Types.Assets;
     using Nekoyume.Helper;
     using Nekoyume.Model.Item;
@@ -108,6 +109,30 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(expectedRune, rune);
                 Assert.Equal(expectedCircle, circle);
             }
+        }
+
+        [Theory]
+        [InlineData(1000, 250, "0.25")]
+        [InlineData(10000, 1, "0.0001")]
+        [InlineData(1000, 0, "0.0000")]
+        [InlineData(1000, 1500, "1")]
+        public void CalculateContribution_ValidInput_ReturnsCorrectContribution(long totalDamage, long myDamage, string expected)
+        {
+            // Act
+            decimal contribution = WorldBossHelper.CalculateContribution(totalDamage, myDamage);
+
+            // Assert
+            Assert.Equal(decimal.Parse(expected), contribution);
+        }
+
+        [Theory]
+        [InlineData(0, 250)]
+        [InlineData(-1000, 250)]
+        public void CalculateContribution_ThrowsArgumentOutOfRangeException(long totalDamage, long myDamage)
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                WorldBossHelper.CalculateContribution(totalDamage, myDamage));
         }
     }
 }

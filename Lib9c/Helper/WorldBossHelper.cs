@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
 using Nekoyume.Battle;
@@ -111,6 +112,25 @@ namespace Nekoyume.Helper
             }
 
             return (assets, materials);
+        }
+
+        /// <summary>
+        /// Calculates the contribution percentage based on total damage and individual damage.
+        /// </summary>
+        /// <param name="totalDamage">The total damage dealt.</param>
+        /// <param name="myDamage">The damage dealt by the individual.</param>
+        /// <returns>The contribution percentage rounded to four decimal places.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when totalDamage is lower than 0.</exception>
+        public static decimal CalculateContribution(BigInteger totalDamage, long myDamage)
+        {
+            if (totalDamage <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(totalDamage), "total damage must be greater than 0.");
+            }
+
+            var contribution = myDamage / (decimal)totalDamage;
+            contribution = Math.Min(Math.Round(contribution, 4), 1m);
+            return contribution;
         }
     }
 }
