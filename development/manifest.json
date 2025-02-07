@@ -432,6 +432,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Arena.ArenaProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Arena.ArenaProvider.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Arena.Battle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Arena.Battle.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Arena.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Arena.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ArenaNotEndedException.yml",
       "output": {
         ".html": {
@@ -5896,16 +5926,6 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Guild.GuildParticipant.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Nekoyume.Model.Guild.GuildRejoinCooldown.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Nekoyume.Model.Guild.GuildRejoinCooldown.html"
         }
       },
       "version": ""
