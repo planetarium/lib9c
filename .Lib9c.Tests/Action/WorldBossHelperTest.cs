@@ -16,6 +16,16 @@ namespace Lib9c.Tests.Action
 
         private readonly TableSheets _tableSheets = new (TableSheetsImporter.ImportSheets());
 
+        private readonly WorldBossContributionRewardSheet _sheet;
+
+        public WorldBossHelperTest()
+        {
+            const string csv =
+                "boss_id,reward1_count,reward1_item_id,reward1_ticker,reward2_count,reward2_item_id,reward2_ticker,reward3_count,reward3_item_id,reward3_ticker,reward4_count,reward4_item_id,reward4_ticker,reward5_count,reward5_item_id,reward5_ticker,reward6_count,reward6_item_id,reward6_ticker,reward7_count,reward7_item_id,reward7_ticker\n900001,300340,,RUNESTONE_FENRIR4,45740,,RUNESTONE_FENRIR5,5125,,RUNESTONE_FENRIR6,24600,600201,,24600,600202,,14976300000,,CRYSTAL,1270,500000\n900002,300340,,RUNESTONE_SAEHRIMNIR4,45740,,RUNESTONE_SAEHRIMNIR5,5125,,RUNESTONE_SAEHRIMNIR6,24600,600201,,24600,600202,,14976300000,,CRYSTAL,1270,500000\n";
+            _sheet = new WorldBossContributionRewardSheet();
+            _sheet.Set(csv);
+        }
+
         [Theory]
         [InlineData(10, 10, 0, 10)]
         [InlineData(10, 10, 1, 20)]
@@ -133,6 +143,15 @@ namespace Lib9c.Tests.Action
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() =>
                 WorldBossHelper.CalculateContribution(totalDamage, myDamage));
+        }
+
+        [Fact]
+        public void CalculateContributionReward_Empty()
+        {
+            var row = _sheet[900001];
+            var (items, fav) = WorldBossHelper.CalculateContributionReward(row, 0m);
+            Assert.Empty(items);
+            Assert.Empty(fav);
         }
     }
 }

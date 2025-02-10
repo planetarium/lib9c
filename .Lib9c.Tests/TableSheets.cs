@@ -287,6 +287,8 @@ namespace Lib9c.Tests
 
         public PatrolRewardSheet PatrolRewardSheet { get; private set; }
 
+        public WorldBossContributionRewardSheet WorldBossContributionRewardSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();
