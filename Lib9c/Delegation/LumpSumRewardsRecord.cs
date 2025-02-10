@@ -16,7 +16,6 @@ namespace Nekoyume.Delegation
     {
         private const string StateTypeName = "lump_sum_rewards_record";
         private const long StateVersion = 1;
-        private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         public LumpSumRewardsRecord(
             Address address,
@@ -153,7 +152,7 @@ namespace Nekoyume.Delegation
                     .Add(StartHeight)
                     .Add(TotalShares)
                     .Add(new List(LumpSumRewards
-                        .OrderBy(r => r.Key, _currencyComparer)
+                        .OrderBy(r => r.Key, CurrencyComparer.HashBytes)
                         .Select(r => r.Value.Serialize())));
 
                 return LastStartHeight is long lastStartHeight
@@ -190,7 +189,7 @@ namespace Nekoyume.Delegation
 
         public ImmutableSortedDictionary<Currency, FungibleAssetValue> RewardsDuringPeriod(BigInteger share)
             => LumpSumRewards.Keys.Select(k => RewardsDuringPeriod(share, k))
-                .ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
+                .ToImmutableSortedDictionary(f => f.Currency, f => f, CurrencyComparer.HashBytes);
 
         public FungibleAssetValue RewardsDuringPeriod(BigInteger share, Currency currency)
             => LumpSumRewards.TryGetValue(currency, out var reward)

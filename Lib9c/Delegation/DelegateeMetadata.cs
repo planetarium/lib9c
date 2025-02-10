@@ -18,7 +18,6 @@ namespace Nekoyume.Delegation
         private const long StateVersion = 1;
 
         private Address? _address;
-        private readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         /// <summary>
         /// Create a new instance of DelegateeMetadata.
@@ -120,7 +119,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = new Currency(bencoded[2]);
-            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableSortedSet(_currencyComparer);
+            RewardCurrencies = ((List)bencoded[3]).Select(v => new Currency(v)).ToImmutableSortedSet(CurrencyComparer.HashBytes);
             DelegationPoolAddress = new Address(bencoded[4]);
             RewardPoolAddress = new Address(bencoded[5]);
             RewardRemainderPoolAddress = new Address(bencoded[6]);
@@ -196,7 +195,7 @@ namespace Nekoyume.Delegation
             DelegateeAddress = delegateeAddress;
             DelegateeAccountAddress = delegateeAccountAddress;
             DelegationCurrency = delegationCurrency;
-            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(_currencyComparer);
+            RewardCurrencies = rewardCurrencies.ToImmutableSortedSet(CurrencyComparer.HashBytes);
             DelegationPoolAddress = delegationPoolAddress;
             RewardPoolAddress = rewardPoolAddress;
             RewardRemainderPoolAddress = rewardRemainderPoolAddress;
