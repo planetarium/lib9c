@@ -413,22 +413,15 @@ namespace Nekoyume.Module
         {
             try
             {
-                var csv = GetSheetCsv<T>(worldState);
-                byte[] hash;
-                using (var sha256 = SHA256.Create())
-                {
-                    hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(csv));
-                }
-
-                var cacheKey = sheetAddr.ToHex() + ByteUtil.Hex(hash);
-                if (SheetsCache.TryGetValue(cacheKey, out var cached))
+                if (SheetsCache.TryGetValue(sheetAddr.ToHex(), out var cached))
                 {
                     return (T)cached;
                 }
 
+                var csv = GetSheetCsv<T>(worldState);
                 var sheet = new T();
                 sheet.Set(csv);
-                SheetsCache.AddOrUpdate(cacheKey, sheet);
+                SheetsCache.AddOrUpdate(sheetAddr.ToHex(), sheet);
                 return sheet;
             }
             catch (Exception e)
@@ -645,14 +638,7 @@ namespace Nekoyume.Module
                 }
 
                 var csv = csvValue.ToDotnetString();
-                byte[] hash;
-                using (var sha256 = SHA256.Create())
-                {
-                    hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(csv));
-                }
-
-                var cacheKey = address.ToHex() + ByteUtil.Hex(hash);
-                if (SheetsCache.TryGetValue(cacheKey, out var cached))
+                if (SheetsCache.TryGetValue(address.ToHex(), out var cached))
                 {
                     result[sheetType] = (address, cached);
                     continue;
@@ -665,7 +651,7 @@ namespace Nekoyume.Module
                 }
 
                 sheet.Set(csv);
-                SheetsCache.AddOrUpdate(cacheKey, sheet);
+                SheetsCache.AddOrUpdate(address.ToHex(), sheet);
                 result[sheetType] = (address, sheet);
             }
 
