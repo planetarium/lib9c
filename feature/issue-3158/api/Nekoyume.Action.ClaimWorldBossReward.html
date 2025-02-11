@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class ClaimWorldBossReward | Lib9c ">
       
-      
+      <meta name="description" content="The ClaimWorldBossReward class is an action that allows a player to claim rewards for their contribution in defeating a world boss. This action ensures that only the owner of the avatar can claim the reward and calculates the reward based on the player&#39;s contribution.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_ClaimWorldBossReward" data-uid="Nekoyume.Action.ClaimWorldBossReward" class="text-break">
-Class ClaimWorldBossReward  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L20"><i class="bi bi-code-slash"></i></a>
+Class ClaimWorldBossReward  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,14 @@ Class ClaimWorldBossReward  <a class="header-action link-secondary" title="View 
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>The ClaimWorldBossReward class is an action that allows a player to claim rewards for their contribution in defeating a world boss.
+This action ensures that only the owner of the avatar can claim the reward and calculates the reward based on the player's contribution.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Serializable]
-[ActionType(&quot;claimworldbossreward&quot;)]
+[ActionType(&quot;claim_world_boss_reward&quot;)]
 public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
   </div>
 
@@ -177,10 +179,11 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_ClaimWorldBossReward__ctor" data-uid="Nekoyume.Action.ClaimWorldBossReward.#ctor">
   ClaimWorldBossReward()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the ClaimWorldBossReward class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -203,10 +206,11 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_ClaimWorldBossReward__ctor_Libplanet_Crypto_Address_" data-uid="Nekoyume.Action.ClaimWorldBossReward.#ctor(Libplanet.Crypto.Address)">
   ClaimWorldBossReward(Address)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance with the specified avatar address.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -216,7 +220,8 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>address</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The address of the avatar.</p>
+</dd>
   </dl>
 
 
@@ -237,10 +242,11 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_ClaimWorldBossReward_AvatarAddress" data-uid="Nekoyume.Action.ClaimWorldBossReward.AvatarAddress">
   AvatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The address of the avatar claiming the reward.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -265,16 +271,48 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
 
 
-  <h3 id="Nekoyume_Action_ClaimWorldBossReward_TypeIdentifier" data-uid="Nekoyume.Action.ClaimWorldBossReward.TypeIdentifier">
-  TypeIdentifier
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_ClaimWorldBossReward_MinimumContribution" data-uid="Nekoyume.Action.ClaimWorldBossReward.MinimumContribution">
+  MinimumContribution
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The minimum contribution percentage required to be eligible for a reward.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string TypeIdentifier = &quot;claimworldbossreward&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public const decimal MinimumContribution = 0.0001</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_ClaimWorldBossReward_TypeIdentifier" data-uid="Nekoyume.Action.ClaimWorldBossReward.TypeIdentifier">
+  TypeIdentifier
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>A string identifier for this action type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string TypeIdentifier = &quot;claim_world_boss_reward&quot;</code></pre>
   </div>
 
 
@@ -302,10 +340,11 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_ClaimWorldBossReward_PlainValue" data-uid="Nekoyume.Action.ClaimWorldBossReward.PlainValue">
   PlainValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L113"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the action's data into a plain value format.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -337,10 +376,11 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_ClaimWorldBossReward_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ClaimWorldBossReward.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the action to claim the world boss reward.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -350,13 +390,15 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>context</code> <span class="xref">IActionContext</span></dt>
-    <dd></dd>
+    <dd><p>The action context.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The updated world state.</p>
+</dd>
   </dl>
 
 
@@ -366,6 +408,21 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.InvalidAddressException.html">InvalidAddressException</a></dt>
+    <dd><p>Thrown if the avatar address does not belong to the signer.</p>
+</dd>
+    <dt><a class="xref" href="Nekoyume.Action.Exceptions.AdventureBoss.AlreadyClaimedException.html">AlreadyClaimedException</a></dt>
+    <dd><p>Thrown if the reward has already been claimed.</p>
+</dd>
+    <dt><a class="xref" href="Nekoyume.Action.InvalidClaimException.html">InvalidClaimException</a></dt>
+    <dd><p>Thrown if no valid rewards are calculated.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.invalidoperationexception">InvalidOperationException</a></dt>
+    <dd><p>Thrown if the contribution does not meet the minimum requirement.</p>
+</dd>
+  </dl>
 
 
 
@@ -373,10 +430,11 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_ClaimWorldBossReward_LoadPlainValue_Bencodex_Types_IValue_" data-uid="Nekoyume.Action.ClaimWorldBossReward.LoadPlainValue(Bencodex.Types.IValue)">
   LoadPlainValue(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L157"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Deserializes the plain value back into the action's data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -386,7 +444,8 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>plainValue</code> <span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>The serialized plain value.</p>
+</dd>
   </dl>
 
 
@@ -404,7 +463,7 @@ public class ClaimWorldBossReward : ActionBase, IAction</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L20" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Action/ClaimWorldBossReward.cs/#L22" class="edit-link">Edit this page</a>
         </div>
 
 
