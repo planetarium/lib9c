@@ -269,10 +269,11 @@ public const long RefillInterval = 7200</code></pre>
 
   <h3 id="Nekoyume_Helper_WorldBossHelper_CalculateContributionReward_Nekoyume_TableData_WorldBossContributionRewardSheet_Row_System_Decimal_" data-uid="Nekoyume.Helper.WorldBossHelper.CalculateContributionReward(Nekoyume.TableData.WorldBossContributionRewardSheet.Row,System.Decimal)">
   CalculateContributionReward(Row, decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Helper/WorldBossHelper.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/issue-3158/Lib9c/Helper/WorldBossHelper.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Calculates the contribution reward based on the given contribution percentage.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -282,15 +283,18 @@ public const long RefillInterval = 7200</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>row</code> <a class="xref" href="Nekoyume.TableData.WorldBossContributionRewardSheet.html">WorldBossContributionRewardSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldBossContributionRewardSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>The row from the WorldBossContributionRewardSheet containing reward details.</p>
+</dd>
     <dt><code>contribution</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
-    <dd></dd>
+    <dd><p>The contribution percentage of the player.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.id">id</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.int32,system.int32-.count">count</a>)&gt;, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">FungibleAssetValue</span>&gt;)</dt>
-    <dd></dd>
+    <dd><p>A tuple containing a list of item rewards and a list of fungible asset values.</p>
+</dd>
   </dl>
 
 
