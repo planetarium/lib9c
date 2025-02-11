@@ -631,6 +631,12 @@ namespace Nekoyume.Module
             {
                 var sheetType = sheetTypes[i];
                 var address = addresses[i];
+                if (SheetsCache.TryGetValue(address.ToHex(), out var cached))
+                {
+                    result[sheetType] = (address, cached);
+                    continue;
+                }
+
                 var csvValue = csvValues[i];
                 if (csvValue is null or Null)
                 {
@@ -638,12 +644,6 @@ namespace Nekoyume.Module
                 }
 
                 var csv = csvValue.ToDotnetString();
-                if (SheetsCache.TryGetValue(address.ToHex(), out var cached))
-                {
-                    result[sheetType] = (address, cached);
-                    continue;
-                }
-
                 var sheetConstructorInfo = sheetType.GetConstructor(Type.EmptyTypes);
                 if (sheetConstructorInfo?.Invoke(Array.Empty<object>()) is not ISheet sheet)
                 {
