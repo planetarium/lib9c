@@ -31,6 +31,7 @@ namespace Nekoyume.Action.Tests
         [Theory]
         [InlineData(0.0001)]
         [InlineData(1)]
+        [InlineData(100)]
         public void Execute(decimal contribution)
         {
             Address agentAddress = new PrivateKey().Address;
@@ -39,12 +40,12 @@ namespace Nekoyume.Action.Tests
             var raiderAddress = Addresses.GetRaiderAddress(avatarAddress, bossRow.Id);
             var worldBossAddress = Addresses.GetWorldBossAddress(bossRow.Id);
             var worldBossState = new WorldBossState(bossRow, _tableSheets.WorldBossGlobalHpSheet[1]);
-            const int totalScore = 10000;
+            const int totalScore = 1000000;
             worldBossState.TotalDamage = totalScore;
             var raiderState = new RaiderState
             {
                 HighScore = 0,
-                TotalScore = (long)(totalScore * contribution),
+                TotalScore = (long)(totalScore * contribution / 100),
             };
             var avatarState = AvatarState.Create(
                 avatarAddress,

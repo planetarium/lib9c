@@ -129,8 +129,8 @@ namespace Nekoyume.Helper
                 throw new ArgumentOutOfRangeException(nameof(totalDamage), "total damage must be greater than 0.");
             }
 
-            var contribution = myDamage / (decimal)totalDamage;
-            contribution = Math.Min(Math.Round(contribution, 4), 1m);
+            var contribution = myDamage / (decimal)totalDamage * 100;
+            contribution = Math.Min(Math.Round(contribution, 4), 100m);
             return contribution;
         }
 
@@ -150,7 +150,7 @@ namespace Nekoyume.Helper
             {
                 var ticker = reward.Ticker;
                 var countDecimal = (decimal) reward.Count;
-                var proportionalCount = new BigInteger(countDecimal * contribution);
+                var proportionalCount = new BigInteger(countDecimal * contribution * 0.01m);
                 if (proportionalCount <= 0)
                 {
                     continue;

@@ -21,7 +21,7 @@ namespace Lib9c.Tests.Action
         public WorldBossHelperTest()
         {
             const string csv =
-                "boss_id,reward1_count,reward1_item_id,reward1_ticker,reward2_count,reward2_item_id,reward2_ticker,reward3_count,reward3_item_id,reward3_ticker,reward4_count,reward4_item_id,reward4_ticker,reward5_count,reward5_item_id,reward5_ticker,reward6_count,reward6_item_id,reward6_ticker,reward7_count,reward7_item_id,reward7_ticker\n900001,300340,,RUNESTONE_FENRIR4,45740,,RUNESTONE_FENRIR5,5125,,RUNESTONE_FENRIR6,24600,600201,,24600,600202,,14976300000,,CRYSTAL,1270,500000\n900002,300340,,RUNESTONE_SAEHRIMNIR4,45740,,RUNESTONE_SAEHRIMNIR5,5125,,RUNESTONE_SAEHRIMNIR6,24600,600201,,24600,600202,,14976300000,,CRYSTAL,1270,500000\n";
+                "boss_id,reward1_count,reward1_item_id,reward1_ticker,reward2_count,reward2_item_id,reward2_ticker,reward3_count,reward3_item_id,reward3_ticker,reward4_count,reward4_item_id,reward4_ticker,reward5_count,reward5_item_id,reward5_ticker,reward6_count,reward6_item_id,reward6_ticker,reward7_count,reward7_item_id,reward7_ticker\n900001,1000000,,RUNESTONE_FENRIR4,1000000,,RUNESTONE_FENRIR5,1000000,,RUNESTONE_FENRIR6,1000000,600201,,1000000,600202,,1000000,,CRYSTAL,1000000,500000\n";
             _sheet = new WorldBossContributionRewardSheet();
             _sheet.Set(csv);
         }
@@ -122,10 +122,10 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(1000, 250, "0.25")]
-        [InlineData(10000, 1, "0.0001")]
+        [InlineData(1000, 250, "25")]
+        [InlineData(1000000, 1, "0.0001")]
         [InlineData(1000, 0, "0.0000")]
-        [InlineData(1000, 1500, "1")]
+        [InlineData(1000, 1500, "100")]
         public void CalculateContribution_ValidInput_ReturnsCorrectContribution(long totalDamage, long myDamage, string expected)
         {
             // Act
@@ -152,6 +152,19 @@ namespace Lib9c.Tests.Action
             var (items, fav) = WorldBossHelper.CalculateContributionReward(row, 0m);
             Assert.Empty(items);
             Assert.Empty(fav);
+        }
+
+        [Theory]
+        [InlineData(0.0001, 1)]
+        [InlineData(0.1, 1_000)]
+        [InlineData(1, 10_000)]
+        [InlineData(100, 1_000_000)]
+        public void CalculateContributionReward(decimal contribution, int count)
+        {
+            var row = _sheet[900001];
+            var (items, fav) = WorldBossHelper.CalculateContributionReward(row, contribution);
+            Assert.All(items, i => Assert.Equal(count, i.count));
+            Assert.All(fav, asset => Assert.Equal(count * asset.Currency, asset));
         }
     }
 }
