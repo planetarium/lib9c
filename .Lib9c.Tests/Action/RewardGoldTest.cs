@@ -493,7 +493,7 @@ namespace Lib9c.Tests.Action
         [Theory]
         [InlineData(5, 4)]
         [InlineData(101, 100)]
-        // Skip mead when InsufficientBalanceException occured.
+        // Skip mead when InsufficientBalanceException occurred.
         [InlineData(1, 0)]
         public void TransferMead(int patronMead, int balance)
         {
