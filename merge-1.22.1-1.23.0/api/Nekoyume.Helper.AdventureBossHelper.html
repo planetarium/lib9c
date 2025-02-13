@@ -1,0 +1,731 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class AdventureBossHelper | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class AdventureBossHelper | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/merge-1.22.1-1.23.0/apiSpec/new?filename=Nekoyume_Helper_AdventureBossHelper.md&amp;value=---%0Auid%3A%20Nekoyume.Helper.AdventureBossHelper%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Helper.AdventureBossHelper">
+
+
+
+  <h1 id="Nekoyume_Helper_AdventureBossHelper" data-uid="Nekoyume.Helper.AdventureBossHelper" class="text-break">
+Class AdventureBossHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Helper.html">Helper</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class AdventureBossHelper</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">AdventureBossHelper</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_FixedRewardRatio" data-uid="Nekoyume.Helper.AdventureBossHelper.FixedRewardRatio">
+  FixedRewardRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const decimal FixedRewardRatio = 0.7</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_RaffleRewardPercent" data-uid="Nekoyume.Helper.AdventureBossHelper.RaffleRewardPercent">
+  RaffleRewardPercent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int RaffleRewardPercent = 5</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_RandomRewardRatio" data-uid="Nekoyume.Helper.AdventureBossHelper.RandomRewardRatio">
+  RandomRewardRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const decimal RandomRewardRatio = 0.3</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_TotalRewardMultiplier" data-uid="Nekoyume.Helper.AdventureBossHelper.TotalRewardMultiplier">
+  TotalRewardMultiplier
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const decimal TotalRewardMultiplier = 1.2</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_AddExploreRewards_" data-uid="Nekoyume.Helper.AdventureBossHelper.AddExploreRewards*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_AddExploreRewards_Libplanet_Action_IActionContext_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_Nekoyume_Model_Item_Inventory_System_Collections_Generic_IEnumerable_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData__" data-uid="Nekoyume.Helper.AdventureBossHelper.AddExploreRewards(Libplanet.Action.IActionContext,Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,Nekoyume.Model.Item.Inventory,System.Collections.Generic.IEnumerable{Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData})">
+  AddExploreRewards(IActionContext, IWorld, Address, Inventory, IEnumerable&lt;RewardAmountData&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L366"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IWorld AddExploreRewards(IActionContext context, IWorld states, Address avatarAddress, Inventory inventory, IEnumerable&lt;AdventureBossSheet.RewardAmountData&gt; rewardList)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+    <dt><code>states</code> <span class="xref">IWorld</span></dt>
+    <dd></dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>inventory</code> <a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a></dt>
+    <dd></dd>
+    <dt><code>rewardList</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.html">AdventureBossSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html">RewardAmountData</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_CalculateExploreReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateExploreReward*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_CalculateExploreReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_Explorer_Libplanet_Crypto_Address_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_System_Decimal_System_Decimal_System_Boolean_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateExploreReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.Explorer,Libplanet.Crypto.Address,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,System.Decimal,System.Decimal,System.Boolean,Libplanet.Types.Assets.FungibleAssetValue@)">
+  CalculateExploreReward(ClaimableReward, BountyBoard, ExploreBoard, Explorer, Address, AdventureBossNcgRewardRatioSheet, decimal, decimal, bool, out FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate reward for adventure boss explorers.
+This method only calculates reward for given avatar, not actually give rewards.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AdventureBossGameData.ClaimableReward CalculateExploreReward(AdventureBossGameData.ClaimableReward reward, BountyBoard bountyBoard, ExploreBoard exploreBoard, Explorer explorer, Address avatarAddress, AdventureBossNcgRewardRatioSheet sheet, decimal ncgApRatio, decimal ncgRuneRatio, bool isReal, out FungibleAssetValue ncgReward)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reward</code> <a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd><p>Claimable reward for this avatar so far.</p>
+</dd>
+    <dt><code>bountyBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.BountyBoard.html">BountyBoard</a></dt>
+    <dd><p>Bounty board for this season. NCG reward is based on totalBounty on this board.</p>
+</dd>
+    <dt><code>exploreBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.ExploreBoard.html">ExploreBoard</a></dt>
+    <dd><p>Explore board for this season. Total reward amount is base on usedApPotion on this board.</p>
+</dd>
+    <dt><code>explorer</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.Explorer.html">Explorer</a></dt>
+    <dd><p>Target explorer to calculate reward</p>
+</dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd><p>Target avatar address to calculate reward.</p>
+</dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet.html">AdventureBossNcgRewardRatioSheet</a></dt>
+    <dd><p>NCG to reward exchange ratio sheet. Calculate total reward amount based on this sheet.</p>
+</dd>
+    <dt><code>ncgApRatio</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd><p>Exchange ratio between used AP potion to NCG. Used to set total reward amount.</p>
+</dd>
+    <dt><code>ncgRuneRatio</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd><p>If a reward is rune, use this fixed ratio, not in sheet.</p>
+</dd>
+    <dt><code>isReal</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>ncgReward</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd><p>out value: calculated NCG reward in this function.
+We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd><p>Updated Claimable reward after calculation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_CalculateRaffleReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateRaffleReward*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_CalculateRaffleReward_Nekoyume_Model_AdventureBoss_BountyBoard_" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateRaffleReward(Nekoyume.Model.AdventureBoss.BountyBoard)">
+  CalculateRaffleReward(BountyBoard)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static FungibleAssetValue CalculateRaffleReward(BountyBoard bountyBoard)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bountyBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.BountyBoard.html">BountyBoard</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_CalculateWantedReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateWantedReward*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_CalculateWantedReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_AdventureBoss_BountyBoard_Libplanet_Crypto_Address_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_System_Decimal_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateWantedReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.AdventureBoss.BountyBoard,Libplanet.Crypto.Address,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,System.Decimal,Libplanet.Types.Assets.FungibleAssetValue@)">
+  CalculateWantedReward(ClaimableReward, BountyBoard, Address, AdventureBossNcgRewardRatioSheet, decimal, out FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculate reward for adventure boss operators.
+This method only calculates reward for given avatar, not actually give rewards.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AdventureBossGameData.ClaimableReward CalculateWantedReward(AdventureBossGameData.ClaimableReward reward, BountyBoard bountyBoard, Address avatarAddress, AdventureBossNcgRewardRatioSheet sheet, decimal ncgRuneRatio, out FungibleAssetValue ncgReward)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reward</code> <a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd><p>Claimable reward for this avatar so far.</p>
+</dd>
+    <dt><code>bountyBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.BountyBoard.html">BountyBoard</a></dt>
+    <dd><p>Bounty board for this season. All the reward amount is based on totalBounty on this board.</p>
+</dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd><p>Target avatar address to calculate reward.</p>
+</dd>
+    <dt><code>sheet</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet.html">AdventureBossNcgRewardRatioSheet</a></dt>
+    <dd><p>NCG to reward exchange ratio sheet. Calculate total reward amount based on this sheet.</p>
+</dd>
+    <dt><code>ncgRuneRatio</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd><p>If a reward is rune, use this fixed ratio, not in sheet.</p>
+</dd>
+    <dt><code>ncgReward</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd><p>out value: calculated NCG reward in this function.
+We must handle NCG reward separately because NCG reward must be transferred from each season's bounty address.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd><p>Updated Claimable reward after calculation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_CollectExploreReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.CollectExploreReward*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_CollectExploreReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_State_GameConfigState_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_Nekoyume_Model_AdventureBoss_SeasonInfo_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_Explorer_System_Int64_Libplanet_Crypto_Address_Nekoyume_Data_AdventureBossGameData_ClaimableReward__Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Helper.AdventureBossHelper.CollectExploreReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.State.GameConfigState,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,Nekoyume.Model.AdventureBoss.SeasonInfo,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.Explorer,System.Int64,Libplanet.Crypto.Address,Nekoyume.Data.AdventureBossGameData.ClaimableReward@,Libplanet.Types.Assets.FungibleAssetValue@)">
+  CollectExploreReward(ClaimableReward, GameConfigState, AdventureBossNcgRewardRatioSheet, SeasonInfo, BountyBoard, ExploreBoard, Explorer, long, Address, ref ClaimableReward, out FungibleAssetValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L329"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool CollectExploreReward(AdventureBossGameData.ClaimableReward reward, GameConfigState gameConfig, AdventureBossNcgRewardRatioSheet ncgRewardRatioSheet, SeasonInfo seasonInfo, BountyBoard bountyBoard, ExploreBoard exploreBoard, Explorer explorer, long currentBlockIndex, Address avatarAddress, ref AdventureBossGameData.ClaimableReward updatedReward, out FungibleAssetValue ncgReward)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reward</code> <a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd></dd>
+    <dt><code>gameConfig</code> <a class="xref" href="Nekoyume.Model.State.GameConfigState.html">GameConfigState</a></dt>
+    <dd></dd>
+    <dt><code>ncgRewardRatioSheet</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet.html">AdventureBossNcgRewardRatioSheet</a></dt>
+    <dd></dd>
+    <dt><code>seasonInfo</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.SeasonInfo.html">SeasonInfo</a></dt>
+    <dd></dd>
+    <dt><code>bountyBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.BountyBoard.html">BountyBoard</a></dt>
+    <dd></dd>
+    <dt><code>exploreBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.ExploreBoard.html">ExploreBoard</a></dt>
+    <dd></dd>
+    <dt><code>explorer</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.Explorer.html">Explorer</a></dt>
+    <dd></dd>
+    <dt><code>currentBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>updatedReward</code> <a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd></dd>
+    <dt><code>ncgReward</code> <span class="xref">FungibleAssetValue</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_CollectWantedReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.CollectWantedReward*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_CollectWantedReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_State_GameConfigState_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_Nekoyume_Model_AdventureBoss_SeasonInfo_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_Investor_System_Int64_Libplanet_Crypto_Address_Nekoyume_Data_AdventureBossGameData_ClaimableReward__" data-uid="Nekoyume.Helper.AdventureBossHelper.CollectWantedReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.State.GameConfigState,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,Nekoyume.Model.AdventureBoss.SeasonInfo,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.Investor,System.Int64,Libplanet.Crypto.Address,Nekoyume.Data.AdventureBossGameData.ClaimableReward@)">
+  CollectWantedReward(ClaimableReward, GameConfigState, AdventureBossNcgRewardRatioSheet, SeasonInfo, BountyBoard, Investor, long, Address, ref ClaimableReward)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool CollectWantedReward(AdventureBossGameData.ClaimableReward reward, GameConfigState gameConfig, AdventureBossNcgRewardRatioSheet ncgRewardRatioSheet, SeasonInfo seasonInfo, BountyBoard bountyBoard, Investor investor, long currentBlockIndex, Address avatarAddress, ref AdventureBossGameData.ClaimableReward updatedReward)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reward</code> <a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd></dd>
+    <dt><code>gameConfig</code> <a class="xref" href="Nekoyume.Model.State.GameConfigState.html">GameConfigState</a></dt>
+    <dd></dd>
+    <dt><code>ncgRewardRatioSheet</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet.html">AdventureBossNcgRewardRatioSheet</a></dt>
+    <dd></dd>
+    <dt><code>seasonInfo</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.SeasonInfo.html">SeasonInfo</a></dt>
+    <dd></dd>
+    <dt><code>bountyBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.BountyBoard.html">BountyBoard</a></dt>
+    <dd></dd>
+    <dt><code>investor</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.Investor.html">Investor</a></dt>
+    <dd></dd>
+    <dt><code>currentBlockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>avatarAddress</code> <span class="xref">Address</span></dt>
+    <dd></dd>
+    <dt><code>updatedReward</code> <a class="xref" href="Nekoyume.Data.AdventureBossGameData.html">AdventureBossGameData</a>.<a class="xref" href="Nekoyume.Data.AdventureBossGameData.ClaimableReward.html">ClaimableReward</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_GetSeasonAsAddressForm_" data-uid="Nekoyume.Helper.AdventureBossHelper.GetSeasonAsAddressForm*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_GetSeasonAsAddressForm_System_Int64_" data-uid="Nekoyume.Helper.AdventureBossHelper.GetSeasonAsAddressForm(System.Int64)">
+  GetSeasonAsAddressForm(long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string GetSeasonAsAddressForm(long season)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>season</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_PickExploreRaffle_" data-uid="Nekoyume.Helper.AdventureBossHelper.PickExploreRaffle*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_PickExploreRaffle_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_ExplorerList_Libplanet_Action_IRandom_" data-uid="Nekoyume.Helper.AdventureBossHelper.PickExploreRaffle(Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.ExplorerList,Libplanet.Action.IRandom)">
+  PickExploreRaffle(BountyBoard, ExploreBoard, ExplorerList, IRandom)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ExploreBoard PickExploreRaffle(BountyBoard bountyBoard, ExploreBoard exploreBoard, ExplorerList explorerList, IRandom random)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bountyBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.BountyBoard.html">BountyBoard</a></dt>
+    <dd></dd>
+    <dt><code>exploreBoard</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.ExploreBoard.html">ExploreBoard</a></dt>
+    <dd></dd>
+    <dt><code>explorerList</code> <a class="xref" href="Nekoyume.Model.AdventureBoss.ExplorerList.html">ExplorerList</a></dt>
+    <dd></dd>
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.AdventureBoss.ExploreBoard.html">ExploreBoard</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_PickReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.PickReward*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_PickReward_Libplanet_Action_IRandom_System_Collections_Generic_IEnumerable_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardRatioData__" data-uid="Nekoyume.Helper.AdventureBossHelper.PickReward(Libplanet.Action.IRandom,System.Collections.Generic.IEnumerable{Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData})">
+  PickReward(IRandom, IEnumerable&lt;RewardRatioData&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (int?, int?) PickReward(IRandom random, IEnumerable&lt;AdventureBossSheet.RewardRatioData&gt; rewardData)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+    <dt><code>rewardData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.html">AdventureBossSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData.html">RewardRatioData</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?)</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/merge-1.22.1-1.23.0/Lib9c/Helper/AdventureBossHelper.cs/#L22" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
