@@ -171,6 +171,7 @@ public class QuitGuildTest : GuildTestBase
     [InlineData(793705868)]
     [InlineData(559431555)]
     [InlineData(1746916991)]
+    [InlineData(1169184205)]
     public void Execute_Fact_WithStaticSeed(int randomSeed)
     {
         var fixture = new RandomFixture(randomSeed);
@@ -219,11 +220,12 @@ public class QuitGuildTest : GuildTestBase
         var totalShare = totalGG.RawValue;
         var agentShare = totalShare * agentGG.RawValue / totalGG.RawValue;
         var expectedAgengGG = (slashedGG * agentShare).DivRem(totalShare).Quotient;
+        var expectedAgentNCG = GGToNCG(expectedAgengGG);
         var expectedTotalGG = slashedGG - expectedAgengGG;
         var expectedTotalShares = totalShare - agentShare;
         var quitGuild = new QuitGuild();
 
-        if (agentNCG.MajorUnit > 50)
+        if (expectedAgentNCG.MajorUnit > 50)
         {
             world = EnsureToStake(world, agentAddress, agentNCG.Currency * 50, height++);
             var actionContextToThrow = new ActionContext
