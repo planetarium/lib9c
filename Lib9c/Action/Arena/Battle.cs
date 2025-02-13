@@ -14,6 +14,7 @@ using Nekoyume.Battle;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model;
+using Nekoyume.Model.Arena;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
@@ -31,8 +32,7 @@ namespace Nekoyume.Action.Arena
     /// Temp
     /// </summary>
     [Serializable]
-    // FIXME enable v200280
-    // [ActionType("battle")]
+    [ActionType("battle")]
     public class Battle : GameAction
     {
         public const int HpIncreasingModifier = 5;
@@ -131,6 +131,21 @@ namespace Nekoyume.Action.Arena
                     )
             );
 
+            var collectionModifiers = new Dictionary<Address, List<StatModifier>>
+            {
+                [myAvatarAddress] = new(),
+                [enemyAvatarAddress] = new(),
+            };
+
+            if (collectionStates.Any())
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                foreach (var (address, state) in collectionStates)
+                {
+                    collectionModifiers[address] = state.GetModifiers(collectionSheet);
+                }
+            }
+
             var myLoadout = MeasureAndLog(
                 "Get my spec",
                 sw,
@@ -141,10 +156,11 @@ namespace Nekoyume.Action.Arena
                         myAvatarState,
                         context.BlockIndex,
                         addressesHex,
-                        gameConfigState
+                        gameConfigState,
+                        collectionModifiers
                     )
             );
-            var (updatedStates, myItemSlotState, myRuneSlotState, myRuneStates) = myLoadout;
+            var (updatedStates, myItemSlotState, myRuneSlotState, myRuneStates, myCp) = myLoadout;
             states = updatedStates;
 
             var enemyLoadout = MeasureAndLog(
@@ -163,8 +179,7 @@ namespace Nekoyume.Action.Arena
                         myAvatarState,
                         context.GetRandom(),
                         gameConfigState,
-                        collectionStates.Any(),
-                        collectionStates,
+                        collectionModifiers,
                         (myItemSlotState, myRuneSlotState, myRuneStates),
                         enemyLoadout
                     )
@@ -173,7 +188,7 @@ namespace Nekoyume.Action.Arena
             states = MeasureAndLog(
                 "Simulate battle",
                 sw,
-                () => StoreArenaResult(states, context.TxId, resultLog)
+                () => StoreArenaResult(states, context.TxId!.Value, resultLog, myCp, myAvatarState)
             );
 
             sw.Stop();
@@ -231,6 +246,8 @@ namespace Nekoyume.Action.Arena
                 typeof(RuneLevelBonusSheet),
                 typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
+                typeof(CharacterSheet),
+                typeof(CostumeStatSheet),
             };
 
             if (collectionExist)
@@ -287,17 +304,19 @@ namespace Nekoyume.Action.Arena
             IWorld UpdatedStates,
             ItemSlotState ItemSlotState,
             RuneSlotState RuneSlotState,
-            AllRuneState RuneStates
+            AllRuneState RuneStates,
+            int Cp
         ) PrepareMyLoadout(
             IWorld states,
             Dictionary<Type, (Address address, ISheet sheet)> sheets,
             AvatarState myAvatarState,
             long blockIndex,
             string addressesHex,
-            GameConfigState gameConfigState
+            GameConfigState gameConfigState,
+            Dictionary<Address, List<StatModifier>> collectionModifiers
         )
         {
-            myAvatarState.ValidEquipmentAndCostumeV2(
+            var (equipmentItems, costumeItems) = myAvatarState.ValidEquipmentAndCostumeV2(
                 costumes,
                 equipments,
                 sheets.GetSheet<ItemRequirementSheet>(),
@@ -351,7 +370,53 @@ namespace Nekoyume.Action.Arena
             }
             states = states.SetAvatarState(myAvatarAddress, myAvatarState);
 
-            return (states, myItemSlotState, myRuneSlotState, myRuneStates);
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            if (!characterSheet.TryGetValue(myAvatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", myAvatarState.characterId);
+            }
+
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+            var myRuneOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in myRuneSlotState.GetEquippedRuneSlotInfos())
+            {
+                if (!myRuneStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                myRuneOptions.Add(option);
+            }
+
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            var myRuneLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                myRuneStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+            var myCp = CPHelper.TotalCP(
+                equipmentItems,
+                costumeItems,
+                myRuneOptions,
+                myAvatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers[myAvatarAddress],
+                myRuneLevelBonus
+            );
+
+            return (states, myItemSlotState, myRuneSlotState, myRuneStates, myCp);
         }
 
         private (
@@ -393,8 +458,7 @@ namespace Nekoyume.Action.Arena
             AvatarState myAvatarState,
             IRandom random,
             GameConfigState gameConfigState,
-            bool collectionExist,
-            Dictionary<Address, CollectionState> collectionStates,
+            Dictionary<Address, List<StatModifier>> collectionModifiers,
             (
                 ItemSlotState ItemSlotState,
                 RuneSlotState RuneSlotState,
@@ -424,21 +488,6 @@ namespace Nekoyume.Action.Arena
             );
 
             var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
-            var collectionModifiers = new Dictionary<Address, List<StatModifier>>
-            {
-                [myAvatarAddress] = new(),
-                [enemyAvatarAddress] = new(),
-            };
-
-            if (collectionExist)
-            {
-                var collectionSheet = sheets.GetSheet<CollectionSheet>();
-                foreach (var (address, state) in collectionStates)
-                {
-                    collectionModifiers[address] = state.GetModifiers(collectionSheet);
-                }
-            }
-
             var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
             var simulator = new ArenaSimulator(
                 random,
@@ -457,13 +506,27 @@ namespace Nekoyume.Action.Arena
             );
         }
 
-        private IWorld StoreArenaResult(IWorld states, TxId? txId, ArenaLog resultLog)
+        private IWorld StoreArenaResult(
+            IWorld states,
+            TxId txId,
+            ArenaLog resultLog,
+            int cp,
+            AvatarState avatarState
+        )
         {
+            var isVictory = resultLog.Result.Equals(ArenaLog.ArenaResult.Win);
+            var arenaResult = new ArenaResult(
+                isVictory,
+                avatarState.GetPortraitId(),
+                avatarState.level,
+                cp
+            );
+
             var accountAddress = Addresses.Battle.Derive(arenaProvider.ToString());
             var account = states.GetAccount(accountAddress);
             account = account.SetState(
-                myAvatarAddress.Derive(txId.ToString()),
-                (Integer)(resultLog.Result.Equals(ArenaLog.ArenaResult.Win) ? 1 : 0)
+                ArenaResult.DeriveAddress(myAvatarAddress, txId),
+                arenaResult.Bencoded
             );
             states = states.SetAccount(accountAddress, account);
 

@@ -8,7 +8,7 @@
     <Platforms>AnyCPU</Platforms>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
-    <VersionPrefix>1.22.1</VersionPrefix>
+    <VersionPrefix>$(Lib9cVersion)</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
