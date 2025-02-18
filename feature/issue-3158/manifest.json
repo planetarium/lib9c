@@ -1542,6 +1542,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.LegacyGuildParticipant.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Guild.Migration.LegacyModels.MigrationModule.yml",
       "output": {
         ".html": {
@@ -1576,6 +1586,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.html"
         }
       },
       "version": ""
@@ -3062,6 +3082,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Swap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Swap.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Synthesize.yml",
       "output": {
         ".html": {
@@ -3816,6 +3846,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Delegation.Bond.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.CurrencyComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.CurrencyComparer.html"
         }
       },
       "version": ""
@@ -4656,6 +4696,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Arena.ArenaParticipantsNotFoundException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Arena.ArenaResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Arena.ArenaResult.html"
         }
       },
       "version": ""
@@ -8122,6 +8172,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Swap.SwapPool.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Swap.SwapPool.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Swap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Swap.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.WorldInformation.World.yml",
       "output": {
         ".html": {
@@ -11206,6 +11276,56 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.Summon.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Fraction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.html"
         }
       },
       "version": ""
