@@ -138,10 +138,12 @@ namespace Lib9c.Tests.Action
 
             var accountAddress = Addresses.Battle.Derive(ArenaProvider.PLANETARIUM.ToString());
             var account = nextStates.GetAccountState(accountAddress);
-            var resultState = account.GetState(_preset1Avatar.Derive(txid.ToString()));
+            var resultState = account.GetState(ArenaResult.DeriveAddress(_preset1Avatar, txid));
+            var arenaResult = new ArenaResult(resultState);
             var resultActionPoint = nextStates.GetActionPoint(_preset1Avatar);
 
-            Assert.IsType<Integer>(resultState);
+            Assert.IsType<bool>(arenaResult.IsVictory);
+            Assert.True(arenaResult.Cp > 0);
             Assert.Equal(115, resultActionPoint);
         }
 

@@ -26,7 +26,6 @@ namespace Nekoyume.Delegation
         /// Margin for significant figure. It's used to calculate the significant figure of the reward base.
         /// </summary>
         public const int Margin = 2;
-        private static readonly IComparer<Currency> _currencyComparer = new CurrencyComparer();
 
         /// <summary>
         /// Constructor for new <see cref="RewardBase"/>.
@@ -107,7 +106,7 @@ namespace Nekoyume.Delegation
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f.Portion, _currencyComparer);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Currency, f => f.Portion, CurrencyComparer.HashBytes);
             SigFig = (Integer)bencoded[3];
 
             try
@@ -179,7 +178,7 @@ namespace Nekoyume.Delegation
                 throw new ArgumentException("Duplicated currency in reward base.");
             }
 
-            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Item1, f => f.Item2, _currencyComparer);
+            RewardPortion = rewardPortion.ToImmutableSortedDictionary(f => f.Item1, f => f.Item2, CurrencyComparer.HashBytes);
             SigFig = sigFig;
             StartHeight = startHeight;
         }
@@ -240,7 +239,7 @@ namespace Nekoyume.Delegation
                     .Add(StateTypeName)
                     .Add(StateVersion)
                     .Add(new List(RewardPortion
-                        .OrderBy(r => r.Key, _currencyComparer)
+                        .OrderBy(r => r.Key, CurrencyComparer.HashBytes)
                         .Select(r => new List(r.Key.Serialize(), new Integer(r.Value)))))
                     .Add(SigFig);
 
@@ -328,7 +327,7 @@ namespace Nekoyume.Delegation
         /// </returns>
         public ImmutableSortedDictionary<Currency, FungibleAssetValue> CumulativeRewardDuringPeriod(BigInteger share)
             => RewardPortion.Keys.Select(k => CumulativeRewardDuringPeriod(share, k))
-                .ToImmutableSortedDictionary(f => f.Currency, f => f, _currencyComparer);
+                .ToImmutableSortedDictionary(f => f.Currency, f => f, CurrencyComparer.HashBytes);
 
         /// <summary>
         /// Calculate the cumulative reward during the period, for the specific currency.
@@ -375,7 +374,7 @@ namespace Nekoyume.Delegation
             var newPortion = rewardBase.RewardPortion.ToImmutableSortedDictionary(
                 kvp => kvp.Key,
                 kvp => kvp.Value * multiplier,
-                _currencyComparer);
+                CurrencyComparer.HashBytes);
 
             return new RewardBase(
                 rewardBase.Address,

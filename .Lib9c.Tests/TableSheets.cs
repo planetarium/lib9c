@@ -14,6 +14,7 @@ namespace Lib9c.Tests
     using Nekoyume.TableData.Rune;
     using Nekoyume.TableData.Stake;
     using Nekoyume.TableData.Summon;
+    using Nekoyume.TableData.Swap;
 
     public class TableSheets
     {
@@ -252,6 +253,8 @@ namespace Lib9c.Tests
         public BuffLimitSheet BuffLimitSheet { get; set; }
 
         public BuffLinkSheet BuffLinkSheet { get; set; }
+
+        public SwapRateSheet SwapRateSheet { get; set; }
 
         // Adventure Boss
         public AdventureBossSheet AdventureBossSheet { get; private set; }
