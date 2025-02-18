@@ -136,8 +136,11 @@ namespace Nekoyume.Action
                 mailBox.CleanUp();
                 avatarState.mailBox = mailBox;
 
+                raiderState.HasClaimedReward = true;
+
                 // Set states
                 return states
+                    .SetLegacyState(raiderAddress, raiderState.Serialize())
                     .SetAvatarState(AvatarAddress, avatarState, setAvatar: true, setInventory: true,
                         setWorldInformation: false, setQuestList: false);
             }

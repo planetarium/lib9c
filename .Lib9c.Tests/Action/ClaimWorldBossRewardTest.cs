@@ -6,6 +6,7 @@ namespace Nekoyume.Action.Tests
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
+    using Nekoyume.Action.Exceptions.AdventureBoss;
     using Nekoyume.Helper;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.State;
@@ -71,6 +72,16 @@ namespace Nekoyume.Action.Tests
             var mail = nextAvatarState.mailBox.OfType<WorldBossRewardMail>().Single();
             Assert.Equal(items, mail.Items);
             Assert.Equal(fav, mail.FungibleAssetValues);
+            var nextRaiderState = nextState.GetRaiderState(raiderAddress);
+            Assert.True(nextRaiderState.HasClaimedReward);
+
+            Assert.Throws<AlreadyClaimedException>(() => action.Execute(new ActionContext
+            {
+                RandomSeed = 0,
+                Signer = agentAddress,
+                BlockIndex = bossRow.EndedBlockIndex + 2L,
+                PreviousState = nextState,
+            }));
         }
     }
 }
