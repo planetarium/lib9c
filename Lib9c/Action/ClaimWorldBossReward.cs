@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c;
@@ -21,7 +23,7 @@ namespace Nekoyume.Action
     /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
-    public class ClaimWorldBossReward : ActionBase
+    public class ClaimWorldBossReward : GameAction
     {
         /// <summary>
         /// The minimum contribution percentage required to be eligible for a reward.
@@ -146,17 +148,19 @@ namespace Nekoyume.Action
         /// <summary>
         /// Serializes the action's data into a plain value format.
         /// </summary>
-        public override IValue PlainValue => Dictionary.Empty
-            .Add("type_id", TypeIdentifier)
-            .Add("values", AvatarAddress.Serialize());
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
+            new Dictionary<string, IValue>
+            {
+                ["a"] = AvatarAddress.Serialize(),
+            }.ToImmutableDictionary();
 
         /// <summary>
         /// Deserializes the plain value back into the action's data.
         /// </summary>
         /// <param name="plainValue">The serialized plain value.</param>
-        public override void LoadPlainValue(IValue plainValue)
+        protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
-            AvatarAddress = ((Dictionary)plainValue)["values"].ToAddress();
+            AvatarAddress = plainValue["a"].ToAddress();
         }
     }
 }
