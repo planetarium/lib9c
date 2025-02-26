@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class PayMaster | Lib9c ">
       
-      
+      <meta name="description" content="PayMaster is a contract that manages the proxy of mortgage and refund of gas.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_ValidatorDelegation_PayMaster" data-uid="Nekoyume.ValidatorDelegation.PayMaster" class="text-break">
-Class PayMaster  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Class PayMaster  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class PayMaster  <a class="header-action link-secondary" title="View source" hre
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>PayMaster is a contract that manages the proxy of mortgage and refund of gas.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,10 +157,11 @@ Class PayMaster  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="Nekoyume_ValidatorDelegation_PayMaster_Mortgage_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.ValidatorDelegation.PayMaster.Mortgage(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Libplanet.Types.Assets.FungibleAssetValue)">
   Mortgage(IWorld, IActionContext, Address, Address, FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Mortgage gas with the PayMaster.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -169,21 +171,27 @@ Class PayMaster  <a class="header-action link-secondary" title="View source" hre
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>world</code> <span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Action.State.IWorld</span> where the mortgage happen.</p>
+</dd>
     <dt><code>context</code> <span class="xref">IActionContext</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Action.IActionContext</span> where the mortgage happen.</p>
+</dd>
     <dt><code>address</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Crypto.Address</span> of the user to mortgage gas.</p>
+</dd>
     <dt><code>payMaster</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Crypto.Address</span> of the paymaster.</p>
+</dd>
     <dt><code>gasToMortgage</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> of gas to mortgage.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The updated <span class="xref">Libplanet.Action.State.IWorld</span>.</p>
+</dd>
   </dl>
 
 
@@ -200,10 +208,11 @@ Class PayMaster  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="Nekoyume_ValidatorDelegation_PayMaster_Refund_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Libplanet_Types_Assets_FungibleAssetValue_" data-uid="Nekoyume.ValidatorDelegation.PayMaster.Refund(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Libplanet.Types.Assets.FungibleAssetValue)">
   Refund(IWorld, IActionContext, Address, FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Refund gas with the PayMaster.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -213,19 +222,24 @@ Class PayMaster  <a class="header-action link-secondary" title="View source" hre
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>world</code> <span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Action.State.IWorld</span> where the refund happen.</p>
+</dd>
     <dt><code>context</code> <span class="xref">IActionContext</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Action.IActionContext</span> where the refund happen.</p>
+</dd>
     <dt><code>address</code> <span class="xref">Address</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Crypto.Address</span> of the user to refund gas.</p>
+</dd>
     <dt><code>gasToRefund</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd></dd>
+    <dd><p>The <span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> of gas to refund.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The updated <span class="xref">Libplanet.Action.State.IWorld</span>.</p>
+</dd>
   </dl>
 
 
@@ -242,7 +256,7 @@ Class PayMaster  <a class="header-action link-secondary" title="View source" hre
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/pay-proxy-guild/Lib9c/ValidatorDelegation/PayMaster.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 
