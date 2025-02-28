@@ -130,7 +130,8 @@ namespace Nekoyume.Helper
             }
 
             var contribution = myDamage / (decimal)totalDamage * 100;
-            contribution = Math.Min(Math.Round(contribution, 4), 100m);
+            contribution = Math.Floor(contribution * 10000) / 10000;
+            contribution = Math.Min(contribution, 100m);
             return contribution;
         }
 
