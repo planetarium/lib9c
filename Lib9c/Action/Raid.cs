@@ -296,6 +296,7 @@ namespace Nekoyume.Action
 
             // Reward.
             bossState.CurrentHp -= score;
+            bossState.TotalDamage += score;
             if (bossState.CurrentHp <= 0)
             {
                 if (bossState.Level < hpSheet.OrderedList.Last().Level)
