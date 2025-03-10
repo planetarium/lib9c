@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_TableExtensions" data-uid="Nekoyume.TableData.TableExtensions" class="text-break">
-Class TableExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class TableExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -156,7 +156,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseBigInteger_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseBigInteger(System.String)">
   ParseBigInteger(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -192,7 +192,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseBool_System_String_System_Boolean_" data-uid="Nekoyume.TableData.TableExtensions.ParseBool(System.String,System.Boolean)">
   ParseBool(string, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -226,11 +226,57 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <a id="Nekoyume_TableData_TableExtensions_ParseCurrency_" data-uid="Nekoyume.TableData.TableExtensions.ParseCurrency*"></a>
+
+  <h3 id="Nekoyume_TableData_TableExtensions_ParseCurrency_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseCurrency(System.String)">
+  ParseCurrency(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Parse a currency from a string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Currency ParseCurrency(string value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string to parse.
+Currency should be in the form of &quot;ticker;decimalPlaces;minters;totalSupplyTractable;maximumSupply&quot;.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Currency</span></dt>
+    <dd><p>The parsed currency.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The string is not a valid currency.</p>
+</dd>
+  </dl>
+
+
+
   <a id="Nekoyume_TableData_TableExtensions_ParseDecimal_" data-uid="Nekoyume.TableData.TableExtensions.ParseDecimal*"></a>
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseDecimal_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseDecimal(System.String)">
   ParseDecimal(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -266,7 +312,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseDecimal_System_String_System_Decimal_" data-uid="Nekoyume.TableData.TableExtensions.ParseDecimal(System.String,System.Decimal)">
   ParseDecimal(string, decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -300,11 +346,57 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <a id="Nekoyume_TableData_TableExtensions_ParseFraction_" data-uid="Nekoyume.TableData.TableExtensions.ParseFraction*"></a>
+
+  <h3 id="Nekoyume_TableData_TableExtensions_ParseFraction_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseFraction(System.String)">
+  ParseFraction(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Parse a fraction from a string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SwapRateSheet.Fraction ParseFraction(string value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string to parse.
+Fraction should be in the form of &quot;numerator/denominator&quot;.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html">Fraction</a></dt>
+    <dd><p>The parsed fraction.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>The string is not a valid fraction.</p>
+</dd>
+  </dl>
+
+
+
   <a id="Nekoyume_TableData_TableExtensions_ParseInt_" data-uid="Nekoyume.TableData.TableExtensions.ParseInt*"></a>
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseInt_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseInt(System.String)">
   ParseInt(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -340,7 +432,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseInt_System_String_System_Int32_" data-uid="Nekoyume.TableData.TableExtensions.ParseInt(System.String,System.Int32)">
   ParseInt(string, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -378,7 +470,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseLong_System_String_" data-uid="Nekoyume.TableData.TableExtensions.ParseLong(System.String)">
   ParseLong(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -414,7 +506,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_ParseLong_System_String_System_Int64_" data-uid="Nekoyume.TableData.TableExtensions.ParseLong(System.String,System.Int64)">
   ParseLong(string, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -448,11 +540,92 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <a id="Nekoyume_TableData_TableExtensions_TryParseBigInteger_" data-uid="Nekoyume.TableData.TableExtensions.TryParseBigInteger*"></a>
+
+  <h3 id="Nekoyume_TableData_TableExtensions_TryParseBigInteger_System_String_System_Numerics_BigInteger__" data-uid="Nekoyume.TableData.TableExtensions.TryParseBigInteger(System.String,System.Numerics.BigInteger@)">
+  TryParseBigInteger(string, out BigInteger)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool TryParseBigInteger(string value, out BigInteger result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>result</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.biginteger">BigInteger</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_TableData_TableExtensions_TryParseCurrency_" data-uid="Nekoyume.TableData.TableExtensions.TryParseCurrency*"></a>
+
+  <h3 id="Nekoyume_TableData_TableExtensions_TryParseCurrency_System_String_Libplanet_Types_Assets_Currency__" data-uid="Nekoyume.TableData.TableExtensions.TryParseCurrency(System.String,Libplanet.Types.Assets.Currency@)">
+  TryParseCurrency(string, out Currency)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Try to parse a currency from a string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool TryParseCurrency(string value, out Currency currency)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string to parse.
+Currency should be in the form of &quot;ticker;decimalPlaces;minters;totalSupplyTractable;maximumSupply&quot;.</p>
+</dd>
+    <dt><code>currency</code> <span class="xref">Currency</span></dt>
+    <dd><p>The parsed currency.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether the parsing is successful.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_TableData_TableExtensions_TryParseDecimal_" data-uid="Nekoyume.TableData.TableExtensions.TryParseDecimal*"></a>
 
   <h3 id="Nekoyume_TableData_TableExtensions_TryParseDecimal_System_String_System_Decimal__" data-uid="Nekoyume.TableData.TableExtensions.TryParseDecimal(System.String,System.Decimal@)">
   TryParseDecimal(string, out decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -490,7 +663,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_TryParseFloat_System_String_System_Single__" data-uid="Nekoyume.TableData.TableExtensions.TryParseFloat(System.String,System.Single@)">
   TryParseFloat(string, out float)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -524,11 +697,53 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
 
 
+  <a id="Nekoyume_TableData_TableExtensions_TryParseFraction_" data-uid="Nekoyume.TableData.TableExtensions.TryParseFraction*"></a>
+
+  <h3 id="Nekoyume_TableData_TableExtensions_TryParseFraction_System_String_Nekoyume_TableData_Swap_SwapRateSheet_Fraction__" data-uid="Nekoyume.TableData.TableExtensions.TryParseFraction(System.String,Nekoyume.TableData.Swap.SwapRateSheet.Fraction@)">
+  TryParseFraction(string, out Fraction)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Try to parse a fraction from a string.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool TryParseFraction(string value, out SwapRateSheet.Fraction result)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string to parse.
+Fraction should be in the form of &quot;numerator/denominator&quot;.</p>
+</dd>
+    <dt><code>result</code> <a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.html">SwapRateSheet</a>.<a class="xref" href="Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html">Fraction</a></dt>
+    <dd><p>The parsed fraction.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_TableData_TableExtensions_TryParseInt_" data-uid="Nekoyume.TableData.TableExtensions.TryParseInt*"></a>
 
   <h3 id="Nekoyume_TableData_TableExtensions_TryParseInt_System_String_System_Int32__" data-uid="Nekoyume.TableData.TableExtensions.TryParseInt(System.String,System.Int32@)">
   TryParseInt(string, out int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -566,7 +781,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 
   <h3 id="Nekoyume_TableData_TableExtensions_TryParseLong_System_String_System_Int64__" data-uid="Nekoyume.TableData.TableExtensions.TryParseLong(System.String,System.Int64@)">
   TryParseLong(string, out long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -604,7 +819,7 @@ Class TableExtensions  <a class="header-action link-secondary" title="View sourc
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/TableExtensions.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

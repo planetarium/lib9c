@@ -782,6 +782,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ClaimWorldBossReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ClaimWorldBossReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ClaimableGiftsNotAvailableException.yml",
       "output": {
         ".html": {
@@ -3072,6 +3082,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Swap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Swap.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Synthesize.yml",
       "output": {
         ".html": {
@@ -3826,6 +3846,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Delegation.Bond.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Delegation.CurrencyComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Delegation.CurrencyComparer.html"
         }
       },
       "version": ""
@@ -4666,6 +4696,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Arena.ArenaParticipantsNotFoundException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Arena.ArenaResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Arena.ArenaResult.html"
         }
       },
       "version": ""
@@ -6572,6 +6612,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Mail.WorldBossRewardMail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Mail.WorldBossRewardMail.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Mail.yml",
       "output": {
         ".html": {
@@ -8116,6 +8166,26 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.State.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Swap.SwapPool.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Swap.SwapPool.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Swap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Swap.html"
         }
       },
       "version": ""
@@ -11212,6 +11282,56 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.CurrencyPair.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Fraction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Fraction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.SwapRateSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.Swap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.Swap.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.SweepRequiredCPSheet.Row.yml",
       "output": {
         ".html": {
@@ -11436,6 +11556,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.WorldBossCharacterSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.RewardModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.RewardModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.html"
         }
       },
       "version": ""
@@ -11764,11 +11914,11 @@
       "type": "Toc",
       "source_relative_path": "api/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "api/toc.html"
-        },
         ".json": {
           "relative_path": "api/toc.json"
+        },
+        ".html": {
+          "relative_path": "api/toc.html"
         }
       },
       "version": ""
@@ -11787,11 +11937,11 @@
       "type": "Toc",
       "source_relative_path": "articles/currencies/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "articles/currencies/toc.html"
-        },
         ".json": {
           "relative_path": "articles/currencies/toc.json"
+        },
+        ".html": {
+          "relative_path": "articles/currencies/toc.html"
         }
       },
       "version": ""
@@ -11890,11 +12040,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/avatar/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "articles/system/avatar/toc.html"
-        },
         ".json": {
           "relative_path": "articles/system/avatar/toc.json"
+        },
+        ".html": {
+          "relative_path": "articles/system/avatar/toc.html"
         }
       },
       "version": ""
@@ -11913,11 +12063,11 @@
       "type": "Toc",
       "source_relative_path": "articles/system/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "articles/system/toc.html"
-        },
         ".json": {
           "relative_path": "articles/system/toc.json"
+        },
+        ".html": {
+          "relative_path": "articles/system/toc.html"
         }
       },
       "version": ""
@@ -11926,11 +12076,11 @@
       "type": "Toc",
       "source_relative_path": "articles/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "articles/toc.html"
-        },
         ".json": {
           "relative_path": "articles/toc.json"
+        },
+        ".html": {
+          "relative_path": "articles/toc.html"
         }
       },
       "version": ""
@@ -11959,11 +12109,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/documentation/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "contributing/documentation/toc.html"
-        },
         ".json": {
           "relative_path": "contributing/documentation/toc.json"
+        },
+        ".html": {
+          "relative_path": "contributing/documentation/toc.html"
         }
       },
       "version": ""
@@ -11972,11 +12122,11 @@
       "type": "Toc",
       "source_relative_path": "contributing/toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "contributing/toc.html"
-        },
         ".json": {
           "relative_path": "contributing/toc.json"
+        },
+        ".html": {
+          "relative_path": "contributing/toc.html"
         }
       },
       "version": ""
@@ -11995,11 +12145,11 @@
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
-        ".html": {
-          "relative_path": "toc.html"
-        },
         ".json": {
           "relative_path": "toc.json"
+        },
+        ".html": {
+          "relative_path": "toc.html"
         }
       },
       "version": ""
