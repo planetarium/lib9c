@@ -47,11 +47,12 @@ namespace Lib9c.Tests.Action
             var (state, avatar, _) = InitializeUtil.AddAvatar(_initialState, _tableSheets.GetAvatarSheets(), agentAddress);
             var avatarAddress = avatar.address;
             var action = new ClaimPatrolReward(avatar.address);
+            var blockIndex = row.StartedBlockIndex;
 
             var nextState = action.Execute(new ActionContext
             {
                 Signer = agentAddress,
-                BlockIndex = 1L,
+                BlockIndex = blockIndex,
                 PreviousState = state,
                 RandomSeed = 0,
             });
@@ -81,14 +82,14 @@ namespace Lib9c.Tests.Action
                 }
             }
 
-            Assert.Equal(1L, nextState.GetPatrolRewardClaimedBlockIndex(avatarAddress));
+            Assert.Equal(blockIndex, nextState.GetPatrolRewardClaimedBlockIndex(avatarAddress));
             Assert.True(row.Interval > 1L);
 
             // Throw RequiredBlockIndex by reward interval
             Assert.Throws<RequiredBlockIndexException>(() => action.Execute(new ActionContext
             {
                 Signer = agentAddress,
-                BlockIndex = 2L,
+                BlockIndex = blockIndex + 1L,
                 PreviousState = nextState,
                 RandomSeed = 0,
             }));

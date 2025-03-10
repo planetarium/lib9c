@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
 using Nekoyume.Battle;
@@ -111,6 +113,63 @@ namespace Nekoyume.Helper
             }
 
             return (assets, materials);
+        }
+
+        /// <summary>
+        /// Calculates the contribution percentage based on total damage and individual damage.
+        /// </summary>
+        /// <param name="totalDamage">The total damage dealt.</param>
+        /// <param name="myDamage">The damage dealt by the individual.</param>
+        /// <returns>The contribution percentage rounded to four decimal places.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when totalDamage is lower than 0.</exception>
+        public static decimal CalculateContribution(BigInteger totalDamage, long myDamage)
+        {
+            if (totalDamage <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(totalDamage), "total damage must be greater than 0.");
+            }
+
+            var contribution = myDamage / (decimal)totalDamage * 100;
+            contribution = Math.Floor(contribution * 10000) / 10000;
+            contribution = Math.Min(contribution, 100m);
+            return contribution;
+        }
+
+        /// <summary>
+        /// Calculates the contribution reward based on the given contribution percentage.
+        /// </summary>
+        /// <param name="row">The row from the WorldBossContributionRewardSheet containing reward details.</param>
+        /// <param name="contribution">The contribution percentage of the player.</param>
+        /// <returns>A tuple containing a list of item rewards and a list of fungible asset values.</returns>
+        public static (List<(int id, int count)>, List<FungibleAssetValue>)
+            CalculateContributionReward(WorldBossContributionRewardSheet.Row row,
+                decimal contribution)
+        {
+            var fav = new List<FungibleAssetValue>();
+            var items = new List<(int id, int count)>();
+            foreach (var reward in row.Rewards)
+            {
+                var ticker = reward.Ticker;
+                var countDecimal = (decimal) reward.Count;
+                var proportionalCount = new BigInteger(countDecimal * contribution * 0.01m);
+                if (proportionalCount <= 0)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(ticker))
+                {
+                    items.Add(new (reward.ItemId, (int)proportionalCount));
+                }
+                else
+                {
+                    var currency = Currencies.GetMinterlessCurrency(ticker);
+                    var asset = currency * proportionalCount;
+                    fav.Add(asset);
+                }
+            }
+
+            return (items, fav);
         }
     }
 }

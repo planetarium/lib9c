@@ -93,6 +93,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(ActivateCollection))]
         [InlineData(typeof(RetrieveAvatarAssets))]
         [InlineData(typeof(MigrateFee))]
+        [InlineData(typeof(ClaimWorldBossReward))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -486,6 +487,10 @@ namespace Lib9c.Tests.Action
                         (new PrivateKey().Address, new PrivateKey().Address, 1),
                         (new PrivateKey().Address, new PrivateKey().Address, 2),
                     },
+                },
+                ClaimWorldBossReward _ => new ClaimWorldBossReward
+                {
+                    AvatarAddress = new PrivateKey().Address,
                 },
                 _ => throw new InvalidCastException(),
             };

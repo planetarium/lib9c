@@ -23,6 +23,7 @@ namespace Nekoyume.Model.State
         public string AvatarName;
         public int LatestBossLevel;
         public long UpdatedBlockIndex;
+        public bool HasClaimedReward;
 
         public RaiderState()
         {
@@ -50,6 +51,10 @@ namespace Nekoyume.Model.State
             AvatarName = rawState[12].ToDotnetString();
             LatestBossLevel = rawState[13].ToInteger();
             UpdatedBlockIndex = rawState[14].ToLong();
+            if (rawState.Count > 15)
+            {
+                HasClaimedReward = rawState[15].ToBoolean();
+            }
         }
 
         public void Update(AvatarState avatarState, int cp, long score, bool payNcg, long blockIndex)
@@ -90,7 +95,8 @@ namespace Nekoyume.Model.State
                 .Add(AvatarAddress.Serialize())
                 .Add(AvatarName.Serialize())
                 .Add(LatestBossLevel.Serialize())
-                .Add(UpdatedBlockIndex.Serialize());
+                .Add(UpdatedBlockIndex.Serialize())
+                .Add(HasClaimedReward.Serialize());
         }
     }
 }

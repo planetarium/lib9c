@@ -85,7 +85,8 @@ namespace Lib9c.Tests.TableData
                 nextRound = rounds[2];
                 Assert.Equal(ArenaType.Season, round.ArenaType);
                 Assert.Equal(0, round.RequiredMedalCount);
-                Assert.True(round.EntranceFee > 0L);
+                // fee can 0 for prepare NCIP-24
+                Assert.True(round.EntranceFee >= 0L);
                 Assert.True(round.StartBlockIndex < round.EndBlockIndex);
                 Assert.Equal(round.EndBlockIndex + 1, nextRound.StartBlockIndex);
                 round = nextRound;
@@ -99,7 +100,8 @@ namespace Lib9c.Tests.TableData
                 nextRound = rounds[4];
                 Assert.Equal(ArenaType.Season, round.ArenaType);
                 Assert.Equal(0, round.RequiredMedalCount);
-                Assert.True(round.EntranceFee > 0L);
+                // fee can 0 for prepare NCIP-24
+                Assert.True(round.EntranceFee >= 0L);
                 Assert.True(round.StartBlockIndex < round.EndBlockIndex);
                 Assert.Equal(round.EndBlockIndex + 1, nextRound.StartBlockIndex);
                 round = nextRound;
@@ -155,10 +157,12 @@ namespace Lib9c.Tests.TableData
                 }
                 else
                 {
-                    Assert.True(round.RequiredMedalCount > 0);
+                    // fee can 0 for prepare NCIP-24
+                    Assert.True(round.RequiredMedalCount >= 0);
                 }
 
-                Assert.True(round.EntranceFee > 0L);
+                // fee can 0 for prepare NCIP-24
+                Assert.True(round.EntranceFee >= 0L);
                 Assert.True(round.StartBlockIndex < round.EndBlockIndex);
             }
         }

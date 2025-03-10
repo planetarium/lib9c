@@ -268,18 +268,22 @@ namespace Lib9c.Tests.Action
                 var random = new TestRandom(randomSeed);
                 var bossListRow = _tableSheets.WorldBossListSheet.FindRowByBlockIndex(ctx.BlockIndex);
                 var raidSimulatorSheets = _tableSheets.GetRaidSimulatorSheets();
+                var runeSlotStateAddress = RuneSlotState.DeriveAddress(_avatarAddress, BattleType.Raid);
+                var runeSlotState =
+                    new RuneSlotState((List)nextState.GetLegacyState(runeSlotStateAddress));
                 var simulator = new RaidSimulator(
                     bossListRow.BossId,
                     random,
                     avatarState,
                     action.FoodIds,
-                    new AllRuneState(),
-                    new RuneSlotState(BattleType.Raid),
+                    allRuneState,
+                    runeSlotState,
                     raidSimulatorSheets,
                     _tableSheets.CostumeStatSheet,
                     new List<StatModifier>(),
                     _tableSheets.BuffLimitSheet,
-                    _tableSheets.BuffLinkSheet
+                    _tableSheets.BuffLinkSheet,
+                    shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
                 );
                 simulator.Simulate();
                 var score = simulator.DamageDealt;
@@ -391,6 +395,7 @@ namespace Lib9c.Tests.Action
 
                 Assert.Equal(expectedLevel, bossState.Level);
                 Assert.Equal(expectedLevel, raiderState.LatestBossLevel);
+                Assert.Equal(score, bossState.TotalDamage);
                 if (kill)
                 {
                     Assert.Equal(hpSheet[expectedLevel].Hp, bossState.CurrentHp);
