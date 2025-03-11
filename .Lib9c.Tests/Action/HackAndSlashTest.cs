@@ -1101,40 +1101,49 @@ namespace Lib9c.Tests.Action
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
 
-            var rewardItem = nextAvatarState.inventory.Items.Where(
-                x => x.item.ItemSubType != ItemSubType.FoodMaterial &&
-                    x.item is IFungibleItem ownedFungibleItem &&
-                    x.item.Id != 400000 && x.item.Id != 500000);
-
-            var worldQuestSheet = state.GetSheet<WorldQuestSheet>();
-            var questRow = worldQuestSheet.OrderedList.FirstOrDefault(e => e.Goal == stageId);
-            var questRewardSheet = state.GetSheet<QuestRewardSheet>();
-            var rewardIds = questRewardSheet.First(x => x.Key == questRow.QuestRewardId).Value
-                .RewardIds;
-            var questItemRewardSheet = state.GetSheet<QuestItemRewardSheet>();
-            var materialItemSheet = state.GetSheet<MaterialItemSheet>();
-            var sortedMaterialItemSheet = materialItemSheet
-                .Where(
-                    x =>
-                        x.Value.ItemSubType == ItemSubType.EquipmentMaterial ||
-                        x.Value.ItemSubType == ItemSubType.MonsterPart).ToList();
-
-            var selectedIdn = new Dictionary<int, int>();
-            foreach (var row in questItemRewardSheet)
+            var prevItemMap = previousAvatarState.itemMap;
+            var nextItemMap = nextAvatarState.itemMap;
+            var totalCount = 0;
+            // calculate get item count
+            foreach (var kv in nextItemMap)
             {
-                if (sortedMaterialItemSheet.Exists(x => x.Key.Equals(row.ItemId)))
+                // exclude hourglass or appotion
+                if (kv.Key is 400000 or 500000)
                 {
-                    selectedIdn.Add(row.Key, row.Count);
+                    continue;
+                }
+
+                var prevCount = prevItemMap.TryGetValue(kv.Key, out var value)
+                    ? value
+                    : 0;
+                var nextCount = kv.Value;
+                totalCount += nextCount - prevCount;
+            }
+
+            var questListCompletedQuestIds = nextAvatarState.questList.completedQuestIds;
+            var completedQuest =
+                nextAvatarState.questList.Where(i => questListCompletedQuestIds.Contains(i.Id));
+            var questSum = 0;
+            foreach (var quest in completedQuest)
+            {
+                foreach (var tuple in quest.Reward.ItemMap)
+                {
+                    // exclude hourglass or appotion
+                    if (tuple.Item1 is 400000 or 500000)
+                    {
+                        continue;
+                    }
+
+                    questSum += tuple.Item2;
                 }
             }
 
-            var questSum = rewardIds.Where(rewardId => selectedIdn.ContainsKey(rewardId))
-                .Sum(rewardId => selectedIdn[rewardId]);
             var min = stageRow.Rewards.OrderBy(x => x.Min).First().Min;
             var max = stageRow.Rewards.OrderBy(x => x.Max).First().Max;
             var totalMin = min * stageRow.DropItemMin + questSum;
             var totalMax = max * stageRow.DropItemMax + questSum;
-            var totalCount = rewardItem.Sum(x => x.count);
+            // var totalCount = rewardItem.Sum(x => x.count);
+            var materialItemSheet = _tableSheets.MaterialItemSheet;
             Assert.InRange(totalCount, totalMin, totalMax);
 
             var circleRow = materialItemSheet.Values.First(i => i.ItemSubType == ItemSubType.Circle);
