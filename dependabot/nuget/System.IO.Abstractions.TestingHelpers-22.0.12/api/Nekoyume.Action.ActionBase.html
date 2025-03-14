@@ -1,0 +1,486 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ActionBase | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ActionBase | Lib9c ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/apiSpec/new?filename=Nekoyume_Action_ActionBase.md&amp;value=---%0Auid%3A%20Nekoyume.Action.ActionBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Action.ActionBase">
+
+
+
+  <h1 id="Nekoyume_Action_ActionBase" data-uid="Nekoyume.Action.ActionBase" class="text-break">
+Class ActionBase  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public abstract class ActionBase : IAction</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ActionBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">IAction</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Action.ApprovePledge.html">ApprovePledge</a></div>
+      <div><a class="xref" href="Nekoyume.Action.BurnAsset.html">BurnAsset</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ClaimPatrolReward.html">ClaimPatrolReward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.CreatePendingActivation.html">CreatePendingActivation</a></div>
+      <div><a class="xref" href="Nekoyume.Action.CreatePendingActivations.html">CreatePendingActivations</a></div>
+      <div><a class="xref" href="Nekoyume.Action.CreatePledge.html">CreatePledge</a></div>
+      <div><a class="xref" href="Nekoyume.Action.CustomEquipmentCraft.CustomEquipmentCraft.html">CustomEquipmentCraft</a></div>
+      <div><a class="xref" href="Nekoyume.Action.EndPledge.html">EndPledge</a></div>
+      <div><a class="xref" href="Nekoyume.Action.GameAction.html">GameAction</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.BanGuildMember.html">BanGuildMember</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.ClaimGuildReward.html">ClaimGuildReward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.ClaimReward.html">ClaimReward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.ClaimUnbonded.html">ClaimUnbonded</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.JoinGuild.html">JoinGuild</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.MakeGuild.html">MakeGuild</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.Migration.MigrateDelegationHeight.html">MigrateDelegationHeight</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.Migration.MigratePlanetariumValidator.html">MigratePlanetariumValidator</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.Migration.MigrateStakeAndJoinGuild.html">MigrateStakeAndJoinGuild</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.MoveGuild.html">MoveGuild</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.QuitGuild.html">QuitGuild</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.RemoveGuild.html">RemoveGuild</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Guild.UnbanGuildMember.html">UnbanGuildMember</a></div>
+      <div><a class="xref" href="Nekoyume.Action.IssueToken.html">IssueToken</a></div>
+      <div><a class="xref" href="Nekoyume.Action.IssueTokensFromGarage.html">IssueTokensFromGarage</a></div>
+      <div><a class="xref" href="Nekoyume.Action.MigrateAgentAvatar.html">MigrateAgentAvatar</a></div>
+      <div><a class="xref" href="Nekoyume.Action.MigrateFee.html">MigrateFee</a></div>
+      <div><a class="xref" href="Nekoyume.Action.MigrateMonsterCollection.html">MigrateMonsterCollection</a></div>
+      <div><a class="xref" href="Nekoyume.Action.MintAssets.html">MintAssets</a></div>
+      <div><a class="xref" href="Nekoyume.Action.PrepareRewardAssets.html">PrepareRewardAssets</a></div>
+      <div><a class="xref" href="Nekoyume.Action.RequestPledge.html">RequestPledge</a></div>
+      <div><a class="xref" href="Nekoyume.Action.RetrieveAvatarAssets.html">RetrieveAvatarAssets</a></div>
+      <div><a class="xref" href="Nekoyume.Action.RewardGold.html">RewardGold</a></div>
+      <div><a class="xref" href="Nekoyume.Action.SecureMiningReward.html">SecureMiningReward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.Swap.html">Swap</a></div>
+      <div><a class="xref" href="Nekoyume.Action.TransferAsset.html">TransferAsset</a></div>
+      <div><a class="xref" href="Nekoyume.Action.TransferAssets.html">TransferAssets</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.AllocateGuildReward.html">AllocateGuildReward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.AllocateReward.html">AllocateReward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.ClaimValidatorRewardSelf.html">ClaimValidatorRewardSelf</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.DelegateValidator.html">DelegateValidator</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.Mortgage.html">Mortgage</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.PromoteValidator.html">PromoteValidator</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.RecordProposer.html">RecordProposer</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.Refund.html">Refund</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.Reward.html">Reward</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.SetValidatorCommission.html">SetValidatorCommission</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.SlashValidator.html">SlashValidator</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.UndelegateValidator.html">UndelegateValidator</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.UnjailValidator.html">UnjailValidator</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorDelegation.UpdateValidators.html">UpdateValidators</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ValidatorSetOperate.html">ValidatorSetOperate</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Action_ActionBase_PlainValue_" data-uid="Nekoyume.Action.ActionBase.PlainValue*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_PlainValue" data-uid="Nekoyume.Action.ActionBase.PlainValue">
+  PlainValue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract IValue PlainValue { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Action_ActionBase_CheckObsolete_" data-uid="Nekoyume.Action.ActionBase.CheckObsolete*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_CheckObsolete_System_Int64_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ActionBase.CheckObsolete(System.Int64,Libplanet.Action.IActionContext)">
+  CheckObsolete(long, IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void CheckObsolete(long obsoleteIndex, IActionContext ctx)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obsoleteIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>ctx</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_ActionBase_CheckPermission_" data-uid="Nekoyume.Action.ActionBase.CheckPermission*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_CheckPermission_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ActionBase.CheckPermission(Libplanet.Action.IActionContext)">
+  CheckPermission(IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void CheckPermission(IActionContext ctx)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_ActionBase_Execute_" data-uid="Nekoyume.Action.ActionBase.Execute*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ActionBase.Execute(Libplanet.Action.IActionContext)">
+  Execute(IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract IWorld Execute(IActionContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_ActionBase_GetSignerAndOtherAddressesHex_" data-uid="Nekoyume.Action.ActionBase.GetSignerAndOtherAddressesHex*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_GetSignerAndOtherAddressesHex_Libplanet_Action_IActionContext_Libplanet_Crypto_Address___" data-uid="Nekoyume.Action.ActionBase.GetSignerAndOtherAddressesHex(Libplanet.Action.IActionContext,Libplanet.Crypto.Address[])">
+  GetSignerAndOtherAddressesHex(IActionContext, params Address[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>returns &quot;[Signer Address, AvatarState Address, ...]&quot;</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string GetSignerAndOtherAddressesHex(IActionContext ctx, params Address[] addresses)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+    <dt><code>addresses</code> <span class="xref">Address</span>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_ActionBase_LoadPlainValue_" data-uid="Nekoyume.Action.ActionBase.LoadPlainValue*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_LoadPlainValue_Bencodex_Types_IValue_" data-uid="Nekoyume.Action.ActionBase.LoadPlainValue(Bencodex.Types.IValue)">
+  LoadPlainValue(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract void LoadPlainValue(IValue plainValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>plainValue</code> <span class="xref">IValue</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_ActionBase_TryGetAdminState_" data-uid="Nekoyume.Action.ActionBase.TryGetAdminState*"></a>
+
+  <h3 id="Nekoyume_Action_ActionBase_TryGetAdminState_Libplanet_Action_IActionContext_Nekoyume_Model_State_AdminState__" data-uid="Nekoyume.Action.ActionBase.TryGetAdminState(Libplanet.Action.IActionContext,Nekoyume.Model.State.AdminState@)">
+  TryGetAdminState(IActionContext, out AdminState)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool TryGetAdminState(IActionContext ctx, out AdminState state)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <span class="xref">IActionContext</span></dt>
+    <dd></dd>
+    <dt><code>state</code> <a class="xref" href="Nekoyume.Model.State.AdminState.html">AdminState</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/dependabot/nuget/System.IO.Abstractions.TestingHelpers-22.0.12/Lib9c/Action/ActionBase.cs/#L19" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
