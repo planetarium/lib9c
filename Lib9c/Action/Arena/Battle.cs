@@ -281,17 +281,17 @@ namespace Nekoyume.Action.Arena
                     case false:
                         throw new NotEnoughActionPointException("");
                     case true:
-                    {
-                        MaterialItemSheet.Row row = sheet.OrderedList.First(r =>
-                            r.ItemSubType == ItemSubType.ApStone
-                        );
-                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, blockIndex))
                         {
-                            throw new NotEnoughMaterialException("not enough ap stone.");
+                            MaterialItemSheet.Row row = sheet.OrderedList.First(r =>
+                                r.ItemSubType == ItemSubType.ApStone
+                            );
+                            if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, blockIndex))
+                            {
+                                throw new NotEnoughMaterialException("not enough ap stone.");
+                            }
+                            actionPoint = DailyReward.ActionPointMax;
+                            break;
                         }
-                        actionPoint = DailyReward.ActionPointMax;
-                        break;
-                    }
                 }
             }
 
@@ -529,6 +529,7 @@ namespace Nekoyume.Action.Arena
                 arenaResult.Bencoded
             );
             states = states.SetAccount(accountAddress, account);
+            states = states.SetCp(myAvatarAddress, BattleType.Arena, cp);
 
             return states;
         }
