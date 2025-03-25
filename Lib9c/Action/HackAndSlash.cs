@@ -194,6 +194,7 @@ namespace Nekoyume.Action
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
+                typeof(RuneOptionSheet),
                 typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
             };
