@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
@@ -177,6 +178,7 @@ namespace Nekoyume.Action
                 typeof(StageWaveSheet),
                 typeof(EnemySkillSheet),
                 typeof(CostumeStatSheet),
+                typeof(CharacterSheet),
                 typeof(SkillSheet),
                 typeof(QuestRewardSheet),
                 typeof(QuestItemRewardSheet),
@@ -705,7 +707,52 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
             }
 
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             states = states.SetAvatarState(AvatarAddress, avatarState);
+            states = states.SetCp(AvatarAddress, BattleType.Adventure, cp);
 
             setStateActivity?.Dispose();
             sw.Stop();

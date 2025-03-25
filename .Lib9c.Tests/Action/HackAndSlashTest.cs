@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Battle;
     using Nekoyume.Extensions;
     using Nekoyume.Model;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Quest;
@@ -190,7 +191,10 @@ namespace Lib9c.Tests.Action
                 });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var nextCpAccount = nextState.GetAccountState(CpState.AccountAddress);
+            var nextCpState = new CpState(nextCpAccount.GetState(CpState.DeriveAddress(_avatarAddress, BattleType.Adventure)));
 
+            Assert.True(nextCpState.Cp > 0);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
         }
