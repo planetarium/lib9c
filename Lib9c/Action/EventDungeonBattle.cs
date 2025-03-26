@@ -410,26 +410,8 @@ namespace Nekoyume.Action
                 runeLevelBonusSheet
             );
 
-            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeInfo in RuneInfos)
-            {
-                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
-                {
-                    continue;
-                }
+            var runeOptions = RuneHelper.GetRuneOptions(RuneInfos, runeStates, runeOptionSheet);
 
-                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
-                {
-                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
-                }
-
-                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
-                {
-                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
-                }
-
-                runeOptions.Add(option);
-            }
             var cp = CPHelper.TotalCP(
                 equipmentList,
                 costumeList,
