@@ -369,6 +369,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
                 .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetCp(AvatarAddress, BattleType.Raid, cp)
                 .SetLegacyState(worldBossAddress, bossState.Serialize())
                 .SetLegacyState(raiderAddress, raiderState.Serialize());
         }
