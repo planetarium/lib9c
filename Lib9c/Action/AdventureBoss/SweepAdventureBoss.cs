@@ -25,6 +25,18 @@ using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    /// <summary>
+    /// Represents a sweep action that automatically completes multiple adventure boss stages without player interaction.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - ExploreBoard: Updates exploration progress and points
+    /// - Explorer: Updates player's exploration status and achievements
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
+    /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class SweepAdventureBoss : GameAction

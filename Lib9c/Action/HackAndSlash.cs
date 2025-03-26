@@ -26,6 +26,15 @@ using Skill = Nekoyume.Model.Skill.Skill;
 namespace Nekoyume.Action
 {
     /// <summary>
+    /// Represents a battle action in the game where a player engages in combat with monsters.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - WorldBossKillRewardRecord: Records boss kill rewards
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
     /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
     /// </summary>
     [Serializable]
