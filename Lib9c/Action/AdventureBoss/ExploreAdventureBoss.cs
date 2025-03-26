@@ -142,6 +142,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(CollectionSheet),
                     typeof(EnemySkillSheet),
                     typeof(CostumeStatSheet),
+                    typeof(CharacterSheet),
                     typeof(BuffLimitSheet),
                     typeof(BuffLinkSheet),
                     typeof(ItemRequirementSheet),
@@ -150,6 +151,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(EquipmentItemOptionSheet),
                     typeof(RuneListSheet),
                     typeof(RuneLevelBonusSheet),
+                    typeof(RuneOptionSheet),
                 });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
@@ -358,10 +360,55 @@ namespace Nekoyume.Action.AdventureBoss
                 context, states, AvatarAddress, avatarState.inventory, rewardList
             );
 
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in RuneInfos)
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             return states
                 .SetInventory(AvatarAddress, avatarState.inventory)
                 .SetExploreBoard(Season, exploreBoard)
-                .SetExplorer(Season, explorer);
+                .SetExplorer(Season, explorer)
+                .SetCp(AvatarAddress, BattleType.Adventure, cp);
         }
     }
 }
