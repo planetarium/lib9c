@@ -141,8 +141,8 @@ namespace Lib9c.Tests.Action
             var resultState = account.GetState(ArenaResult.DeriveAddress(_preset1Avatar, txid));
             var arenaResult = new ArenaResult(resultState);
             var resultActionPoint = nextStates.GetActionPoint(_preset1Avatar);
-            var cpAccount = nextStates.GetAccountState(CpState.AccountAddress);
-            var resultCpState = cpAccount.GetState(CpState.DeriveAddress(_preset1Avatar, BattleType.Arena));
+            var cpAccount = nextStates.GetAccountState(Addresses.GetCpAccountAddress(BattleType.Arena));
+            var resultCpState = cpAccount.GetState(_preset1Avatar);
             var cpState = new CpState(resultCpState);
 
             Assert.IsType<bool>(arenaResult.IsVictory);

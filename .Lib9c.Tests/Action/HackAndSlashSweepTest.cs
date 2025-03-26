@@ -623,8 +623,8 @@ namespace Lib9c.Tests.Action
                     });
                 var nextAvatar = nextState.GetAvatarState(_avatarAddress);
 
-                var nextCpAccount = nextState.GetAccountState(CpState.AccountAddress);
-                var nextCpState = new CpState(nextCpAccount.GetState(CpState.DeriveAddress(_avatarAddress, BattleType.Adventure)));
+                var nextCpAccount = nextState.GetAccountState(Addresses.GetCpAccountAddress(BattleType.Adventure));
+                var nextCpState = new CpState(nextCpAccount.GetState(_avatarAddress));
 
                 Assert.True(nextCpState.Cp > 0);
                 Assert.Equal(expectedLevel, nextAvatar.level);

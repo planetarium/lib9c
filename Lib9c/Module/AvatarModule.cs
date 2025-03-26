@@ -182,9 +182,9 @@ namespace Nekoyume.Module
 
         internal static IWorld SetCp(this IWorld world, Address address, BattleType battleType, int cp)
         {
-            var cpAccount = world.GetAccount(CpState.AccountAddress);
-            cpAccount = cpAccount.SetState(CpState.DeriveAddress(address, battleType), new CpState(address, cp).Serialize());
-            return world.SetAccount(CpState.AccountAddress, cpAccount);
+            var cpAccount = world.GetAccount(Addresses.GetCpAccountAddress(battleType));
+            cpAccount = cpAccount.SetState(address, new CpState(cp).Serialize());
+            return world.SetAccount(Addresses.GetCpAccountAddress(battleType), cpAccount);
         }
 
         internal static Inventory GetInventoryV2(this IWorldState worldState, Address address)

@@ -329,8 +329,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         amount * currency <= state.GetBalance(TesterAvatarAddress, currency));
                 }
 
-                var nextCpAccount = state.GetAccountState(CpState.AccountAddress);
-                var nextCpState = new CpState(nextCpAccount.GetState(CpState.DeriveAddress(TesterAvatarAddress, BattleType.Adventure)));
+                var nextCpAccount = state.GetAccountState(Addresses.GetCpAccountAddress(BattleType.Adventure));
+                var nextCpState = new CpState(nextCpAccount.GetState(TesterAvatarAddress));
 
                 Assert.True(nextCpState.Cp > 0);
             }

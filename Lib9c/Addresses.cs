@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Nekoyume.Action;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
@@ -48,7 +49,10 @@ namespace Nekoyume
         public static readonly Address DailyReward           = new("0000000000000000000000000000000000000020");
         public static readonly Address ActionPoint           = new("0000000000000000000000000000000000000021");
         public static readonly Address RuneState             = new("0000000000000000000000000000000000000022");
-        public static readonly Address CpState               = new("0000000000000000000000000000000000000028");
+        public static readonly Address CpRootAddress         = new("0000000000000000000000000000000000000028");
+        public static readonly Address AdventureCp           = CpRootAddress.Derive(BattleType.Adventure.ToString());
+        public static readonly Address RaidCp                = CpRootAddress.Derive(BattleType.Raid.ToString());
+        public static readonly Address ArenaCp               = CpRootAddress.Derive(BattleType.Arena.ToString());
 
         // Custom Equipment Craft
         public static readonly Address Relationship          = new("0000000000000000000000000000000000000023");
@@ -379,6 +383,26 @@ namespace Nekoyume
         {
             var hex = $"01{championshipId:D36}{round:D2}";
             return new Address(hex);
+        }
+        /// <summary>
+        /// Gets the account address for storing CP based on the battle type.
+        /// </summary>
+        /// <param name="battleType">The type of battle (Adventure, Raid, or Arena)</param>
+        /// <returns>The address where CP is stored for the given battle type</returns>
+        /// <exception cref="ArgumentException">Thrown when an invalid battle type is provided</exception>
+        public static Address GetCpAccountAddress(BattleType battleType)
+        {
+            switch (battleType)
+            {
+                case BattleType.Adventure:
+                    return AdventureCp;
+                case BattleType.Raid:
+                    return RaidCp;
+                case BattleType.Arena:
+                    return ArenaCp;
+                default:
+                    throw new ArgumentException(nameof(battleType));
+            }
         }
 
         /// <summary>
