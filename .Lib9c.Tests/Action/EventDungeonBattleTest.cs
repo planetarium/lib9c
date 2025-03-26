@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Event;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Rune;
@@ -109,6 +110,11 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 scheduleRow.DungeonTicketsMax - 1,
                 eventDungeonInfo.RemainingTickets);
+
+            var nextCpAccount = nextStates.GetAccountState(CpState.AccountAddress);
+            var nextCpState = new CpState(nextCpAccount.GetState(CpState.DeriveAddress(_avatarAddress, BattleType.Adventure)));
+
+            Assert.True(nextCpState.Cp > 0);
         }
 
         [Theory]

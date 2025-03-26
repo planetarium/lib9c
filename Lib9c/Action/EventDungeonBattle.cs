@@ -12,6 +12,7 @@ using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Event;
 using Nekoyume.Model.Skill;
@@ -393,6 +394,53 @@ namespace Nekoyume.Action
                 ActionTypeText,
                 addressesHex,
                 sw.Elapsed);
+
+
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in RuneInfos)
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             // ~Simulate
 
             // Update avatar's event dungeon info.
@@ -424,7 +472,8 @@ namespace Nekoyume.Action
             sw.Restart();
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
-                .SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+                .SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize())
+                .SetCp(AvatarAddress, BattleType.Adventure, cp);
 
             sw.Stop();
             Log.Verbose(
