@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
@@ -621,6 +622,11 @@ namespace Lib9c.Tests.Action
                         RandomSeed = 0,
                     });
                 var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+                var nextCpAccount = nextState.GetAccountState(CpState.AccountAddress);
+                var nextCpState = new CpState(nextCpAccount.GetState(CpState.DeriveAddress(_avatarAddress, BattleType.Adventure)));
+
+                Assert.True(nextCpState.Cp > 0);
                 Assert.Equal(expectedLevel, nextAvatar.level);
                 Assert.Equal(expectedExp, nextAvatar.exp);
             }

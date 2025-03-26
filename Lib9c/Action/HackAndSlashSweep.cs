@@ -372,7 +372,7 @@ namespace Nekoyume.Action
                 "{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}",
                 addressesHex, ended - started
             );
-            return states.SetAvatarState(avatarAddress, avatarState);
+            return states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,
