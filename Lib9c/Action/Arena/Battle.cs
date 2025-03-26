@@ -281,17 +281,17 @@ namespace Nekoyume.Action.Arena
                     case false:
                         throw new NotEnoughActionPointException("");
                     case true:
-                    {
-                        MaterialItemSheet.Row row = sheet.OrderedList.First(r =>
-                            r.ItemSubType == ItemSubType.ApStone
-                        );
-                        if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, blockIndex))
                         {
-                            throw new NotEnoughMaterialException("not enough ap stone.");
+                            MaterialItemSheet.Row row = sheet.OrderedList.First(r =>
+                                r.ItemSubType == ItemSubType.ApStone
+                            );
+                            if (!avatarState.inventory.RemoveFungibleItem(row.ItemId, blockIndex))
+                            {
+                                throw new NotEnoughMaterialException("not enough ap stone.");
+                            }
+                            actionPoint = DailyReward.ActionPointMax;
+                            break;
                         }
-                        actionPoint = DailyReward.ActionPointMax;
-                        break;
-                    }
                 }
             }
 
@@ -377,26 +377,7 @@ namespace Nekoyume.Action.Arena
             }
 
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
-            var myRuneOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeInfo in myRuneSlotState.GetEquippedRuneSlotInfos())
-            {
-                if (!myRuneStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
-                {
-                    continue;
-                }
-
-                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
-                {
-                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
-                }
-
-                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
-                {
-                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
-                }
-
-                myRuneOptions.Add(option);
-            }
+            var myRuneOptions = RuneHelper.GetRuneOptions(runeInfos, myRuneStates, runeOptionSheet);
 
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
@@ -529,6 +510,7 @@ namespace Nekoyume.Action.Arena
                 arenaResult.Bencoded
             );
             states = states.SetAccount(accountAddress, account);
+            states = states.SetCp(myAvatarAddress, BattleType.Arena, cp);
 
             return states;
         }

@@ -96,5 +96,63 @@ namespace Nekoyume.Helper
 
             return runeLevelBonus;
         }
+
+        public static List<RuneOptionSheet.Row.RuneOptionInfo> GetRuneOptions(
+            IEnumerable<RuneWeightSheet.RuneInfo> runeInfos,
+            AllRuneState runeStates,
+            RuneOptionSheet runeOptionSheet)
+        {
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in runeInfos)
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+
+            return runeOptions;
+        }
+
+        public static List<RuneOptionSheet.Row.RuneOptionInfo> GetRuneOptions(
+            IEnumerable<RuneSlotInfo> runeInfos,
+            AllRuneState runeStates,
+            RuneOptionSheet runeOptionSheet)
+        {
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in runeInfos)
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+
+            return runeOptions;
+        }
     }
 }

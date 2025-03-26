@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Battle;
     using Nekoyume.Extensions;
     using Nekoyume.Model;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Mail;
     using Nekoyume.Model.Quest;
@@ -190,7 +191,10 @@ namespace Lib9c.Tests.Action
                 });
 
             var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var nextCpAccount = nextState.GetAccountState(Addresses.GetCpAccountAddress(BattleType.Adventure));
+            var nextCpState = new CpState(nextCpAccount.GetState(_avatarAddress));
 
+            Assert.True(nextCpState.Cp > 0);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
         }
@@ -1577,12 +1581,12 @@ namespace Lib9c.Tests.Action
             var allRuneState = state.GetRuneState(_avatarAddress, out _);
             if (!allRuneState.TryGetRuneState(30001, out _))
             {
-                allRuneState.AddRuneState(new RuneState(30001));
+                allRuneState.AddRuneState(new RuneState(30001, 1));
             }
 
             if (!allRuneState.TryGetRuneState(10002, out _))
             {
-                allRuneState.AddRuneState(new RuneState(10002));
+                allRuneState.AddRuneState(new RuneState(10002, 1));
             }
 
             state = state.SetRuneState(_avatarAddress, allRuneState);

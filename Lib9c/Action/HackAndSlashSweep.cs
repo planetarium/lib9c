@@ -23,6 +23,14 @@ using Serilog;
 namespace Nekoyume.Action
 {
     /// <summary>
+    /// Represents a sweep action that automatically completes multiple battles without player interaction.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
     /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
     /// </summary>
     [Serializable]
@@ -372,7 +380,7 @@ namespace Nekoyume.Action
                 "{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}",
                 addressesHex, ended - started
             );
-            return states.SetAvatarState(avatarAddress, avatarState);
+            return states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,

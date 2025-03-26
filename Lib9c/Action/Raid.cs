@@ -27,7 +27,15 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
+    /// Represents a raid action where players participate in a world boss battle.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - WorldBossKillRewardRecord: Records boss kill rewards
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
     /// </summary>
     [Serializable]
     [ActionType("raid7")]
@@ -369,6 +377,7 @@ namespace Nekoyume.Action
             Log.Debug("{AddressHex}Raid Total Executed Time: {Elapsed}", addressHex, ended - started);
             return states
                 .SetAvatarState(AvatarAddress, avatarState, true, true, false, false)
+                .SetCp(AvatarAddress, BattleType.Raid, cp)
                 .SetLegacyState(worldBossAddress, bossState.Serialize())
                 .SetLegacyState(raiderAddress, raiderState.Serialize());
         }
