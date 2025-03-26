@@ -16,6 +16,7 @@ using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -116,12 +117,16 @@ namespace Nekoyume.Action.AdventureBoss
                 containSimulatorSheets: true,
                 sheetTypes: new[]
                 {
+                    typeof(CharacterSheet),
+                    typeof(CollectionSheet),
+                    typeof(CostumeStatSheet),
                     typeof(ItemRequirementSheet),
                     typeof(EquipmentItemRecipeSheet),
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(MaterialItemSheet),
                     typeof(RuneListSheet),
+                    typeof(RuneOptionSheet),
                     typeof(RuneLevelBonusSheet),
                     typeof(AdventureBossFloorWaveSheet),
                 });
@@ -237,10 +242,81 @@ namespace Nekoyume.Action.AdventureBoss
                 context, states, AvatarAddress, inventory, rewardList
             );
 
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+
+            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
+            {
+                states = states.SetRuneState(AvatarAddress, runeStates);
+            }
+
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
+            }
+
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in RuneInfos)
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+
+            var collectionExist =
+                states.TryGetCollectionState(AvatarAddress, out var collectionState) &&
+                collectionState.Ids.Any();
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                collectionModifiers = collectionState.GetModifiers(collectionSheet);
+            }
+
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             return states
                 .SetInventory(AvatarAddress, inventory)
                 .SetExploreBoard(Season, exploreBoard)
-                .SetExplorer(Season, explorer);
+                .SetExplorer(Season, explorer)
+                .SetCp(AvatarAddress, BattleType.Adventure, cp);
         }
     }
 }

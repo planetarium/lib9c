@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Extensions;
     using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -251,6 +252,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         Assert.Equal(amount, inventory.Items.First(i => i.item.Id == id).count);
                     }
                 }
+
+                var nextCpAccount = state.GetAccountState(CpState.AccountAddress);
+                var nextCpState = new CpState(nextCpAccount.GetState(CpState.DeriveAddress(TesterAvatarAddress, BattleType.Adventure)));
+
+                Assert.True(nextCpState.Cp > 0);
             }
         }
 
