@@ -159,40 +159,6 @@ namespace Nekoyume.Module
         }
 #nullable disable
 
-        public static IWorld Mead(
-            this IWorld world, IActionContext context, Address signer, BigInteger rawValue)
-        {
-            while (true)
-            {
-                var price = rawValue * Currencies.Mead;
-                var balance = world.GetBalance(signer, Currencies.Mead);
-                if (balance < price)
-                {
-                    var requiredMead = price - balance;
-                    var contractAddress = signer.Derive(nameof(RequestPledge));
-                    if (GetLegacyState(world, contractAddress) is List contract && contract[1].ToBoolean())
-                    {
-                        var patron = contract[0].ToAddress();
-                        try
-                        {
-                            world = world.TransferAsset(context, patron, signer, requiredMead);
-                        }
-                        catch (InsufficientBalanceException)
-                        {
-                            world = Mead(world, context, patron, rawValue);
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        throw new InsufficientBalanceException("", signer, balance);
-                    }
-                }
-
-                return world;
-            }
-        }
-
         // Methods from AccountStateExtensions
         public static bool TryGetLegacyState<T>(this IWorldState worldState, Address address, out T result)
             where T : IValue
