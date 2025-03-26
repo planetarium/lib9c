@@ -49,10 +49,9 @@ namespace Nekoyume
         public static readonly Address DailyReward           = new("0000000000000000000000000000000000000020");
         public static readonly Address ActionPoint           = new("0000000000000000000000000000000000000021");
         public static readonly Address RuneState             = new("0000000000000000000000000000000000000022");
-        public static readonly Address CpRootAddress         = new("0000000000000000000000000000000000000028");
-        public static readonly Address AdventureCp           = CpRootAddress.Derive(BattleType.Adventure.ToString());
-        public static readonly Address RaidCp                = CpRootAddress.Derive(BattleType.Raid.ToString());
-        public static readonly Address ArenaCp               = CpRootAddress.Derive(BattleType.Arena.ToString());
+        public static readonly Address AdventureCp           = new("0000000000000000000000000000000000000028");
+        public static readonly Address RaidCp                = new("0000000000000000000000000000000000000029");
+        public static readonly Address ArenaCp               = new("0000000000000000000000000000000000000030");
 
         // Custom Equipment Craft
         public static readonly Address Relationship          = new("0000000000000000000000000000000000000023");
