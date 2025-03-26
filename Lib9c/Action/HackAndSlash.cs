@@ -722,7 +722,7 @@ namespace Nekoyume.Action
             var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
 
             var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
-            foreach (var runeInfo in runeSlotState.GetEquippedRuneSlotInfos())
+            foreach (var runeInfo in RuneInfos)
             {
                 if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
                 {
