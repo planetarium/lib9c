@@ -9,6 +9,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Battle;
 using Nekoyume.Extensions;
+using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
@@ -25,6 +26,15 @@ using Skill = Nekoyume.Model.Skill.Skill;
 namespace Nekoyume.Action
 {
     /// <summary>
+    /// Represents a battle action in the game where a player engages in combat with monsters.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - WorldBossKillRewardRecord: Records boss kill rewards
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
     /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
     /// </summary>
     [Serializable]
@@ -177,6 +187,7 @@ namespace Nekoyume.Action
                 typeof(StageWaveSheet),
                 typeof(EnemySkillSheet),
                 typeof(CostumeStatSheet),
+                typeof(CharacterSheet),
                 typeof(SkillSheet),
                 typeof(QuestRewardSheet),
                 typeof(QuestItemRewardSheet),
@@ -192,6 +203,7 @@ namespace Nekoyume.Action
                 typeof(StakeActionPointCoefficientSheet),
                 typeof(RuneListSheet),
                 typeof(RuneLevelBonusSheet),
+                typeof(RuneOptionSheet),
                 typeof(BuffLimitSheet),
                 typeof(BuffLinkSheet),
             };
@@ -705,7 +717,52 @@ namespace Nekoyume.Action
                 states = states.SetLegacyState(skillStateAddress, skillState.Serialize());
             }
 
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+
+            var runeOptions = new List<RuneOptionSheet.Row.RuneOptionInfo>();
+            foreach (var runeInfo in RuneInfos)
+            {
+                if (!runeStates.TryGetRuneState(runeInfo.RuneId, out var runeState))
+                {
+                    continue;
+                }
+
+                if (!runeOptionSheet.TryGetValue(runeState.RuneId, out var optionRow))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.RuneId);
+                }
+
+                if (!optionRow.LevelOptionMap.TryGetValue(runeState.Level, out var option))
+                {
+                    throw new SheetRowNotFoundException("RuneOptionSheet", runeState.Level);
+                }
+
+                runeOptions.Add(option);
+            }
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             states = states.SetAvatarState(AvatarAddress, avatarState);
+            states = states.SetCp(AvatarAddress, BattleType.Adventure, cp);
 
             setStateActivity?.Dispose();
             sw.Stop();

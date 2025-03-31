@@ -16,6 +16,7 @@ using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
@@ -24,6 +25,18 @@ using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    /// <summary>
+    /// Represents a sweep action that automatically completes multiple adventure boss stages without player interaction.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - ExploreBoard: Updates exploration progress and points
+    /// - Explorer: Updates player's exploration status and achievements
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
+    /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class SweepAdventureBoss : GameAction
@@ -116,12 +129,16 @@ namespace Nekoyume.Action.AdventureBoss
                 containSimulatorSheets: true,
                 sheetTypes: new[]
                 {
+                    typeof(CharacterSheet),
+                    typeof(CollectionSheet),
+                    typeof(CostumeStatSheet),
                     typeof(ItemRequirementSheet),
                     typeof(EquipmentItemRecipeSheet),
                     typeof(EquipmentItemSubRecipeSheetV2),
                     typeof(EquipmentItemOptionSheet),
                     typeof(MaterialItemSheet),
                     typeof(RuneListSheet),
+                    typeof(RuneOptionSheet),
                     typeof(RuneLevelBonusSheet),
                     typeof(AdventureBossFloorWaveSheet),
                 });
@@ -237,10 +254,62 @@ namespace Nekoyume.Action.AdventureBoss
                 context, states, AvatarAddress, inventory, rewardList
             );
 
+            var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+
+            var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired);
+            // Passive migrate runeStates
+            if (migrateRequired)
+            {
+                states = states.SetRuneState(AvatarAddress, runeStates);
+            }
+
+            // just validate
+            foreach (var runeSlotInfo in RuneInfos)
+            {
+                runeStates.GetRuneState(runeSlotInfo.RuneId);
+            }
+
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+
+            var runeOptions = RuneHelper.GetRuneOptions(RuneInfos, runeStates, runeOptionSheet);
+
+            var collectionExist =
+                states.TryGetCollectionState(AvatarAddress, out var collectionState) &&
+                collectionState.Ids.Any();
+            var collectionModifiers = new List<StatModifier>();
+            if (collectionExist)
+            {
+                var collectionSheet = sheets.GetSheet<CollectionSheet>();
+                collectionModifiers = collectionState.GetModifiers(collectionSheet);
+            }
+
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             return states
                 .SetInventory(AvatarAddress, inventory)
                 .SetExploreBoard(Season, exploreBoard)
-                .SetExplorer(Season, explorer);
+                .SetExplorer(Season, explorer)
+                .SetCp(AvatarAddress, BattleType.Adventure, cp);
         }
     }
 }
