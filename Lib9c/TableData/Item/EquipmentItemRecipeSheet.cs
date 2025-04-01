@@ -47,7 +47,8 @@ namespace Nekoyume.TableData
                 CRYSTAL = 0;
                 if (fields.Count >= 12)
                 {
-                    CRYSTAL = ParseInt(fields[11]);
+                    var currentField = fields[11];
+                    CRYSTAL = string.IsNullOrEmpty(currentField) ? 0 : ParseInt(currentField);
                 }
 
                 if (fields.Count >= 13)
