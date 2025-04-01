@@ -6,6 +6,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model;
+using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
@@ -177,6 +178,13 @@ namespace Nekoyume.Module
             var avatarAccount = world.GetAccount(Addresses.Avatar);
             avatarAccount = avatarAccount.SetState(address, state.SerializeList());
             return world.SetAccount(Addresses.Avatar, avatarAccount);
+        }
+
+        internal static IWorld SetCp(this IWorld world, Address address, BattleType battleType, int cp)
+        {
+            var cpAccount = world.GetAccount(Addresses.GetCpAccountAddress(battleType));
+            cpAccount = cpAccount.SetState(address, new CpState(cp).Serialize());
+            return world.SetAccount(Addresses.GetCpAccountAddress(battleType), cpAccount);
         }
 
         internal static Inventory GetInventoryV2(this IWorldState worldState, Address address)

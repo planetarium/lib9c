@@ -24,6 +24,18 @@ using Nekoyume.TableData.Rune;
 
 namespace Nekoyume.Action.AdventureBoss
 {
+    /// <summary>
+    /// Represents an action where a player explores and battles through adventure boss stages.
+    /// This action modifies the following states:
+    /// - AvatarState: Updates player's stats, inventory, and experience
+    /// - ExploreBoard: Updates exploration progress and points
+    /// - Explorer: Updates player's exploration status and achievements
+    /// - CollectionState: Updates collection progress
+    /// - RuneState: Updates rune effects and bonuses
+    /// - ItemSlotState: Updates equipped items
+    /// - RuneSlotState: Updates equipped runes
+    /// - CP: Updates character's combat power
+    /// </summary>
     [Serializable]
     [ActionType(TypeIdentifier)]
     public class ExploreAdventureBoss : GameAction
@@ -142,6 +154,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(CollectionSheet),
                     typeof(EnemySkillSheet),
                     typeof(CostumeStatSheet),
+                    typeof(CharacterSheet),
                     typeof(BuffLimitSheet),
                     typeof(BuffLinkSheet),
                     typeof(ItemRequirementSheet),
@@ -150,6 +163,7 @@ namespace Nekoyume.Action.AdventureBoss
                     typeof(EquipmentItemOptionSheet),
                     typeof(RuneListSheet),
                     typeof(RuneLevelBonusSheet),
+                    typeof(RuneOptionSheet),
                 });
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var material =
@@ -358,10 +372,37 @@ namespace Nekoyume.Action.AdventureBoss
                 context, states, AvatarAddress, avatarState.inventory, rewardList
             );
 
+            var characterSheet = sheets.GetSheet<CharacterSheet>();
+            var runeLevelBonusSheet = sheets.GetSheet<RuneLevelBonusSheet>();
+            if (!characterSheet.TryGetValue(avatarState.characterId, out var myCharacterRow))
+            {
+                throw new SheetRowNotFoundException("CharacterSheet", avatarState.characterId);
+            }
+            var runeLevelBonus = RuneHelper.CalculateRuneLevelBonus(
+                runeStates,
+                runeListSheet,
+                runeLevelBonusSheet
+            );
+            var runeOptionSheet = sheets.GetSheet<RuneOptionSheet>();
+
+            var runeOptions = RuneHelper.GetRuneOptions(RuneInfos, runeStates, runeOptionSheet);
+
+            var cp = CPHelper.TotalCP(
+                equipmentList,
+                costumeList,
+                runeOptions,
+                avatarState.level,
+                myCharacterRow,
+                costumeStatSheet,
+                collectionModifiers,
+                runeLevelBonus
+            );
+
             return states
                 .SetInventory(AvatarAddress, avatarState.inventory)
                 .SetExploreBoard(Season, exploreBoard)
-                .SetExplorer(Season, explorer);
+                .SetExplorer(Season, explorer)
+                .SetCp(AvatarAddress, BattleType.Adventure, cp);
         }
     }
 }

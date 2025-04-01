@@ -385,6 +385,11 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(GameConfig.DefaultAvatarArmorId, raiderState.IconId);
                 Assert.True(raiderState.Cp > 0);
 
+                var nextCpAccount = nextState.GetAccountState(Addresses.GetCpAccountAddress(BattleType.Raid));
+                var nextCpState = new CpState(nextCpAccount.GetState(_avatarAddress));
+
+                Assert.True(nextCpState.Cp > 0);
+
                 Assert.True(nextState.TryGetLegacyState(bossAddress, out List rawBoss));
                 var bossState = new WorldBossState(rawBoss);
                 var expectedLevel = level;
