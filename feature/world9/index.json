@@ -2872,7 +2872,7 @@
   "api/Nekoyume.Model.EnumType.Grade.html": {
     "href": "api/Nekoyume.Model.EnumType.Grade.html",
     "title": "Enum Grade | Lib9c",
-    "keywords": "Enum Grade Namespace Nekoyume.Model.EnumType Assembly Lib9c.dll public enum Grade Extension Methods StateExtensions.Serialize(Enum) Fields Divinity = 6 Epic = 3 Legendary = 5 Normal = 1 Rare = 2 Unique = 4"
+    "keywords": "Enum Grade Namespace Nekoyume.Model.EnumType Assembly Lib9c.dll Enumeration of item grades. public enum Grade Extension Methods StateExtensions.Serialize(Enum) Fields Divinity = 6 Epic = 3 Legendary = 5 Mythic = 7 Normal = 1 Rare = 2 Unique = 4"
   },
   "api/Nekoyume.Model.EnumType.RuneSlotType.html": {
     "href": "api/Nekoyume.Model.EnumType.RuneSlotType.html",
@@ -2902,7 +2902,7 @@
   "api/Nekoyume.Model.EnumType.html": {
     "href": "api/Nekoyume.Model.EnumType.html",
     "title": "Namespace Nekoyume.Model.EnumType | Lib9c",
-    "keywords": "Namespace Nekoyume.Model.EnumType Classes BattleTypeExtensions Enums ArenaType BattleType CraftType Grade RuneSlotType RuneType RuneUsePlace StatReferenceType TradeType"
+    "keywords": "Namespace Nekoyume.Model.EnumType Classes BattleTypeExtensions Enums ArenaType BattleType CraftType Grade Enumeration of item grades. RuneSlotType RuneType RuneUsePlace StatReferenceType TradeType"
   },
   "api/Nekoyume.Model.Event.EventDungeonInfo.html": {
     "href": "api/Nekoyume.Model.Event.EventDungeonInfo.html",
