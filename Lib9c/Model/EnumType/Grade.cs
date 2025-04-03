@@ -8,5 +8,6 @@ namespace Nekoyume.Model.EnumType
         Unique = 4,
         Legendary = 5,
         Divinity = 6,
+        Mythic = 7,
     }
 }
