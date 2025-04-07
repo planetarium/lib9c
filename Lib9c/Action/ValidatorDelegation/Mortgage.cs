@@ -2,9 +2,12 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Nekoyume.Model.Guild;
+using Nekoyume.Model.State;
 using Nekoyume.Module.Guild;
+using Nekoyume.Module;
 using Nekoyume.TypedAddress;
 using Nekoyume.ValidatorDelegation;
+using Lib9c;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -47,7 +50,13 @@ namespace Nekoyume.Action.ValidatorDelegation
                 var guildGasBalance = state.GetBalance(guildAddress, realGasPrice.Currency);
                 if (guildGasBalance >= gasRequired)
                 {
-                    return PayMaster.Mortgage(state, context, context.Signer, guildAddress, gasRequired);
+                    if (state.GetLegacyState(context.Signer.GetPledgeAddress()) is List contract
+                        && contract[1].ToBoolean()
+                        && contract[0].ToAddress() == MeadConfig.PatronAddress
+                        && contract[2].ToInteger() * Currencies.Mead >= gasRequired)
+                    {
+                        return PayMaster.Mortgage(state, context, context.Signer, guildAddress, gasRequired);
+                    }
                 }
             }
 
