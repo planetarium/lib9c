@@ -412,10 +412,11 @@ namespace Lib9c.Tests
         }
 
         [Theory]
-        [InlineData(10L, 1L, 5L)]
-        [InlineData(1L, 10L, 5L)]
-        [InlineData(1L, 1L, 5L)]
-        public void PayMeadWithGuild(long guildMint, long signerMint, long consumption)
+        [InlineData(10L, 1L, 50, 5L)]
+        [InlineData(1L, 10L, 50, 5L)]
+        [InlineData(1L, 1L, 50, 5L)]
+        [InlineData(10L, 1L, 3, 5L)]
+        public void PayMeadWithGuild(long guildMint, long signerMint, int contract, long consumption)
         {
             var validatorPrivateKey = new PrivateKey();
             var adminPrivateKey = new PrivateKey();
@@ -466,6 +467,14 @@ namespace Lib9c.Tests
             );
 
             var adminMintAmount = Currencies.Mead * 10;
+            var mintToAdmin = new PrepareRewardAssets
+            {
+                RewardPoolAddress = adminAddress,
+                Assets = new List<FungibleAssetValue>
+                {
+                    adminMintAmount,
+                },
+            };
 
             var signerMintAmount = Currencies.Mead * signerMint;
             var mintToSigner = new PrepareRewardAssets
@@ -476,6 +485,11 @@ namespace Lib9c.Tests
                     signerMintAmount,
                 },
             };
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { mintToAdmin, }
+            );
 
             blockChain.MakeTransaction(
                 adminPrivateKey,
@@ -493,6 +507,17 @@ namespace Lib9c.Tests
             blockChain.MakeTransaction(
                 guildMasterPrivateKey,
                 new ActionBase[] { new MakeGuild(validatorPrivateKey.Address), }
+            );
+
+            var requestPledge = new RequestPledgePatron
+            {
+                AgentAddress = signerPrivateKey.Address,
+                RefillMead = contract,
+            };
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { requestPledge }
             );
 
             block = blockChain.ProposeBlock(adminPrivateKey, commit);
@@ -516,11 +541,21 @@ namespace Lib9c.Tests
                 },
             };
 
+            var approvePledge = new ApprovePledge
+            {
+                PatronAddress = MeadConfig.PatronAddress,
+            };
+
             var joinGuild = new JoinGuild(guildAddress);
 
             blockChain.MakeTransaction(
                 adminPrivateKey,
                 new ActionBase[] { mintToGuild, }
+            );
+
+            blockChain.MakeTransaction(
+                signerPrivateKey,
+                new ActionBase[] { approvePledge, }
             );
 
             blockChain.MakeTransaction(
@@ -570,7 +605,7 @@ namespace Lib9c.Tests
                 .GetBalance(guildAddress, Currencies.Mead);
 
             var failed = false;
-            if (consumption < guildMint)
+            if (contract > consumption && consumption < guildMint)
             {
                 expectedGuildBalance = guildMintAmount - Currencies.Mead * consumption;
             }
@@ -985,6 +1020,52 @@ namespace Lib9c.Tests
             }
         }
 
+        [ActionType(TypeIdentifier)]
+        protected class RequestPledgePatron : ActionBase
+        {
+            public const string TypeIdentifier = "request_pledge_patron";
+
+            public RequestPledgePatron()
+            {
+            }
+
+            public Address AgentAddress { get; set; }
+
+            public int RefillMead { get; set; }
+
+            public override IValue PlainValue =>
+                Dictionary.Empty
+                    .Add("type_id", TypeIdentifier)
+                    .Add("values", List.Empty.Add(AgentAddress.Serialize()).Add(RefillMead.Serialize()));
+
+            public override void LoadPlainValue(IValue plainValue)
+            {
+                List values = (List)((Dictionary)plainValue)["values"];
+                AgentAddress = values[0].ToAddress();
+                RefillMead = values[1].ToInteger();
+            }
+
+            public override IWorld Execute(IActionContext context)
+            {
+                GasTracer.UseGas(1);
+                var states = context.PreviousState;
+                var contractAddress = AgentAddress.GetPledgeAddress();
+                if (states.TryGetLegacyState(contractAddress, out List _))
+                {
+                    throw new AlreadyContractedException($"{AgentAddress} already contracted.");
+                }
+
+                return states
+                    .SetLegacyState(
+                        contractAddress,
+                        List.Empty
+                            .Add(MeadConfig.PatronAddress.Serialize())
+                            .Add(false.Serialize())
+                            .Add(RefillMead.Serialize())
+                    );
+            }
+        }
+
         protected class GasActionLoader : IActionLoader
         {
             private readonly NCActionLoader _actionLoader;
@@ -1002,6 +1083,15 @@ namespace Lib9c.Tests
                 {
                     var action = new GasAction();
                     action.LoadPlainValue(pv);
+                    return action;
+                }
+
+                if (value is Dictionary pv2 &&
+                    pv2.TryGetValue((Text)"type_id", out IValue rawTypeId2) &&
+                    rawTypeId2 is Text typeId2 && typeId2 == RequestPledgePatron.TypeIdentifier)
+                {
+                    var action = new RequestPledgePatron();
+                    action.LoadPlainValue(pv2);
                     return action;
                 }
 
