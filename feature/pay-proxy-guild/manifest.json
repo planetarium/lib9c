@@ -782,6 +782,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.ClaimWorldBossReward.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.ClaimWorldBossReward.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ClaimableGiftsNotAvailableException.yml",
       "output": {
         ".html": {
@@ -6602,6 +6612,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Mail.WorldBossRewardMail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Mail.WorldBossRewardMail.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Mail.yml",
       "output": {
         ".html": {
@@ -7716,6 +7736,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.State.CombinationSlotState.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.State.CpState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.State.CpState.html"
         }
       },
       "version": ""
@@ -11536,6 +11566,36 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.WorldBossCharacterSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.RewardModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.RewardModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.WorldBossContributionRewardSheet.html"
         }
       },
       "version": ""

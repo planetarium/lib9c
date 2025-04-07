@@ -334,6 +334,12 @@ It can only claim once at the specified block index.</p>
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.ClaimWorldBossReward.html">ClaimWorldBossReward</a></dt>
+      <dd><p>The ClaimWorldBossReward class is an action that allows a player to claim rewards for their contribution in defeating a world boss.
+This action ensures that only the owner of the avatar can claim the reward and calculates the reward based on the player's contribution.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.ClaimableGiftsNotAvailableException.html">ClaimableGiftsNotAvailableException</a></dt>
       <dd></dd>
     </dl>
@@ -488,7 +494,18 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1828">https://gith
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.HackAndSlash.html">HackAndSlash</a></dt>
-      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+      <dd><p>Represents a battle action in the game where a player engages in combat with monsters.
+This action modifies the following states:</p>
+<ul>
+<li>AvatarState: Updates player's stats, inventory, and experience</li>
+<li>WorldBossKillRewardRecord: Records boss kill rewards</li>
+<li>CollectionState: Updates collection progress</li>
+<li>RuneState: Updates rune effects and bonuses</li>
+<li>ItemSlotState: Updates equipped items</li>
+<li>RuneSlotState: Updates equipped runes</li>
+<li>CP: Updates character's combat power
+Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></li>
+</ul>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -498,7 +515,17 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1828">https://gith
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.HackAndSlashSweep.html">HackAndSlashSweep</a></dt>
-      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+      <dd><p>Represents a sweep action that automatically completes multiple battles without player interaction.
+This action modifies the following states:</p>
+<ul>
+<li>AvatarState: Updates player's stats, inventory, and experience</li>
+<li>CollectionState: Updates collection progress</li>
+<li>RuneState: Updates rune effects and bonuses</li>
+<li>ItemSlotState: Updates equipped items</li>
+<li>RuneSlotState: Updates equipped runes</li>
+<li>CP: Updates character's combat power
+Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></li>
+</ul>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -870,7 +897,17 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1560">https://gith
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.Raid.html">Raid</a></dt>
-      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+      <dd><p>Represents a raid action where players participate in a world boss battle.
+This action modifies the following states:</p>
+<ul>
+<li>AvatarState: Updates player's stats, inventory, and experience</li>
+<li>WorldBossKillRewardRecord: Records boss kill rewards</li>
+<li>CollectionState: Updates collection progress</li>
+<li>RuneState: Updates rune effects and bonuses</li>
+<li>ItemSlotState: Updates equipped items</li>
+<li>RuneSlotState: Updates equipped runes</li>
+<li>CP: Updates character's combat power</li>
+</ul>
 </dd>
     </dl>
     <dl class="jumplist">
