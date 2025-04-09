@@ -8,7 +8,9 @@ namespace Lib9c.Tests
     using System.Security.Cryptography;
     using Bencodex.Types;
     using Lib9c.Renderers;
+    using Lib9c.Tests.Action;
     using Libplanet.Action;
+    using Libplanet.Action.Loader;
     using Libplanet.Action.State;
     using Libplanet.Blockchain;
     using Libplanet.Blockchain.Policies;
@@ -23,11 +25,16 @@ namespace Lib9c.Tests
     using Libplanet.Types.Tx;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Action.Guild;
     using Nekoyume.Action.Loader;
     using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Blockchain.Policy;
     using Nekoyume.Model;
+    using Nekoyume.Model.Guild;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
+    using Nekoyume.Module.Guild;
+    using Nekoyume.TypedAddress;
     using Xunit;
 
     public class BlockPolicyTest
@@ -404,6 +411,222 @@ namespace Lib9c.Tests
             Assert.Equal(expectedBalance, actualBalance);
         }
 
+        [Theory]
+        [InlineData(10L, 1L, 50, 5L)]
+        [InlineData(1L, 10L, 50, 5L)]
+        [InlineData(1L, 1L, 50, 5L)]
+        [InlineData(10L, 1L, 3, 5L)]
+        public void PayMeadWithGuild(long guildMint, long signerMint, int contract, long consumption)
+        {
+            var validatorPrivateKey = new PrivateKey();
+            var adminPrivateKey = new PrivateKey();
+            var guildMasterPrivateKey = new PrivateKey();
+            var signerPrivateKey = new PrivateKey();
+            var adminAddress = adminPrivateKey.Address;
+            var authorizedMinerPrivateKey = new PrivateKey();
+
+            var (ak, ps) = ActivationKey.Create(
+                new PrivateKey(),
+                new byte[] { 0x00, 0x01, }
+            );
+
+            var blockPolicySource = new BlockPolicySource(actionLoader: new GasActionLoader());
+            var policy = blockPolicySource.GetPolicy(
+                null,
+                null,
+                null,
+                null);
+            IStagePolicy stagePolicy = new VolatileStagePolicy();
+            Block genesis = MakeGenesisBlock(
+                new ValidatorSet(
+                    new List<Validator> { new (validatorPrivateKey.PublicKey, 10_000_000_000_000_000_000) }),
+                adminAddress,
+                ImmutableHashSet.Create(adminAddress),
+                new AuthorizedMinersState(
+                    new[] { authorizedMinerPrivateKey.Address, },
+                    5,
+                    10
+                ),
+                pendingActivations: new[] { ps }
+            );
+
+            using var store = new DefaultStore(null);
+            using var stateStore = new TrieStateStore(new DefaultKeyValueStore(null));
+            var blockChain = BlockChain.Create(
+                policy,
+                stagePolicy,
+                store,
+                stateStore,
+                genesis,
+                new ActionEvaluator(
+                    policy.PolicyActionsRegistry,
+                    stateStore,
+                    new GasActionLoader()
+                ),
+                new[] { new BlockRenderer(), }
+            );
+
+            var adminMintAmount = Currencies.Mead * 10;
+            var mintToAdmin = new PrepareRewardAssets
+            {
+                RewardPoolAddress = adminAddress,
+                Assets = new List<FungibleAssetValue>
+                {
+                    adminMintAmount,
+                },
+            };
+
+            var signerMintAmount = Currencies.Mead * signerMint;
+            var mintToSigner = new PrepareRewardAssets
+            {
+                RewardPoolAddress = signerPrivateKey.Address,
+                Assets = new List<FungibleAssetValue>
+                {
+                    signerMintAmount,
+                },
+            };
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { mintToAdmin, }
+            );
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { mintToSigner, }
+            );
+
+            var block = blockChain.ProposeBlock(adminPrivateKey);
+            var power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(validatorPrivateKey.PublicKey).Power;
+            var commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { validatorPrivateKey });
+            blockChain.Append(block, commit);
+
+            blockChain.MakeTransaction(
+                guildMasterPrivateKey,
+                new ActionBase[] { new MakeGuild(validatorPrivateKey.Address), }
+            );
+
+            var requestPledge = new RequestPledgePatron
+            {
+                AgentAddress = signerPrivateKey.Address,
+                RefillMead = contract,
+            };
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { requestPledge }
+            );
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(validatorPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { validatorPrivateKey });
+            blockChain.Append(block, commit);
+
+            var repo = new GuildRepository(new World(blockChain.GetNextWorldState()), new ActionContext { });
+            var guildAddress = repo.GetJoinedGuild(new AgentAddress(guildMasterPrivateKey.Address)).Value;
+
+            var guildMintAmount = Currencies.Mead * guildMint;
+            var mintToGuild = new PrepareRewardAssets
+            {
+                RewardPoolAddress = (Address)guildAddress,
+                Assets = new List<FungibleAssetValue>
+                {
+                    guildMintAmount,
+                },
+            };
+
+            var approvePledge = new ApprovePledge
+            {
+                PatronAddress = MeadConfig.PatronAddress,
+            };
+
+            var joinGuild = new JoinGuild(guildAddress);
+
+            blockChain.MakeTransaction(
+                adminPrivateKey,
+                new ActionBase[] { mintToGuild, }
+            );
+
+            blockChain.MakeTransaction(
+                signerPrivateKey,
+                new ActionBase[] { approvePledge, }
+            );
+
+            blockChain.MakeTransaction(
+                signerPrivateKey,
+                new ActionBase[] { joinGuild, }
+            );
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(validatorPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { validatorPrivateKey });
+            blockChain.Append(block, commit);
+            var actualBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(signerPrivateKey.Address, Currencies.Mead);
+            var actualGuildBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(guildAddress, Currencies.Mead);
+            var expectedBalance = signerMintAmount;
+            var expectedGuildBalance = guildMintAmount;
+            Assert.Equal(expectedBalance, actualBalance);
+            Assert.Equal(expectedGuildBalance, actualGuildBalance);
+
+            var gasAction = new GasAction { Consumption = consumption };
+            var gasTx = blockChain.MakeTransaction(
+                signerPrivateKey,
+                new ActionBase[] { gasAction, },
+                maxGasPrice: Currencies.Mead * 1,
+                gasLimit: 10L
+            );
+
+            block = blockChain.ProposeBlock(adminPrivateKey, commit);
+            power = blockChain.GetNextWorldState().GetValidatorSet().GetValidator(validatorPrivateKey.PublicKey).Power;
+            commit = GenerateBlockCommit(
+                block,
+                blockChain.GetNextWorldState().GetValidatorSet(),
+                new PrivateKey[] { validatorPrivateKey });
+            blockChain.Append(block, commit);
+
+            actualBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(signerPrivateKey.Address, Currencies.Mead);
+            actualGuildBalance = blockChain
+                .GetNextWorldState()
+                .GetBalance(guildAddress, Currencies.Mead);
+
+            var failed = false;
+            if (contract > consumption && consumption < guildMint)
+            {
+                expectedGuildBalance = guildMintAmount - Currencies.Mead * consumption;
+            }
+            else
+            {
+                if (consumption < signerMint)
+                {
+                    expectedBalance = signerMintAmount - Currencies.Mead * consumption;
+                }
+                else
+                {
+                    expectedBalance = Currencies.Mead * 0;
+                    failed = true;
+                }
+            }
+
+            Assert.Equal(failed, blockChain.GetTxExecution(block.Hash, gasTx.Id).Fail);
+            Assert.Equal(expectedBalance, actualBalance);
+            Assert.Equal(expectedGuildBalance, actualGuildBalance);
+        }
+
         [Fact]
         public void ValidateNextBlockWithManyTransactions()
         {
@@ -761,6 +984,119 @@ namespace Lib9c.Tests
             }
 
             return preEvaluationBlock.Sign(privateKey, stateRootHash);
+        }
+
+        [ActionType(TypeIdentifier)]
+        protected class GasAction : ActionBase
+        {
+            public const string TypeIdentifier = "gas_action";
+
+            public GasAction()
+            {
+            }
+
+            public long Consumption { get; set; }
+
+            public override IValue PlainValue => Dictionary.Empty
+               .Add("type_id", TypeIdentifier)
+               .Add("consumption", new Integer(Consumption));
+
+            public override void LoadPlainValue(IValue plainValue)
+            {
+                if (plainValue is not Dictionary root ||
+                    !root.TryGetValue((Text)"consumption", out var rawValues) ||
+                    rawValues is not Integer value)
+                {
+                    throw new InvalidCastException();
+                }
+
+                Consumption = (long)value.Value;
+            }
+
+            public override IWorld Execute(IActionContext context)
+            {
+                GasTracer.UseGas(Consumption);
+                return context.PreviousState;
+            }
+        }
+
+        [ActionType(TypeIdentifier)]
+        protected class RequestPledgePatron : ActionBase
+        {
+            public const string TypeIdentifier = "request_pledge_patron";
+
+            public RequestPledgePatron()
+            {
+            }
+
+            public Address AgentAddress { get; set; }
+
+            public int RefillMead { get; set; }
+
+            public override IValue PlainValue =>
+                Dictionary.Empty
+                    .Add("type_id", TypeIdentifier)
+                    .Add("values", List.Empty.Add(AgentAddress.Serialize()).Add(RefillMead.Serialize()));
+
+            public override void LoadPlainValue(IValue plainValue)
+            {
+                List values = (List)((Dictionary)plainValue)["values"];
+                AgentAddress = values[0].ToAddress();
+                RefillMead = values[1].ToInteger();
+            }
+
+            public override IWorld Execute(IActionContext context)
+            {
+                GasTracer.UseGas(1);
+                var states = context.PreviousState;
+                var contractAddress = AgentAddress.GetPledgeAddress();
+                if (states.TryGetLegacyState(contractAddress, out List _))
+                {
+                    throw new AlreadyContractedException($"{AgentAddress} already contracted.");
+                }
+
+                return states
+                    .SetLegacyState(
+                        contractAddress,
+                        List.Empty
+                            .Add(MeadConfig.PatronAddress.Serialize())
+                            .Add(false.Serialize())
+                            .Add(RefillMead.Serialize())
+                    );
+            }
+        }
+
+        protected class GasActionLoader : IActionLoader
+        {
+            private readonly NCActionLoader _actionLoader;
+
+            public GasActionLoader()
+            {
+                _actionLoader = new NCActionLoader();
+            }
+
+            public IAction LoadAction(long index, IValue value)
+            {
+                if (value is Dictionary pv &&
+                    pv.TryGetValue((Text)"type_id", out IValue rawTypeId) &&
+                    rawTypeId is Text typeId && typeId == GasAction.TypeIdentifier)
+                {
+                    var action = new GasAction();
+                    action.LoadPlainValue(pv);
+                    return action;
+                }
+
+                if (value is Dictionary pv2 &&
+                    pv2.TryGetValue((Text)"type_id", out IValue rawTypeId2) &&
+                    rawTypeId2 is Text typeId2 && typeId2 == RequestPledgePatron.TypeIdentifier)
+                {
+                    var action = new RequestPledgePatron();
+                    action.LoadPlainValue(pv2);
+                    return action;
+                }
+
+                return _actionLoader.LoadAction(index, value);
+            }
         }
     }
 }

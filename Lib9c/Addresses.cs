@@ -77,6 +77,8 @@ namespace Nekoyume
         /// </summary>
         public static readonly Address SwapPool = new Address("0000000000000000000000000000000000100002");
 
+        public static readonly Address PayMaster = new Address("0000000000000000000000000000000000100003");
+
         #region Guild
 
         /// <summary>

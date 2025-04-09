@@ -490,45 +490,6 @@ namespace Lib9c.Tests.Action
         //    // Rewardless era
         //    AssertMinerReward(50457601, "0");
         //}
-        [Theory]
-        [InlineData(5, 4)]
-        [InlineData(101, 100)]
-        // Skip mead when InsufficientBalanceException occured.
-        [InlineData(1, 0)]
-        public void TransferMead(int patronMead, int balance)
-        {
-            var agentKey = new PrivateKey();
-            var agentAddress = agentKey.Address;
-            var patronAddress = new PrivateKey().Address;
-            var contractAddress = agentAddress.GetPledgeAddress();
-            IActionContext context = new ActionContext()
-            {
-                Txs = ImmutableList.Create<ITransaction>(
-                    new Transaction(
-                        new UnsignedTx(
-                            new TxInvoice(
-                                null,
-                                DateTimeOffset.UtcNow,
-                                new TxActionList(new List<IValue>()),
-                                Currencies.Mead * 4,
-                                4),
-                            new TxSigningMetadata(agentKey.PublicKey, 0)),
-                        agentKey)),
-            };
-            var states = new World(MockUtil.MockModernWorldState)
-                .MintAsset(context, patronAddress, patronMead * Currencies.Mead)
-                .TransferAsset(context, patronAddress, agentAddress, 1 * Currencies.Mead)
-                .SetLegacyState(contractAddress, List.Empty.Add(patronAddress.Serialize()).Add(true.Serialize()).Add(balance.Serialize()))
-                .BurnAsset(context, agentAddress, 1 * Currencies.Mead);
-            Assert.Equal(balance * Currencies.Mead, states.GetBalance(patronAddress, Currencies.Mead));
-            Assert.Equal(0 * Currencies.Mead, states.GetBalance(agentAddress, Currencies.Mead));
-
-            var nextState = RewardGold.TransferMead(context, states);
-            // transfer mead from patron to agent
-            Assert.Equal(0 * Currencies.Mead, nextState.GetBalance(patronAddress, Currencies.Mead));
-            Assert.Equal(balance * Currencies.Mead, nextState.GetBalance(agentAddress, Currencies.Mead));
-        }
-
         [Fact]
         public void NoRewardWhenEmptySupply()
         {
