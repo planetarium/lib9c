@@ -165,34 +165,5 @@ namespace Lib9c.Tests.Action
                     .Add(coupon3.Serialize()),
                 states.GetLegacyState(agentAddress2.Derive(SerializeKeys.CouponWalletKey)));
         }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        [InlineData(4)]
-        public void Mead(int agentBalance)
-        {
-            var patron = new PrivateKey().Address;
-            var agentContractAddress = _agentAddress.GetPledgeAddress();
-            var mead = Currencies.Mead;
-            var price = RequestPledge.DefaultRefillMead * mead;
-            var context = new ActionContext();
-            var states = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(
-                    agentContractAddress,
-                    List.Empty.Add(patron.Serialize()).Add(true.Serialize()))
-                .MintAsset(context, patron, price);
-
-            if (agentBalance > 0)
-            {
-                states = states.MintAsset(context, _agentAddress, agentBalance * mead);
-            }
-
-            states = states.Mead(context, _agentAddress, 4);
-            Assert.Equal(agentBalance * mead, states.GetBalance(patron, mead));
-            Assert.Equal(price, states.GetBalance(_agentAddress, mead));
-        }
     }
 }

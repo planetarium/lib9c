@@ -130,11 +130,6 @@ namespace Nekoyume.Action
                     var recipient = Currencies.PickAddress(asset.Currency, context.Signer, AvatarAddress);
                     states = states.MintAsset(context, recipient, asset);
                 }
-                var mailBox = avatarState.mailBox;
-                var mail = new WorldBossRewardMail(context.BlockIndex, random.GenerateRandomGuid(), context.BlockIndex, fav, items);
-                mailBox.Add(mail);
-                mailBox.CleanUp();
-                avatarState.mailBox = mailBox;
 
                 raiderState.HasClaimedReward = true;
 
