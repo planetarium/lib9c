@@ -302,3 +302,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10572000,Surt's Ring,Ring,7,Water,0,DEF,347499,0,10552001,10000000
 10573000,Surt's Ring,Ring,7,Land,0,DEF,1,0,10553001,10000000
 10574000,Surt's Ring,Ring,7,Wind,0,DEF,1,0,10554001,10000000
+10670000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10670001,Beast Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10670002,Aegis Aura,Aura,6,Normal,0,HP,10,0,10620001,130000
+10670003,Barrage Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
