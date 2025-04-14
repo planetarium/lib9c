@@ -51,7 +51,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
             var optionSheet = states.GetSheet<EquipmentItemOptionSheet>();
             var skillSheet = states.GetSheet<SkillSheet>();
             var characterLevelSheet = states.GetSheet<CharacterLevelSheet>();
-            var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV2>();
+            var enhancementCostSheet = states.GetSheet<EnhancementCostSheetV3>();
             var materialItemSheet = states.GetSheet<MaterialItemSheet>();
 
             AddTestItems(ctx, avatarState, random, materialItemSheet);
@@ -84,7 +84,7 @@ namespace Lib9c.DevExtensions.Manager.Contents
             EquipmentItemSubRecipeSheetV2 subRecipeSheet,
             EquipmentItemOptionSheet optionSheet,
             SkillSheet skillSheet,
-            EnhancementCostSheetV2 enhancementCostSheet,
+            EnhancementCostSheetV3 enhancementCostSheet,
             int recipeId)
         {
             var recipeRow = recipeSheet[recipeId];
@@ -138,18 +138,9 @@ namespace Lib9c.DevExtensions.Manager.Contents
             }
         }
 
-        private static void EnhanceEquipmentToMaxLevel(Equipment equipment, EnhancementCostSheetV2 enhancementCostSheet, IRandom random)
+        private static void EnhanceEquipmentToMaxLevel(Equipment equipment, EnhancementCostSheetV3 enhancementCostSheet, IRandom random)
         {
-            for (int i = 1; i <= 20; ++i)
-            {
-                var subType = equipment.ItemSubType;
-                var grade = equipment.Grade;
-                var costRow = enhancementCostSheet.Values
-                    .First(x => x.ItemSubType == subType &&
-                                x.Grade == grade &&
-                                x.Level == i);
-                equipment.LevelUp(random, costRow, true);
-            }
+            equipment.SetLevel(random, 20, enhancementCostSheet);
         }
 
         /// <summary>

@@ -1,5 +1,8 @@
 namespace Nekoyume.Model.EnumType
 {
+    /// <summary>
+    /// Enumeration of item grades.
+    /// </summary>
     public enum Grade
     {
         Normal = 1,
@@ -8,5 +11,6 @@ namespace Nekoyume.Model.EnumType
         Unique = 4,
         Legendary = 5,
         Divinity = 6,
+        Mythic = 7,
     }
 }
