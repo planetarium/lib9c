@@ -273,3 +273,23 @@ id,_name,item_sub_type,grade,elemental_type
 701602,시즌 35 메달,NormalMaterial,5,Normal
 701604,시즌 36 메달,NormalMaterial,5,Normal
 701606,챔피언 쉽 16 메달,NormalMaterial,5,Normal
+303006,신화의 검,EquipmentMaterial,7,Normal
+303106,신화의 옷,EquipmentMaterial,7,Normal
+303206,신화의 벨트,EquipmentMaterial,7,Normal
+303306,신화의 목걸이,EquipmentMaterial,7,Normal
+303406,신화의 반지,EquipmentMaterial,7,Normal
+306100,Mucus Crystal (Big),MonsterPart,6,Normal
+306101,Flame Mucus Crystal (Big),MonsterPart,6,Fire
+306102,Water Mucus Crystal (Big),MonsterPart,6,Water
+306103,Earth Mucus Crystal (Big),MonsterPart,6,Land
+306104,Wind Mucus Crystal (Big),MonsterPart,6,Wind
+306105,9월드 신규 재료 (무기),MonsterPart,5,Land
+306106,9월드 신규 재료 (갑옷),MonsterPart,5,Land
+306107,9월드 신규 재료 (벨트),MonsterPart,5,Land
+306108,9월드 신규 재료 (목걸이),MonsterPart,5,Land
+306109,9월드 신규 재료 (반지),MonsterPart,5,Land
+306110,9월드 신규 재료 (무기),MonsterPart,5,Land
+306111,9월드 신규 재료 (갑옷),MonsterPart,5,Land
+306112,9월드 신규 재료 (벨트),MonsterPart,5,Land
+306113,9월드 신규 재료 (목걸이),MonsterPart,5,Land
+306114,9월드 신규 재료 (반지),MonsterPart,5,Land
