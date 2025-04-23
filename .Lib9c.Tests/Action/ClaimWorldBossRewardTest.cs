@@ -1,6 +1,7 @@
 namespace Nekoyume.Action.Tests
 {
     using System.Linq;
+    using Lib9c;
     using Lib9c.Tests;
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
@@ -67,11 +68,22 @@ namespace Nekoyume.Action.Tests
                 BlockIndex = bossRow.EndedBlockIndex + 1L,
                 PreviousState = state,
             });
-            var (items, fav) = WorldBossHelper.CalculateContributionReward(_tableSheets.WorldBossContributionRewardSheet[bossRow.BossId], contribution);
             var nextAvatarState = nextState.GetAvatarState(avatarAddress);
-            var mail = nextAvatarState.mailBox.OfType<WorldBossRewardMail>().Single();
-            Assert.Equal(items, mail.Items);
-            Assert.Equal(fav, mail.FungibleAssetValues);
+            Assert.Empty(nextAvatarState.mailBox.OfType<WorldBossRewardMail>());
+
+            var (items, fav) = WorldBossHelper.CalculateContributionReward(_tableSheets.WorldBossContributionRewardSheet[bossRow.BossId], contribution);
+
+            // Check reward
+            Assert.All(items, tuple => avatarState.inventory.HasItem(tuple.id, tuple.count));
+
+            foreach (var asset in fav)
+            {
+                Assert.Equal(
+                    asset.Currency.Equals(Currencies.Crystal)
+                        ? nextState.GetBalance(agentAddress, asset.Currency)
+                        : nextState.GetBalance(avatarAddress, asset.Currency), asset);
+            }
+
             var nextRaiderState = nextState.GetRaiderState(raiderAddress);
             Assert.True(nextRaiderState.HasClaimedReward);
 

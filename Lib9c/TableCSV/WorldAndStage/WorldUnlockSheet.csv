@@ -7,3 +7,4 @@ id,world_id,stage_id,world_id_to_unlock,required_crystal
 6,5,250,6,1000000
 7,6,300,7,1000000
 8,7,350,8,10000000
+9,8,430,9,10000000
