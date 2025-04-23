@@ -73,7 +73,7 @@ namespace Nekoyume.Action.Arena
         {
             myAvatarAddress = plainValue[MyAvatarAddressKey].ToAddress();
             enemyAvatarAddress = plainValue[EnemyAvatarAddressKey].ToAddress();
-            memo = plainValue[MemoKey].ToString();
+            memo = plainValue[MemoKey].ToDotnetString();
             arenaProvider = plainValue[ArenaProviderKey].ToEnum<ArenaProvider>();
             chargeAp = plainValue[ChargeApKey].ToBoolean();
             costumes = ((List)plainValue[CostumesKey]).Select(e => e.ToGuid()).ToList();
