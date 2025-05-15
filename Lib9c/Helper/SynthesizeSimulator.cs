@@ -704,7 +704,7 @@ namespace Nekoyume.Helper
                 3 => 4, // Grade.Epic => Grade.Unique
                 4 => 5, // Grade.Unique => Grade.Legendary
                 5 => 6, // Grade.Legendary => Grade.Divinity
-                6 => 6, // Grade.Divinity => Grade.Divinity (Max)
+                6 => 7, // Grade.Divinity => Grade.Mythic
                 7 => 7, // Grade.Mythic => Grade.Mythic (Max)
                 _ => throw new ArgumentOutOfRangeException(nameof(gradeId), gradeId, null),
             };
