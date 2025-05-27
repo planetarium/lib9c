@@ -683,7 +683,7 @@ namespace Nekoyume.Helper
             Grade.Epic => Grade.Unique,
             Grade.Unique => Grade.Legendary,
             Grade.Legendary => Grade.Divinity,
-            Grade.Divinity => Grade.Divinity,
+            Grade.Divinity => Grade.Mythic,
             Grade.Mythic => Grade.Mythic,
             _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, null),
         };
