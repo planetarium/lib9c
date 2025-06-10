@@ -94,6 +94,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(RetrieveAvatarAssets))]
         [InlineData(typeof(MigrateFee))]
         [InlineData(typeof(ClaimWorldBossReward))]
+        [InlineData(typeof(RemoveAddressState))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -492,6 +493,7 @@ namespace Lib9c.Tests.Action
                 {
                     AvatarAddress = new PrivateKey().Address,
                 },
+                RemoveAddressState _ => new RemoveAddressState(new PrivateKey().Address, new PrivateKey().Address),
                 _ => throw new InvalidCastException(),
             };
         }
