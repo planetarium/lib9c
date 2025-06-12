@@ -1,145 +1,136 @@
-"id","_name","item_sub_type","grade","elemental_type","spine_resource_path"
-"_item_sub_type","FullCostume|HairCostume|EarCostume|EyeCostume|TailCostume|Title","","","",""
-"_elemental_type","Normal|Fire|Water|Land|Wind","","","",""
-"_spine_resource_path","값이 비어 있으면 `item_sub_type`에 따라서 자동 설정됩니다.","","","",""
-"_spine_resource_path","`default`: `Character/PlayerSpineTexture/{item_sub_type}/{id}`","","","",""
-"_spine_resource_path","`FullCostume`: `Character/{item_sub_type}/{id}`","","","",""
-"_spine_resource_path","`Title`: ``","","","",""
-"40100000","발키리","FullCostume","4","Normal",""
-"40100001","새벽의 사자","FullCostume","3","Normal",""
-"40100002","헬라의 환영","FullCostume","5","Normal",""
-"40100003","어둠의 발키리","FullCostume","5","Normal",""
-"40100004","천상의 고양이","FullCostume","2","Normal",""
-"40100005","창술사 루이","FullCostume","4","Normal",""
-"40100006","창술사 루시","FullCostume","5","Normal",""
-"40100007","백마법사 아라엘","FullCostume","5","Normal",""
-"40100008","마법사 릴리","FullCostume","4","Normal",""
-"40100009","흑마법사 이블리","FullCostume","5","Normal",""
-"40100010","도끼 여전사 퓨리오사","FullCostume","5","Normal",""
-"40100011","마도사 라미아 Lamia","FullCostume","5","Normal",""
-"40100012","Nad the Illuminator","FullCostume","5","Normal",""
-"40100013","BSC 코스튬 (갈색 발키리)","FullCostume","3","Normal",""
-"40100014","BSC 코스튬 (흰색 발키리)","FullCostume","3","Normal",""
-"40100015","천상의 고양이 (사전예약보상)","FullCostume","3","Normal",""
-"40100016","마법사 릴리 (사전예약보상)","FullCostume","3","Normal",""
-"40100017","퓨리오사 (사전예약보상)","FullCostume","4","Normal",""
-"40100018","고대의 연구자 아이린","FullCostume","5","Normal",""
-"40100019","창술사 루이 (챔피언쉽 6 보상)","FullCostume","5","Normal",""
-"40100020","전장의 지배자 스콜","FullCostume","5","Normal",""
-"40100021","랜스 마스터 푸른 루시","FullCostume","5","Normal",""
-"40100022","Incarnation of Fire","FullCostume","5","Normal",""
-"40100023","크리스마스 정열의 리나","FullCostume","5","Normal",""
-"40100024","크리스마스 평온의 리나","FullCostume","4","Normal",""
-"40100025","크리스마스 고양이 전사","FullCostume","4","Normal",""
-"40100026","Lamia the Light Enchantress","FullCostume","5","Normal",""
-"40100027","Red Witch Irene","FullCostume","5","Normal",""
-"40100028","Cat of Darkness","FullCostume","4","Normal",""
-"40100029","Lion of Darkness","FullCostume","4","Normal",""
-"40100030","Valhalla's Sigrun","FullCostume","5","Normal",""
-"40100031","Guardian of Blossoms Lundis","FullCostume","6","Normal",""
-"40100032","Shadow's Sigrun","FullCostume","6","Normal",""
-"40100033","Blushing Blossom Sigrun","FullCostume","6","Normal",""
-"40100035","Lundis Herald of the Night","FullCostume","6","Normal",""
-"40100036","Guardian of the Forest Lundis","FullCostume","4","Normal",""
-"40100039","Iron Will of the Wild Trude","FullCostume","6","Normal",""
-"40100040","Queen of Maces Trude","FullCostume","6","Normal",""
-"40100041","Skaedolin the Abyss Harmonizer","FullCostume","6","Normal",""
-"40100042","1st Anniversary Cat","FullCostume","6","Normal",""
-"40100043","1st Anniversary Blue Cat","FullCostume","6","Normal",""
-"40100044","Goddess of the Sea Ran","FullCostume","7","Normal",""
-"40100046","Goddess of the Present Verðandi","FullCostume","7","Normal",""
-"40200001","갈색 머리카락","HairCostume","1","Normal",""
-"40200002","파란색 머리카락","HairCostume","1","Normal",""
-"40200003","초록색 머리카락","HairCostume","1","Normal",""
-"40200004","빨간색 머리카락","HairCostume","1","Normal",""
-"40200005","흰색 머리카락","HairCostume","1","Normal",""
-"40200006","노란색 머리카락","HairCostume","1","Normal",""
-"40200007","검은색 머리카락","HairCostume","1","Normal",""
-"40300001","갈색 귀","EarCostume","1","Normal",""
-"40300002","검은색 귀","EarCostume","1","Normal",""
-"40300003","갈색 표범 무늬 귀","EarCostume","1","Normal",""
-"40300004","회색 표범 무늬 귀","EarCostume","1","Normal",""
-"40300005","흰색 귀","EarCostume","1","Normal",""
-"40300006","검붉은색 귀","EarCostume","1","Normal",""
-"40300007","흰털 갈색 귀","EarCostume","1","Normal",""
-"40300008","흰털 파란색 귀","EarCostume","1","Normal",""
-"40300009","흰털 회색 귀","EarCostume","1","Normal",""
-"40300010","흰털 파란 유령 귀","EarCostume","1","Normal",""
-"40300011","사바나 무늬 귀","EarCostume","1","Normal",""
-"40300012","얼룩 무늬 귀","EarCostume","1","Normal",""
-"40300013","야광 분홍 귀","EarCostume","1","Normal",""
-"40300014","야광 청색 귀","EarCostume","1","Normal",""
-"40300015","야광 노랑 귀","EarCostume","1","Normal",""
-"40300016","야광 흰색 귀","EarCostume","1","Normal",""
-"40300017","야광 녹색 귀","EarCostume","1","Normal",""
-"40300018","야광 보라 귀","EarCostume","1","Normal",""
-"40300019","검은 털 귀","EarCostume","1","Normal",""
-"40300020","어두운 보라색 귀","EarCostume","1","Normal",""
-"40400001","빨간색 눈","EyeCostume","1","Normal",""
-"40400002","파란색 눈","EyeCostume","1","Normal",""
-"40400003","초록색 눈","EyeCostume","1","Normal",""
-"40400004","보라색 눈","EyeCostume","1","Normal",""
-"40400005","흰색 눈","EyeCostume","1","Normal",""
-"40400006","노란색 눈","EyeCostume","1","Normal",""
-"40500001","꼬리","TailCostume","1","Normal",""
-"40500002","검흰색 꼬리","TailCostume","1","Normal",""
-"40500003","갈색 표범 무늬 꼬리","TailCostume","1","Normal",""
-"40500004","회색 표범 무늬 꼬리","TailCostume","1","Normal",""
-"40500005","흰색 꼬리","TailCostume","1","Normal",""
-"40500006","검은색 꼬리","TailCostume","1","Normal",""
-"40500007","빨간색 꼬리","TailCostume","1","Normal",""
-"40500008","파란색 꼬리","TailCostume","1","Normal",""
-"40500009","회색 꼬리","TailCostume","1","Normal",""
-"40500010","파란 유령 꼬리","TailCostume","1","Normal",""
-"40500011","사바나 무늬 꼬리","TailCostume","1","Normal",""
-"40500012","얼룩 무늬 꼬리","TailCostume","1","Normal",""
-"40500013","야광 분홍 꼬리","TailCostume","1","Normal",""
-"40500014","야광 청색 꼬리","TailCostume","1","Normal",""
-"40500015","야광 노랑 꼬리","TailCostume","1","Normal",""
-"40500016","야광 흰색 꼬리","TailCostume","1","Normal",""
-"40500017","야광 녹색 꼬리","TailCostume","1","Normal",""
-"40500018","야광 보라 꼬리","TailCostume","1","Normal",""
-"40500019","검은 털 꼬리","TailCostume","1","Normal",""
-"40500020","어두운 보라색 꼬리","TailCostume","1","Normal",""
-"49900001","전설의 모험가","Title","4","Normal",""
-"49900002","최초의 전사","Title","5","Normal",""
-"49900003","Yggdrasil Champion","Title","5","Normal",""
-"49900004","Yggdrasil Challenger","Title","4","Normal",""
-"49900005","Sushi Frontier","Title","5","Normal",""
-"49900006","Yggdrasil Warrior","Title","3","Normal",""
-"49900007","Championship 1 Ranker","Title","5","Normal",""
-"49900008","Championship 2 Ranker","Title","5","Normal",""
-"49900009","2022 Grand Finale","Title","3","Normal",""
-"49900010","Championship 4 Ranker","Title","5","Normal",""
-"49900011","Great Adventurer 1","Title","5","Normal",""
-"49900012","Championship 6 Ranker","Title","5","Normal",""
-"49900013","Great Adventurer 2","Title","5","Normal",""
-"49900014","Great Adventurer 3","Title","5","Normal",""
-"49900015","Great Adventurer 4","Title","5","Normal",""
-"49900016","Hel's worrior","Title","5","Normal",""
-"49900017","Rune Master","Title","5","Normal",""
-"49900018","Ruby Guardian","Title","5","Normal",""
-"49900019","Hot Summer","Title","5","Normal",""
-"49900020","Bounty Hunter","Title","5","Normal",""
-"49900021","Warrior of Odin","Title","5","Normal",""
-"49900022","YGG Event","Title","5","Normal",""
-"49900023","Hallow Winner","Title","5","Normal",""
-"49900024","YGG Bravecat","Title","5","Normal",""
-"49900025","Collection Master","Title","5","Normal",""
-"49900026","Courage Master","Title","5","Normal",""
-"49900027","Gold Partner","Title","6","Normal",""
-"49900028","Abyss of Freya","Title","6","Normal",""
-"49900029","Ragnarok","Title","5","Normal",""
-"49900030","Wish Maker","Title","5","Normal",""
-"49900031","Happy Holy Day","Title","5","Normal",""
-"49900032","Guardian of the Invasion","Title","5","Normal",""
-"49900033","White Angel","Title","5","Normal",""
-"49900034","Herald of Thor","Title","6","Normal",""
-"49900040","The one who walks the wind","Title","6","Normal",""
-"49900041","Flame of the Abyss","Title","6","Normal",""
-"49900042","Guardian of Summer","Title","6","Normal",""
-"49900043","Side by side with the wind","Title","6","Normal",""
-"49900044","Messenger in the Shadows","Title","6","Normal",""
-"49900045","Song of Autumn","Title","6","Normal",""
-"49900046","The Oath of Frost Flowers","Title","6","Normal",""
-"49900047","The one who embraces dawn","Title","6","Normal",""
+id,_name,item_sub_type,grade,elemental_type,spine_resource_path
+_item_sub_type,FullCostume|HairCostume|EarCostume|EyeCostume|TailCostume|Title,,,,
+_elemental_type,Normal|Fire|Water|Land|Wind,,,,
+_spine_resource_path,값이 비어 있으면 `item_sub_type`에 따라서 자동 설정됩니다.,,,,
+_spine_resource_path,`default`: `Character/PlayerSpineTexture/{item_sub_type}/{id}`,,,,
+_spine_resource_path,`FullCostume`: `Character/{item_sub_type}/{id}`,,,,
+_spine_resource_path,`Title`: ``,,,,
+40100000,발키리,FullCostume,4,Normal,
+40100001,새벽의 사자,FullCostume,3,Normal,
+40100002,헬라의 환영,FullCostume,5,Normal,
+40100003,어둠의 발키리,FullCostume,5,Normal,
+40100004,천상의 고양이,FullCostume,2,Normal,
+40100005,창술사 루이,FullCostume,4,Normal,
+40100006,창술사 루시,FullCostume,5,Normal,
+40100007,백마법사 아라엘,FullCostume,5,Normal,
+40100008,마법사 릴리,FullCostume,4,Normal,
+40100009,흑마법사 이블리,FullCostume,5,Normal,
+40100010,도끼 여전사 퓨리오사,FullCostume,5,Normal,
+40100011,마도사 라미아 Lamia,FullCostume,5,Normal,
+40100012,Nad the Illuminator,FullCostume,5,Normal,
+40100013,BSC 코스튬 (갈색 발키리),FullCostume,3,Normal,
+40100014,BSC 코스튬 (흰색 발키리),FullCostume,3,Normal,
+40100015,천상의 고양이 (사전예약보상),FullCostume,3,Normal,
+40100016,마법사 릴리 (사전예약보상),FullCostume,3,Normal,
+40100017,퓨리오사 (사전예약보상),FullCostume,4,Normal,
+40100018,고대의 연구자 아이린,FullCostume,5,Normal,
+40100019,창술사 루이 (챔피언쉽 6 보상),FullCostume,5,Normal,
+40100020,전장의 지배자 스콜,FullCostume,5,Normal,
+40100021,랜스 마스터 푸른 루시,FullCostume,5,Normal,
+40100022,Incarnation of Fire,FullCostume,5,Normal,
+40100023,크리스마스 정열의 리나,FullCostume,5,Normal,
+40100024,크리스마스 평온의 리나,FullCostume,4,Normal,
+40100025,크리스마스 고양이 전사,FullCostume,4,Normal,
+40100026,Lamia the Light Enchantress,FullCostume,5,Normal,
+40100027,Red Witch Irene,FullCostume,5,Normal,
+40100028,Cat of Darkness,FullCostume,4,Normal,
+40100029,Lion of Darkness,FullCostume,4,Normal,
+40100030,Valhalla's Sigrun,FullCostume,5,Normal,
+40100031,페어리,FullCostume,6,Normal,
+40100032,그림자의 시그룬,FullCostume,6,Normal,
+40100033,궁수 벚꽃놀이,FullCostume,6,Normal,
+40100035,페어리 미드나잇,FullCostume,6,Normal,
+40100036,Guardian of the Forest Lundis,FullCostume,4,Normal,
+40100039,핫 선라이즈,FullCostume,6,Normal,
+40100040,블루레모네이드,FullCostume,6,Normal,
+40100041,mileage costume 01,FullCostume,6,Normal,
+40100042,1주년 기념 고양이,FullCostume,6,Normal,
+40100043,1주년 기념 파란 고양이,FullCostume,6,Normal,
+40100044,바다의 신 란,FullCostume,7,Normal,
+40200001,갈색 머리카락,HairCostume,1,Normal,
+40200002,파란색 머리카락,HairCostume,1,Normal,
+40200003,초록색 머리카락,HairCostume,1,Normal,
+40200004,빨간색 머리카락,HairCostume,1,Normal,
+40200005,흰색 머리카락,HairCostume,1,Normal,
+40200006,노란색 머리카락,HairCostume,1,Normal,
+40200007,검은색 머리카락,HairCostume,1,Normal,
+40300001,갈색 귀,EarCostume,1,Normal,
+40300002,검은색 귀,EarCostume,1,Normal,
+40300003,갈색 표범 무늬 귀,EarCostume,1,Normal,
+40300004,회색 표범 무늬 귀,EarCostume,1,Normal,
+40300005,흰색 귀,EarCostume,1,Normal,
+40300006,검붉은색 귀,EarCostume,1,Normal,
+40300007,흰털 갈색 귀,EarCostume,1,Normal,
+40300008,흰털 파란색 귀,EarCostume,1,Normal,
+40300009,흰털 회색 귀,EarCostume,1,Normal,
+40300010,흰털 파란 유령 귀,EarCostume,1,Normal,
+40300011,사바나 무늬 귀,EarCostume,1,Normal,
+40300012,얼룩 무늬 귀,EarCostume,1,Normal,
+40300013,야광 분홍 귀,EarCostume,1,Normal,
+40300014,야광 청색 귀,EarCostume,1,Normal,
+40300015,야광 노랑 귀,EarCostume,1,Normal,
+40300016,야광 흰색 귀,EarCostume,1,Normal,
+40300017,야광 녹색 귀,EarCostume,1,Normal,
+40300018,야광 보라 귀,EarCostume,1,Normal,
+40300019,검은 털 귀,EarCostume,1,Normal,
+40300020,어두운 보라색 귀,EarCostume,1,Normal,
+40400001,빨간색 눈,EyeCostume,1,Normal,
+40400002,파란색 눈,EyeCostume,1,Normal,
+40400003,초록색 눈,EyeCostume,1,Normal,
+40400004,보라색 눈,EyeCostume,1,Normal,
+40400005,흰색 눈,EyeCostume,1,Normal,
+40400006,노란색 눈,EyeCostume,1,Normal,
+40500001,꼬리,TailCostume,1,Normal,
+40500002,검흰색 꼬리,TailCostume,1,Normal,
+40500003,갈색 표범 무늬 꼬리,TailCostume,1,Normal,
+40500004,회색 표범 무늬 꼬리,TailCostume,1,Normal,
+40500005,흰색 꼬리,TailCostume,1,Normal,
+40500006,검은색 꼬리,TailCostume,1,Normal,
+40500007,빨간색 꼬리,TailCostume,1,Normal,
+40500008,파란색 꼬리,TailCostume,1,Normal,
+40500009,회색 꼬리,TailCostume,1,Normal,
+40500010,파란 유령 꼬리,TailCostume,1,Normal,
+40500011,사바나 무늬 꼬리,TailCostume,1,Normal,
+40500012,얼룩 무늬 꼬리,TailCostume,1,Normal,
+40500013,야광 분홍 꼬리,TailCostume,1,Normal,
+40500014,야광 청색 꼬리,TailCostume,1,Normal,
+40500015,야광 노랑 꼬리,TailCostume,1,Normal,
+40500016,야광 흰색 꼬리,TailCostume,1,Normal,
+40500017,야광 녹색 꼬리,TailCostume,1,Normal,
+40500018,야광 보라 꼬리,TailCostume,1,Normal,
+40500019,검은 털 꼬리,TailCostume,1,Normal,
+40500020,어두운 보라색 꼬리,TailCostume,1,Normal,
+49900001,전설의 모험가,Title,4,Normal,
+49900002,최초의 전사,Title,5,Normal,
+49900003,Yggdrasil Champion,Title,5,Normal,
+49900004,Yggdrasil Challenger,Title,4,Normal,
+49900005,Sushi Frontier,Title,5,Normal,
+49900006,Yggdrasil Warrior,Title,3,Normal,
+49900007,Championship 1 Ranker,Title,5,Normal,
+49900008,Championship 2 Ranker,Title,5,Normal,
+49900009,2022 Grand Finale,Title,3,Normal,
+49900010,Championship 4 Ranker,Title,5,Normal,
+49900011,Great Adventurer 1,Title,5,Normal,
+49900012,Championship 6 Ranker,Title,5,Normal,
+49900013,Great Adventurer 2,Title,5,Normal,
+49900014,Great Adventurer 3,Title,5,Normal,
+49900015,Great Adventurer 4,Title,5,Normal,
+49900016,Hel's worrior,Title,5,Normal,
+49900017,Rune Master,Title,5,Normal,
+49900018,Ruby Guardian,Title,5,Normal,
+49900019,Hot Summer,Title,5,Normal,
+49900020,Bounty Hunter,Title,5,Normal,
+49900021,Warrior of Odin,Title,5,Normal,
+49900022,YGG Event,Title,5,Normal,
+49900023,Hallow Winner,Title,5,Normal,
+49900024,YGG Bravecat,Title,5,Normal,
+49900025,Collection Master,Title,5,Normal,
+49900026,Courage Master,Title,5,Normal,
+49900027,mileage title 01,Title,6,Normal,
+49900028,시즌패스 18,Title,6,Normal,
+49900029,Ragnarok,Title,5,Normal,
+49900030,Wish Maker,Title,5,Normal,
+49900031,Happy Holy Day,Title,5,Normal,
+49900032,Guardian of the Invasion,Title,5,Normal,
+49900033,White Angel,Title,5,Normal,
+49900034,Herald of Thor,Title,5,Normal,

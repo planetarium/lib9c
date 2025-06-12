@@ -1,307 +1,308 @@
-"id","_name","item_sub_type","grade","elemental_type","set_id","stat_type","stat_value","attack_range","spine_resource_path","exp"
-"10100000","Wooden Club","Weapon","0","Normal","0","ATK","1","2","10100000","10"
-"10110000","Long Sword","Weapon","1","Normal","1","ATK","11","2","10110000","5"
-"10111000","Long Sword","Weapon","1","Fire","2","ATK","14","2","10111000","5"
-"10112000","Long Sword","Weapon","1","Water","3","ATK","17","2","10112000","5"
-"10113000","Long Sword","Weapon","1","Land","4","ATK","55","2","10113000","8"
-"10114000","Long Sword","Weapon","1","Wind","5","ATK","136","2","10114000","9"
-"10120000","Gladiator Sword","Weapon","2","Normal","6","ATK","31","2","10120000","100"
-"10121000","Gladiator Sword","Weapon","2","Fire","7","ATK","32","2","10121000","100"
-"10122000","Gladiator Sword","Weapon","2","Water","8","ATK","38","2","10122000","141"
-"10123000","Gladiator Sword","Weapon","2","Land","9","ATK","152","2","10123000","167"
-"10124000","Gladiator Sword","Weapon","2","Wind","10","ATK","327","2","10124000","180"
-"10130000","Black Crow Sword","Weapon","3","Normal","11","ATK","78","2","10130000","500"
-"10131000","Black Crow Sword","Weapon","3","Fire","12","ATK","81","2","10131000","700"
-"10132000","Black Crow Sword","Weapon","3","Water","13","ATK","92","2","10132000","1430"
-"10133000","Black Crow Sword","Weapon","3","Land","14","ATK","354","2","10133000","2489"
-"10134000","Black Crow Sword","Weapon","3","Wind","15","ATK","693","2","10134000","2746"
-"10130001","Heavy Sword","Weapon","3","Normal","11","ATK","170","2","10130001","1934"
-"10131001","Heavy Sword","Weapon","3","Fire","12","ATK","179","2","10131001","3518"
-"10132001","Heavy Sword","Weapon","3","Water","13","ATK","196","2","10132001","3600"
-"10133001","Heavy Sword","Weapon","3","Land","14","ATK","908","2","10133001","3600"
-"10134001","Heavy Sword","Weapon","3","Wind","15","ATK","967","2","10134001","3600"
-"10140000","War Sword","Weapon","4","Normal","11","ATK","3094","2","10140000","120000"
-"10141000","War Sword","Weapon","4","Fire","12","ATK","1934","2","10141000","75000"
-"10142000","War Sword","Weapon","4","Water","13","ATK","2224","2","10142000","75000"
-"10143000","War Sword","Weapon","4","Land","14","ATK","2514","2","10143000","96000"
-"10144000","War Sword","Weapon","4","Wind","15","ATK","2804","2","10144000","96000"
-"10150000","Dainsleif","Weapon","5","Normal","16","ATK","6063","2","10150000","2400000"
-"10151000","Dainsleif","Weapon","5","Fire","17","ATK","4331","2","10151000","1800000"
-"10152000","Dainsleif","Weapon","5","Water","18","ATK","4331","2","10152000","1800000"
-"10153000","Dainsleif","Weapon","5","Land","19","ATK","6063","2","10153000","2400000"
-"10154000","Dainsleif","Weapon","5","Wind","20","ATK","6063","2","10154000","2400000"
-"10140001","Asgardian Sword","Weapon","5","Normal","11","ATK","765","2","10140001","2"
-"10141001","Asgardian Sword","Weapon","5","Fire","12","ATK","782","2","10141001","2"
-"10142001","Asgardian Sword","Weapon","5","Water","13","ATK","798","2","10142001","2"
-"10143001","Asgardian Sword","Weapon","5","Land","14","ATK","1221","2","10143001","2"
-"10144001","Asgardian Sword","Weapon","5","Wind","15","ATK","1525","2","10144001","2"
-"10150001","Surt's Sword","Weapon","6","Normal","0","ATK","15473","2","10150001","10000000"
-"10151001","Surt's Sword","Weapon","6","Fire","0","ATK","11052","2","10151001","10000000"
-"10152001","Surt's Sword","Weapon","6","Water","0","ATK","11052","2","10152001","10000000"
-"10153001","Surt's Sword","Weapon","6","Land","0","ATK","15473","2","10153001","10000000"
-"10154001","Surt's Sword","Weapon","6","Wind","0","ATK","15473","2","10154001","10000000"
-"10155000","Valkyrie’s Sword","Weapon","5","Normal","15","ATK","2902","2","10155000","2"
-"10200000","Ragged Clothes","Armor","0","Normal","0","HP","30","2","Character/Player/10200000","12"
-"10210000","Casual Clothes","Armor","1","Normal","1","HP","180","2","Character/Player/10210000","5"
-"10211000","Casual Clothes","Armor","1","Fire","2","HP","222","2","Character/Player/10211000","5"
-"10212000","Casual Clothes","Armor","1","Water","3","HP","288","2","Character/Player/10212000","5"
-"10213000","Casual Clothes","Armor","1","Land","4","HP","915","2","Character/Player/10213000","6"
-"10214000","Casual Clothes","Armor","1","Wind","5","HP","2182","2","Character/Player/10214000","8"
-"10220000","Leather Clothes","Armor","2","Normal","6","HP","531","2","Character/Player/10220000","100"
-"10221000","Leather Clothes","Armor","2","Fire","7","HP","549","2","Character/Player/10221000","144"
-"10222000","Leather Clothes","Armor","2","Water","8","HP","621","2","Character/Player/10222000","180"
-"10223000","Leather Clothes","Armor","2","Land","9","HP","2431","2","Character/Player/10223000","180"
-"10224000","Leather Clothes","Armor","2","Wind","10","HP","5109","2","Character/Player/10224000","180"
-"10230000","Black Crow Armor","Armor","3","Normal","11","HP","1337","2","Character/Player/10230000","500"
-"10231000","Black Crow Armor","Armor","3","Fire","12","HP","1418","2","Character/Player/10231000","700"
-"10232000","Black Crow Armor","Armor","3","Water","13","HP","1580","2","Character/Player/10232000","1560"
-"10233000","Black Crow Armor","Armor","3","Land","14","HP","8370","2","Character/Player/10233000","2400"
-"10234000","Black Crow Armor","Armor","3","Wind","15","HP","10571","2","Character/Player/10234000","2400"
-"10230001","Hermes' Clothes","Armor","3","Normal","11","HP","2811","2","Character/Player/10230001","2040"
-"10231001","Hermes' Clothes","Armor","3","Fire","12","HP","3009","2","Character/Player/10231001","3600"
-"10232001","Hermes' Clothes","Armor","3","Water","13","HP","3141","2","Character/Player/10232001","3600"
-"10233001","Hermes' Clothes","Armor","3","Land","14","HP","11482","2","Character/Player/10233001","3600"
-"10234001","Hermes' Clothes","Armor","3","Wind","15","HP","12302","2","Character/Player/10234001","3600"
-"10240000","War Armor","Armor","4","Normal","11","HP","34446","2","Character/Player/10240000","120000"
-"10241000","War Armor","Armor","4","Fire","12","HP","24604","2","Character/Player/10241000","75000"
-"10242000","War Armor","Armor","4","Water","13","HP","27064","2","Character/Player/10242000","75000"
-"10243000","War Armor","Armor","4","Land","14","HP","29525","2","Character/Player/10243000","96000"
-"10244000","War Armor","Armor","4","Wind","15","HP","31985","2","Character/Player/10244000","96000"
-"10250001","Ancient Armor","Armor","5","Normal","11","HP","67513","2","Character/Player/10250001","2400000"
-"10251001","Ancient Armor","Armor","5","Fire","12","HP","48224","2","Character/Player/10251001","1800000"
-"10252001","Ancient Armor","Armor","5","Water","13","HP","48224","2","Character/Player/10252001","1800000"
-"10253001","Ancient Armor","Armor","5","Land","14","HP","67513","2","Character/Player/10253001","2400000"
-"10254001","Ancient Armor","Armor","5","Wind","15","HP","67513","2","Character/Player/10254001","2400000"
-"10250000","Surt's Armor","Armor","6","Normal","0","HP","172306.66666666666","2","Character/Player/10250000","10000000"
-"10251000","Surt's Armor","Armor","6","Fire","0","HP","123076.19047619047","2","Character/Player/10251000","10000000"
-"10252000","Surt's Armor","Armor","6","Water","0","HP","123076.19047619047","2","Character/Player/10252000","10000000"
-"10253000","Surt's Armor","Armor","6","Land","0","HP","172306.66666666666","2","Character/Player/10253000","10000000"
-"10254000","Surt's Armor","Armor","6","Wind","0","HP","172306.66666666666","2","Character/Player/10254000","10000000"
-"10240001","Asgardian Armor","Armor","5","Normal","11","HP","10358","2","Character/Player/10240001","2"
-"10241001","Asgardian Armor","Armor","5","Fire","12","HP","10571","2","Character/Player/10241001","2"
-"10242001","Asgardian Armor","Armor","5","Water","13","HP","10783","2","Character/Player/10242001","2"
-"10243001","Asgardian Armor","Armor","5","Land","14","HP","16494","2","Character/Player/10243001","2"
-"10244001","Asgardian Armor","Armor","5","Wind","15","HP","20647","2","Character/Player/10244001","2"
-"10255000","Heavenly Cat","Armor","5","Normal","11","HP","42856","2","Character/Player/10235000","2"
-"10310000","Basic Belt","Belt","1","Normal","1","SPD","46","2","10310000","5"
-"10311000","Basic Belt","Belt","1","Fire","2","SPD","62","2","10311000","6"
-"10312000","Basic Belt","Belt","1","Water","3","SPD","69","2","10312000","8"
-"10313000","Basic Belt","Belt","1","Land","4","SPD","239","2","10313000","10"
-"10314000","Basic Belt","Belt","1","Wind","5","SPD","610","2","10314000","10"
-"10320000","Leather Belt","Belt","2","Normal","6","SPD","137","2","10320000","100"
-"10321000","Leather Belt","Belt","2","Fire","7","SPD","141","2","10321000","100"
-"10322000","Leather Belt","Belt","2","Water","8","SPD","166","2","10322000","180"
-"10323000","Leather Belt","Belt","2","Land","9","SPD","718","2","10323000","180"
-"10324000","Leather Belt","Belt","2","Wind","10","SPD","1314","2","10324000","180"
-"10330000","Solid Belt","Belt","3","Normal","11","SPD","350","2","10330000","500"
-"10331000","Solid Belt","Belt","3","Fire","12","SPD","359","2","10331000","700"
-"10332000","Solid Belt","Belt","3","Water","13","SPD","425","2","10332000","3600"
-"10333000","Solid Belt","Belt","3","Land","14","SPD","1701","2","10333000","3600"
-"10334000","Solid Belt","Belt","3","Wind","15","SPD","2883","2","10334000","2400"
-"10340000","War Belt","Belt","4","Normal","11","SPD","1215","2","10340000","9600"
-"10341000","War Belt","Belt","4","Fire","12","SPD","1262","2","10341000","60000"
-"10342000","War Belt","Belt","4","Water","13","SPD","2292","2","10342000","60000"
-"10343000","War Belt","Belt","4","Land","14","SPD","2292","2","10343000","60000"
-"10344000","War Belt","Belt","4","Wind","15","SPD","2292","2","10344000","33000"
-"10350000","Legendary Belt","Belt","4","Normal","11","SPD","7334","2","10350000","120000"
-"10351000","Legendary Belt","Belt","4","Fire","12","SPD","4584","2","10351000","75000"
-"10352000","Legendary Belt","Belt","4","Water","13","SPD","5272","2","10352000","75000"
-"10353000","Legendary Belt","Belt","4","Land","14","SPD","5959","2","10353000","96000"
-"10354000","Legendary Belt","Belt","4","Wind","15","SPD","6647","2","10354000","96000"
-"10410000","Thin Necklace","Necklace","1","Normal","1","HIT","70","0","10410000","5"
-"10411000","Thin Necklace","Necklace","1","Fire","2","HIT","81","0","10411000","5"
-"10412000","Thin Necklace","Necklace","1","Water","3","HIT","99","0","10412000","5"
-"10413000","Thin Necklace","Necklace","1","Land","4","HIT","357","0","10413000","8"
-"10414000","Thin Necklace","Necklace","1","Wind","5","HIT","863","0","10414000","10"
-"10420000","Guardian Necklace","Necklace","2","Normal","6","HIT","192","0","10420000","100"
-"10421000","Guardian Necklace","Necklace","2","Fire","7","HIT","197","0","10421000","100"
-"10422000","Guardian Necklace","Necklace","2","Water","8","HIT","230","0","10422000","180"
-"10423000","Guardian Necklace","Necklace","2","Land","9","HIT","1002","0","10423000","180"
-"10424000","Guardian Necklace","Necklace","2","Wind","10","HIT","1682","0","10424000","180"
-"10430000","Mana Necklace","Necklace","3","Normal","11","HIT","510","0","10430000","180"
-"10431000","Mana Necklace","Necklace","3","Fire","12","HIT","522","0","10431000","300"
-"10432000","Mana Necklace","Necklace","3","Water","13","HIT","608","0","10432000","3600"
-"10433000","Mana Necklace","Necklace","3","Land","14","HIT","2151","0","10433000","3600"
-"10434000","Mana Necklace","Necklace","3","Wind","15","HIT","2333","0","10434000","3600"
-"10440000","Warrior's Necklace","Necklace","4","Normal","11","HIT","2031","0","10440000","50000"
-"10441000","Warrior's Necklace","Necklace","4","Fire","12","HIT","3047","0","10441000","75000"
-"10442000","Warrior's Necklace","Necklace","4","Water","13","HIT","3047","0","10442000","75000"
-"10443000","Warrior's Necklace","Necklace","4","Land","14","HIT","3047","0","10443000","75000"
-"10444000","Warrior's Necklace","Necklace","4","Wind","15","HIT","3047","0","10444000","75000"
-"10450000","Legendary Necklace","Necklace","4","Normal","11","HIT","7466","0","10450000","120000"
-"10451000","Legendary Necklace","Necklace","4","Fire","12","HIT","4666","0","10451000","75000"
-"10452000","Legendary Necklace","Necklace","4","Water","13","HIT","5366","0","10452000","75000"
-"10453000","Legendary Necklace","Necklace","4","Land","14","HIT","6066","0","10453000","96000"
-"10454000","Legendary Necklace","Necklace","4","Wind","15","HIT","6766","0","10454000","96000"
-"10510000","Thin Ring","Ring","1","Normal","1","DEF","8","0","10510000","5"
-"10511000","Thin Ring","Ring","1","Fire","2","DEF","9","0","10511000","5"
-"10512000","Thin Ring","Ring","1","Water","3","DEF","11","0","10512000","5"
-"10513000","Thin Ring","Ring","1","Land","4","DEF","44","0","10513000","8"
-"10514000","Thin Ring","Ring","1","Wind","5","DEF","107","0","10514000","10"
-"10520000","Guardian Ring","Ring","2","Normal","6","DEF","23","0","10520000","100"
-"10521000","Guardian Ring","Ring","2","Fire","7","DEF","24","0","10521000","100"
-"10522000","Guardian Ring","Ring","2","Water","8","DEF","29","0","10522000","180"
-"10523000","Guardian Ring","Ring","2","Land","9","DEF","122","0","10523000","180"
-"10524000","Guardian Ring","Ring","2","Wind","10","DEF","189","0","10524000","180"
-"10530000","Mana Ring","Ring","3","Normal","11","DEF","63","0","10530000","500"
-"10531000","Mana Ring","Ring","3","Fire","12","DEF","65","0","10531000","700"
-"10532000","Mana Ring","Ring","3","Water","13","DEF","74","0","10532000","1200"
-"10533000","Mana Ring","Ring","3","Land","14","DEF","251","0","10533000","3600"
-"10534000","Mana Ring","Ring","3","Wind","15","DEF","270","0","10534000","3600"
-"10540000","Warrior's Ring","Ring","4","Normal","11","DEF","864","0","10540000","120000"
-"10541000","Warrior's Ring","Ring","4","Fire","12","DEF","540","0","10541000","75000"
-"10542000","Warrior's Ring","Ring","4","Water","13","DEF","621","0","10542000","75000"
-"10543000","Warrior's Ring","Ring","4","Land","14","DEF","702","0","10543000","96000"
-"10544000","Warrior's Ring","Ring","4","Wind","15","DEF","783","0","10544000","96000"
-"10550000","Ancient Ring","Ring","5","Normal","11","DEF","1946","0","10550000","2400000"
-"10551000","Ancient Ring","Ring","5","Fire","12","DEF","1209","0","10551000","1800000"
-"10552000","Ancient Ring","Ring","5","Water","13","DEF","1209","0","10552000","1800000"
-"10553000","Ancient Ring","Ring","5","Land","14","DEF","1946","0","10553000","2400000"
-"10554000","Ancient Ring","Ring","5","Wind","15","DEF","1946","0","10554000","2400000"
-"11320000","Blue Sapphire Belt","Belt","2","Normal","6","SPD","176","2","11320000","2"
-"11420000","Blue Sapphire Necklace","Necklace","2","Normal","6","HIT","227","0","11420000","2"
-"11520000","Blue Sapphire Ring","Ring","2","Normal","6","DEF","50","0","11520000","2"
-"12001001","Special Crystal Belt","Belt","2","Normal","0","ATK","1","0","12001001","1"
-"12001002","Special Crystal Necklace","Necklace","3","Normal","1","ATK","1","0","12001002","1"
-"12001003","Special Crystal Ring","Ring","4","Normal","2","ATK","1","0","12001003","1"
-"10350001","Ancient Belt","Belt","5","Normal","15","SPD","14373","2","10350001","2400000"
-"10351001","Ancient Belt","Belt","5","Fire","15","SPD","10267","2","10351001","1800000"
-"10352001","Ancient Belt","Belt","5","Water","15","SPD","10267","2","10352001","1800000"
-"10353001","Ancient Belt","Belt","5","Land","15","SPD","14373","2","10353001","2400000"
-"10354001","Ancient Belt","Belt","5","Wind","15","SPD","14373","2","10354001","2400000"
-"10450001","Ancient Necklace","Necklace","5","Normal","15","HIT","15363","0","10450001","2400000"
-"10451001","Ancient Necklace","Necklace","5","Fire","15","HIT","10452","0","10451001","1800000"
-"10452001","Ancient Necklace","Necklace","5","Water","15","HIT","10452","0","10452001","1800000"
-"10453001","Ancient Necklace","Necklace","5","Land","15","HIT","15363","0","10453001","2400000"
-"10454001","Ancient Necklace","Necklace","5","Wind","15","HIT","15363","0","10454001","2400000"
-"10610000","Nimble Aura","Aura","1","Normal","0","HIT","310","0","10610000","2"
-"10620000","Nimble Aura","Aura","2","Normal","0","HIT","10","0","10610000","40"
-"10630000","Nimble Aura","Aura","3","Normal","0","HIT","10","0","10610000","600"
-"10620001","Beast Aura","Aura","2","Normal","0","ATK","10","0","10620001","40"
-"10630001","Beast Aura","Aura","3","Normal","0","ATK","10","0","10620001","600"
-"10640001","Beast Aura","Aura","4","Normal","0","ATK","10","0","10620001","6000"
-"10650001","Beast Aura","Aura","5","Normal","0","ATK","10","0","10620001","60000"
-"10650002","Lord's Beast Aura","Aura","5","Normal","0","ATK","10","0","10620001","60000"
-"10130002","Classic Sword","Weapon","3","Normal","0","ATK","50","2","10130000","100"
-"10620002","Aegis Aura","Aura","2","Normal","0","HP","10","0","10620001","40"
-"10630002","Aegis Aura","Aura","3","Normal","0","HP","10","0","10620001","600"
-"10640002","Aegis Aura","Aura","4","Normal","0","HP","10","0","10620001","6000"
-"10650003","Aegis Aura","Aura","5","Normal","0","HP","10","0","10620001","60000"
-"10650004","Lord's Aegis Aura","Aura","5","Normal","0","HP","10","0","10620001","60000"
-"10620003","Barrage Aura","Aura","2","Normal","0","ATK","10","0","10620001","40"
-"10630003","Barrage Aura","Aura","3","Normal","0","ATK","10","0","10620001","600"
-"10640003","Barrage Aura","Aura","4","Normal","0","ATK","10","0","10620001","6000"
-"10650005","Barrage Aura","Aura","5","Normal","0","ATK","10","0","10620001","60000"
-"10650006","Lord's Barrage Aura","Aura","5","Normal","0","ATK","10","0","10620001","60000"
-"10350002","Surt's Belt","Belt","6","Normal","0","SPD","55024.2","2","10350002","10000000"
-"10351002","Surt's Belt","Belt","6","Fire","0","SPD","39303","2","10351002","10000000"
-"10352002","Surt's Belt","Belt","6","Water","0","SPD","39303","2","10352002","10000000"
-"10353002","Surt's Belt","Belt","6","Land","0","SPD","55024.2","2","10353002","10000000"
-"10354002","Surt's Belt","Belt","6","Wind","0","SPD","55024.2","2","10354002","10000000"
-"10450002","Surt's Necklace","Necklace","6","Normal","0","HIT","39208","0","10450002","10000000"
-"10451002","Surt's Necklace","Necklace","6","Fire","0","HIT","28006","0","10451002","10000000"
-"10452002","Surt's Necklace","Necklace","6","Water","0","HIT","28006","0","10452002","10000000"
-"10453002","Surt's Necklace","Necklace","6","Land","0","HIT","39208","0","10453002","10000000"
-"10454002","Surt's Necklace","Necklace","6","Wind","0","HIT","39208","0","10454002","10000000"
-"10550001","Surt's Ring","Ring","6","Normal","0","DEF","9748","0","10550001","10000000"
-"10551001","Surt's Ring","Ring","6","Fire","0","DEF","6963","0","10551001","10000000"
-"10552001","Surt's Ring","Ring","6","Water","0","DEF","6963","0","10552001","10000000"
-"10553001","Surt's Ring","Ring","6","Land","0","DEF","9748","0","10553001","10000000"
-"10554001","Surt's Ring","Ring","6","Wind","0","DEF","9748","0","10554001","10000000"
-"10640004","Ymir Aura","Aura","4","Normal","0","ATK","10","0","10620001","6000"
-"10650007","Ymir Aura","Aura","5","Normal","0","ATK","10","0","10620001","60000"
-"10660000","Ymir Aura","Aura","6","Normal","0","ATK","10","0","10620001","130000"
-"10660001","Beast Aura","Aura","6","Normal","0","ATK","10","0","10620001","130000"
-"10660002","Aegis Aura","Aura","6","Normal","0","HP","10","0","10620001","130000"
-"10660003","Barrage Aura","Aura","6","Normal","0","ATK","10","0","10620001","130000"
-"10660004","1주년 아우라","Aura","6","Normal","0","HIT","10","0","10620001","1"
-"10730000","공격의 그리모어 (A)","Grimoire","3","Normal","0","ATK","10","0","10730000","600"
-"10730001","공격의 그리모어 (H)","Grimoire","3","Normal","0","ATK","10","0","10730001","600"
-"10730002","공격의 그리모어 (S)","Grimoire","3","Normal","0","ATK","10","0","10730002","600"
-"10730003","방어의 그리모어 (D)","Grimoire","3","Normal","0","DEF","10","0","10730003","600"
-"10730004","방어의 그리모어 (H)","Grimoire","3","Normal","0","DEF","10","0","10730004","600"
-"10730005","방어의 그리모어 (S)","Grimoire","3","Normal","0","DEF","10","0","10730005","600"
-"10730006","기능의 그리모어 (A)","Grimoire","3","Normal","0","SPD","10","0","10730006","600"
-"10730007","기능의 그리모어 (D)","Grimoire","3","Normal","0","SPD","10","0","10730007","600"
-"10730008","기능의 그리모어 (S)","Grimoire","3","Normal","0","SPD","10","0","10730008","600"
-"10740000","공격의 그리모어 (A)","Grimoire","4","Normal","0","ATK","10","0","10740000","6000"
-"10740001","공격의 그리모어 (H)","Grimoire","4","Normal","0","ATK","10","0","10740001","6000"
-"10740002","공격의 그리모어 (S)","Grimoire","4","Normal","0","ATK","10","0","10740002","6000"
-"10740003","방어의 그리모어 (D)","Grimoire","4","Normal","0","DEF","10","0","10740003","6000"
-"10740004","방어의 그리모어 (H)","Grimoire","4","Normal","0","DEF","10","0","10740004","6000"
-"10740005","방어의 그리모어 (S)","Grimoire","4","Normal","0","DEF","10","0","10740005","6000"
-"10740006","기능의 그리모어 (A)","Grimoire","4","Normal","0","SPD","10","0","10740006","6000"
-"10740007","기능의 그리모어 (D)","Grimoire","4","Normal","0","SPD","10","0","10740007","6000"
-"10740008","기능의 그리모어 (S)","Grimoire","4","Normal","0","SPD","10","0","10740008","6000"
-"10750000","공격의 그리모어 (A)","Grimoire","5","Normal","0","ATK","10","0","10750000","60000"
-"10750001","공격의 그리모어 (H)","Grimoire","5","Normal","0","ATK","10","0","10750001","60000"
-"10750002","공격의 그리모어 (S)","Grimoire","5","Normal","0","ATK","10","0","10750002","60000"
-"10750003","방어의 그리모어 (D)","Grimoire","5","Normal","0","DEF","10","0","10750003","60000"
-"10750004","방어의 그리모어 (H)","Grimoire","5","Normal","0","DEF","10","0","10750004","60000"
-"10750005","방어의 그리모어 (S)","Grimoire","5","Normal","0","DEF","10","0","10750005","60000"
-"10750006","기능의 그리모어 (A)","Grimoire","5","Normal","0","SPD","10","0","10750006","60000"
-"10750007","기능의 그리모어 (D)","Grimoire","5","Normal","0","SPD","10","0","10750007","60000"
-"10750008","기능의 그리모어 (S)","Grimoire","5","Normal","0","SPD","10","0","10750008","60000"
-"10760000","공격의 그리모어 (A)","Grimoire","6","Normal","0","ATK","10","0","10760000","130000"
-"10760001","공격의 그리모어 (H)","Grimoire","6","Normal","0","ATK","10","0","10760001","130000"
-"10760002","공격의 그리모어 (S)","Grimoire","6","Normal","0","ATK","10","0","10760002","130000"
-"10760003","방어의 그리모어 (D)","Grimoire","6","Normal","0","DEF","10","0","10760003","130000"
-"10760004","방어의 그리모어 (H)","Grimoire","6","Normal","0","DEF","10","0","10760004","130000"
-"10760005","방어의 그리모어 (S)","Grimoire","6","Normal","0","DEF","10","0","10760005","130000"
-"10760006","기능의 그리모어 (A)","Grimoire","6","Normal","0","SPD","10","0","10760006","130000"
-"10760007","기능의 그리모어 (D)","Grimoire","6","Normal","0","SPD","10","0","10760007","130000"
-"10760008","기능의 그리모어 (S)","Grimoire","6","Normal","0","SPD","10","0","10760008","130000"
-"10760009","1주년 그리모어","Grimoire","6","Normal","0","ATK","10","0","10760009","1"
-"20160000","커스텀 장비 무기","Weapon","3","Normal","0","ATK","10","0","20160000","1"
-"20160001","커스텀 장비 무기","Weapon","4","Normal","0","ATK","100","0","20160000","1"
-"20160002","커스텀 장비 무기","Weapon","5","Normal","0","ATK","500","0","20160000","1"
-"20160003","커스텀 장비 무기","Weapon","6","Normal","0","ATK","800","0","20160000","1"
-"20160004","커스텀 장비 무기","Weapon","6","Normal","0","ATK","1200","0","20160000","1"
-"20260000","커스텀 장비 갑옷","Armor","3","Normal","0","HP","10","0","20260000","1"
-"20260001","커스텀 장비 갑옷","Armor","4","Normal","0","HP","100","0","20260000","1"
-"20260002","커스텀 장비 갑옷","Armor","5","Normal","0","HP","500","0","20260000","1"
-"20260003","커스텀 장비 갑옷","Armor","6","Normal","0","HP","800","0","20260000","1"
-"20260004","커스텀 장비 갑옷","Armor","6","Normal","0","HP","1200","0","20260000","1"
-"20360000","커스텀 장비 벨트","Belt","3","Normal","0","SPD","10","0","20360000","1"
-"20360001","커스텀 장비 벨트","Belt","4","Normal","0","SPD","100","0","20360000","1"
-"20360002","커스텀 장비 벨트","Belt","5","Normal","0","SPD","500","0","20360000","1"
-"20360003","커스텀 장비 벨트","Belt","6","Normal","0","SPD","800","0","20360000","1"
-"20360004","커스텀 장비 벨트","Belt","6","Normal","0","SPD","1200","0","20360000","1"
-"20460000","커스텀 장비 목걸이","Necklace","3","Normal","0","HIT","10","0","20460000","1"
-"20460001","커스텀 장비 목걸이","Necklace","4","Normal","0","HIT","100","0","20460000","1"
-"20460002","커스텀 장비 목걸이","Necklace","5","Normal","0","HIT","500","0","20460000","1"
-"20460003","커스텀 장비 목걸이","Necklace","6","Normal","0","HIT","800","0","20460000","1"
-"20460004","커스텀 장비 목걸이","Necklace","6","Normal","0","HIT","1200","0","20460000","1"
-"20560000","커스텀 장비 반지","Ring","3","Normal","0","DEF","10","0","20560000","1"
-"20560001","커스텀 장비 반지","Ring","4","Normal","0","DEF","100","0","20560000","1"
-"20560002","커스텀 장비 반지","Ring","5","Normal","0","DEF","500","0","20560000","1"
-"20560003","커스텀 장비 반지","Ring","6","Normal","0","DEF","800","0","20560000","1"
-"20560004","커스텀 장비 반지","Ring","6","Normal","0","DEF","1200","0","20560000","1"
-"10170000","Valkyrie Sword","Weapon","7","Normal","0","ATK","198571","2","10170000","80000000"
-"10171000","Valkyrie Sword","Weapon","7","Fire","0","ATK","347499","2","10171000","80000000"
-"10172000","Valkyrie Sword","Weapon","7","Water","0","ATK","347499","2","10172000","80000000"
-"10270000","Valkyrie Armor","Armor","7","Normal","0","HP","2978571","2","Character/Player/10270000","80000000"
-"10271000","Valkyrie Armor","Armor","7","Fire","0","HP","5212499","2","Character/Player/10270001","80000000"
-"10272000","Valkyrie Armor","Armor","7","Water","0","HP","5212499","2","Character/Player/10270002","80000000"
-"10370000","Valkyrie Belt","Belt","7","Normal","0","SPD","906521","2","10370000","80000000"
-"10371000","Valkyrie Belt","Belt","7","Fire","0","SPD","1586411","2","10371000","80000000"
-"10372000","Valkyrie Belt","Belt","7","Water","0","SPD","1586411","2","10372000","80000000"
-"10470000","Valkyrie Necklace","Necklace","7","Normal","0","HIT","695000","0","10470000","80000000"
-"10471000","Valkyrie Necklace","Necklace","7","Fire","0","HIT","1216250","0","10471000","80000000"
-"10472000","Valkyrie Necklace","Necklace","7","Water","0","HIT","1216250","0","10472000","80000000"
-"10570000","Valkyrie Ring","Ring","7","Normal","0","DEF","198571","0","10570000","80000000"
-"10571000","Valkyrie Ring","Ring","7","Fire","0","DEF","347499","0","10571000","80000000"
-"10572000","Valkyrie Ring","Ring","7","Water","0","DEF","347499","0","10572000","80000000"
-"10670000","Ymir Aura","Aura","7","Normal","0","ATK","10","0","10620001","650000"
-"10670001","Beast Aura","Aura","7","Normal","0","ATK","10","0","10620001","650000"
-"10670002","Aegis Aura","Aura","7","Normal","0","HP","10","0","10620001","650000"
-"10670003","Barrage Aura","Aura","7","Normal","0","ATK","10","0","10620001","650000"
-"10770001","공격의 그리모어 (A)","Grimoire","7","Normal","0","ATK","10","0","10760000","650000"
-"10770002","공격의 그리모어 (H)","Grimoire","7","Normal","0","ATK","10","0","10760001","650000"
-"10770003","공격의 그리모어 (S)","Grimoire","7","Normal","0","ATK","10","0","10760002","650000"
-"10770004","방어의 그리모어 (D)","Grimoire","7","Normal","0","DEF","10","0","10760003","650000"
-"10770005","방어의 그리모어 (H)","Grimoire","7","Normal","0","DEF","10","0","10760004","650000"
-"10770006","방어의 그리모어 (S)","Grimoire","7","Normal","0","DEF","10","0","10760005","650000"
-"10770007","기능의 그리모어 (A)","Grimoire","7","Normal","0","SPD","10","0","10760006","650000"
-"10770008","기능의 그리모어 (D)","Grimoire","7","Normal","0","SPD","10","0","10760007","650000"
-"10770009","기능의 그리모어 (S)","Grimoire","7","Normal","0","SPD","10","0","10760008","650000"
+id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_range,spine_resource_path,exp
+10100000,Wooden Club,Weapon,0,Normal,0,ATK,1,2,10100000,10
+10110000,Long Sword,Weapon,1,Normal,1,ATK,11,2,10110000,5
+10111000,Long Sword,Weapon,1,Fire,2,ATK,14,2,10111000,5
+10112000,Long Sword,Weapon,1,Water,3,ATK,17,2,10112000,5
+10113000,Long Sword,Weapon,1,Land,4,ATK,55,2,10113000,8
+10114000,Long Sword,Weapon,1,Wind,5,ATK,136,2,10114000,9
+10120000,Gladiator Sword,Weapon,2,Normal,6,ATK,31,2,10120000,100
+10121000,Gladiator Sword,Weapon,2,Fire,7,ATK,32,2,10121000,100
+10122000,Gladiator Sword,Weapon,2,Water,8,ATK,38,2,10122000,141
+10123000,Gladiator Sword,Weapon,2,Land,9,ATK,152,2,10123000,167
+10124000,Gladiator Sword,Weapon,2,Wind,10,ATK,327,2,10124000,180
+10130000,Black Crow Sword,Weapon,3,Normal,11,ATK,78,2,10130000,500
+10131000,Black Crow Sword,Weapon,3,Fire,12,ATK,81,2,10131000,700
+10132000,Black Crow Sword,Weapon,3,Water,13,ATK,92,2,10132000,1430
+10133000,Black Crow Sword,Weapon,3,Land,14,ATK,354,2,10133000,2489
+10134000,Black Crow Sword,Weapon,3,Wind,15,ATK,693,2,10134000,2746
+10130001,Heavy Sword,Weapon,3,Normal,11,ATK,170,2,10130001,1934
+10131001,Heavy Sword,Weapon,3,Fire,12,ATK,179,2,10131001,3518
+10132001,Heavy Sword,Weapon,3,Water,13,ATK,196,2,10132001,3600
+10133001,Heavy Sword,Weapon,3,Land,14,ATK,908,2,10133001,3600
+10134001,Heavy Sword,Weapon,3,Wind,15,ATK,967,2,10134001,3600
+10140000,War Sword,Weapon,4,Normal,11,ATK,3094,2,10140000,120000
+10141000,War Sword,Weapon,4,Fire,12,ATK,1934,2,10141000,75000
+10142000,War Sword,Weapon,4,Water,13,ATK,2224,2,10142000,75000
+10143000,War Sword,Weapon,4,Land,14,ATK,2514,2,10143000,96000
+10144000,War Sword,Weapon,4,Wind,15,ATK,2804,2,10144000,96000
+10150000,Dainsleif,Weapon,5,Normal,16,ATK,6063,2,10150000,2400000
+10151000,Dainsleif,Weapon,5,Fire,17,ATK,4331,2,10151000,1800000
+10152000,Dainsleif,Weapon,5,Water,18,ATK,4331,2,10152000,1800000
+10153000,Dainsleif,Weapon,5,Land,19,ATK,6063,2,10153000,2400000
+10154000,Dainsleif,Weapon,5,Wind,20,ATK,6063,2,10154000,2400000
+10140001,Asgardian Sword,Weapon,5,Normal,11,ATK,765,2,10140001,2
+10141001,Asgardian Sword,Weapon,5,Fire,12,ATK,782,2,10141001,2
+10142001,Asgardian Sword,Weapon,5,Water,13,ATK,798,2,10142001,2
+10143001,Asgardian Sword,Weapon,5,Land,14,ATK,1221,2,10143001,2
+10144001,Asgardian Sword,Weapon,5,Wind,15,ATK,1525,2,10144001,2
+10150001,Surt's Sword,Weapon,6,Normal,0,ATK,15473,2,10150001,10000000
+10151001,Surt's Sword,Weapon,6,Fire,0,ATK,11052,2,10151001,10000000
+10152001,Surt's Sword,Weapon,6,Water,0,ATK,11052,2,10152001,10000000
+10153001,Surt's Sword,Weapon,6,Land,0,ATK,15473,2,10153001,10000000
+10154001,Surt's Sword,Weapon,6,Wind,0,ATK,15473,2,10154001,10000000
+10155000,Valkyrie’s Sword,Weapon,5,Normal,15,ATK,2902,2,10155000,2
+10200000,Ragged Clothes,Armor,0,Normal,0,HP,30,2,Character/Player/10200000,12
+10210000,Casual Clothes,Armor,1,Normal,1,HP,180,2,Character/Player/10210000,5
+10211000,Casual Clothes,Armor,1,Fire,2,HP,222,2,Character/Player/10211000,5
+10212000,Casual Clothes,Armor,1,Water,3,HP,288,2,Character/Player/10212000,5
+10213000,Casual Clothes,Armor,1,Land,4,HP,915,2,Character/Player/10213000,6
+10214000,Casual Clothes,Armor,1,Wind,5,HP,2182,2,Character/Player/10214000,8
+10220000,Leather Clothes,Armor,2,Normal,6,HP,531,2,Character/Player/10220000,100
+10221000,Leather Clothes,Armor,2,Fire,7,HP,549,2,Character/Player/10221000,144
+10222000,Leather Clothes,Armor,2,Water,8,HP,621,2,Character/Player/10222000,180
+10223000,Leather Clothes,Armor,2,Land,9,HP,2431,2,Character/Player/10223000,180
+10224000,Leather Clothes,Armor,2,Wind,10,HP,5109,2,Character/Player/10224000,180
+10230000,Black Crow Armor,Armor,3,Normal,11,HP,1337,2,Character/Player/10230000,500
+10231000,Black Crow Armor,Armor,3,Fire,12,HP,1418,2,Character/Player/10231000,700
+10232000,Black Crow Armor,Armor,3,Water,13,HP,1580,2,Character/Player/10232000,1560
+10233000,Black Crow Armor,Armor,3,Land,14,HP,8370,2,Character/Player/10233000,2400
+10234000,Black Crow Armor,Armor,3,Wind,15,HP,10571,2,Character/Player/10234000,2400
+10230001,Hermes' Clothes,Armor,3,Normal,11,HP,2811,2,Character/Player/10230001,2040
+10231001,Hermes' Clothes,Armor,3,Fire,12,HP,3009,2,Character/Player/10231001,3600
+10232001,Hermes' Clothes,Armor,3,Water,13,HP,3141,2,Character/Player/10232001,3600
+10233001,Hermes' Clothes,Armor,3,Land,14,HP,11482,2,Character/Player/10233001,3600
+10234001,Hermes' Clothes,Armor,3,Wind,15,HP,12302,2,Character/Player/10234001,3600
+10240000,War Armor,Armor,4,Normal,11,HP,34446,2,Character/Player/10240000,120000
+10241000,War Armor,Armor,4,Fire,12,HP,24604,2,Character/Player/10241000,75000
+10242000,War Armor,Armor,4,Water,13,HP,27064,2,Character/Player/10242000,75000
+10243000,War Armor,Armor,4,Land,14,HP,29525,2,Character/Player/10243000,96000
+10244000,War Armor,Armor,4,Wind,15,HP,31985,2,Character/Player/10244000,96000
+10250001,Ancient Armor,Armor,5,Normal,11,HP,67513,2,Character/Player/10250001,2400000
+10251001,Ancient Armor,Armor,5,Fire,12,HP,48224,2,Character/Player/10251001,1800000
+10252001,Ancient Armor,Armor,5,Water,13,HP,48224,2,Character/Player/10252001,1800000
+10253001,Ancient Armor,Armor,5,Land,14,HP,67513,2,Character/Player/10253001,2400000
+10254001,Ancient Armor,Armor,5,Wind,15,HP,67513,2,Character/Player/10254001,2400000
+10250000,Surt's Armor,Armor,6,Normal,0,HP,172307,2,Character/Player/10250000,10000000
+10251000,Surt's Armor,Armor,6,Fire,0,HP,123076,2,Character/Player/10251000,10000000
+10252000,Surt's Armor,Armor,6,Water,0,HP,123076,2,Character/Player/10252000,10000000
+10253000,Surt's Armor,Armor,6,Land,0,HP,172307,2,Character/Player/10253000,10000000
+10254000,Surt's Armor,Armor,6,Wind,0,HP,172307,2,Character/Player/10254000,10000000
+10240001,Asgardian Armor,Armor,5,Normal,11,HP,10358,2,Character/Player/10240001,2
+10241001,Asgardian Armor,Armor,5,Fire,12,HP,10571,2,Character/Player/10241001,2
+10242001,Asgardian Armor,Armor,5,Water,13,HP,10783,2,Character/Player/10242001,2
+10243001,Asgardian Armor,Armor,5,Land,14,HP,16494,2,Character/Player/10243001,2
+10244001,Asgardian Armor,Armor,5,Wind,15,HP,20647,2,Character/Player/10244001,2
+10255000,Heavenly Cat,Armor,5,Normal,11,HP,42856,2,Character/Player/10235000,2
+10310000,Basic Belt,Belt,1,Normal,1,SPD,46,2,10310000,5
+10311000,Basic Belt,Belt,1,Fire,2,SPD,62,2,10311000,6
+10312000,Basic Belt,Belt,1,Water,3,SPD,69,2,10312000,8
+10313000,Basic Belt,Belt,1,Land,4,SPD,239,2,10313000,10
+10314000,Basic Belt,Belt,1,Wind,5,SPD,610,2,10314000,10
+10320000,Leather Belt,Belt,2,Normal,6,SPD,137,2,10320000,100
+10321000,Leather Belt,Belt,2,Fire,7,SPD,141,2,10321000,100
+10322000,Leather Belt,Belt,2,Water,8,SPD,166,2,10322000,180
+10323000,Leather Belt,Belt,2,Land,9,SPD,718,2,10323000,180
+10324000,Leather Belt,Belt,2,Wind,10,SPD,1314,2,10324000,180
+10330000,Solid Belt,Belt,3,Normal,11,SPD,350,2,10330000,500
+10331000,Solid Belt,Belt,3,Fire,12,SPD,359,2,10331000,700
+10332000,Solid Belt,Belt,3,Water,13,SPD,425,2,10332000,3600
+10333000,Solid Belt,Belt,3,Land,14,SPD,1701,2,10333000,3600
+10334000,Solid Belt,Belt,3,Wind,15,SPD,2883,2,10334000,2400
+10340000,War Belt,Belt,4,Normal,11,SPD,1215,2,10340000,9600
+10341000,War Belt,Belt,4,Fire,12,SPD,1262,2,10341000,60000
+10342000,War Belt,Belt,4,Water,13,SPD,2292,2,10342000,60000
+10343000,War Belt,Belt,4,Land,14,SPD,2292,2,10343000,60000
+10344000,War Belt,Belt,4,Wind,15,SPD,2292,2,10344000,33000
+10350000,Legendary Belt,Belt,4,Normal,11,SPD,7334,2,10350000,120000
+10351000,Legendary Belt,Belt,4,Fire,12,SPD,4584,2,10351000,75000
+10352000,Legendary Belt,Belt,4,Water,13,SPD,5272,2,10352000,75000
+10353000,Legendary Belt,Belt,4,Land,14,SPD,5959,2,10353000,96000
+10354000,Legendary Belt,Belt,4,Wind,15,SPD,6647,2,10354000,96000
+10410000,Thin Necklace,Necklace,1,Normal,1,HIT,70,0,10410000,5
+10411000,Thin Necklace,Necklace,1,Fire,2,HIT,81,0,10411000,5
+10412000,Thin Necklace,Necklace,1,Water,3,HIT,99,0,10412000,5
+10413000,Thin Necklace,Necklace,1,Land,4,HIT,357,0,10413000,8
+10414000,Thin Necklace,Necklace,1,Wind,5,HIT,863,0,10414000,10
+10420000,Guardian Necklace,Necklace,2,Normal,6,HIT,192,0,10420000,100
+10421000,Guardian Necklace,Necklace,2,Fire,7,HIT,197,0,10421000,100
+10422000,Guardian Necklace,Necklace,2,Water,8,HIT,230,0,10422000,180
+10423000,Guardian Necklace,Necklace,2,Land,9,HIT,1002,0,10423000,180
+10424000,Guardian Necklace,Necklace,2,Wind,10,HIT,1682,0,10424000,180
+10430000,Mana Necklace,Necklace,3,Normal,11,HIT,510,0,10430000,180
+10431000,Mana Necklace,Necklace,3,Fire,12,HIT,522,0,10431000,300
+10432000,Mana Necklace,Necklace,3,Water,13,HIT,608,0,10432000,3600
+10433000,Mana Necklace,Necklace,3,Land,14,HIT,2151,0,10433000,3600
+10434000,Mana Necklace,Necklace,3,Wind,15,HIT,2333,0,10434000,3600
+10440000,Warrior's Necklace,Necklace,4,Normal,11,HIT,2031,0,10440000,50000
+10441000,Warrior's Necklace,Necklace,4,Fire,12,HIT,3047,0,10441000,75000
+10442000,Warrior's Necklace,Necklace,4,Water,13,HIT,3047,0,10442000,75000
+10443000,Warrior's Necklace,Necklace,4,Land,14,HIT,3047,0,10443000,75000
+10444000,Warrior's Necklace,Necklace,4,Wind,15,HIT,3047,0,10444000,75000
+10450000,Legendary Necklace,Necklace,4,Normal,11,HIT,7466,0,10450000,120000
+10451000,Legendary Necklace,Necklace,4,Fire,12,HIT,4666,0,10451000,75000
+10452000,Legendary Necklace,Necklace,4,Water,13,HIT,5366,0,10452000,75000
+10453000,Legendary Necklace,Necklace,4,Land,14,HIT,6066,0,10453000,96000
+10454000,Legendary Necklace,Necklace,4,Wind,15,HIT,6766,0,10454000,96000
+10510000,Thin Ring,Ring,1,Normal,1,DEF,8,0,10510000,5
+10511000,Thin Ring,Ring,1,Fire,2,DEF,9,0,10511000,5
+10512000,Thin Ring,Ring,1,Water,3,DEF,11,0,10512000,5
+10513000,Thin Ring,Ring,1,Land,4,DEF,44,0,10513000,8
+10514000,Thin Ring,Ring,1,Wind,5,DEF,107,0,10514000,10
+10520000,Guardian Ring,Ring,2,Normal,6,DEF,23,0,10520000,100
+10521000,Guardian Ring,Ring,2,Fire,7,DEF,24,0,10521000,100
+10522000,Guardian Ring,Ring,2,Water,8,DEF,29,0,10522000,180
+10523000,Guardian Ring,Ring,2,Land,9,DEF,122,0,10523000,180
+10524000,Guardian Ring,Ring,2,Wind,10,DEF,189,0,10524000,180
+10530000,Mana Ring,Ring,3,Normal,11,DEF,63,0,10530000,500
+10531000,Mana Ring,Ring,3,Fire,12,DEF,65,0,10531000,700
+10532000,Mana Ring,Ring,3,Water,13,DEF,74,0,10532000,1200
+10533000,Mana Ring,Ring,3,Land,14,DEF,251,0,10533000,3600
+10534000,Mana Ring,Ring,3,Wind,15,DEF,270,0,10534000,3600
+10540000,Warrior's Ring,Ring,4,Normal,11,DEF,864,0,10540000,120000
+10541000,Warrior's Ring,Ring,4,Fire,12,DEF,540,0,10541000,75000
+10542000,Warrior's Ring,Ring,4,Water,13,DEF,621,0,10542000,75000
+10543000,Warrior's Ring,Ring,4,Land,14,DEF,702,0,10543000,96000
+10544000,Warrior's Ring,Ring,4,Wind,15,DEF,783,0,10544000,96000
+10550000,Ancient Ring,Ring,5,Normal,11,DEF,1946,0,10550000,2400000
+10551000,Ancient Ring,Ring,5,Fire,12,DEF,1209,0,10551000,1800000
+10552000,Ancient Ring,Ring,5,Water,13,DEF,1209,0,10552000,1800000
+10553000,Ancient Ring,Ring,5,Land,14,DEF,1946,0,10553000,2400000
+10554000,Ancient Ring,Ring,5,Wind,15,DEF,1946,0,10554000,2400000
+11320000,Blue Sapphire Belt,Belt,2,Normal,6,SPD,176,2,11320000,2
+11420000,Blue Sapphire Necklace,Necklace,2,Normal,6,HIT,227,0,11420000,2
+11520000,Blue Sapphire Ring,Ring,2,Normal,6,DEF,50,0,11520000,2
+12001001,Special Crystal Belt,Belt,2,Normal,0,ATK,1,0,12001001,1
+12001002,Special Crystal Necklace,Necklace,3,Normal,1,ATK,1,0,12001002,1
+12001003,Special Crystal Ring,Ring,4,Normal,2,ATK,1,0,12001003,1
+10350001,Ancient Belt,Belt,5,Normal,15,SPD,14373,2,10350001,2400000
+10351001,Ancient Belt,Belt,5,Fire,15,SPD,10267,2,10351001,1800000
+10352001,Ancient Belt,Belt,5,Water,15,SPD,10267,2,10352001,1800000
+10353001,Ancient Belt,Belt,5,Land,15,SPD,14373,2,10353001,2400000
+10354001,Ancient Belt,Belt,5,Wind,15,SPD,14373,2,10354001,2400000
+10450001,Ancient Necklace,Necklace,5,Normal,15,HIT,15363,0,10450001,2400000
+10451001,Ancient Necklace,Necklace,5,Fire,15,HIT,10452,0,10451001,1800000
+10452001,Ancient Necklace,Necklace,5,Water,15,HIT,10452,0,10452001,1800000
+10453001,Ancient Necklace,Necklace,5,Land,15,HIT,15363,0,10453001,2400000
+10454001,Ancient Necklace,Necklace,5,Wind,15,HIT,15363,0,10454001,2400000
+10610000,Nimble Aura,Aura,1,Normal,0,HIT,310,0,10610000,2
+10620000,Nimble Aura,Aura,2,Normal,0,HIT,10,0,10610000,40
+10630000,Nimble Aura,Aura,3,Normal,0,HIT,10,0,10610000,600
+10620001,Beast Aura,Aura,2,Normal,0,ATK,10,0,10620001,40
+10630001,Beast Aura,Aura,3,Normal,0,ATK,10,0,10620001,600
+10640001,Beast Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
+10650001,Beast Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
+10650002,Lord's Beast Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
+10130002,Classic Sword,Weapon,3,Normal,0,ATK,50,2,10130000,100
+10620002,Aegis Aura,Aura,2,Normal,0,HP,10,0,10620001,40
+10630002,Aegis Aura,Aura,3,Normal,0,HP,10,0,10620001,600
+10640002,Aegis Aura,Aura,4,Normal,0,HP,10,0,10620001,6000
+10650003,Aegis Aura,Aura,5,Normal,0,HP,10,0,10620001,60000
+10650004,Lord's Aegis Aura,Aura,5,Normal,0,HP,10,0,10620001,60000
+10620003,Barrage Aura,Aura,2,Normal,0,ATK,10,0,10620001,40
+10630003,Barrage Aura,Aura,3,Normal,0,ATK,10,0,10620001,600
+10640003,Barrage Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
+10650005,Barrage Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
+10650006,Lord's Barrage Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
+10350002,Surt's Belt,Belt,6,Normal,0,SPD,55024,2,10350002,10000000
+10351002,Surt's Belt,Belt,6,Fire,0,SPD,39303,2,10351002,10000000
+10352002,Surt's Belt,Belt,6,Water,0,SPD,39303,2,10352002,10000000
+10353002,Surt's Belt,Belt,6,Land,0,SPD,55024,2,10353002,10000000
+10354002,Surt's Belt,Belt,6,Wind,0,SPD,55024,2,10354002,10000000
+10450002,Surt's Necklace,Necklace,6,Normal,0,HIT,39208,0,10450002,10000000
+10451002,Surt's Necklace,Necklace,6,Fire,0,HIT,28006,0,10451002,10000000
+10452002,Surt's Necklace,Necklace,6,Water,0,HIT,28006,0,10452002,10000000
+10453002,Surt's Necklace,Necklace,6,Land,0,HIT,39208,0,10453002,10000000
+10454002,Surt's Necklace,Necklace,6,Wind,0,HIT,39208,0,10454002,10000000
+10550001,Surt's Ring,Ring,6,Normal,0,DEF,9748,0,10550001,10000000
+10551001,Surt's Ring,Ring,6,Fire,0,DEF,6963,0,10551001,10000000
+10552001,Surt's Ring,Ring,6,Water,0,DEF,6963,0,10552001,10000000
+10553001,Surt's Ring,Ring,6,Land,0,DEF,9748,0,10553001,10000000
+10554001,Surt's Ring,Ring,6,Wind,0,DEF,9748,0,10554001,10000000
+10640004,Ymir Aura,Aura,4,Normal,0,ATK,10,0,10620001,6000
+10650007,Ymir Aura,Aura,5,Normal,0,ATK,10,0,10620001,60000
+10660000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10660001,Beast Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10660002,Aegis Aura,Aura,6,Normal,0,HP,10,0,10620001,130000
+10660003,Barrage Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10660004,1주년 아우라,Aura,6,Normal,0,HIT,10,0,10620001,1
+10730000,공격의 그리모어 (A),Grimoire,3,Normal,0,ATK,10,0,10730000,600
+10730001,공격의 그리모어 (H),Grimoire,3,Normal,0,ATK,10,0,10730001,600
+10730002,공격의 그리모어 (S),Grimoire,3,Normal,0,ATK,10,0,10730002,600
+10730003,방어의 그리모어 (D),Grimoire,3,Normal,0,DEF,10,0,10730003,600
+10730004,방어의 그리모어 (H),Grimoire,3,Normal,0,DEF,10,0,10730004,600
+10730005,방어의 그리모어 (S),Grimoire,3,Normal,0,DEF,10,0,10730005,600
+10730006,기능의 그리모어 (A),Grimoire,3,Normal,0,SPD,10,0,10730006,600
+10730007,기능의 그리모어 (D),Grimoire,3,Normal,0,SPD,10,0,10730007,600
+10730008,기능의 그리모어 (S),Grimoire,3,Normal,0,SPD,10,0,10730008,600
+10740000,공격의 그리모어 (A),Grimoire,4,Normal,0,ATK,10,0,10740000,6000
+10740001,공격의 그리모어 (H),Grimoire,4,Normal,0,ATK,10,0,10740001,6000
+10740002,공격의 그리모어 (S),Grimoire,4,Normal,0,ATK,10,0,10740002,6000
+10740003,방어의 그리모어 (D),Grimoire,4,Normal,0,DEF,10,0,10740003,6000
+10740004,방어의 그리모어 (H),Grimoire,4,Normal,0,DEF,10,0,10740004,6000
+10740005,방어의 그리모어 (S),Grimoire,4,Normal,0,DEF,10,0,10740005,6000
+10740006,기능의 그리모어 (A),Grimoire,4,Normal,0,SPD,10,0,10740006,6000
+10740007,기능의 그리모어 (D),Grimoire,4,Normal,0,SPD,10,0,10740007,6000
+10740008,기능의 그리모어 (S),Grimoire,4,Normal,0,SPD,10,0,10740008,6000
+10750000,공격의 그리모어 (A),Grimoire,5,Normal,0,ATK,10,0,10750000,60000
+10750001,공격의 그리모어 (H),Grimoire,5,Normal,0,ATK,10,0,10750001,60000
+10750002,공격의 그리모어 (S),Grimoire,5,Normal,0,ATK,10,0,10750002,60000
+10750003,방어의 그리모어 (D),Grimoire,5,Normal,0,DEF,10,0,10750003,60000
+10750004,방어의 그리모어 (H),Grimoire,5,Normal,0,DEF,10,0,10750004,60000
+10750005,방어의 그리모어 (S),Grimoire,5,Normal,0,DEF,10,0,10750005,60000
+10750006,기능의 그리모어 (A),Grimoire,5,Normal,0,SPD,10,0,10750006,60000
+10750007,기능의 그리모어 (D),Grimoire,5,Normal,0,SPD,10,0,10750007,60000
+10750008,기능의 그리모어 (S),Grimoire,5,Normal,0,SPD,10,0,10750008,60000
+10760000,공격의 그리모어 (A),Grimoire,6,Normal,0,ATK,10,0,10760000,130000
+10760001,공격의 그리모어 (H),Grimoire,6,Normal,0,ATK,10,0,10760001,130000
+10760002,공격의 그리모어 (S),Grimoire,6,Normal,0,ATK,10,0,10760002,130000
+10760003,방어의 그리모어 (D),Grimoire,6,Normal,0,DEF,10,0,10760003,130000
+10760004,방어의 그리모어 (H),Grimoire,6,Normal,0,DEF,10,0,10760004,130000
+10760005,방어의 그리모어 (S),Grimoire,6,Normal,0,DEF,10,0,10760005,130000
+10760006,기능의 그리모어 (A),Grimoire,6,Normal,0,SPD,10,0,10760006,130000
+10760007,기능의 그리모어 (D),Grimoire,6,Normal,0,SPD,10,0,10760007,130000
+10760008,기능의 그리모어 (S),Grimoire,6,Normal,0,SPD,10,0,10760008,130000
+10760009,1주년 그리모어,Grimoire,6,Normal,0,ATK,10,0,10760009,1
+20160000,커스텀 장비 무기,Weapon,3,Normal,0,ATK,10,0,20160000,1
+20160001,커스텀 장비 무기,Weapon,4,Normal,0,ATK,100,0,20160000,2
+20160002,커스텀 장비 무기,Weapon,5,Normal,0,ATK,500,0,20160000,3
+20160003,커스텀 장비 무기,Weapon,6,Normal,0,ATK,800,0,20160000,4
+20160004,커스텀 장비 무기,Weapon,6,Normal,0,ATK,1200,0,20160000,5
+20260000,커스텀 장비 갑옷,Armor,3,Normal,0,HP,10,0,20260000,1
+20260001,커스텀 장비 갑옷,Armor,4,Normal,0,HP,100,0,20260000,2
+20260002,커스텀 장비 갑옷,Armor,5,Normal,0,HP,500,0,20260000,3
+20260003,커스텀 장비 갑옷,Armor,6,Normal,0,HP,800,0,20260000,4
+20260004,커스텀 장비 갑옷,Armor,6,Normal,0,HP,1200,0,20260000,5
+20360000,커스텀 장비 벨트,Belt,3,Normal,0,SPD,10,0,20360000,1
+20360001,커스텀 장비 벨트,Belt,4,Normal,0,SPD,100,0,20360000,2
+20360002,커스텀 장비 벨트,Belt,5,Normal,0,SPD,500,0,20360000,3
+20360003,커스텀 장비 벨트,Belt,6,Normal,0,SPD,800,0,20360000,4
+20360004,커스텀 장비 벨트,Belt,6,Normal,0,SPD,1200,0,20360000,5
+20460000,커스텀 장비 목걸이,Necklace,3,Normal,0,HIT,10,0,20460000,1
+20460001,커스텀 장비 목걸이,Necklace,4,Normal,0,HIT,100,0,20460000,2
+20460002,커스텀 장비 목걸이,Necklace,5,Normal,0,HIT,500,0,20460000,3
+20460003,커스텀 장비 목걸이,Necklace,6,Normal,0,HIT,800,0,20460000,4
+20460004,커스텀 장비 목걸이,Necklace,6,Normal,0,HIT,1200,0,20460000,5
+20560000,커스텀 장비 반지,Ring,3,Normal,0,DEF,10,0,20560000,1
+20560001,커스텀 장비 반지,Ring,4,Normal,0,DEF,100,0,20560000,2
+20560002,커스텀 장비 반지,Ring,5,Normal,0,DEF,500,0,20560000,3
+20560003,커스텀 장비 반지,Ring,6,Normal,0,DEF,800,0,20560000,4
+20560004,커스텀 장비 반지,Ring,6,Normal,0,DEF,1200,0,20560000,5
+10170000,Surt's Sword,Weapon,7,Normal,0,ATK,198571,2,10150001,10000000
+10171000,Surt's Sword,Weapon,7,Fire,0,ATK,347499,2,10151001,10000000
+10172000,Surt's Sword,Weapon,7,Water,0,ATK,347499,2,10152001,10000000
+10173000,Surt's Sword,Weapon,7,Land,0,ATK,1,2,10153001,10000000
+10174000,Surt's Sword,Weapon,7,Wind,0,ATK,1,2,10154001,10000000
+10270000,Surt's Armor,Armor,7,Normal,0,HP,2978571,2,Character/Player/10250000,10000000
+10271000,Surt's Armor,Armor,7,Fire,0,HP,5212499,2,Character/Player/10251000,10000000
+10272000,Surt's Armor,Armor,7,Water,0,HP,5212499,2,Character/Player/10252000,10000000
+10273000,Surt's Armor,Armor,7,Land,0,HP,1,2,Character/Player/10253000,10000000
+10274000,Surt's Armor,Armor,7,Wind,0,HP,1,2,Character/Player/10254000,10000000
+10370000,Surt's Belt,Belt,7,Normal,0,SPD,906521,2,10350002,10000000
+10371000,Surt's Belt,Belt,7,Fire,0,SPD,1586411,2,10351002,10000000
+10372000,Surt's Belt,Belt,7,Water,0,SPD,1586411,2,10352002,10000000
+10373000,Surt's Belt,Belt,7,Land,0,SPD,1,2,10353002,10000000
+10374000,Surt's Belt,Belt,7,Wind,0,SPD,1,2,10354002,10000000
+10470000,Surt's Necklace,Necklace,7,Normal,0,HIT,695000,0,10450002,10000000
+10471000,Surt's Necklace,Necklace,7,Fire,0,HIT,1216250,0,10451002,10000000
+10472000,Surt's Necklace,Necklace,7,Water,0,HIT,1216250,0,10452002,10000000
+10473000,Surt's Necklace,Necklace,7,Land,0,HIT,1,0,10453002,10000000
+10474000,Surt's Necklace,Necklace,7,Wind,0,HIT,1,0,10454002,10000000
+10570000,Surt's Ring,Ring,7,Normal,0,DEF,198571,0,10550001,10000000
+10571000,Surt's Ring,Ring,7,Fire,0,DEF,347499,0,10551001,10000000
+10572000,Surt's Ring,Ring,7,Water,0,DEF,347499,0,10552001,10000000
+10573000,Surt's Ring,Ring,7,Land,0,DEF,1,0,10553001,10000000
+10574000,Surt's Ring,Ring,7,Wind,0,DEF,1,0,10554001,10000000
+10670000,Ymir Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10670001,Beast Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
+10670002,Aegis Aura,Aura,6,Normal,0,HP,10,0,10620001,130000
+10670003,Barrage Aura,Aura,6,Normal,0,ATK,10,0,10620001,130000
