@@ -285,7 +285,7 @@ public class SynthesizeTest
     [Fact]
     public void ExecuteNotEnoughActionPoint()
     {
-        var grade = Grade.Rare;
+        var grade = Grade.Unique;
         var itemSubType = ItemSubType.FullCostume;
         var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
 
@@ -323,7 +323,7 @@ public class SynthesizeTest
     [InlineData(12)]
     public void ExecuteMultipleSameType(int testCount)
     {
-        var grade = Grade.Rare;
+        var grade = Grade.Unique;
         var itemSubType = ItemSubType.FullCostume;
         var materialCount = GetSucceededMaterialCount(itemSubType, grade) * testCount;
         var itemSubTypes = GetSubTypeArray(itemSubType, materialCount);
