@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -11,17 +12,16 @@ namespace Nekoyume.Action
     public class RemoveAddressState : ActionBase
     {
         public const string TypeId = "remove_address_state";
-        public Address AccountAddress { get; private set; }
-        public Address TargetAddress { get; private set; }
+
+        public IReadOnlyList<(Address accountAddress, Address targetAddress)> Removals { get; private set; }
 
         public RemoveAddressState()
         {
         }
 
-        public RemoveAddressState(Address accountAddress, Address targetAddress)
+        public RemoveAddressState(IReadOnlyList<(Address accountAddress, Address targetAddress)> removals)
         {
-            AccountAddress = accountAddress;
-            TargetAddress = targetAddress;
+            Removals = removals;
         }
 
         public override IValue PlainValue =>
@@ -30,8 +30,10 @@ namespace Nekoyume.Action
                 { (Text)"type_id", (Text)TypeId },
                 {
                     (Text)"values", Dictionary.Empty
-                    .Add("a", AccountAddress.Serialize())
-                    .Add("t", TargetAddress.Serialize())
+                    .Add("r", new List(Removals.Select(r =>
+                        List.Empty
+                            .Add(r.accountAddress.Serialize())
+                            .Add(r.targetAddress.Serialize()))))
                 }
             });
 
@@ -39,22 +41,28 @@ namespace Nekoyume.Action
         {
             var dictionary = (Dictionary)plainValue;
             var values = (Dictionary)dictionary["values"];
-            AccountAddress = values["a"].ToAddress();
-            TargetAddress = values["t"].ToAddress();
+            Removals = ((List)values["r"])
+                .Select(r =>
+                {
+                    var list = (List)r;
+                    return (list[0].ToAddress(), list[1].ToAddress());
+                })
+                .ToList();
         }
 
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
             var states = context.PreviousState;
-
             CheckPermission(context);
 
-            var account = states.GetAccount(AccountAddress);
-
-            // Remove state
-            account = account.RemoveState(TargetAddress);
-            return states.SetAccount(AccountAddress, account);
+            foreach (var (accountAddress, targetAddress) in Removals)
+            {
+                var account = states.GetAccount(accountAddress);
+                account = account.RemoveState(targetAddress);
+                states = states.SetAccount(accountAddress, account);
+            }
+            return states;
         }
     }
 }

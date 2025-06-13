@@ -493,7 +493,10 @@ namespace Lib9c.Tests.Action
                 {
                     AvatarAddress = new PrivateKey().Address,
                 },
-                RemoveAddressState _ => new RemoveAddressState(new PrivateKey().Address, new PrivateKey().Address),
+                RemoveAddressState _ => new RemoveAddressState(new List<(Address accountAddress, Address targetAddress)>
+                {
+                    (new PrivateKey().Address, new PrivateKey().Address),
+                }),
                 _ => throw new InvalidCastException(),
             };
         }
