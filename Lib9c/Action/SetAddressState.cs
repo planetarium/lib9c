@@ -9,17 +9,35 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Action to set state for multiple addresses.
+    /// Throws an exception if the state already exists for the target address.
+    /// </summary>
     [ActionType(TypeId)]
     public class SetAddressState : ActionBase
     {
+        /// <summary>
+        /// The type identifier of the action.
+        /// </summary>
         public const string TypeId = "set_address_state";
 
+        /// <summary>
+        /// List of tuples (account address, target address, state value) to set state for.
+        /// </summary>
         public IReadOnlyList<(Address accountAddress, Address targetAddress, IValue state)> States { get; private set; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public SetAddressState()
         {
         }
 
+        /// <summary>
+        /// Constructor that initializes with a list of states to set.
+        /// </summary>
+        /// <param name="states">List of tuples to set state for</param>
+        /// <exception cref="ArgumentNullException">Thrown if states is null or any state value is null</exception>
         public SetAddressState(IReadOnlyList<(Address accountAddress, Address targetAddress, IValue state)> states)
         {
             if (states == null || states.Any(s => s.state == null))
@@ -30,6 +48,7 @@ namespace Nekoyume.Action
             States = states;
         }
 
+        /// <inheritdoc />
         public override IValue PlainValue =>
             new Dictionary(new Dictionary<IKey, IValue>
             {
@@ -44,6 +63,7 @@ namespace Nekoyume.Action
                 }
             });
 
+        /// <inheritdoc />
         public override void LoadPlainValue(IValue plainValue)
         {
             var dictionary = (Dictionary)plainValue;
@@ -63,6 +83,13 @@ namespace Nekoyume.Action
             States = states;
         }
 
+        /// <summary>
+        /// Executes the action to set state for the specified addresses.
+        /// Throws an exception if the state already exists for the target address.
+        /// </summary>
+        /// <param name="context">Action context</param>
+        /// <returns>The updated world state</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the state already exists for the target address</exception>
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);

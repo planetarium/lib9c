@@ -8,22 +8,39 @@ using Nekoyume.Model.State;
 
 namespace Nekoyume.Action
 {
+    /// <summary>
+    /// Action to remove state for multiple addresses.
+    /// </summary>
     [ActionType(TypeId)]
     public class RemoveAddressState : ActionBase
     {
+        /// <summary>
+        /// The type identifier of the action.
+        /// </summary>
         public const string TypeId = "remove_address_state";
 
+        /// <summary>
+        /// List of tuples (account address, target address) to remove state for.
+        /// </summary>
         public IReadOnlyList<(Address accountAddress, Address targetAddress)> Removals { get; private set; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public RemoveAddressState()
         {
         }
 
+        /// <summary>
+        /// Constructor that initializes with a list of removals.
+        /// </summary>
+        /// <param name="removals">List of tuples to remove state for</param>
         public RemoveAddressState(IReadOnlyList<(Address accountAddress, Address targetAddress)> removals)
         {
             Removals = removals;
         }
 
+        /// <inheritdoc />
         public override IValue PlainValue =>
             new Dictionary(new Dictionary<IKey, IValue>
             {
@@ -37,6 +54,7 @@ namespace Nekoyume.Action
                 }
             });
 
+        /// <inheritdoc />
         public override void LoadPlainValue(IValue plainValue)
         {
             var dictionary = (Dictionary)plainValue;
@@ -50,6 +68,11 @@ namespace Nekoyume.Action
                 .ToList();
         }
 
+        /// <summary>
+        /// Executes the action to remove state for the specified addresses.
+        /// </summary>
+        /// <param name="context">Action context</param>
+        /// <returns>The updated world state</returns>
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
