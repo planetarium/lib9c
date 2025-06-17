@@ -184,5 +184,34 @@ namespace Lib9c.Tests.Action
 
             Assert.NotNull(nextState.GetSheet<CostumeStatSheet>());
         }
+
+        [Fact]
+        public void Execute_WithOperator()
+        {
+            var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
+            var adminState = new AdminState(adminAddress, 100);
+            const string tableName = "TestTable";
+            var sheetAddress = Addresses.TableSheet.Derive(tableName);
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(AdminState.Address, adminState.Serialize())
+                .SetLegacyState(sheetAddress, "Initial".Serialize());
+            var action = new PatchTableSheet()
+            {
+                TableName = tableName,
+                TableCsv = "New Value",
+            };
+
+            // Can execute even after policy expiration when signed by Operator
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    BlockIndex = 101,
+                    PreviousState = state,
+                    Signer = PatchTableSheet.Operator,
+                }
+            );
+
+            Assert.Equal("New Value", nextState.GetSheetCsv(sheetAddress));
+        }
     }
 }
