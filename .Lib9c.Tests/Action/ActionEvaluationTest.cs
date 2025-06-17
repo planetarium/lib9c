@@ -94,6 +94,8 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(RetrieveAvatarAssets))]
         [InlineData(typeof(MigrateFee))]
         [InlineData(typeof(ClaimWorldBossReward))]
+        [InlineData(typeof(RemoveAddressState))]
+        [InlineData(typeof(SetAddressState))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -492,7 +494,18 @@ namespace Lib9c.Tests.Action
                 {
                     AvatarAddress = new PrivateKey().Address,
                 },
-                _ => throw new InvalidCastException(),
+                RemoveAddressState _ => new RemoveAddressState(new List<(Address, Address)>
+                {
+                    (new PrivateKey().Address, new PrivateKey().Address),
+                }),
+                SetAddressState _ => new SetAddressState(new List<(Address, Address, IValue)>
+                {
+                    (new PrivateKey().Address, new PrivateKey().Address, new Dictionary(new Dictionary<IKey, IValue>
+                    {
+                        [(Text)"key"] = (Text)"value",
+                    })),
+                }),
+                _ => throw new NotSupportedException($"Not supported action type: {type}"),
             };
         }
     }
