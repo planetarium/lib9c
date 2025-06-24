@@ -240,5 +240,31 @@ namespace Lib9c.Tests.Action
                 )
             );
         }
+
+        [Fact]
+        public void Execute_WithOperator()
+        {
+            Assert.Null(_initialState.GetLegacyState(_targetAddress));
+            Assert.Null(_initialState.GetLegacyState(_targetAddress2));
+
+            var action = new SetAddressState(new List<(Address, Address, IValue)>
+            {
+                (_accountAddress, _targetAddress, _state),
+                (_accountAddress, _targetAddress2, _state2),
+            });
+
+            // Can execute even after policy expiration when signed by Operator
+            var nextState = action.Execute(
+                new ActionContext()
+                {
+                    PreviousState = _initialState,
+                    Signer = PatchTableSheet.Operator,
+                    BlockIndex = 101,
+                }
+            );
+
+            Assert.Equal(_state, nextState.GetLegacyState(_targetAddress));
+            Assert.Equal(_state2, nextState.GetLegacyState(_targetAddress2));
+        }
     }
 }

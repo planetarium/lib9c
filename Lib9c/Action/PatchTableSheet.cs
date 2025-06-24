@@ -27,7 +27,13 @@ namespace Nekoyume.Action
     {
         // FIXME: We should eliminate or justify this concept in another way after v100340.
         // (Until that) please consult Nine Chronicles Dev if you have any questions about this account.
-        private static readonly Address Operator =
+        /// <summary>
+        /// The operator address that has special permission to operation actions.
+        /// When the action is signed by this operator, permission check is skipped.
+        /// This is a temporary solution until v100340, after which this concept should be eliminated or justified differently.
+        /// For any questions about this account, please consult Nine Chronicles Dev team.
+        /// </summary>
+        public static readonly Address Operator =
             new Address("3fe3106a3547488e157AED606587580e80375295");
 
         public string TableName;

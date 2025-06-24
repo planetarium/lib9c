@@ -5,6 +5,7 @@ using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Model.State;
+using Serilog;
 
 namespace Nekoyume.Action
 {
@@ -18,6 +19,12 @@ namespace Nekoyume.Action
         /// The type identifier of the action.
         /// </summary>
         public const string TypeId = "remove_address_state";
+
+        /// <summary>
+        /// The operator address that has special permission to execute this action.
+        /// When the action is signed by this operator, permission check is skipped.
+        /// </summary>
+        private static readonly Address Operator = PatchTableSheet.Operator;
 
         /// <summary>
         /// List of tuples (account address, target address) to remove state for.
@@ -77,7 +84,23 @@ namespace Nekoyume.Action
         {
             GasTracer.UseGas(1);
             var states = context.PreviousState;
+
+#if !LIB9C_DEV_EXTENSIONS && !UNITY_EDITOR
+            if (context.Signer == Operator)
+            {
+                Log.Information(
+                    "Skip CheckPermission since {TxId} had been signed by the operator({Operator}).",
+                    context.TxId,
+                    Operator
+                );
+            }
+            else
+            {
+                CheckPermission(context);
+            }
+#else
             CheckPermission(context);
+#endif
 
             foreach (var (accountAddress, targetAddress) in Removals)
             {
