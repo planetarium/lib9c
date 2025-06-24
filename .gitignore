@@ -21,3 +21,6 @@ Desktop.ini
 
 # For action
 !.github/bin/
+
+**/.vscode/
+.cursor/
