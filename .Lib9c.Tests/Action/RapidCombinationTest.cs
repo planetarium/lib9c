@@ -589,7 +589,7 @@ namespace Lib9c.Tests.Action
             AttachmentActionResult resultModel = null;
             var random = new TestRandom();
             var mailId = random.GenerateRandomGuid();
-            var preItemUsable = new Equipment((Dictionary)equipment.Serialize());
+            var preItemUsable = new Equipment(equipment.Serialize());
             switch (itemEnhancementResultModelNumber)
             {
                 case 7:

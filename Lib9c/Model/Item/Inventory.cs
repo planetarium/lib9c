@@ -35,9 +35,7 @@ namespace Nekoyume.Model.Item
 
             public Item(Bencodex.Types.Dictionary serialized)
             {
-                item = ItemFactory.Deserialize(
-                    (Bencodex.Types.Dictionary) serialized["item"]
-                );
+                item = ItemFactory.Deserialize(serialized["item"]);
                 count = (int) ((Integer) serialized["count"]).Value;
                 if (serialized.ContainsKey("l"))
                 {
@@ -1105,7 +1103,7 @@ namespace Nekoyume.Model.Item
             // Copy new TradableMaterial
             if (tradableItem is TradableMaterial tradableMaterial)
             {
-                var material = new TradableMaterial((Dictionary) tradableMaterial.Serialize())
+                var material = new TradableMaterial(tradableMaterial.Serialize())
                 {
                     RequiredBlockIndex = requiredBlockIndex
                 };

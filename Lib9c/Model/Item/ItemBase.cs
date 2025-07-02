@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using Bencodex;
 using Bencodex.Types;
@@ -8,9 +9,14 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Item
 {
+    /// <summary>
+    /// Base class for all items in the game.
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    /// </summary>
     [Serializable]
     public abstract class ItemBase : IItem
     {
+        public const int SerializationVersion = 2;
         protected static readonly Codec Codec = new Codec();
 
         private int _id;
@@ -23,6 +29,7 @@ namespace Nekoyume.Model.Item
         private Text? _serializedItemType;
         private Text? _serializedItemSubType;
         private Text? _serializedElementalType;
+        private Integer? _serializedVersion;
 
         public int Id
         {
@@ -58,7 +65,7 @@ namespace Nekoyume.Model.Item
             {
                 if (_serializedItemType is { })
                 {
-                    _itemType = _serializedItemType.ToEnum<ItemType>();
+                    _itemType = (ItemType)_serializedItemType.ToInteger();
                     _serializedItemType = null;
                 }
 
@@ -72,7 +79,7 @@ namespace Nekoyume.Model.Item
             {
                 if (_serializedItemSubType is { })
                 {
-                    _itemSubType = _serializedItemSubType.ToEnum<ItemSubType>();
+                    _itemSubType = (ItemSubType)_serializedItemSubType.ToInteger();
                     _serializedItemSubType = null;
                 }
 
@@ -86,7 +93,7 @@ namespace Nekoyume.Model.Item
             {
                 if (_serializedElementalType is { })
                 {
-                    _elementalType = _serializedElementalType.ToEnum<ElementalType>();
+                    _elementalType = (ElementalType)_serializedElementalType.ToInteger();
                     _serializedElementalType = null;
                 }
 
@@ -103,6 +110,7 @@ namespace Nekoyume.Model.Item
             _itemType = data.ItemType;
             _itemSubType = data.ItemSubType;
             _elementalType = data.ElementalType;
+            _serializedVersion = (Integer)SerializationVersion;
         }
 
         protected ItemBase(ItemBase other)
@@ -114,32 +122,70 @@ namespace Nekoyume.Model.Item
             _elementalType = other.ElementalType;
         }
 
-        protected ItemBase(Dictionary serialized)
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        protected ItemBase(IValue serialized)
         {
-            if (serialized.TryGetValue((Text) "id", out var id))
+            switch (serialized)
             {
-                _serializedId = (Text) id;
-            }
-            if (serialized.TryGetValue((Text) "grade", out var grade))
-            {
-                _serializedGrade = (Text) grade;
-            }
-            if (serialized.TryGetValue((Text) "item_type", out var type))
-            {
-                _serializedItemType = (Text) type;
-            }
-            if (serialized.TryGetValue((Text) "item_sub_type", out var subType))
-            {
-                _serializedItemSubType = (Text) subType;
-            }
-            if (serialized.TryGetValue((Text) "elemental_type", out var elementalType))
-            {
-                _serializedElementalType = (Text) elementalType;
+                case Dictionary dict:
+                    DeserializeFromDictionary(dict);
+                    break;
+                case List list:
+                    DeserializeFromList(list);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
             }
         }
 
+        /// <summary>
+        /// Deserializes data from Dictionary format (legacy support).
+        /// </summary>
+        /// <param name="dict">Dictionary containing serialized data</param>
+        private void DeserializeFromDictionary(Dictionary dict)
+        {
+            if (dict.TryGetValue((Text) "id", out var id))
+            {
+                _serializedId = (Text) id;
+            }
+            if (dict.TryGetValue((Text) "grade", out var grade))
+            {
+                _serializedGrade = (Text) grade;
+            }
+            if (dict.TryGetValue((Text) "item_type", out var type))
+            {
+                _serializedItemType = (Text)((int)type.ToEnum<ItemType>()).Serialize();
+            }
+            if (dict.TryGetValue((Text) "item_sub_type", out var subType))
+            {
+                _serializedItemSubType = (Text)((int)subType.ToEnum<ItemSubType>()).Serialize();
+            }
+            if (dict.TryGetValue((Text) "elemental_type", out var elementalType))
+            {
+                _serializedElementalType = (Text)((int)elementalType.ToEnum<ElementalType>()).Serialize();
+            }
+        }
+
+        /// <summary>
+        /// Deserializes data from List format (new format).
+        /// </summary>
+        /// <param name="list">List containing serialized data in order: [version, id, itemType, itemSubType, grade, elementalType]</param>
+        private void DeserializeFromList(List list)
+        {
+            // Always read 6 fields (length check removed)
+            _serializedVersion = (Integer) list[0];
+            _serializedId = (Text) list[1];
+            _serializedItemType = (Text) list[2];
+            _serializedItemSubType = (Text) list[3];
+            _serializedGrade = (Text) list[4];
+            _serializedElementalType = (Text) list[5];
+        }
+
         protected ItemBase(SerializationInfo info, StreamingContext _)
-            : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
+            : this(Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
 
@@ -170,13 +216,21 @@ namespace Nekoyume.Model.Item
             return Id;
         }
 
-        public virtual IValue Serialize() =>
-            Dictionary.Empty
-                .Add("id", _serializedId ?? Id.Serialize())
-                .Add("item_type", _serializedItemType ?? ItemType.Serialize())
-                .Add("item_sub_type", _serializedItemSubType ?? ItemSubType.Serialize())
-                .Add("grade", _serializedGrade ?? Grade.Serialize())
-                .Add("elemental_type", _serializedElementalType ?? ElementalType.Serialize());
+        /// <summary>
+        /// Serializes the item to List format (new format).
+        /// Order: [version, id, itemType, itemSubType, grade, elementalType]
+        /// </summary>
+        /// <returns>List containing serialized data</returns>
+        public virtual IValue Serialize()
+        {
+            return List.Empty
+                .Add(SerializationVersion)
+                .Add(_serializedId ?? Id.Serialize())
+                .Add(_serializedItemType ?? ((int)ItemType).ToString(CultureInfo.InvariantCulture).Serialize())
+                .Add(_serializedItemSubType ?? ((int)ItemSubType).ToString(CultureInfo.InvariantCulture).Serialize())
+                .Add(_serializedGrade ?? Grade.Serialize())
+                .Add(_serializedElementalType ?? ((int)ElementalType).ToString(CultureInfo.InvariantCulture).Serialize());
+        }
 
         public override string ToString()
         {

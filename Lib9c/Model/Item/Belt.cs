@@ -5,6 +5,10 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Item
 {
+    /// <summary>
+    /// Represents belt equipment items.
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    /// </summary>
     [Serializable]
     public class Belt : Equipment, ITradableItem
     {
@@ -16,12 +20,16 @@ namespace Nekoyume.Model.Item
         {
         }
 
-        public Belt(Dictionary serialized) : base(serialized)
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        public Belt(IValue serialized) : base(serialized)
         {
         }
 
         protected Belt(SerializationInfo info, StreamingContext _)
-            : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
+            : this(Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
     }

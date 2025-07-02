@@ -7,14 +7,18 @@ using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.Item
 {
+    /// <summary>
+    /// Represents costume items that can be equipped by characters.
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    /// </summary>
     [Serializable]
     public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableItem
     {
         // FIXME: Whether the equipment is equipped or not has no asset value and must be removed from the state.
         public bool equipped = false;
-        public string SpineResourcePath { get; }
+        public string SpineResourcePath { get; set; }
 
-        public Guid ItemId { get; }
+        public Guid ItemId { get; private set; }
         public Guid TradableId => ItemId;
         public Guid NonFungibleId => ItemId;
 
@@ -42,40 +46,93 @@ namespace Nekoyume.Model.Item
             ItemId = itemId;
         }
 
-        public Costume(Dictionary serialized) : base(serialized)
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        public Costume(IValue serialized) : base(serialized)
         {
-            if (serialized.TryGetValue((Text) "equipped", out var toEquipped))
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    DeserializeFromDictionary(dict);
+                    break;
+                case List list:
+                    DeserializeFromList(list);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes data from Dictionary format (legacy support).
+        /// </summary>
+        /// <param name="dict">Dictionary containing serialized data</param>
+        private void DeserializeFromDictionary(Dictionary dict)
+        {
+            if (dict.TryGetValue((Text) "equipped", out var toEquipped))
             {
                 equipped = toEquipped.ToBoolean();
             }
-            if (serialized.TryGetValue((Text) "spine_resource_path", out var spineResourcePath))
+            if (dict.TryGetValue((Text) "spine_resource_path", out var spineResourcePath))
             {
-                SpineResourcePath = (Text) spineResourcePath;
+                // SpineResourcePath is read-only, so we can't set it
+                SpineResourcePath = spineResourcePath.ToDotnetString();
+            }
+            if (dict.TryGetValue((Text) "item_id", out var itemId))
+            {
+                ItemId = itemId.ToGuid();
             }
 
-            ItemId = serialized[LegacyCostumeItemIdKey].ToGuid();
-
-            if (serialized.ContainsKey(RequiredBlockIndexKey))
+            if (dict.ContainsKey(RequiredBlockIndexKey))
             {
-                RequiredBlockIndex = serialized[RequiredBlockIndexKey].ToLong();
+                RequiredBlockIndex = dict[RequiredBlockIndexKey].ToLong();
             }
+        }
+
+        /// <summary>
+        /// Deserializes data from List format (new format).
+        /// Order: [baseData..., equipped, spineResourcePath, itemId, requiredBlockIndex]
+        /// </summary>
+        /// <param name="list">List containing serialized data</param>
+        private void DeserializeFromList(List list)
+        {
+            // Always read 11 fields (length check removed)
+            // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+            // Costume fields (6~10): equipped, spineResourcePath, itemId, requiredBlockIndex
+
+            // equipped (index 6)
+            equipped = list[6].ToBoolean();
+
+            // spineResourcePath (index 7)
+            SpineResourcePath = list[7].ToDotnetString();
+
+            // itemId (index 8)
+            ItemId = list[8].ToGuid();
+
+            // requiredBlockIndex (index 9)
+            RequiredBlockIndex = list[9].ToLong();
         }
 
         protected Costume(SerializationInfo info, StreamingContext _)
-            : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
+            : this(Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
 
+        /// <summary>
+        /// Serializes the costume to List format (new format).
+        /// Order: [baseData..., equipped, spineResourcePath, itemId, requiredBlockIndex]
+        /// </summary>
+        /// <returns>List containing serialized data</returns>
         public override IValue Serialize()
         {
-            var innerDictionary = ((Dictionary)base.Serialize())
-                .Add("equipped", equipped.Serialize())
-                .Add("spine_resource_path", SpineResourcePath.Serialize())
-                .Add(LegacyCostumeItemIdKey, ItemId.Serialize());
-
-            return RequiredBlockIndex > 0
-                ? innerDictionary.Add(RequiredBlockIndexKey, RequiredBlockIndex.Serialize())
-                : innerDictionary;
+            var list = ((List)base.Serialize())
+                .Add(equipped.Serialize())
+                .Add((SpineResourcePath ?? "").Serialize())
+                .Add(ItemId.Serialize())
+                .Add(RequiredBlockIndex.Serialize());
+            return list;
         }
 
         protected bool Equals(Costume other)

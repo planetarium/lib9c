@@ -36,7 +36,7 @@ namespace Nekoyume.Model.Garages
             var list = (List)serialized;
             Item = list[0].Kind == ValueKind.Null
                 ? throw new ArgumentNullException(nameof(serialized), "Item is null.")
-                : (IFungibleItem)ItemFactory.Deserialize((Dictionary)list[0]);
+                : (IFungibleItem)ItemFactory.Deserialize(list[0]);
             Count = (Integer)list[1];
         }
 

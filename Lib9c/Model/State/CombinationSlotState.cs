@@ -84,7 +84,15 @@ namespace Nekoyume.Model.State
 
             if (serialized.TryGetValue((Text)ResultKey, out var result))
             {
-                Result = AttachmentActionResult.Deserialize((Dictionary) result);
+                if (result is Dictionary dict)
+                {
+                    Result = AttachmentActionResult.Deserialize(dict);
+                }
+                else
+                {
+                    // Handle legacy List format if needed
+                    throw new ArgumentException($"Unsupported result format: {result.GetType()}");
+                }
             }
 
             if (serialized.TryGetValue((Text)WorkStartBlockIndexKey, out var value))
