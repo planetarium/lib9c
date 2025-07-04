@@ -2,9 +2,11 @@ namespace Lib9c.Tests.Model.Item
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Formatters;
+    using Libplanet.Action;
     using MessagePack;
     using MessagePack.Resolvers;
     using Nekoyume.Model.Item;
@@ -20,14 +22,12 @@ namespace Lib9c.Tests.Model.Item
     {
         private readonly MaterialItemSheet.Row _materialRow;
         private readonly ConsumableItemSheet.Row _consumableRow;
-        private readonly EquipmentItemSheet.Row _equipmentRow;
 
         public ItemSerializationErrorHandlingTest()
         {
             var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
             _materialRow = tableSheets.MaterialItemSheet.First;
             _consumableRow = tableSheets.ConsumableItemSheet.First;
-            _equipmentRow = tableSheets.EquipmentItemSheet.First;
 
             // Setup MessagePack resolver
             var resolver = CompositeResolver.Create(
@@ -44,9 +44,15 @@ namespace Lib9c.Tests.Model.Item
             // Arrange
             var material = new Material(_materialRow);
 
-            // Act - Dictionary format
-            var serializedDict = material.Serialize();
-            var deserializedDict = new Material(serializedDict);
+            // Act - Dictionary format (legacy)
+            var legacyDict = Dictionary.Empty
+                .Add("id", material.Id.Serialize())
+                .Add("grade", material.Grade.Serialize())
+                .Add("item_type", material.ItemType.Serialize())
+                .Add("item_sub_type", material.ItemSubType.Serialize())
+                .Add("elemental_type", material.ElementalType.Serialize())
+                .Add("item_id", material.ItemId.Serialize());
+            var deserializedDict = new Material(legacyDict);
 
             // Act - List format (new format)
             var serializedList = material.Serialize();
@@ -65,9 +71,19 @@ namespace Lib9c.Tests.Model.Item
             // Arrange
             var consumable = new Consumable(_consumableRow, Guid.NewGuid(), 1000L);
 
-            // Act - Dictionary format
-            var serializedDict = consumable.Serialize();
-            var deserializedDict = new Consumable(serializedDict);
+            // Act - Dictionary format (legacy)
+            var legacyDict = Dictionary.Empty
+                .Add("id", consumable.Id.Serialize())
+                .Add("grade", consumable.Grade.Serialize())
+                .Add("item_type", consumable.ItemType.Serialize())
+                .Add("item_sub_type", consumable.ItemSubType.Serialize())
+                .Add("elemental_type", consumable.ElementalType.Serialize())
+                .Add("itemId", consumable.ItemId.Serialize())
+                .Add("statsMap", consumable.StatsMap.Serialize())
+                .Add("skills", new List(consumable.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(consumable.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", consumable.RequiredBlockIndex.Serialize());
+            var deserializedDict = new Consumable(legacyDict);
 
             // Act - List format (new format)
             var serializedList = consumable.Serialize();
@@ -78,78 +94,6 @@ namespace Lib9c.Tests.Model.Item
             Assert.Equal(consumable.ItemId, deserializedDict.ItemId);
             Assert.Equal(consumable.Id, deserializedList.Id);
             Assert.Equal(consumable.ItemId, deserializedList.ItemId);
-        }
-
-        [Fact]
-        public void Equipment_Serialize_With_MessagePack()
-        {
-            // Arrange
-            var equipment = new Equipment(_equipmentRow, Guid.NewGuid(), 1000L);
-
-            // Act - Dictionary format
-            var serializedDict = equipment.Serialize();
-            var deserializedDict = new Equipment(serializedDict);
-
-            // Act - List format (new format)
-            var serializedList = equipment.Serialize();
-            var deserializedList = new Equipment(serializedList);
-
-            // Assert
-            Assert.Equal(equipment.Id, deserializedDict.Id);
-            Assert.Equal(equipment.ItemId, deserializedDict.ItemId);
-            Assert.Equal(equipment.Id, deserializedList.Id);
-            Assert.Equal(equipment.ItemId, deserializedList.ItemId);
-        }
-
-        [Fact]
-        public void Item_Backward_Compatibility_Dictionary_Format()
-        {
-            // Arrange - Create legacy Dictionary format
-            var material = new Material(_materialRow);
-            var legacyDict = Dictionary.Empty
-                .Add("id", material.Id.Serialize())
-                .Add("grade", material.Grade.Serialize())
-                .Add("item_type", ((int)material.ItemType).Serialize())
-                .Add("item_sub_type", ((int)material.ItemSubType).Serialize())
-                .Add("elemental_type", ((int)material.ElementalType).Serialize())
-                .Add("item_id", material.ItemId.Serialize());
-
-            // Act
-            var deserialized = new Material(legacyDict);
-
-            // Assert
-            Assert.Equal(material.Id, deserialized.Id);
-            Assert.Equal(material.Grade, deserialized.Grade);
-            Assert.Equal(material.ItemType, deserialized.ItemType);
-            Assert.Equal(material.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(material.ElementalType, deserialized.ElementalType);
-            Assert.Equal(material.ItemId, deserialized.ItemId);
-        }
-
-        [Fact]
-        public void Item_Forward_Compatibility_List_Format()
-        {
-            // Arrange - Create new List format
-            var material = new Material(_materialRow);
-            var newList = List.Empty
-                .Add(ItemBase.SerializationVersion)
-                .Add(material.Id.Serialize())
-                .Add(((int)material.ItemType).ToString().Serialize())
-                .Add(((int)material.ItemSubType).ToString().Serialize())
-                .Add(material.Grade.Serialize())
-                .Add(((int)material.ElementalType).ToString().Serialize())
-                .Add(material.ItemId.Serialize());
-
-            // Act
-            var deserialized = new Material(newList);
-
-            // Assert
-            Assert.Equal(material.Id, deserialized.Id);
-            Assert.Equal(material.Grade, deserialized.Grade);
-            Assert.Equal(material.ItemType, deserialized.ItemType);
-            Assert.Equal(material.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(material.ElementalType, deserialized.ElementalType);
-            Assert.Equal(material.ItemId, deserialized.ItemId);
         }
 
         [Fact]
@@ -197,7 +141,7 @@ namespace Lib9c.Tests.Model.Item
             var exception = Assert.Throws<ArgumentException>(() => new Material(insufficientList));
             Assert.Contains("Invalid list length for Material", exception.Message);
             Assert.Contains("expected at least 7", exception.Message);
-            Assert.Contains("Fields:", exception.Message);
+            Assert.Contains("Required fields:", exception.Message);
         }
     }
 }

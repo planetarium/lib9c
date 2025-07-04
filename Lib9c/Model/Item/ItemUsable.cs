@@ -13,8 +13,48 @@ namespace Nekoyume.Model.Item
     /// <summary>
     /// Base class for usable items (consumables and equipment).
     /// Supports both Dictionary and List serialization formats for backward compatibility.
-    /// TODO: This model is equipment-oriented and not ideal for sharing with consumables. Consider refactoring during item reorganization.
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// Base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+    /// ItemUsable fields (6~10): itemId, statsMap, skills, buffSkills, requiredBlockIndex
+    /// </para>
+    ///
+    /// <para>
+    /// Additional Properties:
+    /// - ItemId: Unique identifier for the item instance
+    /// - StatsMap: Dictionary of stat types and values
+    /// - Skills: Collection of skills with chance and power
+    /// - BuffSkills: Collection of buff skills
+    /// - RequiredBlockIndex: Block index when item becomes available
+    /// </para>
     /// </summary>
+    /// <remarks>
+    /// This class extends ItemBase with additional properties needed for usable items.
+    /// Skills and buff skills are ordered by chance (descending) then by power (descending)
+    /// during serialization to ensure consistent ordering.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create consumable item
+    /// var consumable = new Consumable(consumableRow, Guid.NewGuid(), 1000L);
+    ///
+    /// // Check if item is available
+    /// if (consumable.RequiredBlockIndex <= currentBlockIndex)
+    /// {
+    ///     // Item can be used
+    ///     var stats = consumable.Stats;
+    ///     var skills = consumable.Skills;
+    /// }
+    /// </code>
+    /// </para>
+    ///
+    /// <para>
+    /// TODO: This model is equipment-oriented and not ideal for sharing with consumables.
+    /// Consider refactoring during item reorganization.
+    /// </para>
+    /// </remarks>
     // todo: 소모품과 장비가 함께 쓰기에는 장비 위주의 모델이 된 느낌. 아이템 정리하면서 정리를 흐음..
     [Serializable]
     public abstract class ItemUsable : ItemBase, INonFungibleItem
@@ -201,7 +241,10 @@ namespace Nekoyume.Model.Item
             if (list.Count < ITEM_USABLE_FIELD_COUNT)
             {
                 var fieldNames = string.Join(", ", GetFieldNames());
-                throw new ArgumentException($"Invalid list length for {GetType().Name}: expected at least {ITEM_USABLE_FIELD_COUNT}, got {list.Count}. Fields: {fieldNames}");
+                throw new ArgumentException(
+                    $"Invalid list length for {GetType().Name}: expected at least {ITEM_USABLE_FIELD_COUNT}, got {list.Count}. " +
+                    $"Required fields: {fieldNames}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
             }
 
             // Always read ITEM_USABLE_FIELD_COUNT fields

@@ -16,7 +16,51 @@ namespace Nekoyume.Model.Item
     /// <summary>
     /// Represents equipment items that can be equipped by characters.
     /// Supports both Dictionary and List serialization formats for backward compatibility.
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// Base fields (0~10): 11 fields from ItemUsable
+    /// Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+    /// </para>
+    ///
+    /// <para>
+    /// Equipment Properties:
+    /// - Equipped: Whether the equipment is currently equipped
+    /// - Level: Equipment enhancement level
+    /// - Stat: Primary stat of the equipment
+    /// - SetId: ID for equipment set bonuses
+    /// - SpineResourcePath: Path to spine animation resource
+    /// - IconId: Icon identifier for UI display
+    /// - ByCustomCraft: Whether crafted through custom crafting
+    /// - CraftWithRandom: Whether random options were applied during crafting
+    /// - HasRandomOnlyIcon: Whether has random-only icon
+    /// - OptionCountFromCombination: Number of options from combination
+    /// - MadeWithMimisbrunnrRecipe: Whether made with Mimisbrunnr recipe
+    /// - Exp: Experience points for leveling
+    /// </para>
     /// </summary>
+    /// <remarks>
+    /// Equipment items can be enhanced, equipped, and provide various stats and bonuses.
+    /// The equipment system supports both regular crafting and custom crafting with random options.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create equipment
+    /// var equipment = new Equipment(equipmentRow, Guid.NewGuid(), 1000L);
+    ///
+    /// // Enhance equipment
+    /// equipment.LevelUp();
+    ///
+    /// // Equip/unequip
+    /// equipment.Equipped = true;
+    ///
+    /// // Check stats
+    /// var statValue = equipment.Stat.StatType;
+    /// var setBonus = equipment.SetId;
+    /// </code>
+    /// </para>
+    /// </remarks>
     [Serializable]
     public class Equipment : ItemUsable, IEquippableItem
     {
@@ -161,7 +205,10 @@ namespace Nekoyume.Model.Item
             if (list.Count < EQUIPMENT_FIELD_COUNT)
             {
                 var fieldNames = string.Join(", ", GetFieldNames());
-                throw new ArgumentException($"Invalid list length for {GetType().Name}: expected at least {EQUIPMENT_FIELD_COUNT}, got {list.Count}. Fields: {fieldNames}");
+                throw new ArgumentException(
+                    $"Invalid list length for {GetType().Name}: expected at least {EQUIPMENT_FIELD_COUNT}, got {list.Count}. " +
+                    $"Required fields: {fieldNames}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
             }
 
             // Always read EQUIPMENT_FIELD_COUNT fields

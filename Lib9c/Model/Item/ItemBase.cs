@@ -12,7 +12,42 @@ namespace Nekoyume.Model.Item
     /// <summary>
     /// Base class for all items in the game.
     /// Supports both Dictionary and List serialization formats for backward compatibility.
+    ///
+    /// <para>
+    /// Serialization Format:
+    /// - Dictionary (Legacy): Uses key-value pairs for backward compatibility
+    /// - List (New): Uses ordered list for better performance and smaller size
+    /// </para>
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// 1. version - Serialization version number
+    /// 2. id - Item ID (Binary format)
+    /// 3. itemType - Item type as string
+    /// 4. itemSubType - Item sub-type as string
+    /// 5. grade - Item grade
+    /// 6. elementalType - Elemental type as string
+    /// </para>
     /// </summary>
+    /// <remarks>
+    /// This class implements dual serialization support to ensure smooth migration
+    /// from the legacy Dictionary format to the new List format. The List format
+    /// provides better performance and smaller serialized data size.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create item
+    /// var material = new Material(materialRow);
+    ///
+    /// // Serialize to List format (new)
+    /// var serialized = material.Serialize(); // Returns List
+    ///
+    /// // Deserialize from any format
+    /// var deserialized = new Material(serialized); // Supports both Dictionary and List
+    /// </code>
+    /// </para>
+    /// </remarks>
     [Serializable]
     public abstract class ItemBase : IItem
     {
@@ -130,8 +165,15 @@ namespace Nekoyume.Model.Item
         /// Constructor for deserialization that supports both Dictionary and List formats.
         /// </summary>
         /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        /// <exception cref="ArgumentNullException">Thrown when serialized is null</exception>
+        /// <exception cref="ArgumentException">Thrown when serialized format is not supported or has insufficient fields</exception>
         protected ItemBase(IValue serialized)
         {
+            if (serialized == null)
+            {
+                throw new ArgumentNullException(nameof(serialized), "Serialized data cannot be null");
+            }
+
             switch (serialized)
             {
                 case Dictionary dict:
@@ -142,12 +184,18 @@ namespace Nekoyume.Model.Item
                     if (list.Count < BaseFieldCount)
                     {
                         var fieldNames = string.Join(", ", GetFieldNames());
-                        throw new ArgumentException($"Invalid list length for ItemBase: expected at least 6, got {list.Count}. Fields: {fieldNames}");
+                        throw new ArgumentException(
+                            $"Invalid list length for {GetType().Name}: expected at least {BaseFieldCount}, got {list.Count}. " +
+                            $"Required fields: {fieldNames}. " +
+                            $"This may indicate corrupted data or an unsupported serialization format.");
                     }
                     DeserializeFromList(list);
                     break;
                 default:
-                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+                    throw new ArgumentException(
+                        $"Unsupported serialization format: {serialized.GetType().Name}. " +
+                        $"Expected Dictionary or List, got {serialized.GetType().Name}. " +
+                        $"This may indicate corrupted data or an unsupported serialization format.");
             }
         }
 

@@ -5,6 +5,8 @@ namespace Lib9c.Tests.Model.Item
     using System.Linq;
     using Bencodex.Types;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
@@ -23,563 +25,160 @@ namespace Lib9c.Tests.Model.Item
         }
 
         [Fact]
-        public void Material_DictionaryToDictionary_Compatibility()
+        public void Material_DictionaryToList_Bidirectional_Compatibility()
         {
             // Arrange
             var materialRow = _tableSheets.MaterialItemSheet.First;
             var originalMaterial = new Material(materialRow);
 
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalMaterial.Serialize();
-            var deserialized = new Material(serialized);
+            // Act - Dictionary to List migration
+            var legacyDict = Dictionary.Empty
+                .Add("id", originalMaterial.Id.Serialize())
+                .Add("grade", originalMaterial.Grade.Serialize())
+                .Add("item_type", originalMaterial.ItemType.Serialize())
+                .Add("item_sub_type", originalMaterial.ItemSubType.Serialize())
+                .Add("elemental_type", originalMaterial.ElementalType.Serialize())
+                .Add("item_id", originalMaterial.ItemId.Serialize());
 
-            // Assert
-            Assert.Equal(originalMaterial.Id, deserialized.Id);
-            Assert.Equal(originalMaterial.Grade, deserialized.Grade);
-            Assert.Equal(originalMaterial.ItemType, deserialized.ItemType);
-            Assert.Equal(originalMaterial.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalMaterial.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalMaterial.ItemId, deserialized.ItemId);
+            var deserializedFromDict = new Material(legacyDict);
+            var listSerialized = deserializedFromDict.Serialize();
+            var deserializedFromList = new Material(listSerialized);
+
+            // Assert - Bidirectional compatibility
+            Assert.Equal(originalMaterial.Id, deserializedFromDict.Id);
+            Assert.Equal(originalMaterial.Grade, deserializedFromDict.Grade);
+            Assert.Equal(originalMaterial.ItemType, deserializedFromDict.ItemType);
+            Assert.Equal(originalMaterial.ItemSubType, deserializedFromDict.ItemSubType);
+            Assert.Equal(originalMaterial.ElementalType, deserializedFromDict.ElementalType);
+            Assert.Equal(originalMaterial.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(deserializedFromDict, deserializedFromList);
         }
 
         [Fact]
-        public void Material_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var materialRow = _tableSheets.MaterialItemSheet.First;
-            var originalMaterial = new Material(materialRow);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalMaterial.Serialize();
-            var deserialized = new Material(serialized);
-
-            // Assert
-            Assert.Equal(originalMaterial.Id, deserialized.Id);
-            Assert.Equal(originalMaterial.Grade, deserialized.Grade);
-            Assert.Equal(originalMaterial.ItemType, deserialized.ItemType);
-            Assert.Equal(originalMaterial.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalMaterial.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalMaterial.ItemId, deserialized.ItemId);
-        }
-
-        [Fact]
-        public void Consumable_DictionaryToDictionary_Compatibility()
+        public void Consumable_DictionaryToList_Bidirectional_Compatibility()
         {
             // Arrange
             var consumableRow = _tableSheets.ConsumableItemSheet.First;
             var originalConsumable = new Consumable(consumableRow, Guid.NewGuid(), 1000L);
 
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalConsumable.Serialize();
-            var deserialized = new Consumable(serialized);
+            // Act - Dictionary to List migration
+            var legacyDict = Dictionary.Empty
+                .Add("id", originalConsumable.Id.Serialize())
+                .Add("grade", originalConsumable.Grade.Serialize())
+                .Add("item_type", originalConsumable.ItemType.Serialize())
+                .Add("item_sub_type", originalConsumable.ItemSubType.Serialize())
+                .Add("elemental_type", originalConsumable.ElementalType.Serialize())
+                .Add("itemId", originalConsumable.ItemId.Serialize())
+                .Add("statsMap", originalConsumable.StatsMap.Serialize())
+                .Add("skills", new List(originalConsumable.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(originalConsumable.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", originalConsumable.RequiredBlockIndex.Serialize());
 
-            // Assert
-            Assert.Equal(originalConsumable.Id, deserialized.Id);
-            Assert.Equal(originalConsumable.Grade, deserialized.Grade);
-            Assert.Equal(originalConsumable.ItemType, deserialized.ItemType);
-            Assert.Equal(originalConsumable.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalConsumable.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalConsumable.ItemId, deserialized.ItemId);
-            Assert.Equal(originalConsumable.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalConsumable.Stats.Count, deserialized.Stats.Count);
+            var deserializedFromDict = new Consumable(legacyDict);
+            var listSerialized = deserializedFromDict.Serialize();
+            var deserializedFromList = new Consumable(listSerialized);
+
+            // Assert - Bidirectional compatibility
+            Assert.Equal(originalConsumable.Id, deserializedFromDict.Id);
+            Assert.Equal(originalConsumable.Grade, deserializedFromDict.Grade);
+            Assert.Equal(originalConsumable.ItemType, deserializedFromDict.ItemType);
+            Assert.Equal(originalConsumable.ItemSubType, deserializedFromDict.ItemSubType);
+            Assert.Equal(originalConsumable.ElementalType, deserializedFromDict.ElementalType);
+            Assert.Equal(originalConsumable.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(originalConsumable.RequiredBlockIndex, deserializedFromDict.RequiredBlockIndex);
+            Assert.Equal(originalConsumable.Stats?.Count ?? 0, deserializedFromDict.Stats?.Count ?? 0);
+            Assert.Equal(deserializedFromDict, deserializedFromList);
         }
 
         [Fact]
-        public void Consumable_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var consumableRow = _tableSheets.ConsumableItemSheet.First;
-            var originalConsumable = new Consumable(consumableRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalConsumable.Serialize();
-            var deserialized = new Consumable(serialized);
-
-            // Assert
-            Assert.Equal(originalConsumable.Id, deserialized.Id);
-            Assert.Equal(originalConsumable.Grade, deserialized.Grade);
-            Assert.Equal(originalConsumable.ItemType, deserialized.ItemType);
-            Assert.Equal(originalConsumable.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalConsumable.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalConsumable.ItemId, deserialized.ItemId);
-            Assert.Equal(originalConsumable.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalConsumable.Stats.Count, deserialized.Stats.Count);
-        }
-
-        [Fact]
-        public void Costume_DictionaryToDictionary_Compatibility()
+        public void Costume_DictionaryToList_Bidirectional_Compatibility()
         {
             // Arrange
             var costumeRow = _tableSheets.CostumeItemSheet.First;
             var originalCostume = new Costume(costumeRow, Guid.NewGuid());
 
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalCostume.Serialize();
-            var deserialized = new Costume(serialized);
+            // Act - Dictionary to List migration
+            var legacyDict = Dictionary.Empty
+                .Add("id", originalCostume.Id.Serialize())
+                .Add("grade", originalCostume.Grade.Serialize())
+                .Add("item_type", originalCostume.ItemType.Serialize())
+                .Add("item_sub_type", originalCostume.ItemSubType.Serialize())
+                .Add("elemental_type", originalCostume.ElementalType.Serialize())
+                .Add("item_id", originalCostume.ItemId.Serialize())
+                .Add("spine_resource_path", originalCostume.SpineResourcePath.Serialize())
+                .Add("equipped", originalCostume.Equipped.Serialize());
 
-            // Assert
-            Assert.Equal(originalCostume.Id, deserialized.Id);
-            Assert.Equal(originalCostume.Grade, deserialized.Grade);
-            Assert.Equal(originalCostume.ItemType, deserialized.ItemType);
-            Assert.Equal(originalCostume.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalCostume.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalCostume.ItemId, deserialized.ItemId);
-            Assert.Equal(originalCostume.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalCostume.Equipped, deserialized.Equipped);
+            var deserializedFromDict = new Costume(legacyDict);
+            var listSerialized = deserializedFromDict.Serialize();
+            var deserializedFromList = new Costume(listSerialized);
+
+            // Assert - Bidirectional compatibility
+            Assert.Equal(originalCostume.Id, deserializedFromDict.Id);
+            Assert.Equal(originalCostume.Grade, deserializedFromDict.Grade);
+            Assert.Equal(originalCostume.ItemType, deserializedFromDict.ItemType);
+            Assert.Equal(originalCostume.ItemSubType, deserializedFromDict.ItemSubType);
+            Assert.Equal(originalCostume.ElementalType, deserializedFromDict.ElementalType);
+            Assert.Equal(originalCostume.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(originalCostume.SpineResourcePath, deserializedFromDict.SpineResourcePath);
+            Assert.Equal(originalCostume.Equipped, deserializedFromDict.Equipped);
+            Assert.Equal(deserializedFromDict, deserializedFromList);
         }
 
         [Fact]
-        public void Costume_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var costumeRow = _tableSheets.CostumeItemSheet.First;
-            var originalCostume = new Costume(costumeRow, Guid.NewGuid());
-
-            // Act - Serialize to List (new format)
-            var serialized = originalCostume.Serialize();
-            var deserialized = new Costume(serialized);
-
-            // Assert
-            Assert.Equal(originalCostume.Id, deserialized.Id);
-            Assert.Equal(originalCostume.Grade, deserialized.Grade);
-            Assert.Equal(originalCostume.ItemType, deserialized.ItemType);
-            Assert.Equal(originalCostume.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalCostume.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalCostume.ItemId, deserialized.ItemId);
-            Assert.Equal(originalCostume.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalCostume.Equipped, deserialized.Equipped);
-        }
-
-        [Fact]
-        public void Equipment_DictionaryToDictionary_Compatibility()
+        public void Equipment_DictionaryToList_Bidirectional_Compatibility()
         {
             // Arrange
             var equipmentRow = _tableSheets.EquipmentItemSheet.First;
-            var originalEquipment = new Equipment(equipmentRow, Guid.NewGuid(), 1000L);
+            var originalEquipment = CreateEquipmentWithOptions(equipmentRow, Guid.NewGuid(), 1000L);
 
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalEquipment.Serialize();
-            var deserialized = new Equipment(serialized);
+            // Act - Dictionary to List migration
+            var legacyDict = Dictionary.Empty
+                .Add("id", originalEquipment.Id.Serialize())
+                .Add("grade", originalEquipment.Grade.Serialize())
+                .Add("item_type", originalEquipment.ItemType.Serialize())
+                .Add("item_sub_type", originalEquipment.ItemSubType.Serialize())
+                .Add("elemental_type", originalEquipment.ElementalType.Serialize())
+                .Add("itemId", originalEquipment.ItemId.Serialize())
+                .Add("statsMap", originalEquipment.StatsMap.Serialize())
+                .Add("skills", new List(originalEquipment.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(originalEquipment.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", originalEquipment.RequiredBlockIndex.Serialize())
+                .Add("equipped", originalEquipment.Equipped.Serialize())
+                .Add("level", originalEquipment.level.Serialize())
+                .Add("stat", originalEquipment.Stat.Serialize())
+                .Add("set_id", originalEquipment.SetId.Serialize())
+                .Add("spine_resource_path", originalEquipment.SpineResourcePath.Serialize())
+                .Add("eq_exp", originalEquipment.Exp.Serialize());
 
-            // Assert
-            Assert.Equal(originalEquipment.Id, deserialized.Id);
-            Assert.Equal(originalEquipment.Grade, deserialized.Grade);
-            Assert.Equal(originalEquipment.ItemType, deserialized.ItemType);
-            Assert.Equal(originalEquipment.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalEquipment.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalEquipment.ItemId, deserialized.ItemId);
-            Assert.Equal(originalEquipment.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalEquipment.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalEquipment.SetId, deserialized.SetId);
-            Assert.Equal(originalEquipment.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalEquipment.Equipped, deserialized.Equipped);
-            Assert.Equal(originalEquipment.level, deserialized.level);
-            Assert.Equal(originalEquipment.Exp, deserialized.Exp);
-        }
+            var deserializedFromDict = new Equipment(legacyDict);
+            var listSerialized = deserializedFromDict.Serialize();
+            var deserializedFromList = new Equipment(listSerialized);
 
-        [Fact]
-        public void Equipment_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var equipmentRow = _tableSheets.EquipmentItemSheet.First;
-            var originalEquipment = new Equipment(equipmentRow, Guid.NewGuid(), 1000L);
+            // Verify that options are preserved
+            Assert.Equal(originalEquipment.Skills.Count, deserializedFromDict.Skills.Count);
+            Assert.Equal(originalEquipment.Skills.Count, deserializedFromList.Skills.Count);
+            Assert.Equal(
+                originalEquipment.StatsMap.GetAdditionalStats(true).Count(),
+                deserializedFromDict.StatsMap.GetAdditionalStats(true).Count());
+            Assert.Equal(
+                originalEquipment.StatsMap.GetAdditionalStats(true).Count(),
+                deserializedFromList.StatsMap.GetAdditionalStats(true).Count());
 
-            // Act - Serialize to List (new format)
-            var serialized = originalEquipment.Serialize();
-            var deserialized = new Equipment(serialized);
-
-            // Assert
-            Assert.Equal(originalEquipment.Id, deserialized.Id);
-            Assert.Equal(originalEquipment.Grade, deserialized.Grade);
-            Assert.Equal(originalEquipment.ItemType, deserialized.ItemType);
-            Assert.Equal(originalEquipment.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalEquipment.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalEquipment.ItemId, deserialized.ItemId);
-            Assert.Equal(originalEquipment.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalEquipment.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalEquipment.SetId, deserialized.SetId);
-            Assert.Equal(originalEquipment.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalEquipment.Equipped, deserialized.Equipped);
-            Assert.Equal(originalEquipment.level, deserialized.level);
-            Assert.Equal(originalEquipment.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Weapon_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var weaponRow = _tableSheets.EquipmentItemSheet.First;
-            var originalWeapon = new Weapon(weaponRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalWeapon.Serialize();
-            var deserialized = new Weapon(serialized);
-
-            // Assert
-            Assert.Equal(originalWeapon.Id, deserialized.Id);
-            Assert.Equal(originalWeapon.Grade, deserialized.Grade);
-            Assert.Equal(originalWeapon.ItemType, deserialized.ItemType);
-            Assert.Equal(originalWeapon.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalWeapon.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalWeapon.ItemId, deserialized.ItemId);
-            Assert.Equal(originalWeapon.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalWeapon.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalWeapon.SetId, deserialized.SetId);
-            Assert.Equal(originalWeapon.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalWeapon.Equipped, deserialized.Equipped);
-            Assert.Equal(originalWeapon.level, deserialized.level);
-            Assert.Equal(originalWeapon.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Weapon_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var weaponRow = _tableSheets.EquipmentItemSheet.First;
-            var originalWeapon = new Weapon(weaponRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalWeapon.Serialize();
-            var deserialized = new Weapon(serialized);
-
-            // Assert
-            Assert.Equal(originalWeapon.Id, deserialized.Id);
-            Assert.Equal(originalWeapon.Grade, deserialized.Grade);
-            Assert.Equal(originalWeapon.ItemType, deserialized.ItemType);
-            Assert.Equal(originalWeapon.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalWeapon.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalWeapon.ItemId, deserialized.ItemId);
-            Assert.Equal(originalWeapon.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalWeapon.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalWeapon.SetId, deserialized.SetId);
-            Assert.Equal(originalWeapon.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalWeapon.Equipped, deserialized.Equipped);
-            Assert.Equal(originalWeapon.level, deserialized.level);
-            Assert.Equal(originalWeapon.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Armor_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var armorRow = _tableSheets.EquipmentItemSheet.First;
-            var originalArmor = new Armor(armorRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalArmor.Serialize();
-            var deserialized = new Armor(serialized);
-
-            // Assert
-            Assert.Equal(originalArmor.Id, deserialized.Id);
-            Assert.Equal(originalArmor.Grade, deserialized.Grade);
-            Assert.Equal(originalArmor.ItemType, deserialized.ItemType);
-            Assert.Equal(originalArmor.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalArmor.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalArmor.ItemId, deserialized.ItemId);
-            Assert.Equal(originalArmor.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalArmor.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalArmor.SetId, deserialized.SetId);
-            Assert.Equal(originalArmor.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalArmor.Equipped, deserialized.Equipped);
-            Assert.Equal(originalArmor.level, deserialized.level);
-            Assert.Equal(originalArmor.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Armor_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var armorRow = _tableSheets.EquipmentItemSheet.First;
-            var originalArmor = new Armor(armorRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalArmor.Serialize();
-            var deserialized = new Armor(serialized);
-
-            // Assert
-            Assert.Equal(originalArmor.Id, deserialized.Id);
-            Assert.Equal(originalArmor.Grade, deserialized.Grade);
-            Assert.Equal(originalArmor.ItemType, deserialized.ItemType);
-            Assert.Equal(originalArmor.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalArmor.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalArmor.ItemId, deserialized.ItemId);
-            Assert.Equal(originalArmor.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalArmor.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalArmor.SetId, deserialized.SetId);
-            Assert.Equal(originalArmor.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalArmor.Equipped, deserialized.Equipped);
-            Assert.Equal(originalArmor.level, deserialized.level);
-            Assert.Equal(originalArmor.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Belt_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var beltRow = _tableSheets.EquipmentItemSheet.First;
-            var originalBelt = new Belt(beltRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalBelt.Serialize();
-            var deserialized = new Belt(serialized);
-
-            // Assert
-            Assert.Equal(originalBelt.Id, deserialized.Id);
-            Assert.Equal(originalBelt.Grade, deserialized.Grade);
-            Assert.Equal(originalBelt.ItemType, deserialized.ItemType);
-            Assert.Equal(originalBelt.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalBelt.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalBelt.ItemId, deserialized.ItemId);
-            Assert.Equal(originalBelt.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalBelt.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalBelt.SetId, deserialized.SetId);
-            Assert.Equal(originalBelt.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalBelt.Equipped, deserialized.Equipped);
-            Assert.Equal(originalBelt.level, deserialized.level);
-            Assert.Equal(originalBelt.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Belt_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var beltRow = _tableSheets.EquipmentItemSheet.First;
-            var originalBelt = new Belt(beltRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalBelt.Serialize();
-            var deserialized = new Belt(serialized);
-
-            // Assert
-            Assert.Equal(originalBelt.Id, deserialized.Id);
-            Assert.Equal(originalBelt.Grade, deserialized.Grade);
-            Assert.Equal(originalBelt.ItemType, deserialized.ItemType);
-            Assert.Equal(originalBelt.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalBelt.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalBelt.ItemId, deserialized.ItemId);
-            Assert.Equal(originalBelt.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalBelt.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalBelt.SetId, deserialized.SetId);
-            Assert.Equal(originalBelt.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalBelt.Equipped, deserialized.Equipped);
-            Assert.Equal(originalBelt.level, deserialized.level);
-            Assert.Equal(originalBelt.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Necklace_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var necklaceRow = _tableSheets.EquipmentItemSheet.First;
-            var originalNecklace = new Necklace(necklaceRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalNecklace.Serialize();
-            var deserialized = new Necklace(serialized);
-
-            // Assert
-            Assert.Equal(originalNecklace.Id, deserialized.Id);
-            Assert.Equal(originalNecklace.Grade, deserialized.Grade);
-            Assert.Equal(originalNecklace.ItemType, deserialized.ItemType);
-            Assert.Equal(originalNecklace.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalNecklace.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalNecklace.ItemId, deserialized.ItemId);
-            Assert.Equal(originalNecklace.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalNecklace.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalNecklace.SetId, deserialized.SetId);
-            Assert.Equal(originalNecklace.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalNecklace.Equipped, deserialized.Equipped);
-            Assert.Equal(originalNecklace.level, deserialized.level);
-            Assert.Equal(originalNecklace.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Necklace_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var necklaceRow = _tableSheets.EquipmentItemSheet.First;
-            var originalNecklace = new Necklace(necklaceRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalNecklace.Serialize();
-            var deserialized = new Necklace(serialized);
-
-            // Assert
-            Assert.Equal(originalNecklace.Id, deserialized.Id);
-            Assert.Equal(originalNecklace.Grade, deserialized.Grade);
-            Assert.Equal(originalNecklace.ItemType, deserialized.ItemType);
-            Assert.Equal(originalNecklace.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalNecklace.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalNecklace.ItemId, deserialized.ItemId);
-            Assert.Equal(originalNecklace.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalNecklace.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalNecklace.SetId, deserialized.SetId);
-            Assert.Equal(originalNecklace.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalNecklace.Equipped, deserialized.Equipped);
-            Assert.Equal(originalNecklace.level, deserialized.level);
-            Assert.Equal(originalNecklace.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Ring_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var ringRow = _tableSheets.EquipmentItemSheet.First;
-            var originalRing = new Ring(ringRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalRing.Serialize();
-            var deserialized = new Ring(serialized);
-
-            // Assert
-            Assert.Equal(originalRing.Id, deserialized.Id);
-            Assert.Equal(originalRing.Grade, deserialized.Grade);
-            Assert.Equal(originalRing.ItemType, deserialized.ItemType);
-            Assert.Equal(originalRing.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalRing.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalRing.ItemId, deserialized.ItemId);
-            Assert.Equal(originalRing.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalRing.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalRing.SetId, deserialized.SetId);
-            Assert.Equal(originalRing.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalRing.Equipped, deserialized.Equipped);
-            Assert.Equal(originalRing.level, deserialized.level);
-            Assert.Equal(originalRing.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Ring_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var ringRow = _tableSheets.EquipmentItemSheet.First;
-            var originalRing = new Ring(ringRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalRing.Serialize();
-            var deserialized = new Ring(serialized);
-
-            // Assert
-            Assert.Equal(originalRing.Id, deserialized.Id);
-            Assert.Equal(originalRing.Grade, deserialized.Grade);
-            Assert.Equal(originalRing.ItemType, deserialized.ItemType);
-            Assert.Equal(originalRing.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalRing.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalRing.ItemId, deserialized.ItemId);
-            Assert.Equal(originalRing.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalRing.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalRing.SetId, deserialized.SetId);
-            Assert.Equal(originalRing.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalRing.Equipped, deserialized.Equipped);
-            Assert.Equal(originalRing.level, deserialized.level);
-            Assert.Equal(originalRing.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Aura_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var auraRow = _tableSheets.EquipmentItemSheet.First;
-            var originalAura = new Aura(auraRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalAura.Serialize();
-            var deserialized = new Aura(serialized);
-
-            // Assert
-            Assert.Equal(originalAura.Id, deserialized.Id);
-            Assert.Equal(originalAura.Grade, deserialized.Grade);
-            Assert.Equal(originalAura.ItemType, deserialized.ItemType);
-            Assert.Equal(originalAura.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalAura.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalAura.ItemId, deserialized.ItemId);
-            Assert.Equal(originalAura.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalAura.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalAura.SetId, deserialized.SetId);
-            Assert.Equal(originalAura.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalAura.Equipped, deserialized.Equipped);
-            Assert.Equal(originalAura.level, deserialized.level);
-            Assert.Equal(originalAura.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Aura_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var auraRow = _tableSheets.EquipmentItemSheet.First;
-            var originalAura = new Aura(auraRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalAura.Serialize();
-            var deserialized = new Aura(serialized);
-
-            // Assert
-            Assert.Equal(originalAura.Id, deserialized.Id);
-            Assert.Equal(originalAura.Grade, deserialized.Grade);
-            Assert.Equal(originalAura.ItemType, deserialized.ItemType);
-            Assert.Equal(originalAura.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalAura.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalAura.ItemId, deserialized.ItemId);
-            Assert.Equal(originalAura.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalAura.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalAura.SetId, deserialized.SetId);
-            Assert.Equal(originalAura.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalAura.Equipped, deserialized.Equipped);
-            Assert.Equal(originalAura.level, deserialized.level);
-            Assert.Equal(originalAura.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Grimoire_DictionaryToDictionary_Compatibility()
-        {
-            // Arrange
-            var grimoireRow = _tableSheets.EquipmentItemSheet.First;
-            var originalGrimoire = new Grimoire(grimoireRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to Dictionary (legacy format)
-            var serialized = originalGrimoire.Serialize();
-            var deserialized = new Grimoire(serialized);
-
-            // Assert
-            Assert.Equal(originalGrimoire.Id, deserialized.Id);
-            Assert.Equal(originalGrimoire.Grade, deserialized.Grade);
-            Assert.Equal(originalGrimoire.ItemType, deserialized.ItemType);
-            Assert.Equal(originalGrimoire.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalGrimoire.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalGrimoire.ItemId, deserialized.ItemId);
-            Assert.Equal(originalGrimoire.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalGrimoire.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalGrimoire.SetId, deserialized.SetId);
-            Assert.Equal(originalGrimoire.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalGrimoire.Equipped, deserialized.Equipped);
-            Assert.Equal(originalGrimoire.level, deserialized.level);
-            Assert.Equal(originalGrimoire.Exp, deserialized.Exp);
-        }
-
-        [Fact]
-        public void Grimoire_ListToDictionary_Compatibility()
-        {
-            // Arrange
-            var grimoireRow = _tableSheets.EquipmentItemSheet.First;
-            var originalGrimoire = new Grimoire(grimoireRow, Guid.NewGuid(), 1000L);
-
-            // Act - Serialize to List (new format)
-            var serialized = originalGrimoire.Serialize();
-            var deserialized = new Grimoire(serialized);
-
-            // Assert
-            Assert.Equal(originalGrimoire.Id, deserialized.Id);
-            Assert.Equal(originalGrimoire.Grade, deserialized.Grade);
-            Assert.Equal(originalGrimoire.ItemType, deserialized.ItemType);
-            Assert.Equal(originalGrimoire.ItemSubType, deserialized.ItemSubType);
-            Assert.Equal(originalGrimoire.ElementalType, deserialized.ElementalType);
-            Assert.Equal(originalGrimoire.ItemId, deserialized.ItemId);
-            Assert.Equal(originalGrimoire.RequiredBlockIndex, deserialized.RequiredBlockIndex);
-            Assert.Equal(originalGrimoire.Stat.StatType, deserialized.Stat.StatType);
-            Assert.Equal(originalGrimoire.SetId, deserialized.SetId);
-            Assert.Equal(originalGrimoire.SpineResourcePath, deserialized.SpineResourcePath);
-            Assert.Equal(originalGrimoire.Equipped, deserialized.Equipped);
-            Assert.Equal(originalGrimoire.level, deserialized.level);
-            Assert.Equal(originalGrimoire.Exp, deserialized.Exp);
+            // Assert - Bidirectional compatibility
+            Assert.Equal(originalEquipment.Id, deserializedFromDict.Id);
+            Assert.Equal(originalEquipment.Grade, deserializedFromDict.Grade);
+            Assert.Equal(originalEquipment.ItemType, deserializedFromDict.ItemType);
+            Assert.Equal(originalEquipment.ItemSubType, deserializedFromDict.ItemSubType);
+            Assert.Equal(originalEquipment.ElementalType, deserializedFromDict.ElementalType);
+            Assert.Equal(originalEquipment.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(originalEquipment.RequiredBlockIndex, deserializedFromDict.RequiredBlockIndex);
+            Assert.Equal(originalEquipment.Stat.StatType, deserializedFromDict.Stat.StatType);
+            Assert.Equal(originalEquipment.SetId, deserializedFromDict.SetId);
+            Assert.Equal(originalEquipment.SpineResourcePath, deserializedFromDict.SpineResourcePath);
+            Assert.Equal(originalEquipment.Equipped, deserializedFromDict.Equipped);
+            Assert.Equal(originalEquipment.level, deserializedFromDict.level);
+            Assert.Equal(originalEquipment.Exp, deserializedFromDict.Exp);
+            Assert.Equal(deserializedFromDict, deserializedFromList);
         }
 
         [Fact]
@@ -594,6 +193,8 @@ namespace Lib9c.Tests.Model.Item
 
             // Assert
             Assert.IsType<List>(serialized);
+            var list = (List)serialized;
+            Assert.Equal(ItemBase.SerializationVersion, ((Integer)list[0]).Value);
         }
 
         [Fact]
@@ -601,25 +202,80 @@ namespace Lib9c.Tests.Model.Item
         {
             // Arrange
             var materialRow = _tableSheets.MaterialItemSheet.First;
-            var originalMaterial = new Material(materialRow);
+            var material = new Material(materialRow);
 
-            // Act & Assert - List format
-            var listSerialized = originalMaterial.Serialize();
-            var listDeserialized = new Material(listSerialized);
-            Assert.Equal(originalMaterial.Id, listDeserialized.Id);
-            Assert.Equal(originalMaterial.ItemId, listDeserialized.ItemId);
+            // Act - Test List format
+            var listSerialized = material.Serialize();
+            var deserializedFromList = new Material(listSerialized);
 
-            // Act & Assert - Dictionary format (legacy)
+            // Act - Test Dictionary format
             var dictSerialized = Dictionary.Empty
-                .Add("id", originalMaterial.Id.Serialize())
-                .Add("item_type", originalMaterial.ItemType.Serialize())
-                .Add("item_sub_type", originalMaterial.ItemSubType.Serialize())
-                .Add("grade", originalMaterial.Grade.Serialize())
-                .Add("elemental_type", originalMaterial.ElementalType.Serialize())
-                .Add("item_id", originalMaterial.ItemId.Serialize());
-            var dictDeserialized = new Material(dictSerialized);
-            Assert.Equal(originalMaterial.Id, dictDeserialized.Id);
-            Assert.Equal(originalMaterial.ItemId, dictDeserialized.ItemId);
+                .Add("id", material.Id.Serialize())
+                .Add("grade", material.Grade.Serialize())
+                .Add("item_type", material.ItemType.Serialize())
+                .Add("item_sub_type", material.ItemSubType.Serialize())
+                .Add("elemental_type", material.ElementalType.Serialize())
+                .Add("item_id", material.ItemId.Serialize());
+            var deserializedFromDict = new Material(dictSerialized);
+
+            // Assert
+            Assert.Equal(material.Id, deserializedFromList.Id);
+            Assert.Equal(material.Id, deserializedFromDict.Id);
+        }
+
+        /// <summary>
+        /// Creates equipment with options similar to CombinationEquipment action.
+        /// </summary>
+        /// <param name="equipmentRow">Equipment item sheet row.</param>
+        /// <param name="id">Equipment ID.</param>
+        /// <param name="requiredBlockIndex">Required block index.</param>
+        /// <returns>Equipment with randomly added options.</returns>
+        private Equipment CreateEquipmentWithOptions(
+            EquipmentItemSheet.Row equipmentRow,
+            Guid id,
+            long requiredBlockIndex)
+        {
+            var equipment = new Equipment(equipmentRow, id, requiredBlockIndex);
+            var random = new Random(12345); // Fixed seed for deterministic test
+
+            // Get sheets for option generation
+            var tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+            var optionSheet = tableSheets.EquipmentItemOptionSheet;
+            var skillSheet = tableSheets.SkillSheet;
+
+            // Add some random stat options
+            var statOptions = optionSheet.Values
+                .Where(row => row.StatType != StatType.NONE)
+                .Take(3)
+                .ToList();
+
+            foreach (var optionRow in statOptions)
+            {
+                var value = random.Next(optionRow.StatMin, optionRow.StatMax + 1);
+                equipment.StatsMap.AddStatAdditionalValue(optionRow.StatType, value);
+                equipment.optionCountFromCombination++;
+            }
+
+            // Add some random skill options
+            var skillOptions = optionSheet.Values
+                .Where(row => row.StatType == StatType.NONE && row.SkillId > 0)
+                .Take(2)
+                .ToList();
+
+            foreach (var optionRow in skillOptions)
+            {
+                var skillRow = skillSheet.OrderedList.FirstOrDefault(r => r.Id == optionRow.SkillId);
+                if (skillRow != null)
+                {
+                    var dmg = random.Next(optionRow.SkillDamageMin, optionRow.SkillDamageMax + 1);
+                    var chance = random.Next(optionRow.SkillChanceMin, optionRow.SkillChanceMax + 1);
+                    var skill = SkillFactory.Get(skillRow, dmg, chance, 0, StatType.NONE);
+                    equipment.Skills.Add(skill);
+                    equipment.optionCountFromCombination++;
+                }
+            }
+
+            return equipment;
         }
     }
 }

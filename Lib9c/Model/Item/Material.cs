@@ -12,7 +12,41 @@ namespace Nekoyume.Model.Item
     /// <summary>
     /// Represents a material item that can be used for crafting and other purposes.
     /// Supports both Dictionary and List serialization formats for backward compatibility.
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// Base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+    /// Material fields (6): itemId
+    /// </para>
+    ///
+    /// <para>
+    /// Material Properties:
+    /// - ItemId: Unique identifier for the material item
+    /// </para>
     /// </summary>
+    /// <remarks>
+    /// Material items are fungible items used primarily for crafting other items.
+    /// They support both Binary and Text formats for ItemId during deserialization
+    /// to maintain compatibility with different serialization formats.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create material
+    /// var material = new Material(materialRow);
+    ///
+    /// // Use in crafting
+    /// var requiredMaterials = new Dictionary&lt;HashDigest&lt;SHA256&gt;, int&gt;
+    /// {
+    ///     { material.ItemId, 5 } // 5 of this material
+    /// };
+    ///
+    /// // Check material properties
+    /// var grade = material.Grade;
+    /// var itemType = material.ItemType;
+    /// </code>
+    /// </para>
+    /// </remarks>
     [Serializable]
     public class Material : ItemBase, ISerializable, IFungibleItem
     {
@@ -37,6 +71,7 @@ namespace Nekoyume.Model.Item
         /// Sets the ItemId from various serialized formats.
         /// </summary>
         /// <param name="itemIdValue">Serialized ItemId value</param>
+        /// <exception cref="ArgumentException">Thrown when ItemId format is not supported</exception>
         private void SetItemId(IValue itemIdValue)
         {
             if (itemIdValue is Binary binary)
@@ -50,7 +85,10 @@ namespace Nekoyume.Model.Item
             }
             else
             {
-                throw new ArgumentException($"Unsupported ItemId format: {itemIdValue.GetType()}");
+                throw new ArgumentException(
+                    $"Unsupported ItemId format: {itemIdValue.GetType().Name}. " +
+                    $"Expected Binary or Text, got {itemIdValue.GetType().Name}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
             }
         }
 
@@ -101,7 +139,10 @@ namespace Nekoyume.Model.Item
             if (list.Count < MATERIAL_FIELD_COUNT)
             {
                 var fieldNames = string.Join(", ", GetFieldNames());
-                throw new ArgumentException($"Invalid list length for {GetType().Name}: expected at least {MATERIAL_FIELD_COUNT}, got {list.Count}. Fields: {fieldNames}");
+                throw new ArgumentException(
+                    $"Invalid list length for {GetType().Name}: expected at least {MATERIAL_FIELD_COUNT}, got {list.Count}. " +
+                    $"Required fields: {fieldNames}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
             }
 
             // Always read MATERIAL_FIELD_COUNT fields
