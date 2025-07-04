@@ -54,9 +54,8 @@ namespace Nekoyume.Model.Item
                         }
                         else if (itemIdValue is Text text)
                         {
-                            // Handle Text format for ItemId (legacy support)
-                            // For now, we'll skip setting ItemId from Text format
-                            // as it requires proper hash conversion
+                            // Convert Text format to Binary for ItemId
+                            ItemId = text.ToItemId();
                         }
                     }
                     break;
@@ -86,7 +85,13 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Always read 7 fields (length check removed)
+            // Check if we have enough fields for Material (base 6 + itemId 1 = 7)
+            if (list.Count < 7)
+            {
+                throw new ArgumentException($"Invalid list length for Material: expected at least 7, got {list.Count}");
+            }
+
+            // Always read 7 fields
             // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
             // Material fields (6): itemId
 
@@ -95,6 +100,11 @@ namespace Nekoyume.Model.Item
             if (itemIdValue is Binary binary)
             {
                 ItemId = binary.ToItemId();
+            }
+            else if (itemIdValue is Text text)
+            {
+                // Convert Text format to Binary for ItemId
+                ItemId = text.ToItemId();
             }
         }
 

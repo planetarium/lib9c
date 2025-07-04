@@ -65,8 +65,13 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Always read 12 fields (length check removed)
-            // base fields (0~10): ItemUsable의 11개 필드
+            // Check if we have enough fields for Consumable (base 11 + stats 1 = 12)
+            if (list.Count < 12)
+            {
+                throw new ArgumentException($"Invalid list length for Consumable: expected at least 12, got {list.Count}");
+            }
+
+            // base fields (0~10): 11 fields from ItemUsable
             // Consumable fields (11): stats
             Stats = list[11].ToList(i => new DecimalStat((Dictionary) i));
         }

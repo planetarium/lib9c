@@ -13,8 +13,7 @@ namespace Nekoyume.Model.Item
     /// <summary>
     /// Base class for usable items (consumables and equipment).
     /// Supports both Dictionary and List serialization formats for backward compatibility.
-    /// TODO: The model seems to be equipment-oriented when used together with consumables.
-    /// Consider refactoring during item reorganization.
+    /// TODO: This model is equipment-oriented and not ideal for sharing with consumables. Consider refactoring during item reorganization.
     /// </summary>
     // todo: 소모품과 장비가 함께 쓰기에는 장비 위주의 모델이 된 느낌. 아이템 정리하면서 정리를 흐음..
     [Serializable]
@@ -195,7 +194,13 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Always read 11 fields (length check removed)
+            // Check if we have enough fields for ItemUsable (base 6 + 5 fields = 11)
+            if (list.Count < 11)
+            {
+                throw new ArgumentException($"Invalid list length for ItemUsable: expected at least 11, got {list.Count}");
+            }
+
+            // Always read 11 fields
             // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
             // ItemUsable fields (6~10): itemId, statsMap, skills, buffSkills, requiredBlockIndex
 

@@ -154,8 +154,14 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Always read 23 fields (length check removed)
-            // base fields (0~10): ItemUsable의 11개 필드
+            // Check if we have enough fields for Equipment (base 11 + 12 fields = 23)
+            if (list.Count < 23)
+            {
+                throw new ArgumentException($"Invalid list length for Equipment: expected at least 23, got {list.Count}");
+            }
+
+            // Always read 23 fields
+            // base fields (0~10): 11 fields from ItemUsable
             // Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
 
             // equipped (index 11)

@@ -77,7 +77,6 @@ namespace Nekoyume.Model.Item
             }
             if (dict.TryGetValue((Text) "spine_resource_path", out var spineResourcePath))
             {
-                // SpineResourcePath is read-only, so we can't set it
                 SpineResourcePath = spineResourcePath.ToDotnetString();
             }
             if (dict.TryGetValue((Text) "item_id", out var itemId))
@@ -98,9 +97,15 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Always read 11 fields (length check removed)
+            // Check if we have enough fields for Costume (base 6 + 4 fields = 10)
+            if (list.Count < 10)
+            {
+                throw new ArgumentException($"Invalid list length for Costume: expected at least 10, got {list.Count}");
+            }
+
+            // Always read 10 fields
             // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
-            // Costume fields (6~10): equipped, spineResourcePath, itemId, requiredBlockIndex
+            // Costume fields (6~9): equipped, spineResourcePath, itemId, requiredBlockIndex
 
             // equipped (index 6)
             equipped = list[6].ToBoolean();
