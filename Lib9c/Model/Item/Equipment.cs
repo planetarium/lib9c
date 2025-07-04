@@ -20,6 +20,9 @@ namespace Nekoyume.Model.Item
     [Serializable]
     public class Equipment : ItemUsable, IEquippableItem
     {
+        // Field count constants for serialization
+        private const int EQUIPMENT_FIELD_COUNT = ITEM_USABLE_FIELD_COUNT + 12; // base + equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+
         // FIXME: Whether the equipment is equipped or not has no asset value and must be removed from the state.
         public bool equipped;
         public int level;
@@ -154,13 +157,14 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Check if we have enough fields for Equipment (base 11 + 12 fields = 23)
-            if (list.Count < 23)
+            // Check if we have enough fields for Equipment
+            if (list.Count < EQUIPMENT_FIELD_COUNT)
             {
-                throw new ArgumentException($"Invalid list length for Equipment: expected at least 23, got {list.Count}");
+                var fieldNames = string.Join(", ", GetFieldNames());
+                throw new ArgumentException($"Invalid list length for {GetType().Name}: expected at least {EQUIPMENT_FIELD_COUNT}, got {list.Count}. Fields: {fieldNames}");
             }
 
-            // Always read 23 fields
+            // Always read EQUIPMENT_FIELD_COUNT fields
             // base fields (0~10): 11 fields from ItemUsable
             // Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
 
@@ -228,6 +232,29 @@ namespace Nekoyume.Model.Item
                 .Add(Exp);
 
             return list;
+        }
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        protected override string[] GetFieldNames()
+        {
+            return base.GetFieldNames().Concat(new[]
+            {
+                "equipped",
+                "level",
+                "stat",
+                "setId",
+                "spineResourcePath",
+                "iconId",
+                "byCustomCraft",
+                "craftWithRandom",
+                "hasRandomOnlyIcon",
+                "optionCountFromCombination",
+                "madeWithMimisbrunnrRecipe",
+                "exp"
+            }).ToArray();
         }
 
         public void Equip()

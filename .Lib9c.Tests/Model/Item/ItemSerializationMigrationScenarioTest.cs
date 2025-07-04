@@ -12,14 +12,14 @@ namespace Lib9c.Tests.Model.Item
     using static Lib9c.SerializeKeys;
 
     /// <summary>
-    /// Tests for Dictionary to List serialization migration compatibility.
-    /// Verifies that nullable fields and default values are handled correctly during migration.
+    /// Tests for item serialization migration scenarios and complex use cases.
+    /// Focuses on real-world migration scenarios and edge cases.
     /// </summary>
-    public class ItemSerializationMigrationTest
+    public class ItemSerializationMigrationScenarioTest
     {
         private readonly TableSheets _tableSheets;
 
-        public ItemSerializationMigrationTest()
+        public ItemSerializationMigrationScenarioTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
         }

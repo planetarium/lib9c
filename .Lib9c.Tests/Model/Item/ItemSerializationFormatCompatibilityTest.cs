@@ -10,14 +10,14 @@ namespace Lib9c.Tests.Model.Item
     using Xunit;
 
     /// <summary>
-    /// Tests for ItemBase and its derived classes serialization/deserialization compatibility.
-    /// Ensures that both Dictionary (legacy) and List (new) formats are supported.
+    /// Tests for item serialization format compatibility between Dictionary and List formats.
+    /// Focuses on bidirectional conversion and comprehensive item type coverage.
     /// </summary>
-    public class ItemSerializationCompatibilityTest
+    public class ItemSerializationFormatCompatibilityTest
     {
         private readonly TableSheets _tableSheets;
 
-        public ItemSerializationCompatibilityTest()
+        public ItemSerializationFormatCompatibilityTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
         }

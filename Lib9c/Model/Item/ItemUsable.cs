@@ -19,6 +19,9 @@ namespace Nekoyume.Model.Item
     [Serializable]
     public abstract class ItemUsable : ItemBase, INonFungibleItem
     {
+        // Field count constants for serialization
+        protected const int ITEM_USABLE_FIELD_COUNT = BaseFieldCount + 5; // base + itemId, statsMap, skills, buffSkills, requiredBlockIndex
+
         public Guid ItemId
         {
             get
@@ -194,13 +197,14 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Check if we have enough fields for ItemUsable (base 6 + 5 fields = 11)
-            if (list.Count < 11)
+            // Check if we have enough fields for ItemUsable
+            if (list.Count < ITEM_USABLE_FIELD_COUNT)
             {
-                throw new ArgumentException($"Invalid list length for ItemUsable: expected at least 11, got {list.Count}");
+                var fieldNames = string.Join(", ", GetFieldNames());
+                throw new ArgumentException($"Invalid list length for {GetType().Name}: expected at least {ITEM_USABLE_FIELD_COUNT}, got {list.Count}. Fields: {fieldNames}");
             }
 
-            // Always read 11 fields
+            // Always read ITEM_USABLE_FIELD_COUNT fields
             // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
             // ItemUsable fields (6~10): itemId, statsMap, skills, buffSkills, requiredBlockIndex
 
@@ -266,5 +270,21 @@ namespace Nekoyume.Model.Item
                 .ThenByDescending(i => i.Power)
                 .Select(s => s.Serialize())))
             .Add(RequiredBlockIndex.Serialize());
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        protected override string[] GetFieldNames()
+        {
+            return base.GetFieldNames().Concat(new[]
+            {
+                "itemId",
+                "statsMap",
+                "skills",
+                "buffSkills",
+                "requiredBlockIndex"
+            }).ToArray();
+        }
     }
 }

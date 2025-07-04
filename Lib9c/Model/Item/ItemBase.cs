@@ -17,6 +17,10 @@ namespace Nekoyume.Model.Item
     public abstract class ItemBase : IItem
     {
         public const int SerializationVersion = 2;
+
+        // Field count constants for serialization
+        protected const int BaseFieldCount = 6; // version, id, itemType, itemSubType, grade, elementalType
+
         protected static readonly Codec Codec = new Codec();
 
         private int _id;
@@ -134,6 +138,12 @@ namespace Nekoyume.Model.Item
                     DeserializeFromDictionary(dict);
                     break;
                 case List list:
+                    // Check if we have enough fields for Item (base 6)
+                    if (list.Count < BaseFieldCount)
+                    {
+                        var fieldNames = string.Join(", ", GetFieldNames());
+                        throw new ArgumentException($"Invalid list length for ItemBase: expected at least 6, got {list.Count}. Fields: {fieldNames}");
+                    }
                     DeserializeFromList(list);
                     break;
                 default:
@@ -240,6 +250,23 @@ namespace Nekoyume.Model.Item
                 $", {nameof(ItemType)}: {ItemType}" +
                 $", {nameof(ItemSubType)}: {ItemSubType}" +
                 $", {nameof(ElementalType)}: {ElementalType}";
+        }
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        protected virtual string[] GetFieldNames()
+        {
+            return new[]
+            {
+                "version",
+                "id",
+                "itemType",
+                "itemSubType",
+                "grade",
+                "elementalType"
+            };
         }
     }
 }

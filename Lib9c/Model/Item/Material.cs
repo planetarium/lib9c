@@ -5,6 +5,7 @@ using Bencodex.Types;
 using Libplanet.Common;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using System.Linq;
 
 namespace Nekoyume.Model.Item
 {
@@ -15,6 +16,9 @@ namespace Nekoyume.Model.Item
     [Serializable]
     public class Material : ItemBase, ISerializable, IFungibleItem
     {
+        // Field count constants for serialization
+        private const int MATERIAL_FIELD_COUNT = BaseFieldCount + 1; // base + itemId
+
         public HashDigest<SHA256> ItemId { get; private set; }
 
         public HashDigest<SHA256> FungibleId => ItemId;
@@ -30,6 +34,27 @@ namespace Nekoyume.Model.Item
         }
 
         /// <summary>
+        /// Sets the ItemId from various serialized formats.
+        /// </summary>
+        /// <param name="itemIdValue">Serialized ItemId value</param>
+        private void SetItemId(IValue itemIdValue)
+        {
+            if (itemIdValue is Binary binary)
+            {
+                ItemId = binary.ToItemId();
+            }
+            else if (itemIdValue is Text text)
+            {
+                // Convert Text format to Binary for ItemId
+                ItemId = text.ToItemId();
+            }
+            else
+            {
+                throw new ArgumentException($"Unsupported ItemId format: {itemIdValue.GetType()}");
+            }
+        }
+
+        /// <summary>
         /// Constructor for deserialization that supports both Dictionary and List formats.
         /// </summary>
         /// <param name="serialized">Serialized data in either Dictionary or List format</param>
@@ -40,24 +65,11 @@ namespace Nekoyume.Model.Item
                 case Dictionary dict:
                     if (dict.TryGetValue((Text) "item_id", out var itemId))
                     {
-                        ItemId = itemId.ToItemId();
+                        SetItemId(itemId);
                     }
                     break;
                 case List list:
-                    if (list.Count >= 7) // base fields (6) + itemId (1)
-                    {
-                        // Handle both Binary and Text formats for ItemId
-                        var itemIdValue = list[6];
-                        if (itemIdValue is Binary binary)
-                        {
-                            ItemId = binary.ToItemId();
-                        }
-                        else if (itemIdValue is Text text)
-                        {
-                            // Convert Text format to Binary for ItemId
-                            ItemId = text.ToItemId();
-                        }
-                    }
+                    DeserializeFromList(list);
                     break;
                 default:
                     throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
@@ -85,27 +97,19 @@ namespace Nekoyume.Model.Item
         /// <param name="list">List containing serialized data</param>
         private void DeserializeFromList(List list)
         {
-            // Check if we have enough fields for Material (base 6 + itemId 1 = 7)
-            if (list.Count < 7)
+            // Check if we have enough fields for Material
+            if (list.Count < MATERIAL_FIELD_COUNT)
             {
-                throw new ArgumentException($"Invalid list length for Material: expected at least 7, got {list.Count}");
+                var fieldNames = string.Join(", ", GetFieldNames());
+                throw new ArgumentException($"Invalid list length for {GetType().Name}: expected at least {MATERIAL_FIELD_COUNT}, got {list.Count}. Fields: {fieldNames}");
             }
 
-            // Always read 7 fields
+            // Always read MATERIAL_FIELD_COUNT fields
             // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
             // Material fields (6): itemId
 
             // itemId (index 6)
-            var itemIdValue = list[6];
-            if (itemIdValue is Binary binary)
-            {
-                ItemId = binary.ToItemId();
-            }
-            else if (itemIdValue is Text text)
-            {
-                // Convert Text format to Binary for ItemId
-                ItemId = text.ToItemId();
-            }
+            SetItemId(list[6]);
         }
 
         protected Material(SerializationInfo info, StreamingContext _)
@@ -144,6 +148,18 @@ namespace Nekoyume.Model.Item
         /// <returns>List containing serialized data</returns>
         public override IValue Serialize() => ((List)base.Serialize())
             .Add(ItemId.Serialize());
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        protected override string[] GetFieldNames()
+        {
+            return base.GetFieldNames().Concat(new[]
+            {
+                "itemId"
+            }).ToArray();
+        }
 
         public override string ToString()
         {
