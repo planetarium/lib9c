@@ -975,10 +975,17 @@ namespace Nekoyume.Model.State
                     continue;
                 }
 
+                // Check if the item's ItemType is actually Costume
+                if (costume.ItemType != ItemType.Costume)
+                {
+                    throw new InvalidItemTypeException($"Costume[id: {costumeId}] isn't expected type. [type: {costume.ItemType}]");
+                }
+
                 if (subTypes.Contains(costume.ItemSubType))
                 {
                     throw new DuplicateCostumeException($"can't equip duplicate costume type : {costume.ItemSubType}");
                 }
+
                 subTypes.Add(costume.ItemSubType);
 
                 int requiredLevel;
@@ -1014,6 +1021,46 @@ namespace Nekoyume.Model.State
             }
         }
 
+        public List<T> GetNonFungibleItems<T>(List<Guid> itemIds)
+        {
+            var items = new List<T>();
+            foreach (var nonFungibleId in itemIds)
+            {
+                if (!inventory.TryGetNonFungibleItem(nonFungibleId, out var inventoryItem))
+                {
+                    continue;
+                }
+                if (inventoryItem.item is T item)
+                {
+                    items.Add(item);
+                }
+            }
+            return items;
+        }
+
+        public void EquipItems(IEnumerable<Guid> itemIds)
+        {
+            // Unequip items already equipped.
+            var equippableItems = inventory.Items
+                .Select(item => item.item)
+                .OfType<IEquippableItem>()
+                .Where(equippableItem => equippableItem.Equipped);
+            foreach (var equippableItem in equippableItems)
+            {
+                equippableItem.Unequip();
+            }
+            // Equip items.
+            foreach (var itemId in itemIds)
+            {
+                if (!inventory.TryGetNonFungibleItem(itemId, out var inventoryItem) ||
+                    !(inventoryItem.item is IEquippableItem equippableItem))
+                {
+                    continue;
+                }
+                equippableItem.Equip();
+            }
+        }
+
         public void ValidateItemRequirement(
             List<int> itemIds,
             List<Equipment> equipments,
@@ -1029,20 +1076,17 @@ namespace Nekoyume.Model.State
                 {
                     throw new SheetRowNotFoundException(addressesHex, nameof(ItemRequirementSheet), id);
                 }
-
                 if (level < requirementRow.Level)
                 {
                     throw new NotEnoughAvatarLevelException(id, false, requirementRow.Level, level);
                 }
             }
-
             foreach (var equipment in equipments)
             {
                 if (!requirementSheet.TryGetValue(equipment.Id, out var requirementRow))
                 {
                     throw new SheetRowNotFoundException(addressesHex, nameof(ItemRequirementSheet), equipment.Id);
                 }
-
                 var isMadeWithMimisbrunnrRecipe = equipment.IsMadeWithMimisbrunnrRecipe(
                     recipeSheet,
                     subRecipeSheet,
@@ -1058,127 +1102,7 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public void EquipItems(IEnumerable<Guid> itemIds)
-        {
-            // Unequip items already equipped.
-            var equippableItems = inventory.Items
-                .Select(item => item.item)
-                .OfType<IEquippableItem>()
-                .Where(equippableItem => equippableItem.Equipped);
-#pragma warning disable LAA1002
-            foreach (var equippableItem in equippableItems)
-#pragma warning restore LAA1002
-            {
-                equippableItem.Unequip();
-            }
-
-            // Equip items.
-            foreach (var itemId in itemIds)
-            {
-                if (!inventory.TryGetNonFungibleItem(itemId, out var inventoryItem) ||
-                    !(inventoryItem.item is IEquippableItem equippableItem))
-                {
-                    continue;
-                }
-
-                equippableItem.Equip();
-            }
-        }
-
-        // FIXME: Use `EquipItems(IEnumerable<Guid>)` instead of this.
-        public void EquipCostumes(HashSet<int> costumeIds)
-        {
-            // 코스튬 해제.
-            var inventoryCostumes = inventory.Items
-                .Select(i => i.item)
-                .OfType<Costume>()
-                .Where(i => i.equipped)
-                .ToImmutableHashSet();
-#pragma warning disable LAA1002
-            foreach (var costume in inventoryCostumes)
-#pragma warning restore LAA1002
-            {
-                // FIXME: Use `costume.Unequip()`
-                costume.equipped = false;
-            }
-
-            // 코스튬 장착.
-            foreach (var costumeId in costumeIds.OrderBy(i => i))
-            {
-#pragma warning disable 618
-                if (!inventory.TryGetCostume(costumeId, out var costume))
-#pragma warning restore 618
-                {
-                    continue;
-                }
-
-                // FIXME: Use `costume.Unequip()`
-                costume.equipped = true;
-            }
-        }
-
-        // FIXME: Use `EquipItems(IEnumerable<Guid>)` instead of this.
-        public void EquipEquipments(List<Guid> equipmentIds)
-        {
-            // 장비 해제.
-            var inventoryEquipments = inventory.Items
-                .Select(i => i.item)
-                .OfType<Equipment>()
-                .Where(i => i.equipped)
-                .ToImmutableHashSet();
-#pragma warning disable LAA1002
-            foreach (var equipment in inventoryEquipments)
-#pragma warning restore LAA1002
-            {
-                equipment.Unequip();
-            }
-
-            // 장비 장착.
-            foreach (var equipmentId in equipmentIds)
-            {
-                if (!inventory.TryGetNonFungibleItem(equipmentId, out ItemUsable outNonFungibleItem))
-                {
-                    continue;
-                }
-
-                ((Equipment) outNonFungibleItem).Equip();
-            }
-        }
-
-        public int GetRandomSeed()
-        {
-            var bytes = address.ToByteArray().Concat(BitConverter.GetBytes(Nonce)).ToArray();
-            var hash = SHA256.Create().ComputeHash(bytes);
-            Nonce++;
-            return BitConverter.ToInt32(hash, 0);
-        }
-
-        public List<T> GetNonFungibleItems<T>(List<Guid> itemIds)
-        {
-            var items = new List<T>();
-            foreach (var nonFungibleId in itemIds)
-            {
-                if (!inventory.TryGetNonFungibleItem(nonFungibleId, out var inventoryItem))
-                {
-                    continue;
-                }
-
-                if (inventoryItem.item is T item)
-                {
-                    items.Add(item);
-                }
-            }
-
-            return items;
-        }
-
-        /// <inheritdoc cref="IState.Serialize" />
-        public override IValue Serialize()
-        {
-            return SerializeList();
-        }
-
-        public IValue SerializeList()
+        public new IValue SerializeList()
         {
             // Migrated when serialized
             Version = CurrentVersion;
@@ -1210,5 +1134,7 @@ namespace Nekoyume.Model.State
                 RankingMapAddress.Serialize()
             );
         }
+
+        public override IValue Serialize() => SerializeList();
     }
 }

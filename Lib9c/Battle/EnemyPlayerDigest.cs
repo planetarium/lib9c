@@ -42,9 +42,9 @@ namespace Nekoyume.Battle
             EarIndex = serialized[5].ToInteger();
             TailIndex = serialized[6].ToInteger();
             Costumes = ((List) serialized[7]).Select(c =>
-                (Costume) ItemFactory.Deserialize((Dictionary) c)).ToList();
+                (Costume) ItemFactory.Deserialize( c)).ToList();
             Equipments = ((List) serialized[8]).Select(e =>
-                (Equipment) ItemFactory.Deserialize((Dictionary) e)).ToList();
+                (Equipment) ItemFactory.Deserialize( e)).ToList();
         }
 
         public IValue Serialize()

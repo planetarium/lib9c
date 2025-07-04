@@ -23,7 +23,7 @@ namespace Lib9c.Tests.Model.Item
 
             var material = new TradableMaterial(_materialRow);
             var serialized = material.Serialize();
-            var deserialized = new TradableMaterial((Bencodex.Types.Dictionary)serialized);
+            var deserialized = new TradableMaterial(serialized);
 
             Assert.Equal(material, deserialized);
         }

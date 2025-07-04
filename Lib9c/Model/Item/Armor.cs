@@ -5,22 +5,31 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Item
 {
+    /// <summary>
+    /// Represents armor equipment items.
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    /// </summary>
     [Serializable]
     public class Armor : Equipment, ITradableItem
     {
         public Guid TradableId => ItemId;
 
         public Armor(EquipmentItemSheet.Row data, Guid id, long requiredBlockIndex,
-            bool madeWithMimisbrunnrRecipe = false) : base(data, id, requiredBlockIndex, madeWithMimisbrunnrRecipe)
+            bool madeWithMimisbrunnrRecipe = false) : base(data, id, requiredBlockIndex,
+            madeWithMimisbrunnrRecipe)
         {
         }
 
-        public Armor(Dictionary serialized) : base(serialized)
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        public Armor(IValue serialized) : base(serialized)
         {
         }
 
         protected Armor(SerializationInfo info, StreamingContext _)
-            : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
+            : this(Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
     }

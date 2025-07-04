@@ -258,25 +258,6 @@ namespace Lib9c.Tests.Model.State
             Assert.Throws<DuplicateCostumeException>(() => avatarState.ValidateCostume(costumeIds));
         }
 
-        [Fact]
-        public void ValidateCostumeThrowInvalidItemTypeException()
-        {
-            var avatarAddress = new PrivateKey().Address;
-            var agentAddress = new PrivateKey().Address;
-            var avatarState = GetNewAvatarState(avatarAddress, agentAddress);
-            avatarState.level = 100;
-
-            var row = _tableSheets.CostumeItemSheet.Values.First();
-            var costume = ItemFactory.CreateCostume(row, default);
-            var serialized = (Dictionary)costume.Serialize();
-            serialized = serialized.SetItem("item_sub_type", ItemSubType.Armor.Serialize());
-            var costume2 = new Costume(serialized);
-            var costumeIds = new HashSet<int> { costume2.Id, };
-            avatarState.inventory.AddItem(costume2);
-
-            Assert.Throws<InvalidItemTypeException>(() => avatarState.ValidateCostume(costumeIds));
-        }
-
         [Theory]
         [InlineData(ItemSubType.FullCostume, GameConfig.RequireCharacterLevel.CharacterFullCostumeSlot)]
         [InlineData(ItemSubType.HairCostume, GameConfig.RequireCharacterLevel.CharacterHairCostumeSlot)]

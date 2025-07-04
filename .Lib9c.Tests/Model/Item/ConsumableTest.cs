@@ -1,7 +1,12 @@
 namespace Lib9c.Tests.Model.Item
 {
     using System;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.Serialization.Formatters.Binary;
+    using Bencodex.Types;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -20,11 +25,55 @@ namespace Lib9c.Tests.Model.Item
         {
             Assert.NotNull(_consumableRow);
 
-            var consumable = new Consumable(_consumableRow, Guid.NewGuid(), 0);
+            var consumable = new Consumable(_consumableRow, Guid.NewGuid(), 1000L);
             var serialized = consumable.Serialize();
-            var deserialized = new Consumable((Bencodex.Types.Dictionary)serialized);
+            var deserialized = new Consumable(serialized);
 
             Assert.Equal(consumable, deserialized);
+        }
+
+        [Fact]
+        public void Serialize_ReturnsListFormat()
+        {
+            Assert.NotNull(_consumableRow);
+
+            var consumable = new Consumable(_consumableRow, Guid.NewGuid(), 1000L);
+            var serialized = consumable.Serialize();
+
+            Assert.IsType<List>(serialized);
+        }
+
+        [Fact]
+        public void Deserialize_SupportsLegacyDictionaryFormat()
+        {
+            Assert.NotNull(_consumableRow);
+
+            var consumable = new Consumable(_consumableRow, Guid.NewGuid(), 1000L);
+
+            // Create legacy Dictionary format
+            var legacySerialized = Dictionary.Empty
+                .Add("id", consumable.Id.Serialize())
+                .Add("item_type", consumable.ItemType.Serialize())
+                .Add("item_sub_type", consumable.ItemSubType.Serialize())
+                .Add("grade", consumable.Grade.Serialize())
+                .Add("elemental_type", consumable.ElementalType.Serialize())
+                .Add("itemId", consumable.ItemId.Serialize())
+                .Add("statsMap", consumable.StatsMap.Serialize())
+                .Add("skills", new List())
+                .Add("buffSkills", new List())
+                .Add("requiredBlockIndex", consumable.RequiredBlockIndex.Serialize())
+                .Add("stats", new List(consumable.Stats.Select(s => s.SerializeWithoutAdditional())));
+
+            var deserialized = new Consumable(legacySerialized);
+
+            Assert.Equal(consumable.Id, deserialized.Id);
+            Assert.Equal(consumable.Grade, deserialized.Grade);
+            Assert.Equal(consumable.ItemType, deserialized.ItemType);
+            Assert.Equal(consumable.ItemSubType, deserialized.ItemSubType);
+            Assert.Equal(consumable.ElementalType, deserialized.ElementalType);
+            Assert.Equal(consumable.ItemId, deserialized.ItemId);
+            Assert.Equal(consumable.RequiredBlockIndex, deserialized.RequiredBlockIndex);
+            Assert.Equal(consumable.Stats.Count, deserialized.Stats.Count);
         }
 
         [Fact]
