@@ -118,6 +118,7 @@ namespace Nekoyume.Model.State
         public static IValue Serialize(this long? number) =>
             Serialize(Serialize, number);
 
+
         public static long ToLong(this IValue serialized) =>
             long.Parse(((Text)serialized).Value, CultureInfo.InvariantCulture);
 
@@ -272,7 +273,7 @@ namespace Nekoyume.Model.State
             return ((List)serialized)
                 .Cast<Dictionary>()
                 .ToDictionary(
-                    value => (Material)ItemFactory.Deserialize((Dictionary)value["material"]),
+                    value => (Material)ItemFactory.Deserialize(value["material"]),
                     value => value["count"].ToInteger()
                 );
         }

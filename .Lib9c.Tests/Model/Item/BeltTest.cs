@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Model.Item
 
             var costume = new Belt(_beltRow, Guid.NewGuid(), 0);
             var serialized = costume.Serialize();
-            var deserialized = new Belt((Bencodex.Types.Dictionary)serialized);
+            var deserialized = new Belt(serialized);
 
             Assert.Equal(costume, deserialized);
         }

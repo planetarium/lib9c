@@ -7,14 +7,66 @@ using Libplanet.Action;
 using Nekoyume.Extensions;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
+using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
 namespace Nekoyume.Model.Item
 {
+    /// <summary>
+    /// Represents equipment items that can be equipped by characters.
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// Base fields (0~10): 11 fields from ItemUsable
+    /// Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+    /// </para>
+    ///
+    /// <para>
+    /// Equipment Properties:
+    /// - Equipped: Whether the equipment is currently equipped
+    /// - Level: Equipment enhancement level
+    /// - Stat: Primary stat of the equipment
+    /// - SetId: ID for equipment set bonuses
+    /// - SpineResourcePath: Path to spine animation resource
+    /// - IconId: Icon identifier for UI display
+    /// - ByCustomCraft: Whether crafted through custom crafting
+    /// - CraftWithRandom: Whether random options were applied during crafting
+    /// - HasRandomOnlyIcon: Whether has random-only icon
+    /// - OptionCountFromCombination: Number of options from combination
+    /// - MadeWithMimisbrunnrRecipe: Whether made with Mimisbrunnr recipe
+    /// - Exp: Experience points for leveling
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// Equipment items can be enhanced, equipped, and provide various stats and bonuses.
+    /// The equipment system supports both regular crafting and custom crafting with random options.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create equipment
+    /// var equipment = new Equipment(equipmentRow, Guid.NewGuid(), 1000L);
+    ///
+    /// // Enhance equipment
+    /// equipment.LevelUp();
+    ///
+    /// // Equip/unequip
+    /// equipment.Equipped = true;
+    ///
+    /// // Check stats
+    /// var statValue = equipment.Stat.StatType;
+    /// var setBonus = equipment.SetId;
+    /// </code>
+    /// </para>
+    /// </remarks>
     [Serializable]
     public class Equipment : ItemUsable, IEquippableItem
     {
+        // Field count constants for serialization
+        private const int EQUIPMENT_FIELD_COUNT = ITEM_USABLE_FIELD_COUNT + 12; // base + equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+
         // FIXME: Whether the equipment is equipped or not has no asset value and must be removed from the state.
         public bool equipped;
         public int level;
@@ -25,10 +77,10 @@ namespace Nekoyume.Model.Item
         public bool CraftWithRandom;
         public bool HasRandomOnlyIcon;
 
-        public DecimalStat Stat { get; }
-        public int SetId { get; }
-        public string SpineResourcePath { get; }
-        public bool MadeWithMimisbrunnrRecipe { get; }
+        public DecimalStat Stat { get; private set; }
+        public int SetId { get; private set; }
+        public string SpineResourcePath { get; private set; }
+        public bool MadeWithMimisbrunnrRecipe { get; set; }
         public StatType UniqueStatType => Stat.StatType;
         public bool Equipped => equipped;
 
@@ -53,14 +105,37 @@ namespace Nekoyume.Model.Item
             HasRandomOnlyIcon = false;
         }
 
-        public Equipment(Dictionary serialized) : base(serialized)
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        public Equipment(IValue serialized) : base(serialized)
         {
-            if (serialized.TryGetValue((Text) LegacyEquippedKey, out var value))
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    DeserializeFromDictionary(dict);
+                    break;
+                case List list:
+                    DeserializeFromList(list);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes data from Dictionary format (legacy support).
+        /// </summary>
+        /// <param name="dict">Dictionary containing serialized data</param>
+        private void DeserializeFromDictionary(Dictionary dict)
+        {
+            if (dict.TryGetValue((Text) LegacyEquippedKey, out var value))
             {
                 equipped = value.ToBoolean();
             }
 
-            if (serialized.TryGetValue((Text) LegacyLevelKey, out value))
+            if (dict.TryGetValue((Text) LegacyLevelKey, out value))
             {
                 try
                 {
@@ -68,11 +143,11 @@ namespace Nekoyume.Model.Item
                 }
                 catch (InvalidCastException)
                 {
-                    level = (int) ((Integer) value).Value;
+                    level = (Integer) value;
                 }
             }
 
-            if (serialized.TryGetValue((Text)EquipmentExpKey, out value))
+            if (dict.TryGetValue((Text)EquipmentExpKey, out value))
             {
                 try
                 {
@@ -80,7 +155,7 @@ namespace Nekoyume.Model.Item
                 }
                 catch (InvalidCastException)
                 {
-                    Exp = (long)((Integer)value).Value;
+                    Exp = (Integer) value;
                 }
             }
             else
@@ -88,74 +163,145 @@ namespace Nekoyume.Model.Item
                 Exp = 0L;
             }
 
-            IconId = serialized.TryGetValue((Text)EquipmentIconIdKey, out value) ? (Integer)value : Id;
-            ByCustomCraft = serialized.TryGetValue((Text)ByCustomCraftKey, out value) && value.ToBoolean();
-            CraftWithRandom = serialized.TryGetValue((Text)CraftWithRandomKey, out value) && value.ToBoolean();
-            HasRandomOnlyIcon = serialized.TryGetValue((Text)HasRandomOnlyIconKey, out value) && value.ToBoolean();
+            IconId = dict.TryGetValue((Text)EquipmentIconIdKey, out value) ? (Integer)value : Id;
+            ByCustomCraft = dict.TryGetValue((Text)ByCustomCraftKey, out value) && value.ToBoolean();
+            CraftWithRandom = dict.TryGetValue((Text)CraftWithRandomKey, out value) && value.ToBoolean();
+            HasRandomOnlyIcon = dict.TryGetValue((Text)HasRandomOnlyIconKey, out value) && value.ToBoolean();
 
-            if (serialized.TryGetValue((Text) LegacyStatKey, out value))
+            if (dict.TryGetValue((Text) LegacyStatKey, out value))
             {
                 Stat = value.ToDecimalStat();
             }
 
-            if (serialized.TryGetValue((Text) LegacySetIdKey, out value))
+            if (dict.TryGetValue((Text) LegacySetIdKey, out value))
             {
                 SetId = value.ToInteger();
             }
 
-            if (serialized.TryGetValue((Text) LegacySpineResourcePathKey, out value))
+            if (dict.TryGetValue((Text) LegacySpineResourcePathKey, out value))
             {
                 SpineResourcePath = (Text) value;
             }
 
-            if (serialized.TryGetValue((Text) OptionCountFromCombinationKey, out value))
+            if (dict.TryGetValue((Text) OptionCountFromCombinationKey, out value))
             {
                 optionCountFromCombination = value.ToInteger();
             }
 
-            if(serialized.TryGetValue((Text) MadeWithMimisbrunnrRecipeKey, out value))
+            if (dict.TryGetValue((Text) MadeWithMimisbrunnrRecipeKey, out value))
             {
                 MadeWithMimisbrunnrRecipe = value.ToBoolean();
             }
         }
 
+        /// <summary>
+        /// Deserializes data from List format (new format).
+        /// Order: [baseData..., equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp]
+        /// </summary>
+        /// <param name="list">List containing serialized data</param>
+        private void DeserializeFromList(List list)
+        {
+            // Check if we have enough fields for Equipment
+            if (list.Count < EQUIPMENT_FIELD_COUNT)
+            {
+                var fieldNames = string.Join(", ", GetFieldNames());
+                throw new ArgumentException(
+                    $"Invalid list length for {GetType().Name}: expected at least {EQUIPMENT_FIELD_COUNT}, got {list.Count}. " +
+                    $"Required fields: {fieldNames}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
+            }
+
+            // Always read EQUIPMENT_FIELD_COUNT fields
+            // base fields (0~10): 11 fields from ItemUsable
+            // Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+
+            // equipped (index 11)
+            equipped = list[11].ToBoolean();
+
+            // level (index 12)
+            level = (Integer)list[12];
+
+            // stat (index 13)
+            Stat = list[13].ToDecimalStat();
+
+            // setId (index 14)
+            SetId = (Integer)list[14];
+
+            // spineResourcePath (index 15)
+            SpineResourcePath = list[15].ToDotnetString();
+
+            // iconId (index 16)
+            IconId = (Integer)list[16];
+
+            // byCustomCraft (index 17)
+            ByCustomCraft = list[17].ToBoolean();
+
+            // craftWithRandom (index 18)
+            CraftWithRandom = list[18].ToBoolean();
+
+            // hasRandomOnlyIcon (index 19)
+            HasRandomOnlyIcon = list[19].ToBoolean();
+
+            // optionCountFromCombination (index 20)
+            optionCountFromCombination = (Integer)list[20];
+
+            // madeWithMimisbrunnrRecipe (index 21)
+            MadeWithMimisbrunnrRecipe = list[21].ToBoolean();
+
+            // exp (index 22)
+            Exp = (Integer)list[22];
+        }
+
         protected Equipment(SerializationInfo info, StreamingContext _)
-            : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
+            : this(Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
 
+        /// <summary>
+        /// Serializes the equipment to List format (new format).
+        /// Order: [baseData..., equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp]
+        /// </summary>
+        /// <returns>List containing serialized data</returns>
         public override IValue Serialize()
         {
-#pragma warning disable LAA1002
-            var dict = ((Dictionary)base.Serialize())
-                    .Add(LegacyEquippedKey, equipped.Serialize())
-                    .Add(LegacyLevelKey, level.Serialize())
-                    .Add(LegacyStatKey, Stat.SerializeForLegacyEquipmentStat())
-                    .Add(LegacySetIdKey, SetId.Serialize())
-                    .Add(LegacySpineResourcePathKey, SpineResourcePath.Serialize())
-                    .Add(EquipmentIconIdKey, IconId)
-                    .Add(ByCustomCraftKey, ByCustomCraft)
-                    .Add(CraftWithRandomKey, CraftWithRandom)
-                    .Add(HasRandomOnlyIconKey, HasRandomOnlyIcon)
-                ;
+            var list = ((List)base.Serialize())
+                .Add(equipped.Serialize())
+                .Add(level)
+                .Add(Stat.SerializeForLegacyEquipmentStat())
+                .Add(SetId)
+                .Add(SpineResourcePath)
+                .Add(IconId)
+                .Add(ByCustomCraft)
+                .Add(CraftWithRandom)
+                .Add(HasRandomOnlyIcon)
+                .Add(optionCountFromCombination)
+                .Add(MadeWithMimisbrunnrRecipe)
+                .Add(Exp);
 
-            if (optionCountFromCombination > 0)
+            return list;
+        }
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        protected override string[] GetFieldNames()
+        {
+            return base.GetFieldNames().Concat(new[]
             {
-                dict = dict.SetItem(OptionCountFromCombinationKey, optionCountFromCombination.Serialize());
-            }
-
-            if (MadeWithMimisbrunnrRecipe)
-            {
-                dict = dict.SetItem(MadeWithMimisbrunnrRecipeKey, MadeWithMimisbrunnrRecipe.Serialize());
-            }
-
-            if (Exp > 0)
-            {
-                dict = dict.SetItem(EquipmentExpKey, Exp.Serialize());
-            }
-
-            return dict;
-#pragma warning restore LAA1002
+                "equipped",
+                "level",
+                "stat",
+                "setId",
+                "spineResourcePath",
+                "iconId",
+                "byCustomCraft",
+                "craftWithRandom",
+                "hasRandomOnlyIcon",
+                "optionCountFromCombination",
+                "madeWithMimisbrunnrRecipe",
+                "exp"
+            }).ToArray();
         }
 
         public void Equip()
@@ -239,22 +385,6 @@ namespace Nekoyume.Model.Item
             return costSheet.OrderedList.First(r =>
                 r.ItemSubType == ItemSubType && r.Grade == Grade &&
                 r.Level == level).Exp;
-        }
-
-        public List<object> GetOptions()
-        {
-            var options = new List<object>();
-            options.AddRange(Skills);
-            options.AddRange(BuffSkills);
-            foreach (var (statType, additionalValue) in StatsMap.GetAdditionalStats(true))
-            {
-                options.Add(new StatModifier(
-                    statType,
-                    StatModifier.OperationType.Add,
-                    additionalValue));
-            }
-
-            return options;
         }
 
         private void UpdateOptions()
@@ -388,8 +518,8 @@ namespace Nekoyume.Model.Item
         protected bool Equals(Equipment other)
         {
             return base.Equals(other) && equipped == other.equipped && level == other.level &&
-                   Exp == other.Exp && Equals(Stat, other.Stat) && SetId == other.SetId &&
-                   SpineResourcePath == other.SpineResourcePath;
+                Exp == other.Exp && Equals(Stat, other.Stat) && SetId == other.SetId &&
+                SpineResourcePath == other.SpineResourcePath;
         }
 
         public override bool Equals(object obj)

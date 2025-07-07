@@ -87,13 +87,13 @@ namespace Nekoyume.Model.Item
             ProductId = serialized[LegacyProductIdKey].ToGuid();
             Price = serialized[LegacyPriceKey].ToFungibleAssetValue();
             ItemUsable = serialized.ContainsKey(LegacyItemUsableKey)
-                ? (ItemUsable) ItemFactory.Deserialize((Dictionary) serialized[LegacyItemUsableKey])
+                ? (ItemUsable) ItemFactory.Deserialize(serialized[LegacyItemUsableKey])
                 : null;
             Costume = serialized.ContainsKey(LegacyCostumeKey)
-                ? (Costume) ItemFactory.Deserialize((Dictionary) serialized[LegacyCostumeKey])
+                ? (Costume) ItemFactory.Deserialize(serialized[LegacyCostumeKey])
                 : null;
             TradableFungibleItem = serialized.ContainsKey(TradableFungibleItemKey)
-                ? (ITradableFungibleItem) ItemFactory.Deserialize((Dictionary) serialized[TradableFungibleItemKey])
+                ? (ITradableFungibleItem) ItemFactory.Deserialize(serialized[TradableFungibleItemKey])
                 : null;
             TradableFungibleItemCount = serialized.ContainsKey(TradableFungibleItemCountKey)
                 ? serialized[TradableFungibleItemCountKey].ToInteger()
