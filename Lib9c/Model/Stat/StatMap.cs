@@ -6,9 +6,52 @@ using System.Linq;
 
 namespace Nekoyume.Model.Stat
 {
+    /// <summary>
+    /// Represents a collection of character statistics.
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    ///
+    /// <para>
+    /// Serialization Format:
+    /// - Dictionary (Legacy): Uses key-value pairs for backward compatibility
+    /// - List (New): Uses ordered list for better performance and smaller size
+    /// </para>
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// 1. version - Serialization version number
+    /// 2. stats - List of DecimalStat objects ordered by StatType
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// This class implements dual serialization support to ensure smooth migration
+    /// from the legacy Dictionary format to the new List format. The List format
+    /// provides better performance and smaller serialized data size.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create stat map
+    /// var statMap = new StatMap();
+    /// statMap[StatType.HP].SetBaseValue(100);
+    /// statMap[StatType.ATK].SetBaseValue(50);
+    ///
+    /// // Serialize to List format (new)
+    /// var serialized = statMap.Serialize(); // Returns List
+    ///
+    /// // Deserialize from any format
+    /// var deserialized = new StatMap(serialized); // Supports both Dictionary and List
+    /// </code>
+    /// </para>
+    /// </remarks>
     [Serializable]
     public class StatMap : IStats, IBaseAndAdditionalStats, IState
     {
+        // Serialization version for backward compatibility
+        private const int SerializationVersion = 1;
+
+        // Field count constants for serialization
+        private const int StatMapFieldCount = 2; // version + stats
+
         public DecimalStat this[StatType type]
         {
             get => _statMap[type];
@@ -75,6 +118,87 @@ namespace Nekoyume.Model.Stat
             foreach (var stat in statMap.GetDecimalStats(false))
             {
                 _statMap[stat.StatType] = (DecimalStat)stat.Clone();
+            }
+        }
+
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        /// <exception cref="ArgumentNullException">Thrown when serialized is null</exception>
+        /// <exception cref="ArgumentException">Thrown when serialized format is not supported</exception>
+        public StatMap(IValue serialized)
+        {
+            if (serialized == null)
+            {
+                throw new ArgumentNullException(nameof(serialized), "Serialized data cannot be null");
+            }
+
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    DeserializeFromDictionary(dict);
+                    break;
+                case List list:
+                    DeserializeFromList(list);
+                    break;
+                default:
+                    throw new ArgumentException(
+                        $"Unsupported serialization format: {serialized.GetType().Name}. " +
+                        $"Expected Dictionary or List, got {serialized.GetType().Name}. " +
+                        $"This may indicate corrupted data or an unsupported serialization format.");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes data from Dictionary format (legacy support).
+        /// </summary>
+        /// <param name="dict">Dictionary containing serialized data</param>
+        private void DeserializeFromDictionary(Dictionary dict)
+        {
+#pragma warning disable LAA1002
+            foreach (KeyValuePair<IKey, IValue> kv in dict)
+            {
+                _statMap[StatTypeExtension.Deserialize((Binary)kv.Key)]
+                    .Deserialize((Dictionary)kv.Value);
+            }
+#pragma warning restore LAA1002
+        }
+
+        /// <summary>
+        /// Deserializes data from List format (new format).
+        /// Order: [version, stats]
+        /// </summary>
+        /// <param name="list">List containing serialized data</param>
+        private void DeserializeFromList(List list)
+        {
+            // Check if we have enough fields for StatMap
+            if (list.Count < StatMapFieldCount)
+            {
+                var fieldNames = string.Join(", ", GetFieldNames());
+                throw new ArgumentException(
+                    $"Invalid list length for {GetType().Name}: expected at least {StatMapFieldCount}, got {list.Count}. " +
+                    $"Required fields: {fieldNames}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
+            }
+
+            // Always read STAT_MAP_FIELD_COUNT fields
+            // version (index 0)
+            var version = ((Integer)list[0]).Value;
+            if (version != SerializationVersion)
+            {
+                throw new ArgumentException(
+                    $"Unsupported serialization version: {version}. " +
+                    $"Expected {SerializationVersion}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
+            }
+
+            // stats (index 1)
+            var statsList = (List)list[1];
+            foreach (var statValue in statsList)
+            {
+                var stat = new DecimalStat((Dictionary)statValue);
+                _statMap[stat.StatType] = stat;
             }
         }
 
@@ -207,29 +331,30 @@ namespace Nekoyume.Model.Stat
                 values;
         }
 
-        public IValue Serialize() =>
-#pragma warning disable LAA1002
-            new Dictionary(
-                _statMap
-                    .Where(x => x.Value.HasBaseValue || x.Value.HasAdditionalValue)
-                    .Select(kv =>
-                    new KeyValuePair<IKey, IValue>(
-                        kv.Key.Serialize(),
-                        kv.Value.Serialize()
-                    )
-                )
-            );
-#pragma warning restore LAA1002
-
-        public void Deserialize(Dictionary serialized)
+        /// <summary>
+        /// Serializes the StatMap to List format (new format).
+        /// Order: [version, stats]
+        /// </summary>
+        /// <returns>List containing serialized data</returns>
+        public IValue Serialize()
         {
-#pragma warning disable LAA1002
-            foreach (KeyValuePair<IKey, IValue> kv in serialized)
-            {
-                _statMap[StatTypeExtension.Deserialize((Binary)kv.Key)]
-                    .Deserialize((Dictionary)kv.Value);
-            }
-#pragma warning restore LAA1002
+            var statsWithValues = _statMap
+                .Where(x => x.Value.HasBaseValue || x.Value.HasAdditionalValue)
+                .OrderBy(x => x.Key)
+                .Select(x => x.Value.Serialize());
+
+            return List.Empty
+                .Add(SerializationVersion)
+                .Add(new List(statsWithValues));
+        }
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        private static string[] GetFieldNames()
+        {
+            return new[] { "version", "stats" };
         }
     }
 }
