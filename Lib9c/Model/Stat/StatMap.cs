@@ -197,7 +197,7 @@ namespace Nekoyume.Model.Stat
             var statsList = (List)list[1];
             foreach (var statValue in statsList)
             {
-                var stat = new DecimalStat((Dictionary)statValue);
+                var stat = new DecimalStat(statValue);
                 _statMap[stat.StatType] = stat;
             }
         }

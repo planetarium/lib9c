@@ -168,7 +168,7 @@ namespace Nekoyume.Model.Item
             CraftWithRandom = dict.TryGetValue((Text)CraftWithRandomKey, out value) && value.ToBoolean();
             HasRandomOnlyIcon = dict.TryGetValue((Text)HasRandomOnlyIconKey, out value) && value.ToBoolean();
 
-            if (dict.TryGetValue((Text) LegacyStatKey, out value))
+            if (dict.TryGetValue((Text)LegacyStatKey, out value))
             {
                 Stat = value.ToDecimalStat();
             }

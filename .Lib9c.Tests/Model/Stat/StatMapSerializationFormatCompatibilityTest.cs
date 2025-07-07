@@ -1,9 +1,11 @@
 namespace Lib9c.Tests.Model.Stat
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
     using Nekoyume.Model.Stat;
+    using Nekoyume.Model.State;
     using Xunit;
 
     /// <summary>
@@ -46,10 +48,31 @@ namespace Lib9c.Tests.Model.Stat
             var deserializedFromList = new StatMap((IValue)listSerialized);
 
             // Act - Test Dictionary format (legacy)
-            var dictSerialized = Dictionary.Empty
-                .Add(StatType.HP.Serialize(), statMap[StatType.HP].Serialize())
-                .Add(StatType.ATK.Serialize(), statMap[StatType.ATK].Serialize())
-                .Add(StatType.DEF.Serialize(), statMap[StatType.DEF].Serialize());
+            var legacyHpStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.HP.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 100m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 0m.Serialize()),
+            });
+            var legacyAtkStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.ATK.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 50m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 0m.Serialize()),
+            });
+            var legacyDefStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.DEF.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 0m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 25m.Serialize()),
+            });
+
+            var dictSerialized = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>(StatType.HP.Serialize(), legacyHpStatDict),
+                new KeyValuePair<IKey, IValue>(StatType.ATK.Serialize(), legacyAtkStatDict),
+                new KeyValuePair<IKey, IValue>(StatType.DEF.Serialize(), legacyDefStatDict),
+            });
             var deserializedFromDict = new StatMap((IValue)dictSerialized);
 
             // Assert
@@ -228,9 +251,9 @@ namespace Lib9c.Tests.Model.Stat
             Assert.Equal(3, statsList.Count);
 
             // Stats should be ordered by StatType enum value
-            var firstStat = new DecimalStat((Dictionary)statsList[0]);
-            var secondStat = new DecimalStat((Dictionary)statsList[1]);
-            var thirdStat = new DecimalStat((Dictionary)statsList[2]);
+            var firstStat = new DecimalStat(statsList[0]);
+            var secondStat = new DecimalStat(statsList[1]);
+            var thirdStat = new DecimalStat(statsList[2]);
 
             // HP (0) < ATK (1) < Thorn (10)
             Assert.Equal(StatType.HP, firstStat.StatType);
