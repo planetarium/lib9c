@@ -128,20 +128,20 @@ namespace Nekoyume.Model.Skill
 
         public IValue Serialize()
         {
-            var dict = new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+            var list = new List<IValue>
             {
-                [(Text)"skillRow"] = SkillRow.Serialize(),
-                [(Text)"power"] = Power.Serialize(),
-                [(Text)"chance"] = Chance.Serialize()
-            });
+                SkillRow.Serialize(),
+                Power.Serialize(),
+                Chance.Serialize()
+            };
 
-            if (StatPowerRatio != default && ReferencedStatType != StatType.NONE)
+            if (StatPowerRatio != 0 && ReferencedStatType != StatType.NONE)
             {
-                dict = dict.Add("stat_power_ratio", StatPowerRatio.Serialize())
-                    .Add("referenced_stat_type", ReferencedStatType.Serialize());
+                list.Add(StatPowerRatio.Serialize());
+                list.Add(ReferencedStatType.Serialize());
             }
 
-            return dict;
+            return new List(list);
         }
     }
 }

@@ -5,11 +5,14 @@ namespace Lib9c.Tests.Model.Item
     using System.Linq;
     using System.Security.Cryptography;
     using Bencodex.Types;
+    using Lib9c.Tests.Model.Skill;
     using Libplanet.Common;
     using Nekoyume.Model.Elemental;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
+    using Nekoyume.TableData;
     using Xunit;
     using static Lib9c.SerializeKeys;
 
@@ -190,8 +193,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", equipment.ElementalType.Serialize())
                 .Add("itemId", equipment.ItemId.Serialize())
                 .Add("statsMap", equipment.StatsMap.Serialize())
-                .Add("skills", new List(equipment.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(equipment.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(equipment.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(equipment.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", equipment.RequiredBlockIndex.Serialize())
                 .Add("equipped", equipment.Equipped.Serialize())
                 .Add("level", equipment.level.Serialize())
@@ -331,8 +334,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", equipment.ElementalType.Serialize())
                 .Add("itemId", equipment.ItemId.Serialize())
                 .Add("statsMap", equipment.StatsMap.Serialize())
-                .Add("skills", new List(equipment.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(equipment.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(equipment.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(equipment.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", equipment.RequiredBlockIndex.Serialize())
                 .Add("equipped", equipment.Equipped.Serialize())
                 .Add("level", equipment.level.Serialize())
@@ -401,8 +404,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", consumable.ElementalType.Serialize())
                 .Add("itemId", consumable.ItemId.Serialize())
                 .Add("statsMap", consumable.StatsMap.Serialize())
-                .Add("skills", new List(consumable.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(consumable.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(consumable.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(consumable.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", consumable.RequiredBlockIndex.Serialize());
 
             // Deserialize from Dictionary
@@ -551,8 +554,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", weapon.ElementalType.Serialize())
                 .Add("itemId", weapon.ItemId.Serialize())
                 .Add("statsMap", weapon.StatsMap.Serialize())
-                .Add("skills", new List(weapon.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(weapon.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(weapon.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(weapon.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", weapon.RequiredBlockIndex.Serialize())
                 .Add("equipped", weapon.Equipped.Serialize())
                 .Add("level", weapon.level.Serialize())
@@ -627,8 +630,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", armor.ElementalType.Serialize())
                 .Add("itemId", armor.ItemId.Serialize())
                 .Add("statsMap", armor.StatsMap.Serialize())
-                .Add("skills", new List(armor.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(armor.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(armor.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(armor.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", armor.RequiredBlockIndex.Serialize())
                 .Add("equipped", armor.Equipped.Serialize())
                 .Add("level", armor.level.Serialize())
@@ -696,8 +699,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", belt.ElementalType.Serialize())
                 .Add("itemId", belt.ItemId.Serialize())
                 .Add("statsMap", belt.StatsMap.Serialize())
-                .Add("skills", new List(belt.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(belt.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(belt.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(belt.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", belt.RequiredBlockIndex.Serialize())
                 .Add("equipped", belt.Equipped.Serialize())
                 .Add("level", belt.level.Serialize())
@@ -776,8 +779,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", necklace.ElementalType.Serialize())
                 .Add("itemId", necklace.ItemId.Serialize())
                 .Add("statsMap", necklace.StatsMap.Serialize())
-                .Add("skills", new List(necklace.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(necklace.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(necklace.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(necklace.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", necklace.RequiredBlockIndex.Serialize())
                 .Add("equipped", necklace.Equipped.Serialize())
                 .Add("level", necklace.level.Serialize())
@@ -840,8 +843,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", ring.ElementalType.Serialize())
                 .Add("itemId", ring.ItemId.Serialize())
                 .Add("statsMap", ring.StatsMap.Serialize())
-                .Add("skills", new List(ring.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(ring.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(ring.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(ring.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", ring.RequiredBlockIndex.Serialize())
                 .Add("equipped", ring.Equipped.Serialize())
                 .Add("level", ring.level.Serialize())
@@ -904,8 +907,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", aura.ElementalType.Serialize())
                 .Add("itemId", aura.ItemId.Serialize())
                 .Add("statsMap", aura.StatsMap.Serialize())
-                .Add("skills", new List(aura.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(aura.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(aura.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(aura.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", aura.RequiredBlockIndex.Serialize())
                 .Add("equipped", aura.Equipped.Serialize())
                 .Add("level", aura.level.Serialize())
@@ -968,8 +971,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", grimoire.ElementalType.Serialize())
                 .Add("itemId", grimoire.ItemId.Serialize())
                 .Add("statsMap", grimoire.StatsMap.Serialize())
-                .Add("skills", new List(grimoire.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(grimoire.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(grimoire.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(grimoire.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", grimoire.RequiredBlockIndex.Serialize())
                 .Add("equipped", grimoire.Equipped.Serialize())
                 .Add("level", grimoire.level.Serialize())
@@ -1099,6 +1102,304 @@ namespace Lib9c.Tests.Model.Item
 
             // Migration should preserve the values
             Assert.Equal(deserializedFromDict, deserializedFromList);
+        }
+
+        [Fact]
+        public void Equipment_WithMixedSkillFormats_Migration()
+        {
+            // Arrange: Create equipment with both dictionary and list format skills
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 1000L) as Equipment;
+            Assert.NotNull(equipment);
+
+            // Add skills with different formats
+            var skillIds = new[] { 100001, 100003, 100005 };
+            var buffIds = new[] { 200000, 210000, 220000 };
+
+            for (var index = 0; index < skillIds.Length; index++)
+            {
+                var skillId = skillIds[index];
+                var skillRow = _tableSheets.SkillSheet[skillId];
+                var skill = SkillFactory.Get(skillRow, 100 + index, 50 + index, 25 + index, StatType.ATK + index);
+                equipment.Skills.Add(skill);
+
+                var buffId = buffIds[index];
+                var buffRow = _tableSheets.SkillSheet[buffId];
+                var buff = (BuffSkill)SkillFactory.Get(buffRow, 200 + index, 60 + index, 30 + index, StatType.DEF + index);
+                equipment.BuffSkills.Add(buff);
+            }
+
+            // Act: Test migration with mixed skill formats
+            var serialized = equipment.Serialize();
+            var deserialized = new Equipment(serialized);
+
+            // Assert: All skills should be preserved correctly
+            Assert.Equal(equipment.Skills.Count, deserialized.Skills.Count);
+            Assert.Equal(equipment.BuffSkills.Count, deserialized.BuffSkills.Count);
+
+            // Verify each skill's properties are preserved
+            foreach (var skillId in skillIds)
+            {
+                var originalSkill = equipment.Skills.Single(s => s.SkillRow.Id == skillId);
+                var deserializedSkill = deserialized.Skills.Single(s => s.SkillRow.Id == skillId);
+
+                Assert.Equal(originalSkill.Power, deserializedSkill.Power);
+                Assert.Equal(originalSkill.Chance, deserializedSkill.Chance);
+                Assert.Equal(originalSkill.StatPowerRatio, deserializedSkill.StatPowerRatio);
+                Assert.Equal(originalSkill.ReferencedStatType, deserializedSkill.ReferencedStatType);
+                Assert.Equal(originalSkill.SkillRow.Id, deserializedSkill.SkillRow.Id);
+                Assert.Equal(originalSkill.SkillRow.ElementalType, deserializedSkill.SkillRow.ElementalType);
+                Assert.Equal(originalSkill.SkillRow.SkillType, deserializedSkill.SkillRow.SkillType);
+                Assert.Equal(originalSkill.SkillRow.SkillCategory, deserializedSkill.SkillRow.SkillCategory);
+                Assert.Equal(originalSkill.SkillRow.SkillTargetType, deserializedSkill.SkillRow.SkillTargetType);
+            }
+
+            // Verify buff skills
+            foreach (var buffId in buffIds)
+            {
+                var originalBuff = equipment.BuffSkills.Single(s => s.SkillRow.Id == buffId);
+                var deserializedBuff = deserialized.BuffSkills.Single(s => s.SkillRow.Id == buffId);
+
+                Assert.Equal(originalBuff.Power, deserializedBuff.Power);
+                Assert.Equal(originalBuff.Chance, deserializedBuff.Chance);
+                Assert.Equal(originalBuff.StatPowerRatio, deserializedBuff.StatPowerRatio);
+                Assert.Equal(originalBuff.ReferencedStatType, deserializedBuff.ReferencedStatType);
+                Assert.Equal(originalBuff.SkillRow.Id, deserializedBuff.SkillRow.Id);
+            }
+        }
+
+        [Fact]
+        public void Equipment_SkillData_Preservation_Test()
+        {
+            // Arrange: Create equipment with specific skill data
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 1000L) as Equipment;
+            Assert.NotNull(equipment);
+
+            // Add specific skills with known values
+            var skillRow1 = _tableSheets.SkillSheet[100001]; // Blow Attack
+            var skill1 = SkillFactory.Get(skillRow1, 150, 75, 30, StatType.ATK);
+            equipment.Skills.Add(skill1);
+
+            var skillRow2 = _tableSheets.SkillSheet[100003]; // Double Attack
+            var skill2 = SkillFactory.Get(skillRow2, 200, 60, 40, StatType.CRI);
+            equipment.Skills.Add(skill2);
+
+            var buffRow = _tableSheets.SkillSheet[200000]; // Buff skill
+            var buffSkill = (BuffSkill)SkillFactory.Get(buffRow, 100, 80, 20, StatType.DEF);
+            equipment.BuffSkills.Add(buffSkill);
+
+            // Act: Serialize and deserialize
+            var serialized = equipment.Serialize();
+            var deserialized = new Equipment(serialized);
+
+            // Assert: Verify skill data integrity
+            Assert.Equal(2, deserialized.Skills.Count);
+            Assert.Single(deserialized.BuffSkills);
+
+            // Verify first skill
+            var deserializedSkill1 = deserialized.Skills[0];
+            Assert.Equal(150, deserializedSkill1.Power);
+            Assert.Equal(75, deserializedSkill1.Chance);
+            Assert.Equal(30, deserializedSkill1.StatPowerRatio);
+            Assert.Equal(StatType.ATK, deserializedSkill1.ReferencedStatType);
+            Assert.Equal(100001, deserializedSkill1.SkillRow.Id);
+            Assert.Equal(SkillCategory.BlowAttack, deserializedSkill1.SkillRow.SkillCategory);
+
+            // Verify second skill
+            var deserializedSkill2 = deserialized.Skills[1];
+            Assert.Equal(200, deserializedSkill2.Power);
+            Assert.Equal(60, deserializedSkill2.Chance);
+            Assert.Equal(40, deserializedSkill2.StatPowerRatio);
+            Assert.Equal(StatType.CRI, deserializedSkill2.ReferencedStatType);
+            Assert.Equal(100003, deserializedSkill2.SkillRow.Id);
+            Assert.Equal(SkillCategory.DoubleAttack, deserializedSkill2.SkillRow.SkillCategory);
+
+            // Verify buff skill
+            var deserializedBuff = deserialized.BuffSkills[0];
+            Assert.Equal(100, deserializedBuff.Power);
+            Assert.Equal(80, deserializedBuff.Chance);
+            Assert.Equal(20, deserializedBuff.StatPowerRatio);
+            Assert.Equal(StatType.DEF, deserializedBuff.ReferencedStatType);
+            Assert.Equal(200000, deserializedBuff.SkillRow.Id);
+        }
+
+        [Fact]
+        public void Consumable_WithSkills_Migration_Test()
+        {
+            // Arrange: Create consumable with skills
+            var consumableRow = _tableSheets.ConsumableItemSheet.Values.First();
+            var consumable = ItemFactory.CreateItemUsable(consumableRow, Guid.NewGuid(), 1000L) as Consumable;
+            Assert.NotNull(consumable);
+
+            // Add skills to consumable
+            var skillRow = _tableSheets.SkillSheet[100001];
+            var skill = SkillFactory.Get(skillRow, 120, 65, 35, StatType.HP);
+            consumable.Skills.Add(skill);
+
+            var buffRow = _tableSheets.SkillSheet[200000];
+            var buffSkill = (BuffSkill)SkillFactory.Get(buffRow, 80, 90, 15, StatType.SPD);
+            consumable.BuffSkills.Add(buffSkill);
+
+            // Act: Test migration
+            var serialized = consumable.Serialize();
+            var deserialized = new Consumable(serialized);
+
+            // Assert: Skills should be preserved
+            Assert.Single(deserialized.Skills);
+            Assert.Single(deserialized.BuffSkills);
+
+            var deserializedSkill = deserialized.Skills[0];
+            Assert.Equal(120, deserializedSkill.Power);
+            Assert.Equal(65, deserializedSkill.Chance);
+            Assert.Equal(35, deserializedSkill.StatPowerRatio);
+            Assert.Equal(StatType.HP, deserializedSkill.ReferencedStatType);
+
+            var deserializedBuff = deserialized.BuffSkills[0];
+            Assert.Equal(80, deserializedBuff.Power);
+            Assert.Equal(90, deserializedBuff.Chance);
+            Assert.Equal(15, deserializedBuff.StatPowerRatio);
+            Assert.Equal(StatType.SPD, deserializedBuff.ReferencedStatType);
+        }
+
+        [Fact]
+        public void Equipment_LegacySkillFormat_BackwardCompatibility_Test()
+        {
+            // Arrange: Create equipment with legacy dictionary format skills
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 1000L) as Equipment;
+            Assert.NotNull(equipment);
+
+            // Create legacy dictionary format serialization
+            var legacySkillDict = SkillSerializationTest.LegacySerializeSkill(
+                SkillFactory.Get(_tableSheets.SkillSheet[100001], 150, 75, 30, StatType.ATK)
+            );
+
+            var legacyBuffDict = SkillSerializationTest.LegacySerializeSkill(
+                SkillFactory.Get(_tableSheets.SkillSheet[200000], 100, 80, 20, StatType.DEF)
+            );
+
+            var dictSerialized = Dictionary.Empty
+                .Add("id", equipment.Id.Serialize())
+                .Add("item_type", equipment.ItemType.Serialize())
+                .Add("item_sub_type", equipment.ItemSubType.Serialize())
+                .Add("grade", equipment.Grade.Serialize())
+                .Add("elemental_type", equipment.ElementalType.Serialize())
+                .Add("itemId", equipment.ItemId.Serialize())
+                .Add("statsMap", equipment.StatsMap.Serialize())
+                .Add("skills", new List(new[] { legacySkillDict }))
+                .Add("buffSkills", new List(new[] { legacyBuffDict }))
+                .Add("requiredBlockIndex", equipment.RequiredBlockIndex.Serialize())
+                .Add("equipped", equipment.Equipped.Serialize())
+                .Add("level", equipment.level.Serialize())
+                .Add("stat", equipment.Stat.SerializeForLegacyEquipmentStat())
+                .Add("set_id", equipment.SetId.Serialize())
+                .Add("spine_resource_path", equipment.SpineResourcePath.Serialize())
+                .Add("icon_id", equipment.IconId)
+                .Add("bcc", equipment.ByCustomCraft)
+                .Add("cwr", equipment.CraftWithRandom)
+                .Add("hroi", equipment.HasRandomOnlyIcon)
+                .Add("oc", equipment.optionCountFromCombination.Serialize())
+                .Add("mwmr", equipment.MadeWithMimisbrunnrRecipe.Serialize())
+                .Add("eq_exp", equipment.Exp.Serialize());
+
+            // Act: Deserialize from legacy format
+            var deserializedFromDict = new Equipment(dictSerialized);
+
+            // Serialize to new format
+            var listSerialized = deserializedFromDict.Serialize();
+
+            // Deserialize from new format
+            var deserializedFromList = new Equipment(listSerialized);
+
+            // Assert: Legacy skills should be correctly converted and preserved
+            Assert.Single(deserializedFromDict.Skills);
+            Assert.Single(deserializedFromDict.BuffSkills);
+
+            var skill = deserializedFromDict.Skills[0];
+            Assert.Equal(150, skill.Power);
+            Assert.Equal(75, skill.Chance);
+            Assert.Equal(30, skill.StatPowerRatio);
+            Assert.Equal(StatType.ATK, skill.ReferencedStatType);
+            Assert.Equal(100001, skill.SkillRow.Id);
+
+            var buffSkill = deserializedFromDict.BuffSkills[0];
+            Assert.Equal(100, buffSkill.Power);
+            Assert.Equal(80, buffSkill.Chance);
+            Assert.Equal(20, buffSkill.StatPowerRatio);
+            Assert.Equal(StatType.DEF, buffSkill.ReferencedStatType);
+            Assert.Equal(200000, buffSkill.SkillRow.Id);
+
+            // Migration should preserve all data
+            Assert.Equal(deserializedFromDict.Skills.Count, deserializedFromList.Skills.Count);
+            Assert.Equal(deserializedFromDict.BuffSkills.Count, deserializedFromList.BuffSkills.Count);
+        }
+
+        [Fact]
+        public void Equipment_EmptySkills_Migration_Test()
+        {
+            // Arrange: Create equipment with no skills
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 1000L) as Equipment;
+            Assert.NotNull(equipment);
+
+            // Ensure no skills are added
+            Assert.Empty(equipment.Skills);
+            Assert.Empty(equipment.BuffSkills);
+
+            // Act: Test migration with empty skills
+            var serialized = equipment.Serialize();
+            var deserialized = new Equipment(serialized);
+
+            // Assert: Empty skills should be preserved
+            Assert.Empty(deserialized.Skills);
+            Assert.Empty(deserialized.BuffSkills);
+        }
+
+        [Fact]
+        public void Equipment_SkillEnumValues_Preservation_Test()
+        {
+            // Arrange: Create equipment with skills having different enum values
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 1000L) as Equipment;
+            Assert.NotNull(equipment);
+
+            // Add skills with different enum combinations
+            var skillIds = new[] { 100001, 100003, 100005, 110007 };
+            var statTypes = new[] { StatType.NONE, StatType.HP, StatType.ATK, StatType.DEF };
+
+            for (int i = 0; i < skillIds.Length; i++)
+            {
+                var skillId = skillIds[i];
+                if (_tableSheets.SkillSheet.TryGetValue(skillId, out var skillRow))
+                {
+                    var statType = statTypes[i];
+                    var skill = SkillFactory.Get(skillRow, 100 + i, 50 + i, 25 + i, statType);
+                    equipment.Skills.Add(skill);
+                }
+            }
+
+            // Act: Test migration
+            var serialized = equipment.Serialize();
+            var deserialized = new Equipment(serialized);
+
+            // Assert: All enum values should be preserved
+            Assert.Equal(equipment.Skills.Count, deserialized.Skills.Count);
+
+            foreach (var skillId in skillIds)
+            {
+                var originalSkill = equipment.Skills.Single(i => i.SkillRow.Id == skillId);
+                var deserializedSkill = deserialized.Skills.Single(i => i.SkillRow.Id == skillId);
+
+                // Verify SkillSheet.Row enum values
+                Assert.Equal(originalSkill.SkillRow.ElementalType, deserializedSkill.SkillRow.ElementalType);
+                Assert.Equal(originalSkill.SkillRow.SkillType, deserializedSkill.SkillRow.SkillType);
+                Assert.Equal(originalSkill.SkillRow.SkillCategory, deserializedSkill.SkillRow.SkillCategory);
+                Assert.Equal(originalSkill.SkillRow.SkillTargetType, deserializedSkill.SkillRow.SkillTargetType);
+
+                // Verify Skill enum values
+                Assert.Equal(originalSkill.ReferencedStatType, deserializedSkill.ReferencedStatType);
+            }
         }
     }
 }

@@ -125,7 +125,46 @@ namespace Nekoyume.Model.Skill
                 $"{skillRow.Id}, {skillRow.SkillType}, {skillRow.SkillTargetType}, {skillRow.SkillCategory}");
         }
 
-        public static Skill Deserialize(Dictionary serialized)
+        /// <summary>
+        /// Deserializes a skill from serialized data.
+        /// Supports both Dictionary and List formats for backward compatibility.
+        /// </summary>
+        /// <param name="serialized">The serialized skill data</param>
+        /// <returns>The deserialized skill</returns>
+        /// <exception cref="ArgumentException">Thrown when the serialization format is not supported</exception>
+        public static Skill Deserialize(IValue serialized)
+        {
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    return DeserializeFromDictionary(dict);
+                case List list:
+                    return DeserializeFromList(list);
+                default:
+                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+            }
+        }
+
+        public static Skill DeserializeFromList(List serialized)
+        {
+            var skillRow = SkillSheet.Row.Deserialize(serialized[0]);
+            var power = serialized[1].ToInteger();
+            var chance = serialized[2].ToInteger();
+
+            var ratio = 0;
+            var statType = StatType.NONE;
+
+            if (serialized.Count > 3)
+            {
+                ratio = serialized[3].ToInteger();
+                statType = StatTypeExtension.Deserialize((Binary)serialized[4]);
+            }
+
+            return Get(skillRow, power, chance, ratio, statType);
+        }
+
+        [Obsolete("Use Deserialize(IValue) instead.")]
+        public static Skill DeserializeFromDictionary(Dictionary serialized)
         {
             var ratio = serialized.TryGetValue((Text)"stat_power_ratio", out var ratioValue) ?
                 ratioValue.ToInteger() : default;
@@ -133,7 +172,7 @@ namespace Nekoyume.Model.Skill
                 StatTypeExtension.Deserialize((Binary)refStatType) : StatType.NONE;
 
             return Get(
-                SkillSheet.Row.Deserialize((Dictionary)serialized["skillRow"]),
+                SkillSheet.Row.Deserialize(serialized["skillRow"]),
                 serialized["power"].ToInteger(),
                 serialized["chance"].ToInteger(),
                 ratio,
