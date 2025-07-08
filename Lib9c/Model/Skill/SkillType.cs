@@ -2,9 +2,9 @@ namespace Nekoyume.Model.Skill
 {
     public enum SkillType
     {
-        Attack,
-        Heal,
-        Buff,
-        Debuff,
+        Attack = 0,
+        Heal = 1,
+        Buff = 2,
+        Debuff = 3,
     }
 }
