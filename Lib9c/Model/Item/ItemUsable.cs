@@ -153,7 +153,7 @@ namespace Nekoyume.Model.Item
         private List<Skill.Skill> _skills;
         private List<BuffSkill> _buffSkills;
         private Binary? _serializedItemId;
-        private Dictionary _serializedStatsMap;
+        private IValue _serializedStatsMap;
         private List _serializedSkills;
         private List _serializedBuffSkills;
 
@@ -214,7 +214,7 @@ namespace Nekoyume.Model.Item
             }
             if (dict.TryGetValue((Text) "statsMap", out var statsMap))
             {
-                _serializedStatsMap = (Dictionary) statsMap;
+                _serializedStatsMap = statsMap;
             }
             if (dict.TryGetValue((Text) "skills", out var skills))
             {
@@ -252,7 +252,7 @@ namespace Nekoyume.Model.Item
             // ItemUsable fields (6~10): itemId, statsMap, skills, buffSkills, requiredBlockIndex
 
             _serializedItemId = (Binary) list[6];
-            _serializedStatsMap = (Dictionary) list[7];
+            _serializedStatsMap = list[7];
             _serializedSkills = (List) list[8];
             _serializedBuffSkills = (List) list[9];
             RequiredBlockIndex = list[10].ToLong();
@@ -303,7 +303,7 @@ namespace Nekoyume.Model.Item
         /// <returns>List containing serialized data</returns>
         public override IValue Serialize() => ((List)base.Serialize())
             .Add(_serializedItemId ?? ItemId.Serialize())
-            .Add(_serializedStatsMap ?? StatsMap.Serialize())
+            .Add(_serializedStatsMap is List ? _serializedStatsMap : StatsMap.Serialize())
             .Add(_serializedSkills ?? new List(Skills
                 .OrderByDescending(i => i.Chance)
                 .ThenByDescending(i => i.Power)

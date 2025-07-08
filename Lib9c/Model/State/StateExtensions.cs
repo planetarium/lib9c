@@ -212,8 +212,21 @@ namespace Nekoyume.Model.State
                 .Add("type", StatTypeExtension.Serialize(decimalStat.StatType))
                 .Add("value", decimalStat.BaseValue.Serialize());
 
-        public static DecimalStat ToDecimalStat(this IValue serialized) =>
-            ((Dictionary)serialized).ToDecimalStat();
+        public static DecimalStat ToDecimalStat(this IValue serialized)
+        {
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    return dict.ToDecimalStat();
+                case List list:
+                    return new DecimalStat(list);
+                default:
+                    throw new ArgumentException(
+                        $"Unsupported serialization format for DecimalStat: {serialized.GetType().Name}. " +
+                        $"Expected Dictionary or List, got {serialized.GetType().Name}. " +
+                        $"This may indicate corrupted data or an unsupported serialization format.");
+            }
+        }
 
         public static (StatType statType, decimal baseValue, decimal additionalValue) GetStat(
             this Dictionary serialized)

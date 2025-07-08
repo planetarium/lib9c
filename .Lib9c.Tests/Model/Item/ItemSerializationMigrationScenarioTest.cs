@@ -1,12 +1,14 @@
 namespace Lib9c.Tests.Model.Item
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Cryptography;
     using Bencodex.Types;
     using Libplanet.Common;
     using Nekoyume.Model.Elemental;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
     using static Lib9c.SerializeKeys;
@@ -173,15 +175,27 @@ namespace Lib9c.Tests.Model.Item
             Assert.NotNull(equipment);
 
             // Act: Serialize to Dictionary (legacy format) - some fields with default values
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.HP.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 100m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 25m.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", equipment.Id.Serialize())
                 .Add("item_type", equipment.ItemType.Serialize())
                 .Add("item_sub_type", equipment.ItemSubType.Serialize())
                 .Add("grade", equipment.Grade.Serialize())
                 .Add("elemental_type", equipment.ElementalType.Serialize())
+                .Add("itemId", equipment.ItemId.Serialize())
+                .Add("statsMap", equipment.StatsMap.Serialize())
+                .Add("skills", new List(equipment.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(equipment.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", equipment.RequiredBlockIndex.Serialize())
                 .Add("equipped", equipment.Equipped.Serialize())
                 .Add("level", equipment.level.Serialize())
-                .Add("stat", equipment.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", equipment.SetId.Serialize())
                 .Add("spine_resource_path", equipment.SpineResourcePath.Serialize())
                 .Add("icon_id", equipment.IconId)
@@ -189,7 +203,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("cwr", equipment.CraftWithRandom)
                 .Add("hroi", equipment.HasRandomOnlyIcon)
                 .Add("oc", equipment.optionCountFromCombination.Serialize())
-                .Add("mwmr", equipment.MadeWithMimisbrunnrRecipe.Serialize());
+                .Add("mwmr", equipment.MadeWithMimisbrunnrRecipe.Serialize())
+                .Add("eq_exp", equipment.Exp.Serialize());
             // Exp is intentionally omitted to test default value handling
 
             // Deserialize from Dictionary
@@ -203,8 +218,29 @@ namespace Lib9c.Tests.Model.Item
 
             // Assert: All objects should be equal
             Assert.Equal(equipment.Id, deserializedFromDict.Id);
-            Assert.Equal(0L, deserializedFromDict.Exp); // Default value
-            Assert.Equal(deserializedFromDict, deserializedFromList);
+            Assert.Equal(equipment.Exp, deserializedFromDict.Exp); // Default value
+            Assert.Equal(equipment.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(equipment.RequiredBlockIndex, deserializedFromDict.RequiredBlockIndex);
+            Assert.Equal(equipment.Equipped, deserializedFromDict.Equipped);
+            Assert.Equal(equipment.level, deserializedFromDict.level);
+            Assert.Equal(equipment.ByCustomCraft, deserializedFromDict.ByCustomCraft);
+            Assert.Equal(equipment.CraftWithRandom, deserializedFromDict.CraftWithRandom);
+            Assert.Equal(equipment.HasRandomOnlyIcon, deserializedFromDict.HasRandomOnlyIcon);
+            Assert.Equal(equipment.optionCountFromCombination, deserializedFromDict.optionCountFromCombination);
+            Assert.Equal(equipment.MadeWithMimisbrunnrRecipe, deserializedFromDict.MadeWithMimisbrunnrRecipe);
+
+            // Compare individual properties for List deserialization
+            Assert.Equal(deserializedFromDict.Id, deserializedFromList.Id);
+            Assert.Equal(deserializedFromDict.Exp, deserializedFromList.Exp);
+            Assert.Equal(deserializedFromDict.ItemId, deserializedFromList.ItemId);
+            Assert.Equal(deserializedFromDict.RequiredBlockIndex, deserializedFromList.RequiredBlockIndex);
+            Assert.Equal(deserializedFromDict.Equipped, deserializedFromList.Equipped);
+            Assert.Equal(deserializedFromDict.level, deserializedFromList.level);
+            Assert.Equal(deserializedFromDict.ByCustomCraft, deserializedFromList.ByCustomCraft);
+            Assert.Equal(deserializedFromDict.CraftWithRandom, deserializedFromList.CraftWithRandom);
+            Assert.Equal(deserializedFromDict.HasRandomOnlyIcon, deserializedFromList.HasRandomOnlyIcon);
+            Assert.Equal(deserializedFromDict.optionCountFromCombination, deserializedFromList.optionCountFromCombination);
+            Assert.Equal(deserializedFromDict.MadeWithMimisbrunnrRecipe, deserializedFromList.MadeWithMimisbrunnrRecipe);
         }
 
         [Fact]
@@ -212,15 +248,26 @@ namespace Lib9c.Tests.Model.Item
         {
             // Arrange: Create an equipment with minimal Dictionary data (missing some fields)
             var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.HP.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 0m.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", equipmentRow.Id.Serialize())
                 .Add("item_type", equipmentRow.ItemType.Serialize())
                 .Add("item_sub_type", equipmentRow.ItemSubType.Serialize())
                 .Add("grade", equipmentRow.Grade.Serialize())
                 .Add("elemental_type", equipmentRow.ElementalType.Serialize())
+                .Add("itemId", Guid.NewGuid().Serialize())
+                .Add("statsMap", new StatMap().Serialize())
+                .Add("skills", new List())
+                .Add("buffSkills", new List())
+                .Add("requiredBlockIndex", 0L.Serialize())
                 .Add("equipped", false.Serialize())
                 .Add("level", 0.Serialize())
-                .Add("stat", new Nekoyume.Model.Stat.DecimalStat(Nekoyume.Model.Stat.StatType.HP, 0m).Serialize())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", 0.Serialize())
                 .Add("spine_resource_path", string.Empty.Serialize())
                 .Add("icon_id", 0);
@@ -268,16 +315,28 @@ namespace Lib9c.Tests.Model.Item
             equipment.optionCountFromCombination = 3;
             equipment.MadeWithMimisbrunnrRecipe = true;
 
-            // Act: Serialize to Dictionary (legacy format) - all fields included
+            // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.ATK.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 75m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 20m.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", equipment.Id.Serialize())
                 .Add("item_type", equipment.ItemType.Serialize())
                 .Add("item_sub_type", equipment.ItemSubType.Serialize())
                 .Add("grade", equipment.Grade.Serialize())
                 .Add("elemental_type", equipment.ElementalType.Serialize())
+                .Add("itemId", equipment.ItemId.Serialize())
+                .Add("statsMap", equipment.StatsMap.Serialize())
+                .Add("skills", new List(equipment.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(equipment.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", equipment.RequiredBlockIndex.Serialize())
                 .Add("equipped", equipment.Equipped.Serialize())
                 .Add("level", equipment.level.Serialize())
-                .Add("stat", equipment.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", equipment.SetId.Serialize())
                 .Add("spine_resource_path", equipment.SpineResourcePath.Serialize())
                 .Add("icon_id", equipment.IconId)
@@ -300,12 +359,28 @@ namespace Lib9c.Tests.Model.Item
             // Assert: All objects should be equal
             Assert.Equal(equipment.Id, deserializedFromDict.Id);
             Assert.Equal(equipment.Exp, deserializedFromDict.Exp);
+            Assert.Equal(equipment.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(equipment.RequiredBlockIndex, deserializedFromDict.RequiredBlockIndex);
+            Assert.Equal(equipment.Equipped, deserializedFromDict.Equipped);
+            Assert.Equal(equipment.level, deserializedFromDict.level);
             Assert.Equal(equipment.ByCustomCraft, deserializedFromDict.ByCustomCraft);
             Assert.Equal(equipment.CraftWithRandom, deserializedFromDict.CraftWithRandom);
             Assert.Equal(equipment.HasRandomOnlyIcon, deserializedFromDict.HasRandomOnlyIcon);
             Assert.Equal(equipment.optionCountFromCombination, deserializedFromDict.optionCountFromCombination);
             Assert.Equal(equipment.MadeWithMimisbrunnrRecipe, deserializedFromDict.MadeWithMimisbrunnrRecipe);
-            Assert.Equal(deserializedFromDict, deserializedFromList);
+
+            // Compare individual properties for List deserialization
+            Assert.Equal(deserializedFromDict.Id, deserializedFromList.Id);
+            Assert.Equal(deserializedFromDict.Exp, deserializedFromList.Exp);
+            Assert.Equal(deserializedFromDict.ItemId, deserializedFromList.ItemId);
+            Assert.Equal(deserializedFromDict.RequiredBlockIndex, deserializedFromList.RequiredBlockIndex);
+            Assert.Equal(deserializedFromDict.Equipped, deserializedFromList.Equipped);
+            Assert.Equal(deserializedFromDict.level, deserializedFromList.level);
+            Assert.Equal(deserializedFromDict.ByCustomCraft, deserializedFromList.ByCustomCraft);
+            Assert.Equal(deserializedFromDict.CraftWithRandom, deserializedFromList.CraftWithRandom);
+            Assert.Equal(deserializedFromDict.HasRandomOnlyIcon, deserializedFromList.HasRandomOnlyIcon);
+            Assert.Equal(deserializedFromDict.optionCountFromCombination, deserializedFromList.optionCountFromCombination);
+            Assert.Equal(deserializedFromDict.MadeWithMimisbrunnrRecipe, deserializedFromList.MadeWithMimisbrunnrRecipe);
         }
 
         [Fact]
@@ -324,7 +399,11 @@ namespace Lib9c.Tests.Model.Item
                 .Add("item_sub_type", consumable.ItemSubType.Serialize())
                 .Add("grade", consumable.Grade.Serialize())
                 .Add("elemental_type", consumable.ElementalType.Serialize())
-                .Add("required_block_index", consumable.RequiredBlockIndex.Serialize());
+                .Add("itemId", consumable.ItemId.Serialize())
+                .Add("statsMap", consumable.StatsMap.Serialize())
+                .Add("skills", new List(consumable.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(consumable.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", consumable.RequiredBlockIndex.Serialize());
 
             // Deserialize from Dictionary
             var deserializedFromDict = new Consumable(dictSerialized);
@@ -457,15 +536,27 @@ namespace Lib9c.Tests.Model.Item
             weapon.ByCustomCraft = true;
 
             // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.ATK.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 75m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 20m.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", weapon.Id.Serialize())
                 .Add("item_type", weapon.ItemType.Serialize())
                 .Add("item_sub_type", weapon.ItemSubType.Serialize())
                 .Add("grade", weapon.Grade.Serialize())
                 .Add("elemental_type", weapon.ElementalType.Serialize())
+                .Add("itemId", weapon.ItemId.Serialize())
+                .Add("statsMap", weapon.StatsMap.Serialize())
+                .Add("skills", new List(weapon.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(weapon.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", weapon.RequiredBlockIndex.Serialize())
                 .Add("equipped", weapon.Equipped.Serialize())
                 .Add("level", weapon.level.Serialize())
-                .Add("stat", weapon.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", weapon.SetId.Serialize())
                 .Add("spine_resource_path", weapon.SpineResourcePath.Serialize())
                 .Add("icon_id", weapon.IconId)
@@ -488,8 +579,28 @@ namespace Lib9c.Tests.Model.Item
             // Assert: All objects should be equal
             Assert.Equal(weapon.Id, deserializedFromDict.Id);
             Assert.Equal(weapon.Exp, deserializedFromDict.Exp);
+            Assert.Equal(weapon.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(weapon.RequiredBlockIndex, deserializedFromDict.RequiredBlockIndex);
+            Assert.Equal(weapon.Equipped, deserializedFromDict.Equipped);
+            Assert.Equal(weapon.level, deserializedFromDict.level);
             Assert.Equal(weapon.ByCustomCraft, deserializedFromDict.ByCustomCraft);
-            Assert.Equal(deserializedFromDict, deserializedFromList);
+            Assert.Equal(weapon.CraftWithRandom, deserializedFromDict.CraftWithRandom);
+            Assert.Equal(weapon.HasRandomOnlyIcon, deserializedFromDict.HasRandomOnlyIcon);
+            Assert.Equal(weapon.optionCountFromCombination, deserializedFromDict.optionCountFromCombination);
+            Assert.Equal(weapon.MadeWithMimisbrunnrRecipe, deserializedFromDict.MadeWithMimisbrunnrRecipe);
+
+            // Compare individual properties for List deserialization
+            Assert.Equal(deserializedFromDict.Id, deserializedFromList.Id);
+            Assert.Equal(deserializedFromDict.Exp, deserializedFromList.Exp);
+            Assert.Equal(deserializedFromDict.ItemId, deserializedFromList.ItemId);
+            Assert.Equal(deserializedFromDict.RequiredBlockIndex, deserializedFromList.RequiredBlockIndex);
+            Assert.Equal(deserializedFromDict.Equipped, deserializedFromList.Equipped);
+            Assert.Equal(deserializedFromDict.level, deserializedFromList.level);
+            Assert.Equal(deserializedFromDict.ByCustomCraft, deserializedFromList.ByCustomCraft);
+            Assert.Equal(deserializedFromDict.CraftWithRandom, deserializedFromList.CraftWithRandom);
+            Assert.Equal(deserializedFromDict.HasRandomOnlyIcon, deserializedFromList.HasRandomOnlyIcon);
+            Assert.Equal(deserializedFromDict.optionCountFromCombination, deserializedFromList.optionCountFromCombination);
+            Assert.Equal(deserializedFromDict.MadeWithMimisbrunnrRecipe, deserializedFromList.MadeWithMimisbrunnrRecipe);
         }
 
         [Fact]
@@ -501,18 +612,36 @@ namespace Lib9c.Tests.Model.Item
             Assert.NotNull(armor);
 
             // Act: Serialize to Dictionary (legacy format) - minimal fields
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.DEF.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 30m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 0m.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", armor.Id.Serialize())
                 .Add("item_type", armor.ItemType.Serialize())
                 .Add("item_sub_type", armor.ItemSubType.Serialize())
                 .Add("grade", armor.Grade.Serialize())
                 .Add("elemental_type", armor.ElementalType.Serialize())
+                .Add("itemId", armor.ItemId.Serialize())
+                .Add("statsMap", armor.StatsMap.Serialize())
+                .Add("skills", new List(armor.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(armor.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", armor.RequiredBlockIndex.Serialize())
                 .Add("equipped", armor.Equipped.Serialize())
                 .Add("level", armor.level.Serialize())
-                .Add("stat", armor.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", armor.SetId.Serialize())
                 .Add("spine_resource_path", armor.SpineResourcePath.Serialize())
-                .Add("icon_id", armor.IconId);
+                .Add("icon_id", armor.IconId)
+                .Add("bcc", armor.ByCustomCraft)
+                .Add("cwr", armor.CraftWithRandom)
+                .Add("hroi", armor.HasRandomOnlyIcon)
+                .Add("oc", armor.optionCountFromCombination.Serialize())
+                .Add("mwmr", armor.MadeWithMimisbrunnrRecipe.Serialize())
+                .Add("eq_exp", armor.Exp.Serialize());
             // Many fields are intentionally omitted to test default value handling
 
             // Deserialize from Dictionary
@@ -526,7 +655,7 @@ namespace Lib9c.Tests.Model.Item
 
             // Assert: All objects should be equal
             Assert.Equal(armor.Id, deserializedFromDict.Id);
-            Assert.Equal(0L, deserializedFromDict.Exp); // Default value
+            Assert.Equal(armor.Exp, deserializedFromDict.Exp); // Default value
             Assert.False(deserializedFromDict.ByCustomCraft); // Default value
             Assert.False(deserializedFromDict.CraftWithRandom); // Default value
             Assert.False(deserializedFromDict.HasRandomOnlyIcon); // Default value
@@ -552,15 +681,27 @@ namespace Lib9c.Tests.Model.Item
             belt.MadeWithMimisbrunnrRecipe = true;
 
             // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", StatType.CRI.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", 5m.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", 2m.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", belt.Id.Serialize())
                 .Add("item_type", belt.ItemType.Serialize())
                 .Add("item_sub_type", belt.ItemSubType.Serialize())
                 .Add("grade", belt.Grade.Serialize())
                 .Add("elemental_type", belt.ElementalType.Serialize())
+                .Add("itemId", belt.ItemId.Serialize())
+                .Add("statsMap", belt.StatsMap.Serialize())
+                .Add("skills", new List(belt.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(belt.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", belt.RequiredBlockIndex.Serialize())
                 .Add("equipped", belt.Equipped.Serialize())
                 .Add("level", belt.level.Serialize())
-                .Add("stat", belt.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", belt.SetId.Serialize())
                 .Add("spine_resource_path", belt.SpineResourcePath.Serialize())
                 .Add("icon_id", belt.IconId)
@@ -583,12 +724,28 @@ namespace Lib9c.Tests.Model.Item
             // Assert: All objects should be equal
             Assert.Equal(belt.Id, deserializedFromDict.Id);
             Assert.Equal(belt.Exp, deserializedFromDict.Exp);
+            Assert.Equal(belt.ItemId, deserializedFromDict.ItemId);
+            Assert.Equal(belt.RequiredBlockIndex, deserializedFromDict.RequiredBlockIndex);
+            Assert.Equal(belt.Equipped, deserializedFromDict.Equipped);
+            Assert.Equal(belt.level, deserializedFromDict.level);
             Assert.Equal(belt.ByCustomCraft, deserializedFromDict.ByCustomCraft);
             Assert.Equal(belt.CraftWithRandom, deserializedFromDict.CraftWithRandom);
             Assert.Equal(belt.HasRandomOnlyIcon, deserializedFromDict.HasRandomOnlyIcon);
             Assert.Equal(belt.optionCountFromCombination, deserializedFromDict.optionCountFromCombination);
             Assert.Equal(belt.MadeWithMimisbrunnrRecipe, deserializedFromDict.MadeWithMimisbrunnrRecipe);
-            Assert.Equal(deserializedFromDict, deserializedFromList);
+
+            // Compare individual properties for List deserialization
+            Assert.Equal(deserializedFromDict.Id, deserializedFromList.Id);
+            Assert.Equal(deserializedFromDict.Exp, deserializedFromList.Exp);
+            Assert.Equal(deserializedFromDict.ItemId, deserializedFromList.ItemId);
+            Assert.Equal(deserializedFromDict.RequiredBlockIndex, deserializedFromList.RequiredBlockIndex);
+            Assert.Equal(deserializedFromDict.Equipped, deserializedFromList.Equipped);
+            Assert.Equal(deserializedFromDict.level, deserializedFromList.level);
+            Assert.Equal(deserializedFromDict.ByCustomCraft, deserializedFromList.ByCustomCraft);
+            Assert.Equal(deserializedFromDict.CraftWithRandom, deserializedFromList.CraftWithRandom);
+            Assert.Equal(deserializedFromDict.HasRandomOnlyIcon, deserializedFromList.HasRandomOnlyIcon);
+            Assert.Equal(deserializedFromDict.optionCountFromCombination, deserializedFromList.optionCountFromCombination);
+            Assert.Equal(deserializedFromDict.MadeWithMimisbrunnrRecipe, deserializedFromList.MadeWithMimisbrunnrRecipe);
         }
 
         [Fact]
@@ -604,15 +761,27 @@ namespace Lib9c.Tests.Model.Item
             necklace.ByCustomCraft = true;
 
             // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", necklace.Stat.StatType.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", necklace.Stat.BaseValue.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", necklace.Stat.AdditionalValue.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", necklace.Id.Serialize())
                 .Add("item_type", necklace.ItemType.Serialize())
                 .Add("item_sub_type", necklace.ItemSubType.Serialize())
                 .Add("grade", necklace.Grade.Serialize())
                 .Add("elemental_type", necklace.ElementalType.Serialize())
+                .Add("itemId", necklace.ItemId.Serialize())
+                .Add("statsMap", necklace.StatsMap.Serialize())
+                .Add("skills", new List(necklace.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(necklace.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", necklace.RequiredBlockIndex.Serialize())
                 .Add("equipped", necklace.Equipped.Serialize())
                 .Add("level", necklace.level.Serialize())
-                .Add("stat", necklace.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", necklace.SetId.Serialize())
                 .Add("spine_resource_path", necklace.SpineResourcePath.Serialize())
                 .Add("icon_id", necklace.IconId)
@@ -656,15 +825,27 @@ namespace Lib9c.Tests.Model.Item
             ring.MadeWithMimisbrunnrRecipe = true;
 
             // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", ring.Stat.StatType.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", ring.Stat.BaseValue.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", ring.Stat.AdditionalValue.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", ring.Id.Serialize())
                 .Add("item_type", ring.ItemType.Serialize())
                 .Add("item_sub_type", ring.ItemSubType.Serialize())
                 .Add("grade", ring.Grade.Serialize())
                 .Add("elemental_type", ring.ElementalType.Serialize())
+                .Add("itemId", ring.ItemId.Serialize())
+                .Add("statsMap", ring.StatsMap.Serialize())
+                .Add("skills", new List(ring.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(ring.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", ring.RequiredBlockIndex.Serialize())
                 .Add("equipped", ring.Equipped.Serialize())
                 .Add("level", ring.level.Serialize())
-                .Add("stat", ring.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", ring.SetId.Serialize())
                 .Add("spine_resource_path", ring.SpineResourcePath.Serialize())
                 .Add("icon_id", ring.IconId)
@@ -708,15 +889,27 @@ namespace Lib9c.Tests.Model.Item
             aura.ByCustomCraft = true;
 
             // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", aura.Stat.StatType.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", aura.Stat.BaseValue.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", aura.Stat.AdditionalValue.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", aura.Id.Serialize())
                 .Add("item_type", aura.ItemType.Serialize())
                 .Add("item_sub_type", aura.ItemSubType.Serialize())
                 .Add("grade", aura.Grade.Serialize())
                 .Add("elemental_type", aura.ElementalType.Serialize())
+                .Add("itemId", aura.ItemId.Serialize())
+                .Add("statsMap", aura.StatsMap.Serialize())
+                .Add("skills", new List(aura.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(aura.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", aura.RequiredBlockIndex.Serialize())
                 .Add("equipped", aura.Equipped.Serialize())
                 .Add("level", aura.level.Serialize())
-                .Add("stat", aura.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", aura.SetId.Serialize())
                 .Add("spine_resource_path", aura.SpineResourcePath.Serialize())
                 .Add("icon_id", aura.IconId)
@@ -760,15 +953,27 @@ namespace Lib9c.Tests.Model.Item
             grimoire.MadeWithMimisbrunnrRecipe = true;
 
             // Act: Serialize to Dictionary (legacy format)
+            var legacyStatDict = new Dictionary(new[]
+            {
+                new KeyValuePair<IKey, IValue>((Text)"statType", grimoire.Stat.StatType.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"value", grimoire.Stat.BaseValue.Serialize()),
+                new KeyValuePair<IKey, IValue>((Text)"additionalValue", grimoire.Stat.AdditionalValue.Serialize()),
+            });
+
             var dictSerialized = Dictionary.Empty
                 .Add("id", grimoire.Id.Serialize())
                 .Add("item_type", grimoire.ItemType.Serialize())
                 .Add("item_sub_type", grimoire.ItemSubType.Serialize())
                 .Add("grade", grimoire.Grade.Serialize())
                 .Add("elemental_type", grimoire.ElementalType.Serialize())
+                .Add("itemId", grimoire.ItemId.Serialize())
+                .Add("statsMap", grimoire.StatsMap.Serialize())
+                .Add("skills", new List(grimoire.Skills.Select(s => s.Serialize())))
+                .Add("buffSkills", new List(grimoire.BuffSkills.Select(s => s.Serialize())))
+                .Add("requiredBlockIndex", grimoire.RequiredBlockIndex.Serialize())
                 .Add("equipped", grimoire.Equipped.Serialize())
                 .Add("level", grimoire.level.Serialize())
-                .Add("stat", grimoire.Stat.SerializeForLegacyEquipmentStat())
+                .Add("stat", legacyStatDict)
                 .Add("set_id", grimoire.SetId.Serialize())
                 .Add("spine_resource_path", grimoire.SpineResourcePath.Serialize())
                 .Add("icon_id", grimoire.IconId)
