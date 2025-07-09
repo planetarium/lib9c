@@ -132,6 +132,17 @@ namespace Nekoyume.Model.Skill
         /// <param name="serialized">The serialized skill data</param>
         /// <returns>The deserialized skill</returns>
         /// <exception cref="ArgumentException">Thrown when the serialization format is not supported</exception>
+        /// <remarks>
+        /// <para>
+        /// This method automatically detects the serialization format and delegates to the appropriate
+        /// deserialization method. It supports both the new List-based format and the legacy Dictionary format
+        /// to ensure backward compatibility with existing data.
+        /// </para>
+        /// <para>
+        /// List format (new): [SkillRow, Power, Chance, StatPowerRatio?, ReferencedStatType?]
+        /// Dictionary format (legacy): {"skillRow": ..., "power": ..., "chance": ..., "stat_power_ratio": ..., "referenced_stat_type": ...}
+        /// </para>
+        /// </remarks>
         public static Skill Deserialize(IValue serialized)
         {
             switch (serialized)
@@ -145,6 +156,21 @@ namespace Nekoyume.Model.Skill
             }
         }
 
+        /// <summary>
+        /// Deserializes a skill from the new List-based serialization format.
+        /// </summary>
+        /// <param name="serialized">The serialized skill data in List format</param>
+        /// <returns>The deserialized skill</returns>
+        /// <remarks>
+        /// <para>
+        /// Expected List format: [SkillRow, Power, Chance, StatPowerRatio?, ReferencedStatType?]
+        /// Where StatPowerRatio and ReferencedStatType are optional and only included if StatPowerRatio > 0.
+        /// </para>
+        /// <para>
+        /// This method handles the new List-based serialization format which is more compact
+        /// and performant than the previous Dictionary format.
+        /// </para>
+        /// </remarks>
         public static Skill DeserializeFromList(List serialized)
         {
             var skillRow = SkillSheet.Row.Deserialize(serialized[0]);
@@ -163,6 +189,28 @@ namespace Nekoyume.Model.Skill
             return Get(skillRow, power, chance, ratio, statType);
         }
 
+        /// <summary>
+        /// Deserializes a skill from the legacy Dictionary-based serialization format.
+        /// This method is maintained for backward compatibility with existing data.
+        /// </summary>
+        /// <param name="serialized">The serialized skill data in Dictionary format</param>
+        /// <returns>The deserialized skill</returns>
+        /// <remarks>
+        /// <para>
+        /// Expected Dictionary format:
+        /// {
+        ///   "skillRow": SkillSheet.Row,
+        ///   "power": long,
+        ///   "chance": int,
+        ///   "stat_power_ratio": int (optional),
+        ///   "referenced_stat_type": StatType (optional)
+        /// }
+        /// </para>
+        /// <para>
+        /// This method is marked as obsolete and should only be used for backward compatibility.
+        /// New code should use the List-based format through Deserialize(IValue) or DeserializeFromList(List).
+        /// </para>
+        /// </remarks>
         [Obsolete("Use Deserialize(IValue) instead.")]
         public static Skill DeserializeFromDictionary(Dictionary serialized)
         {

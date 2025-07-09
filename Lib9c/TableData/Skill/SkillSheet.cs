@@ -8,9 +8,34 @@ using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
 {
+    /// <summary>
+    /// Sheet containing skill data loaded from CSV files.
+    /// Provides access to skill definitions and their properties.
+    /// </summary>
     [Serializable]
     public class SkillSheet : Sheet<int, SkillSheet.Row>
     {
+        /// <summary>
+        /// Represents a single skill row from the skill sheet.
+        /// Contains skill metadata and properties used for skill creation and execution.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// SkillSheet.Row maps 1:1 to the following 9 fields in SkillSheet.csv:
+        /// [0] id
+        /// [1] _name
+        /// [2] elemental_type
+        /// [3] skill_type
+        /// [4] skill_category
+        /// [5] skill_target_type
+        /// [6] hit_count
+        /// [7] cooldown
+        /// [8] combo
+        /// </para>
+        /// <para>
+        /// Serialization and deserialization are performed as a List in this order. (Dictionary is also supported for backward compatibility.)
+        /// </para>
+        /// </remarks>
         [Serializable]
         public class Row : SheetRow<int>, IState
         {
