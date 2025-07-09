@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SkillSheet.Row | Lib9c ">
       
-      
+      <meta name="description" content="Represents a single skill row from the skill sheet. Contains skill metadata and properties used for skill creation and execution.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_SkillSheet_Row" data-uid="Nekoyume.TableData.SkillSheet.Row" class="text-break">
-Class SkillSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class SkillSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class SkillSheet.Row  <a class="header-action link-secondary" title="View source
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a single skill row from the skill sheet.
+Contains skill metadata and properties used for skill creation and execution.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -160,6 +162,23 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
 
 
+  <h2 id="Nekoyume_TableData_SkillSheet_Row_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+SkillSheet.Row maps 1:1 to the following 9 fields in SkillSheet.csv:
+[0] id
+[1] _name
+[2] elemental_type
+[3] skill_type
+[4] skill_category
+[5] skill_target_type
+[6] hit_count
+[7] cooldown
+[8] combo
+</p>
+<p>
+Serialization and deserialization are performed as a List in this order. (Dictionary is also supported for backward compatibility.)
+</p>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -170,7 +189,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row__ctor" data-uid="Nekoyume.TableData.SkillSheet.Row.#ctor">
   Row()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -196,7 +215,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.TableData.SkillSheet.Row.#ctor(Bencodex.Types.Dictionary)">
   Row(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -227,7 +246,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row__ctor_Bencodex_Types_List_" data-uid="Nekoyume.TableData.SkillSheet.Row.#ctor(Bencodex.Types.List)">
   Row(List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -262,7 +281,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Combo" data-uid="Nekoyume.TableData.SkillSheet.Row.Combo">
   Combo
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -293,7 +312,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Cooldown" data-uid="Nekoyume.TableData.SkillSheet.Row.Cooldown">
   Cooldown
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -324,7 +343,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_ElementalType" data-uid="Nekoyume.TableData.SkillSheet.Row.ElementalType">
   ElementalType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -355,7 +374,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_HitCount" data-uid="Nekoyume.TableData.SkillSheet.Row.HitCount">
   HitCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -386,7 +405,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Id" data-uid="Nekoyume.TableData.SkillSheet.Row.Id">
   Id
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -417,7 +436,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Key" data-uid="Nekoyume.TableData.SkillSheet.Row.Key">
   Key
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -448,7 +467,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_SkillCategory" data-uid="Nekoyume.TableData.SkillSheet.Row.SkillCategory">
   SkillCategory
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -479,7 +498,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_SkillTargetType" data-uid="Nekoyume.TableData.SkillSheet.Row.SkillTargetType">
   SkillTargetType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -510,7 +529,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_SkillType" data-uid="Nekoyume.TableData.SkillSheet.Row.SkillType">
   SkillType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -545,7 +564,7 @@ public class SkillSheet.Row : SheetRow&lt;int&gt;, IState</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Deserialize_Bencodex_Types_Dictionary_" data-uid="Nekoyume.TableData.SkillSheet.Row.Deserialize(Bencodex.Types.Dictionary)">
   Deserialize(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L135"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -582,7 +601,7 @@ public static SkillSheet.Row Deserialize(Dictionary serialized)</code></pre>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Deserialize_Bencodex_Types_IValue_" data-uid="Nekoyume.TableData.SkillSheet.Row.Deserialize(Bencodex.Types.IValue)">
   Deserialize(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deserializes a skill row from serialized data.
@@ -628,7 +647,7 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_DeserializeFromDictionary_Bencodex_Types_Dictionary_" data-uid="Nekoyume.TableData.SkillSheet.Row.DeserializeFromDictionary(Bencodex.Types.Dictionary)">
   DeserializeFromDictionary(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L141"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -664,7 +683,7 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_DeserializeFromList_Bencodex_Types_List_" data-uid="Nekoyume.TableData.SkillSheet.Row.DeserializeFromList(Bencodex.Types.List)">
   DeserializeFromList(List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L130"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -700,7 +719,7 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Serialize" data-uid="Nekoyume.TableData.SkillSheet.Row.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -731,7 +750,7 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 
   <h3 id="Nekoyume_TableData_SkillSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__" data-uid="Nekoyume.TableData.SkillSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})">
   Set(IReadOnlyList&lt;string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -762,7 +781,7 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/TableData/Skill/SkillSheet.cs/#L39" class="edit-link">Edit this page</a>
         </div>
 
 

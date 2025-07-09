@@ -156,7 +156,7 @@ Class SkillFactory  <a class="header-action link-secondary" title="View source" 
 
   <h3 id="Nekoyume_Model_Skill_SkillFactory_Deserialize_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Skill.SkillFactory.Deserialize(Bencodex.Types.IValue)">
   Deserialize(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L146"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deserializes a skill from serialized data.
@@ -188,6 +188,17 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 
 
 
+  <h4 class="section" id="Nekoyume_Model_Skill_SkillFactory_Deserialize_Bencodex_Types_IValue__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+This method automatically detects the serialization format and delegates to the appropriate
+deserialization method. It supports both the new List-based format and the legacy Dictionary format
+to ensure backward compatibility with existing data.
+</p>
+<p>
+List format (new): [SkillRow, Power, Chance, StatPowerRatio?, ReferencedStatType?]
+Dictionary format (legacy): {"skillRow": ..., "power": ..., "chance": ..., "stat_power_ratio": ..., "referenced_stat_type": ...}
+</p>
+</div>
 
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
@@ -202,10 +213,12 @@ Supports both Dictionary and List formats for backward compatibility.</p>
 
   <h3 id="Nekoyume_Model_Skill_SkillFactory_DeserializeFromDictionary_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Skill.SkillFactory.DeserializeFromDictionary(Bencodex.Types.Dictionary)">
   DeserializeFromDictionary(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L214"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Deserializes a skill from the legacy Dictionary-based serialization format.
+This method is maintained for backward compatibility with existing data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -216,13 +229,15 @@ public static Skill DeserializeFromDictionary(Dictionary serialized)</code></pre
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dd><p>The serialized skill data in Dictionary format</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.Model.Skill.Skill.html">Skill</a></dt>
-    <dd></dd>
+    <dd><p>The deserialized skill</p>
+</dd>
   </dl>
 
 
@@ -231,6 +246,22 @@ public static Skill DeserializeFromDictionary(Dictionary serialized)</code></pre
 
 
 
+  <h4 class="section" id="Nekoyume_Model_Skill_SkillFactory_DeserializeFromDictionary_Bencodex_Types_Dictionary__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+Expected Dictionary format:
+{
+  "skillRow": SkillSheet.Row,
+  "power": long,
+  "chance": int,
+  "stat_power_ratio": int (optional),
+  "referenced_stat_type": StatType (optional)
+}
+</p>
+<p>
+This method is marked as obsolete and should only be used for backward compatibility.
+New code should use the List-based format through Deserialize(IValue) or DeserializeFromList(List).
+</p>
+</div>
 
 
 
@@ -239,10 +270,11 @@ public static Skill DeserializeFromDictionary(Dictionary serialized)</code></pre
 
   <h3 id="Nekoyume_Model_Skill_SkillFactory_DeserializeFromList_Bencodex_Types_List_" data-uid="Nekoyume.Model.Skill.SkillFactory.DeserializeFromList(Bencodex.Types.List)">
   DeserializeFromList(List)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L174"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Deserializes a skill from the new List-based serialization format.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -252,13 +284,15 @@ public static Skill DeserializeFromDictionary(Dictionary serialized)</code></pre
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>serialized</code> <span class="xref">List</span></dt>
-    <dd></dd>
+    <dd><p>The serialized skill data in List format</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.Model.Skill.Skill.html">Skill</a></dt>
-    <dd></dd>
+    <dd><p>The deserialized skill</p>
+</dd>
   </dl>
 
 
@@ -267,6 +301,16 @@ public static Skill DeserializeFromDictionary(Dictionary serialized)</code></pre
 
 
 
+  <h4 class="section" id="Nekoyume_Model_Skill_SkillFactory_DeserializeFromList_Bencodex_Types_List__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+Expected List format: [SkillRow, Power, Chance, StatPowerRatio?, ReferencedStatType?]
+Where StatPowerRatio and ReferencedStatType are optional and only included if StatPowerRatio &gt; 0.
+</p>
+<p>
+This method handles the new List-based serialization format which is more compact
+and performant than the previous Dictionary format.
+</p>
+</div>
 
 
 
@@ -404,7 +448,7 @@ public static Skill GetV1(SkillSheet.Row skillRow, long power, int chance)</code
 
   <h3 id="Nekoyume_Model_Skill_SkillFactory_SelectSkill_Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_CustomEquipmentCraft_CustomEquipmentCraftRecipeSkillSheet_Nekoyume_TableData_EquipmentItemOptionSheet_Nekoyume_TableData_SkillSheet_Libplanet_Action_IRandom_" data-uid="Nekoyume.Model.Skill.SkillFactory.SelectSkill(Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.CustomEquipmentCraft.CustomEquipmentCraftRecipeSkillSheet,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Libplanet.Action.IRandom)">
   SelectSkill(ItemSubType, CustomEquipmentCraftRecipeSkillSheet, EquipmentItemOptionSheet, SkillSheet, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-171-skill/Lib9c/Model/Skill/SkillFactory.cs/#L231"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
