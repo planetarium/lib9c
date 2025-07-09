@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Model.Item
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Tests.Model.Skill;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
@@ -84,8 +85,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add((IKey)(Text)"elemental_type", originalConsumable.ElementalType.Serialize())
                 .Add((IKey)(Text)"itemId", originalConsumable.ItemId.Serialize())
                 .Add((IKey)(Text)"statsMap", legacyStatsMapDict)
-                .Add((IKey)(Text)"skills", new List(originalConsumable.Skills.Select(s => s.Serialize())))
-                .Add((IKey)(Text)"buffSkills", new List(originalConsumable.BuffSkills.Select(s => s.Serialize())))
+                .Add((IKey)(Text)"skills", new List(originalConsumable.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add((IKey)(Text)"buffSkills", new List(originalConsumable.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add((IKey)(Text)"requiredBlockIndex", originalConsumable.RequiredBlockIndex.Serialize());
 
             var deserializedFromDict = new Consumable(legacyDict);
@@ -173,8 +174,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add((Text)"elemental_type", originalEquipment.ElementalType.Serialize())
                 .Add((Text)"itemId", originalEquipment.ItemId.Serialize())
                 .Add((Text)"statsMap", legacyStatsMapDict)
-                .Add((Text)"skills", new List(originalEquipment.Skills.Select(s => s.Serialize())))
-                .Add((Text)"buffSkills", new List(originalEquipment.BuffSkills.Select(s => s.Serialize())))
+                .Add((Text)"skills", new List(originalEquipment.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add((Text)"buffSkills", new List(originalEquipment.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add((Text)"requiredBlockIndex", originalEquipment.RequiredBlockIndex.Serialize())
                 .Add((Text)"equipped", originalEquipment.Equipped.Serialize())
                 .Add((Text)"level", originalEquipment.level.Serialize())
@@ -188,8 +189,8 @@ namespace Lib9c.Tests.Model.Item
             var deserializedFromList = new Equipment(listSerialized);
 
             // Verify that options are preserved
-            Assert.True(deserializedFromDict.Skills.Count >= 0);
-            Assert.True(deserializedFromList.Skills.Count >= 0);
+            Assert.Equal(originalEquipment.Skills.Count, deserializedFromDict.Skills.Count);
+            Assert.Equal(originalEquipment.Skills.Count, deserializedFromList.Skills.Count);
             Assert.Equal(
                 originalEquipment.StatsMap.GetAdditionalStats(true).Count(),
                 deserializedFromDict.StatsMap.GetAdditionalStats(true).Count());

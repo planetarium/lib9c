@@ -102,8 +102,7 @@ namespace Nekoyume.Model.Item
                 {
                     foreach (var value in _serializedSkills)
                     {
-                        var serializedSkill = (Dictionary) value;
-                        _skills.Add(SkillFactory.Deserialize(serializedSkill));
+                        _skills.Add(SkillFactory.Deserialize(value));
                     }
 
                     _serializedSkills = null;
@@ -122,8 +121,7 @@ namespace Nekoyume.Model.Item
                 {
                     foreach (var value in _serializedBuffSkills)
                     {
-                        var serializedSkill = (Dictionary) value;
-                        _buffSkills.Add((BuffSkill) SkillFactory.Deserialize(serializedSkill));
+                        _buffSkills.Add((BuffSkill) SkillFactory.Deserialize(value));
                     }
 
                     _serializedBuffSkills = null;
