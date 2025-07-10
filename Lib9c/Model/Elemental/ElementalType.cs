@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Elemental
 {
@@ -119,7 +120,7 @@ namespace Nekoyume.Model.Elemental
 
         public static long GetDamage(this ElementalType from, ElementalType to, long damage)
         {
-            return Convert.ToInt64(damage * GetMultiplier(from, to));
+            return NumberConversionHelper.SafeDecimalToInt64(damage * GetMultiplier(from, to));
         }
 
         public static decimal GetMultiplier(this ElementalType from, ElementalType to)
