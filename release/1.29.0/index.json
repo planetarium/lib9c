@@ -2229,6 +2229,11 @@
     "title": "Class ItemOptionInfo | Lib9c",
     "keywords": "Class ItemOptionInfo Namespace Nekoyume.Helper Assembly Lib9c.dll public class ItemOptionInfo Inheritance object ItemOptionInfo Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Constructors ItemOptionInfo(Equipment) public ItemOptionInfo(Equipment equipment) Parameters equipment Equipment ItemOptionInfo(ItemUsable) public ItemOptionInfo(ItemUsable itemUsable) Parameters itemUsable ItemUsable Fields CP public readonly int CP Field Value int MainStat public readonly (StatType type, long baseValue, long totalValue) MainStat Field Value (StatType type, long baseValue, long totalValue) OptionCountFromCombination public readonly int OptionCountFromCombination Field Value int SkillOptions public readonly List<(SkillSheet.Row skillRow, long power, int chance, int statPowerRatio, StatType refStatType)> SkillOptions Field Value List<(SkillSheet.Row skillRow, long power, int chance, int statPowerRatio, StatType refStatType)> StatOptions public readonly List<(StatType type, long value, int count)> StatOptions Field Value List<(StatType type, long value, int count)>"
   },
+  "api/Nekoyume.Helper.NumberConversionHelper.html": {
+    "href": "api/Nekoyume.Helper.NumberConversionHelper.html",
+    "title": "Class NumberConversionHelper | Lib9c",
+    "keywords": "Class NumberConversionHelper Namespace Nekoyume.Helper Assembly Lib9c.dll 숫자 변환 관련 유틸리티 함수 모음 public static class NumberConversionHelper Inheritance object NumberConversionHelper Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Methods SafeBigIntegerToInt32(BigInteger) Safely converts BigInteger to int32, clamping to int32 bounds to prevent overflow. public static int SafeBigIntegerToInt32(BigInteger value) Parameters value BigInteger The BigInteger value to convert. Returns int The converted int32 value, clamped to int32 bounds. SafeDecimalToInt32(decimal) Safely converts decimal to int32, clamping to int32 bounds to prevent overflow. public static int SafeDecimalToInt32(decimal value) Parameters value decimal The decimal value to convert. Returns int The converted int32 value, clamped to int32 bounds. SafeDecimalToInt64(decimal) Safely converts decimal to long, clamping to long bounds to prevent overflow. public static long SafeDecimalToInt64(decimal value) Parameters value decimal The decimal value to convert. Returns long The converted long value, clamped to long bounds."
+  },
   "api/Nekoyume.Helper.PetHelper.html": {
     "href": "api/Nekoyume.Helper.PetHelper.html",
     "title": "Class PetHelper | Lib9c",
@@ -2267,7 +2272,7 @@
   "api/Nekoyume.Helper.html": {
     "href": "api/Nekoyume.Helper.html",
     "title": "Namespace Nekoyume.Helper | Lib9c",
-    "keywords": "Namespace Nekoyume.Helper Classes AdventureBossHelper AvatarStateExtensions CrystalCalculator CustomCraftHelper InventoryExtensions ItemOptionHelper ItemOptionInfo PetHelper RuneHelper SummonHelper SynthesizeSimulator A class that simulates the synthesis of items. SynthesizeSimulator.InputData WorldBossHelper Structs SynthesizeResult Represents the result of the synthesis. SynthesizeSimulator.InputData Simulate the synthesis of items."
+    "keywords": "Namespace Nekoyume.Helper Classes AdventureBossHelper AvatarStateExtensions CrystalCalculator CustomCraftHelper InventoryExtensions ItemOptionHelper ItemOptionInfo NumberConversionHelper 숫자 변환 관련 유틸리티 함수 모음 PetHelper RuneHelper SummonHelper SynthesizeSimulator A class that simulates the synthesis of items. SynthesizeSimulator.InputData WorldBossHelper Structs SynthesizeResult Represents the result of the synthesis. SynthesizeSimulator.InputData Simulate the synthesis of items."
   },
   "api/Nekoyume.MeadConfig.html": {
     "href": "api/Nekoyume.MeadConfig.html",

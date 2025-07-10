@@ -4472,6 +4472,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.NumberConversionHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.NumberConversionHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Helper.PetHelper.yml",
       "output": {
         ".html": {
