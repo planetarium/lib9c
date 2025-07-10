@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Skill
 {
@@ -36,7 +37,7 @@ namespace Nekoyume.Model.Skill
             // Apply stat power ratio
             var powerMultiplier = StatPowerRatio / 10000m;
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
-                (int)(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
+                NumberConversionHelper.SafeDecimalToInt32(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
 
             var healPoint = caster.ATK + Power + statAdditionalPower;
             foreach (var target in SkillRow.SkillTargetType.GetTarget(caster))

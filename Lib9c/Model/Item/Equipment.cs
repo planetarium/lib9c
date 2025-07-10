@@ -10,6 +10,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Item
 {
@@ -401,9 +402,9 @@ namespace Nekoyume.Model.Item
             skills.AddRange(BuffSkills);
             foreach (var skill in skills)
             {
-                var chance = decimal.ToInt32(skill.Chance * 1.3m);
-                var power = decimal.ToInt32(skill.Power * 1.3m);
-                var statPowerRatio = decimal.ToInt32(skill.StatPowerRatio * 1.3m);
+                var chance = NumberConversionHelper.SafeDecimalToInt32(skill.Chance * 1.3m);
+                var power = NumberConversionHelper.SafeDecimalToInt32(skill.Power * 1.3m);
+                var statPowerRatio = NumberConversionHelper.SafeDecimalToInt32(skill.StatPowerRatio * 1.3m);
                 skill.Update(chance, power, statPowerRatio);
             }
         }

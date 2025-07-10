@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.BattleStatus.Arena;
 using Nekoyume.Model.Skill;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Buff
 {
@@ -58,7 +59,7 @@ namespace Nekoyume.Model.Buff
             int simulatorWaveTurn)
         {
             var clone = (ArenaCharacter)affectedCharacter.Clone();
-            var originalDamage = (int)decimal.Round(Power * RowData.ATKPowerRatio);
+            var originalDamage = NumberConversionHelper.SafeDecimalToInt32(decimal.Round(Power * RowData.ATKPowerRatio));
             var damage = affectedCharacter.GetDamage(originalDamage, false);
             affectedCharacter.CurrentHP -= damage;
 
