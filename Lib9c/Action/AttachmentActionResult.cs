@@ -51,14 +51,13 @@ namespace Nekoyume.Action
         protected AttachmentActionResult(BxDictionary serialized)
         {
             itemUsable = serialized.ContainsKey("itemUsable")
-               ? (ItemUsable) ItemFactory.Deserialize((BxDictionary) serialized["itemUsable"])
+               ? (ItemUsable) ItemFactory.Deserialize(serialized["itemUsable"])
                : null;
             costume = serialized.ContainsKey("costume")
-                ? (Costume) ItemFactory.Deserialize((BxDictionary) serialized["costume"])
+                ? (Costume) ItemFactory.Deserialize(serialized["costume"])
                 : null;
             tradableFungibleItem = serialized.ContainsKey("tradableFungibleItem")
-                ? (ITradableFungibleItem) ItemFactory.Deserialize(
-                    (BxDictionary) serialized["tradableFungibleItem"])
+                ? (ITradableFungibleItem) ItemFactory.Deserialize(serialized["tradableFungibleItem"])
                 : null;
             tradableFungibleItemCount = serialized.ContainsKey("tradableFungibleItemCount")
                 ? serialized["tradableFungibleItemCount"].ToInteger()

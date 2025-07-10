@@ -7,6 +7,7 @@ using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Skill.Arena
 {
@@ -33,7 +34,7 @@ namespace Nekoyume.Model.Skill.Arena
             // Apply stat power ratio
             var powerMultiplier = StatPowerRatio / 10000m;
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
-                 (int)(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
+                NumberConversionHelper.SafeDecimalToInt32(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
 
             var multipliers = GetMultiplier(SkillRow.HitCount, 1m);
             var elementalType = isNormalAttack ? caster.OffensiveElementalType : SkillRow.ElementalType;
@@ -62,7 +63,7 @@ namespace Nekoyume.Model.Skill.Arena
                     var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, long.MaxValue);
                     damage = Math.Max(damage - finalDEF, 1);
                     // Apply damage reduce
-                    damage = (int)((damage - target.DRV) * DamageHelper.GetDamageReductionRate(target.DRR));
+                    damage = NumberConversionHelper.SafeDecimalToInt32((damage - target.DRV) * DamageHelper.GetDamageReductionRate(target.DRR));
 
                     // ShatterStrike has max damage limitation
                     if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)

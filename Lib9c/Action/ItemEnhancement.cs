@@ -314,7 +314,7 @@ namespace Nekoyume.Action
             }
 
             // clone enhancement item
-            var preItemUsable = new Equipment((Dictionary)enhancementEquipment.Serialize());
+            var preItemUsable = new Equipment(enhancementEquipment.Serialize());
 
             // Equipment level up & Update
             enhancementEquipment.Exp = enhancementEquipment.GetRealExp(equipmentItemSheet,

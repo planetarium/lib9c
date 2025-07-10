@@ -24,7 +24,7 @@ namespace Nekoyume.Model.Mail
 
         public CustomCraftMail(Dictionary serialized) : base(serialized)
         {
-            Equipment = new Equipment((Dictionary)serialized["equipment"]);
+            Equipment = new Equipment(serialized["equipment"]);
         }
 
         public override IValue Serialize() =>
