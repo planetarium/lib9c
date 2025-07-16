@@ -282,7 +282,7 @@ namespace Nekoyume.Helper
             }
 
             // calculate ncg reward
-            var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
+            var totalNcgReward = (bountyBoard.totalBounty() * 30).DivRem(100, out _);
             var myNcgReward = exploreBoard.TotalPoint == 0
                 ? 0 * totalNcgReward.Currency
                 : (totalNcgReward * explorer.Score).DivRem(exploreBoard.TotalPoint, out _);
