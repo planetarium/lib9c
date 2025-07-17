@@ -64,9 +64,9 @@ namespace Lib9c.Tests.Helper
 
         [Theory]
         // Raffle reward is always 0 when isReal == false
-        [InlineData(false, false, 0 + 15)]
-        [InlineData(true, false, 0 + 15)]
-        [InlineData(true, true, 5 + 15)]
+        [InlineData(false, false, 0 + 30)]
+        [InlineData(true, false, 0 + 30)]
+        [InlineData(true, true, 5 + 30)]
         public void CalculateExploreReward(bool isReal, bool winner, int expectedNcgReward)
         {
             var ncgApRatio =

@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Model.State
             map2.Add(2, 1);
             map2.Add(1, 1);
 
-            var deserialized = new CollectionMap((Dictionary)map2.Serialize());
+            var deserialized = new CollectionMap(map2.Serialize());
             Assert.Equal(deserialized, map);
         }
 

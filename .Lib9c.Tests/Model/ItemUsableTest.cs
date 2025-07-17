@@ -36,7 +36,7 @@ namespace Lib9c.Tests.Model
             }
 
             var serialized = itemUsable.Serialize();
-            var deserialized = new Equipment((Dictionary)serialized);
+            var deserialized = new Equipment(serialized);
 
             Assert.Equal(serialized, deserialized.Serialize());
         }

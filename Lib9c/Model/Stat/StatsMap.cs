@@ -45,7 +45,7 @@ namespace Nekoyume.Model.Stat
         public long AdditionalArmorPenetration => GetAdditionalStat(StatType.ArmorPenetration);
         public long AdditionalThorn => GetAdditionalStat(StatType.Thorn);
 
-        private readonly StatMap _statMap = new StatMap();
+        private StatMap _statMap = new StatMap();
 
         protected bool Equals(StatsMap other)
         {
@@ -102,7 +102,7 @@ namespace Nekoyume.Model.Stat
 
         public IValue Serialize() => _statMap.Serialize();
 
-        public void Deserialize(Dictionary serialized) => _statMap.Deserialize(serialized);
+        public void Deserialize(IValue serialized) => _statMap = new StatMap(serialized);
 
         public IEnumerable<(StatType statType, long value)> GetStats(bool ignoreZero = false)
         {

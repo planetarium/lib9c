@@ -16,6 +16,7 @@ using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Nekoyume.TableData.AdventureBoss;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Helper
 {
@@ -150,25 +151,25 @@ namespace Nekoyume.Helper
 
             // calculate total reward
             var totalRewardNcg =
-                (int)Math.Floor(
+                NumberConversionHelper.SafeDecimalToInt32(Math.Floor(
                     (int)bountyBoard.totalBounty().MajorUnit * TotalRewardMultiplier
-                );
+                ));
             var bonusNcg = totalRewardNcg - bountyBoard.totalBounty().MajorUnit;
 
             // Calculate total amount based on NCG exchange ratio
-            var totalFixedRewardNcg = (int)Math.Floor(totalRewardNcg * FixedRewardRatio);
-            var totalFixedRewardAmount = (int)Math.Floor(
+            var totalFixedRewardNcg = NumberConversionHelper.SafeDecimalToInt32(Math.Floor(totalRewardNcg * FixedRewardRatio));
+            var totalFixedRewardAmount = NumberConversionHelper.SafeDecimalToInt32(Math.Floor(
                 bountyBoard.FixedRewardItemId is not null
                     ? totalFixedRewardNcg / sheet[(int)bountyBoard.FixedRewardItemId].Ratio
                     : totalFixedRewardNcg / ncgRuneRatio
-            );
+            ));
 
-            var totalRandomRewardNcg = (int)Math.Floor(totalRewardNcg * RandomRewardRatio);
-            var totalRandomRewardAmount = (int)Math.Floor(
+            var totalRandomRewardNcg = NumberConversionHelper.SafeDecimalToInt32(Math.Floor(totalRewardNcg * RandomRewardRatio));
+            var totalRandomRewardAmount = NumberConversionHelper.SafeDecimalToInt32(Math.Floor(
                 bountyBoard.RandomRewardItemId is not null
                     ? totalRandomRewardNcg / sheet[(int)bountyBoard.RandomRewardItemId].Ratio
                     : totalRandomRewardNcg / ncgRuneRatio
-            );
+            ));
 
             // Calculate my reward
             var myInvestment =
@@ -185,7 +186,7 @@ namespace Nekoyume.Helper
             }
 
             var fixedRewardAmount =
-                (int)Math.Floor(totalFixedRewardAmount * finalPortion / totalRewardNcg);
+                NumberConversionHelper.SafeDecimalToInt32(Math.Floor(totalFixedRewardAmount * finalPortion / totalRewardNcg));
 
             if (fixedRewardAmount > 0)
             {
@@ -195,7 +196,7 @@ namespace Nekoyume.Helper
             }
 
             var randomRewardAmount =
-                (int)Math.Floor(totalRandomRewardAmount * finalPortion / totalRewardNcg);
+                NumberConversionHelper.SafeDecimalToInt32(Math.Floor(totalRandomRewardAmount * finalPortion / totalRewardNcg));
             if (randomRewardAmount > 0)
             {
                 reward = AddReward(reward, bountyBoard.RandomRewardItemId is not null,
@@ -281,7 +282,7 @@ namespace Nekoyume.Helper
             }
 
             // calculate ncg reward
-            var totalNcgReward = (bountyBoard.totalBounty() * 15).DivRem(100, out _);
+            var totalNcgReward = (bountyBoard.totalBounty() * 30).DivRem(100, out _);
             var myNcgReward = exploreBoard.TotalPoint == 0
                 ? 0 * totalNcgReward.Currency
                 : (totalNcgReward * explorer.Score).DivRem(exploreBoard.TotalPoint, out _);
@@ -305,14 +306,14 @@ namespace Nekoyume.Helper
                 ? sheet[(int)exploreBoard.FixedRewardItemId].Ratio
                 : ncgRuneRatio;
             var totalRewardAmount =
-                (int)Math.Floor(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio);
+                NumberConversionHelper.SafeDecimalToInt32(Math.Floor(exploreBoard.UsedApPotion * ncgApRatio / ncgRewardRatio));
 
             var myRewardAmount = 0;
             if (exploreBoard.TotalPoint > 0)
             {
-                myRewardAmount = (int)Math.Floor(
+                myRewardAmount = NumberConversionHelper.SafeDecimalToInt32(Math.Floor(
                     (decimal)totalRewardAmount * explorer.Score / exploreBoard.TotalPoint
-                );
+                ));
             }
 
             if (myRewardAmount > 0)

@@ -125,7 +125,94 @@ namespace Nekoyume.Model.Skill
                 $"{skillRow.Id}, {skillRow.SkillType}, {skillRow.SkillTargetType}, {skillRow.SkillCategory}");
         }
 
-        public static Skill Deserialize(Dictionary serialized)
+        /// <summary>
+        /// Deserializes a skill from serialized data.
+        /// Supports both Dictionary and List formats for backward compatibility.
+        /// </summary>
+        /// <param name="serialized">The serialized skill data</param>
+        /// <returns>The deserialized skill</returns>
+        /// <exception cref="ArgumentException">Thrown when the serialization format is not supported</exception>
+        /// <remarks>
+        /// <para>
+        /// This method automatically detects the serialization format and delegates to the appropriate
+        /// deserialization method. It supports both the new List-based format and the legacy Dictionary format
+        /// to ensure backward compatibility with existing data.
+        /// </para>
+        /// <para>
+        /// List format (new): [SkillRow, Power, Chance, StatPowerRatio?, ReferencedStatType?]
+        /// Dictionary format (legacy): {"skillRow": ..., "power": ..., "chance": ..., "stat_power_ratio": ..., "referenced_stat_type": ...}
+        /// </para>
+        /// </remarks>
+        public static Skill Deserialize(IValue serialized)
+        {
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    return DeserializeFromDictionary(dict);
+                case List list:
+                    return DeserializeFromList(list);
+                default:
+                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes a skill from the new List-based serialization format.
+        /// </summary>
+        /// <param name="serialized">The serialized skill data in List format</param>
+        /// <returns>The deserialized skill</returns>
+        /// <remarks>
+        /// <para>
+        /// Expected List format: [SkillRow, Power, Chance, StatPowerRatio?, ReferencedStatType?]
+        /// Where StatPowerRatio and ReferencedStatType are optional and only included if StatPowerRatio > 0.
+        /// </para>
+        /// <para>
+        /// This method handles the new List-based serialization format which is more compact
+        /// and performant than the previous Dictionary format.
+        /// </para>
+        /// </remarks>
+        public static Skill DeserializeFromList(List serialized)
+        {
+            var skillRow = SkillSheet.Row.Deserialize(serialized[0]);
+            var power = serialized[1].ToInteger();
+            var chance = serialized[2].ToInteger();
+
+            var ratio = 0;
+            var statType = StatType.NONE;
+
+            if (serialized.Count > 3)
+            {
+                ratio = serialized[3].ToInteger();
+                statType = StatTypeExtension.Deserialize((Binary)serialized[4]);
+            }
+
+            return Get(skillRow, power, chance, ratio, statType);
+        }
+
+        /// <summary>
+        /// Deserializes a skill from the legacy Dictionary-based serialization format.
+        /// This method is maintained for backward compatibility with existing data.
+        /// </summary>
+        /// <param name="serialized">The serialized skill data in Dictionary format</param>
+        /// <returns>The deserialized skill</returns>
+        /// <remarks>
+        /// <para>
+        /// Expected Dictionary format:
+        /// {
+        ///   "skillRow": SkillSheet.Row,
+        ///   "power": long,
+        ///   "chance": int,
+        ///   "stat_power_ratio": int (optional),
+        ///   "referenced_stat_type": StatType (optional)
+        /// }
+        /// </para>
+        /// <para>
+        /// This method is marked as obsolete and should only be used for backward compatibility.
+        /// New code should use the List-based format through Deserialize(IValue) or DeserializeFromList(List).
+        /// </para>
+        /// </remarks>
+        [Obsolete("Use Deserialize(IValue) instead.")]
+        public static Skill DeserializeFromDictionary(Dictionary serialized)
         {
             var ratio = serialized.TryGetValue((Text)"stat_power_ratio", out var ratioValue) ?
                 ratioValue.ToInteger() : default;
@@ -133,7 +220,7 @@ namespace Nekoyume.Model.Skill
                 StatTypeExtension.Deserialize((Binary)refStatType) : StatType.NONE;
 
             return Get(
-                SkillSheet.Row.Deserialize((Dictionary)serialized["skillRow"]),
+                SkillSheet.Row.Deserialize(serialized["skillRow"]),
                 serialized["power"].ToInteger(),
                 serialized["chance"].ToInteger(),
                 ratio,

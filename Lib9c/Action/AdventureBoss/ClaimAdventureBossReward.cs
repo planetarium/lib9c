@@ -127,7 +127,7 @@ namespace Nekoyume.Action.AdventureBoss
                     }
                 }
 
-                // Send 80% NCG to operational account. 20% are for rewards.
+                // Send 65% NCG to operational account. 35% are for rewards.
                 var seasonBountyBoardAddress = Addresses.BountyBoard.Derive(
                     AdventureBossHelper.GetSeasonAsAddressForm(szn)
                 );
@@ -145,7 +145,7 @@ namespace Nekoyume.Action.AdventureBoss
 
                     states = states.TransferAsset(context, seasonBountyBoardAddress,
                         feeAddress,
-                        (bountyBoard.totalBounty() * 80).DivRem(100, out _)
+                        (bountyBoard.totalBounty() * 65).DivRem(100, out _)
                     );
                 }
 

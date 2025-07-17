@@ -9,6 +9,7 @@ using Nekoyume.Battle;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Helper
 {
@@ -159,7 +160,7 @@ namespace Nekoyume.Helper
 
                 if (string.IsNullOrEmpty(ticker))
                 {
-                    items.Add(new (reward.ItemId, (int)proportionalCount));
+                    items.Add(new (reward.ItemId, NumberConversionHelper.SafeBigIntegerToInt32(proportionalCount)));
                 }
                 else
                 {

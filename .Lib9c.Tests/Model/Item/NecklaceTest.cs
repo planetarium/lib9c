@@ -25,7 +25,7 @@ namespace Lib9c.Tests.Model.Item
 
             var costume = new Necklace(_necklaceRow, Guid.NewGuid(), 0);
             var serialized = costume.Serialize();
-            var deserialized = new Necklace((Bencodex.Types.Dictionary)serialized);
+            var deserialized = new Necklace(serialized);
 
             Assert.Equal(costume, deserialized);
         }

@@ -17,7 +17,7 @@ namespace Nekoyume.Model.Market
 
         public ItemProduct(List serialized) : base(serialized)
         {
-            TradableItem = (ITradableItem) ItemFactory.Deserialize((Dictionary)serialized[6]);
+            TradableItem = (ITradableItem) ItemFactory.Deserialize(serialized[6]);
             ItemCount = serialized[7].ToInteger();
         }
 

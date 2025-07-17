@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Model.Item
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -23,7 +24,7 @@ namespace Lib9c.Tests.Model.Item
 
             var material = new Material(_materialRow);
             var serialized = material.Serialize();
-            var deserialized = new Material((Bencodex.Types.Dictionary)serialized);
+            var deserialized = new Material(serialized);
 
             Assert.Equal(material, deserialized);
         }
@@ -42,6 +43,43 @@ namespace Lib9c.Tests.Model.Item
             var deserialized = (Material)formatter.Deserialize(ms);
 
             Assert.Equal(material, deserialized);
+        }
+
+        [Fact]
+        public void Serialize_ReturnsListFormat()
+        {
+            Assert.NotNull(_materialRow);
+
+            var material = new Material(_materialRow);
+            var serialized = material.Serialize();
+
+            Assert.IsType<Bencodex.Types.List>(serialized);
+        }
+
+        [Fact]
+        public void Deserialize_SupportsLegacyDictionaryFormat()
+        {
+            Assert.NotNull(_materialRow);
+
+            var material = new Material(_materialRow);
+
+            // Create legacy Dictionary format
+            var legacySerialized = Bencodex.Types.Dictionary.Empty
+                .Add("id", material.Id.Serialize())
+                .Add("item_type", material.ItemType.Serialize())
+                .Add("item_sub_type", material.ItemSubType.Serialize())
+                .Add("grade", material.Grade.Serialize())
+                .Add("elemental_type", material.ElementalType.Serialize())
+                .Add("item_id", material.ItemId.Serialize());
+
+            var deserialized = new Material(legacySerialized);
+
+            Assert.Equal(material.Id, deserialized.Id);
+            Assert.Equal(material.Grade, deserialized.Grade);
+            Assert.Equal(material.ItemType, deserialized.ItemType);
+            Assert.Equal(material.ItemSubType, deserialized.ItemSubType);
+            Assert.Equal(material.ElementalType, deserialized.ElementalType);
+            Assert.Equal(material.ItemId, deserialized.ItemId);
         }
     }
 }

@@ -76,7 +76,7 @@ namespace Nekoyume.Action
                 actionPoint = serialized["actionPoint"].ToInteger();
                 enhancementResult = serialized["enhancementResult"].ToEnum<EnhancementResult>();
                 preItemUsable = serialized.ContainsKey("preItemUsable")
-                    ? (ItemUsable)ItemFactory.Deserialize((Dictionary)serialized["preItemUsable"])
+                    ? (ItemUsable)ItemFactory.Deserialize(serialized["preItemUsable"])
                     : null;
                 CRYSTAL = serialized["c"].ToFungibleAssetValue();
             }

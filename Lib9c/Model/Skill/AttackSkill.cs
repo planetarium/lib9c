@@ -6,6 +6,7 @@ using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Skill
 {
@@ -30,8 +31,11 @@ namespace Nekoyume.Model.Skill
         /// <param name="isNormalAttack"></param>
         /// <param name="copyCharacter"></param>
         /// <returns></returns>
-        protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessDamage(CharacterBase caster, int simulatorWaveTurn,
-            bool isNormalAttack = false, bool copyCharacter = true)
+        protected IEnumerable<BattleStatus.Skill.SkillInfo> ProcessDamage(
+            CharacterBase caster,
+            int simulatorWaveTurn,
+            bool isNormalAttack = false,
+            bool copyCharacter = true)
         {
             var infos = new List<BattleStatus.Skill.SkillInfo>();
             var targets = SkillRow.SkillTargetType.GetTarget(caster).ToList();
@@ -40,7 +44,7 @@ namespace Nekoyume.Model.Skill
             // Apply stat power ratio
             var powerMultiplier = StatPowerRatio / 10000m;
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
-                (int)(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
+                NumberConversionHelper.SafeDecimalToInt32(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
 
             long totalDamage = caster.ATK + Power + statAdditionalPower;
             var multipliers = GetMultiplier(SkillRow.HitCount, 1m);
