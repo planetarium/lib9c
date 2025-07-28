@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class ItemBase | Lib9c ">
       
-      
+      <meta name="description" content="Base class for all items in the game. Supports both Dictionary and List serialization formats for backward compatibility.  Serialization Format: - Dictionary (Legacy): Uses key-value pairs for backward compatibility - List (New): Uses ordered list for better performance and smaller size  Field Order (List Format): 1. version - Serialization version number 2. id - Item ID (Binary format) 3. itemType - Item type as string 4. itemSubType - Item sub-type as string 5. grade - Item grade 6. elementalType - Elemental type as string">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_ItemBase" data-uid="Nekoyume.Model.Item.ItemBase" class="text-break">
-Class ItemBase  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Class ItemBase  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,22 @@ Class ItemBase  <a class="header-action link-secondary" title="View source" href
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Base class for all items in the game.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. id - Item ID (Binary format)
+3. itemType - Item type as string
+4. itemSubType - Item sub-type as string
+5. grade - Item grade
+6. elementalType - Elemental type as string
+</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -153,6 +168,19 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
 
 
+  <h2 id="Nekoyume_Model_Item_ItemBase_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This class implements dual serialization support to ensure smooth migration
+from the legacy Dictionary format to the new List format. The List format
+provides better performance and smaller serialized data size.</p>
+<p>
+Example usage:
+<pre><code class="lang-csharp">// Create item
+var material = new Material(materialRow);
+<p>// Serialize to List format (new)
+var serialized = material.Serialize(); // Returns List</p>
+<p>// Deserialize from any format
+var deserialized = new Material(serialized); // Supports both Dictionary and List</p></code></pre>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -161,22 +189,24 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <a id="Nekoyume_Model_Item_ItemBase__ctor_" data-uid="Nekoyume.Model.Item.ItemBase.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_ItemBase__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.ItemBase.#ctor(Bencodex.Types.Dictionary)">
-  ItemBase(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_ItemBase__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.ItemBase.#ctor(Bencodex.Types.IValue)">
+  ItemBase(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L170"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ItemBase(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">protected ItemBase(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -187,6 +217,15 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p>Thrown when serialized is null</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when serialized format is not supported or has insufficient fields</p>
+</dd>
+  </dl>
 
 
 
@@ -194,7 +233,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase__ctor_Nekoyume_Model_Item_ItemBase_" data-uid="Nekoyume.Model.Item.ItemBase.#ctor(Nekoyume.Model.Item.ItemBase)">
   ItemBase(ItemBase)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L155"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -225,7 +264,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase__ctor_Nekoyume_TableData_ItemSheet_Row_" data-uid="Nekoyume.Model.Item.ItemBase.#ctor(Nekoyume.TableData.ItemSheet.Row)">
   ItemBase(Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -256,7 +295,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.ItemBase.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   ItemBase(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L245"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -290,9 +329,39 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
 
 
+  <h3 id="Nekoyume_Model_Item_ItemBase_BaseFieldCount" data-uid="Nekoyume.Model.Item.ItemBase.BaseFieldCount">
+  BaseFieldCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected const int BaseFieldCount = 6</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_Model_Item_ItemBase_Codec" data-uid="Nekoyume.Model.Item.ItemBase.Codec">
   Codec
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -319,6 +388,36 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
 
 
+
+  <h3 id="Nekoyume_Model_Item_ItemBase_SerializationVersion" data-uid="Nekoyume.Model.Item.ItemBase.SerializationVersion">
+  SerializationVersion
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int SerializationVersion = 2</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -327,7 +426,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_ElementalType" data-uid="Nekoyume.Model.Item.ItemBase.ElementalType">
   ElementalType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L129"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -358,7 +457,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_Grade" data-uid="Nekoyume.Model.Item.ItemBase.Grade">
   Grade
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -389,7 +488,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_Id" data-uid="Nekoyume.Model.Item.ItemBase.Id">
   Id
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -420,7 +519,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_ItemSubType" data-uid="Nekoyume.Model.Item.ItemBase.ItemSubType">
   ItemSubType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -451,7 +550,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_ItemType" data-uid="Nekoyume.Model.Item.ItemBase.ItemType">
   ItemType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -486,7 +585,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_Equals_Nekoyume_Model_Item_ItemBase_" data-uid="Nekoyume.Model.Item.ItemBase.Equals(Nekoyume.Model.Item.ItemBase)">
   Equals(ItemBase)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L260"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -522,7 +621,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_Equals_System_Object_" data-uid="Nekoyume.Model.Item.ItemBase.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L265"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -557,11 +656,44 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
 
 
+  <a id="Nekoyume_Model_Item_ItemBase_GetFieldNames_" data-uid="Nekoyume.Model.Item.ItemBase.GetFieldNames*"></a>
+
+  <h3 id="Nekoyume_Model_Item_ItemBase_GetFieldNames" data-uid="Nekoyume.Model.Item.ItemBase.GetFieldNames">
+  GetFieldNames()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L307"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the field names for serialization in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual string[] GetFieldNames()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>Array of field names</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Item_ItemBase_GetHashCode_" data-uid="Nekoyume.Model.Item.ItemBase.GetHashCode*"></a>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_GetHashCode" data-uid="Nekoyume.Model.Item.ItemBase.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L272"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -594,7 +726,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_GetObjectData_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.ItemBase.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   GetObjectData(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L250"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -627,10 +759,12 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_Serialize" data-uid="Nekoyume.Model.Item.ItemBase.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L282"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the item to List format (new format).
+Order: [version, id, itemType, itemSubType, grade, elementalType]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -641,7 +775,8 @@ public abstract class ItemBase : IItem, IState</code></pre>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -658,7 +793,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Item_ItemBase_ToString" data-uid="Nekoyume.Model.Item.ItemBase.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L293"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
@@ -691,7 +826,7 @@ public abstract class ItemBase : IItem, IState</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemBase.cs/#L51" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class TradableMaterial | Lib9c ">
       
-      
+      <meta name="description" content="Represents a tradable material item that can be traded between players. Supports both Dictionary and List serialization formats for backward compatibility.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_TradableMaterial" data-uid="Nekoyume.Model.Item.TradableMaterial" class="text-break">
-Class TradableMaterial  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class TradableMaterial  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class TradableMaterial  <a class="header-action link-secondary" title="View sour
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a tradable material item that can be traded between players.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -143,6 +145,15 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.Material.html#Nekoyume_Model_Item_Material_Equals_Nekoyume_Model_Item_Material_">Material.Equals(Material)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.Material.html#Nekoyume_Model_Item_Material_GetFieldNames">Material.GetFieldNames()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
@@ -193,22 +204,24 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <a id="Nekoyume_Model_Item_TradableMaterial__ctor_" data-uid="Nekoyume.Model.Item.TradableMaterial.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_TradableMaterial__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.TradableMaterial.#ctor(Bencodex.Types.Dictionary)">
-  TradableMaterial(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_TradableMaterial__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.TradableMaterial.#ctor(Bencodex.Types.IValue)">
+  TradableMaterial(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TradableMaterial(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public TradableMaterial(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -226,10 +239,11 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial__ctor_Nekoyume_TableData_MaterialItemSheet_Row_" data-uid="Nekoyume.Model.Item.TradableMaterial.#ctor(Nekoyume.TableData.MaterialItemSheet.Row)">
   TradableMaterial(Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Nekoyume.Model.Item.TradableMaterial.html">TradableMaterial</a> class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -239,7 +253,8 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>data</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a>.<a class="xref" href="Nekoyume.TableData.MaterialItemSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>The material item sheet row data</p>
+</dd>
   </dl>
 
 
@@ -257,7 +272,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.TradableMaterial.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   TradableMaterial(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -294,10 +309,11 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_RequiredBlockIndex" data-uid="Nekoyume.Model.Item.TradableMaterial.RequiredBlockIndex">
   RequiredBlockIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the required block index for trading this material.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -325,10 +341,11 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_TradableId" data-uid="Nekoyume.Model.Item.TradableMaterial.TradableId">
   TradableId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the tradable ID of this material.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -360,7 +377,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_Clone" data-uid="Nekoyume.Model.Item.TradableMaterial.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L128"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -393,10 +410,11 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_DeriveTradableId_Libplanet_Common_HashDigest_System_Security_Cryptography_SHA256__" data-uid="Nekoyume.Model.Item.TradableMaterial.DeriveTradableId(Libplanet.Common.HashDigest{System.Security.Cryptography.SHA256})">
   DeriveTradableId(HashDigest&lt;SHA256&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Derives a tradable ID from a fungible ID.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -406,13 +424,15 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>fungibleId</code> <span class="xref">HashDigest</span>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.cryptography.sha256">SHA256</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>The fungible ID to derive from</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
-    <dd></dd>
+    <dd><p>The derived tradable ID</p>
+</dd>
   </dl>
 
 
@@ -429,7 +449,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_Equals_Nekoyume_Model_Item_TradableMaterial_" data-uid="Nekoyume.Model.Item.TradableMaterial.Equals(Nekoyume.Model.Item.TradableMaterial)">
   Equals(TradableMaterial)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -465,7 +485,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_Equals_System_Object_" data-uid="Nekoyume.Model.Item.TradableMaterial.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -504,7 +524,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_GetHashCode" data-uid="Nekoyume.Model.Item.TradableMaterial.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -537,10 +557,12 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_Serialize" data-uid="Nekoyume.Model.Item.TradableMaterial.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the tradable material to List format (new format).
+Order: [baseData..., requiredBlockIndex]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -551,7 +573,8 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -568,7 +591,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 
   <h3 id="Nekoyume_Model_Item_TradableMaterial_ToString" data-uid="Nekoyume.Model.Item.TradableMaterial.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L121"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
@@ -601,7 +624,7 @@ public class TradableMaterial : Material, ISerializable, ITradableFungibleItem, 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/TradableMaterial.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 

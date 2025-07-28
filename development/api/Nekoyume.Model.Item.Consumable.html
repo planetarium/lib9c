@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Consumable | Lib9c ">
       
-      
+      <meta name="description" content="Represents consumable items that can be used by characters. Supports both Dictionary and List serialization formats for backward compatibility.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_Consumable" data-uid="Nekoyume.Model.Item.Consumable" class="text-break">
-Class Consumable  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class Consumable  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class Consumable  <a class="header-action link-secondary" title="View source" hr
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents consumable items that can be used by characters.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -133,6 +135,9 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
     <dt>Inherited Members</dt>
     <dd>
     <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ITEM_USABLE_FIELD_COUNT">ItemUsable.ITEM_USABLE_FIELD_COUNT</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ItemId">ItemUsable.ItemId</a>
     </div>
     <div>
@@ -164,6 +169,15 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_Update_System_Int64_">ItemUsable.Update(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_GetFieldNames">ItemUsable.GetFieldNames()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
@@ -217,22 +231,24 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <a id="Nekoyume_Model_Item_Consumable__ctor_" data-uid="Nekoyume.Model.Item.Consumable.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_Consumable__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.Consumable.#ctor(Bencodex.Types.Dictionary)">
-  Consumable(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_Consumable__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.Consumable.#ctor(Bencodex.Types.IValue)">
+  Consumable(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Consumable(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public Consumable(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -250,7 +266,7 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <h3 id="Nekoyume_Model_Item_Consumable__ctor_Nekoyume_TableData_ConsumableItemSheet_Row_System_Guid_System_Int64_" data-uid="Nekoyume.Model.Item.Consumable.#ctor(Nekoyume.TableData.ConsumableItemSheet.Row,System.Guid,System.Int64)">
   Consumable(Row, Guid, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -285,7 +301,7 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <h3 id="Nekoyume_Model_Item_Consumable__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.Consumable.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   Consumable(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -322,7 +338,7 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <h3 id="Nekoyume_Model_Item_Consumable_MainStat" data-uid="Nekoyume.Model.Item.Consumable.MainStat">
   MainStat
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -353,14 +369,14 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <h3 id="Nekoyume_Model_Item_Consumable_Stats" data-uid="Nekoyume.Model.Item.Consumable.Stats">
   Stats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;DecimalStat&gt; Stats { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public List&lt;DecimalStat&gt; Stats { get; set; }</code></pre>
   </div>
 
 
@@ -384,7 +400,7 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <h3 id="Nekoyume_Model_Item_Consumable_TradableId" data-uid="Nekoyume.Model.Item.Consumable.TradableId">
   TradableId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -419,10 +435,12 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 
   <h3 id="Nekoyume_Model_Item_Consumable_Serialize" data-uid="Nekoyume.Model.Item.Consumable.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the consumable to List format (new format).
+Order: [baseData..., stats]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -433,7 +451,8 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -450,7 +469,7 @@ public class Consumable : ItemUsable, INonFungibleItem, ITradableItem, IItem, IS
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Consumable.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -108,7 +108,18 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
-      <dd></dd>
+      <dd><p>Represents a collection map with key-value pairs.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. entries - List of key-value pairs ordered by key
+</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Enemy.html">Enemy</a></dt>

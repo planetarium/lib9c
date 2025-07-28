@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_ItemUsable" data-uid="Nekoyume.Model.Item.ItemUsable" class="text-break">
-Class ItemUsable  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class ItemUsable  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -137,6 +137,12 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
   <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
+    </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
     </div>
@@ -189,22 +195,24 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <a id="Nekoyume_Model_Item_ItemUsable__ctor_" data-uid="Nekoyume.Model.Item.ItemUsable.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_ItemUsable__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.ItemUsable.#ctor(Bencodex.Types.Dictionary)">
-  ItemUsable(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_ItemUsable__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.ItemUsable.#ctor(Bencodex.Types.IValue)">
+  ItemUsable(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L188"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ItemUsable(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">protected ItemUsable(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -222,7 +230,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable__ctor_Nekoyume_TableData_ItemSheet_Row_System_Guid_System_Int64_" data-uid="Nekoyume.Model.Item.ItemUsable.#ctor(Nekoyume.TableData.ItemSheet.Row,System.Guid,System.Int64)">
   ItemUsable(Row, Guid, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L158"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -257,7 +265,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.ItemUsable.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   ItemUsable(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L259"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -286,6 +294,40 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
 
 
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Model_Item_ItemUsable_ITEM_USABLE_FIELD_COUNT" data-uid="Nekoyume.Model.Item.ItemUsable.ITEM_USABLE_FIELD_COUNT">
+  ITEM_USABLE_FIELD_COUNT
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected const int ITEM_USABLE_FIELD_COUNT = 11</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -294,7 +336,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_BuffSkills" data-uid="Nekoyume.Model.Item.ItemUsable.BuffSkills">
   BuffSkills
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -325,7 +367,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_ItemId" data-uid="Nekoyume.Model.Item.ItemUsable.ItemId">
   ItemId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -356,7 +398,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_NonFungibleId" data-uid="Nekoyume.Model.Item.ItemUsable.NonFungibleId">
   NonFungibleId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -387,7 +429,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_RequiredBlockIndex" data-uid="Nekoyume.Model.Item.ItemUsable.RequiredBlockIndex">
   RequiredBlockIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L134"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -418,7 +460,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_Skills" data-uid="Nekoyume.Model.Item.ItemUsable.Skills">
   Skills
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -449,7 +491,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_StatsMap" data-uid="Nekoyume.Model.Item.ItemUsable.StatsMap">
   StatsMap
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -484,7 +526,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_Equals_Nekoyume_Model_Item_ItemUsable_" data-uid="Nekoyume.Model.Item.ItemUsable.Equals(Nekoyume.Model.Item.ItemUsable)">
   Equals(ItemUsable)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L167"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L264"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -520,7 +562,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_Equals_System_Object_" data-uid="Nekoyume.Model.Item.ItemUsable.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L269"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -555,11 +597,44 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
 
 
+  <a id="Nekoyume_Model_Item_ItemUsable_GetFieldNames_" data-uid="Nekoyume.Model.Item.ItemUsable.GetFieldNames*"></a>
+
+  <h3 id="Nekoyume_Model_Item_ItemUsable_GetFieldNames" data-uid="Nekoyume.Model.Item.ItemUsable.GetFieldNames">
+  GetFieldNames()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L319"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the field names for serialization in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override string[] GetFieldNames()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>Array of field names</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Item_ItemUsable_GetHashCode_" data-uid="Nekoyume.Model.Item.ItemUsable.GetHashCode*"></a>
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_GetHashCode" data-uid="Nekoyume.Model.Item.ItemUsable.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L277"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -592,7 +667,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_GetOptionCount" data-uid="Nekoyume.Model.Item.ItemUsable.GetOptionCount">
   GetOptionCount()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L285"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -623,10 +698,12 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_Serialize" data-uid="Nekoyume.Model.Item.ItemUsable.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L302"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the item to List format (new format).
+Order: [baseData..., itemId, statsMap, skills, buffSkills, requiredBlockIndex]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -637,7 +714,8 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -654,7 +732,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 
   <h3 id="Nekoyume_Model_Item_ItemUsable_Update_System_Int64_" data-uid="Nekoyume.Model.Item.ItemUsable.Update(System.Int64)">
   Update(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L292"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -685,7 +763,7 @@ public abstract class ItemUsable : ItemBase, INonFungibleItem, IItem, IState</co
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/ItemUsable.cs/#L59" class="edit-link">Edit this page</a>
         </div>
 
 

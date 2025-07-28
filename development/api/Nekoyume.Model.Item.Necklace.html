@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Necklace | Lib9c ">
       
-      
+      <meta name="description" content="Represents necklace equipment items. Supports both Dictionary and List serialization formats for backward compatibility.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_Necklace" data-uid="Nekoyume.Model.Item.Necklace" class="text-break">
-Class Necklace  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class Necklace  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class Necklace  <a class="header-action link-secondary" title="View source" href
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents necklace equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -183,6 +185,9 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_Serialize">Equipment.Serialize()</a>
     </div>
     <div>
+      <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetFieldNames">Equipment.GetFieldNames()</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_Equip">Equipment.Equip()</a>
     </div>
     <div>
@@ -201,9 +206,6 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetRealExp_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EnhancementCostSheetV3_">Equipment.GetRealExp(EquipmentItemSheet, EnhancementCostSheetV3)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetOptions">Equipment.GetOptions()</a>
-    </div>
-    <div>
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_Equals_Nekoyume_Model_Item_Equipment_">Equipment.Equals(Equipment)</a>
     </div>
     <div>
@@ -211,6 +213,9 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetHashCode">Equipment.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ITEM_USABLE_FIELD_COUNT">ItemUsable.ITEM_USABLE_FIELD_COUNT</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ItemId">ItemUsable.ItemId</a>
@@ -238,6 +243,12 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_Update_System_Int64_">ItemUsable.Update(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
@@ -301,22 +312,24 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
 
   <a id="Nekoyume_Model_Item_Necklace__ctor_" data-uid="Nekoyume.Model.Item.Necklace.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_Necklace__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.Necklace.#ctor(Bencodex.Types.Dictionary)">
-  Necklace(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_Necklace__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.Necklace.#ctor(Bencodex.Types.IValue)">
+  Necklace(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Necklace(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public Necklace(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -334,7 +347,7 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
 
   <h3 id="Nekoyume_Model_Item_Necklace__ctor_Nekoyume_TableData_EquipmentItemSheet_Row_System_Guid_System_Int64_System_Boolean_" data-uid="Nekoyume.Model.Item.Necklace.#ctor(Nekoyume.TableData.EquipmentItemSheet.Row,System.Guid,System.Int64,System.Boolean)">
   Necklace(Row, Guid, long, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -371,7 +384,7 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
 
   <h3 id="Nekoyume_Model_Item_Necklace__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.Necklace.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   Necklace(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -408,7 +421,7 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
 
   <h3 id="Nekoyume_Model_Item_Necklace_TradableId" data-uid="Nekoyume.Model.Item.Necklace.TradableId">
   TradableId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -439,7 +452,7 @@ public class Necklace : Equipment, INonFungibleItem, IEquippableItem, ITradableI
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Necklace.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

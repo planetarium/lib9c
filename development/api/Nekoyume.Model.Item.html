@@ -96,31 +96,64 @@ Classes
 </h3>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Armor.html">Armor</a></dt>
-      <dd></dd>
+      <dd><p>Represents armor equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Aura.html">Aura</a></dt>
-      <dd></dd>
+      <dd><p>Represents aura equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Belt.html">Belt</a></dt>
-      <dd></dd>
+      <dd><p>Represents belt equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Consumable.html">Consumable</a></dt>
-      <dd></dd>
+      <dd><p>Represents consumable items that can be used by characters.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a></dt>
-      <dd></dd>
+      <dd><p>Represents costume items that can be equipped by characters.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Equipment.html">Equipment</a></dt>
-      <dd></dd>
+      <dd><p>Represents equipment items that can be equipped by characters.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Field Order (List Format):
+Base fields (0~10): 11 fields from ItemUsable
+Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+</p><p>
+Equipment Properties:
+- Equipped: Whether the equipment is currently equipped
+- Level: Equipment enhancement level
+- Stat: Primary stat of the equipment
+- SetId: ID for equipment set bonuses
+- SpineResourcePath: Path to spine animation resource
+- IconId: Icon identifier for UI display
+- ByCustomCraft: Whether crafted through custom crafting
+- CraftWithRandom: Whether random options were applied during crafting
+- HasRandomOnlyIcon: Whether has random-only icon
+- OptionCountFromCombination: Number of options from combination
+- MadeWithMimisbrunnrRecipe: Whether made with Mimisbrunnr recipe
+- Exp: Experience points for leveling
+</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Grimoire.html">Grimoire</a></dt>
-      <dd></dd>
+      <dd><p>Represents grimoire equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Inventory.html">Inventory</a></dt>
@@ -132,11 +165,28 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
-      <dd></dd>
+      <dd><p>Base class for all items in the game.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. id - Item ID (Binary format)
+3. itemType - Item type as string
+4. itemSubType - Item sub-type as string
+5. grade - Item grade
+6. elementalType - Elemental type as string
+</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.ItemFactory.html">ItemFactory</a></dt>
-      <dd></dd>
+      <dd><p>Factory class for creating and deserializing items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.ItemSubTypeComparer.html">ItemSubTypeComparer</a></dt>
@@ -152,15 +202,29 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Material.html">Material</a></dt>
-      <dd></dd>
+      <dd><p>Represents a material item that can be used for crafting and other purposes.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Field Order (List Format):
+Base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+Material fields (6): itemId
+</p><p>
+Material Properties:
+- ItemId: Unique identifier for the material item
+</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Necklace.html">Necklace</a></dt>
-      <dd></dd>
+      <dd><p>Represents necklace equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Ring.html">Ring</a></dt>
-      <dd></dd>
+      <dd><p>Represents ring equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.ShopItem.html">ShopItem</a></dt>
@@ -168,11 +232,15 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.TradableMaterial.html">TradableMaterial</a></dt>
-      <dd></dd>
+      <dd><p>Represents a tradable material item that can be traded between players.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Item.Weapon.html">Weapon</a></dt>
-      <dd></dd>
+      <dd><p>Represents weapon equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</dd>
     </dl>
     <h3 id="structs">
 Structs

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Grimoire | Lib9c ">
       
-      
+      <meta name="description" content="Represents grimoire equipment items. Supports both Dictionary and List serialization formats for backward compatibility.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_Grimoire" data-uid="Nekoyume.Model.Item.Grimoire" class="text-break">
-Class Grimoire  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class Grimoire  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class Grimoire  <a class="header-action link-secondary" title="View source" href
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents grimoire equipment items.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -182,6 +184,9 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_Serialize">Equipment.Serialize()</a>
     </div>
     <div>
+      <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetFieldNames">Equipment.GetFieldNames()</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_Equip">Equipment.Equip()</a>
     </div>
     <div>
@@ -200,9 +205,6 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetRealExp_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EnhancementCostSheetV3_">Equipment.GetRealExp(EquipmentItemSheet, EnhancementCostSheetV3)</a>
     </div>
     <div>
-      <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetOptions">Equipment.GetOptions()</a>
-    </div>
-    <div>
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_Equals_Nekoyume_Model_Item_Equipment_">Equipment.Equals(Equipment)</a>
     </div>
     <div>
@@ -210,6 +212,9 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.Equipment.html#Nekoyume_Model_Item_Equipment_GetHashCode">Equipment.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ITEM_USABLE_FIELD_COUNT">ItemUsable.ITEM_USABLE_FIELD_COUNT</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ItemId">ItemUsable.ItemId</a>
@@ -237,6 +242,12 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_Update_System_Int64_">ItemUsable.Update(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
@@ -300,22 +311,24 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
 
   <a id="Nekoyume_Model_Item_Grimoire__ctor_" data-uid="Nekoyume.Model.Item.Grimoire.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_Grimoire__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.Grimoire.#ctor(Bencodex.Types.Dictionary)">
-  Grimoire(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_Grimoire__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.Grimoire.#ctor(Bencodex.Types.IValue)">
+  Grimoire(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Grimoire(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public Grimoire(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -333,7 +346,7 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
 
   <h3 id="Nekoyume_Model_Item_Grimoire__ctor_Nekoyume_TableData_EquipmentItemSheet_Row_System_Guid_System_Int64_System_Boolean_" data-uid="Nekoyume.Model.Item.Grimoire.#ctor(Nekoyume.TableData.EquipmentItemSheet.Row,System.Guid,System.Int64,System.Boolean)">
   Grimoire(Row, Guid, long, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -370,7 +383,7 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
 
   <h3 id="Nekoyume_Model_Item_Grimoire__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.Grimoire.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   Grimoire(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -403,7 +416,7 @@ public class Grimoire : Equipment, INonFungibleItem, IEquippableItem, IItem, ISt
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Grimoire.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

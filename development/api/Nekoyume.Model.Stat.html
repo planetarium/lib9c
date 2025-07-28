@@ -106,11 +106,35 @@ Stat of character is built with total of these stats.</p>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Stat.DecimalStat.html">DecimalStat</a></dt>
-      <dd></dd>
+      <dd><p>Represents a single character statistic with base and additional values.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. statType - The type of statistic
+3. baseValue - Base value of the statistic
+4. additionalValue - Additional value of the statistic
+</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Stat.StatMap.html">StatMap</a></dt>
-      <dd></dd>
+      <dd><p>Represents a collection of character statistics.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. stats - List of DecimalStat objects ordered by StatType
+</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a></dt>

@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Costume | Lib9c ">
       
-      
+      <meta name="description" content="Represents costume items that can be equipped by characters. Supports both Dictionary and List serialization formats for backward compatibility.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_Costume" data-uid="Nekoyume.Model.Item.Costume" class="text-break">
-Class Costume  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Class Costume  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class Costume  <a class="header-action link-secondary" title="View source" href=
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents costume items that can be equipped by characters.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -133,6 +135,12 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
     <dt>Inherited Members</dt>
     <dd>
     <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
     </div>
     <div>
@@ -160,6 +168,9 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_ToString">ItemBase.ToString()</a>
     </div>
     <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_GetFieldNames">ItemBase.GetFieldNames()</a>
+    </div>
+    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
     </div>
     <div>
@@ -184,22 +195,24 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <a id="Nekoyume_Model_Item_Costume__ctor_" data-uid="Nekoyume.Model.Item.Costume.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_Costume__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.Costume.#ctor(Bencodex.Types.Dictionary)">
-  Costume(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_Costume__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.Costume.#ctor(Bencodex.Types.IValue)">
+  Costume(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Costume(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public Costume(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -217,7 +230,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume__ctor_Nekoyume_TableData_CostumeItemSheet_Row_System_Guid_" data-uid="Nekoyume.Model.Item.Costume.#ctor(Nekoyume.TableData.CostumeItemSheet.Row,System.Guid)">
   Costume(Row, Guid)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -250,7 +263,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.Costume.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   Costume(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L123"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -286,7 +299,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_equipped" data-uid="Nekoyume.Model.Item.Costume.equipped">
   equipped
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -321,7 +334,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Equipped" data-uid="Nekoyume.Model.Item.Costume.Equipped">
   Equipped
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -352,7 +365,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_ItemId" data-uid="Nekoyume.Model.Item.Costume.ItemId">
   ItemId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -383,7 +396,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_NonFungibleId" data-uid="Nekoyume.Model.Item.Costume.NonFungibleId">
   NonFungibleId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -414,7 +427,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_RequiredBlockIndex" data-uid="Nekoyume.Model.Item.Costume.RequiredBlockIndex">
   RequiredBlockIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -445,14 +458,14 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_SpineResourcePath" data-uid="Nekoyume.Model.Item.Costume.SpineResourcePath">
   SpineResourcePath
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string SpineResourcePath { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string SpineResourcePath { get; set; }</code></pre>
   </div>
 
 
@@ -476,7 +489,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_TradableId" data-uid="Nekoyume.Model.Item.Costume.TradableId">
   TradableId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -511,7 +524,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Equals_Nekoyume_Model_Item_Costume_" data-uid="Nekoyume.Model.Item.Costume.Equals(Nekoyume.Model.Item.Costume)">
   Equals(Costume)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -547,7 +560,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Equals_System_Object_" data-uid="Nekoyume.Model.Item.Costume.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -586,7 +599,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Equip" data-uid="Nekoyume.Model.Item.Costume.Equip">
   Equip()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L167"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -612,7 +625,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_GetHashCode" data-uid="Nekoyume.Model.Item.Costume.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L156"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -645,10 +658,12 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Serialize" data-uid="Nekoyume.Model.Item.Costume.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the costume to List format (new format).
+Order: [baseData..., equipped, spineResourcePath, itemId, requiredBlockIndex]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -659,7 +674,8 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -676,7 +692,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Unequip" data-uid="Nekoyume.Model.Item.Costume.Unequip">
   Unequip()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -702,7 +718,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 
   <h3 id="Nekoyume_Model_Item_Costume_Update_System_Int64_" data-uid="Nekoyume.Model.Item.Costume.Update(System.Int64)">
   Update(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L177"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -733,7 +749,7 @@ public class Costume : ItemBase, INonFungibleItem, IEquippableItem, ITradableIte
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Costume.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

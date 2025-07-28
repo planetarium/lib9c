@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class DecimalStat | Lib9c ">
       
-      
+      <meta name="description" content="Represents a single character statistic with base and additional values. Supports both Dictionary and List serialization formats for backward compatibility.  Serialization Format: - Dictionary (Legacy): Uses key-value pairs for backward compatibility - List (New): Uses ordered list for better performance and smaller size  Field Order (List Format): 1. version - Serialization version number 2. statType - The type of statistic 3. baseValue - Base value of the statistic 4. additionalValue - Additional value of the statistic">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Stat_DecimalStat" data-uid="Nekoyume.Model.Stat.DecimalStat" class="text-break">
-Class DecimalStat  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class DecimalStat  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,20 @@ Class DecimalStat  <a class="header-action link-secondary" title="View source" h
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a single character statistic with base and additional values.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. statType - The type of statistic
+3. baseValue - Base value of the statistic
+4. additionalValue - Additional value of the statistic
+</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -155,6 +168,19 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
 
 
+  <h2 id="Nekoyume_Model_Stat_DecimalStat_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This class implements dual serialization support to ensure smooth migration
+from the legacy Dictionary format to the new List format. The List format
+provides better performance and smaller serialized data size.</p>
+<p>
+Example usage:
+<pre><code class="lang-csharp">// Create decimal stat
+var stat = new DecimalStat(StatType.HP, 100, 50);
+<p>// Serialize to List format (new)
+var serialized = stat.Serialize(); // Returns List</p>
+<p>// Deserialize from any format
+var deserialized = new DecimalStat(serialized); // Supports both Dictionary and List</p></code></pre>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -165,10 +191,11 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Stat.DecimalStat.#ctor(Bencodex.Types.Dictionary)">
   DecimalStat(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L132"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for backward compatibility with Dictionary format.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -178,7 +205,8 @@ public class DecimalStat : ICloneable, IState</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dd><p>Dictionary containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -194,9 +222,51 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <a id="Nekoyume_Model_Stat_DecimalStat__ctor_" data-uid="Nekoyume.Model.Stat.DecimalStat.#ctor*"></a>
 
+  <h3 id="Nekoyume_Model_Stat_DecimalStat__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Stat.DecimalStat.#ctor(Bencodex.Types.IValue)">
+  DecimalStat(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DecimalStat(IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p>Thrown when serialized is null</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when serialized format is not supported</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_Stat_DecimalStat__ctor_" data-uid="Nekoyume.Model.Stat.DecimalStat.#ctor*"></a>
+
   <h3 id="Nekoyume_Model_Stat_DecimalStat__ctor_Nekoyume_Model_Stat_DecimalStat_" data-uid="Nekoyume.Model.Stat.DecimalStat.#ctor(Nekoyume.Model.Stat.DecimalStat)">
   DecimalStat(DecimalStat)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -227,7 +297,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat__ctor_Nekoyume_Model_Stat_StatType_System_Decimal_System_Decimal_" data-uid="Nekoyume.Model.Stat.DecimalStat.#ctor(Nekoyume.Model.Stat.StatType,System.Decimal,System.Decimal)">
   DecimalStat(StatType, decimal, decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -265,7 +335,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_StatType" data-uid="Nekoyume.Model.Stat.DecimalStat.StatType">
   StatType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -300,7 +370,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_AdditionalValue" data-uid="Nekoyume.Model.Stat.DecimalStat.AdditionalValue">
   AdditionalValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -331,7 +401,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_AdditionalValueAsLong" data-uid="Nekoyume.Model.Stat.DecimalStat.AdditionalValueAsLong">
   AdditionalValueAsLong
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -362,7 +432,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_BaseValue" data-uid="Nekoyume.Model.Stat.DecimalStat.BaseValue">
   BaseValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -393,7 +463,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_BaseValueAsLong" data-uid="Nekoyume.Model.Stat.DecimalStat.BaseValueAsLong">
   BaseValueAsLong
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -424,7 +494,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_HasAdditionalValue" data-uid="Nekoyume.Model.Stat.DecimalStat.HasAdditionalValue">
   HasAdditionalValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -455,7 +525,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_HasAdditionalValueAsLong" data-uid="Nekoyume.Model.Stat.DecimalStat.HasAdditionalValueAsLong">
   HasAdditionalValueAsLong
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -486,7 +556,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_HasBaseValue" data-uid="Nekoyume.Model.Stat.DecimalStat.HasBaseValue">
   HasBaseValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -517,7 +587,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_HasBaseValueAsLong" data-uid="Nekoyume.Model.Stat.DecimalStat.HasBaseValueAsLong">
   HasBaseValueAsLong
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -548,7 +618,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_HasTotalValueAsLong" data-uid="Nekoyume.Model.Stat.DecimalStat.HasTotalValueAsLong">
   HasTotalValueAsLong
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -579,7 +649,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_TotalValue" data-uid="Nekoyume.Model.Stat.DecimalStat.TotalValue">
   TotalValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -610,7 +680,7 @@ public class DecimalStat : ICloneable, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_TotalValueAsLong" data-uid="Nekoyume.Model.Stat.DecimalStat.TotalValueAsLong">
   TotalValueAsLong
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -646,7 +716,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_AddAdditionalValue_System_Decimal_" data-uid="Nekoyume.Model.Stat.DecimalStat.AddAdditionalValue(System.Decimal)">
   AddAdditionalValue(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L206"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -677,7 +747,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_AddBaseValue_System_Decimal_" data-uid="Nekoyume.Model.Stat.DecimalStat.AddBaseValue(System.Decimal)">
   AddBaseValue(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L196"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -708,7 +778,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_Clone" data-uid="Nekoyume.Model.Stat.DecimalStat.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L211"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -741,10 +811,11 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_Deserialize_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Stat.DecimalStat.Deserialize(Bencodex.Types.Dictionary)">
   Deserialize(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L263"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Deserializes data from Dictionary format (legacy support).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -754,7 +825,8 @@ public long TotalValueAsLong { get; }</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dd><p>Dictionary containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -772,7 +844,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_Equals_Nekoyume_Model_Stat_DecimalStat_" data-uid="Nekoyume.Model.Stat.DecimalStat.Equals(Nekoyume.Model.Stat.DecimalStat)">
   Equals(DecimalStat)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L216"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -808,7 +880,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_Equals_System_Object_" data-uid="Nekoyume.Model.Stat.DecimalStat.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L223"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -847,7 +919,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_GetHashCode" data-uid="Nekoyume.Model.Stat.DecimalStat.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L231"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -880,7 +952,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_Reset" data-uid="Nekoyume.Model.Stat.DecimalStat.Reset">
   Reset()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -906,10 +978,12 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_Serialize" data-uid="Nekoyume.Model.Stat.DecimalStat.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L241"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the DecimalStat to List format (new format).
+Order: [version, statType, baseValue, additionalValue]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -920,7 +994,8 @@ public long TotalValueAsLong { get; }</code></pre>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -937,7 +1012,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_SerializeWithoutAdditional" data-uid="Nekoyume.Model.Stat.DecimalStat.SerializeWithoutAdditional">
   SerializeWithoutAdditional()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L250"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -968,7 +1043,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_SetAdditionalValue_System_Decimal_" data-uid="Nekoyume.Model.Stat.DecimalStat.SetAdditionalValue(System.Decimal)">
   SetAdditionalValue(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L201"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -999,7 +1074,7 @@ public long TotalValueAsLong { get; }</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_DecimalStat_SetBaseValue_System_Decimal_" data-uid="Nekoyume.Model.Stat.DecimalStat.SetBaseValue(System.Decimal)">
   SetBaseValue(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L191"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1030,7 +1105,7 @@ public long TotalValueAsLong { get; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/DecimalStat.cs/#L45" class="edit-link">Edit this page</a>
         </div>
 
 

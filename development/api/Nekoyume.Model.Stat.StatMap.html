@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class StatMap | Lib9c ">
       
-      
+      <meta name="description" content="Represents a collection of character statistics. Supports both Dictionary and List serialization formats for backward compatibility.  Serialization Format: - Dictionary (Legacy): Uses key-value pairs for backward compatibility - List (New): Uses ordered list for better performance and smaller size  Field Order (List Format): 1. version - Serialization version number 2. stats - List of DecimalStat objects ordered by StatType">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Stat_StatMap" data-uid="Nekoyume.Model.Stat.StatMap" class="text-break">
-Class StatMap  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Class StatMap  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,18 @@ Class StatMap  <a class="header-action link-secondary" title="View source" href=
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a collection of character statistics.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. stats - List of DecimalStat objects ordered by StatType
+</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -155,6 +166,21 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
 
 
+  <h2 id="Nekoyume_Model_Stat_StatMap_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This class implements dual serialization support to ensure smooth migration
+from the legacy Dictionary format to the new List format. The List format
+provides better performance and smaller serialized data size.</p>
+<p>
+Example usage:
+<pre><code class="lang-csharp">// Create stat map
+var statMap = new StatMap();
+statMap[StatType.HP].SetBaseValue(100);
+statMap[StatType.ATK].SetBaseValue(50);
+<p>// Serialize to List format (new)
+var serialized = statMap.Serialize(); // Returns List</p>
+<p>// Deserialize from any format
+var deserialized = new StatMap(serialized); // Supports both Dictionary and List</p></code></pre>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -165,7 +191,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap__ctor" data-uid="Nekoyume.Model.Stat.StatMap.#ctor">
   StatMap()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -189,9 +215,51 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <a id="Nekoyume_Model_Stat_StatMap__ctor_" data-uid="Nekoyume.Model.Stat.StatMap.#ctor*"></a>
 
+  <h3 id="Nekoyume_Model_Stat_StatMap__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Stat.StatMap.#ctor(Bencodex.Types.IValue)">
+  StatMap(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StatMap(IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p>Thrown when serialized is null</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when serialized format is not supported</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Model_Stat_StatMap__ctor_" data-uid="Nekoyume.Model.Stat.StatMap.#ctor*"></a>
+
   <h3 id="Nekoyume_Model_Stat_StatMap__ctor_Nekoyume_Model_Stat_StatMap_" data-uid="Nekoyume.Model.Stat.StatMap.#ctor(Nekoyume.Model.Stat.StatMap)">
   StatMap(StatMap)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -226,7 +294,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_ATK" data-uid="Nekoyume.Model.Stat.StatMap.ATK">
   ATK
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -257,7 +325,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalATK" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalATK">
   AdditionalATK
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -288,7 +356,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalArmorPenetration" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalArmorPenetration">
   AdditionalArmorPenetration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -319,7 +387,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalCDMG" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalCDMG">
   AdditionalCDMG
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -350,7 +418,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalCRI" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalCRI">
   AdditionalCRI
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -381,7 +449,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalDEF" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalDEF">
   AdditionalDEF
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -412,7 +480,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalDRR" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalDRR">
   AdditionalDRR
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -443,7 +511,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalDRV" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalDRV">
   AdditionalDRV
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -474,7 +542,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalHIT" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalHIT">
   AdditionalHIT
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L88"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -505,7 +573,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalHP" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalHP">
   AdditionalHP
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L84"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -536,7 +604,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalSPD" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalSPD">
   AdditionalSPD
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -567,7 +635,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_AdditionalThorn" data-uid="Nekoyume.Model.Stat.StatMap.AdditionalThorn">
   AdditionalThorn
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -598,7 +666,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_ArmorPenetration" data-uid="Nekoyume.Model.Stat.StatMap.ArmorPenetration">
   ArmorPenetration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L69"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -629,7 +697,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseATK" data-uid="Nekoyume.Model.Stat.StatMap.BaseATK">
   BaseATK
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -660,7 +728,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseArmorPenetration" data-uid="Nekoyume.Model.Stat.StatMap.BaseArmorPenetration">
   BaseArmorPenetration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -691,7 +759,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseCDMG" data-uid="Nekoyume.Model.Stat.StatMap.BaseCDMG">
   BaseCDMG
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -722,7 +790,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseCRI" data-uid="Nekoyume.Model.Stat.StatMap.BaseCRI">
   BaseCRI
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -753,7 +821,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseDEF" data-uid="Nekoyume.Model.Stat.StatMap.BaseDEF">
   BaseDEF
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -784,7 +852,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseDRR" data-uid="Nekoyume.Model.Stat.StatMap.BaseDRR">
   BaseDRR
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -815,7 +883,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseDRV" data-uid="Nekoyume.Model.Stat.StatMap.BaseDRV">
   BaseDRV
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -846,7 +914,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseHIT" data-uid="Nekoyume.Model.Stat.StatMap.BaseHIT">
   BaseHIT
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -877,7 +945,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseHP" data-uid="Nekoyume.Model.Stat.StatMap.BaseHP">
   BaseHP
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -908,7 +976,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseSPD" data-uid="Nekoyume.Model.Stat.StatMap.BaseSPD">
   BaseSPD
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -939,7 +1007,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_BaseThorn" data-uid="Nekoyume.Model.Stat.StatMap.BaseThorn">
   BaseThorn
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -970,7 +1038,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_CDMG" data-uid="Nekoyume.Model.Stat.StatMap.CDMG">
   CDMG
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1001,7 +1069,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_CRI" data-uid="Nekoyume.Model.Stat.StatMap.CRI">
   CRI
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1032,7 +1100,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_DEF" data-uid="Nekoyume.Model.Stat.StatMap.DEF">
   DEF
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1063,7 +1131,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_DRR" data-uid="Nekoyume.Model.Stat.StatMap.DRR">
   DRR
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1094,7 +1162,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_DRV" data-uid="Nekoyume.Model.Stat.StatMap.DRV">
   DRV
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1125,7 +1193,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_HIT" data-uid="Nekoyume.Model.Stat.StatMap.HIT">
   HIT
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1156,7 +1224,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_HP" data-uid="Nekoyume.Model.Stat.StatMap.HP">
   HP
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1187,7 +1255,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_Item_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Stat.StatMap.Item(Nekoyume.Model.Stat.StatType)">
   this[StatType]
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1223,7 +1291,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_SPD" data-uid="Nekoyume.Model.Stat.StatMap.SPD">
   SPD
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1254,7 +1322,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_Thorn" data-uid="Nekoyume.Model.Stat.StatMap.Thorn">
   Thorn
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1285,42 +1353,11 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 </h2>
 
 
-  <a id="Nekoyume_Model_Stat_StatMap_Deserialize_" data-uid="Nekoyume.Model.Stat.StatMap.Deserialize*"></a>
-
-  <h3 id="Nekoyume_Model_Stat_StatMap_Deserialize_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Stat.StatMap.Deserialize(Bencodex.Types.Dictionary)">
-  Deserialize(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L224"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Deserialize(Dictionary serialized)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-
   <a id="Nekoyume_Model_Stat_StatMap_GetAdditionalStat_" data-uid="Nekoyume.Model.Stat.StatMap.GetAdditionalStat*"></a>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetAdditionalStat_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Stat.StatMap.GetAdditionalStat(Nekoyume.Model.Stat.StatType)">
   GetAdditionalStat(StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L243"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1356,7 +1393,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetAdditionalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.StatMap.GetAdditionalStats(System.Boolean)">
   GetAdditionalStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L289"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1392,7 +1429,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetBaseAndAdditionalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.StatMap.GetBaseAndAdditionalStats(System.Boolean)">
   GetBaseAndAdditionalStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L307"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1428,7 +1465,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetBaseStat_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Stat.StatMap.GetBaseStat(Nekoyume.Model.Stat.StatType)">
   GetBaseStat(StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L233"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1464,7 +1501,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetBaseStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.StatMap.GetBaseStats(System.Boolean)">
   GetBaseStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L271"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1500,7 +1537,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetDecimalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.StatMap.GetDecimalStats(System.Boolean)">
   GetDecimalStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L326"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1536,7 +1573,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetStat_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Stat.StatMap.GetStat(Nekoyume.Model.Stat.StatType)">
   GetStat(StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L223"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1572,7 +1609,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetStatAsLong_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Stat.StatMap.GetStatAsLong(Nekoyume.Model.Stat.StatType)">
   GetStatAsLong(StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L213"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1608,7 +1645,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_GetStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.StatMap.GetStats(System.Boolean)">
   GetStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L253"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1644,7 +1681,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_Reset" data-uid="Nekoyume.Model.Stat.StatMap.Reset">
   Reset()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L205"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1670,10 +1707,12 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 
   <h3 id="Nekoyume_Model_Stat_StatMap_Serialize" data-uid="Nekoyume.Model.Stat.StatMap.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L339"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the StatMap to List format (new format).
+Order: [version, stats]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1684,7 +1723,8 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -1701,7 +1741,7 @@ public class StatMap : IStats, IBaseAndAdditionalStats, IState</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/StatMap.cs/#L46" class="edit-link">Edit this page</a>
         </div>
 
 

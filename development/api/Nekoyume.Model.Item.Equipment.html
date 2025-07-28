@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Equipment | Lib9c ">
       
-      
+      <meta name="description" content="Represents equipment items that can be equipped by characters. Supports both Dictionary and List serialization formats for backward compatibility.  Field Order (List Format): Base fields (0~10): 11 fields from ItemUsable Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp  Equipment Properties: - Equipped: Whether the equipment is currently equipped - Level: Equipment enhancement level - Stat: Primary stat of the equipment - SetId: ID for equipment set bonuses - SpineResourcePath: Path to spine animation resource - IconId: Icon identifier for UI display - ByCustomCraft: Whether crafted through custom crafting - CraftWithRandom: Whether random options were applied during crafting - HasRandomOnlyIcon: Whether has random-only icon - OptionCountFromCombination: Number of options from combination - MadeWithMimisbrunnrRecipe: Whether made with Mimisbrunnr recipe - Exp: Experience points for leveling">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_Equipment" data-uid="Nekoyume.Model.Item.Equipment" class="text-break">
-Class Equipment  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class Equipment  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,28 @@ Class Equipment  <a class="header-action link-secondary" title="View source" hre
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents equipment items that can be equipped by characters.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Field Order (List Format):
+Base fields (0~10): 11 fields from ItemUsable
+Equipment fields (11~22): equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp
+</p><p>
+Equipment Properties:
+- Equipped: Whether the equipment is currently equipped
+- Level: Equipment enhancement level
+- Stat: Primary stat of the equipment
+- SetId: ID for equipment set bonuses
+- SpineResourcePath: Path to spine animation resource
+- IconId: Icon identifier for UI display
+- ByCustomCraft: Whether crafted through custom crafting
+- CraftWithRandom: Whether random options were applied during crafting
+- HasRandomOnlyIcon: Whether has random-only icon
+- OptionCountFromCombination: Number of options from combination
+- MadeWithMimisbrunnrRecipe: Whether made with Mimisbrunnr recipe
+- Exp: Experience points for leveling
+</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -145,6 +166,9 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
     <dt>Inherited Members</dt>
     <dd>
     <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ITEM_USABLE_FIELD_COUNT">ItemUsable.ITEM_USABLE_FIELD_COUNT</a>
+    </div>
+    <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_ItemId">ItemUsable.ItemId</a>
     </div>
     <div>
@@ -170,6 +194,12 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemUsable.html#Nekoyume_Model_Item_ItemUsable_Update_System_Int64_">ItemUsable.Update(long)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
     </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
@@ -225,6 +255,21 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
 
 
+  <h2 id="Nekoyume_Model_Item_Equipment_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Equipment items can be enhanced, equipped, and provide various stats and bonuses.
+The equipment system supports both regular crafting and custom crafting with random options.</p>
+<p>
+Example usage:
+<pre><code class="lang-csharp">// Create equipment
+var equipment = new Equipment(equipmentRow, Guid.NewGuid(), 1000L);
+<p>// Enhance equipment
+equipment.LevelUp();</p>
+<p>// Equip/unequip
+equipment.Equipped = true;</p>
+<p>// Check stats
+var statValue = equipment.Stat.StatType;
+var setBonus = equipment.SetId;</p></code></pre>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -233,22 +278,24 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <a id="Nekoyume_Model_Item_Equipment__ctor_" data-uid="Nekoyume.Model.Item.Equipment.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_Equipment__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.Equipment.#ctor(Bencodex.Types.Dictionary)">
-  Equipment(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_Equipment__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.Equipment.#ctor(Bencodex.Types.IValue)">
+  Equipment(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L113"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Equipment(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public Equipment(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -266,7 +313,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment__ctor_Nekoyume_TableData_EquipmentItemSheet_Row_System_Guid_System_Int64_System_Boolean_System_Int32_" data-uid="Nekoyume.Model.Item.Equipment.#ctor(Nekoyume.TableData.EquipmentItemSheet.Row,System.Guid,System.Int64,System.Boolean,System.Int32)">
   Equipment(Row, Guid, long, bool, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -305,7 +352,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.Equipment.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   Equipment(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L256"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -341,7 +388,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_ByCustomCraft" data-uid="Nekoyume.Model.Item.Equipment.ByCustomCraft">
   ByCustomCraft
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -371,7 +418,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_CraftWithRandom" data-uid="Nekoyume.Model.Item.Equipment.CraftWithRandom">
   CraftWithRandom
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -401,7 +448,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_Exp" data-uid="Nekoyume.Model.Item.Equipment.Exp">
   Exp
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -431,7 +478,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_HasRandomOnlyIcon" data-uid="Nekoyume.Model.Item.Equipment.HasRandomOnlyIcon">
   HasRandomOnlyIcon
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -461,7 +508,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_IconId" data-uid="Nekoyume.Model.Item.Equipment.IconId">
   IconId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -491,7 +538,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_equipped" data-uid="Nekoyume.Model.Item.Equipment.equipped">
   equipped
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -521,7 +568,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_level" data-uid="Nekoyume.Model.Item.Equipment.level">
   level
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -551,7 +598,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_optionCountFromCombination" data-uid="Nekoyume.Model.Item.Equipment.optionCountFromCombination">
   optionCountFromCombination
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -586,7 +633,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_Equipped" data-uid="Nekoyume.Model.Item.Equipment.Equipped">
   Equipped
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -617,14 +664,14 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_MadeWithMimisbrunnrRecipe" data-uid="Nekoyume.Model.Item.Equipment.MadeWithMimisbrunnrRecipe">
   MadeWithMimisbrunnrRecipe
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L84"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool MadeWithMimisbrunnrRecipe { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool MadeWithMimisbrunnrRecipe { get; set; }</code></pre>
   </div>
 
 
@@ -648,7 +695,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_SetId" data-uid="Nekoyume.Model.Item.Equipment.SetId">
   SetId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -679,7 +726,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_SpineResourcePath" data-uid="Nekoyume.Model.Item.Equipment.SpineResourcePath">
   SpineResourcePath
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -710,7 +757,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_Stat" data-uid="Nekoyume.Model.Item.Equipment.Stat">
   Stat
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -741,7 +788,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_UniqueStatType" data-uid="Nekoyume.Model.Item.Equipment.UniqueStatType">
   UniqueStatType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -776,7 +823,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_Equals_Nekoyume_Model_Item_Equipment_" data-uid="Nekoyume.Model.Item.Equipment.Equals(Nekoyume.Model.Item.Equipment)">
   Equals(Equipment)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L388"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L519"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -812,7 +859,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_Equals_System_Object_" data-uid="Nekoyume.Model.Item.Equipment.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L395"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L526"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -851,7 +898,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_Equip" data-uid="Nekoyume.Model.Item.Equipment.Equip">
   Equip()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L308"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -873,11 +920,44 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
 
 
+  <a id="Nekoyume_Model_Item_Equipment_GetFieldNames_" data-uid="Nekoyume.Model.Item.Equipment.GetFieldNames*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Equipment_GetFieldNames" data-uid="Nekoyume.Model.Item.Equipment.GetFieldNames">
+  GetFieldNames()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the field names for serialization in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override string[] GetFieldNames()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>Array of field names</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Item_Equipment_GetHashCode_" data-uid="Nekoyume.Model.Item.Equipment.GetHashCode*"></a>
 
   <h3 id="Nekoyume_Model_Item_Equipment_GetHashCode" data-uid="Nekoyume.Model.Item.Equipment.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L403"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L534"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -910,7 +990,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_GetIncrementAmountOfEnhancement" data-uid="Nekoyume.Model.Item.Equipment.GetIncrementAmountOfEnhancement">
   GetIncrementAmountOfEnhancement()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L88"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -937,42 +1017,11 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
 
 
-  <a id="Nekoyume_Model_Item_Equipment_GetOptions_" data-uid="Nekoyume.Model.Item.Equipment.GetOptions*"></a>
-
-  <h3 id="Nekoyume_Model_Item_Equipment_GetOptions" data-uid="Nekoyume.Model.Item.Equipment.GetOptions">
-  GetOptions()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L244"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;object&gt; GetOptions()</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
   <a id="Nekoyume_Model_Item_Equipment_GetRealExp_" data-uid="Nekoyume.Model.Item.Equipment.GetRealExp*"></a>
 
   <h3 id="Nekoyume_Model_Item_Equipment_GetRealExp_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EnhancementCostSheetV3_" data-uid="Nekoyume.Model.Item.Equipment.GetRealExp(Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EnhancementCostSheetV3)">
   GetRealExp(EquipmentItemSheet, EnhancementCostSheetV3)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L231"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L378"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1010,7 +1059,7 @@ public class Equipment : ItemUsable, INonFungibleItem, IEquippableItem, IItem, I
 
   <h3 id="Nekoyume_Model_Item_Equipment_LevelUp_Libplanet_Action_IRandom_Nekoyume_TableData_EnhancementCostSheetV2_Row_System_Boolean_" data-uid="Nekoyume.Model.Item.Equipment.LevelUp(Libplanet.Action.IRandom,Nekoyume.TableData.EnhancementCostSheetV2.Row,System.Boolean)">
   LevelUp(IRandom, Row, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L184"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L331"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1046,7 +1095,7 @@ public void LevelUp(IRandom random, EnhancementCostSheetV2.Row row, bool isGreat
 
   <h3 id="Nekoyume_Model_Item_Equipment_LevelUpV1" data-uid="Nekoyume.Model.Item.Equipment.LevelUpV1">
   LevelUpV1()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L318"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1073,10 +1122,12 @@ public void LevelUpV1()</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Equipment_Serialize" data-uid="Nekoyume.Model.Item.Equipment.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L266"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the equipment to List format (new format).
+Order: [baseData..., equipped, level, stat, setId, spineResourcePath, iconId, byCustomCraft, craftWithRandom, hasRandomOnlyIcon, optionCountFromCombination, madeWithMimisbrunnrRecipe, exp]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1087,7 +1138,8 @@ public void LevelUpV1()</code></pre>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -1104,7 +1156,7 @@ public void LevelUpV1()</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Equipment_SetLevel_Libplanet_Action_IRandom_System_Int32_Nekoyume_TableData_EnhancementCostSheetV3_" data-uid="Nekoyume.Model.Item.Equipment.SetLevel(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.EnhancementCostSheetV3)">
   SetLevel(IRandom, int, EnhancementCostSheetV3)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L352"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1139,7 +1191,7 @@ public void LevelUpV1()</code></pre>
 
   <h3 id="Nekoyume_Model_Item_Equipment_Unequip" data-uid="Nekoyume.Model.Item.Equipment.Unequip">
   Unequip()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L313"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1165,7 +1217,7 @@ public void LevelUpV1()</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Item/Equipment.cs/#L65" class="edit-link">Edit this page</a>
         </div>
 
 
