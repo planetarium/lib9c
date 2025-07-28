@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class CollectionMap | Lib9c ">
       
-      
+      <meta name="description" content="Represents a collection map with key-value pairs. Supports both Dictionary and List serialization formats for backward compatibility.  Serialization Format: - Dictionary (Legacy): Uses key-value pairs for backward compatibility - List (New): Uses ordered list for better performance and smaller size  Field Order (List Format): 1. version - Serialization version number 2. entries - List of key-value pairs ordered by key">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_CollectionMap" data-uid="Nekoyume.Model.CollectionMap" class="text-break">
-Class CollectionMap  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class CollectionMap  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,18 @@ Class CollectionMap  <a class="header-action link-secondary" title="View source"
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a collection map with key-value pairs.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Serialization Format:
+- Dictionary (Legacy): Uses key-value pairs for backward compatibility
+- List (New): Uses ordered list for better performance and smaller size
+</p><p>
+Field Order (List Format):
+1. version - Serialization version number
+2. entries - List of key-value pairs ordered by key
+</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -158,6 +169,21 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
 
 
+  <h2 id="Nekoyume_Model_CollectionMap_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This class implements dual serialization support to ensure smooth migration
+from the legacy Dictionary format to the new List format. The List format
+provides better performance and smaller serialized data size.</p>
+<p>
+Example usage:
+<pre><code class="lang-csharp">// Create collection map
+var map = new CollectionMap();
+map.Add(1, 100);
+map.Add(2, 200);
+<p>// Serialize to List format (new)
+var serialized = map.Serialize(); // Returns List</p>
+<p>// Deserialize from any format
+var deserialized = new CollectionMap(serialized); // Supports both Dictionary and List</p></code></pre>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -168,7 +194,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap__ctor" data-uid="Nekoyume.Model.CollectionMap.#ctor">
   CollectionMap()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -194,10 +220,11 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.CollectionMap.#ctor(Bencodex.Types.Dictionary)">
   CollectionMap(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for backward compatibility with Dictionary format.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -207,7 +234,8 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dd><p>Dictionary containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -221,6 +249,48 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
 
 
+  <a id="Nekoyume_Model_CollectionMap__ctor_" data-uid="Nekoyume.Model.CollectionMap.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_CollectionMap__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.CollectionMap.#ctor(Bencodex.Types.IValue)">
+  CollectionMap(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap(IValue serialized)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p>Thrown when serialized is null</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when serialized format is not supported</p>
+</dd>
+  </dl>
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -229,7 +299,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Count" data-uid="Nekoyume.Model.CollectionMap.Count">
   Count
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L257"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the number of elements contained in the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>.</p>
@@ -262,7 +332,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_IsReadOnly" data-uid="Nekoyume.Model.CollectionMap.IsReadOnly">
   IsReadOnly
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L258"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> is read-only.</p>
@@ -295,7 +365,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Item_System_Int32_" data-uid="Nekoyume.Model.CollectionMap.Item(System.Int32)">
   this[int]
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L290"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the element with the specified key.</p>
@@ -346,7 +416,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Keys" data-uid="Nekoyume.Model.CollectionMap.Keys">
   Keys
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L296"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> containing the keys of the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary&lt;TKey, TValue&gt;</a>.</p>
@@ -379,7 +449,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Values" data-uid="Nekoyume.Model.CollectionMap.Values">
   Values
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L297"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> containing the values in the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary&lt;TKey, TValue&gt;</a>.</p>
@@ -416,7 +486,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Add_System_Collections_Generic_KeyValuePair_System_Int32_System_Int32__" data-uid="Nekoyume.Model.CollectionMap.Add(System.Collections.Generic.KeyValuePair{System.Int32,System.Int32})">
   Add(KeyValuePair&lt;int, int&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L223"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds an item to the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>.</p>
@@ -455,7 +525,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Add_System_Int32_System_Int32_" data-uid="Nekoyume.Model.CollectionMap.Add(System.Int32,System.Int32)">
   Add(int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L270"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds an element with the provided key and value to the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary&lt;TKey, TValue&gt;</a>.</p>
@@ -503,7 +573,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Clear" data-uid="Nekoyume.Model.CollectionMap.Clear">
   Clear()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L235"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Removes all items from the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>.</p>
@@ -536,7 +606,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Contains_System_Collections_Generic_KeyValuePair_System_Int32_System_Int32__" data-uid="Nekoyume.Model.CollectionMap.Contains(System.Collections.Generic.KeyValuePair{System.Int32,System.Int32})">
   Contains(KeyValuePair&lt;int, int&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L240"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> contains a specific value.</p>
@@ -575,7 +645,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_ContainsKey_System_Int32_" data-uid="Nekoyume.Model.CollectionMap.ContainsKey(System.Int32)">
   ContainsKey(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L275"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary&lt;TKey, TValue&gt;</a> contains an element with the specified key.</p>
@@ -620,7 +690,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_CopyTo_System_Collections_Generic_KeyValuePair_System_Int32_System_Int32____System_Int32_" data-uid="Nekoyume.Model.CollectionMap.CopyTo(System.Collections.Generic.KeyValuePair{System.Int32,System.Int32}[],System.Int32)">
   CopyTo(KeyValuePair&lt;int, int&gt;[], int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L247"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Copies the elements of the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a> to an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.array">Array</a>, starting at a particular <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.array">Array</a> index.</p>
@@ -668,7 +738,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_GetEnumerator" data-uid="Nekoyume.Model.CollectionMap.GetEnumerator">
   GetEnumerator()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L260"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the collection.</p>
@@ -701,7 +771,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_GetObjectData_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.CollectionMap.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   GetObjectData(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L299"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Populates a <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.runtime.serialization.serializationinfo">SerializationInfo</a> with the data needed to serialize the target object.</p>
@@ -743,7 +813,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Remove_System_Collections_Generic_KeyValuePair_System_Int32_System_Int32__" data-uid="Nekoyume.Model.CollectionMap.Remove(System.Collections.Generic.KeyValuePair{System.Int32,System.Int32})">
   Remove(KeyValuePair&lt;int, int&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L252"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Removes the first occurrence of a specific object from the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>.</p>
@@ -788,7 +858,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Remove_System_Int32_" data-uid="Nekoyume.Model.CollectionMap.Remove(System.Int32)">
   Remove(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L280"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Removes the element with the specified key from the <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary&lt;TKey, TValue&gt;</a>.</p>
@@ -836,10 +906,12 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_Serialize" data-uid="Nekoyume.Model.CollectionMap.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L201"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the CollectionMap to List format (new format).
+Order: [version, entries]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -850,7 +922,8 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -867,7 +940,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 
   <h3 id="Nekoyume_Model_CollectionMap_TryGetValue_System_Int32_System_Int32__" data-uid="Nekoyume.Model.CollectionMap.TryGetValue(System.Int32,System.Int32@)">
   TryGetValue(int, out int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L285"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the value associated with the specified key.</p>
@@ -915,7 +988,7 @@ public class CollectionMap : IState, IDictionary&lt;int, int&gt;, ICollection&lt
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/CollectionMap.cs/#L50" class="edit-link">Edit this page</a>
         </div>
 
 

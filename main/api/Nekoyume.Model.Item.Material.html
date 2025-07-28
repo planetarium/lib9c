@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Material | Lib9c ">
       
-      
+      <meta name="description" content="Represents a material item that can be used for crafting and other purposes. Supports both Dictionary and List serialization formats for backward compatibility.  Field Order (List Format): Base fields (0~5): version, id, itemType, itemSubType, grade, elementalType Material fields (6): itemId  Material Properties: - ItemId: Unique identifier for the material item">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_Material" data-uid="Nekoyume.Model.Item.Material" class="text-break">
-Class Material  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L11"><i class="bi bi-code-slash"></i></a>
+Class Material  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,17 @@ Class Material  <a class="header-action link-secondary" title="View source" href
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a material item that can be used for crafting and other purposes.
+Supports both Dictionary and List serialization formats for backward compatibility.</p>
+<p>
+Field Order (List Format):
+Base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+Material fields (6): itemId
+</p><p>
+Material Properties:
+- ItemId: Unique identifier for the material item
+</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -137,6 +147,12 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
   <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_SerializationVersion">ItemBase.SerializationVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_BaseFieldCount">ItemBase.BaseFieldCount</a>
+    </div>
     <div>
       <a class="xref" href="Nekoyume.Model.Item.ItemBase.html#Nekoyume_Model_Item_ItemBase_Codec">ItemBase.Codec</a>
     </div>
@@ -178,6 +194,23 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
 
 
+  <h2 id="Nekoyume_Model_Item_Material_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Material items are fungible items used primarily for crafting other items.
+They support both Binary and Text formats for ItemId during deserialization
+to maintain compatibility with different serialization formats.</p>
+<p>
+Example usage:
+<pre><code class="lang-csharp">// Create material
+var material = new Material(materialRow);
+<p>// Use in crafting
+var requiredMaterials = new Dictionary&lt;HashDigest&lt;SHA256&gt;, int&gt;
+{
+{ material.ItemId, 5 } // 5 of this material
+};</p>
+<p>// Check material properties
+var grade = material.Grade;
+var itemType = material.ItemType;</p></code></pre>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -186,22 +219,24 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <a id="Nekoyume_Model_Item_Material__ctor_" data-uid="Nekoyume.Model.Item.Material.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_Material__ctor_Bencodex_Types_Dictionary_" data-uid="Nekoyume.Model.Item.Material.#ctor(Bencodex.Types.Dictionary)">
-  Material(Dictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_Material__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.Material.#ctor(Bencodex.Types.IValue)">
+  Material(IValue)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Constructor for deserialization that supports both Dictionary and List formats.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Material(Dictionary serialized)</code></pre>
+    <pre><code class="lang-csharp hljs">public Material(IValue serialized)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>serialized</code> <span class="xref">Dictionary</span></dt>
-    <dd></dd>
+    <dt><code>serialized</code> <span class="xref">IValue</span></dt>
+    <dd><p>Serialized data in either Dictionary or List format</p>
+</dd>
   </dl>
 
 
@@ -219,7 +254,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material__ctor_Nekoyume_Model_Item_Material_" data-uid="Nekoyume.Model.Item.Material.#ctor(Nekoyume.Model.Item.Material)">
   Material(Material)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -250,7 +285,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material__ctor_Nekoyume_TableData_MaterialItemSheet_Row_" data-uid="Nekoyume.Model.Item.Material.#ctor(Nekoyume.TableData.MaterialItemSheet.Row)">
   Material(Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -281,7 +316,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Nekoyume.Model.Item.Material.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
   Material(SerializationInfo, StreamingContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L156"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -318,7 +353,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material_FungibleId" data-uid="Nekoyume.Model.Item.Material.FungibleId">
   FungibleId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -349,7 +384,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material_ItemId" data-uid="Nekoyume.Model.Item.Material.ItemId">
   ItemId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -384,7 +419,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material_Equals_Nekoyume_Model_Item_Material_" data-uid="Nekoyume.Model.Item.Material.Equals(Nekoyume.Model.Item.Material)">
   Equals(Material)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L161"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -420,7 +455,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material_Equals_System_Object_" data-uid="Nekoyume.Model.Item.Material.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L167"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -455,11 +490,44 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
 
 
+  <a id="Nekoyume_Model_Item_Material_GetFieldNames_" data-uid="Nekoyume.Model.Item.Material.GetFieldNames*"></a>
+
+  <h3 id="Nekoyume_Model_Item_Material_GetFieldNames" data-uid="Nekoyume.Model.Item.Material.GetFieldNames">
+  GetFieldNames()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the field names for serialization in order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override string[] GetFieldNames()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>Array of field names</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Item_Material_GetHashCode_" data-uid="Nekoyume.Model.Item.Material.GetHashCode*"></a>
 
   <h3 id="Nekoyume_Model_Item_Material_GetHashCode" data-uid="Nekoyume.Model.Item.Material.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L175"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -492,10 +560,12 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material_Serialize" data-uid="Nekoyume.Model.Item.Material.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L190"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the material to List format (new format).
+Order: [baseData..., itemId]</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -506,7 +576,8 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>List containing serialized data</p>
+</dd>
   </dl>
 
 
@@ -523,7 +594,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 
   <h3 id="Nekoyume_Model_Item_Material_ToString" data-uid="Nekoyume.Model.Item.Material.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L205"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
@@ -556,7 +627,7 @@ public class Material : ItemBase, ISerializable, IFungibleItem, IItem, IState</c
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L11" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Item/Material.cs/#L50" class="edit-link">Edit this page</a>
         </div>
 
 

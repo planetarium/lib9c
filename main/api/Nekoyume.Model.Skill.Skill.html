@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Skill | Lib9c ">
       
-      
+      <meta name="description" content="Abstract base class for all skills in the game. Provides common functionality for skill execution and serialization.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Skill_Skill" data-uid="Nekoyume.Model.Skill.Skill" class="text-break">
-Class Skill  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class Skill  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class Skill  <a class="header-action link-secondary" title="View source" href="h
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Abstract base class for all skills in the game.
+Provides common functionality for skill execution and serialization.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,6 +158,26 @@ public abstract class Skill : IState, ISkill</code></pre>
 
 
 
+  <h2 id="Nekoyume_Model_Skill_Skill_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+Skills are categorized by their type (Attack, Heal, Buff, Debuff) and category
+(NormalAttack, DoubleAttack, BlowAttack, etc.). Each skill has power, chance,
+and optional stat-based damage ratio.
+</p>
+<p>
+Serialization format has been migrated from Dictionary to List for better
+performance and consistency. The new format stores data in the following order:
+[0] SkillRow (serialized SkillSheet.Row)
+[1] Power (long)
+[2] Chance (int)
+[3] StatPowerRatio (int, optional - only included if &gt; 0)
+[4] ReferencedStatType (StatType, optional - only included if StatPowerRatio &gt; 0)
+</p>
+<p>
+Backward compatibility is maintained through SkillFactory.Deserialize() which
+automatically detects and handles both Dictionary and List formats.
+</p>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -166,7 +188,7 @@ public abstract class Skill : IState, ISkill</code></pre>
 
   <h3 id="Nekoyume_Model_Skill_Skill__ctor_Nekoyume_TableData_SkillSheet_Row_System_Int64_System_Int32_System_Int32_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Skill.Skill.#ctor(Nekoyume.TableData.SkillSheet.Row,System.Int64,System.Int32,System.Int32,Nekoyume.Model.Stat.StatType)">
   Skill(Row, long, int, int, StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -209,7 +231,7 @@ public abstract class Skill : IState, ISkill</code></pre>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Chance" data-uid="Nekoyume.Model.Skill.Skill.Chance">
   Chance
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -240,7 +262,7 @@ public abstract class Skill : IState, ISkill</code></pre>
 
   <h3 id="Nekoyume_Model_Skill_Skill_CustomField" data-uid="Nekoyume.Model.Skill.Skill.CustomField">
   CustomField
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -271,7 +293,7 @@ public abstract class Skill : IState, ISkill</code></pre>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Power" data-uid="Nekoyume.Model.Skill.Skill.Power">
   Power
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines damage of <code>AttackSkill</code>.
@@ -304,7 +326,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_ReferencedStatType" data-uid="Nekoyume.Model.Skill.Skill.ReferencedStatType">
   ReferencedStatType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -335,7 +357,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_SkillRow" data-uid="Nekoyume.Model.Skill.Skill.SkillRow">
   SkillRow
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -366,7 +388,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_StatPowerRatio" data-uid="Nekoyume.Model.Skill.Skill.StatPowerRatio">
   StatPowerRatio
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -401,7 +423,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Equals_Nekoyume_Model_Skill_Skill_" data-uid="Nekoyume.Model.Skill.Skill.Equals(Nekoyume.Model.Skill.Skill)">
   Equals(Skill)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -437,7 +459,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Equals_System_Object_" data-uid="Nekoyume.Model.Skill.Skill.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -476,7 +498,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_GetHashCode" data-uid="Nekoyume.Model.Skill.Skill.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -509,10 +531,11 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_IsBuff" data-uid="Nekoyume.Model.Skill.Skill.IsBuff">
   IsBuff()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L147"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Determines if this skill is a buff skill.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -523,7 +546,8 @@ Determines effect of <code>BuffSkill</code>.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>True if the skill type is Buff, false otherwise.</p>
+</dd>
   </dl>
 
 
@@ -540,10 +564,11 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_IsDebuff" data-uid="Nekoyume.Model.Skill.Skill.IsDebuff">
   IsDebuff()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L156"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Determines if this skill is a debuff skill.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -554,7 +579,8 @@ Determines effect of <code>BuffSkill</code>.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>True if the skill type is Debuff, false otherwise.</p>
+</dd>
   </dl>
 
 
@@ -571,7 +597,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_ProcessBuff_Nekoyume_Model_CharacterBase_System_Int32_System_Collections_Generic_IEnumerable_Nekoyume_Model_Buff_Buff__System_Boolean_" data-uid="Nekoyume.Model.Skill.Skill.ProcessBuff(Nekoyume.Model.CharacterBase,System.Int32,System.Collections.Generic.IEnumerable{Nekoyume.Model.Buff.Buff},System.Boolean)">
   ProcessBuff(CharacterBase, int, IEnumerable&lt;Buff&gt;, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -613,10 +639,11 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Serialize" data-uid="Nekoyume.Model.Skill.Skill.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L187"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the skill to a List format for storage and transmission.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -627,7 +654,13 @@ Determines effect of <code>BuffSkill</code>.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IValue</span></dt>
-    <dd></dd>
+    <dd><p>A List containing the serialized skill data in the following order:
+[0] SkillRow (serialized SkillSheet.Row)
+[1] Power (long)
+[2] Chance (int)
+[3] StatPowerRatio (int, optional - only included if &gt; 0)
+[4] ReferencedStatType (StatType, optional - only included if StatPowerRatio &gt; 0)</p>
+</dd>
   </dl>
 
 
@@ -636,6 +669,21 @@ Determines effect of <code>BuffSkill</code>.</p>
 
 
 
+  <h4 class="section" id="Nekoyume_Model_Skill_Skill_Serialize_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+This method implements the new List-based serialization format for better
+performance and consistency. The format is more compact than the previous
+Dictionary format and maintains all necessary data.
+</p>
+<p>
+Optional fields (StatPowerRatio and ReferencedStatType) are only included
+when they have non-default values to minimize serialization overhead.
+</p>
+<p>
+For backward compatibility, use SkillFactory.Deserialize() which can handle
+both the new List format and the legacy Dictionary format.
+</p>
+</div>
 
 
 
@@ -644,7 +692,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Update_System_Int32_System_Int64_System_Int32_" data-uid="Nekoyume.Model.Skill.Skill.Update(System.Int32,System.Int64,System.Int32)">
   Update(int, long, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L136"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -679,7 +727,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 
   <h3 id="Nekoyume_Model_Skill_Skill_Use_Nekoyume_Model_CharacterBase_System_Int32_System_Collections_Generic_IEnumerable_Nekoyume_Model_Buff_Buff__System_Boolean_" data-uid="Nekoyume.Model.Skill.Skill.Use(Nekoyume.Model.CharacterBase,System.Int32,System.Collections.Generic.IEnumerable{Nekoyume.Model.Buff.Buff},System.Boolean)">
   Use(CharacterBase, int, IEnumerable&lt;Buff&gt;, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -721,7 +769,7 @@ Determines effect of <code>BuffSkill</code>.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/Skill.cs/#L37" class="edit-link">Edit this page</a>
         </div>
 
 
