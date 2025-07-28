@@ -8,9 +8,34 @@ using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
 {
+    /// <summary>
+    /// Sheet containing skill data loaded from CSV files.
+    /// Provides access to skill definitions and their properties.
+    /// </summary>
     [Serializable]
     public class SkillSheet : Sheet<int, SkillSheet.Row>
     {
+        /// <summary>
+        /// Represents a single skill row from the skill sheet.
+        /// Contains skill metadata and properties used for skill creation and execution.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// SkillSheet.Row maps 1:1 to the following 9 fields in SkillSheet.csv:
+        /// [0] id
+        /// [1] _name
+        /// [2] elemental_type
+        /// [3] skill_type
+        /// [4] skill_category
+        /// [5] skill_target_type
+        /// [6] hit_count
+        /// [7] cooldown
+        /// [8] combo
+        /// </para>
+        /// <para>
+        /// Serialization and deserialization are performed as a List in this order. (Dictionary is also supported for backward compatibility.)
+        /// </para>
+        /// </remarks>
         [Serializable]
         public class Row : SheetRow<int>, IState
         {
@@ -42,6 +67,18 @@ namespace Nekoyume.TableData
                 }
             }
 
+            public Row(Bencodex.Types.List serialized)
+            {
+                Id = (Bencodex.Types.Integer) serialized[0];
+                ElementalType = (ElementalType) (int)(Integer) serialized[1];
+                SkillType = (SkillType) (int)(Integer) serialized[2];
+                SkillCategory = (SkillCategory) (int)(Integer) serialized[3];
+                SkillTargetType = (SkillTargetType) (int)(Integer) serialized[4];
+                HitCount = (Bencodex.Types.Integer) serialized[5];
+                Cooldown = (Bencodex.Types.Integer) serialized[6];
+                Combo = serialized[7].ToBoolean();
+            }
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -56,20 +93,52 @@ namespace Nekoyume.TableData
 
             public IValue Serialize()
             {
-                var dict = Bencodex.Types.Dictionary.Empty
-                    .Add("id", Id)
-                    .Add("elemental_type", ElementalType.ToString())
-                    .Add("skill_type", SkillType.ToString())
-                    .Add("skill_category", SkillCategory.ToString())
-                    .Add("skill_target_type", SkillTargetType.ToString())
-                    .Add("hit_count", HitCount)
-                    .Add("cooldown", Cooldown)
-                    .Add("combo", Combo)
-                    ;
-                return dict;
+                var list = new List<IValue>
+                {
+                    (Integer)Id,
+                    (Integer)(int)ElementalType,
+                    (Integer)(int)SkillType,
+                    (Integer)(int)SkillCategory,
+                    (Integer)(int)SkillTargetType,
+                    (Integer)HitCount,
+                    (Integer)Cooldown,
+                    Combo.Serialize(),
+                };
+                return new List(list);
             }
 
+            /// <summary>
+            /// Deserializes a skill row from serialized data.
+            /// Supports both Dictionary and List formats for backward compatibility.
+            /// </summary>
+            /// <param name="serialized">The serialized skill row data</param>
+            /// <returns>The deserialized skill row</returns>
+            /// <exception cref="ArgumentException">Thrown when the serialization format is not supported</exception>
+            public static Row Deserialize(IValue serialized)
+            {
+                switch (serialized)
+                {
+                    case Dictionary dict:
+                        return DeserializeFromDictionary(dict);
+                    case List list:
+                        return DeserializeFromList(list);
+                    default:
+                        throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+                }
+            }
+
+            public static Row DeserializeFromList(Bencodex.Types.List serialized)
+            {
+                return new Row(serialized);
+            }
+
+            [Obsolete("Use Deserialize(IValue) instead.")]
             public static Row Deserialize(Bencodex.Types.Dictionary serialized)
+            {
+                return DeserializeFromDictionary(serialized);
+            }
+
+            public static Row DeserializeFromDictionary(Bencodex.Types.Dictionary serialized)
             {
                 return new Row(serialized);
             }

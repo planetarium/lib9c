@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Model.Item
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Formatters;
+    using Lib9c.Tests.Model.Skill;
     using Libplanet.Action;
     using MessagePack;
     using MessagePack.Resolvers;
@@ -80,8 +81,8 @@ namespace Lib9c.Tests.Model.Item
                 .Add("elemental_type", consumable.ElementalType.Serialize())
                 .Add("itemId", consumable.ItemId.Serialize())
                 .Add("statsMap", consumable.StatsMap.Serialize())
-                .Add("skills", new List(consumable.Skills.Select(s => s.Serialize())))
-                .Add("buffSkills", new List(consumable.BuffSkills.Select(s => s.Serialize())))
+                .Add("skills", new List(consumable.Skills.Select(SkillSerializationTest.LegacySerializeSkill)))
+                .Add("buffSkills", new List(consumable.BuffSkills.Select(SkillSerializationTest.LegacySerializeSkill)))
                 .Add("requiredBlockIndex", consumable.RequiredBlockIndex.Serialize());
             var deserializedDict = new Consumable(legacyDict);
 

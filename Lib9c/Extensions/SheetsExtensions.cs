@@ -7,6 +7,7 @@ using Libplanet.Types.Assets;
 using Nekoyume.Action;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Extensions
 {
@@ -455,7 +456,7 @@ namespace Nekoyume.Extensions
             int playCount,
             int level)
         {
-            return (int)(originAp * playCount * sheet[level].Coefficient * 0.01m);
+            return NumberConversionHelper.SafeDecimalToInt32(originAp * playCount * sheet[level].Coefficient * 0.01m);
         }
 
         public static WorldBossListSheet.Row FindRowByBlockIndex(this WorldBossListSheet sheet,

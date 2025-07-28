@@ -10,6 +10,30 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Skill
 {
+    /// <summary>
+    /// Abstract base class for all skills in the game.
+    /// Provides common functionality for skill execution and serialization.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Skills are categorized by their type (Attack, Heal, Buff, Debuff) and category
+    /// (NormalAttack, DoubleAttack, BlowAttack, etc.). Each skill has power, chance,
+    /// and optional stat-based damage ratio.
+    /// </para>
+    /// <para>
+    /// Serialization format has been migrated from Dictionary to List for better
+    /// performance and consistency. The new format stores data in the following order:
+    /// [0] SkillRow (serialized SkillSheet.Row)
+    /// [1] Power (long)
+    /// [2] Chance (int)
+    /// [3] StatPowerRatio (int, optional - only included if > 0)
+    /// [4] ReferencedStatType (StatType, optional - only included if StatPowerRatio > 0)
+    /// </para>
+    /// <para>
+    /// Backward compatibility is maintained through SkillFactory.Deserialize() which
+    /// automatically detects and handles both Dictionary and List formats.
+    /// </para>
+    /// </remarks>
     [Serializable]
     public abstract class Skill : IState, ISkill
     {
@@ -116,32 +140,66 @@ namespace Nekoyume.Model.Skill
             StatPowerRatio = statPowerRatio;
         }
 
+        /// <summary>
+        /// Determines if this skill is a buff skill.
+        /// </summary>
+        /// <returns>True if the skill type is Buff, false otherwise.</returns>
         public bool IsBuff()
         {
             return SkillRow.SkillType is SkillType.Buff;
         }
 
+        /// <summary>
+        /// Determines if this skill is a debuff skill.
+        /// </summary>
+        /// <returns>True if the skill type is Debuff, false otherwise.</returns>
         public bool IsDebuff()
         {
             return SkillRow.SkillType is SkillType.Debuff;
         }
 
+        /// <summary>
+        /// Serializes the skill to a List format for storage and transmission.
+        /// </summary>
+        /// <returns>
+        /// A List containing the serialized skill data in the following order:
+        /// [0] SkillRow (serialized SkillSheet.Row)
+        /// [1] Power (long)
+        /// [2] Chance (int)
+        /// [3] StatPowerRatio (int, optional - only included if > 0)
+        /// [4] ReferencedStatType (StatType, optional - only included if StatPowerRatio > 0)
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// This method implements the new List-based serialization format for better
+        /// performance and consistency. The format is more compact than the previous
+        /// Dictionary format and maintains all necessary data.
+        /// </para>
+        /// <para>
+        /// Optional fields (StatPowerRatio and ReferencedStatType) are only included
+        /// when they have non-default values to minimize serialization overhead.
+        /// </para>
+        /// <para>
+        /// For backward compatibility, use SkillFactory.Deserialize() which can handle
+        /// both the new List format and the legacy Dictionary format.
+        /// </para>
+        /// </remarks>
         public IValue Serialize()
         {
-            var dict = new Bencodex.Types.Dictionary(new Dictionary<IKey, IValue>
+            var list = new List<IValue>
             {
-                [(Text)"skillRow"] = SkillRow.Serialize(),
-                [(Text)"power"] = Power.Serialize(),
-                [(Text)"chance"] = Chance.Serialize()
-            });
+                SkillRow.Serialize(),
+                Power.Serialize(),
+                Chance.Serialize()
+            };
 
-            if (StatPowerRatio != default && ReferencedStatType != StatType.NONE)
+            if (StatPowerRatio != 0 && ReferencedStatType != StatType.NONE)
             {
-                dict = dict.Add("stat_power_ratio", StatPowerRatio.Serialize())
-                    .Add("referenced_stat_type", ReferencedStatType.Serialize());
+                list.Add(StatPowerRatio.Serialize());
+                list.Add(ReferencedStatType.Serialize());
             }
 
-            return dict;
+            return new List(list);
         }
     }
 }

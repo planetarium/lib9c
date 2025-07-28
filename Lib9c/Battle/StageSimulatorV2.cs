@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
+using Nekoyume.Helper;
 using Nekoyume.Model;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Item;
@@ -136,7 +137,7 @@ namespace Nekoyume.Battle
                             Result = BattleLog.Result.Lose;
                             if (Exp > 0)
                             {
-                                Player.GetExp((int)(Exp * 0.3m), true);
+                                Player.GetExp(NumberConversionHelper.SafeDecimalToInt32(Exp * 0.3m), true);
                             }
                         }
                         else
@@ -163,7 +164,7 @@ namespace Nekoyume.Battle
                             Result = BattleLog.Result.Lose;
                             if (Exp > 0)
                             {
-                                Player.GetExp((int)(Exp * 0.3m), true);
+                                Player.GetExp(NumberConversionHelper.SafeDecimalToInt32(Exp * 0.3m), true);
                             }
                         }
                         else

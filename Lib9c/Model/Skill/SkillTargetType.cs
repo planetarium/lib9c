@@ -5,10 +5,10 @@ namespace Nekoyume.Model.Skill
 {
     public enum SkillTargetType
     {
-        Enemy,
-        Enemies,
-        Self,
-        Ally,
+        Enemy = 0,
+        Enemies = 1,
+        Self = 2,
+        Ally = 3,
     }
 
     public static class SkillTargetTypeExtension
