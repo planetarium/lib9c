@@ -10,10 +10,58 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Model.Item
 {
+    /// <summary>
+    /// Base class for usable items (consumables and equipment).
+    /// Supports both Dictionary and List serialization formats for backward compatibility.
+    ///
+    /// <para>
+    /// Field Order (List Format):
+    /// Base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+    /// ItemUsable fields (6~10): itemId, statsMap, skills, buffSkills, requiredBlockIndex
+    /// </para>
+    ///
+    /// <para>
+    /// Additional Properties:
+    /// - ItemId: Unique identifier for the item instance
+    /// - StatsMap: Dictionary of stat types and values
+    /// - Skills: Collection of skills with chance and power
+    /// - BuffSkills: Collection of buff skills
+    /// - RequiredBlockIndex: Block index when item becomes available
+    /// </para>
+    /// </summary>
+    /// <remarks>
+    /// This class extends ItemBase with additional properties needed for usable items.
+    /// Skills and buff skills are ordered by chance (descending) then by power (descending)
+    /// during serialization to ensure consistent ordering.
+    ///
+    /// <para>
+    /// Example usage:
+    /// <code>
+    /// // Create consumable item
+    /// var consumable = new Consumable(consumableRow, Guid.NewGuid(), 1000L);
+    ///
+    /// // Check if item is available
+    /// if (consumable.RequiredBlockIndex <= currentBlockIndex)
+    /// {
+    ///     // Item can be used
+    ///     var stats = consumable.Stats;
+    ///     var skills = consumable.Skills;
+    /// }
+    /// </code>
+    /// </para>
+    ///
+    /// <para>
+    /// TODO: This model is equipment-oriented and not ideal for sharing with consumables.
+    /// Consider refactoring during item reorganization.
+    /// </para>
+    /// </remarks>
     // todo: 소모품과 장비가 함께 쓰기에는 장비 위주의 모델이 된 느낌. 아이템 정리하면서 정리를 흐음..
     [Serializable]
     public abstract class ItemUsable : ItemBase, INonFungibleItem
     {
+        // Field count constants for serialization
+        protected const int ITEM_USABLE_FIELD_COUNT = BaseFieldCount + 5; // base + itemId, statsMap, skills, buffSkills, requiredBlockIndex
+
         public Guid ItemId
         {
             get
@@ -54,8 +102,7 @@ namespace Nekoyume.Model.Item
                 {
                     foreach (var value in _serializedSkills)
                     {
-                        var serializedSkill = (Dictionary) value;
-                        _skills.Add(SkillFactory.Deserialize(serializedSkill));
+                        _skills.Add(SkillFactory.Deserialize(value));
                     }
 
                     _serializedSkills = null;
@@ -74,8 +121,7 @@ namespace Nekoyume.Model.Item
                 {
                     foreach (var value in _serializedBuffSkills)
                     {
-                        var serializedSkill = (Dictionary) value;
-                        _buffSkills.Add((BuffSkill) SkillFactory.Deserialize(serializedSkill));
+                        _buffSkills.Add((BuffSkill) SkillFactory.Deserialize(value));
                     }
 
                     _serializedBuffSkills = null;
@@ -105,7 +151,7 @@ namespace Nekoyume.Model.Item
         private List<Skill.Skill> _skills;
         private List<BuffSkill> _buffSkills;
         private Binary? _serializedItemId;
-        private Dictionary _serializedStatsMap;
+        private IValue _serializedStatsMap;
         private List _serializedSkills;
         private List _serializedBuffSkills;
 
@@ -135,32 +181,83 @@ namespace Nekoyume.Model.Item
             RequiredBlockIndex = requiredBlockIndex;
         }
 
-        protected ItemUsable(Dictionary serialized) : base(serialized)
+        /// <summary>
+        /// Constructor for deserialization that supports both Dictionary and List formats.
+        /// </summary>
+        /// <param name="serialized">Serialized data in either Dictionary or List format</param>
+        protected ItemUsable(IValue serialized) : base(serialized)
         {
-            if (serialized.TryGetValue((Text) "itemId", out var itemId))
+            switch (serialized)
+            {
+                case Dictionary dict:
+                    DeserializeFromDictionary(dict);
+                    break;
+                case List list:
+                    DeserializeFromList(list);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported serialization format: {serialized.GetType()}");
+            }
+        }
+
+        /// <summary>
+        /// Deserializes data from Dictionary format (legacy support).
+        /// </summary>
+        /// <param name="dict">Dictionary containing serialized data</param>
+        private void DeserializeFromDictionary(Dictionary dict)
+        {
+            if (dict.TryGetValue((Text) "itemId", out var itemId))
             {
                 _serializedItemId = (Binary) itemId;
             }
-            if (serialized.TryGetValue((Text) "statsMap", out var statsMap))
+            if (dict.TryGetValue((Text) "statsMap", out var statsMap))
             {
-                _serializedStatsMap = (Dictionary) statsMap;
+                _serializedStatsMap = statsMap;
             }
-            if (serialized.TryGetValue((Text) "skills", out var skills))
+            if (dict.TryGetValue((Text) "skills", out var skills))
             {
                 _serializedSkills = (List) skills;
             }
-            if (serialized.TryGetValue((Text) "buffSkills", out var buffSkills))
+            if (dict.TryGetValue((Text) "buffSkills", out var buffSkills))
             {
                 _serializedBuffSkills = (List) buffSkills;
             }
-            if (serialized.TryGetValue((Text) "requiredBlockIndex", out var requiredBlockIndex))
+            if (dict.TryGetValue((Text) "requiredBlockIndex", out var requiredBlockIndex))
             {
                 RequiredBlockIndex = requiredBlockIndex.ToLong();
             }
         }
 
+        /// <summary>
+        /// Deserializes data from List format (new format).
+        /// Order: [baseData..., itemId, statsMap, skills, buffSkills, requiredBlockIndex]
+        /// </summary>
+        /// <param name="list">List containing serialized data</param>
+        private void DeserializeFromList(List list)
+        {
+            // Check if we have enough fields for ItemUsable
+            if (list.Count < ITEM_USABLE_FIELD_COUNT)
+            {
+                var fieldNames = string.Join(", ", GetFieldNames());
+                throw new ArgumentException(
+                    $"Invalid list length for {GetType().Name}: expected at least {ITEM_USABLE_FIELD_COUNT}, got {list.Count}. " +
+                    $"Required fields: {fieldNames}. " +
+                    $"This may indicate corrupted data or an unsupported serialization format.");
+            }
+
+            // Always read ITEM_USABLE_FIELD_COUNT fields
+            // base fields (0~5): version, id, itemType, itemSubType, grade, elementalType
+            // ItemUsable fields (6~10): itemId, statsMap, skills, buffSkills, requiredBlockIndex
+
+            _serializedItemId = (Binary) list[6];
+            _serializedStatsMap = list[7];
+            _serializedSkills = (List) list[8];
+            _serializedBuffSkills = (List) list[9];
+            RequiredBlockIndex = list[10].ToLong();
+        }
+
         protected ItemUsable(SerializationInfo info, StreamingContext _)
-            : this((Dictionary) Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
+            : this(Codec.Decode((byte[]) info.GetValue("serialized", typeof(byte[]))))
         {
         }
 
@@ -197,17 +294,38 @@ namespace Nekoyume.Model.Item
             RequiredBlockIndex = blockIndex;
         }
 
-        public override IValue Serialize() => ((Dictionary)base.Serialize())
-            .Add("itemId", _serializedItemId ?? ItemId.Serialize())
-            .Add("statsMap", _serializedStatsMap ?? StatsMap.Serialize())
-            .Add("skills", _serializedSkills ?? new List(Skills
+        /// <summary>
+        /// Serializes the item to List format (new format).
+        /// Order: [baseData..., itemId, statsMap, skills, buffSkills, requiredBlockIndex]
+        /// </summary>
+        /// <returns>List containing serialized data</returns>
+        public override IValue Serialize() => ((List)base.Serialize())
+            .Add(_serializedItemId ?? ItemId.Serialize())
+            .Add(_serializedStatsMap is List ? _serializedStatsMap : StatsMap.Serialize())
+            .Add(_serializedSkills ?? new List(Skills
                 .OrderByDescending(i => i.Chance)
                 .ThenByDescending(i => i.Power)
                 .Select(s => s.Serialize())))
-            .Add("buffSkills", _serializedBuffSkills ?? new List(BuffSkills
+            .Add(_serializedBuffSkills ?? new List(BuffSkills
                 .OrderByDescending(i => i.Chance)
                 .ThenByDescending(i => i.Power)
                 .Select(s => s.Serialize())))
-            .Add("requiredBlockIndex", RequiredBlockIndex.Serialize());
+            .Add(RequiredBlockIndex.Serialize());
+
+        /// <summary>
+        /// Gets the field names for serialization in order.
+        /// </summary>
+        /// <returns>Array of field names</returns>
+        protected override string[] GetFieldNames()
+        {
+            return base.GetFieldNames().Concat(new[]
+            {
+                "itemId",
+                "statsMap",
+                "skills",
+                "buffSkills",
+                "requiredBlockIndex"
+            }).ToArray();
+        }
     }
 }

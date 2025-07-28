@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model.Buff
 {
@@ -23,7 +24,7 @@ namespace Nekoyume.Model.Buff
             switch (row.ActionBuffType)
             {
                 case ActionBuffType.Bleed:
-                    var power = (int)decimal.Round(stat.ATK * row.ATKPowerRatio);
+                    var power = NumberConversionHelper.SafeDecimalToInt32(decimal.Round(stat.ATK * row.ATKPowerRatio));
                     return new Bleed(row, power);
                 case ActionBuffType.Stun:
                     return new Stun(row);

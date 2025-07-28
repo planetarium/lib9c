@@ -198,9 +198,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
         {
             yield return new object[]
             {
-                1, 100, 0, true, new AdventureBossGameData.ClaimableReward
+                1, 100, 0, true,                 new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = (5 + 15) * NCG, // 5NCG for raffle, 15NCG for 15% distribution
+                    NcgReward = (5 + 30) * NCG, // 5NCG for raffle, 30NCG for 30% distribution
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 160 }, // 100AP * 0.4 Exchange / 0.5 ratio * 100% contribution
@@ -221,10 +221,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 1, 100, 1, false, new AdventureBossGameData.ClaimableReward
                 {
                     NcgReward =
-                        // 7.5NCG for half of 15% distribution
+                        // 15NCG for half of 30% distribution
                         FungibleAssetValue.FromRawValue(
                             NCG,
-                            (BigInteger)(7.5 * 100)
+                            (BigInteger)(15 * 100)
                         ),
                     ItemReward = new Dictionary<int, int>
                     {
@@ -240,16 +240,16 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
-                // 7.5NCG for half of 15% contribution, 5NCG for 5% raffle
-                FungibleAssetValue.FromRawValue(NCG, 1250),
+                // 15NCG for half of 30% contribution, 5NCG for 5% raffle
+                FungibleAssetValue.FromRawValue(NCG, 2000),
             };
 
             yield return new object[]
             {
-                1, 200, 1, false, new AdventureBossGameData.ClaimableReward
+                1, 200, 1, false,                 new AdventureBossGameData.ClaimableReward
                 {
-                    // 15NCG for half of 15% distribution
-                    NcgReward = 15 * NCG,
+                    // 30NCG for half of 30% distribution
+                    NcgReward = 30 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
                         {
@@ -264,15 +264,15 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
-                25 * NCG, // 15NCG for half of distribution, 10NCG for 5% raffle
+                40 * NCG, // 30NCG for half of distribution, 10NCG for 5% raffle
             };
 
             yield return new object[]
             {
-                1, 100, 2, false, new AdventureBossGameData.ClaimableReward
+                1, 100, 2, false,                 new AdventureBossGameData.ClaimableReward
                 {
-                    // No raffle, 5 NCG for 1/3 of 15% distribution
-                    NcgReward = 5 * NCG,
+                    // No raffle, 10 NCG for 1/3 of 30% distribution
+                    NcgReward = FungibleAssetValue.FromRawValue(NCG, (BigInteger)(10 * 100)),
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 160 },
@@ -285,7 +285,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                         { 30001, 0 },
                     },
                 },
-                15 * NCG, // 10NCG for 2/3 of 15% distribution, 5NCG for raffle
+                FungibleAssetValue.FromRawValue(NCG, (BigInteger)(25 * 100)), // 20NCG for 2/3 of 30% distribution, 5NCG for raffle
             };
         }
 
@@ -312,9 +312,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                false, true, new AdventureBossGameData.ClaimableReward
+                false, true,                 new AdventureBossGameData.ClaimableReward
                 {
-                    NcgReward = 20 * NCG, // 5NCG for explore raffle, 15NCG for 15% distribution
+                    NcgReward = 35 * NCG, // 5NCG for explore raffle, 30NCG for 30% distribution
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 160 },
@@ -331,10 +331,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                true, true, new AdventureBossGameData.ClaimableReward
+                true, true,                 new AdventureBossGameData.ClaimableReward
                 {
-                    // 5NCG for explore raffle, 15NCG for 15% distribution
-                    NcgReward = 20 * NCG,
+                    // 5NCG for explore raffle, 30NCG for 30% distribution
+                    NcgReward = 35 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
                         { 600201, 496 },
@@ -744,8 +744,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
-                // (5NCG for raffle, 15NCG for 15% distribution) for season 1 and 3
-                NcgReward = 40 * NCG,
+                // (5NCG for raffle, 30NCG for 30% distribution) for season 1 and 3
+                NcgReward = 70 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
                     { 10036, 40 }, // (100 AP * 0.4 Exchange / 1 Ratio * 100% contribution) for season 3
@@ -883,8 +883,8 @@ namespace Lib9c.Tests.Action.AdventureBoss
             // Settings
             var expectedReward = new AdventureBossGameData.ClaimableReward
             {
-                // 5NCG for explore raffle, 15NCG for 15% distribution.
-                NcgReward = 20 * NCG,
+                // 5NCG for explore raffle, 30NCG for 30% distribution.
+                NcgReward = 35 * NCG,
                 FavReward = new Dictionary<int, int>
                 {
                     { 20001, 0 },

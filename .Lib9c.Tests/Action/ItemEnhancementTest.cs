@@ -259,7 +259,7 @@ namespace Lib9c.Tests.Action
                 materials = new Dictionary<Material, int>(),
                 itemUsable = equipment,
             };
-            var preItemUsable = new Equipment((Dictionary)equipment.Serialize());
+            var preItemUsable = new Equipment(equipment.Serialize());
 
             for (var i = 0; i < 100; i++)
             {
@@ -439,7 +439,7 @@ namespace Lib9c.Tests.Action
                 materials = new Dictionary<Material, int>(),
                 itemUsable = equipment,
             };
-            var preItemUsable = new Equipment((Dictionary)equipment.Serialize());
+            var preItemUsable = new Equipment(equipment.Serialize());
 
             for (var i = 0; i < 100; i++)
             {
