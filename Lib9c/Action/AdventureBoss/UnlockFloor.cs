@@ -24,7 +24,7 @@ namespace Nekoyume.Action.AdventureBoss
     {
         public const string TypeIdentifier = "unlock_floor";
         public const int OpeningFloor = 5;
-        public const int TotalFloor = 20;
+        public const int TotalFloor = 30;
         public const int GoldenDustId = 600201;
 
         public int Season;
