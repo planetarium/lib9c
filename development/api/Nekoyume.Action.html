@@ -856,6 +856,20 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1560">https://gith
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PatchTableSheetCompressed.html">PatchTableSheetCompressed</a></dt>
+      <dd><p>Compressed version of PatchTableSheet to reduce transaction size for large CSV files.
+Uses GZip compression to minimize the size of table data in transactions.</p>
+<p>This action is particularly useful for large CSV files like RuneOptionSheet.csv
+which can be compressed from ~842KB to ~154KB (81% reduction).</p>
+<p>Example usage:</p>
+<pre><code class="lang-csharp">var compressedAction = new PatchTableSheetCompressed
+{
+    TableName = "RuneOptionSheet",
+    CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+};</code></pre>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.PendingActivationDoesNotExistsException.html">PendingActivationDoesNotExistsException</a></dt>
       <dd></dd>
     </dl>
