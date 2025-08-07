@@ -365,7 +365,8 @@ namespace Lib9c.Tests.Action
                 throw new RuneCostNotFoundException($"[{nameof(Execute)}] ");
             }
 
-            runeState.LevelUp(costRow.Cost.Count);
+            // 최대레벨까지 레벨업해서 더이상 레벨업이 불가능함
+            runeState.LevelUp(costRow.Cost.Max(i => i.LevelEnd));
             allRuneState.SetRuneState(runeState);
             state = state.SetRuneState(avatarAddress, allRuneState);
 
