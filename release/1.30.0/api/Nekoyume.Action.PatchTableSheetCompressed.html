@@ -1,0 +1,563 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PatchTableSheetCompressed | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PatchTableSheetCompressed | Lib9c ">
+      
+      <meta name="description" content="Compressed version of PatchTableSheet to reduce transaction size for large CSV files. Uses GZip compression to minimize the size of table data in transactions. This action is particularly useful for large CSV files like RuneOptionSheet.csv which can be compressed from ~842KB to ~154KB (81% reduction). Example usage: var compressedAction = new PatchTableSheetCompressed {     TableName = &quot;RuneOptionSheet&quot;,     CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData), };">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/release/1.30.0/apiSpec/new?filename=Nekoyume_Action_PatchTableSheetCompressed.md&amp;value=---%0Auid%3A%20Nekoyume.Action.PatchTableSheetCompressed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Action.PatchTableSheetCompressed">
+
+
+
+  <h1 id="Nekoyume_Action_PatchTableSheetCompressed" data-uid="Nekoyume.Action.PatchTableSheetCompressed" class="text-break">
+Class PatchTableSheetCompressed  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Compressed version of PatchTableSheet to reduce transaction size for large CSV files.
+Uses GZip compression to minimize the size of table data in transactions.</p>
+<p>This action is particularly useful for large CSV files like RuneOptionSheet.csv
+which can be compressed from ~842KB to ~154KB (81% reduction).</p>
+<p>Example usage:</p>
+<pre><code class="lang-csharp">var compressedAction = new PatchTableSheetCompressed
+{
+    TableName = "RuneOptionSheet",
+    CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+};</code></pre>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+[ActionType(&quot;patch_table_sheet_compressed&quot;)]
+public class PatchTableSheetCompressed : GameAction, IAction, IPatchTableSheetCompressedV1</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ActionBase.html">ActionBase</a></div>
+      <div><a class="xref" href="Nekoyume.Action.GameAction.html">GameAction</a></div>
+      <div><span class="xref">PatchTableSheetCompressed</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">IAction</span></div>
+      <div><span class="xref">IPatchTableSheetCompressedV1</span></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Action.GameAction.html#Nekoyume_Action_GameAction_Id">GameAction.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.GameAction.html#Nekoyume_Action_GameAction_PlainValue">GameAction.PlainValue</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.GameAction.html#Nekoyume_Action_GameAction_LoadPlainValue_Bencodex_Types_IValue_">GameAction.LoadPlainValue(IValue)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_GetSignerAndOtherAddressesHex_Libplanet_Action_IActionContext_Libplanet_Crypto_Address___">ActionBase.GetSignerAndOtherAddressesHex(IActionContext, params Address[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_TryGetAdminState_Libplanet_Action_IActionContext_Nekoyume_Model_State_AdminState__">ActionBase.TryGetAdminState(IActionContext, out AdminState)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_CheckPermission_Libplanet_Action_IActionContext_">ActionBase.CheckPermission(IActionContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_CheckObsolete_System_Int64_Libplanet_Action_IActionContext_">ActionBase.CheckObsolete(long, IActionContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_Operator" data-uid="Nekoyume.Action.PatchTableSheetCompressed.Operator">
+  Operator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The operator address that has special permission to operation actions.
+When the action is signed by this operator, permission check is skipped.
+This is a temporary solution until v100340, after which this concept should be eliminated or justified differently.
+For any questions about this account, please consult Nine Chronicles Dev team.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Address Operator</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_CompressedTableCsv_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.CompressedTableCsv*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_CompressedTableCsv" data-uid="Nekoyume.Action.PatchTableSheetCompressed.CompressedTableCsv">
+  CompressedTableCsv
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the compressed CSV data as a byte array.
+This should be compressed using the CompressCsv method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] CompressedTableCsv { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="Nekoyume_Action_PatchTableSheetCompressed_CompressedTableCsv_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The compression can reduce file size by 60-80% depending on the CSV content.
+For example, RuneOptionSheet.csv (842KB) can be compressed to ~154KB.</p>
+</div>
+
+
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_PlainValueInternal_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.PlainValueInternal*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_PlainValueInternal" data-uid="Nekoyume.Action.PatchTableSheetCompressed.PlainValueInternal">
+  PlainValueInternal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Serializes the action data for blockchain storage.
+Contains the table name and compressed CSV data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IImmutableDictionary&lt;string, IValue&gt; PlainValueInternal { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.iimmutabledictionary-2">IImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <span class="xref">IValue</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_TableName_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.TableName*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_TableName" data-uid="Nekoyume.Action.PatchTableSheetCompressed.TableName">
+  TableName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the name of the table sheet to patch.
+This should match the name of the CSV file without the .csv extension.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string TableName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <h4 class="section" id="Nekoyume_Action_PatchTableSheetCompressed_TableName_examples">Examples</h4>
+  <p>&quot;RuneOptionSheet&quot; for RuneOptionSheet.csv
+&quot;ItemSheet&quot; for ItemSheet.csv</p>
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_CompressCsv_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.CompressCsv*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_CompressCsv_System_String_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.CompressCsv(System.String)">
+  CompressCsv(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Compresses CSV data using GZip compression.</p>
+<p>This method is used to prepare CSV data for the CompressedTableCsv property.
+GZip compression typically reduces CSV file size by 60-80%.</p>
+<p>Example:</p>
+<pre><code class="lang-csharp">var csvData = File.ReadAllText("RuneOptionSheet.csv");
+var compressedData = PatchTableSheetCompressed.CompressCsv(csvData);
+// compressedData can now be used in CompressedTableCsv property</code></pre>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte[] CompressCsv(string csvData)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>csvData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The CSV data to compress. Must not be null.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>Compressed byte array using GZip compression.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p>Thrown when csvData is null.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_DecompressCsv_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.DecompressCsv*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_DecompressCsv_System_Byte___" data-uid="Nekoyume.Action.PatchTableSheetCompressed.DecompressCsv(System.Byte[])">
+  DecompressCsv(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Decompresses CSV data using GZip compression.</p>
+<p>This method is used internally to restore the original CSV data
+from the compressed byte array stored in CompressedTableCsv.</p>
+<p>Example:</p>
+<pre><code class="lang-csharp">var originalCsv = PatchTableSheetCompressed.DecompressCsv(compressedData);
+// originalCsv now contains the decompressed CSV string</code></pre>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string DecompressCsv(byte[] compressedData)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>compressedData</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd><p>The compressed data to decompress. Must not be null.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Decompressed CSV string in UTF-8 encoding.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd><p>Thrown when compressedData is null.</p>
+</dd>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.invaliddataexception">InvalidDataException</a></dt>
+    <dd><p>Thrown when the compressed data is corrupted or not valid GZip format.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_Execute_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.Execute*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.Execute(Libplanet.Action.IActionContext)">
+  Execute(IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Executes the compressed table sheet patching action.</p>
+<p>This method:</p>
+<ol>
+<li>Validates permissions (unless signed by operator)</li>
+<li>Decompresses the CSV data</li>
+<li>Updates the table sheet state</li>
+<li>Handles special cases like GameConfigSheet</li>
+</ol>
+<p>The action reduces transaction size significantly compared to PatchTableSheet
+while maintaining the same functionality.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IWorld Execute(IActionContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
+    <dd><p>The action context containing state and transaction information.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd><p>The updated world state with the patched table sheet.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.invaliddataexception">InvalidDataException</a></dt>
+    <dd><p>Thrown when the compressed data is corrupted or invalid.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="Nekoyume_Action_PatchTableSheetCompressed_LoadPlainValueInternal_" data-uid="Nekoyume.Action.PatchTableSheetCompressed.LoadPlainValueInternal*"></a>
+
+  <h3 id="Nekoyume_Action_PatchTableSheetCompressed_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.PatchTableSheetCompressed.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
+  LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Deserializes the action data from blockchain storage.
+Restores the table name and compressed CSV data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt; plainValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>plainValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.iimmutabledictionary-2">IImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <span class="xref">IValue</span>&gt;</dt>
+    <dd><p>The serialized action data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Action/PatchTableSheetCompressed.cs/#L35" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
