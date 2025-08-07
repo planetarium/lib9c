@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class RuneCostSheet.Row | Lib9c ">
       
-      
+      <meta name="description" content="Represents a row in the RuneCostSheet containing cost data for a specific rune. Each row can contain multiple cost data entries for different level ranges.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_RuneCostSheet_Row" data-uid="Nekoyume.TableData.RuneCostSheet.Row" class="text-break">
-Class RuneCostSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L36"><i class="bi bi-code-slash"></i></a>
+Class RuneCostSheet.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class RuneCostSheet.Row  <a class="header-action link-secondary" title="View sou
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a row in the RuneCostSheet containing cost data for a specific rune.
+Each row can contain multiple cost data entries for different level ranges.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -164,10 +166,11 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_RuneCostSheet_Row_Cost" data-uid="Nekoyume.TableData.RuneCostSheet.Row.Cost">
   Cost
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L110"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the collection of cost data entries for different level ranges.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -195,10 +198,11 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_RuneCostSheet_Row_Key" data-uid="Nekoyume.TableData.RuneCostSheet.Row.Key">
   Key
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the unique identifier for this row, which is the rune ID.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -226,10 +230,11 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_RuneCostSheet_Row_RuneId" data-uid="Nekoyume.TableData.RuneCostSheet.Row.RuneId">
   RuneId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the rune identifier associated with this cost data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -257,14 +262,57 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
 </h2>
 
 
+  <a id="Nekoyume_TableData_RuneCostSheet_Row_GetCostsInRange_" data-uid="Nekoyume.TableData.RuneCostSheet.Row.GetCostsInRange*"></a>
+
+  <h3 id="Nekoyume_TableData_RuneCostSheet_Row_GetCostsInRange_System_Int32_System_Int32_" data-uid="Nekoyume.TableData.RuneCostSheet.Row.GetCostsInRange(System.Int32,System.Int32)">
+  GetCostsInRange(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves all cost data entries that overlap with the specified level range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;RuneCostSheet.RuneCostData&gt; GetCostsInRange(int startLevel, int endLevel)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>startLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The starting level of the range (inclusive)</p>
+</dd>
+    <dt><code>endLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The ending level of the range (inclusive)</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneCostSheet.RuneCostData.html">RuneCostData</a>&gt;</dt>
+    <dd><p>An enumerable collection of cost data entries that overlap with the specified range</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_TableData_RuneCostSheet_Row_Set_" data-uid="Nekoyume.TableData.RuneCostSheet.Row.Set*"></a>
 
   <h3 id="Nekoyume_TableData_RuneCostSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__" data-uid="Nekoyume.TableData.RuneCostSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})">
   Set(IReadOnlyList&lt;string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Sets the row data from the provided CSV fields.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -274,7 +322,8 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>fields</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>The CSV fields containing rune cost information</p>
+</dd>
   </dl>
 
 
@@ -292,10 +341,11 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
 
   <h3 id="Nekoyume_TableData_RuneCostSheet_Row_TryGetCost_System_Int32_Nekoyume_TableData_RuneCostSheet_RuneCostData__" data-uid="Nekoyume.TableData.RuneCostSheet.Row.TryGetCost(System.Int32,Nekoyume.TableData.RuneCostSheet.RuneCostData@)">
   TryGetCost(int, out RuneCostData)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L138"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Attempts to find cost data for a specific level.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -305,15 +355,19 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The level to search for</p>
+</dd>
     <dt><code>costData</code> <a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneCostSheet.RuneCostData.html">RuneCostData</a></dt>
-    <dd></dd>
+    <dd><p>When this method returns, contains the cost data for the specified level,
+if found; otherwise, null</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>true if cost data was found for the specified level; otherwise, false</p>
+</dd>
   </dl>
 
 
@@ -330,7 +384,7 @@ public class RuneCostSheet.Row : SheetRow&lt;int&gt;</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L36" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/RuneCostSheet.cs/#L94" class="edit-link">Edit this page</a>
         </div>
 
 
