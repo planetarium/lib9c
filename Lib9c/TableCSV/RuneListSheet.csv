@@ -36,3 +36,11 @@ id,_name,grade,rune_type,required_level,use_place,bonus_coef
 10040,Thor Strike Rune (WorldBoss),6,2,1,4,30
 10041,Loki Vampiric Rune (Adventure),6,2,1,1,30
 10042,Loki Vampiric Rune (WorldBoss),6,2,1,4,30
+10043,Odin Order Rune,7,1,1,7,50
+10044,Odin Creator Rune,7,2,1,7,50
+10045,Odin Word Rune,7,1,1,7,50
+10046,Odin Mimir's Rune,7,2,1,7,50
+10047,Yggdrasil ATK Rune,7,2,1,7,50
+10048,Yggdrasil HP Rune,7,2,1,7,50
+10049,Yggdrasil SPD Rune,7,2,1,7,50
+10050,Yggdrasil CRI Rune,7,2,1,7,50
