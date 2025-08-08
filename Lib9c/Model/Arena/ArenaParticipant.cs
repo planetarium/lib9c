@@ -107,6 +107,10 @@ namespace Nekoyume.Model.Arena
             LastBattleBlockIndex = (Integer)l[12];
         }
 
+        public ArenaParticipant()
+        {
+        }
+
         public IValue Serialize() => Bencoded;
 
         public void AddScore(int score)

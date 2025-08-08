@@ -43,7 +43,7 @@ namespace Lib9c.Model.Order
         {
             SellerAgentAddress = serialized[SellerAgentAddressKey].ToAddress();
             Price = serialized[PriceKey].ToFungibleAssetValue();
-            CombatPoint = serialized[CombatPointKey].ToInteger();
+            CombatPoint = serialized[CombatPointKey].ToLong();
             Level = serialized[LevelKey].ToInteger();
             ItemId = serialized[ItemIdKey].ToInteger();
             ItemCount = serialized[ItemCountKey].ToInteger();
