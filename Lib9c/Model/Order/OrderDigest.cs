@@ -13,7 +13,7 @@ namespace Lib9c.Model.Order
         // Client filter data
         public readonly Address SellerAgentAddress;
         public readonly FungibleAssetValue Price;
-        public readonly int CombatPoint;
+        public readonly long CombatPoint;
         public readonly int Level;
         public readonly int ItemId;
         public readonly int ItemCount;
@@ -25,7 +25,7 @@ namespace Lib9c.Model.Order
             Guid orderId,
             Guid tradableId,
             FungibleAssetValue price,
-            int combatPoint,
+            long combatPoint,
             int level,
             int itemId,
             int itemCount
@@ -90,7 +90,7 @@ namespace Lib9c.Model.Order
                 hashCode = (hashCode * 397) ^ OrderId.GetHashCode();
                 hashCode = (hashCode * 397) ^ TradableId.GetHashCode();
                 hashCode = (hashCode * 397) ^ Price.GetHashCode();
-                hashCode = (hashCode * 397) ^ CombatPoint;
+                hashCode = (hashCode * 397) ^ CombatPoint.GetHashCode();
                 hashCode = (hashCode * 397) ^ Level;
                 hashCode = (hashCode * 397) ^ ItemId;
                 hashCode = (hashCode * 397) ^ SellerAgentAddress.GetHashCode();

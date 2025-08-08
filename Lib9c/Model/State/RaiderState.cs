@@ -16,7 +16,7 @@ namespace Nekoyume.Model.State
         public long ClaimedBlockIndex;
         public long RefillBlockIndex;
         public int PurchaseCount;
-        public int Cp;
+        public long Cp;
         public int Level;
         public int IconId;
         public Address AvatarAddress;
@@ -44,7 +44,7 @@ namespace Nekoyume.Model.State
             ClaimedBlockIndex = rawState[5].ToLong();
             RefillBlockIndex = rawState[6].ToLong();
             PurchaseCount = rawState[7].ToInteger();
-            Cp = rawState[8].ToInteger();
+            Cp = rawState[8].ToLong();
             Level = rawState[9].ToInteger();
             IconId = rawState[10].ToInteger();
             AvatarAddress = rawState[11].ToAddress();
@@ -57,7 +57,7 @@ namespace Nekoyume.Model.State
             }
         }
 
-        public void Update(AvatarState avatarState, int cp, long score, bool payNcg, long blockIndex)
+        public void Update(AvatarState avatarState, long cp, long score, bool payNcg, long blockIndex)
         {
             Level = avatarState.level;
             AvatarAddress = avatarState.address;

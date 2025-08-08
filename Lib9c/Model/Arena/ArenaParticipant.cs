@@ -38,7 +38,7 @@ namespace Nekoyume.Model.Arena
 
         public int PortraitId;
         public int Level;
-        public int Cp;
+        public long Cp;
 
         public int Score;
 

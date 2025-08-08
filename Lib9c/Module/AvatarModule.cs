@@ -180,7 +180,7 @@ namespace Nekoyume.Module
             return world.SetAccount(Addresses.Avatar, avatarAccount);
         }
 
-        internal static IWorld SetCp(this IWorld world, Address address, BattleType battleType, int cp)
+        internal static IWorld SetCp(this IWorld world, Address address, BattleType battleType, long cp)
         {
             var cpAccount = world.GetAccount(Addresses.GetCpAccountAddress(battleType));
             cpAccount = cpAccount.SetState(address, new CpState(cp).Serialize());
