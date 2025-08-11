@@ -20,11 +20,11 @@ namespace Nekoyume.Model.Arena
         public bool IsVictory;
         public int PortraitId;
         public int Level;
-        public int Cp;
+        public long Cp;
 
         public IValue Bencoded => List.Empty.Add(IsVictory).Add(PortraitId).Add(Level).Add(Cp);
 
-        public ArenaResult(bool isVictory, int portraitId, int level, int cp)
+        public ArenaResult(bool isVictory, int portraitId, int level, long cp)
         {
             IsVictory = isVictory;
             PortraitId = portraitId;
