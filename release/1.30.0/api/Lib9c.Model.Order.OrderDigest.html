@@ -196,8 +196,8 @@ public class OrderDigest : OrderBase</code></pre>
 
   <a id="Lib9c_Model_Order_OrderDigest__ctor_" data-uid="Lib9c.Model.Order.OrderDigest.#ctor*"></a>
 
-  <h3 id="Lib9c_Model_Order_OrderDigest__ctor_Libplanet_Crypto_Address_System_Int64_System_Int64_System_Guid_System_Guid_Libplanet_Types_Assets_FungibleAssetValue_System_Int32_System_Int32_System_Int32_System_Int32_" data-uid="Lib9c.Model.Order.OrderDigest.#ctor(Libplanet.Crypto.Address,System.Int64,System.Int64,System.Guid,System.Guid,Libplanet.Types.Assets.FungibleAssetValue,System.Int32,System.Int32,System.Int32,System.Int32)">
-  OrderDigest(Address, long, long, Guid, Guid, FungibleAssetValue, int, int, int, int)
+  <h3 id="Lib9c_Model_Order_OrderDigest__ctor_Libplanet_Crypto_Address_System_Int64_System_Int64_System_Guid_System_Guid_Libplanet_Types_Assets_FungibleAssetValue_System_Int64_System_Int32_System_Int32_System_Int32_" data-uid="Lib9c.Model.Order.OrderDigest.#ctor(Libplanet.Crypto.Address,System.Int64,System.Int64,System.Guid,System.Guid,Libplanet.Types.Assets.FungibleAssetValue,System.Int64,System.Int32,System.Int32,System.Int32)">
+  OrderDigest(Address, long, long, Guid, Guid, FungibleAssetValue, long, int, int, int)
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Model/Order/OrderDigest.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -205,7 +205,7 @@ public class OrderDigest : OrderBase</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public OrderDigest(Address sellerAgentAddress, long startedBlockIndex, long expiredBlockIndex, Guid orderId, Guid tradableId, FungibleAssetValue price, int combatPoint, int level, int itemId, int itemCount)</code></pre>
+    <pre><code class="lang-csharp hljs">public OrderDigest(Address sellerAgentAddress, long startedBlockIndex, long expiredBlockIndex, Guid orderId, Guid tradableId, FungibleAssetValue price, long combatPoint, int level, int itemId, int itemCount)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -222,7 +222,7 @@ public class OrderDigest : OrderBase</code></pre>
     <dd></dd>
     <dt><code>price</code> <span class="xref">FungibleAssetValue</span></dt>
     <dd></dd>
-    <dt><code>combatPoint</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><code>combatPoint</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
     <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd></dd>
@@ -257,7 +257,7 @@ public class OrderDigest : OrderBase</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public readonly int CombatPoint</code></pre>
+    <pre><code class="lang-csharp hljs">public readonly long CombatPoint</code></pre>
   </div>
 
 
@@ -265,7 +265,7 @@ public class OrderDigest : OrderBase</code></pre>
 
   <h4 class="section">Field Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 

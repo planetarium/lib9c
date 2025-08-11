@@ -156,7 +156,7 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Battle_CPHelper_ConvertCpToStat_Nekoyume_Model_Stat_StatType_System_Decimal_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.ConvertCpToStat(Nekoyume.Model.Stat.StatType,System.Decimal,System.Int32)">
   ConvertCpToStat(StatType, decimal, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L214"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -192,18 +192,18 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
 
 
-  <a id="Nekoyume_Battle_CPHelper_DecimalToInt_" data-uid="Nekoyume.Battle.CPHelper.DecimalToInt*"></a>
+  <a id="Nekoyume_Battle_CPHelper_DecimalToLong_" data-uid="Nekoyume.Battle.CPHelper.DecimalToLong*"></a>
 
-  <h3 id="Nekoyume_Battle_CPHelper_DecimalToInt_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.DecimalToInt(System.Decimal)">
-  DecimalToInt(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L276"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Battle_CPHelper_DecimalToLong_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.DecimalToLong(System.Decimal)">
+  DecimalToLong(decimal)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L260"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int DecimalToInt(decimal value)</code></pre>
+    <pre><code class="lang-csharp hljs">public static long DecimalToLong(decimal value)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -214,43 +214,7 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Nekoyume_Battle_CPHelper_GetCP_" data-uid="Nekoyume.Battle.CPHelper.GetCP*"></a>
-
-  <h3 id="Nekoyume_Battle_CPHelper_GetCP_Nekoyume_Model_Enemy_" data-uid="Nekoyume.Battle.CPHelper.GetCP(Nekoyume.Model.Enemy)">
-  GetCP(Enemy)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L113"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int GetCP(Enemy enemy)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>enemy</code> <a class="xref" href="Nekoyume.Model.Enemy.html">Enemy</a></dt>
-    <dd></dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -268,14 +232,14 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCP_Nekoyume_Model_Item_Costume_Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Battle.CPHelper.GetCP(Nekoyume.Model.Item.Costume,Nekoyume.TableData.CostumeStatSheet)">
   GetCP(Costume, CostumeStatSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int GetCP(Costume costume, CostumeStatSheet sheet)</code></pre>
+    <pre><code class="lang-csharp hljs">public static long GetCP(Costume costume, CostumeStatSheet sheet)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -288,7 +252,7 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -306,7 +270,7 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCP_Nekoyume_Model_Item_INonFungibleItem_Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Battle.CPHelper.GetCP(Nekoyume.Model.Item.INonFungibleItem,Nekoyume.TableData.CostumeStatSheet)">
   GetCP(INonFungibleItem, CostumeStatSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -314,7 +278,7 @@ Class CPHelper  <a class="header-action link-secondary" title="View source" href
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use GetCp&quot;)]
-public static int GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)</code></pre>
+public static long GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -327,7 +291,7 @@ public static int GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)</
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -345,14 +309,14 @@ public static int GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)</
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCP_Nekoyume_Model_Item_ItemUsable_" data-uid="Nekoyume.Battle.CPHelper.GetCP(Nekoyume.Model.Item.ItemUsable)">
   GetCP(ItemUsable)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int GetCP(ItemUsable itemUsable)</code></pre>
+    <pre><code class="lang-csharp hljs">public static long GetCP(ItemUsable itemUsable)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -363,45 +327,7 @@ public static int GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)</
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Nekoyume_Battle_CPHelper_GetCP_" data-uid="Nekoyume.Battle.CPHelper.GetCP*"></a>
-
-  <h3 id="Nekoyume_Battle_CPHelper_GetCP_Nekoyume_Model_Player_Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Battle.CPHelper.GetCP(Nekoyume.Model.Player,Nekoyume.TableData.CostumeStatSheet)">
-  GetCP(Player, CostumeStatSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L104"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int GetCP(Player player, CostumeStatSheet costumeStatSheet)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>player</code> <a class="xref" href="Nekoyume.Model.Player.html">Player</a></dt>
-    <dd></dd>
-    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
-    <dd></dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -427,7 +353,7 @@ public static int GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)</
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use TotalCP&quot;)]
-public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)</code></pre>
+public static long GetCP(AvatarState avatarState, CharacterSheet characterSheet)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -440,7 +366,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -458,7 +384,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfATK_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfATK(System.Decimal)">
   GetCPOfATK(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L185"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -494,7 +420,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfArmorPenetration_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfArmorPenetration(System.Decimal)">
   GetCPOfArmorPenetration(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L207"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -530,7 +456,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfCDMG_System_Decimal_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfCDMG(System.Decimal,System.Int32)">
   GetCPOfCDMG(decimal, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L204"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -568,7 +494,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfCRI_System_Decimal_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfCRI(System.Decimal,System.Int32)">
   GetCPOfCRI(decimal, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L200"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -606,7 +532,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfDEF_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfDEF(System.Decimal)">
   GetCPOfDEF(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L187"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -642,7 +568,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfDRR_System_Decimal_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfDRR(System.Decimal,System.Int32)">
   GetCPOfDRR(decimal, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L213"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L197"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -680,7 +606,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfDRV_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfDRV(System.Decimal)">
   GetCPOfDRV(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -716,7 +642,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfHIT_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfHIT(System.Decimal)">
   GetCPOfHIT(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L207"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L191"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -752,7 +678,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfHP_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfHP(System.Decimal)">
   GetCPOfHP(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L183"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -788,7 +714,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfSPD_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfSPD(System.Decimal)">
   GetCPOfSPD(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L189"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -824,7 +750,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <h3 id="Nekoyume_Battle_CPHelper_GetCPOfThorn_System_Decimal_" data-uid="Nekoyume.Battle.CPHelper.GetCPOfThorn(System.Decimal)">
   GetCPOfThorn(decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L210"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -868,7 +794,7 @@ public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)<
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use TotalCP&quot;)]
-public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet, CostumeStatSheet costumeStatSheet)</code></pre>
+public static long GetCPV2(AvatarState avatarState, CharacterSheet characterSheet, CostumeStatSheet costumeStatSheet)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -883,7 +809,7 @@ public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -901,7 +827,7 @@ public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet
 
   <h3 id="Nekoyume_Battle_CPHelper_GetSkillsMultiplier_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.GetSkillsMultiplier(System.Int32)">
   GetSkillsMultiplier(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L247"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -937,7 +863,7 @@ public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet
 
   <h3 id="Nekoyume_Battle_CPHelper_GetStatCP_Nekoyume_Model_Stat_StatType_System_Decimal_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.GetStatCP(Nekoyume.Model.Stat.StatType,System.Decimal,System.Int32)">
   GetStatCP(StatType, decimal, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L150"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -977,7 +903,7 @@ public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet
 
   <h3 id="Nekoyume_Battle_CPHelper_GetStatsCP_Nekoyume_Model_Stat_IStats_System_Int32_" data-uid="Nekoyume.Battle.CPHelper.GetStatsCP(Nekoyume.Model.Stat.IStats,System.Int32)">
   GetStatsCP(IStats, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.30.0/Lib9c/Battle/CPHelper.cs/#L138"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1022,7 +948,7 @@ public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int TotalCP(IReadOnlyCollection&lt;Equipment&gt; equipments, IReadOnlyCollection&lt;Costume&gt; costumes, IReadOnlyCollection&lt;RuneOptionSheet.Row.RuneOptionInfo&gt; runeOptions, int level, CharacterSheet.Row row, CostumeStatSheet costumeStatSheet, List&lt;StatModifier&gt; collectionStatModifiers, int runeLevelBonus)</code></pre>
+    <pre><code class="lang-csharp hljs">public static long TotalCP(IReadOnlyCollection&lt;Equipment&gt; equipments, IReadOnlyCollection&lt;Costume&gt; costumes, IReadOnlyCollection&lt;RuneOptionSheet.Row.RuneOptionInfo&gt; runeOptions, int level, CharacterSheet.Row row, CostumeStatSheet costumeStatSheet, List&lt;StatModifier&gt; collectionStatModifiers, int runeLevelBonus)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -1047,7 +973,7 @@ public static int GetCPV2(AvatarState avatarState, CharacterSheet characterSheet
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
