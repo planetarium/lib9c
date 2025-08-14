@@ -96,7 +96,7 @@ namespace Nekoyume.Model.Buff
                         {
                             var statMap = stats.StatWithoutBuffs;
                             var multiplier = skill.StatPowerRatio / 10000m;
-                            additionalValue += (int)Math.Round(statMap.GetStat(skill.ReferencedStatType) * multiplier);
+                            additionalValue += NumberConversionHelper.SafeDecimalToInt32(Math.Round(statMap.GetStat(skill.ReferencedStatType) * multiplier));
                         }
 
                         customField = new SkillCustomField()

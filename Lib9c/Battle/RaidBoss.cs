@@ -5,6 +5,7 @@ using Nekoyume.Model.Stat;
 using Nekoyume.TableData;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Helper;
 
 namespace Nekoyume.Model
 {
@@ -56,7 +57,7 @@ namespace Nekoyume.Model
         protected override void SetSkill()
         {
             var pattern = PatternRowData.Patterns.First(x => x.Wave == _wave);
-            var dmg = (int)(ATK * 0.3m);
+            var dmg = NumberConversionHelper.SafeDecimalToInt64(ATK * 0.3m);
             bool isBuff;
 
             foreach (var id in pattern.SkillIds)
