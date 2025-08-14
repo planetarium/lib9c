@@ -15,7 +15,7 @@ namespace Nekoyume.TableData
         {
             public class RuneOptionInfo
             {
-                public int Cp { get; }
+                public long Cp { get; }
                 public List<(DecimalStat stat, StatModifier.OperationType operationType)> Stats { get; set; }
                 public int SkillId { get; set; }
                 public int SkillCooldown { get; set; }
@@ -27,7 +27,7 @@ namespace Nekoyume.TableData
                 public int BuffDuration { get; set; }
 
                 public RuneOptionInfo(
-                    int cp,
+                    long cp,
                     List<(DecimalStat, StatModifier.OperationType)> stats,
                     int skillId,
                     int skillCooldown,
@@ -51,7 +51,7 @@ namespace Nekoyume.TableData
                 }
 
                 public RuneOptionInfo(
-                    int cp,
+                    long cp,
                     List<(DecimalStat, StatModifier.OperationType)> stats)
                 {
                     Cp = cp;
