@@ -456,9 +456,9 @@ namespace Nekoyume.Model.Item
                     addStatPowerRatio = Math.Max(1.0m, addStatPowerRatio);
                 }
 
-                var chance = skill.Chance + (int)addChance;
-                var power = skill.Power + (int)addPower;
-                var statPowerRatio = skill.StatPowerRatio + (int)addStatPowerRatio;
+                var chance = skill.Chance + NumberConversionHelper.SafeDecimalToInt32(addChance);
+                var power = skill.Power + NumberConversionHelper.SafeDecimalToInt32(addPower);
+                var statPowerRatio = skill.StatPowerRatio + NumberConversionHelper.SafeDecimalToInt32(addStatPowerRatio);
 
                 skill.Update(chance, power, statPowerRatio);
             }
@@ -508,9 +508,9 @@ namespace Nekoyume.Model.Item
                     addStatPowerRatio = Math.Max(1.0m, addStatPowerRatio);
                 }
 
-                var chance = skill.Chance + (int)addChance;
-                var power = skill.Power + (int)addPower;
-                var statPowerRatio = skill.StatPowerRatio + (int)addStatPowerRatio;
+                var chance = skill.Chance + NumberConversionHelper.SafeDecimalToInt32(addChance);
+                var power = skill.Power + NumberConversionHelper.SafeDecimalToInt32(addPower);
+                var statPowerRatio = skill.StatPowerRatio + NumberConversionHelper.SafeDecimalToInt32(addStatPowerRatio);
 
                 skill.Update(chance, power, statPowerRatio);
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.TableData;
 
@@ -367,7 +368,7 @@ namespace Nekoyume.Model.Stat
                 var stat = costumeStatSheet.OrderedList
                     .Where(r => r.CostumeId == costume.Id)
                     .Select(row => new StatModifier(row.StatType, StatModifier.OperationType.Add,
-                        (int) row.Stat));
+                        NumberConversionHelper.SafeDecimalToInt32(row.Stat)));
                 statModifiers.AddRange(stat);
             }
 
@@ -578,7 +579,7 @@ namespace Nekoyume.Model.Stat
                     costumeStatSheet.OrderedList
                         .Where(r => r.CostumeId == itemId)
                         .Select(row => new StatModifier(row.StatType,
-                            StatModifier.OperationType.Add, (int) row.Stat))
+                            StatModifier.OperationType.Add, NumberConversionHelper.SafeDecimalToInt32(row.Stat)))
                 );
             }
 

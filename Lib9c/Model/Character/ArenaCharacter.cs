@@ -308,7 +308,7 @@ namespace Nekoyume.Model
             statModifiers = statSheet.OrderedList
                 .Where(r => r.CostumeId == itemId)
                 .Select(row =>
-                    new StatModifier(row.StatType, StatModifier.OperationType.Add, (int)row.Stat));
+                    new StatModifier(row.StatType, StatModifier.OperationType.Add, NumberConversionHelper.SafeDecimalToInt32(row.Stat)));
 
             return statModifiers.Any();
         }
@@ -408,12 +408,12 @@ namespace Nekoyume.Model
 
                 if (optionInfo.SkillValueType == StatModifier.OperationType.Add)
                 {
-                    power = (int)optionInfo.SkillValue;
+                    power = NumberConversionHelper.SafeDecimalToInt32(optionInfo.SkillValue);
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
                     var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
-                    power = (int)Math.Round(value * optionInfo.SkillValue);
+                    power = NumberConversionHelper.SafeDecimalToInt32(Math.Round(value * optionInfo.SkillValue));
                 }
                 var skill = SkillFactory.GetForArena(skillRow, power, optionInfo.SkillChance, default, StatType.NONE);
                 var customField = new SkillCustomField
@@ -474,12 +474,12 @@ namespace Nekoyume.Model
 
                 if (optionInfo.SkillValueType == StatModifier.OperationType.Add)
                 {
-                    power = (int)optionInfo.SkillValue;
+                    power = NumberConversionHelper.SafeDecimalToInt32(optionInfo.SkillValue);
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
                     var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
-                    power = (int)Math.Round(value * optionInfo.SkillValue);
+                    power = NumberConversionHelper.SafeDecimalToInt32(Math.Round(value * optionInfo.SkillValue));
                 }
                 var skill = SkillFactory.GetForArena(skillRow, power, optionInfo.SkillChance, default, StatType.NONE);
                 var customField = new SkillCustomField
