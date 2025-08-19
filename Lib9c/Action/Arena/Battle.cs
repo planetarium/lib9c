@@ -305,7 +305,7 @@ namespace Nekoyume.Action.Arena
             ItemSlotState ItemSlotState,
             RuneSlotState RuneSlotState,
             AllRuneState RuneStates,
-            int Cp
+            long Cp
         ) PrepareMyLoadout(
             IWorld states,
             Dictionary<Type, (Address address, ISheet sheet)> sheets,
@@ -491,7 +491,7 @@ namespace Nekoyume.Action.Arena
             IWorld states,
             TxId txId,
             ArenaLog resultLog,
-            int cp,
+            long cp,
             AvatarState avatarState
         )
         {

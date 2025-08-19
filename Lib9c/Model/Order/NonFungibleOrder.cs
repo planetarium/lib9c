@@ -121,7 +121,7 @@ namespace Lib9c.Model.Order
             if (avatarState.inventory.TryGetLockedItem(new OrderLock(OrderId), out Inventory.Item inventoryItem))
             {
                 ItemBase item = inventoryItem.item;
-                int cp = CPHelper.GetCP((INonFungibleItem)item, costumeStatSheet);
+                long cp = CPHelper.GetCP((INonFungibleItem)item, costumeStatSheet);
                 int level = item is Equipment equipment ? equipment.level : 0;
                 return new OrderDigest(
                     SellerAgentAddress,
@@ -270,7 +270,7 @@ namespace Lib9c.Model.Order
             if (avatarState.inventory.TryGetNonFungibleItem(TradableId, out INonFungibleItem nonFungibleItem))
             {
                 ItemBase item = (ItemBase) nonFungibleItem;
-                int cp = CPHelper.GetCP(nonFungibleItem, costumeStatSheet);
+                long cp = CPHelper.GetCP(nonFungibleItem, costumeStatSheet);
                 int level = item is Equipment equipment ? equipment.level : 0;
                 return new OrderDigest(
                     SellerAgentAddress,

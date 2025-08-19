@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.Skill;
 using Nekoyume.Model.Stat;
@@ -93,7 +94,7 @@ namespace Nekoyume.Model
         {
             base.SetSkill();
 
-            var dmg = (int)(ATK * 0.3m);
+            var dmg = NumberConversionHelper.SafeDecimalToInt64(ATK * 0.3m);
             var skillIds = _stageSimulator.EnemySkillSheet.Values
                 .Where(r => r.characterId == RowData.Id)
                 .Select(r => r.skillId)

@@ -83,7 +83,7 @@ namespace Nekoyume.Helper
             else if (optionInfo.OptionType == PetOptionType.DiscountMaterialCostCrystal)
             {
                 // Convert as permyriad
-                var multiplier = (int)(10000 - optionInfo.OptionValue * 100);
+                var multiplier = NumberConversionHelper.SafeDecimalToInt32(10000 - optionInfo.OptionValue * 100);
                 var cost = originalCost.DivRem(10000, out _) * multiplier;
 
                 // Keep cost more than 1.
@@ -139,12 +139,12 @@ namespace Nekoyume.Helper
             else if (optionInfo.OptionType == PetOptionType.AdditionalOptionRate)
             {
                 var multiplier = (100 + optionInfo.OptionValue) / 100;
-                var result = (int)Math.Round(originalRatio * multiplier);
+                var result = NumberConversionHelper.SafeDecimalToInt32(Math.Round(originalRatio * multiplier));
                 return result;
             }
             else if (optionInfo.OptionType == PetOptionType.AdditionalOptionRateByFixedValue)
             {
-                return originalRatio + (int)(optionInfo.OptionValue * 100);
+                return originalRatio + NumberConversionHelper.SafeDecimalToInt32(optionInfo.OptionValue * 100);
             }
 
             return originalRatio;

@@ -76,7 +76,7 @@ namespace Lib9c.Tests
                 ccp += CPHelper.GetStatCP(statType, value);
             }
 
-            var collectionCp = CPHelper.DecimalToInt(ccp);
+            var collectionCp = CPHelper.DecimalToLong(ccp);
             Assert.Equal(result + collectionCp, CPHelper.TotalCP(equipments, costumes, runeOptions, level, row, costumeStatSheet, collectionStatModifiers, 0));
         }
     }

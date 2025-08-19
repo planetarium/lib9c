@@ -11,7 +11,7 @@ namespace Nekoyume.Battle
 {
     public static class CPHelper
     {
-        public static int TotalCP(
+        public static long TotalCP(
             IReadOnlyCollection<Equipment> equipments,
             IReadOnlyCollection<Costume> costumes,
             IReadOnlyCollection<RuneOptionSheet.Row.RuneOptionInfo> runeOptions,
@@ -36,9 +36,9 @@ namespace Nekoyume.Battle
                 }
             }
 
-            var equipmentsCp = 0;
-            var costumeCp = 0;
-            var runeCp = 0;
+            var equipmentsCp = 0L;
+            var costumeCp = 0L;
+            var runeCp = 0L;
             var runeLevelBonusCp = 0m;
 
             foreach (var equipment in equipments)
@@ -62,14 +62,14 @@ namespace Nekoyume.Battle
                 );
             }
 
-            var totalCp = DecimalToInt(
+            var totalCp = DecimalToLong(
                 levelStatsCp + equipmentsCp + costumeCp + runeCp + runeLevelBonusCp + collectionCp
             );
             return totalCp;
         }
 
         [Obsolete("Use TotalCP")]
-        public static int GetCP(AvatarState avatarState, CharacterSheet characterSheet)
+        public static long GetCP(AvatarState avatarState, CharacterSheet characterSheet)
         {
             if (!characterSheet.TryGetValue(avatarState.characterId, out var row))
             {
@@ -84,11 +84,11 @@ namespace Nekoyume.Battle
                 .Where(equipment => equipment.equipped)
                 .Sum(GetCP);
 
-            return DecimalToInt(levelStatsCP + equipmentsCP);
+            return DecimalToLong(levelStatsCP + equipmentsCP);
         }
 
         [Obsolete("Use TotalCP")]
-        public static int GetCPV2(
+        public static long GetCPV2(
             AvatarState avatarState,
             CharacterSheet characterSheet,
             CostumeStatSheet costumeStatSheet)
@@ -98,33 +98,17 @@ namespace Nekoyume.Battle
                 .Where(c => c.equipped)
                 .Sum(c => GetCP(c, costumeStatSheet));
 
-            return DecimalToInt(current + costumeCP);
+            return DecimalToLong(current + costumeCP);
         }
 
-        public static int GetCP(Player player, CostumeStatSheet costumeStatSheet)
-        {
-            var levelStatsCP = GetStatsCP(player.Stats.BaseStats, player.Level);
-            var equipmentsCP = player.Equipments.Sum(GetCP);
-            var costumeCP = player.Costumes.Sum(c => GetCP(c, costumeStatSheet));
-
-            return DecimalToInt(levelStatsCP + equipmentsCP + costumeCP);
-        }
-
-        public static int GetCP(Enemy enemy)
-        {
-            var levelStatsCP = GetStatsCP(enemy.Stats.BaseStats, enemy.Level);
-            var skills = enemy.Skills.Concat(enemy.BuffSkills).ToArray();
-            return DecimalToInt(levelStatsCP * GetSkillsMultiplier(skills.Length));
-        }
-
-        public static int GetCP(ItemUsable itemUsable)
+        public static long GetCP(ItemUsable itemUsable)
         {
             var statsCP = GetStatsCP(itemUsable.StatsMap);
             var skills = itemUsable.Skills.Concat(itemUsable.BuffSkills).ToArray();
-            return DecimalToInt(statsCP * GetSkillsMultiplier(skills.Length));
+            return DecimalToLong(statsCP * GetSkillsMultiplier(skills.Length));
         }
 
-        public static int GetCP(Costume costume, CostumeStatSheet sheet)
+        public static long GetCP(Costume costume, CostumeStatSheet sheet)
         {
             var statsMap = new StatsMap();
             foreach (var r in sheet.OrderedList.Where(r => r.CostumeId == costume.Id))
@@ -132,11 +116,11 @@ namespace Nekoyume.Battle
                 statsMap.AddStatValue(r.StatType, r.Stat);
             }
 
-            return DecimalToInt(GetStatsCP(statsMap));
+            return DecimalToLong(GetStatsCP(statsMap));
         }
 
         [Obsolete("Use GetCp")]
-        public static int GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)
+        public static long GetCP(INonFungibleItem tradableItem, CostumeStatSheet sheet)
         {
             if (tradableItem is ItemUsable itemUsable)
             {
@@ -273,14 +257,14 @@ namespace Nekoyume.Battle
             }
         }
 
-        public static int DecimalToInt(decimal value)
+        public static long DecimalToLong(decimal value)
         {
-            if (value > int.MaxValue)
+            if (value > long.MaxValue)
             {
-                return int.MaxValue;
+                return long.MaxValue;
             }
 
-            return (int) value;
+            return (long) value;
         }
     }
 }

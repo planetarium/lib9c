@@ -9,11 +9,11 @@ namespace Nekoyume.Model.State
     /// </summary>
     public class CpState : IBencodable, IState
     {
-        public int Cp;
+        public long Cp;
 
         public IValue Bencoded => List.Empty.Add(Cp.Serialize());
 
-        public CpState(int cp)
+        public CpState(long cp)
         {
             Cp = cp;
         }
@@ -28,7 +28,7 @@ namespace Nekoyume.Model.State
                 );
             }
 
-            Cp = l[0].ToInteger();
+            Cp = l[0].ToLong();
         }
 
         public IValue Serialize() => Bencoded;
