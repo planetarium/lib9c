@@ -53,7 +53,7 @@ namespace Nekoyume.Model.State
         public int Level;
 
         [Obsolete("Not used anymore since v100070")]
-        public int CombatPoint;
+        public long CombatPoint;
 
         [Obsolete("Not used anymore since v100070")]
         public int ArmorId;
@@ -89,7 +89,7 @@ namespace Nekoyume.Model.State
                 : new Record();
             Level = serialized.GetInteger("level");
             ArmorId = serialized.GetInteger("armorId");
-            CombatPoint = serialized.GetInteger("combatPoint");
+            CombatPoint = serialized.GetLong("combatPoint");
             Active = IsActive(serialized);
             DailyChallengeCount = serialized.GetInteger("dailyChallengeCount");
             Score = serialized.GetInteger("score");
@@ -109,7 +109,7 @@ namespace Nekoyume.Model.State
             Active = false;
             ArenaRecord = new Record();
         }
-        
+
         public ArenaInfo Clone() => new ArenaInfo(this)
         {
             Score = Score,
@@ -258,7 +258,7 @@ namespace Nekoyume.Model.State
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
-        
+
             var (challengerScore, defenderScore) = scoreGetter(Score, enemyInfo.Score, result);
             Score = Math.Max(1000, Score + challengerScore);
             enemyInfo.Score = Math.Max(1000, enemyInfo.Score + defenderScore);

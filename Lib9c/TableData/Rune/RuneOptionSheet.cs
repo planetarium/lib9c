@@ -15,7 +15,7 @@ namespace Nekoyume.TableData
         {
             public class RuneOptionInfo
             {
-                public int Cp { get; }
+                public long Cp { get; }
                 public List<(DecimalStat stat, StatModifier.OperationType operationType)> Stats { get; set; }
                 public int SkillId { get; set; }
                 public int SkillCooldown { get; set; }
@@ -27,7 +27,7 @@ namespace Nekoyume.TableData
                 public int BuffDuration { get; set; }
 
                 public RuneOptionInfo(
-                    int cp,
+                    long cp,
                     List<(DecimalStat, StatModifier.OperationType)> stats,
                     int skillId,
                     int skillCooldown,
@@ -51,7 +51,7 @@ namespace Nekoyume.TableData
                 }
 
                 public RuneOptionInfo(
-                    int cp,
+                    long cp,
                     List<(DecimalStat, StatModifier.OperationType)> stats)
                 {
                     Cp = cp;
@@ -73,34 +73,43 @@ namespace Nekoyume.TableData
                 var level = ParseInt(fields[1]);
                 var cp = ParseInt(fields[2]);
 
-                var statType1 = (StatType)Enum.Parse(typeof(StatType), fields[3]);
-                var value1 = ParseDecimal(fields[4]);
-                var valueType1 = (StatModifier.OperationType)
-                    Enum.Parse(typeof(StatModifier.OperationType), fields[5]);
-                if (statType1 != StatType.NONE)
+                if (!string.IsNullOrEmpty(fields[3]))
                 {
-                    var statMap = new DecimalStat(statType1, value1);
-                    stats.Add((statMap, valueType1));
+                    var statType1 = (StatType)Enum.Parse(typeof(StatType), fields[3]);
+                    var value1 = ParseDecimal(fields[4]);
+                    var valueType1 = (StatModifier.OperationType)
+                        Enum.Parse(typeof(StatModifier.OperationType), fields[5]);
+                    if (statType1 != StatType.NONE)
+                    {
+                        var statMap = new DecimalStat(statType1, value1);
+                        stats.Add((statMap, valueType1));
+                    }
                 }
 
-                var statType2 = (StatType)Enum.Parse(typeof(StatType), fields[6]);
-                var value2 = ParseDecimal(fields[7]);
-                var valueType2 = (StatModifier.OperationType)
-                    Enum.Parse(typeof(StatModifier.OperationType), fields[8]);
-                if (statType2 != StatType.NONE)
+                if (!string.IsNullOrEmpty(fields[6]))
                 {
-                    var statMap = new DecimalStat(statType2, value2);
-                    stats.Add((statMap, valueType2));
+                    var statType2 = (StatType)Enum.Parse(typeof(StatType), fields[6]);
+                    var value2 = ParseDecimal(fields[7]);
+                    var valueType2 = (StatModifier.OperationType)
+                        Enum.Parse(typeof(StatModifier.OperationType), fields[8]);
+                    if (statType2 != StatType.NONE)
+                    {
+                        var statMap = new DecimalStat(statType2, value2);
+                        stats.Add((statMap, valueType2));
+                    }
                 }
 
-                var statType3 = (StatType)Enum.Parse(typeof(StatType), fields[9]);
-                var value3 = ParseDecimal(fields[10]);
-                var valueType3 = (StatModifier.OperationType)
-                    Enum.Parse(typeof(StatModifier.OperationType), fields[11]);
-                if (statType3 != StatType.NONE)
+                if (!string.IsNullOrEmpty(fields[9]))
                 {
-                    var statMap = new DecimalStat(statType3, value3);
-                    stats.Add((statMap, valueType3));
+                    var statType3 = (StatType)Enum.Parse(typeof(StatType), fields[9]);
+                    var value3 = ParseDecimal(fields[10]);
+                    var valueType3 = (StatModifier.OperationType)
+                        Enum.Parse(typeof(StatModifier.OperationType), fields[11]);
+                    if (statType3 != StatType.NONE)
+                    {
+                        var statMap = new DecimalStat(statType3, value3);
+                        stats.Add((statMap, valueType3));
+                    }
                 }
 
                 if (TryParseInt(fields[12], out var skillId))

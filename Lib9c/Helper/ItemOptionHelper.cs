@@ -19,7 +19,7 @@ namespace Nekoyume.Helper
         public readonly List<(SkillSheet.Row skillRow, long power, int chance, int statPowerRatio, StatType refStatType)> SkillOptions
             = new List<(SkillSheet.Row skillRow, long power, int chance, int statPowerRatio, StatType refStatType)>();
 
-        public readonly int CP;
+        public readonly long CP;
 
         public ItemOptionInfo(Equipment equipment)
         {

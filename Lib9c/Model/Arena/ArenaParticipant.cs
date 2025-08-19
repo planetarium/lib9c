@@ -38,7 +38,7 @@ namespace Nekoyume.Model.Arena
 
         public int PortraitId;
         public int Level;
-        public int Cp;
+        public long Cp;
 
         public int Score;
 
@@ -105,6 +105,10 @@ namespace Nekoyume.Model.Arena
             Win = (Integer)l[10];
             Lose = (Integer)l[11];
             LastBattleBlockIndex = (Integer)l[12];
+        }
+
+        public ArenaParticipant()
+        {
         }
 
         public IValue Serialize() => Bencoded;
