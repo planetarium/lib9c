@@ -120,7 +120,7 @@ namespace Nekoyume.Model.Skill
             return infos;
         }
 
-        private static decimal[] GetMultiplier(int hitCount, decimal totalDamage)
+        protected static decimal[] GetMultiplier(int hitCount, decimal totalDamage)
         {
             if (hitCount == 1) return new[] {totalDamage};
             var multiplier = new List<decimal>();
