@@ -66,12 +66,12 @@ namespace Nekoyume.Model.Skill
                         target.IsHit(caster))
                     {
                         // Apply armor penetration and DEF.
-                        var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, int.MaxValue);
+                        var finalDEF = DamageHelper.GetFinalDefense(target.DEF, caster.ArmorPenetration);
                         damage = totalDamage - finalDEF;
                         // Apply multiple hits
                         damage = (long) (damage * multiplier);
                         // Apply damage reduction
-                        damage = (long) ((damage - target.DRV) * DamageHelper.GetDamageReductionRate(target.DRR));
+                        damage = DamageHelper.GetReducedDamage(damage, target.DRV, target.DRR);
 
                         if (damage < 1)
                         {

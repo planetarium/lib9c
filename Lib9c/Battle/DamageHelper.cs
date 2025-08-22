@@ -1,3 +1,6 @@
+using System;
+using Nekoyume.Helper;
+
 namespace Nekoyume.Battle
 {
     public static class DamageHelper
@@ -19,6 +22,29 @@ namespace Nekoyume.Battle
             }
 
             return 1 - drr / 10000m;
+        }
+
+        /// <summary>
+        /// calculate defense.
+        /// </summary>
+        /// <param name="targetDefense">enemy <see cref="Model.Stat.StatType.DEF"/> stats</param>
+        /// <param name="armorPenetration">caster <see cref="Model.Stat.StatType.ArmorPenetration"/> stats</param>
+        /// <returns>calculated final defense.</returns>
+        public static long GetFinalDefense(long targetDefense, long armorPenetration)
+        {
+            return Math.Clamp(targetDefense - armorPenetration, 0, long.MaxValue);
+        }
+
+        /// <summary>
+        /// calculate reduced damage.
+        /// </summary>
+        /// <param name="damage">damage</param>
+        /// <param name="drv">enemy <see cref="Model.Stat.StatType.DRV"/> stats</param>
+        /// <param name="drr">enemy <see cref="Model.Stat.StatType.DRR"/> stats</param>
+        /// <returns>calculated damage.</returns>
+        public static long GetReducedDamage(long damage, long drv, long drr)
+        {
+            return NumberConversionHelper.SafeDecimalToInt32((damage - drv) * GetDamageReductionRate(drr));
         }
     }
 }

@@ -60,10 +60,10 @@ namespace Nekoyume.Model.Skill.Arena
                     }
 
                     // Apply armor penetration and DEF.
-                    var finalDEF = Math.Clamp(target.DEF - caster.ArmorPenetration, 0, long.MaxValue);
+                    var finalDEF = DamageHelper.GetFinalDefense(target.DEF, caster.ArmorPenetration);
                     damage = Math.Max(damage - finalDEF, 1);
                     // Apply damage reduce
-                    damage = NumberConversionHelper.SafeDecimalToInt32((damage - target.DRV) * DamageHelper.GetDamageReductionRate(target.DRR));
+                    damage = DamageHelper.GetReducedDamage(damage, target.DRV, target.DRR);
 
                     // ShatterStrike has max damage limitation
                     if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
