@@ -44,7 +44,7 @@ namespace Nekoyume.Battle
         /// <returns>calculated damage.</returns>
         public static long GetReducedDamage(long damage, long drv, long drr)
         {
-            return NumberConversionHelper.SafeDecimalToInt32((damage - drv) * GetDamageReductionRate(drr));
+            return NumberConversionHelper.SafeDecimalToInt64((damage - drv) * GetDamageReductionRate(drr));
         }
     }
 }
