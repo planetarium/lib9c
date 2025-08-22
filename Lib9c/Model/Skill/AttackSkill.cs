@@ -56,7 +56,7 @@ namespace Nekoyume.Model.Skill
                 {
                     if (SkillRow.SkillCategory is SkillCategory.ShatterStrike)
                     {
-                        totalDamage = (long)(target.HP * powerMultiplier);
+                        totalDamage = NumberConversionHelper.SafeDecimalToInt64(target.HP * powerMultiplier);
                     }
 
                     long damage = 0;
@@ -69,7 +69,7 @@ namespace Nekoyume.Model.Skill
                         var finalDEF = DamageHelper.GetFinalDefense(target.DEF, caster.ArmorPenetration);
                         damage = totalDamage - finalDEF;
                         // Apply multiple hits
-                        damage = (long) (damage * multiplier);
+                        damage = NumberConversionHelper.SafeDecimalToInt64(damage * multiplier);
                         // Apply damage reduction
                         damage = DamageHelper.GetReducedDamage(damage, target.DRV, target.DRR);
 

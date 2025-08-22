@@ -46,10 +46,10 @@ namespace Nekoyume.Model.Skill.Arena
 
                 if (target.IsHit(caster))
                 {
-                    damage = (long)(SkillRow.SkillCategory is SkillCategory.ShatterStrike
+                    damage = NumberConversionHelper.SafeDecimalToInt64(SkillRow.SkillCategory is SkillCategory.ShatterStrike
                         ? target.HP * powerMultiplier
                         : caster.ATK + Power + statAdditionalPower);
-                    damage = (long)(damage * multiplier);
+                    damage = NumberConversionHelper.SafeDecimalToInt64(damage * multiplier);
                     damage = caster.GetDamage(damage, isNormalAttack || SkillRow.Combo);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
                     isCritical = SkillRow.SkillCategory is not SkillCategory.ShatterStrike &&
