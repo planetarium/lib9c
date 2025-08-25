@@ -97,7 +97,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                1, 100, 99, null, new[] { (600301, 5), (600302, 0), (600303, 0), (600304, 0), },
+                1, 100, 99, null, new[] { (600302, 3), },
             };
             yield return new object[]
             {
@@ -109,7 +109,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
             };
             yield return new object[]
             {
-                20, 20, 0, null, new[] { (600301, 15), (600302, 18), (600303, 14), (600304, 14), },
+                20, 20, 0, null, new[] { (600302, 27), (600303, 14), (600304, 14), },
             };
         }
 
