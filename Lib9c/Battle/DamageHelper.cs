@@ -36,7 +36,7 @@ namespace Nekoyume.Battle
         }
 
         /// <summary>
-        /// calculate reduced damage.
+        /// calculate reduced damage. minimum 1.
         /// </summary>
         /// <param name="damage">damage</param>
         /// <param name="drv">enemy <see cref="Model.Stat.StatType.DRV"/> stats</param>
@@ -44,7 +44,7 @@ namespace Nekoyume.Battle
         /// <returns>calculated damage.</returns>
         public static long GetReducedDamage(long damage, long drv, long drr)
         {
-            return NumberConversionHelper.SafeDecimalToInt64((damage - drv) * GetDamageReductionRate(drr));
+            return Math.Max(1, NumberConversionHelper.SafeDecimalToInt64((damage - drv) * GetDamageReductionRate(drr)));
         }
     }
 }

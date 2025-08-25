@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Nekoyume.Battle;
 using Nekoyume.Model.Buff;
 using Nekoyume.Model.Elemental;
@@ -45,8 +46,8 @@ namespace Nekoyume.Model.Skill
             var powerMultiplier = StatPowerRatio / 10000m;
             var statAdditionalPower = ReferencedStatType != StatType.NONE ?
                 NumberConversionHelper.SafeDecimalToInt32(caster.Stats.GetStat(ReferencedStatType) * powerMultiplier) : default;
-
-            long totalDamage = caster.ATK + Power + statAdditionalPower;
+            // Use decimal atk stats because avoid overflow long.maxValue case
+            long totalDamage = NumberConversionHelper.SafeDecimalToInt64(caster.Stats.GetStat(StatType.ATK) + Power + statAdditionalPower);
             var multipliers = GetMultiplier(SkillRow.HitCount, 1m);
             for (var i = 0; i < SkillRow.HitCount; i++)
             {
@@ -73,11 +74,7 @@ namespace Nekoyume.Model.Skill
                         // Apply damage reduction
                         damage = DamageHelper.GetReducedDamage(damage, target.DRV, target.DRR);
 
-                        if (damage < 1)
-                        {
-                            damage = 1;
-                        }
-                        else
+                        if (damage > 1)
                         {
                             // 모션 배율 적용.
                             damage = caster.GetDamage(

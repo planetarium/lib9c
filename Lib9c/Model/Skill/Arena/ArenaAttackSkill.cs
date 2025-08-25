@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Nekoyume.Arena;
 using Nekoyume.Battle;
 using Nekoyume.Model.Buff;
@@ -46,10 +47,11 @@ namespace Nekoyume.Model.Skill.Arena
 
                 if (target.IsHit(caster))
                 {
-                    damage = NumberConversionHelper.SafeDecimalToInt64(SkillRow.SkillCategory is SkillCategory.ShatterStrike
+                    var total = SkillRow.SkillCategory is SkillCategory.ShatterStrike
                         ? target.HP * powerMultiplier
-                        : caster.ATK + Power + statAdditionalPower);
-                    damage = NumberConversionHelper.SafeDecimalToInt64(damage * multiplier);
+                        // Use decimal atk stats because avoid overflow long.maxValue case
+                        : caster.Stats.GetStat(StatType.ATK) + Power + statAdditionalPower;
+                    damage = NumberConversionHelper.SafeDecimalToInt64(total * multiplier);
                     damage = caster.GetDamage(damage, isNormalAttack || SkillRow.Combo);
                     damage = elementalType.GetDamage(target.DefenseElementalType, damage);
                     isCritical = SkillRow.SkillCategory is not SkillCategory.ShatterStrike &&

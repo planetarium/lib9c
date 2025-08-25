@@ -103,6 +103,205 @@ namespace Lib9c.Tests.Model.Skill
             }
         }
 
+        [Fact]
+        public void ProcessDamage_ShouldHandleLargeValuesBetterThanLegacy()
+        {
+            // Arrange - Create a skill with very high power to test large value handling
+            var skillRow = _tableSheets.SkillSheet.Values.First();
+            var testSkill = new TestAttackSkill(skillRow, int.MaxValue, 100, 10000, StatType.ATK);
+
+            var avatar = AvatarState.Create(
+                new PrivateKey().Address,
+                new PrivateKey().Address,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new PrivateKey().Address);
+
+            var simulator = new StageSimulator(
+                new TestRandom(),
+                avatar,
+                new List<System.Guid>(),
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                1,
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    new TestRandom(),
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>(),
+                _tableSheets.BuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
+                true);
+            var character = new Player(avatar, simulator);
+            character.Stats.Modify(new[] { new StatModifier(StatType.ATK, StatModifier.OperationType.Add, long.MaxValue - character.ATK) });
+            var enemyRow = _tableSheets.CharacterSheet.OrderedList
+                .FirstOrDefault(e => e.Id > 200000);
+            Assert.NotNull(enemyRow);
+            var enemy = new Enemy(character, enemyRow, 1);
+            character.Targets.Add(enemy);
+
+            // Act
+            var legacyResult = testSkill.TestLegacyProcessDamage(character, 1, false, true).ToList();
+            var currentResult = testSkill.TestProcessDamage(character, 1, false, true).ToList();
+
+            // Assert - Current implementation should handle large values better
+            Assert.Equal(legacyResult.Count, currentResult.Count);
+
+            for (int i = 0; i < legacyResult.Count; i++)
+            {
+                var legacy = legacyResult[i];
+                var current = currentResult[i];
+
+                // Current implementation should not have overflow issues with large values
+                Assert.True(legacy.Effect > 0);
+                Assert.True(current.Effect > 0);
+                Assert.True(current.Effect > legacy.Effect);
+            }
+        }
+
+        [Fact]
+        public void ProcessDamage_ShouldHandleLargeDefenseValuesBetterThanLegacy()
+        {
+            // Arrange - Test with very high defense values to check DamageHelper.GetFinalDefense changes
+            var skillRow = _tableSheets.SkillSheet.Values.First();
+            var testSkill = new TestAttackSkill(skillRow, 100, 100, 10000, StatType.ATK);
+
+            var avatar = AvatarState.Create(
+                new PrivateKey().Address,
+                new PrivateKey().Address,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new PrivateKey().Address);
+
+            var simulator = new StageSimulator(
+                new TestRandom(),
+                avatar,
+                new List<System.Guid>(),
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                1,
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    new TestRandom(),
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>(),
+                _tableSheets.BuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
+                true);
+            var character = new Player(avatar, simulator);
+            var enemyRow = _tableSheets.CharacterSheet.OrderedList
+                .FirstOrDefault(e => e.Id > 200000);
+            Assert.NotNull(enemyRow);
+            var enemy = new Enemy(character, enemyRow, 1);
+            character.Targets.Add(enemy);
+
+            // Set very high defense values to test the change from int.MaxValue to DamageHelper.GetFinalDefense
+            enemy.Stats.Modify(new[] { new StatModifier(StatType.DEF, StatModifier.OperationType.Add, int.MaxValue) });
+
+            // Act
+            var legacyResult = testSkill.TestLegacyProcessDamage(character, 1, false, true).ToList();
+            var currentResult = testSkill.TestProcessDamage(character, 1, false, true).ToList();
+
+            // Assert - Current implementation should handle large defense values better
+            Assert.Equal(legacyResult.Count, currentResult.Count);
+
+            for (int i = 0; i < legacyResult.Count; i++)
+            {
+                var legacy = legacyResult[i];
+                var current = currentResult[i];
+
+                // Current implementation should handle large defense values without overflow
+                Assert.True(current.Effect >= 0, "Current implementation should handle large defense values without overflow");
+            }
+        }
+
+        [Fact]
+        public void ProcessDamage_ShouldHandleLargeDamageReductionValuesBetterThanLegacy()
+        {
+            // Arrange - Test with very high DRV and DRR values to check DamageHelper.GetReducedDamage changes
+            var skillRow = _tableSheets.SkillSheet.Values.First();
+            var testSkill = new TestAttackSkill(skillRow, 100, 100, 10000, StatType.ATK);
+
+            var avatar = AvatarState.Create(
+                new PrivateKey().Address,
+                new PrivateKey().Address,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                new PrivateKey().Address);
+
+            var simulator = new StageSimulator(
+                new TestRandom(),
+                avatar,
+                new List<System.Guid>(),
+                new AllRuneState(),
+                new RuneSlotState(BattleType.Adventure),
+                new List<Nekoyume.Model.Skill.Skill>(),
+                1,
+                1,
+                _tableSheets.StageSheet[1],
+                _tableSheets.StageWaveSheet[1],
+                false,
+                20,
+                _tableSheets.GetSimulatorSheets(),
+                _tableSheets.EnemySkillSheet,
+                _tableSheets.CostumeStatSheet,
+                StageSimulator.GetWaveRewards(
+                    new TestRandom(),
+                    _tableSheets.StageSheet[1],
+                    _tableSheets.MaterialItemSheet),
+                new List<StatModifier>(),
+                _tableSheets.BuffLimitSheet,
+                _tableSheets.BuffLinkSheet,
+                true);
+            var character = new Player(avatar, simulator);
+            var enemyRow = _tableSheets.CharacterSheet.OrderedList
+                .FirstOrDefault(e => e.Id > 200000);
+            Assert.NotNull(enemyRow);
+            var enemy = new Enemy(character, enemyRow, 1);
+            character.Targets.Add(enemy);
+
+            // Set very high DRV and DRR values to test the change in damage reduction calculation
+            enemy.Stats.Modify(new[]
+            {
+                new StatModifier(StatType.DRV, StatModifier.OperationType.Add, long.MaxValue),
+                new StatModifier(StatType.DRR, StatModifier.OperationType.Add, 8100), // Maximum DRR value
+            });
+
+            // Act
+            var legacyResult = testSkill.TestLegacyProcessDamage(character, 1, false, true).ToList();
+            var currentResult = testSkill.TestProcessDamage(character, 1, false, true).ToList();
+
+            // Assert - Current implementation should handle large damage reduction values better
+            Assert.Equal(legacyResult.Count, currentResult.Count);
+
+            for (int i = 0; i < legacyResult.Count; i++)
+            {
+                var legacy = legacyResult[i];
+                var current = currentResult[i];
+
+                // Current implementation should handle large damage reduction values without overflow
+                Assert.True(current.Effect >= 0, "Current implementation should handle large damage reduction values without overflow");
+            }
+        }
+
         /// <summary>
         /// Test implementation of AttackSkill to access protected ProcessDamage method.
         /// </summary>

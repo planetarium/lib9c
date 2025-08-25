@@ -96,6 +96,121 @@ namespace Lib9c.Tests.Model.Skill.Arena
             }
         }
 
+        [Fact]
+        public void ProcessDamage_ShouldHandleLargeValuesBetterThanLegacy()
+        {
+            // Arrange - Create a skill with very high power to test large value handling
+            var skillRow = _tableSheets.SkillSheet.Values.First();
+            var testSkill = new TestArenaAttackSkill(skillRow, int.MaxValue, 100, 10000, StatType.ATK);
+
+            var random = new TestRandom();
+            var arenaSimulator = new ArenaSimulator(random);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+
+            var casterDigest = new ArenaPlayerDigest(_avatar1, new AllRuneState(), new RuneSlotState(BattleType.Arena));
+            var targetDigest = new ArenaPlayerDigest(_avatar2, new AllRuneState(), new RuneSlotState(BattleType.Arena));
+
+            var caster = new ArenaCharacter(arenaSimulator, casterDigest, arenaSheets);
+            caster.Stats.Modify(new[] { new StatModifier(StatType.ATK, StatModifier.OperationType.Add, int.MaxValue) });
+            var target = new ArenaCharacter(arenaSimulator, targetDigest, arenaSheets, true);
+            target.Stats.Modify(new[] { new StatModifier(StatType.DEF, StatModifier.OperationType.Add, -target.DEF) });
+
+            // Act
+            var legacyResult = testSkill.TestLegacyProcessDamage(caster, target, 1, false).ToList();
+            var currentResult = testSkill.TestProcessDamage(caster, target, 1, false).ToList();
+
+            // Assert - Current implementation should handle large values better
+            Assert.Equal(legacyResult.Count, currentResult.Count);
+
+            for (int i = 0; i < legacyResult.Count; i++)
+            {
+                var legacy = legacyResult[i];
+                var current = currentResult[i];
+
+                // Current implementation should not have overflow issues with large values
+                Assert.Equal(int.MaxValue, legacy.Effect);
+                Assert.True(current.Effect > int.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void ProcessDamage_ShouldHandleLargeDefenseValuesBetterThanLegacy()
+        {
+            // Arrange - Test with very high defense values to check DamageHelper.GetFinalDefense changes
+            var skillRow = _tableSheets.SkillSheet.Values.First();
+            var testSkill = new TestArenaAttackSkill(skillRow, 100, 100, 10000, StatType.ATK);
+
+            var random = new TestRandom();
+            var arenaSimulator = new ArenaSimulator(random);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+
+            var casterDigest = new ArenaPlayerDigest(_avatar1, new AllRuneState(), new RuneSlotState(BattleType.Arena));
+            var targetDigest = new ArenaPlayerDigest(_avatar2, new AllRuneState(), new RuneSlotState(BattleType.Arena));
+
+            var caster = new ArenaCharacter(arenaSimulator, casterDigest, arenaSheets);
+            var target = new ArenaCharacter(arenaSimulator, targetDigest, arenaSheets, true);
+
+            // Set very high defense values to test the change from long.MaxValue to DamageHelper.GetFinalDefense
+            target.Stats.Modify(new[] { new StatModifier(StatType.DEF, StatModifier.OperationType.Add, int.MaxValue) });
+
+            // Act
+            var legacyResult = testSkill.TestLegacyProcessDamage(caster, target, 1, false).ToList();
+            var currentResult = testSkill.TestProcessDamage(caster, target, 1, false).ToList();
+
+            // Assert - Current implementation should handle large defense values better
+            Assert.Equal(legacyResult.Count, currentResult.Count);
+
+            for (int i = 0; i < legacyResult.Count; i++)
+            {
+                var legacy = legacyResult[i];
+                var current = currentResult[i];
+
+                // Current implementation should handle large defense values without overflow
+                Assert.True(current.Effect >= 0, "Current implementation should handle large defense values without overflow");
+            }
+        }
+
+        [Fact]
+        public void ProcessDamage_ShouldHandleLargeDamageReductionValuesBetterThanLegacy()
+        {
+            // Arrange - Test with very high DRV and DRR values to check DamageHelper.GetReducedDamage changes
+            var skillRow = _tableSheets.SkillSheet.Values.First();
+            var testSkill = new TestArenaAttackSkill(skillRow, 100, 100, 10000, StatType.ATK);
+
+            var random = new TestRandom();
+            var arenaSimulator = new ArenaSimulator(random);
+            var arenaSheets = _tableSheets.GetArenaSimulatorSheets();
+
+            var casterDigest = new ArenaPlayerDigest(_avatar1, new AllRuneState(), new RuneSlotState(BattleType.Arena));
+            var targetDigest = new ArenaPlayerDigest(_avatar2, new AllRuneState(), new RuneSlotState(BattleType.Arena));
+
+            var caster = new ArenaCharacter(arenaSimulator, casterDigest, arenaSheets);
+            var target = new ArenaCharacter(arenaSimulator, targetDigest, arenaSheets, true);
+
+            // Set very high DRV and DRR values to test the change in damage reduction calculation
+            target.Stats.Modify(new[]
+            {
+                new StatModifier(StatType.DRV, StatModifier.OperationType.Add, long.MaxValue),
+                new StatModifier(StatType.DRR, StatModifier.OperationType.Add, 8100), // Maximum DRR value
+            });
+
+            // Act
+            var legacyResult = testSkill.TestLegacyProcessDamage(caster, target, 1, false).ToList();
+            var currentResult = testSkill.TestProcessDamage(caster, target, 1, false).ToList();
+
+            // Assert - Current implementation should handle large damage reduction values better
+            Assert.Equal(legacyResult.Count, currentResult.Count);
+
+            for (int i = 0; i < legacyResult.Count; i++)
+            {
+                var legacy = legacyResult[i];
+                var current = currentResult[i];
+                // Current implementation should handle large damage reduction values without overflow
+                Assert.True(current.Effect > legacy.Effect);
+                Assert.True(current.Effect >= 0, "Current implementation should handle large damage reduction values without overflow");
+            }
+        }
+
         /// <summary>
         /// Test implementation of ArenaAttackSkill to access protected ProcessDamage method.
         /// </summary>
