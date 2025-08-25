@@ -2,5 +2,13 @@ group_id,modify_type1,percentage
 206000,Percentage,-20
 709000,Percentage,-50
 206003,Percentage,-20
-206009,Percentage,-50
+206009,Percentage,-20
 702001,Add,30
+108000,Add,200000
+108001,Add,200000
+202004,Percentage,-85
+102000,Add,15000000
+202000,Add,-15000000
+106000,Add,15000000
+105000,Add,15000000
+205000,Add,-15000000
