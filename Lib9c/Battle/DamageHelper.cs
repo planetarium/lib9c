@@ -25,7 +25,9 @@ namespace Nekoyume.Battle
         }
 
         /// <summary>
-        /// calculate defense.
+        /// Calculates final defense after applying armor penetration.
+        /// Uses Math.Clamp to ensure the result is between 0 and long.MaxValue,
+        /// preventing overflow issues when dealing with large defense values.
         /// </summary>
         /// <param name="targetDefense">enemy <see cref="Model.Stat.StatType.DEF"/> stats</param>
         /// <param name="armorPenetration">caster <see cref="Model.Stat.StatType.ArmorPenetration"/> stats</param>
@@ -36,7 +38,9 @@ namespace Nekoyume.Battle
         }
 
         /// <summary>
-        /// calculate reduced damage. minimum 1.
+        /// Calculates reduced damage after applying damage reduction values (DRV) and damage reduction rate (DRR).
+        /// Uses NumberConversionHelper.SafeDecimalToInt64 to prevent overflow when dealing with large damage values.
+        /// Ensures minimum damage of 1 to prevent zero damage attacks.
         /// </summary>
         /// <param name="damage">damage</param>
         /// <param name="drv">enemy <see cref="Model.Stat.StatType.DRV"/> stats</param>
