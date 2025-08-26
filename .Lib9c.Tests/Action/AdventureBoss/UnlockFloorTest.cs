@@ -92,9 +92,6 @@ namespace Lib9c.Tests.Action.AdventureBoss
         // Success
         [InlineData(false, false, 5, 10, null)]
         [InlineData(true, false, 5, 10, null)]
-        // Max floor
-        [InlineData(false, false, 20, 20, typeof(InvalidOperationException))]
-        [InlineData(true, false, 20, 20, typeof(InvalidOperationException))]
         // Not enough resources
         [InlineData(false, true, 5, 5, typeof(NotEnoughMaterialException))]
         [InlineData(true, true, 5, 5, typeof(InsufficientBalanceException))]
@@ -229,6 +226,103 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     resultState.GetExplorer(1, TesterAvatarAddress).MaxFloor
                 );
             }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_MaxFloor(bool useNcg)
+        {
+            // Settings
+            var state = _initialState;
+            var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
+            state = state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var validatorKey = new PrivateKey().PublicKey;
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey.Address, 0L);
+
+            state = Stake(state, WantedAddress);
+            var materialSheet = state.GetSheet<MaterialItemSheet>();
+            var goldenDust =
+                ItemFactory.CreateMaterial(materialSheet.Values.First(row => row.Id == 600201));
+
+            var unlockRow = state.GetSheet<AdventureBossUnlockFloorCostSheet>().Values
+                .First(row => row.FloorId == 6);
+            if (useNcg)
+            {
+                state = state.MintAsset(
+                    new ActionContext(),
+                    TesterAddress,
+                    unlockRow.NcgPrice * NCG
+                );
+            }
+            else
+            {
+                var inventory = state.GetInventoryV2(TesterAvatarAddress);
+                inventory.AddItem(goldenDust, unlockRow.GoldenDustPrice);
+                state = state.SetInventory(TesterAvatarAddress, inventory);
+            }
+
+            // Open Season
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = WantedAvatarAddress,
+                Bounty = gameConfigState.AdventureBossMinBounty * NCG,
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
+
+            // Explore
+            state = new ExploreAdventureBoss
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = 1L,
+                });
+
+            // Make all floors cleared
+            var explorer = state.GetExplorer(1, TesterAvatarAddress);
+            explorer.MaxFloor = state.GetSheet<AdventureBossFloorSheet>().Values.Max(r => r.Floor);
+            explorer.Floor = explorer.MaxFloor;
+            state = state.SetExplorer(1, explorer);
+
+            // Unlock
+            var action = new UnlockFloor
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+                UseNcg = useNcg,
+            };
+
+            Assert.Throws<InvalidOperationException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = TesterAddress,
+                        BlockIndex = 2L,
+                    })
+            );
         }
 
         private IWorld Stake(IWorld world, Address agentAddress)
