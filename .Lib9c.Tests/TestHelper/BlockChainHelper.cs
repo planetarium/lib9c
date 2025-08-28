@@ -84,7 +84,8 @@ namespace Lib9c.Tests.TestHelper
                 activatedAccounts: activatedAddresses,
                 isActivateAdminAddress: false,
                 credits: null,
-                privateKey: privateKey,
+                minerPrivateKey: privateKey,
+                signerPrivateKey: privateKey,
                 timestamp: timestamp ?? DateTimeOffset.MinValue);
         }
 

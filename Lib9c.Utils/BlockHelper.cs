@@ -49,6 +49,7 @@ namespace Nekoyume
             redeemCodeListSheet.Set(tableSheets[nameof(RedeemCodeListSheet)]);
 
             minerPrivateKey ??= new PrivateKey();
+            signerPrivateKey ??= new PrivateKey();
             activatedAccounts ??= ImmutableHashSet<Address>.Empty;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319

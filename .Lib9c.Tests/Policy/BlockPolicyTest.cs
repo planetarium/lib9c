@@ -958,7 +958,8 @@ namespace Lib9c.Tests
                 activatedAccounts: activatedAddresses,
                 isActivateAdminAddress: false,
                 credits: null,
-                privateKey: privateKey ?? _privateKey,
+                minerPrivateKey: privateKey ?? _privateKey,
+                signerPrivateKey: privateKey ?? _privateKey,
                 timestamp: timestamp ?? DateTimeOffset.MinValue,
                 actionBases: actionBases);
         }
