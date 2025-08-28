@@ -49,7 +49,7 @@ public abstract class TxAcitonTestBase
         var stagePolicy = new VolatileStagePolicy();
         var validator = new Validator(validatorKey.PublicKey, 10_000_000_000_000_000_000);
         var genesis = MakeGenesisBlock(
-            new ValidatorSet(new List<Validator> { validator }));
+            new ValidatorSet(new List<Validator> { validator }), validatorKey);
         using var store = new MemoryStore();
         using var keyValueStore = new MemoryKeyValueStore();
         using var stateStore = new TrieStateStore(keyValueStore);
@@ -161,7 +161,7 @@ public abstract class TxAcitonTestBase
             : throw new InvalidOperationException("Block index must be greater than 0");
     }
 
-    private Block MakeGenesisBlock(ValidatorSet validators)
+    private Block MakeGenesisBlock(ValidatorSet validators, PrivateKey validatorKey)
     {
         var nonce = new byte[] { 0x00, 0x01, 0x02, 0x03 };
         (ActivationKey _, PendingActivationState pendingActivation) =
@@ -173,7 +173,9 @@ public abstract class TxAcitonTestBase
             validators,
             sheets,
             new GoldDistribution[0],
-            pendingActivations);
+            pendingActivations,
+            minerPrivateKey: validatorKey,
+            signerPrivateKey: validatorKey);
     }
 
     protected sealed class ActionRenderer : IActionRenderer
