@@ -31,7 +31,8 @@ namespace Nekoyume
             IImmutableSet<Address>? activatedAccounts = null,
             bool isActivateAdminAddress = false,
             IEnumerable<string>? credits = null,
-            PrivateKey? privateKey = null,
+            PrivateKey? minerPrivateKey = null,
+            PrivateKey? signerPrivateKey = null,
             DateTimeOffset? timestamp = null,
             IEnumerable<ActionBase>? actionBases = null,
             Currency? goldCurrency = null,
@@ -47,11 +48,11 @@ namespace Nekoyume
             var redeemCodeListSheet = new RedeemCodeListSheet();
             redeemCodeListSheet.Set(tableSheets[nameof(RedeemCodeListSheet)]);
 
-            privateKey ??= new PrivateKey();
+            minerPrivateKey ??= new PrivateKey();
             activatedAccounts ??= ImmutableHashSet<Address>.Empty;
 #pragma warning disable CS0618
             // Use of obsolete method Currency.Legacy(): https://github.com/planetarium/lib9c/discussions/1319
-            goldCurrency ??= Currency.Legacy("NCG", 2, privateKey.Address);
+            goldCurrency ??= Currency.Legacy("NCG", 2, minerPrivateKey.Address);
 #pragma warning restore CS0618
 
             var initialStatesAction = new InitializeStates
@@ -92,13 +93,13 @@ namespace Nekoyume
                 actionLoader);
             return
                 BlockChain.ProposeGenesisBlock(
-                    privateKey: privateKey,
+                    privateKey: minerPrivateKey,
                     transactions: ImmutableList<Transaction>.Empty
                         .Add(Transaction.Create(
-                            0, privateKey, null, actions.ToPlainValues()))
+                            0, signerPrivateKey, null, actions.ToPlainValues()))
                         .AddRange(systemActions.Select((sa, index) =>
                             Transaction.Create(
-                                index + 1, privateKey, null, new [] { sa.PlainValue }))),
+                                index + 1, signerPrivateKey, null, new [] { sa.PlainValue }))),
                     timestamp: timestamp);
         }
     }
