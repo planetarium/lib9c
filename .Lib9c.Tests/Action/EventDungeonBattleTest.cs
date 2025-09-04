@@ -4,6 +4,7 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -517,6 +518,45 @@ namespace Lib9c.Tests.Action
                 var circles = nextAvatar.inventory.Items.Where(x => x.item.Id == circleRow.Id);
                 Assert.All(circles, x => Assert.True(x.item is TradableMaterial));
             }
+        }
+
+        [Theory]
+        [InlineData(false, 4)]
+        [InlineData(true, 1)]
+        public void PlainValue(bool legacy, int expected)
+        {
+            var address = new PrivateKey().Address;
+            var innerValue = List.Empty
+                .Add(address.Serialize())
+                .Add(1.Serialize())
+                .Add(2.Serialize())
+                .Add(3.Serialize())
+                .Add(new List())
+                .Add(new List())
+                .Add(new List())
+                .Add(true)
+                .Add(new List());
+            if (!legacy)
+            {
+                innerValue = innerValue.Add(expected);
+            }
+
+            var plainValue = Dictionary.Empty
+                .Add("type_id", "event_dungeon_battle6")
+                .Add("values", Dictionary.Empty.Add("id", Guid.NewGuid().Serialize()).Add("l", innerValue));
+            var action = new EventDungeonBattle();
+            action.LoadPlainValue(plainValue);
+
+            Assert.Equal(address, action.AvatarAddress);
+            Assert.Equal(1, action.EventScheduleId);
+            Assert.Equal(2, action.EventDungeonId);
+            Assert.Equal(3, action.EventDungeonStageId);
+            Assert.Equal(new List<Guid>(), action.Equipments);
+            Assert.Equal(new List<Guid>(), action.Costumes);
+            Assert.Equal(new List<Guid>(), action.Foods);
+            Assert.True(action.BuyTicketIfNeeded);
+            Assert.Equal(new List<RuneSlotInfo>(), action.RuneInfos);
+            Assert.Equal(expected, action.TotalPlayCount);
         }
 
         private IWorld Execute(
