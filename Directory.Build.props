@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <LibplanetVersion>5.5.0</LibplanetVersion>
+        <LibplanetVersion>5.5.0-test.2</LibplanetVersion>
         <Lib9cVersion>1.30.0</Lib9cVersion>
 
         <!-- Fill with Libplanet's absolute path to debug with local Libplanet.
