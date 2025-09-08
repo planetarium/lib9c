@@ -12,13 +12,12 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Nekoyume.TableData.Summon;
     using Xunit;
-    using static SerializeKeys;
 
     public class AuraSummonTest
     {
@@ -265,6 +264,128 @@ namespace Lib9c.Tests.Action.Summon
                             });
                     });
             }
+        }
+
+        [Theory]
+        [InlineData(10, 11, 1, 3)]
+        [InlineData(100, 110, 2, 4)]
+        public void SimulateSummon_WithGradeGuarantee_ShouldGuaranteeMinimumGrade(int summonCount, int resultCount, int guaranteeCount, int minGrade)
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestSummonRowWithGuarantee();
+
+            Assert.True(summonRow.UseGradeGuarantee);
+            Assert.Equal((int)Grade.Epic, summonRow.MinimumGrade11);
+            Assert.Equal((int)Grade.Unique, summonRow.MinimumGrade110);
+
+            // Act
+            var result = AuraSummon.SimulateSummon(
+                "test",
+                _tableSheets.EquipmentItemRecipeSheet,
+                _tableSheets.EquipmentItemSheet,
+                _tableSheets.EquipmentItemSubRecipeSheetV2,
+                _tableSheets.EquipmentItemOptionSheet,
+                _tableSheets.SkillSheet,
+                summonRow,
+                summonCount,
+                random,
+                0
+            ).ToList();
+
+            // Assert
+            Assert.Equal(resultCount, result.Count); // 10+1 rule applied
+
+            // Check that at least the guaranteed number of equipment meets minimum grade requirement
+            Assert.True(result.Count(i => i.Item2.Grade >= minGrade) >= guaranteeCount);
+        }
+
+        [Theory]
+        [InlineData(10, 11, 3)]
+        [InlineData(100, 110, 4)]
+        public void SimulateSummon_WithoutGradeGuarantee_ShouldUseOriginalLogic(int summonCount, int resultCount, int minGrade)
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestSummonRowWithoutGuarantee();
+            Assert.False(summonRow.UseGradeGuarantee);
+
+            // Act
+            var result = AuraSummon.SimulateSummon(
+                "test",
+                _tableSheets.EquipmentItemRecipeSheet,
+                _tableSheets.EquipmentItemSheet,
+                _tableSheets.EquipmentItemSubRecipeSheetV2,
+                _tableSheets.EquipmentItemOptionSheet,
+                _tableSheets.SkillSheet,
+                summonRow,
+                summonCount,
+                random,
+                0
+            ).ToList();
+
+            // Assert
+            Assert.Equal(resultCount, result.Count); // 10+1 rule applied
+            // No grade guarantee, so we just verify the count is correct
+            Assert.DoesNotContain(result, i => i.Item2.Grade >= minGrade);
+        }
+
+        /// <summary>
+        /// Creates a test SummonSheet.Row with grade guarantee settings enabled.
+        /// Uses actual recipe IDs from the test fixtures.
+        /// </summary>
+        private static SummonSheet.Row CreateTestSummonRowWithGuarantee()
+        {
+            var fields = new List<string>
+            {
+                "99999", // GroupId
+                "800201", // CostMaterial
+                "10", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110
+                "2", // GuaranteeCount110
+                "171", "1000", // Recipe1: Low grade (1) - from fixtures
+                "172", "500",  // Recipe2: Low grade (1) - from fixtures
+                "174", "200",  // Recipe3: Medium grade (2) - from fixtures
+                "173", "1",  // Recipe4: High grade (3) - from fixtures
+                "176", "1",  // Recipe5: Unique grade (4) - from fixtures
+            };
+
+            var row = new SummonSheet.Row();
+            row.Set(fields);
+            return row;
+        }
+
+        /// <summary>
+        /// Creates a test SummonSheet.Row with grade guarantee settings enabled.
+        /// Uses actual recipe IDs from the test fixtures.
+        /// </summary>
+        private static SummonSheet.Row CreateTestSummonRowWithoutGuarantee()
+        {
+            var fields = new List<string>
+            {
+                "99999", // GroupId
+                "800201", // CostMaterial
+                "10", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                string.Empty, // MinimumGrade11
+                string.Empty, // GuaranteeCount11
+                string.Empty, // MinimumGrade110
+                string.Empty, // GuaranteeCount110
+                "171", "1000", // Recipe1: Low grade (1) - from fixtures
+                "172", "500",  // Recipe2: Low grade (1) - from fixtures
+                "174", "200",  // Recipe3: Medium grade (2) - from fixtures
+                "173", "1",  // Recipe4: High grade (3) - from fixtures
+                "176", "1",  // Recipe5: Unique grade (4) - from fixtures
+            };
+
+            var row = new SummonSheet.Row();
+            row.Set(fields);
+            return row;
         }
     }
 }

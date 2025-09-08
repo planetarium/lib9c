@@ -69,7 +69,6 @@ namespace Nekoyume.Action
 
         public static IEnumerable<(int, Equipment)> SimulateSummon(
             string addressesHex,
-            AgentState agentState,
             EquipmentItemRecipeSheet recipeSheet,
             EquipmentItemSheet equipmentItemSheet,
             EquipmentItemSubRecipeSheetV2 equipmentItemSubRecipeSheetV2,
@@ -84,63 +83,141 @@ namespace Nekoyume.Action
             summonCount = SummonHelper.CalculateSummonCount(summonCount);
 
             var result = new List<(int, Equipment)>();
-            for (var i = 0; i < summonCount; i++)
+            List<int> recipeIds;
+
+            if (summonRow.UseGradeGuarantee)
             {
-                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
+                // Use grade guarantee system with settings from SummonSheet.Row based on summon count
+                recipeIds = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
+                    summonRow, summonCount, random, equipmentItemSheet, recipeSheet);
+            }
+            else
+            {
+                // Use original random selection - don't pre-generate, process one by one
+                recipeIds = null; // Will be processed one by one in the loop
+            }
 
-                // Validate RecipeId
-                var recipeRow = recipeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
-                if (recipeRow is null)
+            if (summonRow.UseGradeGuarantee && recipeIds != null)
+            {
+                // Process pre-generated recipe IDs
+                foreach (var recipeId in recipeIds)
                 {
-                    throw new SheetRowNotFoundException(
-                        addressesHex,
-                        nameof(EquipmentItemRecipeSheet),
-                        recipeId
+                    // Validate RecipeId
+                    var recipeRow = recipeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
+                    if (recipeRow is null)
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(EquipmentItemRecipeSheet),
+                            recipeId
+                        );
+                    }
+
+                    // Validate Recipe ResultEquipmentId
+                    if (!equipmentItemSheet.TryGetValue(recipeRow.ResultEquipmentId,
+                            out var equipmentRow))
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(equipmentItemSheet),
+                            recipeRow.ResultEquipmentId);
+                    }
+
+                    // Validate subRecipeId
+                    if (recipeRow.SubRecipeIds.Count == 0)
+                    {
+                        throw new InvalidRecipeIdException(
+                            $"Recipe {recipeId} does not have any subRecipe.");
+                    }
+
+                    var subRecipeId = recipeRow.SubRecipeIds[0];
+                    if (!equipmentItemSubRecipeSheetV2.TryGetValue(subRecipeId, out var subRecipeRow))
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(EquipmentItemSubRecipeSheetV2),
+                            subRecipeId
+                        );
+                    }
+
+                    // Create Equipment
+                    var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                        equipmentRow,
+                        random.GenerateRandomGuid(),
+                        blockIndex
                     );
-                }
 
-                // Validate Recipe ResultEquipmentId
-                if (!equipmentItemSheet.TryGetValue(recipeRow.ResultEquipmentId,
-                        out var equipmentRow))
-                {
-                    throw new SheetRowNotFoundException(
-                        addressesHex,
-                        nameof(equipmentItemSheet),
-                        recipeRow.ResultEquipmentId);
-                }
-
-                // Validate subRecipeId
-                if (recipeRow.SubRecipeIds.Count == 0)
-                {
-                    throw new InvalidRecipeIdException(
-                        $"Recipe {recipeId} does not have any subRecipe.");
-                }
-
-                var subRecipeId = recipeRow.SubRecipeIds[0];
-                if (!equipmentItemSubRecipeSheetV2.TryGetValue(subRecipeId, out var subRecipeRow))
-                {
-                    throw new SheetRowNotFoundException(
-                        addressesHex,
-                        nameof(EquipmentItemSubRecipeSheetV2),
-                        subRecipeId
+                    AddAndUnlockOption(
+                        equipment,
+                        random,
+                        subRecipeRow,
+                        optionSheet,
+                        skillSheet
                     );
+                    result.Add((recipeId, equipment));
                 }
+            }
+            else
+            {
+                // Original logic - process one by one
+                for (var i = 0; i < summonCount; i++)
+                {
+                    var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
 
-                // Create Equipment
-                var equipment = (Equipment)ItemFactory.CreateItemUsable(
-                    equipmentRow,
-                    random.GenerateRandomGuid(),
-                    blockIndex
-                );
+                    // Validate RecipeId
+                    var recipeRow = recipeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
+                    if (recipeRow is null)
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(EquipmentItemRecipeSheet),
+                            recipeId
+                        );
+                    }
 
-                AddAndUnlockOption(
-                    equipment,
-                    random,
-                    subRecipeRow,
-                    optionSheet,
-                    skillSheet
-                );
-                result.Add((recipeId, equipment));
+                    // Validate Recipe ResultEquipmentId
+                    if (!equipmentItemSheet.TryGetValue(recipeRow.ResultEquipmentId,
+                            out var equipmentRow))
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(equipmentItemSheet),
+                            recipeRow.ResultEquipmentId);
+                    }
+
+                    // Validate subRecipeId
+                    if (recipeRow.SubRecipeIds.Count == 0)
+                    {
+                        throw new InvalidRecipeIdException(
+                            $"Recipe {recipeId} does not have any subRecipe.");
+                    }
+
+                    var subRecipeId = recipeRow.SubRecipeIds[0];
+                    if (!equipmentItemSubRecipeSheetV2.TryGetValue(subRecipeId, out var subRecipeRow))
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(EquipmentItemSubRecipeSheetV2),
+                            subRecipeId
+                        );
+                    }
+
+                    // Create Equipment
+                    var equipment = (Equipment)ItemFactory.CreateItemUsable(
+                        equipmentRow,
+                        random.GenerateRandomGuid(),
+                        blockIndex
+                    );
+
+                    AddAndUnlockOption(
+                        equipment,
+                        random,
+                        subRecipeRow,
+                        optionSheet,
+                        skillSheet
+                    );
+                    result.Add((recipeId, equipment));
+                }
             }
 
             return result;
@@ -222,7 +299,7 @@ namespace Nekoyume.Action
 
             var random = context.GetRandom();
             var summonResult = SimulateSummon(
-                addressesHex, agentState,
+                addressesHex,
                 sheets.GetSheet<EquipmentItemRecipeSheet>(),
                 sheets.GetSheet<EquipmentItemSheet>(),
                 sheets.GetSheet<EquipmentItemSubRecipeSheetV2>(),
