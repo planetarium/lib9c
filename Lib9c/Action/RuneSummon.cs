@@ -18,6 +18,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Rune;
 using Nekoyume.TableData.Summon;
 using Serilog;
 
@@ -152,7 +153,7 @@ namespace Nekoyume.Action
             IWorld states
         )
         {
-            var result = SimulateSummon(runeSheet, summonRow, summonCount, random);
+            var result = SimulateSummon(runeSheet, summonRow, summonCount, random, useGradeGuarantee: summonRow.UseGradeGuarantee, minimumGrade: 3, runeListSheet: null);
 #pragma warning disable LAA1002
             foreach (var pair in result)
 #pragma warning restore LAA1002
@@ -167,33 +168,174 @@ namespace Nekoyume.Action
             RuneSheet runeSheet,
             SummonSheet.Row summonRow,
             int summonCount,
-            IRandom random
+            IRandom random,
+            bool useGradeGuarantee = true,
+            int minimumGrade = 3,
+            RuneListSheet runeListSheet = null
         )
         {
             summonCount = SummonHelper.CalculateSummonCount(summonCount);
 
             var result = new Dictionary<Currency, int>();
-            for (var i = 0; i < summonCount; i++)
+            List<int> recipeIds;
+
+            if (useGradeGuarantee && summonRow.UseGradeGuarantee)
             {
-                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
+                // For runes, we'll use a simplified approach since runes don't have traditional grades
+                // We'll use the same logic but with rune-specific grade checking
+                recipeIds = GetRuneSummonRecipeIdsWithGradeGuarantee(
+                    summonRow, summonCount, random, runeSheet, runeListSheet);
+            }
+            else
+            {
+                // Use original random selection - don't pre-generate, process one by one
+                recipeIds = null; // Will be processed one by one in the loop
+            }
 
-                // Validate RecipeId
-                var runeRow = runeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
-                if (runeRow is null)
+            if (useGradeGuarantee && recipeIds != null)
+            {
+                // Process pre-generated recipe IDs
+                foreach (var recipeId in recipeIds)
                 {
-                    throw new SheetRowNotFoundException(
-                        nameof(RuneSheet),
-                        recipeId
-                    );
-                }
+                    // Validate RecipeId
+                    var runeRow = runeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
+                    if (runeRow is null)
+                    {
+                        throw new SheetRowNotFoundException(
+                            nameof(RuneSheet),
+                            recipeId
+                        );
+                    }
 
-                var ticker = runeRow.Ticker;
-                var currency = Currencies.GetRune(ticker);
-                result.TryAdd(currency, 0);
-                result[currency] += RuneQuantity;
+                    var ticker = runeRow.Ticker;
+                    var currency = Currencies.GetRune(ticker);
+                    result.TryAdd(currency, 0);
+                    result[currency] += RuneQuantity;
+                }
+            }
+            else
+            {
+                // Original logic - process one by one
+                for (var i = 0; i < summonCount; i++)
+                {
+                    var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
+
+                    // Validate RecipeId
+                    var runeRow = runeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
+                    if (runeRow is null)
+                    {
+                        throw new SheetRowNotFoundException(
+                            nameof(RuneSheet),
+                            recipeId
+                        );
+                    }
+
+                    var ticker = runeRow.Ticker;
+                    var currency = Currencies.GetRune(ticker);
+                    result.TryAdd(currency, 0);
+                    result[currency] += RuneQuantity;
+                }
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets rune summon recipe IDs with grade guarantee system based on summon count.
+        /// Applies different guarantee settings for 11 summons vs 110 summons.
+        /// For runes, we use a simplified approach based on rune level or rarity.
+        /// This method processes items one by one to maintain the same random call order as the original implementation.
+        /// Uses grade guarantee settings from SummonSheet.Row.
+        /// </summary>
+        private static List<int> GetRuneSummonRecipeIdsWithGradeGuarantee(
+            SummonSheet.Row summonRow,
+            int summonCount,
+            IRandom random,
+            RuneSheet runeSheet,
+            RuneListSheet runeListSheet)
+        {
+            var result = new List<int>();
+            var guaranteedCount = 0;
+
+            // Get guarantee settings
+            var (useGuarantee, minimumGrade, guaranteeCount) = SummonHelper.GetGuaranteeSettings(summonRow, summonCount);
+
+            // Process each item one by one to maintain random call order
+            for (var i = 0; i < summonCount; i++)
+            {
+                int recipeId;
+
+                // Check if we need grade guarantee
+                var needsGuarantee = useGuarantee &&
+                                   guaranteedCount < guaranteeCount &&
+                                   (summonCount - i) <= (guaranteeCount - guaranteedCount);
+
+                if (needsGuarantee)
+                {
+                    // Select item from minimum grade or higher
+                    recipeId = GetGuaranteedRuneGradeRecipeId(summonRow, random, runeSheet, minimumGrade, runeListSheet);
+                    guaranteedCount++;
+                }
+                else
+                {
+                    // Select item normally
+                    recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
+                }
+
+                result.Add(recipeId);
+            }
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Gets a rune recipe ID that guarantees minimum grade or higher.
+        /// </summary>
+        private static int GetGuaranteedRuneGradeRecipeId(
+            SummonSheet.Row summonRow,
+            IRandom random,
+            RuneSheet runeSheet,
+            int minimumGrade,
+            RuneListSheet runeListSheet)
+        {
+            // Filter recipes that meet minimum grade requirement
+            var eligibleRecipes = new List<(int recipeId, int ratio)>();
+            var totalEligibleRatio = 0;
+
+            foreach (var (recipeId, ratio) in summonRow.Recipes)
+            {
+                var runeRow = runeSheet.OrderedList.FirstOrDefault(r => r.Id == recipeId);
+                if (runeRow != null && runeListSheet != null)
+                {
+                    if (runeListSheet.TryGetValue(recipeId, out var runeListRow) && runeListRow.Grade >= minimumGrade)
+                    {
+                        eligibleRecipes.Add((recipeId, ratio));
+                        totalEligibleRatio += ratio;
+                    }
+                }
+            }
+
+            // If no eligible recipes found, return the first recipe (fallback)
+            if (eligibleRecipes.Count == 0)
+            {
+                return summonRow.Recipes.First().Item1;
+            }
+
+            // Select from eligible recipes based on their ratios
+            var targetRatio = random.Next(1, totalEligibleRatio + 1);
+            var cumulativeRatio = 0;
+
+            foreach (var (recipeId, ratio) in eligibleRecipes)
+            {
+                cumulativeRatio += ratio;
+                if (targetRatio <= cumulativeRatio)
+                {
+                    return recipeId;
+                }
+            }
+
+            return eligibleRecipes.First().recipeId;
         }
     }
 }
