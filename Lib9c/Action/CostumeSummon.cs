@@ -69,34 +69,72 @@ namespace Nekoyume.Action
             IRandom random
         )
         {
-            // Ten plus one
-            if (summonCount >= 10)
-            {
-                summonCount += summonCount / 10;
-            }
+            summonCount = SummonHelper.CalculateSummonCount(summonCount);
 
             var result = new List<Costume>();
-            for (var i = 0; i < summonCount; i++)
+            List<int> recipeIds;
+
+            if (summonRow.UseGradeGuarantee)
             {
-                var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
+                // Use grade guarantee system with settings from SummonSheet.Row based on summon count
+                recipeIds = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
+                    summonRow, summonCount, random, costumeItemSheet, null);
+            }
+            else
+            {
+                // Use original random selection - don't pre-generate, process one by one
+                recipeIds = null; // Will be processed one by one in the loop
+            }
 
-                // Validate Recipe ResultEquipmentId
-                if (!costumeItemSheet.TryGetValue(recipeId,
-                        out var costumeRow))
+            if (summonRow.UseGradeGuarantee && recipeIds != null)
+            {
+                // Process pre-generated recipe IDs
+                foreach (var recipeId in recipeIds)
                 {
-                    throw new SheetRowNotFoundException(
-                        addressesHex,
-                        nameof(CostumeItemSheet),
-                        recipeId);
+                    // Validate Recipe ResultEquipmentId
+                    if (!costumeItemSheet.TryGetValue(recipeId,
+                            out var costumeRow))
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(CostumeItemSheet),
+                            recipeId);
+                    }
+
+                    // Create Costume
+                    var costume = ItemFactory.CreateCostume(
+                        costumeRow,
+                        random.GenerateRandomGuid()
+                    );
+
+                    result.Add(costume);
                 }
+            }
+            else
+            {
+                // Original logic - process one by one
+                for (var i = 0; i < summonCount; i++)
+                {
+                    var recipeId = SummonHelper.GetSummonRecipeIdByRandom(summonRow, random);
 
-                // Create Equipment
-                var costume = ItemFactory.CreateCostume(
-                    costumeRow,
-                    random.GenerateRandomGuid()
-                );
+                    // Validate Recipe ResultEquipmentId
+                    if (!costumeItemSheet.TryGetValue(recipeId,
+                            out var costumeRow))
+                    {
+                        throw new SheetRowNotFoundException(
+                            addressesHex,
+                            nameof(CostumeItemSheet),
+                            recipeId);
+                    }
 
-                result.Add(costume);
+                    // Create Costume
+                    var costume = ItemFactory.CreateCostume(
+                        costumeRow,
+                        random.GenerateRandomGuid()
+                    );
+
+                    result.Add(costume);
+                }
             }
 
             return result;
