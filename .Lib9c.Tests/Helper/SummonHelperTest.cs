@@ -179,6 +179,40 @@ namespace Lib9c.Tests.Helper
             // No guarantee for less than 11 summons, so we just verify the count
         }
 
+        [Fact]
+        public void GetSummonRecipeIdsWithGradeGuarantee_NoEligibleRecipes_ShouldThrowException()
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestSummonRowWithLowGradesOnly();
+            var equipmentItemSheet = CreateTestEquipmentItemSheet();
+            var equipmentItemRecipeSheet = CreateTestEquipmentItemRecipeSheet();
+            var summonCount = 11; // Use 11 summons to trigger grade guarantee
+
+            // Act & Assert
+            var exception = Assert.Throws<System.InvalidOperationException>(() =>
+                SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
+                    summonRow, summonCount, random, equipmentItemSheet, equipmentItemRecipeSheet));
+
+            Assert.Contains("No equipment recipes found with grade >= 3", exception.Message);
+            Assert.Contains("summon group 10003", exception.Message);
+        }
+
+        [Fact]
+        public void GetSummonRecipeIdByRandom_DataConsistencyIssue_ShouldThrowException()
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestSummonRowWithInconsistentData();
+
+            // Act & Assert
+            var exception = Assert.Throws<System.InvalidOperationException>(() =>
+                SummonHelper.GetSummonRecipeIdByRandom(summonRow, random));
+
+            Assert.Contains("Failed to select recipe for summon group 10005", exception.Message);
+            Assert.Contains("data consistency issue with recipe ratios", exception.Message);
+        }
+
         private static SummonSheet.Row CreateTestSummonRow()
         {
             var row = new SummonSheet.Row();
@@ -220,6 +254,70 @@ namespace Lib9c.Tests.Helper
                 "201", "100", // Recipe1: High grade (3)
                 "202", "100", // Recipe2: High grade (3)
                 "203", "100", // Recipe3: High grade (3)
+            };
+            row.Set(fields);
+            return row;
+        }
+
+        private static SummonSheet.Row CreateTestSummonRowWithLowGradesOnly()
+        {
+            var row = new SummonSheet.Row();
+            var fields = new List<string>
+            {
+                "10003", // GroupId
+                "800201", // CostMaterial
+                "10", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11 (Epic grade)
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110 (Unique grade)
+                "2", // GuaranteeCount110
+                "101", "1000", // Recipe1: Low grade (1) - below minimum
+                "102", "500",  // Recipe2: Low grade (1) - below minimum
+                "103", "200",  // Recipe3: Medium grade (2) - below minimum
+            };
+            row.Set(fields);
+            return row;
+        }
+
+        private static SummonSheet.Row CreateTestSummonRowWithNoRecipes()
+        {
+            var row = new SummonSheet.Row();
+            var fields = new List<string>
+            {
+                "10004", // GroupId
+                "800201", // CostMaterial
+                "10", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110
+                "2", // GuaranteeCount110
+                "101", "0", // Recipe with zero ratio - this should cause an exception
+                "102", "0", // Recipe with zero ratio - this should cause an exception
+            };
+            row.Set(fields);
+            return row;
+        }
+
+        private static SummonSheet.Row CreateTestSummonRowWithInconsistentData()
+        {
+            var row = new SummonSheet.Row();
+            var fields = new List<string>
+            {
+                "10005", // GroupId
+                "800201", // CostMaterial
+                "10", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110
+                "2", // GuaranteeCount110
+                "101", "0", // Recipe1: Zero ratio - this should cause data consistency issue
+                "102", "0", // Recipe2: Zero ratio - this should cause data consistency issue
             };
             row.Set(fields);
             return row;

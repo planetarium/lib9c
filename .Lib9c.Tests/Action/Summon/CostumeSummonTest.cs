@@ -196,6 +196,26 @@
             Assert.True(guaranteedCostumes >= guaranteeCount);
         }
 
+        [Fact]
+        public void SimulateSummon_NoEligibleCostumeRecipes_ShouldThrowException()
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestCostumeSummonRowWithLowGradesOnly();
+
+            // Act & Assert
+            var exception = Assert.Throws<System.InvalidOperationException>(() =>
+                CostumeSummon.SimulateSummon(
+                    string.Empty,
+                    _tableSheets.CostumeItemSheet,
+                    summonRow,
+                    11, // Use 11 summons to trigger grade guarantee
+                    random));
+
+            Assert.Contains("No costume recipes found with grade >= 3", exception.Message);
+            Assert.Contains("summon group 77777", exception.Message);
+        }
+
         /// <summary>
         /// Creates a test CostumeSummonSheet.Row with grade guarantee settings for testing.
         /// </summary>
@@ -218,6 +238,31 @@
                 "40100015", "1000", // Recipe3: Grade 3
                 "40100016", "100",  // Recipe4: Grade 4
                 "40100025", "10",   // Recipe5: Grade 5
+            };
+
+            var row = new CostumeSummonSheet.Row();
+            row.Set(fields);
+            return row;
+        }
+
+        /// <summary>
+        /// Creates a test CostumeSummonSheet.Row with only low-grade costumes that don't meet guarantee requirements.
+        /// </summary>
+        private static CostumeSummonSheet.Row CreateTestCostumeSummonRowWithLowGradesOnly()
+        {
+            var fields = new List<string>
+            {
+                "77777", // GroupId
+                "800201", // CostMaterial
+                "10", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11 (Epic grade)
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110 (Unique grade)
+                "2", // GuaranteeCount110
+                "171", "1000", // Recipe1: Low grade (1) - below minimum
+                "172", "1000", // Recipe2: Normal grade (2) - below minimum
             };
 
             var row = new CostumeSummonSheet.Row();

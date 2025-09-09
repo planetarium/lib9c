@@ -344,10 +344,12 @@ namespace Nekoyume.Action
                 }
             }
 
-            // If no eligible recipes found, return the first recipe (fallback)
+            // If no eligible recipes found, throw an exception
             if (eligibleRecipes.Count == 0)
             {
-                return summonRow.Recipes.First().Item1;
+                throw new InvalidOperationException(
+                    $"No rune recipes found with grade >= {minimumGrade} for summon group {summonRow.GroupId}. " +
+                    "Please check the rune list sheet and summon configuration.");
             }
 
             // Select from eligible recipes based on their ratios

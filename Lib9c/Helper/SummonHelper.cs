@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Libplanet.Action;
 using Nekoyume.Model.Item;
@@ -55,7 +56,10 @@ namespace Nekoyume.Helper
                 }
             }
 
-            return summonRow.Recipes.First().Item1;
+            // This should never happen if the data is correct, but provide a clear error message
+            throw new InvalidOperationException(
+                $"Failed to select recipe for summon group {summonRow.GroupId}. " +
+                "This indicates a data consistency issue with recipe ratios.");
         }
 
         /// <summary>
@@ -226,10 +230,12 @@ namespace Nekoyume.Helper
                 }
             }
 
-            // If no eligible recipes found, return the first recipe (fallback)
+            // If no eligible recipes found, throw an exception
             if (eligibleRecipes.Count == 0)
             {
-                return summonRow.Recipes.First().Item1;
+                throw new InvalidOperationException(
+                    $"No costume recipes found with grade >= {minimumGrade} for summon group {summonRow.GroupId}. " +
+                    "Please check the costume item sheet and summon configuration.");
             }
 
             // Select from eligible recipes based on their ratios
@@ -302,10 +308,12 @@ namespace Nekoyume.Helper
                 }
             }
 
-            // If no eligible recipes found, return the first recipe (fallback)
+            // If no eligible recipes found, throw an exception
             if (eligibleRecipes.Count == 0)
             {
-                return summonRow.Recipes.First().Item1;
+                throw new InvalidOperationException(
+                    $"No equipment recipes found with grade >= {minimumGrade} for summon group {summonRow.GroupId}. " +
+                    "Please check the equipment item sheet and summon configuration.");
             }
 
             // Select from eligible recipes based on their ratios
