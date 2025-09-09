@@ -67,6 +67,22 @@ namespace Nekoyume.Action
             SummonCount = plainValue[SummonCountKey].ToInteger();
         }
 
+        /// <summary>
+        /// Simulates aura equipment summoning with optional grade guarantee system.
+        /// Applies 10+1 bonus rule and uses grade guarantee settings from SummonSheet.Row when enabled.
+        /// When grade guarantee is enabled, ensures minimum grade items are obtained based on summon count.
+        /// </summary>
+        /// <param name="addressesHex">Addresses hex for error reporting</param>
+        /// <param name="recipeSheet">Equipment item recipe sheet</param>
+        /// <param name="equipmentItemSheet">Equipment item sheet</param>
+        /// <param name="equipmentItemSubRecipeSheetV2">Equipment item sub-recipe sheet</param>
+        /// <param name="optionSheet">Equipment item option sheet</param>
+        /// <param name="skillSheet">Skill sheet</param>
+        /// <param name="summonRow">Summon configuration row with recipes and guarantee settings</param>
+        /// <param name="summonCount">Number of items to summon (before 10+1 bonus)</param>
+        /// <param name="random">Random number generator</param>
+        /// <param name="blockIndex">Current block index for item creation</param>
+        /// <returns>Collection of (recipe ID, equipment) pairs</returns>
         public static IEnumerable<(int, Equipment)> SimulateSummon(
             string addressesHex,
             EquipmentItemRecipeSheet recipeSheet,

@@ -36,6 +36,9 @@ namespace Nekoyume.Action
         public const string SummonCountKey = "sc";
         public int SummonCount;
 
+        /// <summary>
+        /// Number of runes obtained per summon.
+        /// </summary>
         public const int RuneQuantity = 10;
 
         public override IWorld Execute(IActionContext context)
@@ -164,6 +167,20 @@ namespace Nekoyume.Action
             return states;
         }
 
+        /// <summary>
+        /// Simulates rune summoning with optional grade guarantee system.
+        /// Applies 10+1 bonus rule and uses grade guarantee settings from SummonSheet.Row when enabled.
+        /// When grade guarantee is enabled, ensures minimum grade runes are obtained based on summon count.
+        /// Each summon yields 10 runes of the selected type.
+        /// </summary>
+        /// <param name="runeSheet">Rune sheet containing rune information</param>
+        /// <param name="summonRow">Summon configuration row with recipes and guarantee settings</param>
+        /// <param name="summonCount">Number of summons to perform (before 10+1 bonus)</param>
+        /// <param name="random">Random number generator</param>
+        /// <param name="useGradeGuarantee">Whether to use grade guarantee (deprecated, now determined by summonRow.UseGradeGuarantee)</param>
+        /// <param name="minimumGrade">Minimum grade for guarantee (deprecated, now determined by summonRow settings)</param>
+        /// <param name="runeListSheet">Rune list sheet for grade information</param>
+        /// <returns>Dictionary mapping rune currencies to quantities</returns>
         public static Dictionary<Currency, int> SimulateSummon(
             RuneSheet runeSheet,
             SummonSheet.Row summonRow,
@@ -243,10 +260,16 @@ namespace Nekoyume.Action
         /// <summary>
         /// Gets rune summon recipe IDs with grade guarantee system based on summon count.
         /// Applies different guarantee settings for 11 summons vs 110 summons.
-        /// For runes, we use a simplified approach based on rune level or rarity.
+        /// For runes, we use RuneListSheet.Grade to determine rune quality levels.
         /// This method processes items one by one to maintain the same random call order as the original implementation.
-        /// Uses grade guarantee settings from SummonSheet.Row.
+        /// Uses grade guarantee settings from SummonSheet.Row to ensure minimum grade runes are obtained.
         /// </summary>
+        /// <param name="summonRow">Summon configuration row with recipes and guarantee settings</param>
+        /// <param name="summonCount">Number of summons to perform</param>
+        /// <param name="random">Random number generator</param>
+        /// <param name="runeSheet">Rune sheet containing rune information</param>
+        /// <param name="runeListSheet">Rune list sheet for grade information</param>
+        /// <returns>List of recipe IDs with grade guarantee applied</returns>
         private static List<int> GetRuneSummonRecipeIdsWithGradeGuarantee(
             SummonSheet.Row summonRow,
             int summonCount,
@@ -291,7 +314,15 @@ namespace Nekoyume.Action
 
         /// <summary>
         /// Gets a rune recipe ID that guarantees minimum grade or higher.
+        /// Filters available recipes to only those meeting the minimum grade requirement,
+        /// then selects from eligible recipes based on their configured ratios.
         /// </summary>
+        /// <param name="summonRow">Summon configuration row with recipes</param>
+        /// <param name="random">Random number generator</param>
+        /// <param name="runeSheet">Rune sheet containing rune information</param>
+        /// <param name="minimumGrade">Minimum grade requirement</param>
+        /// <param name="runeListSheet">Rune list sheet for grade information</param>
+        /// <returns>Recipe ID that meets minimum grade requirement</returns>
         private static int GetGuaranteedRuneGradeRecipeId(
             SummonSheet.Row summonRow,
             IRandom random,

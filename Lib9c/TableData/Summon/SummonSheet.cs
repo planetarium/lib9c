@@ -9,37 +9,84 @@ namespace Nekoyume.TableData.Summon
     {
         public class Row : SheetRow<int>
         {
+            /// <summary>
+            /// Maximum number of recipes allowed per summon group.
+            /// </summary>
             public const int MaxRecipeCount = 100;
             public override int Key => GroupId;
 
+            /// <summary>
+            /// Unique identifier for this summon group.
+            /// </summary>
             public int GroupId { get; private set; }
+            
+            /// <summary>
+            /// Material ID required for summoning.
+            /// </summary>
             public int CostMaterial { get; private set; }
+            
+            /// <summary>
+            /// Quantity of material required for summoning.
+            /// </summary>
             public int CostMaterialCount { get; private set; }
+            
+            /// <summary>
+            /// NCG (Nine Chronicles Gold) cost for summoning.
+            /// </summary>
             public int CostNcg { get; private set; }
 
-            // Grade guarantee settings for 11 summons
+            /// <summary>
+            /// Minimum grade to guarantee for 11 summons. Null if not configured.
+            /// </summary>
             public int? MinimumGrade11 { get; private set; }
+            
+            /// <summary>
+            /// Number of items to guarantee for 11 summons. Null if not configured.
+            /// </summary>
             public int? GuaranteeCount11 { get; private set; }
 
-            // Grade guarantee settings for 110 summons
+            /// <summary>
+            /// Minimum grade to guarantee for 110 summons. Null if not configured.
+            /// </summary>
             public int? MinimumGrade110 { get; private set; }
+            
+            /// <summary>
+            /// Number of items to guarantee for 110 summons. Null if not configured.
+            /// </summary>
             public int? GuaranteeCount110 { get; private set; }
 
             /// <summary>
             /// Determines if grade guarantee is enabled for this summon group.
             /// Returns true if any guarantee settings are configured (either for 11 or 110 summons).
+            /// This property is used by summon actions to determine whether to apply grade guarantee logic.
             /// </summary>
+            /// <value>True if grade guarantee is configured for this summon group, false otherwise</value>
             public bool UseGradeGuarantee =>
                 (MinimumGrade11.HasValue && GuaranteeCount11.HasValue) ||
                 (MinimumGrade110.HasValue && GuaranteeCount110.HasValue);
 
+            /// <summary>
+            /// List of recipes available for this summon group.
+            /// Each tuple contains (recipeId, ratio) where ratio determines the probability of selection.
+            /// </summary>
             public readonly List<(int, int)> Recipes = new();
 
+            /// <summary>
+            /// Calculates the total ratio of all recipes in this summon group.
+            /// </summary>
+            /// <returns>Sum of all recipe ratios</returns>
             public int TotalRatio()
             {
                 return Recipes.Sum(x => x.Item2);
             }
 
+            /// <summary>
+            /// Calculates the cumulative ratio up to the specified recipe index.
+            /// Used for weighted random selection of recipes.
+            /// </summary>
+            /// <param name="index">Recipe index (1-based)</param>
+            /// <returns>Cumulative ratio up to the specified index</returns>
+            /// <exception cref="IndexOutOfRangeException">Thrown when index is out of valid range</exception>
             public int CumulativeRatio(int index)
             {
                 if (index is < 1 or > MaxRecipeCount)
@@ -59,6 +106,12 @@ namespace Nekoyume.TableData.Summon
                 return ratio;
             }
 
+            /// <summary>
+            /// Sets the row data from CSV fields, supporting both legacy and new formats with grade guarantee settings.
+            /// Legacy format: groupID,cost_material,cost_material_count,cost_ncg,recipe1ID,recipe1ratio,...
+            /// New format: groupID,cost_material,cost_material_count,cost_ncg,GUARANTEE,min_grade_11,count_11,min_grade_110,count_110,recipe1ID,recipe1ratio,...
+            /// </summary>
+            /// <param name="fields">CSV field values</param>
             public override void Set(IReadOnlyList<string> fields)
             {
                 GroupId = ParseInt(fields[0]);

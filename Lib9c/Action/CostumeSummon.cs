@@ -61,6 +61,17 @@ namespace Nekoyume.Action
             SummonCount = (Integer)plainValue[SummonCountKey];
         }
 
+        /// <summary>
+        /// Simulates costume summoning with optional grade guarantee system.
+        /// Applies 10+1 bonus rule and uses grade guarantee settings from SummonSheet.Row when enabled.
+        /// When grade guarantee is enabled, ensures minimum grade costumes are obtained based on summon count.
+        /// </summary>
+        /// <param name="addressesHex">Addresses hex for error reporting</param>
+        /// <param name="costumeItemSheet">Costume item sheet containing costume information</param>
+        /// <param name="summonRow">Summon configuration row with recipes and guarantee settings</param>
+        /// <param name="summonCount">Number of costumes to summon (before 10+1 bonus)</param>
+        /// <param name="random">Random number generator</param>
+        /// <returns>Collection of summoned costumes</returns>
         public static IEnumerable<Costume> SimulateSummon(
             string addressesHex,
             CostumeItemSheet costumeItemSheet,

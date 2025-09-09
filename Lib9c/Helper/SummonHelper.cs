@@ -9,28 +9,40 @@ namespace Nekoyume.Helper
 {
     public static class SummonHelper
     {
+        /// <summary>
+        /// Array of allowed summon counts. Only these values are permitted for summon actions.
+        /// </summary>
         public static readonly int[] AllowedSummonCount = {1, 10, 100};
 
         /// <summary>
-        /// summon에서 쓸 count를 넣으면 허용된 count인지 체크한 뒤 허용 여부를 반환합니다.
+        /// Validates if the given summon count is allowed.
+        /// Only counts in AllowedSummonCount array (1, 10, 100) are permitted.
         /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
+        /// <param name="count">Summon count to validate</param>
+        /// <returns>True if the count is allowed, false otherwise</returns>
         public static bool CheckSummonCountIsValid(int count)
         {
             return AllowedSummonCount.Contains(count);
         }
 
         /// <summary>
-        /// count를 넣으면 10+1 이라는 규칙에 의해 증가된 값을 반환합니다.
+        /// Calculates the actual summon count by applying the 10+1 bonus rule.
+        /// For every 10 summons, 1 additional summon is granted as a bonus.
         /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
+        /// <param name="count">Base summon count</param>
+        /// <returns>Total summon count including bonus</returns>
         public static int CalculateSummonCount(int count)
         {
             return count + count / 10;
         }
 
+        /// <summary>
+        /// Gets a random recipe ID from the summon row based on weighted ratios.
+        /// Uses cumulative ratio calculation to select recipes according to their configured probabilities.
+        /// </summary>
+        /// <param name="summonRow">Summon sheet row containing recipes and their ratios</param>
+        /// <param name="random">Random number generator</param>
+        /// <returns>Selected recipe ID</returns>
         public static int GetSummonRecipeIdByRandom(SummonSheet.Row summonRow,
             IRandom random)
         {
