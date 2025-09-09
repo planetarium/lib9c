@@ -71,7 +71,7 @@ namespace Nekoyume.Helper
             if (summonCount >= 110)
             {
                 // Use 110 summon guarantee settings
-                var useGuarantee = summonRow.MinimumGrade110.HasValue && summonRow.GuaranteeCount110.HasValue;
+                var useGuarantee = summonRow.UseGradeGuarantee(summonCount);
                 var minimumGrade = summonRow.MinimumGrade110 ?? 0;
                 var guaranteeCount = summonRow.GuaranteeCount110 ?? 0;
                 return (useGuarantee, minimumGrade, guaranteeCount);
@@ -79,7 +79,7 @@ namespace Nekoyume.Helper
             else if (summonCount >= 11)
             {
                 // Use 11 summon guarantee settings
-                var useGuarantee = summonRow.MinimumGrade11.HasValue && summonRow.GuaranteeCount11.HasValue;
+                var useGuarantee = summonRow.UseGradeGuarantee(summonCount);
                 var minimumGrade = summonRow.MinimumGrade11 ?? 0;
                 var guaranteeCount = summonRow.GuaranteeCount11 ?? 0;
                 return (useGuarantee, minimumGrade, guaranteeCount);

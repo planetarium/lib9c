@@ -156,7 +156,7 @@ namespace Nekoyume.Action
             IWorld states
         )
         {
-            var result = SimulateSummon(runeSheet, summonRow, summonCount, random, useGradeGuarantee: summonRow.UseGradeGuarantee, minimumGrade: 3, runeListSheet: null);
+            var result = SimulateSummon(runeSheet, summonRow, summonCount, random, runeListSheet: null);
 #pragma warning disable LAA1002
             foreach (var pair in result)
 #pragma warning restore LAA1002
@@ -177,8 +177,6 @@ namespace Nekoyume.Action
         /// <param name="summonRow">Summon configuration row with recipes and guarantee settings</param>
         /// <param name="summonCount">Number of summons to perform (before 10+1 bonus)</param>
         /// <param name="random">Random number generator</param>
-        /// <param name="useGradeGuarantee">Whether to use grade guarantee (deprecated, now determined by summonRow.UseGradeGuarantee)</param>
-        /// <param name="minimumGrade">Minimum grade for guarantee (deprecated, now determined by summonRow settings)</param>
         /// <param name="runeListSheet">Rune list sheet for grade information</param>
         /// <returns>Dictionary mapping rune currencies to quantities</returns>
         public static Dictionary<Currency, int> SimulateSummon(
@@ -186,8 +184,6 @@ namespace Nekoyume.Action
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
-            bool useGradeGuarantee = true,
-            int minimumGrade = 3,
             RuneListSheet runeListSheet = null
         )
         {
@@ -195,8 +191,9 @@ namespace Nekoyume.Action
 
             var result = new Dictionary<Currency, int>();
             List<int> recipeIds;
+            var useGradeGuarantee = summonRow.UseGradeGuarantee(summonCount);
 
-            if (useGradeGuarantee && summonRow.UseGradeGuarantee)
+            if (useGradeGuarantee)
             {
                 // For runes, we'll use a simplified approach since runes don't have traditional grades
                 // We'll use the same logic but with rune-specific grade checking

@@ -182,8 +182,6 @@ namespace Lib9c.Tests.Action.Summon
                 summonRow,
                 summonCount,
                 random,
-                useGradeGuarantee: summonRow.UseGradeGuarantee,
-                minimumGrade: minimumGrade,
                 runeListSheet: _tableSheets.RuneListSheet
             );
 

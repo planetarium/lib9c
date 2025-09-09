@@ -101,7 +101,7 @@ namespace Nekoyume.Action
             var result = new List<(int, Equipment)>();
             List<int> recipeIds;
 
-            if (summonRow.UseGradeGuarantee)
+            if (summonRow.UseGradeGuarantee(summonCount))
             {
                 // Use grade guarantee system with settings from SummonSheet.Row based on summon count
                 recipeIds = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
@@ -113,7 +113,7 @@ namespace Nekoyume.Action
                 recipeIds = null; // Will be processed one by one in the loop
             }
 
-            if (summonRow.UseGradeGuarantee && recipeIds != null)
+            if (summonRow.UseGradeGuarantee(summonCount) && recipeIds != null)
             {
                 // Process pre-generated recipe IDs
                 foreach (var recipeId in recipeIds)

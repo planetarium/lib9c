@@ -19,17 +19,17 @@ namespace Nekoyume.TableData.Summon
             /// Unique identifier for this summon group.
             /// </summary>
             public int GroupId { get; private set; }
-            
+
             /// <summary>
             /// Material ID required for summoning.
             /// </summary>
             public int CostMaterial { get; private set; }
-            
+
             /// <summary>
             /// Quantity of material required for summoning.
             /// </summary>
             public int CostMaterialCount { get; private set; }
-            
+
             /// <summary>
             /// NCG (Nine Chronicles Gold) cost for summoning.
             /// </summary>
@@ -39,7 +39,7 @@ namespace Nekoyume.TableData.Summon
             /// Minimum grade to guarantee for 11 summons. Null if not configured.
             /// </summary>
             public int? MinimumGrade11 { get; private set; }
-            
+
             /// <summary>
             /// Number of items to guarantee for 11 summons. Null if not configured.
             /// </summary>
@@ -49,21 +49,36 @@ namespace Nekoyume.TableData.Summon
             /// Minimum grade to guarantee for 110 summons. Null if not configured.
             /// </summary>
             public int? MinimumGrade110 { get; private set; }
-            
+
             /// <summary>
             /// Number of items to guarantee for 110 summons. Null if not configured.
             /// </summary>
             public int? GuaranteeCount110 { get; private set; }
 
             /// <summary>
-            /// Determines if grade guarantee is enabled for this summon group.
-            /// Returns true if any guarantee settings are configured (either for 11 or 110 summons).
-            /// This property is used by summon actions to determine whether to apply grade guarantee logic.
+            /// Determines if grade guarantee is enabled for this summon group based on summon count.
+            /// Returns true if guarantee settings are configured for the specified summon count.
+            /// For 11 summons: checks if MinimumGrade11 and GuaranteeCount11 are configured.
+            /// For 110 summons: checks if MinimumGrade110 and GuaranteeCount110 are configured.
+            /// For other counts: returns false.
             /// </summary>
-            /// <value>True if grade guarantee is configured for this summon group, false otherwise</value>
-            public bool UseGradeGuarantee =>
-                (MinimumGrade11.HasValue && GuaranteeCount11.HasValue) ||
-                (MinimumGrade110.HasValue && GuaranteeCount110.HasValue);
+            /// <param name="summonCount">Number of summons to check guarantee for</param>
+            /// <value>True if grade guarantee is configured for the specified summon count, false otherwise</value>
+            public bool UseGradeGuarantee(int summonCount)
+            {
+                if (summonCount >= 110)
+                {
+                    return MinimumGrade110.HasValue && GuaranteeCount110.HasValue;
+                }
+                else if (summonCount >= 11)
+                {
+                    return MinimumGrade11.HasValue && GuaranteeCount11.HasValue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
             /// <summary>
             /// List of recipes available for this summon group.

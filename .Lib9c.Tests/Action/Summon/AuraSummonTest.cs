@@ -275,7 +275,8 @@ namespace Lib9c.Tests.Action.Summon
             var random = new TestRandom();
             var summonRow = CreateTestSummonRowWithGuarantee();
 
-            Assert.True(summonRow.UseGradeGuarantee);
+            Assert.True(summonRow.UseGradeGuarantee(11));
+            Assert.True(summonRow.UseGradeGuarantee(110));
             Assert.Equal((int)Grade.Epic, summonRow.MinimumGrade11);
             Assert.Equal((int)Grade.Unique, summonRow.MinimumGrade110);
 
@@ -308,7 +309,8 @@ namespace Lib9c.Tests.Action.Summon
             // Arrange
             var random = new TestRandom();
             var summonRow = CreateTestSummonRowWithoutGuarantee();
-            Assert.False(summonRow.UseGradeGuarantee);
+            Assert.False(summonRow.UseGradeGuarantee(11));
+            Assert.False(summonRow.UseGradeGuarantee(110));
 
             // Act
             var result = AuraSummon.SimulateSummon(
