@@ -69,11 +69,13 @@ namespace Nekoyume.Action
                 typeof(RuneSummonSheet),
                 typeof(MaterialItemSheet),
                 typeof(RuneSheet),
+                typeof(RuneListSheet),
             });
 
             var summonSheet = sheets.GetSheet<RuneSummonSheet>();
             var materialSheet = sheets.GetSheet<MaterialItemSheet>();
             var runeSheet = sheets.GetSheet<RuneSheet>();
+            var runeListSheet = sheets.GetSheet<RuneListSheet>();
 
             var summonRow = summonSheet.OrderedList.FirstOrDefault(row => row.GroupId == GroupId);
             if (summonRow is null)
@@ -113,7 +115,8 @@ namespace Nekoyume.Action
                 summonRow,
                 SummonCount,
                 random,
-                states
+                states,
+                runeListSheet
             );
 
             Log.Debug(
@@ -153,10 +156,11 @@ namespace Nekoyume.Action
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
-            IWorld states
+            IWorld states,
+            RuneListSheet runeListSheet
         )
         {
-            var result = SimulateSummon(runeSheet, summonRow, summonCount, random, runeListSheet: null);
+            var result = SimulateSummon(runeSheet, summonRow, summonCount, random, runeListSheet);
 #pragma warning disable LAA1002
             foreach (var pair in result)
 #pragma warning restore LAA1002
@@ -184,7 +188,7 @@ namespace Nekoyume.Action
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
-            RuneListSheet runeListSheet = null
+            RuneListSheet runeListSheet
         )
         {
             summonCount = SummonHelper.CalculateSummonCount(summonCount);
