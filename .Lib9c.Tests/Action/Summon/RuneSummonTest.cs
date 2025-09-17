@@ -134,7 +134,8 @@ namespace Lib9c.Tests.Action.Summon
                     _tableSheets.RuneSheet,
                     _tableSheets.RuneSummonSheet[groupId],
                     summonCount,
-                    new TestRandom(seed)
+                    new TestRandom(seed),
+                    _tableSheets.RuneListSheet
                 );
                 foreach (var pair in result)
                 {
