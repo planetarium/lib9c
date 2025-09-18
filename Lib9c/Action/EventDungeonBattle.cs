@@ -16,6 +16,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Event;
 using Nekoyume.Model.Skill;
+using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
@@ -259,16 +260,15 @@ namespace Nekoyume.Action
                     }
                 }
             }
-            // ~Update tickets.
 
-            if (!eventDungeonInfo.TryUseTickets(PlayCount))
+            if (!eventDungeonInfo.TryUseTickets(1))
             {
                 if (!BuyTicketIfNeeded)
                 {
                     throw new NotEnoughEventDungeonTicketsException(
                         ActionTypeText,
                         addressesHex,
-                        PlayCount,
+                        1,
                         eventDungeonInfo.RemainingTickets);
                 }
 
@@ -286,16 +286,9 @@ namespace Nekoyume.Action
                         feeAddress = Addresses.EventDungeon;
                     }
 
-                    states = states.TransferAsset(
-                        context,
-                        context.Signer,
-                        feeAddress,
-                        cost
-                    );
+                    states = states.TransferAsset(context, context.Signer, feeAddress, cost);
                 }
 
-                // NOTE: The number of ticket purchases should be increased
-                //       even if [`cost`] is 0.
                 eventDungeonInfo.IncreaseNumberOfTicketPurchases();
             }
 
@@ -311,11 +304,10 @@ namespace Nekoyume.Action
 
             sw.Stop();
             Log.Verbose(
-                "[{ActionTypeString}][{AddressesHex}] Validate fields: {Elapsed}",
+                "[{ActionTypeString}][{AddressesHex}] Validate event dungeon info: {Elapsed}",
                 ActionTypeText,
                 addressesHex,
                 sw.Elapsed);
-            // ~Validate avatar's event dungeon info.
 
             // update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
@@ -472,5 +464,6 @@ namespace Nekoyume.Action
                 DateTimeOffset.UtcNow - started);
             return states;
         }
+
     }
 }
