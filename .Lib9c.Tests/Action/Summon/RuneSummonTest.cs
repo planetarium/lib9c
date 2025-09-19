@@ -134,7 +134,8 @@ namespace Lib9c.Tests.Action.Summon
                     _tableSheets.RuneSheet,
                     _tableSheets.RuneSummonSheet[groupId],
                     summonCount,
-                    new TestRandom(seed)
+                    new TestRandom(seed),
+                    _tableSheets.RuneListSheet
                 );
                 foreach (var pair in result)
                 {
@@ -165,6 +166,129 @@ namespace Lib9c.Tests.Action.Summon
                             });
                     });
             }
+        }
+
+        [Theory]
+        [InlineData(10, 11, 3, 1)]
+        [InlineData(100, 110, 4, 2)]
+        public void SimulateSummon_WithGuarantee(int summonCount, int resultCount, int minimumGrade, int guaranteeCount)
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestRuneSummonRowWithGuarantee();
+
+            // Act
+            var result = RuneSummon.SimulateSummon(
+                _tableSheets.RuneSheet,
+                summonRow,
+                summonCount,
+                random,
+                runeListSheet: _tableSheets.RuneListSheet
+            );
+
+            // Assert
+            Assert.Equal(resultCount * 10, result.Values.Sum()); // 10+1 rule applied, each rune gives 10 items
+            // Check that at least the guaranteed number of runes meets minimum grade requirement
+            var guaranteedRunes = 0;
+            foreach (var (currency, quantity) in result)
+            {
+                var runeId = ExtractRuneIdFromCurrency(currency);
+                if (runeId.HasValue && _tableSheets.RuneListSheet.TryGetValue(runeId.Value, out var runeListRow))
+                {
+                    if (runeListRow.Grade >= minimumGrade)
+                    {
+                        guaranteedRunes += quantity; // Each summon gives 10 runes
+                    }
+                }
+            }
+
+            Assert.True(guaranteedRunes >= guaranteeCount * 10);
+        }
+
+        [Fact]
+        public void SimulateSummon_NoEligibleRuneRecipes_ShouldThrowException()
+        {
+            // Arrange
+            var random = new TestRandom();
+            var summonRow = CreateTestRuneSummonRowWithLowGradesOnly();
+
+            // Act & Assert
+            var exception = Assert.Throws<System.InvalidOperationException>(() =>
+                RuneSummon.SimulateSummon(
+                    _tableSheets.RuneSheet,
+                    summonRow,
+                    11, // Use 11 summons to trigger grade guarantee
+                    random,
+                    runeListSheet: _tableSheets.RuneListSheet));
+
+            Assert.Contains("No rune recipes found with grade >= 3", exception.Message);
+            Assert.Contains("summon group 88888", exception.Message);
+        }
+
+        /// <summary>
+        /// Creates a test RuneSummonSheet.Row with grade guarantee settings enabled.
+        /// </summary>
+        private static RuneSummonSheet.Row CreateTestRuneSummonRowWithGuarantee()
+        {
+            var fields = new List<string>
+            {
+                "99999", // GroupId
+                "600201", // CostMaterial
+                "20", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110
+                "2", // GuaranteeCount110
+                "10021", "1000", // Recipe1: Low grade (1)
+                "10022", "1000", // Recipe2: Normal grade (2)
+                "10023", "1",    // Recipe3: High grade (3)
+                "10024", "1",    // Recipe4: Unique grade (4)
+            };
+
+            var row = new RuneSummonSheet.Row();
+            row.Set(fields);
+            return row;
+        }
+
+        /// <summary>
+        /// Creates a test RuneSummonSheet.Row with only low-grade runes that don't meet guarantee requirements.
+        /// </summary>
+        private static RuneSummonSheet.Row CreateTestRuneSummonRowWithLowGradesOnly()
+        {
+            var fields = new List<string>
+            {
+                "88888", // GroupId
+                "600201", // CostMaterial
+                "20", // CostMaterialCount
+                "0", // CostNcg
+                "GUARANTEE", // Grade guarantee marker
+                "3", // MinimumGrade11 (Epic grade)
+                "1", // GuaranteeCount11
+                "4", // MinimumGrade110 (Unique grade)
+                "2", // GuaranteeCount110
+                "3001", "1000", // Recipe1: Low grade (1) - below minimum
+                "1001", "1000", // Recipe2: Normal grade (2) - below minimum
+            };
+
+            var row = new RuneSummonSheet.Row();
+            row.Set(fields);
+            return row;
+        }
+
+        /// <summary>
+        /// Extracts rune ID from currency ticker.
+        /// </summary>
+        private int? ExtractRuneIdFromCurrency(Currency currency)
+        {
+            // Extract rune ID from ticker by finding the corresponding rune in RuneSheet
+            // The ticker format is like "RUNESTONE_FENRIR1" or similar
+            var ticker = currency.Ticker;
+
+            // Find the rune ID by matching the ticker in the RuneSheet
+            var runeRow = _tableSheets.RuneSheet.OrderedList.FirstOrDefault(r => r.Ticker == ticker);
+            return runeRow?.Id;
         }
 
         private class ExecuteMemeber : IEnumerable<object[]>
