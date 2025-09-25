@@ -37,4 +37,4 @@ Since DocFX doesn't support multilingual (translation) feature like vitepress, I
 
 ### About `toc.yml` files
 
-`toc.yml` file is an yaml file to describe *Table of Contents*. To see its spec, look around https://dotnet.github.io/docfx/docs/table-of-contents.html docs.
+`toc.yml` file is a yaml file to describe *Table of Contents*. To see its spec, look around https://dotnet.github.io/docfx/docs/table-of-contents.html docs.
