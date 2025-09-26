@@ -667,6 +667,7 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 300039,40100045,1,,FALSE,40100044,1,,FALSE,,,,,,,,,,,,,,,,,DEF,Percentage,20,HP,Percentage,20,HIT,Percentage,20
 300040,40100049,1,,FALSE,40100050,1,,FALSE,,,,,,,,,,,,,,,,,SPD,Percentage,20,HIT,Percentage,20,HP,Percentage,20
 300041,49900043,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,2,SPD,Percentage,2,HIT,Percentage,2
+300042,49900044,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Percentage,2,DEF,Percentage,2,HIT,Percentage,2
 1000101,500000,10,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,1309,,,,,,
 1000102,500000,100,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,3588,,,,,,
 1000103,500000,300,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,6185,,,,,,
