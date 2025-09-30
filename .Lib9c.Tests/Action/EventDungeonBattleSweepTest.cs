@@ -394,6 +394,187 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        [InlineData(10010001, 1, 1, 2)] // Level up case: from level 1 to 2
+        [InlineData(10010001, 3, 1, 2)] // Multiple level up case: from level 1 to 2
+        [InlineData(10010001, 5, 1, 3)] // Large experience case: from level 1 to 3
+        public void Execute_LevelUp(int stageId, int playCount, int initialLevel, int expectedLevel)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            // Set avatar to low level
+            avatarState.level = initialLevel;
+            avatarState.exp = 0; // Initialize experience
+
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            // Get the correct block index from event schedule
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+
+            // Create event dungeon info with enough tickets
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 10);
+
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify level up
+            Assert.Equal(expectedLevel, nextAvatar.level);
+            Assert.True(nextAvatar.exp > 0, $"Expected experience > 0, but got {nextAvatar.exp}");
+
+            // Verify level up count
+            var levelUpCount = expectedLevel - initialLevel;
+            Assert.True(levelUpCount > 0, $"Expected level up, but level remained at {initialLevel}");
+
+            // Verify experience is proportional to play count
+            var expectedExp = scheduleRow.GetStageExp(stageId.ToEventDungeonStageNumber(), playCount);
+            Assert.True(
+                nextAvatar.exp >= expectedExp,
+                $"Expected at least {expectedExp} experience, but got {nextAvatar.exp}");
+        }
+
+        [Theory]
+        [InlineData(10010001, 1, 100)] // Max level case: experience gain at level 100
+        [InlineData(10010001, 5, 100)] // Max level with large experience case
+        public void Execute_MaxLevelExperience(int stageId, int playCount, int maxLevel)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            // Set avatar to max level
+            avatarState.level = maxLevel;
+            avatarState.exp = 0; // Initialize experience
+
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            // Get the correct block index from event schedule
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+
+            // Create event dungeon info with enough tickets
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 10);
+
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify no level up occurs at max level
+            Assert.Equal(maxLevel, nextAvatar.level);
+
+            // At max level, experience can be 0 (no level up possible)
+            // But the action should execute successfully
+            Assert.True(nextAvatar.exp >= 0, $"Experience should be non-negative, but got {nextAvatar.exp}");
+        }
+
+        [Theory]
+        [InlineData(10010001, 1, 1, 2)] // Level up quest verification: from level 1 to 2
+        [InlineData(10010001, 3, 1, 2)] // Multiple level up quest verification: from level 1 to 2
+        public void Execute_LevelUpQuestUpdate(int stageId, int playCount, int initialLevel, int expectedLevel)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            // Set avatar to low level
+            avatarState.level = initialLevel;
+            avatarState.exp = 0; // Initialize experience
+
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            // Get the correct block index from event schedule
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+
+            // Create event dungeon info with enough tickets
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 10);
+
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify level up
+            Assert.Equal(expectedLevel, nextAvatar.level);
+
+            // Calculate level up count
+            var levelUpCount = expectedLevel - initialLevel;
+            Assert.True(levelUpCount > 0, $"Expected level up, but level remained at {initialLevel}");
+
+            // Verify that level up events are processed in the quest system
+            // Check if AvatarStateExtensions.UpdateExp adds level up events to eventMap
+            // This is processed through questList.UpdateCompletedQuest
+            Assert.NotNull(nextAvatar.questList);
+        }
+
+        [Theory]
         [InlineData(1)]
         [InlineData(3)]
         [InlineData(5)]

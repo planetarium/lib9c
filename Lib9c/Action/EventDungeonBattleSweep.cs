@@ -75,14 +75,49 @@ namespace Nekoyume.Action
         /// </summary>
         private const int MaxPlayCount = 100;
 
+        /// <summary>
+        /// The address of the avatar performing the sweep action.
+        /// </summary>
         public Address AvatarAddress;
+
+        /// <summary>
+        /// The ID of the event schedule for the dungeon.
+        /// </summary>
         public int EventScheduleId;
+
+        /// <summary>
+        /// The ID of the event dungeon to sweep.
+        /// </summary>
         public int EventDungeonId;
+
+        /// <summary>
+        /// The ID of the event dungeon stage to sweep.
+        /// </summary>
         public int EventDungeonStageId;
+
+        /// <summary>
+        /// List of equipment item IDs to use during the sweep.
+        /// </summary>
         public List<Guid> Equipments;
+
+        /// <summary>
+        /// List of costume item IDs to use during the sweep.
+        /// </summary>
         public List<Guid> Costumes;
+
+        /// <summary>
+        /// List of food item IDs to use during the sweep.
+        /// </summary>
         public List<Guid> Foods;
+
+        /// <summary>
+        /// List of rune slot information for equipped runes.
+        /// </summary>
         public List<RuneSlotInfo> RuneInfos;
+
+        /// <summary>
+        /// The number of times to perform the sweep (must be between 1 and MaxPlayCount).
+        /// </summary>
         public int PlayCount;
 
         Address IEventDungeonBattleSweep.AvatarAddress => AvatarAddress;
@@ -179,6 +214,8 @@ namespace Nekoyume.Action
             // ========================================
             // STEP 1: INITIALIZATION AND VALIDATION
             // ========================================
+            // This step initializes the action execution environment and validates basic parameters.
+            // It includes gas consumption, address validation, and initial state loading.
 
             // Consume gas for action execution
             GasTracer.UseGas(1);
@@ -218,6 +255,8 @@ namespace Nekoyume.Action
             // ========================================
             // STEP 2: LOAD AND VALIDATE GAME SHEETS
             // ========================================
+            // This step loads all required game configuration sheets and validates their data.
+            // It ensures all necessary game data is available for the sweep action.
 
             // Define all required sheet types for event dungeon battle sweep
             var sheetTypes = new List<Type>
@@ -316,6 +355,8 @@ namespace Nekoyume.Action
             // ========================================
             // STEP 4: VALIDATE EVENT DUNGEON INFO AND TICKETS
             // ========================================
+            // This step validates the event dungeon information and ensures sufficient tickets
+            // are available for the requested number of plays.
 
             // Get event dungeon info address and load the state
             var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(
@@ -369,6 +410,8 @@ namespace Nekoyume.Action
             // ========================================
             // STEP 5: UPDATE SLOT STATES
             // ========================================
+            // This step updates the rune and item slot states to reflect the equipped items
+            // and their effects for the sweep action.
 
             // Update rune slot state - manages equipped runes and their effects
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
@@ -463,11 +506,8 @@ namespace Nekoyume.Action
             // ========================================
             // STEP 7: GENERATE REWARDS AND EXPERIENCE
             // ========================================
-
-            // Calculate experience points based on stage and play count
-            var exp = scheduleRow.GetStageExp(
-                EventDungeonStageId.ToEventDungeonStageNumber(),
-                PlayCount);
+            // This step generates rewards and experience based on the stage configuration
+            // and the number of plays. It uses the same reward system as HackAndSlashSweep.
 
             // Generate reward items using random number generator
             var random = context.GetRandom();
@@ -481,10 +521,15 @@ namespace Nekoyume.Action
             // Add reward items to avatar's inventory
             avatarState.UpdateInventory(rewardItems);
 
-            // Calculate level progression and update avatar experience
+            // Calculate experience points based on stage and play count (same as EventDungeonBattle)
+            var exp = scheduleRow.GetStageExp(
+                EventDungeonStageId.ToEventDungeonStageNumber(),
+                PlayCount);
+
+            // Apply experience and handle level up using AvatarStateExtensions.UpdateExp
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
-            var (level, totalExp) = avatarState.GetLevelAndExp(levelSheet, EventDungeonStageId.ToEventDungeonStageNumber(), PlayCount);
-            avatarState.UpdateExp(level, totalExp);
+            var (newLevel, newExp) = avatarState.GetLevelAndExp(levelSheet, EventDungeonStageId.ToEventDungeonStageNumber(), PlayCount);
+            avatarState.UpdateExp(newLevel, newExp);
 
             // Note: Sweep does not clear stages - it only works on already cleared stages
             // This is a key difference from regular battle actions
@@ -492,6 +537,8 @@ namespace Nekoyume.Action
             // ========================================
             // STEP 8: UPDATE STATES AND RETURN
             // ========================================
+            // This final step updates all relevant states and returns the modified world state.
+            // It includes updating avatar state, event dungeon info, and other related states.
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug(
