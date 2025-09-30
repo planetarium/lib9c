@@ -320,9 +320,77 @@ namespace Lib9c.Tests.Action
             // Verify tickets were consumed correctly
             Assert.Equal(expectedRemainingTickets, nextEventDungeonInfo.RemainingTickets);
 
+            // Verify experience was gained
+            var expectedExp = scheduleRow.GetStageExp(stageId.ToEventDungeonStageNumber(), playCount);
+            Assert.True(
+                nextAvatar.exp >= expectedExp,
+                $"Expected at least {expectedExp} experience, but got {nextAvatar.exp}");
+
             // Verify the action completed successfully
             Assert.NotNull(nextState);
             Assert.NotNull(nextAvatar);
+        }
+
+        [Theory]
+        [InlineData(10010001, 1, 1)] // First stage, 1 play
+        [InlineData(10010001, 3, 3)] // First stage, 3 plays
+        [InlineData(10010002, 2, 2)] // Second stage, 2 plays
+        public void Execute_ExperienceGain(int stageId, int playCount, int expectedMinExp)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            // Get the correct block index from event schedule
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+
+            // Create event dungeon info with enough tickets
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 10);
+
+            // Clear previous stage if not first stage
+            if (stageId != 10010001)
+            {
+                eventDungeonInfo.ClearStage(stageId - 1);
+            }
+
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify experience was gained correctly
+            var expectedExp = scheduleRow.GetStageExp(stageId.ToEventDungeonStageNumber(), playCount);
+            Assert.True(
+                nextAvatar.exp >= expectedExp,
+                $"Expected at least {expectedExp} experience, but got {nextAvatar.exp}");
+
+            // Verify experience is proportional to play count
+            Assert.True(
+                nextAvatar.exp >= expectedMinExp,
+                $"Expected at least {expectedMinExp} experience for {playCount} plays, but got {nextAvatar.exp}");
         }
 
         [Theory]

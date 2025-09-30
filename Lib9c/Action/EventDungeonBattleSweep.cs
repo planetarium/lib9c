@@ -483,7 +483,7 @@ namespace Nekoyume.Action
 
             // Calculate level progression and update avatar experience
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
-            var (level, totalExp) = avatarState.GetLevelAndExp(levelSheet, EventDungeonStageId, PlayCount);
+            var (level, totalExp) = avatarState.GetLevelAndExp(levelSheet, EventDungeonStageId.ToEventDungeonStageNumber(), PlayCount);
             avatarState.UpdateExp(level, totalExp);
 
             // Note: Sweep does not clear stages - it only works on already cleared stages
