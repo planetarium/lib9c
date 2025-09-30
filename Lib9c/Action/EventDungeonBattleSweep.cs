@@ -526,10 +526,17 @@ namespace Nekoyume.Action
                 EventDungeonStageId.ToEventDungeonStageNumber(),
                 PlayCount);
 
-            // Apply experience and handle level up using AvatarStateExtensions.UpdateExp
+            // Apply experience and handle level up
+            avatarState.exp += exp;
+
+            // Handle level up manually (since we don't use StageSimulator)
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
-            var (newLevel, newExp) = avatarState.GetLevelAndExp(levelSheet, EventDungeonStageId.ToEventDungeonStageNumber(), PlayCount);
-            avatarState.UpdateExp(newLevel, newExp);
+            while (levelSheet.TryGetValue(avatarState.level, out var levelRow) &&
+                   avatarState.exp >= levelRow.Exp + levelRow.ExpNeed)
+            {
+                avatarState.exp -= levelRow.Exp + levelRow.ExpNeed;
+                avatarState.level++;
+            }
 
             // Note: Sweep does not clear stages - it only works on already cleared stages
             // This is a key difference from regular battle actions
