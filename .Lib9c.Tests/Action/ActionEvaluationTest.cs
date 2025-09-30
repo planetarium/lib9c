@@ -90,6 +90,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(CreatePledge))]
         [InlineData(typeof(TransferAssets))]
         [InlineData(typeof(RuneSummon))]
+        [InlineData(typeof(EventDungeonBattleSweep))]
         [InlineData(typeof(ActivateCollection))]
         [InlineData(typeof(RetrieveAvatarAssets))]
         [InlineData(typeof(MigrateFee))]
@@ -510,6 +511,17 @@ namespace Lib9c.Tests.Action
                 {
                     TableName = "TestSheet",
                     CompressedTableCsv = new byte[] { 1, 2, 3, 4, 5 },
+                },
+                EventDungeonBattleSweep _ => new EventDungeonBattleSweep
+                {
+                    AvatarAddress = default,
+                    EventScheduleId = 0,
+                    EventDungeonId = 0,
+                    EventDungeonStageId = 0,
+                    Equipments = new List<Guid>(),
+                    Costumes = new List<Guid>(),
+                    Foods = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
                 },
                 _ => throw new NotSupportedException($"Not supported action type: {type}"),
             };
