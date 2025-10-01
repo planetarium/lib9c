@@ -51,10 +51,10 @@ namespace Lib9c.Tests.Model.Skill
             var simulator = new StageSimulator(
                 new TestRandom(),
                 avatar,
-                new List<System.Guid>(),
+                new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -120,10 +120,10 @@ namespace Lib9c.Tests.Model.Skill
             var simulator = new StageSimulator(
                 new TestRandom(),
                 avatar,
-                new List<System.Guid>(),
+                new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -185,10 +185,10 @@ namespace Lib9c.Tests.Model.Skill
             var simulator = new StageSimulator(
                 new TestRandom(),
                 avatar,
-                new List<System.Guid>(),
+                new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -250,10 +250,10 @@ namespace Lib9c.Tests.Model.Skill
             var simulator = new StageSimulator(
                 new TestRandom(),
                 avatar,
-                new List<System.Guid>(),
+                new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -421,7 +421,7 @@ namespace Lib9c.Tests.Model.Skill
             public override Nekoyume.Model.BattleStatus.Skill Use(
                 CharacterBase caster,
                 int simulatorWaveTurn,
-                IEnumerable<Nekoyume.Model.Buff.Buff> buffs,
+                IEnumerable<Buff> buffs,
                 bool copyCharacter)
             {
                 // Not used in this test

@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
