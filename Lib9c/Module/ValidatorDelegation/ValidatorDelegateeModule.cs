@@ -2,12 +2,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using Lib9c;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Module.ValidatorDelegation
+namespace Lib9c.Module.ValidatorDelegation
 {
     public static class ValidatorDelegateeModule
     {

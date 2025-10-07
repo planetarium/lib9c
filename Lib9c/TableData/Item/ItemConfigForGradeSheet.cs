@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class ItemConfigForGradeSheet : Sheet<int, ItemConfigForGradeSheet.Row>
@@ -11,14 +11,14 @@ namespace Nekoyume.TableData
         public class Row : SheetRow<int>
         {
             public override int Key => Id;
-            
+
             public int Id { get; private set; }
             public int MonsterPartsCountForCombination { get; private set; }
             public int MonsterPartsCountForCombinationWithNCG { get; private set; }
             public int RandomBuffSkillMinCountForCombination { get; private set; }
             public int RandomBuffSkillMaxCountForCombination { get; private set; }
             public int EnhancementLimit { get; private set; }
-            
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);

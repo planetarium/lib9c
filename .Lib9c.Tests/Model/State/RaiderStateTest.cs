@@ -1,11 +1,12 @@
 namespace Lib9c.Tests.Model.State
 {
     using Bencodex.Types;
+    using Lib9c.Model;
+    using Lib9c.Model.Quest;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.Quest;
     using Libplanet.Crypto;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class RaiderStateTest

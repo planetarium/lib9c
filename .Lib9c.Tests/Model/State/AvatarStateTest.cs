@@ -8,15 +8,14 @@ namespace Lib9c.Tests.Model.State
     using System.Threading.Tasks;
     using Bencodex;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Mail;
+    using Lib9c.Model.Quest;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Model.Item;
     using Libplanet.Common;
     using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class AvatarStateTest
@@ -91,7 +90,7 @@ namespace Lib9c.Tests.Model.State
             };
 
             var serialized = (Dictionary)avatarState.questList.OfType<WorldQuest>().First().Serialize();
-            serialized = serialized.SetItem("reward", new Nekoyume.Model.Quest.QuestReward(map).Serialize());
+            serialized = serialized.SetItem("reward", new QuestReward(map).Serialize());
 
             var quest = new WorldQuest(serialized);
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.Rune
+namespace Lib9c.TableData.Rune
 {
     public class RuneLevelBonusSheet : Sheet<int, RuneLevelBonusSheet.Row>
     {

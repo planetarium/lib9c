@@ -1,9 +1,9 @@
-using Bencodex.Types;
-using Nekoyume.Model.State;
 using System;
 using System.Collections.Generic;
+using Bencodex.Types;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     /// <summary>
     /// Represents a single character statistic with base and additional values.

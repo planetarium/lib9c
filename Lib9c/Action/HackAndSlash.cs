@@ -4,26 +4,30 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Crystal;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Quest;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
+using Lib9c.TableData.WorldAndStage;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Crystal;
-using Nekoyume.TableData.Rune;
 using Serilog;
-using static Lib9c.SerializeKeys;
-using Skill = Nekoyume.Model.Skill.Skill;
+using Skill = Lib9c.Model.Skill.Skill;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Represents a battle action in the game where a player engages in combat with monsters.

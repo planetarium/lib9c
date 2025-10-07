@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Module.CombinationSlot
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class CombinationSlotNotFoundException : Exception
@@ -15,7 +15,7 @@ namespace Nekoyume.Module.CombinationSlot
         {
         }
     }
-    
+
     [Serializable]
     public class DuplicatedCombinationSlotIndexException : Exception
     {

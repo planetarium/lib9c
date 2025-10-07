@@ -4,22 +4,22 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using Lib9c.Action;
+    using Lib9c.Action.AdventureBoss;
+    using Lib9c.Extensions;
+    using Lib9c.Model.AdventureBoss;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
+    using Lib9c.TableData.AdventureBoss;
+    using Lib9c.TableData.Item;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.AdventureBoss;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.AdventureBoss;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.AdventureBoss;
     using Xunit;
 
     public class SweepAdventureBossTest

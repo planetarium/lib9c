@@ -2,7 +2,7 @@ using System;
 using Bencodex;
 using Bencodex.Types;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// CpState is a state that stores the cp of the player.

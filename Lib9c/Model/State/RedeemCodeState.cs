@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
+using Lib9c.TableData;
 using Libplanet.Common;
 using Libplanet.Crypto;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class RedeemCodeState : State

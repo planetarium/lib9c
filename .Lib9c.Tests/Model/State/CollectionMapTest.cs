@@ -1,7 +1,6 @@
 namespace Lib9c.Tests.Model.State
 {
-    using Bencodex.Types;
-    using Nekoyume.Model;
+    using Lib9c.Model;
     using Xunit;
 
     public class CollectionMapTest

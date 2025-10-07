@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using Libplanet.Common;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Exceptions
+namespace Lib9c.Exceptions
 {
     [Serializable]
     public class NotEnoughItemException : Exception

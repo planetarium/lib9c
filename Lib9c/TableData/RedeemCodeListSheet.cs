@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class RedeemCodeListSheet : Sheet<int, RedeemCodeListSheet.Row>

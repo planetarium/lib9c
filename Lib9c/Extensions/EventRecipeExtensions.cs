@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Exceptions;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Event;
+using Lib9c.Exceptions;
+using Lib9c.TableData;
+using Lib9c.TableData.Event;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class EventRecipeExtensions
     {

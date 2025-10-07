@@ -4,26 +4,23 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Extensions;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Market;
 using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Arena;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.Market;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 using Log = Serilog.Log;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType("buy_product3")]
     public class BuyProduct : GameAction

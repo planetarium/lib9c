@@ -4,7 +4,7 @@ namespace Lib9c.Tests.Model.Mail
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
-    using Nekoyume.Model.Mail;
+    using Lib9c.Model.Mail;
     using Xunit;
 
     public class OrderExpirationMailTest
@@ -15,7 +15,7 @@ namespace Lib9c.Tests.Model.Mail
             var orderId = Guid.NewGuid();
             var mail = new OrderExpirationMail(1, Guid.NewGuid(), 2, orderId);
             var serialized = (Dictionary)mail.Serialize();
-            var deserialized = (OrderExpirationMail)Mail.Deserialize(serialized);
+            var deserialized = (OrderExpirationMail)Lib9c.Model.Mail.Mail.Deserialize(serialized);
 
             Assert.Equal(1, deserialized.blockIndex);
             Assert.Equal(2, deserialized.requiredBlockIndex);

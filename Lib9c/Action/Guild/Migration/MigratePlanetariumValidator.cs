@@ -1,12 +1,12 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Model.Guild;
+using Lib9c.Module.Guild;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.Guild;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Action.Guild.Migration
+namespace Lib9c.Action.Guild.Migration
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>

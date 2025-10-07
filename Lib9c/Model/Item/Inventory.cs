@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Action;
 using Lib9c.Model.Order;
+using Lib9c.Model.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
 using Serilog;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     [Serializable]
     public class Inventory : IState, ICloneable

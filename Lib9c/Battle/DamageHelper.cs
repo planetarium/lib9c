@@ -1,7 +1,7 @@
 using System;
-using Nekoyume.Helper;
+using Lib9c.Helper;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class DamageHelper
     {

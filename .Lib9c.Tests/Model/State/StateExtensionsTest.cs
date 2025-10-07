@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Model.State
 {
     using System.Collections.Generic;
     using System.Numerics;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class StateExtensionsTest

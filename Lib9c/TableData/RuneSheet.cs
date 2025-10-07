@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public class RuneSheet : Sheet<int, RuneSheet.Row>
     {

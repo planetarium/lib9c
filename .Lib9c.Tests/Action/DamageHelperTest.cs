@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.Action
 {
+    using Lib9c.Battle;
     using Xunit;
 
     public class DamageHelperTest
@@ -10,7 +11,7 @@ namespace Lib9c.Tests.Action
         [InlineData(long.MinValue, 0)]
         public void GetDamageReductionRate(long drr, decimal expected)
         {
-            Assert.Equal(expected, Nekoyume.Battle.DamageHelper.GetDamageReductionRate(drr));
+            Assert.Equal(expected, DamageHelper.GetDamageReductionRate(drr));
         }
     }
 }

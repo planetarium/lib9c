@@ -5,7 +5,7 @@ using Bencodex;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public interface IDelegateeMetadata : IBencodable
     {

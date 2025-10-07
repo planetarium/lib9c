@@ -3,12 +3,11 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Globalization;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Exceptions;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume.Action;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Module;
     using Xunit;
 
     public class BurnAssetTest

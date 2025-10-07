@@ -1,19 +1,22 @@
-using Libplanet.Action;
-using Libplanet.Types.Assets;
-using Nekoyume.Helper;
-using Nekoyume.Model;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Priority_Queue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.Stat;
-using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
+using Lib9c.Helper;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
+using Libplanet.Action;
+using Libplanet.Types.Assets;
+using Priority_Queue;
+using NormalAttack = Lib9c.Model.BattleStatus.NormalAttack;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public class RaidSimulator : Simulator
     {

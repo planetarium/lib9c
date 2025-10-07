@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action.Exceptions.AdventureBoss;
+using Lib9c.Exceptions;
+using Lib9c.Helper;
+using Lib9c.Model.AdventureBoss;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TableData;
+using Lib9c.TableData.AdventureBoss;
+using Lib9c.TableData.Stake;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Exceptions.AdventureBoss;
-using Nekoyume.Exceptions;
-using Nekoyume.Helper;
-using Nekoyume.Model.AdventureBoss;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.TableData;
-using Nekoyume.TableData.AdventureBoss;
-using Nekoyume.TableData.Stake;
 
-namespace Nekoyume.Action.AdventureBoss
+namespace Lib9c.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]
@@ -107,14 +107,14 @@ namespace Nekoyume.Action.AdventureBoss
             }
 
             var requiredStakingAmount = stakeRegularRewardSheet[requiredStakingLevel].RequiredGold;
-            
+
             var avatarState = states.GetAvatarState(AvatarAddress, false, false, false);
             if (avatarState is null || !avatarState.agentAddress.Equals(context.Signer))
             {
                 var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
                 throw new FailedLoadStateException($"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
-            
+
             var stakedAmount = states.GetStaked(avatarState.agentAddress);
             if (stakedAmount < requiredStakingAmount * currency)
             {

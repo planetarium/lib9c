@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.TableData.AdventureBoss
 {
     using System.Linq;
-    using Nekoyume.TableData.AdventureBoss;
+    using Lib9c.TableData.AdventureBoss;
     using Xunit;
 
     public class AdventureBossWantedRewardSheetTest

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Nekoyume.Model.Stake;
+using Lib9c.Model.Stake;
 
-namespace Nekoyume.TableData.Stake
+namespace Lib9c.TableData.Stake
 {
     public class StakePolicySheet : Sheet<string, StakePolicySheet.Row>
     {

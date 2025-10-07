@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Bencodex;
 using Cocona;
 using Lib9c.DevExtensions.Action.Loader;
+using Lib9c.Model;
+using Lib9c.Model.State;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
@@ -18,8 +20,6 @@ using Libplanet.Store;
 using Libplanet.Store.Trie;
 using Libplanet.Types.Blocks;
 using Nekoyume.Blockchain.Policy;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
 using Serilog;
 using Serilog.Core;
 

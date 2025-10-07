@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Battle;
-using Nekoyume.Model;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Quest;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Battle;
+using Lib9c.Model;
+using Lib9c.Model.Item;
+using Lib9c.Model.Quest;
+using Lib9c.Model.State;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.WorldAndStage;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class AvatarStateExtensions
     {

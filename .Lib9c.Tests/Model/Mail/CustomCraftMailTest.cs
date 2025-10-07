@@ -3,10 +3,10 @@ namespace Lib9c.Tests.Model.Mail
     using System;
     using System.Collections.Generic;
     using Bencodex.Types;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Mail;
+    using Lib9c.TableData.Item;
     using Libplanet.Types.Assets;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CustomCraftMailTest
@@ -26,7 +26,7 @@ namespace Lib9c.Tests.Model.Mail
             var equipment = (Equipment)ItemFactory.CreateItemUsable(row, Guid.NewGuid(), 1L);
             var mail = new CustomCraftMail(1, Guid.NewGuid(), 2, equipment);
             var serialized = (Dictionary)mail.Serialize();
-            var deserialized = (CustomCraftMail)Nekoyume.Model.Mail.Mail.Deserialize(serialized);
+            var deserialized = (CustomCraftMail)Lib9c.Model.Mail.Mail.Deserialize(serialized);
 
             Assert.Equal(1, deserialized.blockIndex);
             Assert.Equal(2, deserialized.requiredBlockIndex);

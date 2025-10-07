@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.TableData
 {
     using System.Collections.Generic;
-    using Nekoyume.TableData;
+    using Lib9c.TableData;
     using Xunit;
 
     public class WorldBossContributionRewardSheetTest

@@ -1,4 +1,4 @@
-﻿namespace Nekoyume.TableData.Summon
+﻿namespace Lib9c.TableData.Summon
 {
     public class CostumeSummonSheet : SummonSheet
     {

@@ -1,11 +1,11 @@
 using System;
 using System.Runtime.Serialization;
 using Bencodex.Types;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     /// <summary>
     /// Represents costume items that can be equipped by characters.

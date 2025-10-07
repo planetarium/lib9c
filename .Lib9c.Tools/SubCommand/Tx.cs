@@ -8,16 +8,16 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
-using Nekoyume.Action;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using Nekoyume.TableData;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 
 namespace Lib9c.Tools.SubCommand
 {
@@ -88,10 +88,10 @@ namespace Lib9c.Tools.SubCommand
                         nameof(TransferAsset) => new TransferAsset(),
                         nameof(PatchTableSheet) => new PatchTableSheet(),
                         nameof(AddRedeemCode) => new AddRedeemCode(),
-                        nameof(Nekoyume.Action.MigrationActivatedAccountsState) => new MigrationActivatedAccountsState(),
-                        nameof(Nekoyume.Action.CreatePendingActivations) => new CreatePendingActivations(),
-                        nameof(Nekoyume.Action.RenewAdminState) => new RenewAdminState(),
-                        nameof(Nekoyume.Action.PrepareRewardAssets) => new PrepareRewardAssets(),
+                        nameof(Lib9c.Action.MigrationActivatedAccountsState) => new MigrationActivatedAccountsState(),
+                        nameof(Lib9c.Action.CreatePendingActivations) => new CreatePendingActivations(),
+                        nameof(Lib9c.Action.RenewAdminState) => new RenewAdminState(),
+                        nameof(PrepareRewardAssets) => new PrepareRewardAssets(),
                         _ => throw new CommandExitedException($"Can't determine given action type: {type}", 128),
                     };
                     action.LoadPlainValue(plainValue);
@@ -144,7 +144,7 @@ namespace Lib9c.Tools.SubCommand
             var type = typeof(ISheet).Assembly
                 .GetTypes()
                 .First(type => type.Namespace is { } @namespace &&
-                               @namespace.StartsWith($"{nameof(Nekoyume)}.{nameof(Nekoyume.TableData)}") &&
+                               @namespace.StartsWith($"{nameof(Lib9c)}.{nameof(TableData)}") &&
                                !type.IsAbstract &&
                                typeof(ISheet).IsAssignableFrom(type) &&
                                type.Name == tableName);
@@ -172,7 +172,7 @@ namespace Lib9c.Tools.SubCommand
         {
             var action = new MigrationActivatedAccountsState();
             var bencoded = new List(
-                (Text)nameof(Nekoyume.Action.MigrationActivatedAccountsState),
+                (Text)nameof(Lib9c.Action.MigrationActivatedAccountsState),
                 action.PlainValue
             );
 
@@ -192,7 +192,7 @@ namespace Lib9c.Tools.SubCommand
                 redeemCsv = tableCsv
             };
             var encoded = new List(
-                (Text)nameof(Nekoyume.Action.AddRedeemCode),
+                (Text)nameof(Lib9c.Action.AddRedeemCode),
                 action.PlainValue
             );
             byte[] raw = _codec.Encode(encoded);
@@ -223,7 +223,7 @@ namespace Lib9c.Tools.SubCommand
             var encoded = new List(
                new IValue[]
                {
-                    (Text) nameof(Nekoyume.Action.CreatePendingActivations),
+                    (Text) nameof(Lib9c.Action.CreatePendingActivations),
                     action.PlainValue
                }
            );
@@ -240,7 +240,7 @@ namespace Lib9c.Tools.SubCommand
         {
             RenewAdminState action = new RenewAdminState(newValidUntil);
             var encoded = new List(
-                (Text) nameof(Nekoyume.Action.RenewAdminState),
+                (Text) nameof(Lib9c.Action.RenewAdminState),
                 action.PlainValue
             );
             byte[] raw = _codec.Encode(encoded);
@@ -300,7 +300,7 @@ namespace Lib9c.Tools.SubCommand
             }
             var action = new PrepareRewardAssets(poolAddress, favs);
             var encoded = new List(
-                (Text) nameof(Nekoyume.Action.PrepareRewardAssets),
+                (Text) nameof(PrepareRewardAssets),
                 action.PlainValue
             );
             byte[] raw = _codec.Encode(encoded);

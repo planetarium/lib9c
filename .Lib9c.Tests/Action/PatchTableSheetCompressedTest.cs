@@ -1,15 +1,12 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.IO;
     using System.Text;
+    using Lib9c.Action;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     /// <summary>

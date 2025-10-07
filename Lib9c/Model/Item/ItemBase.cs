@@ -3,11 +3,11 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using Bencodex;
 using Bencodex.Types;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     /// <summary>
     /// Base class for all items in the game.

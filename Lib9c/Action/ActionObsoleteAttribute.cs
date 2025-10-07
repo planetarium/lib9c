@@ -1,7 +1,7 @@
 using System;
 using Libplanet.Action;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// <para>

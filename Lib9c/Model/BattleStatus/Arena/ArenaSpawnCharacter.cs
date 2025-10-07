@@ -1,6 +1,7 @@
 using System.Collections;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Model.BattleStatus.Arena
+namespace Lib9c.Model.BattleStatus.Arena
 {
     public class ArenaSpawnCharacter : ArenaEventBase
     {

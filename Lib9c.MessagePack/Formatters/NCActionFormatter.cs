@@ -2,11 +2,12 @@ using System.Buffers;
 using System.Linq;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Action.Loader;
 using Libplanet.Action.Loader;
 using MessagePack;
 using MessagePack.Formatters;
 using Nekoyume.Action;
-using Nekoyume.Action.Loader;
 
 namespace Lib9c.Formatters
 {

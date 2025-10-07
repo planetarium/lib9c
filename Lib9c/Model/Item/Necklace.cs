@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.Serialization;
 using Bencodex.Types;
-using Nekoyume.TableData;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     /// <summary>
     /// Represents necklace equipment items.

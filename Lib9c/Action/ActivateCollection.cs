@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Model.Collection;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Collection;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType(ActionTypeText)]
     public class ActivateCollection : GameAction

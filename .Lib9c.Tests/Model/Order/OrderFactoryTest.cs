@@ -3,11 +3,10 @@ namespace Lib9c.Tests.Model.Order
     using System;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.Item;
     using Lib9c.Model.Order;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
     using Xunit;
 
     public class OrderFactoryTest

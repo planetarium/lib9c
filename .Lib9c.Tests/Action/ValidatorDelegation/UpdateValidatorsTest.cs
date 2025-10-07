@@ -1,13 +1,13 @@
 #nullable enable
+
 namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System;
 using System.Linq;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.Model.State;
-using Nekoyume.ValidatorDelegation;
 using Xunit;
 
 public class UpdateValidatorsTest : ValidatorDelegationTestBase

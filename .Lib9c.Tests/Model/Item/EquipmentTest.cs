@@ -2,14 +2,12 @@ namespace Lib9c.Tests.Model.Item
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Cost;
+    using Lib9c.TableData.Item;
     using Xunit;
-    using static SerializeKeys;
 
     public class EquipmentTest
     {

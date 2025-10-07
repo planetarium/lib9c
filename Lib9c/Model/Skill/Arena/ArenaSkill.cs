@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill.Arena
+namespace Lib9c.Model.Skill.Arena
 {
     [Serializable]
     public abstract class ArenaSkill : ISkill

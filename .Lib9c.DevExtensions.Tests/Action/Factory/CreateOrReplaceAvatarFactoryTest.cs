@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lib9c.DevExtensions.Action.Factory;
+using Lib9c.Model.Item;
 using Lib9c.Tests;
-using Nekoyume.Model.Item;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action.Factory

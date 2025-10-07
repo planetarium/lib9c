@@ -4,7 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
-using Lib9c;
+using Lib9c.Extensions;
+using Lib9c.Model.Guild;
+using Lib9c.Model.Stake;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -12,14 +17,8 @@ using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Evidence;
 using Libplanet.Types.Tx;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Guild;
-using Nekoyume.Model.Stake;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Module.Guild
+namespace Lib9c.Module.Guild
 {
     public static class GuildModule
     {

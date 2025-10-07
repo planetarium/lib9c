@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.Model.Rune
 {
     using Bencodex.Types;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class AllRuneStateTest

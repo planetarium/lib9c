@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Nekoyume.Model.Item;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Item;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Cost
 {
     public class EnhancementCostSheet : Sheet<int, EnhancementCostSheet.Row>
     {

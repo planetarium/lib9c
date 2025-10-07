@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class GameConfig
     {

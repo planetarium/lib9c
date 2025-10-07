@@ -1,11 +1,8 @@
 namespace Lib9c.Tests.Model.State
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.TableData;
+    using Lib9c.TableData;
     using Xunit;
     using Xunit.Abstractions;
 

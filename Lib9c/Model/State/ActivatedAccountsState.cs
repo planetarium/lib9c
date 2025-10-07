@@ -1,12 +1,12 @@
-using Bencodex;
-using Bencodex.Types;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.Serialization;
+using Bencodex;
+using Bencodex.Types;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class ActivatedAccountsState : State, ISerializable

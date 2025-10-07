@@ -5,9 +5,9 @@ namespace Lib9c.Tests.Model
     using System.Linq;
     using System.Text;
     using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Quest;
+    using Lib9c.TableData.Quest;
     using Xunit;
 
     public class QuestListTest

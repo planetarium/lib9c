@@ -4,19 +4,17 @@ namespace Lib9c.Tests.Action
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.Module.Guild;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.Module.Guild;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
-    using static Lib9c.SerializeKeys;
 
     public class MigrateMonsterCollectionTest
     {

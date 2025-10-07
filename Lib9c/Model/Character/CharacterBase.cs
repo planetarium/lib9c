@@ -2,22 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BTAI;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Quest;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
 #if TEST_LOG
 using System.Text;
 using UnityEngine;
 #endif
-using BTAI;
-using Nekoyume.Battle;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Character;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Quest;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model.Character
 {
     [Serializable]
     public abstract class CharacterBase : ICloneable

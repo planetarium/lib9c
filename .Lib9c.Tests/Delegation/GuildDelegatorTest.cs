@@ -1,9 +1,9 @@
 namespace Lib9c.Tests.Delegation;
 
+using Lib9c.Delegation;
+using Lib9c.Model.Guild;
 using Lib9c.Tests.Action;
 using Libplanet.Crypto;
-using Nekoyume.Delegation;
-using Nekoyume.Model.Guild;
 using Xunit;
 
 public class GuildDelegatorTest : DelegationTestBase

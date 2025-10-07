@@ -6,11 +6,11 @@ using System.Linq;
 using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     /// <summary>
     /// RewardBase is a class that represents the base of the reward.
@@ -246,7 +246,7 @@ namespace Nekoyume.Delegation
                 return StartHeight is long height
                     ? bencoded.Add(height)
                     : bencoded;
-            }   
+            }
         }
 
         IValue IBencodable.Bencoded => Bencoded;

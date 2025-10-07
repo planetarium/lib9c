@@ -2,7 +2,7 @@ namespace Lib9c.Tests
 {
     using System;
     using System.Collections.Generic;
-    using Nekoyume.Model;
+    using Lib9c.Model.Character;
     using Priority_Queue;
     using Xunit;
 

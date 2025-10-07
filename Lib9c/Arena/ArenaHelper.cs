@@ -1,18 +1,17 @@
 using System;
 using System.Collections.Generic;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Helper;
+using Lib9c.Model.Arena;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Battle;
-using Nekoyume.Helper;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Arena
+namespace Lib9c.Arena
 {
     /// <summary>
     /// There are only things that don't change

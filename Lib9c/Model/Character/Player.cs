@@ -1,19 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Quest;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Inventory = Nekoyume.Model.Item.Inventory;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Item;
+using Lib9c.Model.Quest;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
+using Inventory = Lib9c.Model.Item.Inventory;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model.Character
 {
     [Serializable]
     public class Player : CharacterBase

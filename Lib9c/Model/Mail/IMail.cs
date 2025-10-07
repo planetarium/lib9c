@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     public interface IMail
     {

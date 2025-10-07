@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Runtime.Serialization;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class NotEnoughFungibleAssetValueException : Exception

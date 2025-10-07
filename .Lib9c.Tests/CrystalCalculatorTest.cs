@@ -4,12 +4,13 @@ namespace Lib9c.Tests
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Helper;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Crystal;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.WorldAndStage;
     using Libplanet.Types.Assets;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Crystal;
     using Xunit;
 
     public class CrystalCalculatorTest

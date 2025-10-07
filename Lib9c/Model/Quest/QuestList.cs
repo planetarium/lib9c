@@ -5,14 +5,15 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Quest;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     #region Exceptions
 

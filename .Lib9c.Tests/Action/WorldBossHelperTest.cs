@@ -2,12 +2,11 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Linq;
-    using System.Numerics;
+    using Lib9c.Helper;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.TableData;
     using Libplanet.Types.Assets;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class WorldBossHelperTest

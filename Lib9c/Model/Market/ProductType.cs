@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.Market
+namespace Lib9c.Model.Market
 {
     public enum ProductType
     {

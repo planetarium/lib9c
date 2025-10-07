@@ -1,13 +1,13 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class NotEnoughWeeklyArenaChallengeCountException : Exception
     {
-        public const string BaseMessage = "Aborted as the arena state reached the daily limit."; 
-        
+        public const string BaseMessage = "Aborted as the arena state reached the daily limit.";
+
         public NotEnoughWeeklyArenaChallengeCountException(string message) : base(message)
         {
         }

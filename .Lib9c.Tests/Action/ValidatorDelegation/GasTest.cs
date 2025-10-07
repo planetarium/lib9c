@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Libplanet.Action;
 using Libplanet.Crypto;
-using Nekoyume.Action;
+using Lib9c.Action;
 using Xunit;
 
 public class GasTest : TxAcitonTestBase

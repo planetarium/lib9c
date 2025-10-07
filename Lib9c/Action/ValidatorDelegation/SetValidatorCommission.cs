@@ -1,11 +1,11 @@
 using System;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
-using Nekoyume.ValidatorDelegation;
+using Libplanet.Action.State;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     /// <summary>
     /// Set the commission percentage of the validator.

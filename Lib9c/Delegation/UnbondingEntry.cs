@@ -1,13 +1,13 @@
 #nullable enable
 using System;
-using System.Numerics;
 using System.Collections.Generic;
-using Bencodex.Types;
+using System.Numerics;
 using Bencodex;
+using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public class UnbondingEntry : IBencodable, IEquatable<UnbondingEntry>
     {

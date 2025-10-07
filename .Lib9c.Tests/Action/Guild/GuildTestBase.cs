@@ -10,15 +10,14 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
 using Libplanet.Types.Assets;
-using Nekoyume;
-using Nekoyume.Action;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.Model.Guild;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
+using Lib9c.Action;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.Model.Guild;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 
 public abstract class GuildTestBase
 {

@@ -1,4 +1,5 @@
 #nullable enable
+
 namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System;
@@ -6,6 +7,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using Lib9c.Action.Guild;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.Delegation;
+using Lib9c.Model.Guild;
+using Lib9c.Model.Stake;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
@@ -13,19 +25,7 @@ using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
-using Nekoyume;
-using Nekoyume.Action.Guild;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.Model.Guild;
-using Nekoyume.Model.Stake;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
 using Xunit;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Delegation;
 
 public class ValidatorDelegationTestBase
 {

@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.Model.Rune
 {
     using Bencodex.Types;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Rune;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Rune;
     using Xunit;
 
     public class RuneSlotTest

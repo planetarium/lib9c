@@ -11,10 +11,8 @@ using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
-using Nekoyume;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.Model.State;
-using Nekoyume.ValidatorDelegation;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Xunit;
 
 public class AllocateGuildRewardTest : ValidatorDelegationTestBase

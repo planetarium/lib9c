@@ -4,21 +4,21 @@ using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Model.Guild;
+using Lib9c.Model.Stake;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
-using Nekoyume.Model.State;
-using Nekoyume.Model.Guild;
-using Nekoyume.Model.Stake;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)

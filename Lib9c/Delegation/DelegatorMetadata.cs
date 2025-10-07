@@ -5,10 +5,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public class DelegatorMetadata : IDelegatorMetadata
     {

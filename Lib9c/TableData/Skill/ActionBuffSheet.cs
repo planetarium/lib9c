@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Skill;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Skill;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Skill
 {
     [Serializable]
     public class ActionBuffSheet : Sheet<int, ActionBuffSheet.Row>

@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using Nekoyume.Battle;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
-using Nekoyume.Helper;
+using Lib9c.Battle;
+using Lib9c.Helper;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     [Serializable]
     public abstract class AttackSkill : Skill

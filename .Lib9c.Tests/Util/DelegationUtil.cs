@@ -2,18 +2,17 @@ namespace Lib9c.Tests.Util
 {
     using System;
     using System.Numerics;
+    using Lib9c.Action;
+    using Lib9c.Action.Guild;
+    using Lib9c.Action.ValidatorDelegation;
+    using Lib9c.Model.Guild;
+    using Lib9c.Module;
     using Lib9c.Tests.Action;
+    using Lib9c.TypedAddress;
+    using Lib9c.ValidatorDelegation;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Guild;
-    using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.Model.Guild;
-    using Nekoyume.Module;
-    using Nekoyume.TableData.Stake;
-    using Nekoyume.TypedAddress;
-    using Nekoyume.ValidatorDelegation;
 
     public static class DelegationUtil
     {

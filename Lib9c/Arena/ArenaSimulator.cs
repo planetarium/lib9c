@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
+using Lib9c.Model.Stat;
+using Lib9c.TableData;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
-using Nekoyume.Model;
-using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
 using Priority_Queue;
 
-namespace Nekoyume.Arena
+namespace Lib9c.Arena
 {
     /// <summary>
     /// Changed at https://github.com/planetarium/lib9c/pull/2229

@@ -1,12 +1,12 @@
 using System;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Model.Guild;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Model.Guild;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     [ActionType(TypeIdentifier)]
     public sealed class ClaimValidatorRewardSelf : ActionBase

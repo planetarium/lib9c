@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Item;
-using static Nekoyume.TableData.TableExtensions;
+using System.Linq;
+using Lib9c.Model.Item;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
-    using System.Linq;
-
     /// <summary>
     /// Represents a SynthesizeSheet.
     /// </summary>

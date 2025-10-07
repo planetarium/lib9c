@@ -4,29 +4,34 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c.Abstractions;
+using Lib9c.Arena;
+using Lib9c.Battle;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Arena;
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.Model.Character;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Tx;
-using Nekoyume.Arena;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Rune;
 using Serilog;
 using static Lib9c.SerializeKeys;
+using AllRuneState = Lib9c.Model.State.AllRuneState;
+using AvatarState = Lib9c.Model.State.AvatarState;
+using GameConfigState = Lib9c.Model.State.GameConfigState;
 
-namespace Nekoyume.Action.Arena
+namespace Lib9c.Action.Arena
 {
     /// <summary>
     /// Temp
@@ -302,8 +307,8 @@ namespace Nekoyume.Action.Arena
 
         private (
             IWorld UpdatedStates,
-            ItemSlotState ItemSlotState,
-            RuneSlotState RuneSlotState,
+            Model.State.ItemSlotState ItemSlotState,
+            Model.State.RuneSlotState RuneSlotState,
             AllRuneState RuneStates,
             long Cp
         ) PrepareMyLoadout(
@@ -336,8 +341,8 @@ namespace Nekoyume.Action.Arena
                 myRuneSlotStateAddress,
                 out List rawRuneSlotState
             )
-                ? new RuneSlotState(rawRuneSlotState)
-                : new RuneSlotState(BattleType.Arena);
+                ? new Model.State.RuneSlotState(rawRuneSlotState)
+                : new Model.State.RuneSlotState(BattleType.Arena);
 
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             myRuneSlotState.UpdateSlot(runeInfos, runeListSheet);
@@ -351,8 +356,8 @@ namespace Nekoyume.Action.Arena
                 myItemSlotStateAddress,
                 out List rawItemSlotState
             )
-                ? new ItemSlotState(rawItemSlotState)
-                : new ItemSlotState(BattleType.Arena);
+                ? new Model.State.ItemSlotState(rawItemSlotState)
+                : new Model.State.ItemSlotState(BattleType.Arena);
 
             myItemSlotState.UpdateEquipment(equipments);
             myItemSlotState.UpdateCostumes(costumes);
@@ -401,8 +406,8 @@ namespace Nekoyume.Action.Arena
         }
 
         private (
-            ItemSlotState ItemSlotState,
-            RuneSlotState RuneSlotState,
+            Model.State.ItemSlotState ItemSlotState,
+            Model.State.RuneSlotState RuneSlotState,
             AllRuneState RuneStates
         ) PrepareEnemyLoadout(IWorld states)
         {
@@ -414,8 +419,8 @@ namespace Nekoyume.Action.Arena
                 enemyItemSlotStateAddress,
                 out List rawEnemyItemSlotState
             )
-                ? new ItemSlotState(rawEnemyItemSlotState)
-                : new ItemSlotState(BattleType.Arena);
+                ? new Model.State.ItemSlotState(rawEnemyItemSlotState)
+                : new Model.State.ItemSlotState(BattleType.Arena);
 
             var enemyRuneSlotStateAddress = RuneSlotState.DeriveAddress(
                 enemyAvatarAddress,
@@ -425,8 +430,8 @@ namespace Nekoyume.Action.Arena
                 enemyRuneSlotStateAddress,
                 out List enemyRawRuneSlotState
             )
-                ? new RuneSlotState(enemyRawRuneSlotState)
-                : new RuneSlotState(BattleType.Arena);
+                ? new Model.State.RuneSlotState(enemyRawRuneSlotState)
+                : new Model.State.RuneSlotState(BattleType.Arena);
 
             var enemyRuneStates = states.GetRuneState(enemyAvatarAddress, out _);
 
@@ -441,13 +446,13 @@ namespace Nekoyume.Action.Arena
             GameConfigState gameConfigState,
             Dictionary<Address, List<StatModifier>> collectionModifiers,
             (
-                ItemSlotState ItemSlotState,
-                RuneSlotState RuneSlotState,
+                Model.State.ItemSlotState ItemSlotState,
+                Model.State.RuneSlotState RuneSlotState,
                 AllRuneState RuneStates
             ) mySpec,
             (
-                ItemSlotState ItemSlotState,
-                RuneSlotState RuneSlotState,
+                Model.State.ItemSlotState ItemSlotState,
+                Model.State.RuneSlotState RuneSlotState,
                 AllRuneState RuneStates
             ) enemySpec
         )

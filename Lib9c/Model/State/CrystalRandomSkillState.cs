@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using Bencodex.Types;
-using Nekoyume.TableData.Crystal;
 using System.Linq;
+using Bencodex.Types;
+using Lib9c.Model.Skill;
+using Lib9c.TableData;
+using Lib9c.TableData.Crystal;
+using Lib9c.TableData.Skill;
 using Libplanet.Crypto;
-using Nekoyume.TableData;
-using Nekoyume.Model.Skill;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class CrystalRandomSkillState : IState
     {

@@ -4,16 +4,18 @@ using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("claim_world_boss_kill_reward")]

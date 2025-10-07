@@ -1,8 +1,8 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.TableData;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class WorldQuest : Quest

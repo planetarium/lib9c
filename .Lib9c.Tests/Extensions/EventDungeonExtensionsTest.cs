@@ -1,7 +1,7 @@
 ﻿namespace Lib9c.Tests.Extensions
 {
     using System;
-    using Nekoyume.Extensions;
+    using Lib9c.Extensions;
     using Xunit;
 
     public class EventDungeonExtensionsTest

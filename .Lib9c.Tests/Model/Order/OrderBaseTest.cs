@@ -5,7 +5,7 @@ namespace Lib9c.Tests.Model.Order
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Model.Order;
-    using Nekoyume.Model.State;
+    using Lib9c.Model.State;
     using Xunit;
     using static Lib9c.SerializeKeys;
 

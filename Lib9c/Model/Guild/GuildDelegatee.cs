@@ -2,14 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Lib9c.Delegation;
+using Lib9c.Module;
+using Lib9c.TableData.Stake;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Delegation;
-using Nekoyume.Module;
-using Nekoyume.TableData.Stake;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Model.Guild
+namespace Lib9c.Model.Guild
 {
     public class GuildDelegatee
         : Delegatee<GuildRepository, GuildDelegatee, GuildDelegator>, IEquatable<GuildDelegatee>

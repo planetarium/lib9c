@@ -1,19 +1,19 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using Bencodex.Types;
+using Lib9c.Exceptions;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Event;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Exceptions;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// An action to claim gifts using the Gift Id. <br/>

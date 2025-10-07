@@ -1,16 +1,15 @@
 using System;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Exceptions;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Arena
+namespace Lib9c.Model.Arena
 {
     /// <summary>
-    /// This class combines the information from <see cref="Nekoyume.Model.Arena.ArenaScore"/> and
-    /// <see cref="Nekoyume.Model.Arena.ArenaInformation"/>, and brings together information about the arena
+    /// This class combines the information from <see cref="ArenaScore"/> and
+    /// <see cref="ArenaInformation"/>, and brings together information about the arena
     /// participant, including additional information.
     /// </summary>
     public class ArenaParticipant : IBencodable, IState

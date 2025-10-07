@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action.Exceptions
+namespace Lib9c.Action.Exceptions
 {
     public class InvalidSummonCountException : ArgumentException
     {

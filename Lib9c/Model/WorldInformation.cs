@@ -4,10 +4,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex;
 using Bencodex.Types;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.State;
+using Lib9c.TableData.WorldAndStage;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     [Serializable]
     public class WorldInformation : IState, ISerializable, ICloneable

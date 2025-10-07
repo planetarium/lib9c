@@ -2,11 +2,11 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using MessagePack.Formatters;
 using Nekoyume.Action;
-using Nekoyume.Model.State;
 
 namespace Lib9c.Formatters
 {

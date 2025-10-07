@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Arena
+namespace Lib9c.Model.Arena
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1027

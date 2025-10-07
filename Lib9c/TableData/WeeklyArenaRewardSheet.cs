@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.TableData.WorldAndStage;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     [Serializable]
     public class WeeklyArenaRewardSheet : Sheet<int, WeeklyArenaRewardSheet.Row>

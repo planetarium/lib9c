@@ -8,7 +8,7 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public abstract class Delegatee<TRepository, TDelegatee, TDelegator> : IDelegatee
         where TRepository : DelegationRepository<TRepository, TDelegatee, TDelegator>

@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Model.Mail
 {
     using System;
     using Bencodex.Types;
+    using Lib9c.Model.Mail;
     using Libplanet.Types.Assets;
-    using Nekoyume.Model.Mail;
     using Xunit;
 
     public class AdventureBossRaffleWinnerMailTest
@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Model.Mail
         {
             var mail = new AdventureBossRaffleWinnerMail(1, Guid.NewGuid(), 2, 1, 5 * _currency);
             var serialized = (Dictionary)mail.Serialize();
-            var deserialized = (AdventureBossRaffleWinnerMail)Mail.Deserialize(serialized);
+            var deserialized = (AdventureBossRaffleWinnerMail)Lib9c.Model.Mail.Mail.Deserialize(serialized);
 
             Assert.Equal(1, deserialized.Season);
             Assert.Equal(5 * _currency, deserialized.Reward);

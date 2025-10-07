@@ -4,16 +4,16 @@ namespace Lib9c.Tests.Model
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Battle;
+    using Lib9c.Model;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class RankingSimulatorTest

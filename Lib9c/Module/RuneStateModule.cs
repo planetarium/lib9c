@@ -1,11 +1,11 @@
 #nullable enable
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.TableData.Rune;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
-using Nekoyume.TableData.Rune;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     /// <summary>
     /// RuneStateModule is the module to use RuneState/AllRuneState with account.

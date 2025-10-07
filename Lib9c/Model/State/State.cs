@@ -4,7 +4,7 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public abstract class State : IState

@@ -2,7 +2,7 @@ using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     public static class RelationshipModule
     {

@@ -1,7 +1,7 @@
+using Lib9c.TypedAddress;
 using Libplanet.Action;
-using Nekoyume.TypedAddress;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class ActionContextExtensions
     {

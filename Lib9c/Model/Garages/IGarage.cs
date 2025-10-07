@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.Garages
+namespace Lib9c.Model.Garages
 {
     public interface IGarage<in T1, in T2> where T1 : IGarage<T1, T2>
     {

@@ -3,15 +3,15 @@ namespace Lib9c.Tests.Model.AdventureBoss
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle.AdventureBoss;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.BattleStatus.AdventureBoss;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
-    using Nekoyume.Battle.AdventureBoss;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.BattleStatus.AdventureBoss;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
     using Xunit.Abstractions;
 

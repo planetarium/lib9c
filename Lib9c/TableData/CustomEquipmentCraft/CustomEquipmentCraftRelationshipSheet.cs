@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
+using Lib9c.Model.Item;
 using Libplanet.Action;
-using Nekoyume.Model.Item;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.CustomEquipmentCraft
+namespace Lib9c.TableData.CustomEquipmentCraft
 {
     [Serializable]
     public class

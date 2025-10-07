@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Lib9c.Delegation;
 using Libplanet.Types.Assets;
-using Nekoyume.Delegation;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.Swap
+namespace Lib9c.TableData.Swap
 {
     /// <summary>
     /// Represents a sheet of swap rates.
@@ -200,7 +200,7 @@ namespace Nekoyume.TableData.Swap
                 {
                     return fromComparison;
                 }
-        
+
                 return CurrencyComparer.HashBytes.Compare(To, other.To);
             }
         }

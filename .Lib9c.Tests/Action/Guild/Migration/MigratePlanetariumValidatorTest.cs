@@ -3,19 +3,19 @@ namespace Lib9c.Tests.Action.Guild.Migration
     using System;
     using System.Collections.Generic;
     using System.Numerics;
+    using Lib9c.Action.Guild;
+    using Lib9c.Action.Guild.Migration;
+    using Lib9c.Action.Guild.Migration.LegacyModels;
+    using Lib9c.Action.ValidatorDelegation;
+    using Lib9c.Model.Guild;
+    using Lib9c.Model.Stake;
     using Lib9c.Tests.Util;
+    using Lib9c.TypedAddress;
+    using Lib9c.ValidatorDelegation;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Consensus;
-    using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Guild.Migration;
-    using Nekoyume.Action.Guild.Migration.LegacyModels;
-    using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.Model.Guild;
-    using Nekoyume.Model.Stake;
-    using Nekoyume.TypedAddress;
-    using Nekoyume.ValidatorDelegation;
     using Xunit;
 
     // TODO: Remove this test class after the migration is completed.

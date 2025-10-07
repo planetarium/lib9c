@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public abstract class ActivationException : Exception
     {

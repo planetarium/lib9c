@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using Bencodex.Types;
 using Cocona;
+using Lib9c.Action;
+using Lib9c.Action.Loader;
 using Lib9c.DevExtensions;
+using Lib9c.Model.Item;
 using Lib9c.Model.Order;
 using Libplanet.Action.Loader;
 using Libplanet.Action.State;
@@ -14,9 +17,6 @@ using Libplanet.Store;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
-using Nekoyume.Action;
-using Nekoyume.Action.Loader;
-using Nekoyume.Model.Item;
 using Serilog.Core;
 
 namespace Lib9c.Tools.SubCommand

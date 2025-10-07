@@ -2,7 +2,7 @@ using System;
 using Libplanet.Action;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Common interface used before <see cref="IBuy5"/>.

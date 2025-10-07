@@ -1,7 +1,7 @@
 using System;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action.Factory
+namespace Lib9c.Action.Factory
 {
     public static class ClaimStakeRewardFactory
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     public enum StatType
     {
@@ -10,7 +10,7 @@ namespace Nekoyume.Model.Stat
         /// Default, It's same with null.
         /// </summary>
         NONE,
-        
+
         /// <summary>
         /// Health Point
         /// </summary>
@@ -30,12 +30,12 @@ namespace Nekoyume.Model.Stat
         /// Critical Chance
         /// </summary>
         CRI,
-        
+
         /// <summary>
         /// Hit Chance
         /// </summary>
         HIT,
-        
+
         /// <summary>
         /// Speed
         /// </summary>

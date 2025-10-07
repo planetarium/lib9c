@@ -1,11 +1,11 @@
 namespace Lib9c.Tests.TableData
 {
     using System.Linq;
+    using Lib9c.Extensions;
+    using Lib9c.TableData;
     using Lib9c.Tests.Fixtures.TableCSV.Stake;
     using Libplanet.Action.State;
     using Libplanet.Types.Assets;
-    using Nekoyume.Extensions;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class StakeRegularRewardSheetTest

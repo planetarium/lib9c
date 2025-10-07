@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class EquipmentItemSetEffectSheet : Sheet<int, EquipmentItemSetEffectSheet.Row>
@@ -33,7 +33,7 @@ namespace Nekoyume.TableData
                 };
             }
         }
-        
+
         public EquipmentItemSetEffectSheet() : base(nameof(EquipmentItemSetEffectSheet))
         {
         }
@@ -46,14 +46,14 @@ namespace Nekoyume.TableData
 
                 return;
             }
-            
+
             if (value.StatModifiers.Count == 0)
                 return;
 
             var pair = value.StatModifiers.OrderBy(kv => kv.Key).First();
             if (row.StatModifiers.ContainsKey(pair.Key))
                 throw new Exception($"[{nameof(EquipmentItemSetEffectSheet)}]Already contained key: {pair.Key}");
-            
+
             row.StatModifiers.Add(pair.Key, pair.Value);
         }
     }

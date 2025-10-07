@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Helper;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
+using Lib9c.Helper;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     /// <summary>
     /// Stat is built with _baseStats based on level,

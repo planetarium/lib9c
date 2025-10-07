@@ -3,31 +3,34 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Action;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Arena;
+using Lib9c.Model.Coupons;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stake;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Quest;
+using Lib9c.TableData.Rune;
+using Lib9c.TableData.Skill;
+using Lib9c.TableData.WorldAndStage;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using LruCacheNet;
-using Nekoyume.Action;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Arena;
-using Nekoyume.Model.Coupons;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stake;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Rune;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     public static class LegacyModule
     {

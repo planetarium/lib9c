@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Nekoyume.Model;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
 using Priority_Queue;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public interface ISimulator
     {

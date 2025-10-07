@@ -3,15 +3,15 @@ namespace Lib9c.Tests.Model.Skill.Raid
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class NormalAttackTest
@@ -62,7 +62,7 @@ namespace Lib9c.Tests.Model.Skill.Raid
             {
                 if (log is NormalAttack or BlowAttack or DoubleAttack)
                 {
-                    Assert.True(((Skill)log).SkillInfos.First().Effect > 0);
+                    Assert.True(((Lib9c.Model.BattleStatus.Skill)log).SkillInfos.First().Effect > 0);
                 }
             }
         }

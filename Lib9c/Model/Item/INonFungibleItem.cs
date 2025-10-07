@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     public interface INonFungibleItem: IItem
     {

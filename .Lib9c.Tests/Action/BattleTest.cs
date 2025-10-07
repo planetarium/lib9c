@@ -2,28 +2,24 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
     using Bencodex;
-    using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Action.Arena;
+    using Lib9c.Model;
+    using Lib9c.Model.Arena;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
     using Libplanet.Types.Tx;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Arena;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Rune;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
+    using CpState = Lib9c.Model.State.CpState;
+    using GameConfigState = Lib9c.Model.State.GameConfigState;
 
     public class BattleTest
     {
@@ -109,7 +105,7 @@ namespace Lib9c.Tests.Action
             var previousStates = _initialStates;
             var random = new TestRandom();
 
-            var action = new Battle
+            var action = new Lib9c.Action.Arena.Battle
             {
                 myAvatarAddress = _preset1Avatar,
                 enemyAvatarAddress = _preset2Avatar,
@@ -153,8 +149,8 @@ namespace Lib9c.Tests.Action
 
         private static (
             PrivateKey PrivateKey,
-            AgentState AgentState,
-            AvatarState AvatarState
+            Lib9c.Model.State.AgentState AgentState,
+            Lib9c.Model.State.AvatarState AvatarState
         ) GetAgentStateWithAvatarState(
             TableSheets tableSheets,
             Address rankingMapAddress,

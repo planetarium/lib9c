@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
 
-namespace Nekoyume.Model.Coupons
+namespace Lib9c.Model.Coupons
 {
     public readonly struct RewardSet : IImmutableDictionary<int, uint>, IEquatable<RewardSet>
     {

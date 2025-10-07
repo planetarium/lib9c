@@ -1,14 +1,13 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Lib9c.Model.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.ValidatorDelegation;
 
-
-namespace Nekoyume.Module.Guild
+namespace Lib9c.Module.Guild
 {
     public static class GuildDelegateeModule
     {

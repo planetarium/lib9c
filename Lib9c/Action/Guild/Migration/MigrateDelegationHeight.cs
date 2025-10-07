@@ -1,11 +1,11 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Model.State;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Action.Guild.Migration
+namespace Lib9c.Action.Guild.Migration
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>

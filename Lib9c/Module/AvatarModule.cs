@@ -1,19 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.Quest;
+using Lib9c.Model.State;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Quest;
-using Nekoyume.Model.State;
 using Serilog;
-using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     public static class AvatarModule
     {

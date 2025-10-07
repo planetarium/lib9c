@@ -2,12 +2,12 @@
 using System;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Model.Guild
+namespace Lib9c.Model.Guild
 {
     public class Guild : IBencodable, IEquatable<Guild>
     {

@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.TableData
 {
     using System;
-    using Nekoyume.Extensions;
-    using Nekoyume.TableData;
+    using Lib9c.Extensions;
+    using Lib9c.TableData;
     using Xunit;
 
     public class WorldBossListSheetTest

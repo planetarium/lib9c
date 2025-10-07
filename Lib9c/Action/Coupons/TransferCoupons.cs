@@ -2,12 +2,12 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action.Coupons
+namespace Lib9c.Action.Coupons
 {
     [Serializable]
     [ActionType("transfer_coupons")]

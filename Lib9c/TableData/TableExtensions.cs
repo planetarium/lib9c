@@ -5,11 +5,11 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using Lib9c.TableData.Swap;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.TableData.Swap;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public static class TableExtensions
     {

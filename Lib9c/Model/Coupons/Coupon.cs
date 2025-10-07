@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
 
-namespace Nekoyume.Model.Coupons
+namespace Lib9c.Model.Coupons
 {
     public readonly struct Coupon
         : IOrderedEnumerable<(int ItemId, uint Quantity)>, IEquatable<Coupon>

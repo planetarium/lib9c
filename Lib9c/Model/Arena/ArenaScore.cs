@@ -1,10 +1,10 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 
-namespace Nekoyume.Model.Arena
+namespace Lib9c.Model.Arena
 {
     /// <summary>
     /// Introduced at https://github.com/planetarium/lib9c/pull/1027

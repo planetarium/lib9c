@@ -6,15 +6,15 @@ using System.Linq;
 using System.Text;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Compressed version of PatchTableSheet to reduce transaction size for large CSV files.

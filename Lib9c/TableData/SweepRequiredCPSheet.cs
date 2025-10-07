@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     using static TableExtensions;
 

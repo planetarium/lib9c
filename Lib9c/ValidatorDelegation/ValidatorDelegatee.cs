@@ -5,15 +5,14 @@ using System.Collections.Immutable;
 using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Delegation;
+using Lib9c.Module;
+using Lib9c.TableData.Stake;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Libplanet.Types.Consensus;
-using Nekoyume.Delegation;
-using Nekoyume.Module;
-using Nekoyume.TableData.Stake;
 
-namespace Nekoyume.ValidatorDelegation
+namespace Lib9c.ValidatorDelegation
 {
     public sealed class ValidatorDelegatee
         : Delegatee<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>,

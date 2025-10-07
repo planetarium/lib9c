@@ -3,15 +3,14 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using Lib9c.Action;
+    using Lib9c.Helper;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class PrepareRewardAssetsTest

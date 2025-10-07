@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Helper;
+using Lib9c.Model.Market;
 using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Battle;
-using Nekoyume.Helper;
-using Nekoyume.Model.Market;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType("re_register_product2")]
     public class ReRegisterProduct : GameAction

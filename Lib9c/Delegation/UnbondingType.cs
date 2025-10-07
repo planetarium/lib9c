@@ -1,5 +1,5 @@
 #nullable enable
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public enum UnbondingType
     {

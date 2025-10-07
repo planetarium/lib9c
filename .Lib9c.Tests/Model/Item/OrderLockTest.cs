@@ -2,7 +2,7 @@ namespace Lib9c.Tests.Model.Item
 {
     using System;
     using Bencodex.Types;
-    using Nekoyume.Model.Item;
+    using Lib9c.Model.Item;
     using Xunit;
 
     public class OrderLockTest

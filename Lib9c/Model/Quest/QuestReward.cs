@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class QuestReward : IState

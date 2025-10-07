@@ -1,8 +1,8 @@
 ﻿namespace Lib9c.Tests.TableData.GrandFinale
 {
     using System;
+    using Lib9c.TableData.GrandFinale;
     using Libplanet.Crypto;
-    using Nekoyume.TableData.GrandFinale;
     using Xunit;
 
     public class GrandFinaleParticipantsSheetTest

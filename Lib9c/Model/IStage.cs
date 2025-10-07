@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData.AdventureBoss;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.TableData.AdventureBoss;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     public interface IStage
     {

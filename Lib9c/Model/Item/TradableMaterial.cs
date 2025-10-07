@@ -2,12 +2,12 @@ using System;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 using Libplanet.Common;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     /// <summary>
     /// Represents a tradable material item that can be traded between players.

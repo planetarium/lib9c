@@ -4,7 +4,7 @@ using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.ValidatorDelegation
+namespace Lib9c.ValidatorDelegation
 {
     /// <summary>
     /// PayMaster is a contract that manages the proxy of mortgage and refund of gas.

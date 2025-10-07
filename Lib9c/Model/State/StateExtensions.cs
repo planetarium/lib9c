@@ -7,14 +7,14 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public static class StateExtensions
     {

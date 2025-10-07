@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Action
 {
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Lib9c.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
     using Xunit;
 
     public class PendingActivationDoesNotExistsExceptionTest

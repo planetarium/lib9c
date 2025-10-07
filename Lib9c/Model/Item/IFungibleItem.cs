@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using Libplanet.Common;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     public interface IFungibleItem: IItem
     {

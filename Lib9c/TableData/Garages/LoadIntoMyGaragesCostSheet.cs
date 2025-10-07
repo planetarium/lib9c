@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
-using Lib9c;
 using Libplanet.Common;
 using Libplanet.Types.Assets;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.Garages
+namespace Lib9c.TableData.Garages
 {
     [Serializable]
     public class LoadIntoMyGaragesCostSheet : Sheet<int, LoadIntoMyGaragesCostSheet.Row>

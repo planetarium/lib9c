@@ -6,15 +6,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using Libplanet.Action.State;
+using Lib9c.Action;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.Model.Guild;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
-using Nekoyume.Action;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.Model.Guild;
-using Nekoyume.ValidatorDelegation;
 using Xunit;
 
 public class SlashValidatorTest : ValidatorDelegationTestBase

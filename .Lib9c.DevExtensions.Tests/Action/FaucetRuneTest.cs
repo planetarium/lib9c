@@ -2,21 +2,19 @@ using Lib9c.Tests;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Action;
 using Lib9c.DevExtensions.Action;
+using Lib9c.Helper;
+using Lib9c.Model.Faucet;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume;
-using Nekoyume.Action;
-using Nekoyume.Helper;
-using Nekoyume.Model.Faucet;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 using Xunit;
 using Xunit.Abstractions;
-using static Lib9c.SerializeKeys;
 using Libplanet.Mocks;
 
 namespace Lib9c.DevExtensions.Tests.Action

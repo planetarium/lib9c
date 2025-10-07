@@ -1,10 +1,10 @@
-using Bencodex.Types;
-using Libplanet.Crypto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
+using Libplanet.Crypto;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class AdminState : State

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public static class DelegationAddress
     {
@@ -66,7 +66,7 @@ namespace Nekoyume.Delegation
                 delegatorAddress.ByteArray);
 
         /// <summary>
-        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>. 
+        /// Get the <see cref="Address"/> of the current <see cref="RewardBase"/>.
         /// </summary>
         /// <param name="delegateeAddress">
         /// <see cref="Address"/> of the <see cref="Delegatee{T, TSelf}"/>.

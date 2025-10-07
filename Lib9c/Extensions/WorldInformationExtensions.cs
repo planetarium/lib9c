@@ -1,7 +1,7 @@
-﻿using Nekoyume.Action;
-using Nekoyume.Model;
+﻿using Lib9c.Action;
+using Lib9c.Model;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class WorldInformationExtensions
     {

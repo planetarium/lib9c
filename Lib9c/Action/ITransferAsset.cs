@@ -2,7 +2,7 @@
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public interface ITransferAsset
     {

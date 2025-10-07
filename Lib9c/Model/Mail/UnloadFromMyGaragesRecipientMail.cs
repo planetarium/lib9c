@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Action.Garages;
+using Lib9c.Model.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Garages;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     public class UnloadFromMyGaragesRecipientMail : Mail
     {

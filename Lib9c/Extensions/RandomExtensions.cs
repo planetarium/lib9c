@@ -1,7 +1,7 @@
 using Libplanet.Action;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class RandomExtensions
     {

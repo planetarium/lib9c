@@ -1,17 +1,16 @@
 namespace Lib9c.Tests.Delegation;
 
+using Lib9c.Model.Guild;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.Module.ValidatorDelegation;
 using Lib9c.Tests.Action;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
 using Libplanet.Types.Assets;
-using Nekoyume;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.Guild;
 
 public abstract class DelegationTestBase
 {

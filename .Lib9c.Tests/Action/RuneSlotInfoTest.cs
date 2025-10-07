@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.Action
 {
     using Bencodex.Types;
-    using Nekoyume.Action;
+    using Lib9c.Action;
     using Xunit;
 
     public class RuneSlotInfoTest

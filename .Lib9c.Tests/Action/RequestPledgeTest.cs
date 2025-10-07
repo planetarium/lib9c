@@ -1,13 +1,12 @@
 namespace Lib9c.Tests.Action
 {
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class RequestPledgeTest

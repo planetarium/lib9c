@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Bencodex;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public interface IDelegatorMetadata : IBencodable
     {

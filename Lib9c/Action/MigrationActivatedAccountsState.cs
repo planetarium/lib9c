@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Model;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("migration_activated_accounts_state")]
@@ -24,7 +24,7 @@ namespace Nekoyume.Action
             CheckPermission(context);
 
             Log.Debug($"Start {nameof(MigrationActivatedAccountsState)}");
-            if (states.TryGetLegacyState(Nekoyume.Addresses.ActivatedAccount, out Dictionary rawState))
+            if (states.TryGetLegacyState(Addresses.ActivatedAccount, out Dictionary rawState))
             {
                 var activatedAccountsState = new ActivatedAccountsState(rawState);
                 var accounts = activatedAccountsState.Accounts;

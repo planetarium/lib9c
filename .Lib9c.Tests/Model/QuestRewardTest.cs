@@ -4,7 +4,7 @@ namespace Lib9c.Tests.Model
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
-    using Nekoyume.Model.Quest;
+    using Lib9c.Model.Quest;
     using Xunit;
 
     public class QuestRewardTest

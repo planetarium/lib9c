@@ -1,12 +1,11 @@
 using Lib9c.DevExtensions.Action.Craft;
+using Lib9c.Module;
 using Lib9c.Tests;
 using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume;
-using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action.Craft

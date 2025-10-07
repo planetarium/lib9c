@@ -2,9 +2,9 @@ namespace Lib9c.Tests.Model.Garages
 {
     using System;
     using Bencodex.Types;
-    using Nekoyume.Model.Garages;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Garages;
+    using Lib9c.Model.Item;
+    using Lib9c.TableData.Item;
     using Xunit;
 
     public class FungibleItemGarageTest

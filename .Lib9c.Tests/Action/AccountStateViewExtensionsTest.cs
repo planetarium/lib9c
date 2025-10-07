@@ -6,19 +6,17 @@ namespace Lib9c.Tests.Action
     using System.Globalization;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Helper;
+    using Lib9c.Model.Coupons;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Crystal;
     using Lib9c.Tests.Extensions;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Coupons;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Crystal;
     using Xunit;
     using static Lib9c.SerializeKeys;
 

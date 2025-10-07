@@ -1,9 +1,9 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     public class AdventureBossRaffleWinnerMail : Mail
     {

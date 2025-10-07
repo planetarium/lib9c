@@ -2,15 +2,14 @@
 using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action.Coupons
+namespace Lib9c.Action.Coupons
 {
     [Serializable]
     [ActionType("redeem_coupon")]

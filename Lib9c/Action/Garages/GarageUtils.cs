@@ -5,15 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Exceptions;
+using Lib9c.Model.Garages;
+using Lib9c.Module;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.Garages;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action.Garages
+namespace Lib9c.Action.Garages
 {
     public static class GarageUtils
     {

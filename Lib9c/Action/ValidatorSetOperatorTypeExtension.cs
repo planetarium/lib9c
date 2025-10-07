@@ -1,7 +1,7 @@
 using System;
 using Libplanet.Types.Consensus;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public static class ValidatorSetOperatorTypeExtensions
     {

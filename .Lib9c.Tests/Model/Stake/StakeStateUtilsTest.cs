@@ -2,16 +2,15 @@ namespace Lib9c.Tests.Model.Stake
 {
     using System;
     using Bencodex.Types;
+    using Lib9c.Model.Stake;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData.Stake;
     using Lib9c.Tests.Fixtures.TableCSV;
     using Lib9c.Tests.Fixtures.TableCSV.Stake;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume;
-    using Nekoyume.Model.Stake;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData.Stake;
     using Xunit;
 
     public class StakeStateUtilsTest

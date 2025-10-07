@@ -1,11 +1,11 @@
-#nullable enable
 namespace Lib9c.Tests.Model.Coupons
 {
+#nullable enable
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Model.Coupons;
     using Libplanet.Common;
-    using Nekoyume.Model.Coupons;
     using Xunit;
 
     public class CouponTest

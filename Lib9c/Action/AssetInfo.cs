@@ -1,12 +1,11 @@
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.Market;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Helper;
-using Nekoyume.Model.Market;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public class AssetInfo: IRegisterInfo
     {

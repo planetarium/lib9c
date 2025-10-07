@@ -1,14 +1,12 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Bencodex.Types;
-using Lib9c;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
+using Lib9c.Model.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 
-namespace Nekoyume.Module.Guild
+namespace Lib9c.Module.Guild
 {
     public static class GuildParticipantModule
     {

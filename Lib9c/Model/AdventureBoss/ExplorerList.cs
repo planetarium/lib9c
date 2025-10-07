@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.AdventureBoss
+namespace Lib9c.Model.AdventureBoss
 {
     public class ExplorerList
     {

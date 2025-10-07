@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.TableData.Item
 {
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Item;
+    using Lib9c.TableData.Item;
     using Xunit;
 
     public class EquipmentItemRecipeSheetTest

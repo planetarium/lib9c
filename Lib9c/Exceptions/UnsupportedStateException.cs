@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Exceptions
+namespace Lib9c.Exceptions
 {
     [Serializable]
     public class UnsupportedStateException : Exception
@@ -18,7 +18,7 @@ namespace Nekoyume.Exceptions
                 innerException)
         {
         }
-        
+
         public UnsupportedStateException(
             int expectedVersion,
             int actualVersion,

@@ -2,7 +2,7 @@ using System;
 using Bencodex;
 using Bencodex.Types;
 
-namespace Nekoyume.TypedAddress
+namespace Lib9c.TypedAddress
 {
     using Address = Libplanet.Crypto.Address;
 

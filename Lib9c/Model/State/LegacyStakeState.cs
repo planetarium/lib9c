@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class LegacyStakeState : State
     {

@@ -1,11 +1,12 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Skill;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Skill;
 
-namespace Nekoyume.Model.BattleStatus.Arena
+namespace Lib9c.Model.BattleStatus.Arena
 {
     [Serializable]
     public abstract class ArenaSkill : ArenaEventBase

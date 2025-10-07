@@ -2,9 +2,9 @@ namespace Lib9c.Tests.TableData.Stake
 {
     using System.Linq;
     using System.Text;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Stake;
     using Lib9c.Tests.Fixtures.TableCSV.Stake;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Stake;
     using Xunit;
 
     public class StakePolicySheetTest

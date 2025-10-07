@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.Delegation
 {
+    using Lib9c.Delegation;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Delegation;
 
     public sealed class TestDelegatee : Delegatee<TestRepository, TestDelegatee, TestDelegator>
     {

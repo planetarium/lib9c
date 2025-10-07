@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Model.Item
 {
     using System;
     using System.Linq;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Item;
+    using Lib9c.TableData.Item;
     using Xunit;
 
     public class ArmorTest

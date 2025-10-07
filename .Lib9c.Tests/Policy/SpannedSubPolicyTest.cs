@@ -1,7 +1,6 @@
 namespace Lib9c.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Nekoyume.Blockchain.Policy;
     using Xunit;

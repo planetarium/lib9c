@@ -1,11 +1,11 @@
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Stat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Rune
 {
     [Serializable]
     public class RuneOptionSheet : Sheet<int, RuneOptionSheet.Row>

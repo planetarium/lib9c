@@ -3,10 +3,10 @@ namespace Lib9c.Tests.TableData.Swap
     using System;
     using System.Collections.Immutable;
     using System.Numerics;
+    using Lib9c.TableData.Swap;
     using Lib9c.Tests.Fixtures.TableCSV.Swap;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.TableData.Swap;
     using Xunit;
 
     public class SwapRateSheetTest

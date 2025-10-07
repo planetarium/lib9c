@@ -2,12 +2,12 @@ namespace Lib9c.Tests.TableData
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Model.Collection;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.TableData;
     using Lib9c.Tests.Action;
-    using Nekoyume.Model.Collection;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CollectionSheetTest

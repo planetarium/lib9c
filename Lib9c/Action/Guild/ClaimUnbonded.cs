@@ -1,10 +1,10 @@
 using System;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Model.Guild;
 using Libplanet.Action;
-using Nekoyume.Model.Guild;
+using Libplanet.Action.State;
 
-namespace Nekoyume.Action.Guild
+namespace Lib9c.Action.Guild
 {
     /// <summary>
     /// An action to claim unbonded assets.

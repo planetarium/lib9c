@@ -5,8 +5,14 @@ namespace Lib9c.Tests.TestHelper
     using System.Collections.Immutable;
     using System.Linq;
     using System.Numerics;
+    using Lib9c.Action;
+    using Lib9c.Action.Loader;
     using Lib9c.DevExtensions.Action;
+    using Lib9c.Model;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Lib9c.Renderers;
+    using Lib9c.TableData;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Libplanet.Action.State;
@@ -20,12 +26,6 @@ namespace Lib9c.Tests.TestHelper
     using Libplanet.Types.Blocks;
     using Libplanet.Types.Consensus;
     using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Loader;
-    using Nekoyume.Model;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
 
     public static class BlockChainHelper
     {

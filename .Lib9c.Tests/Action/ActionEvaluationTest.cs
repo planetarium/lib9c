@@ -4,7 +4,14 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Numerics;
     using Bencodex.Types;
+    using Lib9c.Action;
     using Lib9c.Formatters;
+    using Lib9c.Helper;
+    using Lib9c.Model.Collection;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Market;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -12,12 +19,6 @@ namespace Lib9c.Tests.Action
     using MessagePack;
     using MessagePack.Resolvers;
     using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Collection;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Market;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class ActionEvaluationTest

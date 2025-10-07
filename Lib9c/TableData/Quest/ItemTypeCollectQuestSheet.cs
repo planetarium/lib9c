@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Quest
 {
     [Serializable]
     public class ItemTypeCollectQuestSheet: Sheet<int, ItemTypeCollectQuestSheet.Row>

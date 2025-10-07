@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     public class UnexpectedOperationException : Exception
     {

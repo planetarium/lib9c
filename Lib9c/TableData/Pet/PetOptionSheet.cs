@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.Pet;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Pet;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.Pet
+namespace Lib9c.TableData.Pet
 {
     [Serializable]
     public class PetOptionSheet : Sheet<int, PetOptionSheet.Row>

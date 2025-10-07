@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Action.Guild;
+using Lib9c.Extensions;
+using Lib9c.Model.Guild;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TypedAddress;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.Guild;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
-    using Extensions;
-    using Module.Guild;
-
     /// <summary>
     /// Admin action for pledge contract
     /// </summary>
@@ -67,11 +67,11 @@ namespace Nekoyume.Action
                 .Add(Mead.Serialize());
             // migration for planetarium guild
             var repository = new GuildRepository(states, context);
-            var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
+            var planetariumGuildOwner = GuildConfig.PlanetariumGuildOwner;
             if (repository.GetJoinedGuild(planetariumGuildOwner) is null)
             {
                 var random = context.GetRandom();
-                var guildAddr = new Nekoyume.TypedAddress.GuildAddress(random.GenerateAddress());
+                var guildAddr = new GuildAddress(random.GenerateAddress());
                 var guild = new Model.Guild.Guild(guildAddr, planetariumGuildOwner,
                     context.Miner, repository);
                 repository.SetGuild(guild);
@@ -79,14 +79,14 @@ namespace Nekoyume.Action
             }
 
             var guildAddress =
-                (Nekoyume.TypedAddress.GuildAddress)
+                (GuildAddress)
                 repository.GetJoinedGuild(planetariumGuildOwner)!;
             foreach (var (agentAddress, pledgeAddress) in AgentAddresses)
             {
                 if (PatronAddress == MeadConfig.PatronAddress)
                 {
                     repository = repository.JoinGuild(guildAddress,
-                        new Nekoyume.TypedAddress.AgentAddress(agentAddress));
+                        new AgentAddress(agentAddress));
                 }
 
                 repository.UpdateWorld(repository.World

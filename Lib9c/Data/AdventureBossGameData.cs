@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Data
+namespace Lib9c.Data
 {
     public static class AdventureBossGameData
     {

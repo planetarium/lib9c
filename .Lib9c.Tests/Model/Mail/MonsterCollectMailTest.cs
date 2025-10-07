@@ -1,15 +1,13 @@
 namespace Lib9c.Tests.Model.Mail
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c.Model.Mail;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class MonsterCollectMailTest

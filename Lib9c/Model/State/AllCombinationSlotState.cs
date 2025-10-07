@@ -5,17 +5,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Module;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Module;
-using Nekoyume.Module.CombinationSlot;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// This is new version of combination slot State. This state stores all combinationSlot states of an avatar.
     /// AllCombinationSlotState has all combinationSlotStates as dictionary and has methods to get/set/update each combinationSlotState.
-    /// Use this with <see cref="Nekoyume.Module.CombinationSlotStateModule"/>.
+    /// Use this with <see cref="CombinationSlotStateModule"/>.
     /// </summary>
     public class AllCombinationSlotState : IState, IEnumerable<CombinationSlotState>
     {

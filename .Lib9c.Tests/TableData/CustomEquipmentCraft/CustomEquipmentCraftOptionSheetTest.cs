@@ -1,12 +1,12 @@
-#nullable enable
-
 namespace Lib9c.Tests.TableData.CustomEquipmentCraft
 {
+#nullable enable
+
     using System.Collections.Generic;
     using System.Linq;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.TableData.CustomEquipmentCraft;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Stat;
+    using Lib9c.TableData.CustomEquipmentCraft;
     using Xunit;
 
     public class CustomEquipmentCraftOptionSheetTest

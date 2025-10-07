@@ -1,12 +1,13 @@
 using System.Collections.Generic;
-using Nekoyume.Battle;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
+using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
-    using System.Linq;
     public class ItemOptionInfo
     {
         public readonly int OptionCountFromCombination;

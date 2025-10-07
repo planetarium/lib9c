@@ -1,7 +1,6 @@
 namespace Lib9c.Tests.Model
 {
-    using System.Collections.Generic;
-    using Nekoyume.TableData;
+    using Lib9c.TableData;
     using Xunit;
 
     public class MonsterCollectionRewardSheetTest

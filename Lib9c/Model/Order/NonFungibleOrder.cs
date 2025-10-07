@@ -1,12 +1,12 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
 namespace Lib9c.Model.Order
 {

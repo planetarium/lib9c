@@ -1,9 +1,8 @@
 namespace Lib9c.Tests.Model
 {
     using System.Linq;
-    using Bencodex.Types;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Skill;
     using Xunit;
 
     public class ItemUsableTest

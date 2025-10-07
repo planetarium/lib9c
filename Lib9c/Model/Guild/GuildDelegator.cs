@@ -1,16 +1,15 @@
 #nullable enable
 using System;
-using Lib9c;
+using Lib9c.Delegation;
+using Lib9c.Model.Stake;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TypedAddress;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Delegation;
-using Nekoyume.Model.Stake;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.TypedAddress;
 
-namespace Nekoyume.Model.Guild
+namespace Lib9c.Model.Guild
 {
     public class GuildDelegator
         : Delegator<GuildRepository, GuildDelegatee, GuildDelegator>, IEquatable<GuildDelegator>

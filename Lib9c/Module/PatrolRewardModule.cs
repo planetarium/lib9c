@@ -1,9 +1,9 @@
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     /// <summary>
     /// Provides utility methods for handling patrol reward states.

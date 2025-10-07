@@ -1,12 +1,12 @@
 #nullable enable
 using System;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 using Serilog;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     public static class AgentModule
     {

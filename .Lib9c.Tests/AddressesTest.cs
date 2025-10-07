@@ -5,7 +5,6 @@ namespace Lib9c.Tests
     using System.Reflection;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume;
     using Xunit;
 
     public class AddressesTest

@@ -7,7 +7,7 @@
     <CodeAnalysisRuleSet>..\Lib9c.Common.ruleset</CodeAnalysisRuleSet>
     <OutputPath>.bin</OutputPath>
     <IntermediateOutputPath>.obj</IntermediateOutputPath>
-    <RootNamespace>Nekoyume</RootNamespace>
+    <RootNamespace>Lib9c</RootNamespace>
     <LangVersion>9</LangVersion>
     <VersionPrefix>$(Lib9cVersion)</VersionPrefix>
     <EnableDynamicLoading>true</EnableDynamicLoading>

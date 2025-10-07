@@ -2,16 +2,16 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Collections.Generic;
+    using Lib9c.Action;
+    using Lib9c.Action.Guild;
+    using Lib9c.Model.Guild;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.Module.Guild;
     using Lib9c.Tests.Util;
+    using Lib9c.TypedAddress;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Libplanet.Mocks;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Guild;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.Module.Guild;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -42,7 +42,7 @@ namespace Lib9c.Tests.Action
             var mead = Currencies.Mead;
             var pledgedAddress = new PrivateKey().Address;
             var pledgeAddress = pledgedAddress.GetPledgeAddress();
-            var agentAddress = new Nekoyume.TypedAddress.AgentAddress(pledgedAddress);
+            var agentAddress = new AgentAddress(pledgedAddress);
             var context = new ActionContext();
             var (tables, agentAddr, avatarAddr, states) = InitializeUtil.InitializeStates();
             states = states
@@ -87,7 +87,7 @@ namespace Lib9c.Tests.Action
                 Assert.Equal(4 * mead, nextState.GetBalance(pledgedAddress, mead));
 
                 var repository = new GuildRepository(nextState, context);
-                var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
+                var planetariumGuildOwner = GuildConfig.PlanetariumGuildOwner;
                 var guildAddress = repository.GetJoinedGuild(planetariumGuildOwner);
                 Assert.NotNull(guildAddress);
                 Assert.True(repository.TryGetGuild(guildAddress.Value, out var guild));
@@ -99,11 +99,11 @@ namespace Lib9c.Tests.Action
                 else
                 {
                     var joinedGuildAddress =
-                        Assert.IsType<Nekoyume.TypedAddress.GuildAddress>(
+                        Assert.IsType<GuildAddress>(
                             repository.GetJoinedGuild(agentAddress));
                     Assert.True(repository.TryGetGuild(joinedGuildAddress, out var joinedGuild));
                     Assert.Equal(
-                        Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner,
+                        GuildConfig.PlanetariumGuildOwner,
                         joinedGuild.GuildMasterAddress
                     );
                 }

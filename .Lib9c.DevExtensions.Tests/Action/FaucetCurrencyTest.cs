@@ -1,11 +1,11 @@
 using Lib9c.DevExtensions.Action;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 using Serilog;
 using Xunit;
 using Xunit.Abstractions;

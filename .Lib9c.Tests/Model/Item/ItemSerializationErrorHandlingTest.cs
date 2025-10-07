@@ -6,13 +6,12 @@ namespace Lib9c.Tests.Model.Item
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Formatters;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Item;
     using Lib9c.Tests.Model.Skill;
-    using Libplanet.Action;
     using MessagePack;
     using MessagePack.Resolvers;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     /// <summary>

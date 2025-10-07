@@ -1,9 +1,9 @@
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Action.Loader;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
-using Nekoyume.Action;
-using Nekoyume.Action.Loader;
 
 namespace Lib9c.DevExtensions.Action.Loader
 {

@@ -1,15 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.TableData.AdventureBoss;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Helper;
-using Nekoyume.Model.State;
-using Nekoyume.TableData.AdventureBoss;
 
-namespace Nekoyume.Model.AdventureBoss
+namespace Lib9c.Model.AdventureBoss
 {
     public class ExploreBoard
     {

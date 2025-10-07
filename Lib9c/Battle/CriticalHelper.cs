@@ -1,7 +1,7 @@
-using Nekoyume.Model;
 using System;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class CriticalHelper
     {

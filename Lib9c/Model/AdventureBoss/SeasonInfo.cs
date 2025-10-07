@@ -1,7 +1,7 @@
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.AdventureBoss
+namespace Lib9c.Model.AdventureBoss
 {
     public class SeasonInfo
     {

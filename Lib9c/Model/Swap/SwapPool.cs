@@ -1,14 +1,14 @@
 #nullable enable
 using System;
 using System.Numerics;
+using Lib9c.TableData;
+using Lib9c.TableData.Swap;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Swap;
 
-namespace Nekoyume.Model.Swap
+namespace Lib9c.Model.Swap
 {
     /// <summary>
     /// Swap pool for swap between currencies.

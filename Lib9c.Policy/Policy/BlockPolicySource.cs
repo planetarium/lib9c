@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Immutable;
 using Lib9c;
+using Lib9c.Action;
+using Lib9c.Action.Loader;
+using Lib9c.Action.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
 using Libplanet.Action.State;
@@ -8,9 +11,6 @@ using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
-using Nekoyume.Action;
-using Nekoyume.Action.Loader;
-using Nekoyume.Action.ValidatorDelegation;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;

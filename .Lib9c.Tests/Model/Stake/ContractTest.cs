@@ -1,9 +1,9 @@
 namespace Lib9c.Tests.Model.Stake
 {
     using System;
+    using Lib9c.Model.Stake;
+    using Lib9c.TableData.Stake;
     using Lib9c.Tests.Fixtures.TableCSV.Stake;
-    using Nekoyume.Model.Stake;
-    using Nekoyume.TableData.Stake;
     using Xunit;
 
     public class ContractTest

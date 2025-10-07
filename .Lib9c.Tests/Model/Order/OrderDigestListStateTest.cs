@@ -5,9 +5,9 @@ namespace Lib9c.Tests.Model.Order
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c.Action;
     using Lib9c.Model.Order;
     using Libplanet.Types.Assets;
-    using Nekoyume.Action;
     using Xunit;
 
     public class OrderDigestListStateTest

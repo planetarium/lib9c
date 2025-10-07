@@ -7,22 +7,21 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
     using System.Globalization;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Action.CustomEquipmentCraft;
+    using Lib9c.Action.Exceptions;
+    using Lib9c.Action.Exceptions.CustomEquipmentCraft;
+    using Lib9c.Action.Guild.Migration.LegacyModels;
+    using Lib9c.Battle;
+    using Lib9c.Exceptions;
+    using Lib9c.Model.Elemental;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.CustomEquipmentCraft;
-    using Nekoyume.Action.Exceptions;
-    using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
-    using Nekoyume.Action.Guild.Migration.LegacyModels;
-    using Nekoyume.Battle;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class CustomEquipmentCraftTest
@@ -459,7 +458,7 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 );
             }
 
-            var action = new CustomEquipmentCraft
+            var action = new Lib9c.Action.CustomEquipmentCraft.CustomEquipmentCraft
             {
                 AvatarAddress = _avatarAddress,
                 CraftList = craftList,

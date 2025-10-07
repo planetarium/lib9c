@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Nekoyume.Model.Character;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Character
 {
     [Serializable]
     public class CharacterSheet : Sheet<int, CharacterSheet.Row>

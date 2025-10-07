@@ -1,6 +1,6 @@
 using Bencodex.Types;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public interface IState
     {

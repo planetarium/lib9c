@@ -2,15 +2,14 @@
 {
     using System;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Helper;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class InventoryExtensionsTest

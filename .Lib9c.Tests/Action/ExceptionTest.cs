@@ -8,7 +8,9 @@ namespace Lib9c.Tests.Action
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Security.Cryptography;
     using Bencodex.Types;
+    using Lib9c.Action;
     using Lib9c.Formatters;
+    using Lib9c.Model.State;
     using Libplanet.Action;
     using Libplanet.Blockchain.Renderers.Debug;
     using Libplanet.Common;
@@ -19,9 +21,6 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Tx;
     using MessagePack;
     using MessagePack.Resolvers;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class ExceptionTest
@@ -78,7 +77,7 @@ namespace Lib9c.Tests.Action
                 .SelectMany(e => e.GetTypes())
                 .Where(e =>
                     e.Namespace is not null &&
-                    e.Namespace.StartsWith("Nekoyume") &&
+                    e.Namespace.StartsWith("Lib9c") &&
                     !e.IsAbstract &&
                     e.IsClass &&
                     e.IsAssignableTo(t))
@@ -227,7 +226,7 @@ namespace Lib9c.Tests.Action
 
                 if (type == typeof(Address))
                 {
-                    value = Nekoyume.Addresses.Admin;
+                    value = Addresses.Admin;
                     return true;
                 }
 

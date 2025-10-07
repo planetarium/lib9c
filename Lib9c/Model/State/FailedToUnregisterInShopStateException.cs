@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class FailedToUnregisterInShopStateException : Exception

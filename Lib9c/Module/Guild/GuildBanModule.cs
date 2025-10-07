@@ -1,12 +1,12 @@
 using System;
+using Lib9c.Extensions;
+using Lib9c.Model.Guild;
+using Lib9c.TypedAddress;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Guild;
-using Nekoyume.TypedAddress;
 using Boolean = Bencodex.Types.Boolean;
 
-namespace Nekoyume.Module.Guild
+namespace Lib9c.Module.Guild
 {
     public static class GuildBanModule
     {

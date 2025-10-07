@@ -1,21 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Battle;
+using Lib9c.Extensions;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Quest;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Battle;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.Quest;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// Agent가 포함하는 각 Avatar의 상태 모델이다.

@@ -1,20 +1,18 @@
 using System;
 using System.Text;
 using Bencodex.Types;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Libplanet.Types.Assets;
-using Serilog;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using UniRx;
 #else
 #endif
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public abstract class ActionBase : IAction

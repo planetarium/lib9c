@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.Pet
+namespace Lib9c.Model.Pet
 {
     public enum PetOptionType
     {

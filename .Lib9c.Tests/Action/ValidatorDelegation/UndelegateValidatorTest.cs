@@ -3,11 +3,11 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Lib9c.Action;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.ValidatorDelegation;
 using Xunit;
 
 public class UndelegateValidatorTest : ValidatorDelegationTestBase

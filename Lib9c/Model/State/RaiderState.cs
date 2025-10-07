@@ -1,9 +1,9 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Helper;
 using Libplanet.Crypto;
-using Nekoyume.Helper;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class RaiderState : IState

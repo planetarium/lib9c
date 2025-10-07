@@ -1,10 +1,10 @@
-#nullable enable
 namespace Lib9c.Tests.Action.Coupons
 {
+#nullable enable
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using Nekoyume.Model.Coupons;
+    using Lib9c.Model.Coupons;
     using Xunit;
 
     public class RewardSetTest

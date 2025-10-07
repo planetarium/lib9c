@@ -1,15 +1,13 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
-namespace Nekoyume.Model.Stake
+namespace Lib9c.Model.Stake
 {
     public static class StakeStateUtils
     {

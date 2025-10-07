@@ -1,11 +1,11 @@
 using System;
 using Lib9c.DevExtensions.Action.Stage;
+using Lib9c.Module;
 using Lib9c.Tests;
 using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
-using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action.Stage

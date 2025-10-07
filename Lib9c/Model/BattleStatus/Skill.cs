@@ -1,11 +1,12 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Skill;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Skill;
 
-namespace Nekoyume.Model.BattleStatus
+namespace Lib9c.Model.BattleStatus
 {
     [Serializable]
     public abstract class Skill : EventBase
@@ -23,7 +24,7 @@ namespace Nekoyume.Model.BattleStatus
             public readonly long Thorn;
             public readonly bool IsDead;
             public readonly Guid CharacterId;
-            public readonly IEnumerable<Nekoyume.Model.Buff.Buff>? DispelList;
+            public readonly IEnumerable<Model.Buff.Buff>? DispelList;
             public readonly bool Affected;
 
             public readonly Model.Buff.Buff? Buff;
@@ -35,7 +36,7 @@ namespace Nekoyume.Model.BattleStatus
                 SkillTargetType targetType = SkillTargetType.Enemy, Model.Buff.Buff? buff = null,
                 CharacterBase? target = null,
                 bool affected = true,
-                IEnumerable<Nekoyume.Model.Buff.Buff>? dispelList = null,
+                IEnumerable<Model.Buff.Buff>? dispelList = null,
                 IceShield? iceShield = null)
             {
                 CharacterId = characterId;

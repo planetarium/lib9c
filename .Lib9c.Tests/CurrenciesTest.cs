@@ -5,9 +5,10 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Pet;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CurrenciesTest

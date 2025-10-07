@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Action.Exceptions.CustomEquipmentCraft
+namespace Lib9c.Action.Exceptions.CustomEquipmentCraft
 {
     public class RandomOnlyIconException : Exception
     {

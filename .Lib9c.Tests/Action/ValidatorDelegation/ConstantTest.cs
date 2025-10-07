@@ -1,7 +1,7 @@
 #nullable enable
 namespace Lib9c.Tests.Action.ValidatorDelegation;
 
-using Nekoyume.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Xunit;
 
 public class ConstantTest

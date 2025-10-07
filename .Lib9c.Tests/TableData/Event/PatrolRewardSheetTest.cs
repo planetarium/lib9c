@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.TableData.Event
 {
     using System.Linq;
-    using Nekoyume.TableData.Event;
+    using Lib9c.TableData.Event;
     using Xunit;
 
     public class PatrolRewardSheetTest

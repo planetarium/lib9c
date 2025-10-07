@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.EnumType;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.EnumType;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class ItemSlotState : IState
     {

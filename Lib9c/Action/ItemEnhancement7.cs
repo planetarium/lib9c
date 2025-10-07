@@ -7,17 +7,18 @@ using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData.Cost;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionObsolete(ActionObsoleteConfig.V200020AccidentObsoleteIndex)]

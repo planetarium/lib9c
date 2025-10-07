@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.TableData;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Obsolete("This class is reserved for backwards compatibility with MonsterCollection0 only.", false)]
     [Serializable]

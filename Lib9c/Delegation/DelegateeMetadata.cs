@@ -1,16 +1,16 @@
 #nullable enable
-using Bencodex;
-using Bencodex.Types;
-using Libplanet.Crypto;
-using Libplanet.Types.Assets;
-using Nekoyume.Action;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
+using Bencodex;
+using Bencodex.Types;
+using Lib9c.Action;
+using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public class DelegateeMetadata : IDelegateeMetadata
     {

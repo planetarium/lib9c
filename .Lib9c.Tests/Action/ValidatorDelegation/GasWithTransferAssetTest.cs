@@ -3,9 +3,9 @@ namespace Lib9c.Tests.Action.ValidatorDelegation;
 
 using System;
 using System.Linq;
+using Lib9c.Action;
 using Libplanet.Action;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 using Xunit;
 
 public class GasWithTransferAssetTest : TxAcitonTestBase

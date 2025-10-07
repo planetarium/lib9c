@@ -2,14 +2,15 @@ namespace Lib9c.Tests.Extensions
 {
     using System;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Extensions;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
     using Xunit.Abstractions;
 

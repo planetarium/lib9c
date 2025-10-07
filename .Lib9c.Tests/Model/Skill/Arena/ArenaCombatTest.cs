@@ -2,14 +2,15 @@ namespace Lib9c.Tests.Model.Skill.Arena
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Arena;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Skill.Arena;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
-    using Nekoyume.Arena;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Skill.Arena;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class ArenaCombatTest
@@ -291,7 +292,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 simulator.HpModifier,
                 new List<StatModifier>()
             );
-            var statBuffRow = new Nekoyume.TableData.StatBuffSheet.Row();
+            var statBuffRow = new StatBuffSheet.Row();
             var csv = $"101000,101000,20,10,Self,DRR,Add,{int.MaxValue},true";
             statBuffRow.Set(csv.Split(","));
             var buff = new StatBuff(statBuffRow);

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Action;
-using Nekoyume.Model.Collection;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Action;
+using Lib9c.Model.Collection;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public class CollectionSheet : Sheet<int, CollectionSheet.Row>
     {

@@ -1,14 +1,13 @@
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.State;
 using Libplanet.Action;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType("secure_mining_reward")]
     public class SecureMiningReward : ActionBase, ISecureMiningReward

@@ -2,15 +2,15 @@ using System;
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)

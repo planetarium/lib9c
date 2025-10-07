@@ -1,14 +1,13 @@
 namespace Lib9c.Tests.Helper
 {
     using System.Collections.Generic;
-    using System.Globalization;
+    using Lib9c.Data;
+    using Lib9c.Helper;
+    using Lib9c.Model.AdventureBoss;
+    using Lib9c.TableData;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Data;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.AdventureBoss;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class AdventureBossHelperTest

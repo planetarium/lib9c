@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Libplanet.Action;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     public class WorldBossKillRewardSheet : Sheet<int, WorldBossKillRewardSheet.Row>, IWorldBossRewardSheet
     {

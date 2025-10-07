@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Model.State
 {
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class AdminStateTest

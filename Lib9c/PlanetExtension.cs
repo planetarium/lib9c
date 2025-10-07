@@ -1,7 +1,7 @@
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class PlanetExtension
     {

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     /// <summary>
     /// Represents a worldboss reward mail that contains rewards such as fungible assets and items.

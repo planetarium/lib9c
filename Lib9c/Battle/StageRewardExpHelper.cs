@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class StageRewardExpHelper
     {
@@ -49,7 +49,7 @@ namespace Nekoyume.Battle
             {
                 return 0;
             }
-                
+
             var differ = characterLevel - stageNumber;
             if (differ <= DifferLowerLimit)
             {

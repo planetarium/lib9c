@@ -1,10 +1,11 @@
 namespace Lib9c.Tests.Util
 {
+    using Lib9c.Model.Quest;
+    using Lib9c.Module;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.Quest;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
 
     public static class QuestUtil
     {

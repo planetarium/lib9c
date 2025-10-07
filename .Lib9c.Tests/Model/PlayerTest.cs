@@ -3,22 +3,23 @@ namespace Lib9c.Tests.Model
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Quest;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Priority_Queue;
     using Xunit;
+    using NormalAttack = Lib9c.Model.BattleStatus.NormalAttack;
 
     public class PlayerTest
     {
@@ -48,7 +49,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -85,7 +86,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -139,7 +140,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -193,7 +194,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -251,7 +252,7 @@ namespace Lib9c.Tests.Model
                 },
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -382,7 +383,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -464,7 +465,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -536,7 +537,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -601,7 +602,7 @@ namespace Lib9c.Tests.Model
             Assert.Contains(logList, e => e is Tick);
             Assert.Contains(logList, e => e is TickDamage);
             Assert.Contains(logList, e => e is RemoveBuffs);
-            Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
+            Assert.Contains(logList, e => e is NormalAttack);
         }
 
         [Theory]
@@ -622,7 +623,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -672,7 +673,7 @@ namespace Lib9c.Tests.Model
             for (var i = 0; i < logCount; i++)
             {
                 var currLog = logList[i];
-                if (currLog is Nekoyume.Model.BattleStatus.NormalAttack)
+                if (currLog is NormalAttack)
                 {
                     var nextLog = logList[i + 1];
                     if (currLog.Character.ActionBuffs.Any(actionBuff => actionBuff is Vampiric))
@@ -688,7 +689,7 @@ namespace Lib9c.Tests.Model
                 {
                     Assert.Equal(vampiric.RowData.Id, healSkill.SkillId);
                     var healInfo = healSkill.SkillInfos.First();
-                    var prevAttack = logList.Take(i).OfType<Nekoyume.Model.BattleStatus.NormalAttack>()
+                    var prevAttack = logList.Take(i).OfType<NormalAttack>()
                         .Last();
                     Assert.Equal(
                         (int)(prevAttack.SkillInfos.First().Effect * (vampiric.BasisPoint / 10000m)),
@@ -697,7 +698,7 @@ namespace Lib9c.Tests.Model
             }
 
             Assert.True(logList.Count > 0);
-            Assert.Contains(logList, e => e is Nekoyume.Model.BattleStatus.NormalAttack);
+            Assert.Contains(logList, e => e is NormalAttack);
             Assert.Contains(logList, e => e is TickDamage);
             Assert.Contains(logList, e => e is RemoveBuffs);
             Assert.Contains(logList, e => e is Tick);
@@ -740,7 +741,7 @@ namespace Lib9c.Tests.Model
                 },
                 runeStates,
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -952,7 +953,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.Item;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class CombinationSlotState : State
     {

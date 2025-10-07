@@ -1,9 +1,8 @@
 namespace Lib9c.Tests.Model
 {
-    using Nekoyume;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Stat;
+    using Lib9c.TableData.Skill;
     using Xunit;
 
     public class CharacterStatsTest

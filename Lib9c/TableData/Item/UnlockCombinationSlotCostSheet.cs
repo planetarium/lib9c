@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class UnlockCombinationSlotCostSheet : Sheet<int, UnlockCombinationSlotCostSheet.Row>

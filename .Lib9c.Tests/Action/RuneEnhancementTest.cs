@@ -2,18 +2,17 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Helper;
+    using Lib9c.Model.Rune;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Rune;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Rune;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Rune;
     using Xunit;
 
     public class RuneEnhancementTest

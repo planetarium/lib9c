@@ -1,6 +1,6 @@
 using Libplanet.Crypto;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class MeadConfig
     {

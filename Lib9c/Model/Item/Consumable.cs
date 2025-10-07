@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     /// <summary>
     /// Represents consumable items that can be used by characters.

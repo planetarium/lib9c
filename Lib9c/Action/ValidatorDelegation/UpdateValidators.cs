@@ -1,13 +1,13 @@
 using System.Linq;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Model.Guild;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Types.Consensus;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Model.Guild;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     public sealed class UpdateValidators : ActionBase
     {

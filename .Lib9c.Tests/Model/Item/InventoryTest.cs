@@ -3,10 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Model.Item;
+    using Lib9c.TableData.Item;
     using Lib9c.Tests.Action;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
     using Xunit;
     using BxList = Bencodex.Types.List;
 

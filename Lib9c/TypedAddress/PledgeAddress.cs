@@ -2,7 +2,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 
-namespace Nekoyume.TypedAddress
+namespace Lib9c.TypedAddress
 {
     public readonly struct PledgeAddress : IBencodable
     {

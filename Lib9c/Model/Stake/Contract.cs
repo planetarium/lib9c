@@ -1,8 +1,8 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.TableData.Stake;
+using Lib9c.TableData.Stake;
 
-namespace Nekoyume.Model.Stake
+namespace Lib9c.Model.Stake
 {
     public class Contract
     {

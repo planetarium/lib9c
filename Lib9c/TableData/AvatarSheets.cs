@@ -1,4 +1,8 @@
-namespace Nekoyume.TableData
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Quest;
+using Lib9c.TableData.WorldAndStage;
+
+namespace Lib9c.TableData
 {
     public class AvatarSheets
     {

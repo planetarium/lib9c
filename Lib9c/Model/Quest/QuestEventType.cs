@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     public enum QuestEventType
     {

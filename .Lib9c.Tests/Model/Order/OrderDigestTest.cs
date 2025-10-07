@@ -1,14 +1,13 @@
 namespace Lib9c.Tests.Model.Order
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
     using Lib9c.Model.Order;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class OrderDigestTest

@@ -3,15 +3,15 @@ namespace Lib9c.Tests.Model.Skill.Adventure
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class DoubleAttackTest
@@ -83,7 +83,7 @@ namespace Lib9c.Tests.Model.Skill.Adventure
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],

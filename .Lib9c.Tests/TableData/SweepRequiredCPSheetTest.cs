@@ -1,6 +1,6 @@
 namespace Lib9c.Tests.TableData
 {
-    using Nekoyume.TableData;
+    using Lib9c.TableData;
     using Xunit;
 
     public class SweepRequiredCPSheetTest

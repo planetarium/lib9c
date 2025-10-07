@@ -2,10 +2,9 @@ namespace Lib9c.Tests.Model.Stat
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Bencodex.Types;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Xunit;
 
     /// <summary>

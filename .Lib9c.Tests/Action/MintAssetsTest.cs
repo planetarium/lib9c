@@ -5,19 +5,18 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using System.Security.Cryptography;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Mail;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Tx;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class MintAssetsTest

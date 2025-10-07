@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Rune;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Rune;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Arena;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Rune;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Rune;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     [ActionType("runeEnhancement2")]

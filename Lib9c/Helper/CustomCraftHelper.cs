@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.TableData.CustomEquipmentCraft;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
-using Nekoyume.TableData.CustomEquipmentCraft;
 using static System.Numerics.BigInteger;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class CustomCraftHelper
     {

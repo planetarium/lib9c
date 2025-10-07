@@ -1,8 +1,7 @@
 namespace Lib9c.Tests.TableData
 {
     using System.Linq;
-    using Lib9c.Tests.Action;
-    using Nekoyume.TableData;
+    using Lib9c.TableData;
     using Xunit;
 
     public class RuneCostSheetTest

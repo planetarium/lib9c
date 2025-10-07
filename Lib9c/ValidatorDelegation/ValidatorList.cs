@@ -7,7 +7,7 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using Libplanet.Types.Consensus;
 
-namespace Nekoyume.ValidatorDelegation
+namespace Lib9c.ValidatorDelegation
 {
     public sealed class ValidatorList : IBencodable
     {

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.TableData;
 using Libplanet.Crypto;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class GameConfigState : State

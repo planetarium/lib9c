@@ -7,8 +7,18 @@ namespace Lib9c.Tests
     using System.Numerics;
     using System.Security.Cryptography;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Action.Guild;
+    using Lib9c.Action.Loader;
+    using Lib9c.Action.ValidatorDelegation;
+    using Lib9c.Model;
+    using Lib9c.Model.Guild;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.Module.Guild;
     using Lib9c.Renderers;
     using Lib9c.Tests.Action;
+    using Lib9c.TypedAddress;
     using Libplanet.Action;
     using Libplanet.Action.Loader;
     using Libplanet.Action.State;
@@ -24,17 +34,7 @@ namespace Lib9c.Tests
     using Libplanet.Types.Evidence;
     using Libplanet.Types.Tx;
     using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Guild;
-    using Nekoyume.Action.Loader;
-    using Nekoyume.Action.ValidatorDelegation;
     using Nekoyume.Blockchain.Policy;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Guild;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.Module.Guild;
-    using Nekoyume.TypedAddress;
     using Xunit;
 
     public class BlockPolicyTest

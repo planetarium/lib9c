@@ -2,8 +2,8 @@
 {
     using System;
     using System.Linq;
+    using Lib9c.TableData.GrandFinale;
     using Lib9c.Tests.Action;
-    using Nekoyume.TableData.GrandFinale;
     using Xunit;
 
     public class GrandFinaleScheduleSheetTest

@@ -1,9 +1,9 @@
 namespace Lib9c.Tests
 {
     using System;
-    using Nekoyume.Battle;
+    using Lib9c.Battle;
     using Xunit;
-    using Result = Nekoyume.Model.BattleStatus.BattleLog.Result;
+    using Result = Lib9c.Model.BattleStatus.BattleLog.Result;
 
     public class ArenaScoreHelperTest
     {

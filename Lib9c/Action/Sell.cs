@@ -4,19 +4,19 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.Item;
 using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1640

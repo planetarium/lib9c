@@ -5,10 +5,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Crypto;
-using Nekoyume.Action;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class RankingState : State, ISerializable

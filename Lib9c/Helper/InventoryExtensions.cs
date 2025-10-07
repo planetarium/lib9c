@@ -1,12 +1,10 @@
 using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
-using Libplanet.Action.State;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class InventoryExtensions
     {

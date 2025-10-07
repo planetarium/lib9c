@@ -1,8 +1,8 @@
+using Lib9c.Action;
+using Lib9c.TypedAddress;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.TypedAddress;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class AgentAddressExtensions
     {

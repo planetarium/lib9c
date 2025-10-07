@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lib9c;
+using Lib9c.Helper;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Item;
 using Libplanet.Types.Assets;
-using Nekoyume.Helper;
-using Nekoyume.Model.Item;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData
 {
     // This sheet not on-chain data. don't call this sheet in `IAction.Execute()`
     public class WorldBossRankingRewardSheet : Sheet<int, WorldBossRankingRewardSheet.Row>

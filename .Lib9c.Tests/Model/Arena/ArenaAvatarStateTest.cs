@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.Model.Arena
 {
     using Bencodex.Types;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class ArenaAvatarStateTest

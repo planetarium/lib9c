@@ -1,16 +1,17 @@
-using Bencodex.Types;
-using Nekoyume.Model.Skill.Arena;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using System;
 using System.Linq;
+using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.Skill.Arena;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData.CustomEquipmentCraft;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData.CustomEquipmentCraft;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     public static class SkillFactory
     {

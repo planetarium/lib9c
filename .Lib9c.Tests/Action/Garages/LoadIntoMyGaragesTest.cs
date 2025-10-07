@@ -5,21 +5,19 @@ namespace Lib9c.Tests.Action.Garages
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Cryptography;
-    using Bencodex.Types;
     using Lib9c.Abstractions;
+    using Lib9c.Action.Garages;
+    using Lib9c.Exceptions;
+    using Lib9c.Model.Garages;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Lib9c.Tests.Util;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action.Garages;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Model.Garages;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class LoadIntoMyGaragesTest

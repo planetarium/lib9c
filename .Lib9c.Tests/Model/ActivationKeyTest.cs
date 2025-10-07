@@ -1,9 +1,8 @@
 namespace Lib9c.Tests.Model
 {
+    using Lib9c.Model;
     using Libplanet.Common;
     using Libplanet.Crypto;
-    using Nekoyume.Model;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class ActivationKeyTest

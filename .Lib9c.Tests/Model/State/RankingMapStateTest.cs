@@ -2,9 +2,9 @@ namespace Lib9c.Tests.Model.State
 {
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class RankingMapStateTest

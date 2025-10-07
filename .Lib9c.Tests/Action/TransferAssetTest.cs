@@ -6,17 +6,17 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Helper;
+    using Lib9c.Model;
+    using Lib9c.Model.Stake;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume.Action;
-    using Nekoyume.Helper;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Stake;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class TransferAssetTest

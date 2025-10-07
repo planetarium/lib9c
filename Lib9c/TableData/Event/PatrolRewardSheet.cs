@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.Event
+namespace Lib9c.TableData.Event
 {
     /// <summary>
     /// Represents the PatrolRewardSheet, which defines patrol reward policies and rules.

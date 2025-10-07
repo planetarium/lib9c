@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Quest
 {
     [Serializable]
     public class WorldQuestSheet : Sheet<int, WorldQuestSheet.Row>
@@ -9,7 +9,7 @@ namespace Nekoyume.TableData
         public class Row : QuestSheet.Row
         {
         }
-        
+
         public WorldQuestSheet() : base(nameof(WorldQuestSheet))
         {
         }

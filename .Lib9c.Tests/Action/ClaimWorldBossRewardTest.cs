@@ -1,17 +1,15 @@
-namespace Nekoyume.Action.Tests
+namespace Lib9c.Tests.Action
 {
     using System.Linq;
-    using Lib9c;
-    using Lib9c.Tests;
-    using Lib9c.Tests.Action;
+    using Lib9c.Action;
+    using Lib9c.Action.Exceptions.AdventureBoss;
+    using Lib9c.Helper;
+    using Lib9c.Model.Mail;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume.Action.Exceptions.AdventureBoss;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Mail;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class ClaimWorldBossRewardTest

@@ -2,7 +2,7 @@ namespace Lib9c.Tests.Model.Mail
 {
     using System;
     using Bencodex.Types;
-    using Nekoyume.Model.Mail;
+    using Lib9c.Model.Mail;
     using Xunit;
 
     public class MaterialCraftMailTest
@@ -17,7 +17,7 @@ namespace Lib9c.Tests.Model.Mail
                 3,
                 10020001);
             var serialized = (Dictionary)mail.Serialize();
-            var deserialized = (MaterialCraftMail)Mail.Deserialize(serialized);
+            var deserialized = (MaterialCraftMail)Lib9c.Model.Mail.Mail.Deserialize(serialized);
 
             Assert.Equal(1, deserialized.blockIndex);
             Assert.Equal(2, deserialized.requiredBlockIndex);

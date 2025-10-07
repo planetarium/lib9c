@@ -1,13 +1,13 @@
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Action;
+using Lib9c.Delegation;
+using Lib9c.Model.Stake;
+using Lib9c.TypedAddress;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Delegation;
-using Nekoyume.TypedAddress;
-using Nekoyume.Model.Stake;
 
-namespace Nekoyume.Model.Guild
+namespace Lib9c.Model.Guild
 {
     public class GuildRepository
         : DelegationRepository<GuildRepository, GuildDelegatee, GuildDelegator>

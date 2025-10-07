@@ -1,10 +1,10 @@
 using System;
 using System.Globalization;
 using Bencodex.Types;
-using Nekoyume.Model.EnumType;
-using Nekoyume.TableData;
+using Lib9c.Model.EnumType;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class TradeQuest : Quest

@@ -1,10 +1,9 @@
 namespace Lib9c.Tests.Model.State
 {
     using Bencodex.Types;
+    using Lib9c.Model.State;
+    using Lib9c.TableData;
     using Lib9c.Tests.Fixtures.TableCSV;
-    using Nekoyume;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class GameConfigStateTest

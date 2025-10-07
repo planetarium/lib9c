@@ -3,13 +3,13 @@ using System;
 using System.Numerics;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Model.Guild
+namespace Lib9c.Model.Guild
 {
     // It Does not inherit from `Delegator`, since `Validator` related functionalities
     // will be moved to lower level library.

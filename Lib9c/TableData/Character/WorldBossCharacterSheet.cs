@@ -1,11 +1,11 @@
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Stat;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Character
 {
     [Serializable]
     public class WorldBossCharacterSheet : Sheet<int, WorldBossCharacterSheet.Row>

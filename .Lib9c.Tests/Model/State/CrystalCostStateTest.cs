@@ -1,9 +1,9 @@
 namespace Lib9c.Tests.Model.State
 {
     using Bencodex.Types;
+    using Lib9c.Helper;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class CrystalCostStateTest

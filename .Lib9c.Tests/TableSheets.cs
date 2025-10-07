@@ -3,18 +3,24 @@ namespace Lib9c.Tests
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.AdventureBoss;
-    using Nekoyume.TableData.Crystal;
-    using Nekoyume.TableData.CustomEquipmentCraft;
-    using Nekoyume.TableData.Event;
-    using Nekoyume.TableData.Garages;
-    using Nekoyume.TableData.GrandFinale;
-    using Nekoyume.TableData.Pet;
-    using Nekoyume.TableData.Rune;
-    using Nekoyume.TableData.Stake;
-    using Nekoyume.TableData.Summon;
-    using Nekoyume.TableData.Swap;
+    using Lib9c.TableData;
+    using Lib9c.TableData.AdventureBoss;
+    using Lib9c.TableData.Character;
+    using Lib9c.TableData.Cost;
+    using Lib9c.TableData.Crystal;
+    using Lib9c.TableData.CustomEquipmentCraft;
+    using Lib9c.TableData.Event;
+    using Lib9c.TableData.Garages;
+    using Lib9c.TableData.GrandFinale;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.Pet;
+    using Lib9c.TableData.Quest;
+    using Lib9c.TableData.Rune;
+    using Lib9c.TableData.Skill;
+    using Lib9c.TableData.Stake;
+    using Lib9c.TableData.Summon;
+    using Lib9c.TableData.Swap;
+    using Lib9c.TableData.WorldAndStage;
 
     public class TableSheets
     {

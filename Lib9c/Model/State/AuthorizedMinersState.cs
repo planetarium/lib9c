@@ -1,10 +1,10 @@
-using Bencodex.Types;
-using Libplanet.Crypto;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Bencodex.Types;
+using Libplanet.Crypto;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class AuthorizedMinersState : State
     {

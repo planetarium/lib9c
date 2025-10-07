@@ -6,11 +6,11 @@ using System.Numerics;
 using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Action.Guild;
-using Nekoyume.Model.Guild;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
+using Lib9c.Action;
+using Lib9c.Action.Guild;
+using Lib9c.Model.Guild;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 using Xunit;
 
 public class QuitGuildTest : GuildTestBase

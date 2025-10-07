@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Exceptions;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData.Garages;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData.Garages;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType(TypeIdentifier)]
     public class IssueToken : ActionBase

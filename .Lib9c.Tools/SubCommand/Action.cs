@@ -7,9 +7,9 @@ using Bencodex;
 using Bencodex.Types;
 using Cocona;
 using Cocona.Help;
+using Lib9c.Action;
+using Lib9c.Action.Loader;
 using Libplanet.Action;
-using Nekoyume.Action;
-using Nekoyume.Action.Loader;
 
 namespace Lib9c.Tools.SubCommand
 {

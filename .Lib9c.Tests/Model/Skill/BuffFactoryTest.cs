@@ -2,15 +2,15 @@ namespace Lib9c.Tests.Model.Skill
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Arena;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
-    using Nekoyume.Arena;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class BuffFactoryTest

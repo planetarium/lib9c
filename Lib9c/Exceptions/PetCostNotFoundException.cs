@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nekoyume.Exceptions
+namespace Lib9c.Exceptions
 {
     [Serializable]
     public class PetCostNotFoundException : Exception

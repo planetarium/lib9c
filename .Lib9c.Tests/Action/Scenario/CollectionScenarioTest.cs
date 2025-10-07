@@ -3,17 +3,16 @@ namespace Lib9c.Tests.Action.Scenario
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Extensions;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CollectionScenarioTest

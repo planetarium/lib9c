@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     /// <summary>
     /// Represents a collection map with key-value pairs.

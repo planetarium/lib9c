@@ -2,11 +2,11 @@
 using System;
 using System.Numerics;
 using Bencodex.Types;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Guild;
-using Nekoyume.TypedAddress;
+using Lib9c.Extensions;
+using Lib9c.Model.Guild;
+using Lib9c.TypedAddress;
 
-namespace Nekoyume.Module.Guild
+namespace Lib9c.Module.Guild
 {
     public static class GuildMemberCounterModule
     {

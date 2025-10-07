@@ -1,12 +1,12 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Model.Guild;
+using Lib9c.Module.Guild;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.Guild;
 
-namespace Nekoyume.Action.Guild
+namespace Lib9c.Action.Guild
 {
     [ActionType(TypeIdentifier)]
     public class QuitGuild : ActionBase

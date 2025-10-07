@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Extensions;
+using Lib9c.Model.State;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     public static class GiftModule
     {

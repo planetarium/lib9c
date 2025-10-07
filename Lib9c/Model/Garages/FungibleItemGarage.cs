@@ -2,9 +2,9 @@
 
 using System;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
+using Lib9c.Model.Item;
 
-namespace Nekoyume.Model.Garages
+namespace Lib9c.Model.Garages
 {
     public class FungibleItemGarage : IFungibleItemGarage
     {

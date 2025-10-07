@@ -1,9 +1,9 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Stake
+namespace Lib9c.Model.Stake
 {
     public readonly struct StakeState : IState
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.WorldAndStage
 {
     [Serializable]
     public class StageSheet : Sheet<int, StageSheet.Row>
@@ -30,7 +30,7 @@ namespace Nekoyume.TableData
         {
             // FIXME AudioController.MusicCode.StageGreen과 중복
             private const string DefaultBGM = "bgm_stage_green";
-            
+
             public override int Key => Id;
             public int Id { get; private set; }
             public int CostAP { get; private set; }
@@ -76,9 +76,9 @@ namespace Nekoyume.TableData
                             EnemyInitialStatModifiers.Add(new StatModifier(StatType.SPD, StatModifier.OperationType.Percentage, option));
                             break;
                     }
-                    
+
                 }
-                
+
                 Background = fields[9];
                 BGM = string.IsNullOrEmpty(fields[10])
                     ? DefaultBGM
@@ -89,7 +89,7 @@ namespace Nekoyume.TableData
                     var offset = i * 4;
                     if (!TryParseInt(fields[11 + offset], out var itemId))
                         continue;
-                    
+
                     Rewards.Add(new RewardData(
                         itemId,
                         TryParseDecimal(fields[12 + offset], out var ratio) ? ratio : 0m,
@@ -102,7 +102,7 @@ namespace Nekoyume.TableData
                 DropItemMax = TryParseInt(fields[52], out var dropMax) ? dropMax : 0;
             }
         }
-        
+
         public StageSheet() : base(nameof(StageSheet))
         {
         }

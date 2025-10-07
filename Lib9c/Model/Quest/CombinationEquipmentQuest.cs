@@ -1,10 +1,10 @@
 using System;
 using System.Globalization;
 using Bencodex.Types;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Model.State;
+using Lib9c.TableData.Quest;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     public class CombinationEquipmentQuest : Quest
     {

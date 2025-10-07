@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Libplanet.Types.Assets;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     /// <summary>
     /// Represents a comparer for <see cref="Currency"/>.

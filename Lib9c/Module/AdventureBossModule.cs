@@ -1,11 +1,11 @@
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Helper;
+using Lib9c.Model.AdventureBoss;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Helper;
-using Nekoyume.Model.AdventureBoss;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     public static class AdventureBossModule
     {

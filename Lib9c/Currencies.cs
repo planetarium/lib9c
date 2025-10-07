@@ -3,9 +3,10 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Lib9c.TableData;
+using Lib9c.TableData.Pet;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.TableData;
 
 namespace Lib9c
 {

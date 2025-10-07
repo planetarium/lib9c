@@ -1,13 +1,12 @@
 // #define TEST_LOG
 
 using System;
-
 #if TEST_LOG
 using System.Text;
 using UnityEngine;
 #endif
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class HitHelper
     {

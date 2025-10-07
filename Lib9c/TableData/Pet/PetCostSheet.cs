@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Pet
 {
     using static TableExtensions;
 

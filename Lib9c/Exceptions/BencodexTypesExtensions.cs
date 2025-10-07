@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Bencodex.Types;
 
-namespace Nekoyume.Exceptions
+namespace Lib9c.Exceptions
 {
     public static class BencodexTypesExtensions
     {

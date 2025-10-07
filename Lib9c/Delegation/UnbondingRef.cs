@@ -1,10 +1,10 @@
 #nullable enable
+using System;
 using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
-using System;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public class UnbondingRef : IEquatable<UnbondingRef>, IComparable<UnbondingRef>, IComparable, IBencodable
     {

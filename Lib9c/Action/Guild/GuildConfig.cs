@@ -1,6 +1,6 @@
-using Nekoyume.TypedAddress;
+using Lib9c.TypedAddress;
 
-namespace Nekoyume.Action.Guild
+namespace Lib9c.Action.Guild
 {
     public static class GuildConfig
     {

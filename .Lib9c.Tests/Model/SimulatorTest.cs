@@ -3,10 +3,11 @@ namespace Lib9c.Tests.Model
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.WorldAndStage;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class SimulatorTest

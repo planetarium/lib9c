@@ -1,9 +1,9 @@
 using Bencodex.Types;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Collection
+namespace Lib9c.Model.Collection
 {
     public class FungibleCollectionMaterial : ICollectionMaterial
     {

@@ -4,10 +4,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Action;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public abstract class GameAction : ActionBase

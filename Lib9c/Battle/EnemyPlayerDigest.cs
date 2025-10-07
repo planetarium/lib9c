@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public readonly struct EnemyPlayerDigest: IState
     {

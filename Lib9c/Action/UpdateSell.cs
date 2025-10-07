@@ -5,20 +5,20 @@ using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Battle;
+using Lib9c.Model.Mail;
 using Lib9c.Model.Order;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Battle;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 using static Lib9c.SerializeKeys;
 using BxDictionary = Bencodex.Types.Dictionary;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/1640

@@ -1,12 +1,12 @@
 #nullable enable
 using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public abstract class DelegationRepository<TRepository, TDelegatee, TDelegator> : IDelegationRepository
         where TRepository : DelegationRepository<TRepository, TDelegatee, TDelegator>

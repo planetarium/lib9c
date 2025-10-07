@@ -2,15 +2,16 @@ namespace Lib9c.Tests.Model.Skill.Adventure
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.Elemental;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CombatTest

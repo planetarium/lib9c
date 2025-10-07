@@ -1,4 +1,4 @@
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public static class ClaimStakeReward2
     {

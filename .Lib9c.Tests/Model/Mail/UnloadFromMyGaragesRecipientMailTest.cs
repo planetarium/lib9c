@@ -7,11 +7,11 @@ namespace Lib9c.Tests.Model.Mail
     using System.Linq;
     using System.Security.Cryptography;
     using Bencodex.Types;
+    using Lib9c.Model.Mail;
     using Lib9c.Tests.Action.Garages;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Model.Mail;
     using Xunit;
 
     public class UnloadFromMyGaragesRecipientMailTest

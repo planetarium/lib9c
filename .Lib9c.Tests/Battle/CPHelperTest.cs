@@ -3,14 +3,15 @@ namespace Lib9c.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.TableData.Character;
+    using Lib9c.TableData.Item;
+    using Lib9c.TableData.Rune;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
-    using Nekoyume;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CPHelperTest

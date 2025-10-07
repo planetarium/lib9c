@@ -1,12 +1,12 @@
-#nullable enable
-namespace Nekoyume.Delegation
+namespace Lib9c.Tests.Delegation
 {
-    using Lib9c.Tests.Delegation;
+#nullable enable
+    using Lib9c.Action;
+    using Lib9c.Delegation;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Action;
 
     public class TestRepository : DelegationRepository<TestRepository, TestDelegatee, TestDelegator>
     {

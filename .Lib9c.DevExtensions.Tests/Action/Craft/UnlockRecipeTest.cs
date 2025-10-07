@@ -1,16 +1,16 @@
 using System;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
 using Lib9c.DevExtensions.Action.Craft;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Lib9c.Tests;
 using Lib9c.Tests.Action;
 using Lib9c.Tests.Util;
 using Libplanet.Crypto;
 using Libplanet.Action.State;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 using Xunit;
 
 namespace Lib9c.DevExtensions.Tests.Action.Craft

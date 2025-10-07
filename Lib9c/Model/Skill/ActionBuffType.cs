@@ -1,5 +1,5 @@
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     public enum ActionBuffType
     {

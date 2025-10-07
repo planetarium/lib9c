@@ -2,20 +2,17 @@ namespace Lib9c.Tests.Action
 {
     using System;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Action.Guild;
+    using Lib9c.Model.Guild;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.Module.Guild;
     using Lib9c.Tests.Util;
+    using Lib9c.TypedAddress;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Guild;
-    using Nekoyume.Action.ValidatorDelegation;
-    using Nekoyume.Model.Guild;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.Module.Guild;
-    using Nekoyume.TypedAddress;
     using Xunit;
 
     public class ApprovePledgeTest

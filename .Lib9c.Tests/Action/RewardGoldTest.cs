@@ -1,37 +1,19 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using Bencodex;
     using Bencodex.Types;
-    using Lib9c.Renderers;
+    using Lib9c.Action;
+    using Lib9c.Battle;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData.Character;
     using Libplanet.Action;
     using Libplanet.Action.State;
-    using Libplanet.Blockchain;
-    using Libplanet.Blockchain.Policies;
-    using Libplanet.Blockchain.Renderers;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Libplanet.Store;
-    using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
-    using Libplanet.Types.Blocks;
-    using Libplanet.Types.Tx;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Loader;
-    using Nekoyume.Battle;
-    using Nekoyume.Blockchain;
-    using Nekoyume.Blockchain.Policy;
-    using Nekoyume.Model;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class RewardGoldTest

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
-using RewardData = Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData;
+using static Lib9c.TableData.TableExtensions;
+using RewardData = Lib9c.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData;
 
-namespace Nekoyume.TableData.AdventureBoss
+namespace Lib9c.TableData.AdventureBoss
 {
     [Serializable]
     public class AdventureBossWantedRewardSheet : Sheet<int, AdventureBossWantedRewardSheet.Row>

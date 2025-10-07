@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Action;
+using Lib9c.TableData;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     [Serializable]
     public class MonsterCollectionResult : AttachmentActionResult

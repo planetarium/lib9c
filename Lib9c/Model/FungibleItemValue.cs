@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Common;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model
+namespace Lib9c.Model
 {
     public readonly struct FungibleItemValue
     {

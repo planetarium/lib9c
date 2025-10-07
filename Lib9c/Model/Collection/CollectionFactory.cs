@@ -1,7 +1,6 @@
-using System;
 using Bencodex.Types;
 
-namespace Nekoyume.Model.Collection
+namespace Lib9c.Model.Collection
 {
     public static class CollectionFactory
     {

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Model.Item;
 using Libplanet.Crypto;
-using Nekoyume.Model.Item;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// This is a model class of shop state.

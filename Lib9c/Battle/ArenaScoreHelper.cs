@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.BattleStatus;
+using Lib9c.Model.BattleStatus;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class ArenaScoreHelper
     {

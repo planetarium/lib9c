@@ -4,13 +4,13 @@ namespace Lib9c.Tests.Model.Arena
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Model;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class PlayerDigestTest

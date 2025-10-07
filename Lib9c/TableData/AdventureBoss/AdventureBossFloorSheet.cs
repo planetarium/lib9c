@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.AdventureBoss
+namespace Lib9c.TableData.AdventureBoss
 {
     [Serializable]
     public class AdventureBossFloorSheet : Sheet<int, AdventureBossFloorSheet.Row>

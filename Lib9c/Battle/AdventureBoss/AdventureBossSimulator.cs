@@ -3,22 +3,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Helper;
+using Lib9c.Model;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.BattleStatus.AdventureBoss;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.AdventureBoss;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
-using Nekoyume.Helper;
-using Nekoyume.Model;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.BattleStatus.AdventureBoss;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.AdventureBoss;
 using Priority_Queue;
-using NormalAttack = Nekoyume.Model.BattleStatus.NormalAttack;
+using NormalAttack = Lib9c.Model.BattleStatus.NormalAttack;
 
-namespace Nekoyume.Battle.AdventureBoss
+namespace Lib9c.Battle.AdventureBoss
 {
     public class AdventureBossSimulator : Simulator, IStageSimulator
     {

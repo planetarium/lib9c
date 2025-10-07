@@ -4,19 +4,18 @@ namespace Lib9c.Tests
     using System.Linq;
     using System.Security.Cryptography;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model;
+    using Lib9c.Model.Garages;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Garages;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class IssueTokensFromGarageTest

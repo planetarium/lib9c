@@ -5,7 +5,7 @@ using Bencodex.Types;
 using Libplanet.Crypto;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// Agent의 상태 모델이다.

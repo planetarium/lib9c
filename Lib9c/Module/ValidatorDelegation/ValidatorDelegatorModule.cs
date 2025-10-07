@@ -1,9 +1,9 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Module.ValidatorDelegation
+namespace Lib9c.Module.ValidatorDelegation
 {
     public static class ValidatorDelegatorModule
     {

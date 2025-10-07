@@ -9,6 +9,7 @@ using System.Threading;
 using Bencodex;
 using Bencodex.Types;
 using Cocona;
+using Lib9c.Action;
 using Lib9c.DevExtensions;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
@@ -18,7 +19,6 @@ using Libplanet.Common;
 using Libplanet.Store;
 using Libplanet.Store.Trie;
 using Libplanet.Types.Blocks;
-using Nekoyume.Action;
 using Serilog.Core;
 
 namespace Lib9c.Tools.SubCommand

@@ -2,18 +2,17 @@ namespace Lib9c.Tests.Action
 {
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Exceptions;
+    using Lib9c.Helper;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Pet;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class PetEnhancement0Test

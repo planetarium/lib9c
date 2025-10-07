@@ -1,18 +1,17 @@
 using System;
 using Bencodex.Types;
-using Lib9c;
-using Libplanet.Action.State;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Model.Guild;
+using Lib9c.Model.Stake;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TypedAddress;
 using Libplanet.Action;
-using Nekoyume.Model.Guild;
-using Nekoyume.TypedAddress;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Module.Guild;
-using Nekoyume.Model.Stake;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action.Guild.Migration
+namespace Lib9c.Action.Guild.Migration
 {
     /// <summary>
     /// An action to migrate guild delegation and join guild.

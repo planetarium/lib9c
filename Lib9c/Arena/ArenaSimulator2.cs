@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Character;
+using Lib9c.Model.Item;
+using Lib9c.TableData;
 using Libplanet.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
 using Priority_Queue;
 
-namespace Nekoyume.Arena
+namespace Lib9c.Arena
 {
     /// <summary>
     /// This class is only for previewnet.

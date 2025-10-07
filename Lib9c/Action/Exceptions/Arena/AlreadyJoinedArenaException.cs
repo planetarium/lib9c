@@ -2,7 +2,7 @@ using System;
 using System.Runtime.Serialization;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action.Exceptions.Arena
+namespace Lib9c.Action.Exceptions.Arena
 {
     [Serializable]
     public class AlreadyJoinedArenaException : Exception

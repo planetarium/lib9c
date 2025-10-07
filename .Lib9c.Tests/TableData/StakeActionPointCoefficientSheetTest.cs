@@ -1,9 +1,9 @@
 namespace Lib9c.Tests.TableData
 {
+    using Lib9c.Extensions;
+    using Lib9c.TableData;
     using Libplanet.Action.State;
     using Libplanet.Types.Assets;
-    using Nekoyume.Extensions;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class StakeActionPointCoefficientSheetTest

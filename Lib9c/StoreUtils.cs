@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.IO;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class StoreUtils
     {

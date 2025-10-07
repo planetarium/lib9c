@@ -3,11 +3,11 @@ namespace Lib9c.Tests.Model.State
     using System;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class ShardedShopStateTest

@@ -2,19 +2,19 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Action.Guild.Migration.LegacyModels;
+    using Lib9c.Arena;
+    using Lib9c.Extensions;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Item;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Guild.Migration.LegacyModels;
-    using Nekoyume.Arena;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class UnlockCombinationSlotTest

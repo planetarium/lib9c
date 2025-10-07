@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.AdventureBoss
+namespace Lib9c.TableData.AdventureBoss
 {
     [Serializable]
     public class

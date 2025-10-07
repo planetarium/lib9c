@@ -1,9 +1,9 @@
 using Bencodex.Types;
+using Lib9c.Extensions;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
 
-namespace Nekoyume.Action.Guild.Migration.LegacyModels
+namespace Lib9c.Action.Guild.Migration.LegacyModels
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>

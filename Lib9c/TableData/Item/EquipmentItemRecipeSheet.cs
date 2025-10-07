@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.Item;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     public class EquipmentItemRecipeSheet : Sheet<int, EquipmentItemRecipeSheet.Row>
     {

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Bencodex;
 using Bencodex.Types;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
+using Lib9c.Model.Stat;
+using Lib9c.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// Represents the state of a collection.

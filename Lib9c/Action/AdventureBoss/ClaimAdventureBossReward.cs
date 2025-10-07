@@ -3,25 +3,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Action.Exceptions;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Data;
+using Lib9c.Exceptions;
+using Lib9c.Helper;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.AdventureBoss;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Exceptions;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Arena;
-using Nekoyume.Data;
-using Nekoyume.Exceptions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using Nekoyume.TableData.AdventureBoss;
 
-namespace Nekoyume.Action.AdventureBoss
+namespace Lib9c.Action.AdventureBoss
 {
     [Serializable]
     [ActionType(TypeIdentifier)]

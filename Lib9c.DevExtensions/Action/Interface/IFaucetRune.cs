@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using Lib9c.Model.Faucet;
 using Libplanet.Crypto;
-using Nekoyume.Model.Faucet;
 
 namespace Lib9c.DevExtensions.Action.Interface
 {

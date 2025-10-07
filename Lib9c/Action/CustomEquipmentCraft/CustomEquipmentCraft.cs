@@ -2,26 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action.Exceptions;
+using Lib9c.Battle;
+using Lib9c.Exceptions;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.Skill;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.CustomEquipmentCraft;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Exceptions;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Arena;
-using Nekoyume.Battle;
-using Nekoyume.Exceptions;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using Nekoyume.TableData.CustomEquipmentCraft;
 
-namespace Nekoyume.Action.CustomEquipmentCraft
+namespace Lib9c.Action.CustomEquipmentCraft
 {
     [Serializable]
     public struct CustomCraftData

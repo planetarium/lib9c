@@ -4,23 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
 using Lib9c.DevExtensions.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Crystal;
+using Lib9c.TableData.Item;
 using Lib9c.Tests;
 using Lib9c.Tests.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
 using Libplanet.Types.Assets;
-using Nekoyume;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Crystal;
 using Xunit;
-using static Lib9c.SerializeKeys;
 
 namespace Lib9c.DevExtensions.Tests.Action
 {

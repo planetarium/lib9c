@@ -1,16 +1,16 @@
 using System;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Model.Guild;
+using Lib9c.Module.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.Guild;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     [ActionType(TypeIdentifier)]
     public sealed class PromoteValidator : ActionBase

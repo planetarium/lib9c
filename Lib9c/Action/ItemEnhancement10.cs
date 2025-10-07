@@ -7,19 +7,20 @@ using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.Item;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.Cost;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.WorldAndStage;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 using Serilog;
 
-using static Lib9c.SerializeKeys;
-
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Updated at https://github.com/planetarium/lib9c/pull/1176

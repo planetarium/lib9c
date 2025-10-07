@@ -7,10 +7,10 @@ using System.Numerics;
 using Bencodex.Types;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class GoldDistribution : IEquatable<GoldDistribution>

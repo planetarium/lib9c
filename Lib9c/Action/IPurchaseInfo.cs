@@ -1,9 +1,9 @@
 using System;
+using Lib9c.Model.Item;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.Item;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public interface IPurchaseInfo
     {

@@ -1,9 +1,9 @@
 using System;
 using Bencodex;
 using Bencodex.Types;
-using Nekoyume.TypedAddress;
+using Lib9c.TypedAddress;
 
-namespace Nekoyume.Action.Guild.Migration.LegacyModels
+namespace Lib9c.Action.Guild.Migration.LegacyModels
 {
     // TODO: [GuildMigration] Remove this class when the migration is done.
     /// <summary>

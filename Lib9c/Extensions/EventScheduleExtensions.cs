@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using Lib9c.Exceptions;
+using Lib9c.TableData;
+using Lib9c.TableData.Event;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Event;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class EventScheduleExtensions
     {

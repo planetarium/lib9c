@@ -1,10 +1,10 @@
-using Nekoyume.Model.State;
 using System;
 using System.Runtime.Serialization;
+using Lib9c.Model.State;
 using Libplanet.Common.Serialization;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class PermissionDeniedException : AdminPermissionException

@@ -4,12 +4,12 @@ namespace Lib9c.Tests.Model.Item
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Item;
     using Lib9c.Tests.Model.Skill;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     /// <summary>

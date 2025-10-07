@@ -1,11 +1,12 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
+using Lib9c.Action;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Model.Collection
+namespace Lib9c.Model.Collection
 {
     public class NonFungibleCollectionMaterial : ICollectionMaterial
     {

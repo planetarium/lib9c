@@ -4,9 +4,9 @@ namespace Lib9c.Tests.Model.Item
     using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Model.Item;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Model.Item;
     using Xunit;
     using BxDictionary = Bencodex.Types.Dictionary;
 

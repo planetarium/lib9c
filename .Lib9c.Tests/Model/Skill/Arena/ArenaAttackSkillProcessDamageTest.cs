@@ -3,24 +3,24 @@ namespace Lib9c.Tests.Model.Skill.Arena
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Arena;
+    using Lib9c.Battle;
+    using Lib9c.Helper;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.Elemental;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Skill.Arena;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Arena;
-    using Nekoyume.Battle;
-    using Nekoyume.Helper;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Skill.Arena;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
+    using ArenaSkill = Lib9c.Model.BattleStatus.Arena.ArenaSkill;
 
     /// <summary>
     /// Tests for ArenaAttackSkill.ProcessDamage method.
@@ -227,13 +227,13 @@ namespace Lib9c.Tests.Model.Skill.Arena
             }
 
             // Copy from ArenaAttackSkill.ProcessDamage
-            public IEnumerable<Nekoyume.Model.BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> TestLegacyProcessDamage(
+            public IEnumerable<ArenaSkill.ArenaSkillInfo> TestLegacyProcessDamage(
                 ArenaCharacter caster,
                 ArenaCharacter target,
                 int simulatorWaveTurn,
                 bool isNormalAttack = false)
             {
-                var infos = new List<Nekoyume.Model.BattleStatus.Arena.ArenaSkill.ArenaSkillInfo>();
+                var infos = new List<ArenaSkill.ArenaSkillInfo>();
 
                 // Apply stat power ratio
                 var powerMultiplier = StatPowerRatio / 10000m;
@@ -282,7 +282,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
                     }
 
                     var iceShield = target.Buffs.Values.OfType<IceShield>().FirstOrDefault();
-                    infos.Add(new Nekoyume.Model.BattleStatus.Arena.ArenaSkill.ArenaSkillInfo(
+                    infos.Add(new ArenaSkill.ArenaSkillInfo(
                         (ArenaCharacter)target.Clone(),
                         damage,
                         isCritical,
@@ -296,18 +296,18 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 return infos;
             }
 
-            public override Nekoyume.Model.BattleStatus.Arena.ArenaSkill Use(
+            public override ArenaSkill Use(
                 ArenaCharacter caster,
                 ArenaCharacter target,
                 int turn,
-                IEnumerable<Nekoyume.Model.Buff.Buff> buffs)
+                IEnumerable<Buff> buffs)
             {
                 // Not used in this test
                 return null;
             }
 
             // Expose the actual ProcessDamage method for testing
-            public IEnumerable<Nekoyume.Model.BattleStatus.Arena.ArenaSkill.ArenaSkillInfo> TestProcessDamage(
+            public IEnumerable<ArenaSkill.ArenaSkillInfo> TestProcessDamage(
                 ArenaCharacter caster,
                 ArenaCharacter target,
                 int simulatorWaveTurn,

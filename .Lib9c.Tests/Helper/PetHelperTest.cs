@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Helper
 {
     using System;
     using System.Linq;
-    using Nekoyume.Helper;
-    using Nekoyume.TableData;
+    using Lib9c.Helper;
+    using Lib9c.TableData.Pet;
     using Xunit;
 
     public class PetHelperTest

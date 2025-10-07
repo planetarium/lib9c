@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Action.ValidatorDelegation;
-using Nekoyume.ValidatorDelegation;
+using Lib9c.Action;
+using Lib9c.Action.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Xunit;
 
 public class DelegateValidatorTest : ValidatorDelegationTestBase

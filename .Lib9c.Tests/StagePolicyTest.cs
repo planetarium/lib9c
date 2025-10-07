@@ -4,14 +4,13 @@ namespace Lib9c.Tests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Lib9c.Action;
     using Lib9c.Renderers;
     using Lib9c.Tests.TestHelper;
     using Libplanet.Action;
     using Libplanet.Blockchain;
-    using Libplanet.Blockchain.Policies;
     using Libplanet.Crypto;
     using Libplanet.Types.Tx;
-    using Nekoyume.Action;
     using Nekoyume.Blockchain;
     using Nekoyume.Blockchain.Policy;
     using Xunit;

@@ -1,13 +1,12 @@
 using System;
 using Bencodex;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Tx;
-using Nekoyume.Action;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Arena
+namespace Lib9c.Model.Arena
 {
     /// <summary>
     /// temp

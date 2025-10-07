@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Nekoyume.Exceptions
+namespace Lib9c.Exceptions
 {
     [Serializable]
     public class InvalidActionFieldException : Exception

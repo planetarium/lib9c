@@ -1,11 +1,11 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Market
+namespace Lib9c.Model.Market
 {
     public class Product
     {

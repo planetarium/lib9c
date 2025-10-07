@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Quest
 {
     [Serializable]
     public class CollectQuestSheet : Sheet<int, CollectQuestSheet.Row>
@@ -11,14 +11,14 @@ namespace Nekoyume.TableData
         public class Row : QuestSheet.Row
         {
             public int ItemId { get; private set; }
-            
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 base.Set(fields);
                 ItemId = ParseInt(fields[3]);
             }
         }
-        
+
         public CollectQuestSheet() : base(nameof(CollectQuestSheet))
         {
         }

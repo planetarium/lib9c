@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Module;
 using Serilog;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType(TypeIdentifier)]
     public class MigrateAgentAvatar : ActionBase

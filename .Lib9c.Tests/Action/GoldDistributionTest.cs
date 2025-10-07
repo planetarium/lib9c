@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.Action
 {
     using System.IO;
+    using Lib9c.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
     using Xunit;
 
     public class GoldDistributionTest

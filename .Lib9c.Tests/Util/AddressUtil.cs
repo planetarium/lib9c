@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.Util
 {
+    using Lib9c.TypedAddress;
     using Libplanet.Crypto;
-    using Nekoyume.TypedAddress;
 
     public static class AddressUtil
     {

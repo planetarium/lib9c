@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Model
 {
     using System.Linq;
     using Bencodex.Types;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.State;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.State;
     using Xunit;
 
     public class RuneSlotStateTest

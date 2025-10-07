@@ -1,9 +1,9 @@
 using System;
-using Nekoyume.Action;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
+using Lib9c.Action;
+using Lib9c.Model.Mail;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class CombinationSlotStateExtensions
     {

@@ -1,12 +1,12 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Extensions;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Extensions;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Module.ValidatorDelegation
+namespace Lib9c.Module.ValidatorDelegation
 {
     public static class ValidatorListModule
     {

@@ -1,15 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
 using Libplanet.Crypto;
-using Nekoyume.Battle;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public static class CombinationEquipment5
     {

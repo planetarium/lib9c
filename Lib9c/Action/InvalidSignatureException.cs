@@ -1,9 +1,9 @@
-using Bencodex;
-using Nekoyume.Model.State;
 using System;
 using System.Runtime.Serialization;
+using Bencodex;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class InvalidSignatureException : ActivationException

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
-using Bencodex.Types;
 using Bencodex;
+using Bencodex.Types;
+using Lib9c.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public class LumpSumRewardsRecord : IBencodable, IEquatable<LumpSumRewardsRecord>
     {

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
-    using System.Linq;
-
     /// <summary>
     /// Represents a SynthesizeWeightSheet.
     /// </summary>

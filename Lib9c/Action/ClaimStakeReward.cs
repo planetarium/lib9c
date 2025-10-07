@@ -2,22 +2,22 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c;
 using Lib9c.Abstractions;
+using Lib9c.Extensions;
+using Lib9c.Model.Stake;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Extensions;
-using Nekoyume.Model.Stake;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.Module.Guild;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.TableData;
-using Nekoyume.ValidatorDelegation;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Hard forked at https://github.com/planetarium/lib9c/pull/2097

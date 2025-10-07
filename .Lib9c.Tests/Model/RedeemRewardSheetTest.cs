@@ -2,7 +2,7 @@ namespace Lib9c.Tests.Model
 {
     using System.Linq;
     using Bencodex.Types;
-    using Nekoyume.TableData;
+    using Lib9c.TableData;
     using Xunit;
 
     public class RedeemRewardSheetTest

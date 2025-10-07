@@ -2,15 +2,15 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
+using Lib9c.Action;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.State;
+using Lib9c.TableData;
 using Libplanet.Common;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume
+namespace Lib9c
 {
     public static class Addresses
     {
@@ -82,7 +82,7 @@ namespace Nekoyume
         #region Guild
 
         /// <summary>
-        /// An address of an account having <see cref="Nekoyume.Model.Guild.Guild"/>.
+        /// An address of an account having <see cref="Model.Guild.Guild"/>.
         /// </summary>
         public static readonly Address Guild = new("0000000000000000000000000000000000000200");
 
@@ -97,7 +97,7 @@ namespace Nekoyume
         public static readonly Address GuildApplication = new("0000000000000000000000000000000000000202");
 
         /// <summary>
-        /// An address of an account having <see cref="Nekoyume.Model.Guild.GuildParticipant"/>
+        /// An address of an account having <see cref="Model.Guild.GuildParticipant"/>
         /// </summary>
         public static readonly Address GuildParticipant = new("0000000000000000000000000000000000000203");
 
@@ -305,11 +305,11 @@ namespace Nekoyume
         public static Address GetAvatarAddress(Address agentAddr, int index)
         {
             if (index < 0 ||
-                index >= Nekoyume.GameConfig.SlotCount)
+                index >= Lib9c.GameConfig.SlotCount)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(index),
-                    $"Index must be between 0 and {Nekoyume.GameConfig.SlotCount - 1}.");
+                    $"Index must be between 0 and {Lib9c.GameConfig.SlotCount - 1}.");
             }
 
             var deriveKey = string.Format(
@@ -351,7 +351,7 @@ namespace Nekoyume
         public static bool CheckAvatarAddrIsContainedInAgent(
             Address agentAddr,
             Address avatarAddr) =>
-            Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
+            Enumerable.Range(0, Lib9c.GameConfig.SlotCount)
                 .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(avatarAddr);
 
@@ -359,14 +359,14 @@ namespace Nekoyume
             Address agentAddr,
             Address balanceAddr) =>
             agentAddr == balanceAddr ||
-            Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
+            Enumerable.Range(0, Lib9c.GameConfig.SlotCount)
                 .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(balanceAddr);
 
         public static bool CheckInventoryAddrIsContainedInAgent(
             Address agentAddr,
             Address inventoryAddr) =>
-            Enumerable.Range(0, Nekoyume.GameConfig.SlotCount)
+            Enumerable.Range(0, Lib9c.GameConfig.SlotCount)
                 .Select(index => GetAvatarAddress(agentAddr, index))
                 .Contains(inventoryAddr);
 

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Summon;
 using Libplanet.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Summon;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class SummonHelper
     {

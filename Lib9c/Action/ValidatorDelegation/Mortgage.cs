@@ -1,15 +1,14 @@
 using Bencodex.Types;
+using Lib9c.Model.Guild;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.TypedAddress;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Model.Guild;
-using Nekoyume.Model.State;
-using Nekoyume.Module.Guild;
-using Nekoyume.Module;
-using Nekoyume.TypedAddress;
-using Nekoyume.ValidatorDelegation;
-using Lib9c;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     /// <summary>
     /// An action for mortgage gas fee for a transaction.

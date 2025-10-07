@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Lib9c;
+using Lib9c.Battle;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
-using Nekoyume.Battle;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.Helper;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class WorldBossHelper
     {

@@ -1,8 +1,7 @@
 namespace Lib9c.Tests.Model
 {
     using System.Linq;
-    using Nekoyume;
-    using Nekoyume.Model;
+    using Lib9c.Model;
     using Xunit;
 
     public class WorldInformationTest

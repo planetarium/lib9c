@@ -1,10 +1,8 @@
 namespace Lib9c.Tests.Model.Arena
 {
-    using System;
-    using System.Collections.Generic;
     using Bencodex.Types;
-    using Nekoyume.Model.Arena;
-    using Nekoyume.Model.State;
+    using Lib9c.Model.Arena;
+    using Lib9c.Model.State;
     using Xunit;
 
     public class ArenaResultTest

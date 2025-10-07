@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.TableData.Rune
 {
     using System;
-    using Nekoyume.TableData.Rune;
+    using Lib9c.TableData.Rune;
     using Xunit;
 
     public class RuneListSheetTest

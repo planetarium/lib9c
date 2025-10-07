@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.Collection
+namespace Lib9c.Model.Collection
 {
     public enum MaterialType
     {

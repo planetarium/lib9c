@@ -1,6 +1,6 @@
 namespace Lib9c.Tests.TableData.Event
 {
-    using Nekoyume.TableData;
+    using Lib9c.TableData.Event;
     using Xunit;
 
     public class ClaimableGiftsSheetTest

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using static Nekoyume.TableData.TableExtensions;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Skill
 {
     [Serializable]
     public class EnemySkillSheet: Sheet<int, EnemySkillSheet.Row>
@@ -21,7 +21,7 @@ namespace Nekoyume.TableData
                 TryParseInt(fields[2], out skillId);
             }
         }
-        
+
         public EnemySkillSheet() : base(nameof(EnemySkillSheet))
         {
         }

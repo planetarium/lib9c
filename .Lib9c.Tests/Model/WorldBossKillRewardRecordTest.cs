@@ -1,6 +1,6 @@
 namespace Lib9c.Tests.Model
 {
-    using Nekoyume.Model.State;
+    using Lib9c.Model.State;
     using Xunit;
 
     public class WorldBossKillRewardRecordTest

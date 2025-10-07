@@ -1,7 +1,7 @@
 ﻿namespace Lib9c.Tests.TableData.Cost
 {
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Item;
+    using Lib9c.TableData.Cost;
     using Xunit;
 
     public class EnhancementCostSheetV2Test

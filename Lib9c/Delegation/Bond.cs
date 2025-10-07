@@ -5,7 +5,7 @@ using Bencodex;
 using Bencodex.Types;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public sealed class Bond : IBencodable, IEquatable<Bond>
     {

@@ -2,9 +2,9 @@ namespace Lib9c.Tests.Delegation
 {
     using System;
     using System.Numerics;
+    using Lib9c.Delegation;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume.Delegation;
     using Xunit;
 
     public class DelegateeTest

@@ -10,11 +10,11 @@ using Libplanet.Types.Assets;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Tx;
-using Nekoyume.Action;
-using Nekoyume.Action.Loader;
 using Nekoyume.Blockchain.Policy;
-using Nekoyume.Model.State;
 using System.Numerics;
+using Lib9c.Action;
+using Lib9c.Action.Loader;
+using Lib9c.Model.State;
 
 namespace Lib9c.Proposer.Tests
 {

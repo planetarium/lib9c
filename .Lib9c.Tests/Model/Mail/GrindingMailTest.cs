@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Model.Mail
 {
     using System;
     using Bencodex.Types;
+    using Lib9c.Model.Mail;
     using Libplanet.Types.Assets;
-    using Nekoyume.Model.Mail;
     using Xunit;
 
     public class GrindingMailTest
@@ -18,7 +18,7 @@ namespace Lib9c.Tests.Model.Mail
         {
             var mail = new GrindingMail(1, Guid.NewGuid(), 2, 3, _currency * 1000, 4);
             var serialized = (Dictionary)mail.Serialize();
-            var deserialized = (GrindingMail)Mail.Deserialize(serialized);
+            var deserialized = (GrindingMail)Lib9c.Model.Mail.Mail.Deserialize(serialized);
 
             Assert.Equal(1, deserialized.blockIndex);
             Assert.Equal(2, deserialized.requiredBlockIndex);

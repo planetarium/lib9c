@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Bencodex.Types;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public interface IHackAndSlashV10
     {

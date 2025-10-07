@@ -1,7 +1,6 @@
-using System;
 using System.Numerics;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     /// <summary>
     /// 숫자 변환 관련 유틸리티 함수 모음

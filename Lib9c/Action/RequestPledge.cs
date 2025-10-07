@@ -1,12 +1,11 @@
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType(TypeIdentifier)]
     public class RequestPledge : ActionBase

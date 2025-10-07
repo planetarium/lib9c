@@ -5,14 +5,14 @@ namespace Lib9c.Tests.Action.Coupons
     using System.Collections.Immutable;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Action.Coupons;
+    using Lib9c.Model.Coupons;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Mocks;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Coupons;
-    using Nekoyume.Model.Coupons;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class IssueCouponsTest

@@ -1,7 +1,7 @@
 using System;
 using Bencodex.Types;
 
-namespace Nekoyume.Delegation
+namespace Lib9c.Delegation
 {
     public static class UnbondingFactory
     {

@@ -5,9 +5,9 @@ namespace Lib9c.Tests.TableData.Garages
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
+    using Lib9c.TableData.Garages;
     using Libplanet.Common;
     using Libplanet.Types.Assets;
-    using Nekoyume.TableData.Garages;
     using Xunit;
 
     public class LoadIntoMyGaragesCostSheetTest

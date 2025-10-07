@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Model.BattleStatus.Arena
+namespace Lib9c.Model.BattleStatus.Arena
 {
     [Serializable]
     public class ArenaDoubleAttackWithCombo : ArenaSkill

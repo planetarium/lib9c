@@ -5,9 +5,10 @@ namespace Lib9c.Tests.Model.State
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Character;
+    using Lib9c.TableData.Item;
     using Libplanet.Crypto;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class WeeklyArenaStateTest

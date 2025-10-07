@@ -1,13 +1,13 @@
 using System;
 using Bencodex.Types;
+using Lib9c.Model.Swap;
+using Lib9c.Module;
+using Lib9c.TableData.Swap;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.Swap;
-using Nekoyume.Module;
-using Nekoyume.TableData.Swap;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Swap action swaps one currency to another currency.

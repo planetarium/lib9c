@@ -1,5 +1,6 @@
+using Lib9c.Delegation;
+using Lib9c.Tests.Delegation;
 using Libplanet.Crypto;
-using Nekoyume.Delegation;
 
 public sealed class DummyDelegator : Delegator<DummyRepository, DummyDelegatee, DummyDelegator>
 {

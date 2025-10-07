@@ -1,7 +1,7 @@
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Skill
+namespace Lib9c.Model.Skill
 {
     public interface ISkill
     {

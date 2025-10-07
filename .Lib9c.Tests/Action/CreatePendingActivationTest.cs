@@ -1,12 +1,12 @@
 namespace Lib9c.Tests.Action
 {
+    using Lib9c.Action;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Common;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class CreatePendingActivationTest

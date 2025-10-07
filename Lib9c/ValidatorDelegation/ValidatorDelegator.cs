@@ -1,9 +1,9 @@
 #nullable enable
 using System;
+using Lib9c.Delegation;
 using Libplanet.Crypto;
-using Nekoyume.Delegation;
 
-namespace Nekoyume.ValidatorDelegation
+namespace Lib9c.ValidatorDelegation
 {
     public sealed class ValidatorDelegator
         : Delegator<ValidatorRepository, ValidatorDelegatee, ValidatorDelegator>,

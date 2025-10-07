@@ -1,12 +1,11 @@
 using Bencodex.Types;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Extensions;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Extensions;
-using Nekoyume.ValidatorDelegation;
-using static Nekoyume.Model.WorldInformation;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     /// <summary>
     /// An action for recording proposer of the block to use in next block's reward distribution.

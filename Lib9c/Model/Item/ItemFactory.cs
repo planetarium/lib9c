@@ -2,18 +2,17 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action.Exceptions.CustomEquipmentCraft;
+using Lib9c.Battle;
+using Lib9c.Exceptions;
+using Lib9c.Model.State;
+using Lib9c.TableData.Cost;
+using Lib9c.TableData.CustomEquipmentCraft;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
-using Nekoyume.Action.Exceptions.CustomEquipmentCraft;
-using Nekoyume.Battle;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
-using Nekoyume.Model.State;
-using Nekoyume.TableData.CustomEquipmentCraft;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Item
+namespace Lib9c.Model.Item
 {
     /// <summary>
     /// Factory class for creating and deserializing items.

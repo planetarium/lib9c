@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
-using Lib9c;
+using Lib9c.Action.Exceptions.AdventureBoss;
+using Lib9c.Extensions;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Exceptions.AdventureBoss;
-using Nekoyume.Extensions;
-using Nekoyume.Helper;
-using Nekoyume.Model.Mail;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// The ClaimWorldBossReward class is an action that allows a player to claim rewards for their contribution in defeating a world boss.

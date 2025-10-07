@@ -2,15 +2,14 @@ namespace Lib9c.Tests.Policy
 {
     using System;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Action.Loader;
     using Libplanet.Action;
     using Libplanet.Action.Loader;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Types.Blocks;
     using Libplanet.Types.Tx;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Loader;
     using Nekoyume.Blockchain.Policy;
     using Xunit;
 

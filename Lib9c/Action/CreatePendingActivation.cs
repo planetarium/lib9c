@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Introduced at Initial commit(2e645be18a4e2caea031c347f00777fbad5dbcc6)

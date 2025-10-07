@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData.CustomEquipmentCraft
+namespace Lib9c.TableData.CustomEquipmentCraft
 {
     [Serializable]
     public class CustomEquipmentCraftOptionSheet

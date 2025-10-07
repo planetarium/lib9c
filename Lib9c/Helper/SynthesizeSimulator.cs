@@ -3,14 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Action;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
-using Nekoyume.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     /// <summary>
     /// Represents the result of the synthesis.
@@ -50,42 +52,42 @@ namespace Nekoyume.Helper
             public int MaterialCount;
             /// <summary>
             /// The sheet that contains the synthesis information.
-            /// <seealso cref="Nekoyume.TableData.SynthesizeSheet"/>
+            /// <seealso cref="TableData.Item.SynthesizeSheet"/>
             /// </summary>
             public SynthesizeSheet SynthesizeSheet;
             /// <summary>
             /// The sheet that contains the synthesis weight information.
-            /// <seealso cref="Nekoyume.TableData.SynthesizeWeightSheet"/>
+            /// <seealso cref="TableData.Item.SynthesizeWeightSheet"/>
             /// </summary>
             public SynthesizeWeightSheet SynthesizeWeightSheet;
             /// <summary>
             /// The sheet that contains the costume item information.
-            /// <seealso cref="Nekoyume.TableData.CostumeItemSheet"/>
+            /// <seealso cref="TableData.Item.CostumeItemSheet"/>
             /// </summary>
             public CostumeItemSheet CostumeItemSheet;
             /// <summary>
             /// The sheet that contains the equipment item information.
-            /// <seealso cref="Nekoyume.TableData.EquipmentItemSheet"/>
+            /// <seealso cref="TableData.Item.EquipmentItemSheet"/>
             /// </summary>
             public EquipmentItemSheet EquipmentItemSheet;
             /// <summary>
             /// The sheet that contains the equipment item recipe information.
-            /// <seealso cref="Nekoyume.TableData.EquipmentItemRecipeSheet"/>
+            /// <seealso cref="TableData.Item.EquipmentItemRecipeSheet"/>
             /// </summary>
             public EquipmentItemRecipeSheet EquipmentItemRecipeSheet;
             /// <summary>
             /// The sheet that contains the equipment item sub recipe information.
-            /// <seealso cref="Nekoyume.TableData.EquipmentItemSubRecipeSheetV2"/>
+            /// <seealso cref="TableData.Item.EquipmentItemSubRecipeSheetV2"/>
             /// </summary>
             public EquipmentItemSubRecipeSheetV2 EquipmentItemSubRecipeSheetV2;
             /// <summary>
             /// The sheet that contains the equipment item option information.
-            /// <seealso cref="Nekoyume.TableData.EquipmentItemOptionSheet"/>
+            /// <seealso cref="TableData.Item.EquipmentItemOptionSheet"/>
             /// </summary>
             public EquipmentItemOptionSheet EquipmentItemOptionSheet;
             /// <summary>
             /// The sheet that contains the skill information.
-            /// <seealso cref="Nekoyume.TableData.SkillSheet"/>
+            /// <seealso cref="TableData.Skill.SkillSheet"/>
             /// </summary>
             public SkillSheet SkillSheet;
             /// <summary>

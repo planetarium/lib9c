@@ -1,7 +1,7 @@
-using Nekoyume.Extensions;
-using Nekoyume.ValidatorDelegation;
+using Lib9c.Extensions;
+using Lib9c.ValidatorDelegation;
 
-namespace Nekoyume.Module.ValidatorDelegation
+namespace Lib9c.Module.ValidatorDelegation
 {
     public static class AbstainHistoryModule
     {

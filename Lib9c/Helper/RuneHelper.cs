@@ -2,16 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lib9c;
+using Lib9c.Action;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Rune;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Battle;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Rune;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class RuneHelper
     {

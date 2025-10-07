@@ -1,9 +1,9 @@
 using System;
 using System.Numerics;
 using Bencodex.Types;
-using Nekoyume.TableData;
+using Lib9c.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// Represents the state of a World Boss in the game.

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.GrandFinale
+namespace Lib9c.Model.GrandFinale
 {
-    using System.Linq;
     public class GrandFinaleInformation : IState
     {
         public static Address DeriveAddress(Address avatarAddress, int grandFinaleId) =>

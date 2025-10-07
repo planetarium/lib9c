@@ -1,8 +1,8 @@
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Model.Market
+namespace Lib9c.Model.Market
 {
     public class FavProduct : Product
     {

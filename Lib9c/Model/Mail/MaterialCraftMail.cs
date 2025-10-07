@@ -1,8 +1,8 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     [Serializable]
     public class MaterialCraftMail : Mail

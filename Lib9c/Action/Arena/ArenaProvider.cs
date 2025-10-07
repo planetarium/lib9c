@@ -1,4 +1,4 @@
-namespace Nekoyume.Action.Arena
+namespace Lib9c.Action.Arena
 {
     /// <summary>
     /// Temp

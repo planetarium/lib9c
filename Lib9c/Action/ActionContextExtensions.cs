@@ -1,8 +1,8 @@
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Crypto;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     public static class ActionContextExtensions
     {

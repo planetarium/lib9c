@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Bencodex.Types;
+using Lib9c.Action;
 using Lib9c.Formatters;
 using Lib9c.Renderers;
 using Libplanet.Crypto;

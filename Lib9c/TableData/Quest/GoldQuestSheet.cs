@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.EnumType;
+using Lib9c.Model.EnumType;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Quest
 {
     [Serializable]
     public class GoldQuestSheet : Sheet<int, GoldQuestSheet.Row>

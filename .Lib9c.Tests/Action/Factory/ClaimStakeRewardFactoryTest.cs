@@ -1,17 +1,17 @@
-#nullable enable
-
 namespace Lib9c.Tests.Action.Factory
 {
+#nullable enable
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using Bencodex.Types;
     using Lib9c.Abstractions;
+    using Lib9c.Action;
+    using Lib9c.Action.Factory;
     using Libplanet.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Action.Factory;
     using Xunit;
 
     public class ClaimStakeRewardFactoryTest

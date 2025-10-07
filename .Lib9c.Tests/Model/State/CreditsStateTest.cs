@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.Model.State
 {
     using Bencodex.Types;
-    using Nekoyume.Model.State;
+    using Lib9c.Model.State;
     using Xunit;
 
     public class CreditsStateTest

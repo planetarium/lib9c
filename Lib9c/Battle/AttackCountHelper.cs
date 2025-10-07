@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class AttackCountHelper
     {

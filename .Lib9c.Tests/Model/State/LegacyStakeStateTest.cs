@@ -1,12 +1,12 @@
 namespace Lib9c.Tests.Model.State
 {
     using Bencodex.Types;
+    using Lib9c;
+    using Lib9c.Action;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
     using Xunit;
-    using static Nekoyume.Model.State.LegacyStakeState;
+    using static Lib9c.Model.State.LegacyStakeState;
 
     public class LegacyStakeStateTest
     {

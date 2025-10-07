@@ -3,17 +3,17 @@ namespace Lib9c.Tests.Model
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Battle;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Quest;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Quest;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
     using Xunit.Abstractions;
 
@@ -53,7 +53,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -118,7 +118,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 3,
                 _tableSheets.StageSheet[3],
@@ -173,7 +173,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 3,
                 _tableSheets.StageSheet[3],

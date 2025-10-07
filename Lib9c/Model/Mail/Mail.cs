@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.State;
+using Lib9c.Model.State;
 using Serilog;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     public enum MailType
     {

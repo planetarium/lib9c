@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Model.BattleStatus.AdventureBoss
+namespace Lib9c.Model.BattleStatus.AdventureBoss
 {
     [Serializable]
     public class StageBuff : Skill

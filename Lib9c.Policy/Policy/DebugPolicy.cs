@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
+using Lib9c.Action;
+using Lib9c.Action.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Blockchain;
 using Libplanet.Blockchain.Policies;
 using Libplanet.Types.Blocks;
 using Libplanet.Types.Tx;
-using Nekoyume.Action;
-using Nekoyume.Action.ValidatorDelegation;
 
 namespace Nekoyume.Blockchain.Policy
 {

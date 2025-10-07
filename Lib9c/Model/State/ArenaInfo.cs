@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Battle;
+using Lib9c.Model.BattleStatus;
+using Lib9c.Model.Item;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Item;
 using Libplanet.Crypto;
-using Nekoyume.Battle;
-using Nekoyume.Model.BattleStatus;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class ArenaInfo : IState
     {

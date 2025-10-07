@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using Nekoyume.TableData;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class MaterialItemSheetExtensions
     {

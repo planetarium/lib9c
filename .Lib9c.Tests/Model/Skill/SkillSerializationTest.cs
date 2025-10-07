@@ -2,11 +2,11 @@ namespace Lib9c.Tests.Model.Skill
 {
     using System.Collections.Generic;
     using Bencodex.Types;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
+    using Lib9c.Model.Elemental;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Skill;
     using Xunit;
 
     public class SkillSerializationTest
@@ -30,7 +30,7 @@ namespace Lib9c.Tests.Model.Skill
         }
 
         // Legacy serialize for test
-        public static IValue LegacySerializeSkill(Skill skill)
+        public static IValue LegacySerializeSkill(Lib9c.Model.Skill.Skill skill)
         {
             var dict = new Dictionary(new Dictionary<IKey, IValue>
             {

@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
 using Bencodex.Types;
+using Lib9c.Model.EnumType;
+using Lib9c.TableData.Quest;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.EnumType;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.Quest
+namespace Lib9c.Model.Quest
 {
     [Serializable]
     public class GoldQuest : Quest

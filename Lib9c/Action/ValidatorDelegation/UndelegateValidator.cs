@@ -1,12 +1,12 @@
 using System;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Model.Guild;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Model.Guild;
+using Libplanet.Action.State;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     [ActionType(TypeIdentifier)]
     public sealed class UndelegateValidator : ActionBase

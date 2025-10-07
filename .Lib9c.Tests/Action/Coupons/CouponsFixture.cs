@@ -2,8 +2,8 @@ namespace Lib9c.Tests.Action.Coupons
 {
     using System;
     using System.Collections.Immutable;
+    using Lib9c.Model.Coupons;
     using Libplanet.Crypto;
-    using Nekoyume.Model.Coupons;
 
     public static class CouponsFixture
     {

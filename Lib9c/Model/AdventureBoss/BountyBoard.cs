@@ -1,16 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c.Action.Exceptions.AdventureBoss;
+using Lib9c.Helper;
+using Lib9c.Model.State;
+using Lib9c.TableData.AdventureBoss;
 using Libplanet.Action;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Action.Exceptions.AdventureBoss;
-using Nekoyume.Helper;
-using Nekoyume.Model.State;
-using Nekoyume.TableData.AdventureBoss;
-using RewardData = Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData;
 
-namespace Nekoyume.Model.AdventureBoss
+namespace Lib9c.Model.AdventureBoss
 {
     public class BountyBoard
     {

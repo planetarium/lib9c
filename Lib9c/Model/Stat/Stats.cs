@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     [Serializable]
     public class Stats : IStats, ICloneable

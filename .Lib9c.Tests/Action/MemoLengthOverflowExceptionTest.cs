@@ -2,7 +2,7 @@ namespace Lib9c.Tests.Action
 {
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
-    using Nekoyume.Action;
+    using Lib9c.Action;
     using Xunit;
 
     public class MemoLengthOverflowExceptionTest

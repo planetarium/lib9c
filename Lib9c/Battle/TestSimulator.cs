@@ -1,11 +1,11 @@
-using Libplanet.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
 using System;
 using System.Collections.Generic;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Libplanet.Action;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public class TestSimulator : Simulator
     {

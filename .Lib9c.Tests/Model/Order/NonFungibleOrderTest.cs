@@ -6,15 +6,14 @@ namespace Lib9c.Tests.Model.Order
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Battle;
+    using Lib9c.Model.Item;
     using Lib9c.Model.Order;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class NonFungibleOrderTest

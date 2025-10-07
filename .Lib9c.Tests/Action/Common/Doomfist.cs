@@ -3,10 +3,9 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Nekoyume;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Stat;
+    using Lib9c.Model.Elemental;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Stat;
     using Xunit;
 
     public static class Doomfist

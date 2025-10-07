@@ -1,13 +1,12 @@
 using System;
-using Lib9c;
+using Lib9c.Action;
+using Lib9c.Model.Pet;
+using Lib9c.Model.State;
+using Lib9c.TableData;
+using Lib9c.TableData.Pet;
 using Libplanet.Types.Assets;
-using Nekoyume.Action;
-using Nekoyume.Model.Pet;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.Pet;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class PetHelper
     {

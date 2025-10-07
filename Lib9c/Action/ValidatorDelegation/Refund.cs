@@ -1,9 +1,9 @@
 using Bencodex.Types;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     /// <summary>
     /// An action for refund gas fee for a transaction.

@@ -1,6 +1,6 @@
 using System;
 
-namespace Nekoyume.Model.Stat
+namespace Lib9c.Model.Stat
 {
     [Serializable]
     public class StatModifier

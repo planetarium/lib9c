@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Lib9c;
+using Lib9c.Helper;
+using Lib9c.Model.Item;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Types.Assets;
-using Nekoyume.Helper;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public static class StakeRewardCalculator
     {

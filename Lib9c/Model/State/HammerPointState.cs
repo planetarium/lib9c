@@ -1,9 +1,9 @@
 ﻿using System;
 using Bencodex.Types;
+using Lib9c.TableData.Crystal;
 using Libplanet.Crypto;
-using Nekoyume.TableData.Crystal;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     public class HammerPointState : IState
     {

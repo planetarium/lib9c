@@ -3,18 +3,18 @@ namespace Lib9c.Tests.Model.Skill
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Battle;
+    using Lib9c.Helper;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.Elemental;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Skill;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
+    using Lib9c.TableData.Skill;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Battle;
-    using Nekoyume.Helper;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Elemental;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Skill;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
-    using Nekoyume.TableData;
     using Serilog;
     using Xunit;
     using Xunit.Abstractions;
@@ -54,7 +54,7 @@ namespace Lib9c.Tests.Model.Skill
                 new List<System.Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -123,7 +123,7 @@ namespace Lib9c.Tests.Model.Skill
                 new List<System.Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -188,7 +188,7 @@ namespace Lib9c.Tests.Model.Skill
                 new List<System.Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -253,7 +253,7 @@ namespace Lib9c.Tests.Model.Skill
                 new List<System.Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],
@@ -318,13 +318,13 @@ namespace Lib9c.Tests.Model.Skill
             }
 
             // Copy from AttackSkill.ProcessDamage
-            public IEnumerable<Nekoyume.Model.BattleStatus.Skill.SkillInfo> TestLegacyProcessDamage(
+            public IEnumerable<Lib9c.Model.BattleStatus.Skill.SkillInfo> TestLegacyProcessDamage(
                 CharacterBase caster,
                 int simulatorWaveTurn,
                 bool isNormalAttack = false,
                 bool copyCharacter = true)
             {
-                var infos = new List<Nekoyume.Model.BattleStatus.Skill.SkillInfo>();
+                var infos = new List<Lib9c.Model.BattleStatus.Skill.SkillInfo>();
                 var targets = SkillRow.SkillTargetType.GetTarget(caster).ToList();
                 var elementalType = SkillRow.ElementalType;
 
@@ -400,7 +400,7 @@ namespace Lib9c.Tests.Model.Skill
 
                         var iceShield = target.Buffs.Values.OfType<IceShield>().FirstOrDefault();
                         var clone = copyCharacter ? (CharacterBase)target.Clone() : null;
-                        infos.Add(new Nekoyume.Model.BattleStatus.Skill.SkillInfo(
+                        infos.Add(new Lib9c.Model.BattleStatus.Skill.SkillInfo(
                             target.Id,
                             target.IsDead,
                             target.Thorn,
@@ -418,10 +418,10 @@ namespace Lib9c.Tests.Model.Skill
                 return infos;
             }
 
-            public override Nekoyume.Model.BattleStatus.Skill Use(
+            public override Lib9c.Model.BattleStatus.Skill Use(
                 CharacterBase caster,
                 int simulatorWaveTurn,
-                IEnumerable<Nekoyume.Model.Buff.Buff> buffs,
+                IEnumerable<Buff> buffs,
                 bool copyCharacter)
             {
                 // Not used in this test
@@ -429,7 +429,7 @@ namespace Lib9c.Tests.Model.Skill
             }
 
             // Expose the actual ProcessDamage method for testing
-            public IEnumerable<Nekoyume.Model.BattleStatus.Skill.SkillInfo> TestProcessDamage(
+            public IEnumerable<Lib9c.Model.BattleStatus.Skill.SkillInfo> TestProcessDamage(
                 CharacterBase caster,
                 int simulatorWaveTurn,
                 bool isNormalAttack = false,

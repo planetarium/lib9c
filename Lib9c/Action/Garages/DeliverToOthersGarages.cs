@@ -6,17 +6,17 @@ using System.Linq;
 using System.Security.Cryptography;
 using Bencodex.Types;
 using Lib9c.Abstractions;
+using Lib9c.Exceptions;
+using Lib9c.Model.Garages;
+using Lib9c.Model.State;
+using Lib9c.Module;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Common;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.Garages;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action.Garages
+namespace Lib9c.Action.Garages
 {
     [ActionType("deliver_to_others_garages")]
     public class DeliverToOthersGarages : GameAction, IDeliverToOthersGaragesV1, IAction

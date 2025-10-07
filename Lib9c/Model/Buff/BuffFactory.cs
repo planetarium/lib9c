@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
-using Nekoyume.Helper;
+using Lib9c.Helper;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model.Buff
+namespace Lib9c.Model.Buff
 {
     public static class BuffFactory
     {

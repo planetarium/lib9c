@@ -1,13 +1,12 @@
 namespace Lib9c.Tests.Action
 {
     using System;
+    using Lib9c.Action;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
     using Xunit;
 
     public class RenewAdminStateTest

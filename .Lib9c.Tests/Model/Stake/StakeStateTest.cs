@@ -1,9 +1,9 @@
 namespace Lib9c.Tests.Model.Stake
 {
     using System;
+    using Lib9c.Model.Stake;
+    using Lib9c.Model.State;
     using Libplanet.Crypto;
-    using Nekoyume.Model.Stake;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class StakeStateTest

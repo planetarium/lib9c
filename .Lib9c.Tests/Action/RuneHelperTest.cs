@@ -1,8 +1,8 @@
 namespace Lib9c.Tests.Action
 {
+    using Lib9c.Helper;
+    using Lib9c.Model.State;
     using Libplanet.Types.Assets;
-    using Nekoyume.Helper;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class RuneHelperTest

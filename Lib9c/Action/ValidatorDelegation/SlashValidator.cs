@@ -2,16 +2,16 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Model.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Types.Consensus;
 using Libplanet.Types.Evidence;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.ValidatorDelegation;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     public sealed class SlashValidator : ActionBase
     {

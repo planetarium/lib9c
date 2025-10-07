@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Rune;
+using Lib9c.Model.Rune;
+using Lib9c.Module;
 
-namespace Nekoyume.Model.State
+namespace Lib9c.Model.State
 {
     /// <summary>
     /// This is new version of rune state. This state stores all rune states of an avatar.
     /// AllRuneState has all RuneStates as dictionary and has methods to get/set/update each RuneState.
-    /// Use this with <see cref="Nekoyume.Module.RuneStateModule"/>.
+    /// Use this with <see cref="RuneStateModule"/>.
     /// </summary>
     public class AllRuneState : IState
     {

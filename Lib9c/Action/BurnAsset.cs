@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Exceptions;
+using Lib9c.Model.State;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.State;
-using Nekoyume.Module;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [ActionType(TypeIdentifier)]
     public class BurnAsset : ActionBase

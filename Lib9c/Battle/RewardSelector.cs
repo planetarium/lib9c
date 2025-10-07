@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Lib9c.Model.Item;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
+using Lib9c.TableData.WorldAndStage;
 using Libplanet.Action;
-using Nekoyume.Model.Item;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public static class RewardSelector
     {

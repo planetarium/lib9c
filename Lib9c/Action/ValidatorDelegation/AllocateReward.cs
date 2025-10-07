@@ -2,19 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Model.Guild;
+using Lib9c.Module;
+using Lib9c.Module.Guild;
+using Lib9c.Module.ValidatorDelegation;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
+using Libplanet.Action.State;
 using Libplanet.Types.Assets;
-using Libplanet.Types.Consensus;
 using Libplanet.Types.Blocks;
-using Nekoyume.Module;
-using Nekoyume.Model.Guild;
-using Nekoyume.Module.Guild;
-using Nekoyume.ValidatorDelegation;
-using Nekoyume.Module.ValidatorDelegation;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
+using Libplanet.Types.Consensus;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     public sealed class AllocateReward : ActionBase
     {

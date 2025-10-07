@@ -5,7 +5,7 @@ using System.Linq;
 using Bencodex.Types;
 using Libplanet.Crypto;
 
-namespace Nekoyume.ValidatorDelegation
+namespace Lib9c.ValidatorDelegation
 {
     public sealed class AbstainHistory
     {

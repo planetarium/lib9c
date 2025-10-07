@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nekoyume.TableData.GrandFinale
+namespace Lib9c.TableData.GrandFinale
 {
     using static TableExtensions;
 

@@ -1,10 +1,10 @@
 using System;
 using Bencodex.Types;
-using Nekoyume.Model.Market;
-using Nekoyume.Model.State;
+using Lib9c.Model.Market;
+using Lib9c.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Model.Mail
+namespace Lib9c.Model.Mail
 {
     [Serializable]
     public class ProductSellerMail : Mail

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Action;
 
-namespace Nekoyume
+namespace Lib9c.Action
 {
     public static class ActionObsoleteAttributeExtension
     {

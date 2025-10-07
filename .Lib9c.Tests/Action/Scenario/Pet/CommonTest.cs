@@ -1,15 +1,13 @@
 namespace Lib9c.Tests.Action.Scenario.Pet
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class CommonTest

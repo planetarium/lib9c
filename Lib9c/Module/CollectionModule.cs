@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Action;
+using Lib9c.Model.State;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
 using Serilog;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     /// <summary>
     /// Provides utility methods for working with collection states in the world state.

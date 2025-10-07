@@ -1,7 +1,7 @@
-﻿using Nekoyume.Model;
-using Nekoyume.TableData;
+﻿using Lib9c.Model;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Battle
+namespace Lib9c.Battle
 {
     public interface IStageSimulator : ISimulator
     {

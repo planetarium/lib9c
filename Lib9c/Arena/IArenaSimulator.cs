@@ -1,9 +1,8 @@
-
+using Lib9c.Model.BattleStatus.Arena;
+using Lib9c.TableData.Skill;
 using Libplanet.Action;
-using Nekoyume.Model.BattleStatus.Arena;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Arena
+namespace Lib9c.Arena
 {
     public interface IArenaSimulator
     {

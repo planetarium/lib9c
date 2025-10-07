@@ -2,7 +2,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.Loader;
 
-namespace Nekoyume.Action.Loader
+namespace Lib9c.Action.Loader
 {
     /// <summary>
     /// An <see cref="IActionLoader"/> implementation for Nine Chronicles's BlockChain.

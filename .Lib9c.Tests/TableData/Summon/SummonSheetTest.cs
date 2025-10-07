@@ -3,7 +3,7 @@ namespace Lib9c.Tests.TableData.Summon
     using System;
     using System.Linq;
     using System.Text;
-    using Nekoyume.TableData.Summon;
+    using Lib9c.TableData.Summon;
     using Xunit;
 
     public class SummonSheetTest

@@ -2,14 +2,14 @@ namespace Lib9c.Tests.Model
 {
     using System;
     using System.Collections.Generic;
+    using Lib9c.Battle;
+    using Lib9c.Model.BattleStatus;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
     using Libplanet.Action;
     using Libplanet.Crypto;
-    using Nekoyume.Battle;
-    using Nekoyume.Model.BattleStatus;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class BattleLogTest
@@ -40,7 +40,7 @@ namespace Lib9c.Tests.Model
                 new List<Guid>(),
                 new AllRuneState(),
                 new RuneSlotState(BattleType.Adventure),
-                new List<Nekoyume.Model.Skill.Skill>(),
+                new List<Lib9c.Model.Skill.Skill>(),
                 1,
                 1,
                 _tableSheets.StageSheet[1],

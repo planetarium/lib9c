@@ -2,25 +2,23 @@
 
 namespace Lib9c.Tests.Action.Scenario.Pet
 {
-    using System.Collections.Generic;
     using System.Linq;
     using Bencodex.Types;
+    using Lib9c.Action;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Pet;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData.Pet;
     using Lib9c.Tests.Util;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Pet;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Pet;
     using Xunit;
 
     public class AdditionalOptionRateByFixedValueTest
     {
         private const PetOptionType PetOptionType
-            = Nekoyume.Model.Pet.PetOptionType.AdditionalOptionRateByFixedValue;
+            = Lib9c.Model.Pet.PetOptionType.AdditionalOptionRateByFixedValue;
 
         private readonly TableSheets _tableSheets;
         private readonly Address _agentAddr;

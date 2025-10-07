@@ -1,7 +1,5 @@
 namespace Lib9c.Tests.Delegation
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Lib9c.Tests.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -9,7 +7,6 @@ namespace Lib9c.Tests.Delegation
     using Libplanet.Store.Trie;
     using Libplanet.Types.Assets;
     using Libplanet.Types.Blocks;
-    using Nekoyume.Delegation;
 
     public class DelegationFixture
     {

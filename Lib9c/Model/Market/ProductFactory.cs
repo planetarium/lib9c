@@ -1,8 +1,8 @@
 using Bencodex.Types;
-using Nekoyume.Action;
-using Nekoyume.Model.State;
+using Lib9c.Action;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Market
+namespace Lib9c.Model.Market
 {
     public static class ProductFactory
     {

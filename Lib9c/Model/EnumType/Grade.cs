@@ -1,4 +1,4 @@
-namespace Nekoyume.Model.EnumType
+namespace Lib9c.Model.EnumType
 {
     /// <summary>
     /// Enumeration of item grades.

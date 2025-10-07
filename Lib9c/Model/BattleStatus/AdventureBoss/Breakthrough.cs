@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nekoyume.TableData.AdventureBoss;
+using Lib9c.Model.Character;
+using Lib9c.TableData.AdventureBoss;
 
-namespace Nekoyume.Model.BattleStatus.AdventureBoss
+namespace Lib9c.Model.BattleStatus.AdventureBoss
 {
     [Serializable]
     public class Breakthrough : EventBase

@@ -2,23 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Nekoyume.Module;
-using Lib9c;
+using Lib9c.Battle;
+using Lib9c.Data;
+using Lib9c.Exceptions;
+using Lib9c.Model.AdventureBoss;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
+using Lib9c.Module;
+using Lib9c.TableData;
+using Lib9c.TableData.AdventureBoss;
+using Lib9c.TableData.Item;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Battle;
-using Nekoyume.Data;
-using Nekoyume.Exceptions;
-using Nekoyume.Model.AdventureBoss;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
-using Nekoyume.TableData;
-using Nekoyume.TableData.AdventureBoss;
-using Nekoyume.Helper;
 
-namespace Nekoyume.Helper
+namespace Lib9c.Helper
 {
     public static class AdventureBossHelper
     {

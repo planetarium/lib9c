@@ -1,8 +1,8 @@
 using Bencodex.Types;
-using Nekoyume.Model.EnumType;
-using Nekoyume.Model.State;
+using Lib9c.Model.EnumType;
+using Lib9c.Model.State;
 
-namespace Nekoyume.Model.Rune
+namespace Lib9c.Model.Rune
 {
     public class RuneSlot : IState
     {

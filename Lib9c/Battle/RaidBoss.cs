@@ -1,21 +1,23 @@
-using Nekoyume.Battle;
-using Nekoyume.Model.Buff;
-using Nekoyume.Model.Skill;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Helper;
+using Lib9c.Helper;
+using Lib9c.Model.Buff;
+using Lib9c.Model.Character;
+using Lib9c.Model.Skill;
+using Lib9c.Model.Stat;
+using Lib9c.TableData;
+using Lib9c.TableData.Character;
+using Lib9c.TableData.Skill;
 
-namespace Nekoyume.Model
+namespace Lib9c.Battle
 {
     public class RaidBoss : Enemy
     {
         public new WorldBossCharacterSheet.Row RowData { get; }
         public WorldBossActionPatternSheet.Row PatternRowData { get; }
 
-        private List<Skill.Skill> _orderedSkills = new List<Skill.Skill>();
-        private Skill.Skill _enrageSkill;
+        private List<Skill> _orderedSkills = new List<Skill>();
+        private Skill _enrageSkill;
         private int _actionCount;
         private int _wave;
 
@@ -90,7 +92,7 @@ namespace Nekoyume.Model
             _enrageSkill = enrageSkill;
         }
 
-        protected override BattleStatus.Skill UseSkill()
+        protected override Model.BattleStatus.Skill UseSkill()
         {
             var index = _actionCount % _orderedSkills.Count;
             var skill = _orderedSkills[index];

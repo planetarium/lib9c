@@ -4,22 +4,22 @@ namespace Lib9c.Tests.Action
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using Lib9c.Action;
+    using Lib9c.Exceptions;
+    using Lib9c.Extensions;
+    using Lib9c.Model.EnumType;
+    using Lib9c.Model.Event;
+    using Lib9c.Model.Item;
+    using Lib9c.Model.Rune;
+    using Lib9c.Model.State;
+    using Lib9c.Module;
+    using Lib9c.TableData;
+    using Lib9c.TableData.Event;
+    using Lib9c.TableData.Item;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
     using Libplanet.Types.Assets;
-    using Nekoyume;
-    using Nekoyume.Action;
-    using Nekoyume.Exceptions;
-    using Nekoyume.Extensions;
-    using Nekoyume.Model.EnumType;
-    using Nekoyume.Model.Event;
-    using Nekoyume.Model.Item;
-    using Nekoyume.Model.Rune;
-    using Nekoyume.Model.State;
-    using Nekoyume.Module;
-    using Nekoyume.TableData;
-    using Nekoyume.TableData.Event;
     using Xunit;
 
     public class EventDungeonBattleTest

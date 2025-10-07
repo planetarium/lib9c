@@ -1,7 +1,8 @@
 using System;
 using System.Collections;
+using Lib9c.Model.Character;
 
-namespace Nekoyume.Model.BattleStatus
+namespace Lib9c.Model.BattleStatus
 {
     [Serializable]
     public class SpawnEnemyPlayer : EventBase

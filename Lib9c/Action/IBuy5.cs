@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Libplanet.Action;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     /// <summary>
     /// Common interface used after <see cref="IBuy5"/>.

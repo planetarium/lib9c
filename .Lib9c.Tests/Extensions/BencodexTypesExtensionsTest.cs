@@ -2,7 +2,7 @@ namespace Lib9c.Tests.Extensions
 {
     using System;
     using Bencodex.Types;
-    using Nekoyume.Exceptions;
+    using Lib9c.Exceptions;
     using Xunit;
 
     public class BencodexTypesExtensionsTest

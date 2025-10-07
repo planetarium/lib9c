@@ -1,11 +1,11 @@
 using System;
 using Bencodex.Types;
-using Libplanet.Action.State;
+using Lib9c.Model.Guild;
+using Lib9c.ValidatorDelegation;
 using Libplanet.Action;
-using Nekoyume.Model.Guild;
-using Nekoyume.ValidatorDelegation;
+using Libplanet.Action.State;
 
-namespace Nekoyume.Action.Guild
+namespace Lib9c.Action.Guild
 {
     [ActionType(TypeIdentifier)]
     public sealed class ClaimGuildReward : ActionBase

@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.Action
 {
     using System;
-    using Nekoyume.Battle;
+    using Lib9c.Battle;
     using Xunit;
 
     public class HitHelperTest

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bencodex.Types;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using Nekoyume.Model.State;
-using static Nekoyume.TableData.TableExtensions;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.Model.State;
+using static Lib9c.TableData.TableExtensions;
 
-namespace Nekoyume.TableData
+namespace Lib9c.TableData.Item
 {
     [Serializable]
     public class EquipmentItemSheet : Sheet<int, EquipmentItemSheet.Row>

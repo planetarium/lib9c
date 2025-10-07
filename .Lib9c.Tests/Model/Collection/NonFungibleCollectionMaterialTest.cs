@@ -2,11 +2,11 @@ namespace Lib9c.Tests.Model.Collection
 {
     using System;
     using System.Linq;
+    using Lib9c.Action;
+    using Lib9c.Model.Collection;
+    using Lib9c.Model.Item;
+    using Lib9c.TableData;
     using Lib9c.Tests.Action;
-    using Nekoyume.Action;
-    using Nekoyume.Model.Collection;
-    using Nekoyume.Model.Item;
-    using Nekoyume.TableData;
     using Xunit;
 
     public class NonFungibleCollectionMaterialTest

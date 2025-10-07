@@ -1,12 +1,12 @@
 using System;
+using Lib9c.Action.Guild.Migration.LegacyModels;
+using Lib9c.Arena;
+using Lib9c.Module;
+using Lib9c.TableData;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Action.Guild.Migration.LegacyModels;
-using Nekoyume.Arena;
-using Nekoyume.Module;
-using Nekoyume.TableData;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class WorldExtensions
     {

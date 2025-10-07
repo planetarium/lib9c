@@ -1,10 +1,10 @@
 #nullable enable
 using System.Collections.Immutable;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.ValidatorDelegation
+namespace Lib9c.ValidatorDelegation
 {
     public class ProposerInfo
     {

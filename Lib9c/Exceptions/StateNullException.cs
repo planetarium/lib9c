@@ -4,7 +4,7 @@ using System;
 using System.Runtime.Serialization;
 using Libplanet.Crypto;
 
-namespace Nekoyume.Exceptions
+namespace Lib9c.Exceptions
 {
     [Serializable]
     public class StateNullException : Exception

@@ -1,16 +1,14 @@
 #nullable enable
 
-using System.Collections;
-using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Model.State;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
-using Nekoyume.Model.State;
 
-namespace Nekoyume.Module
+namespace Lib9c.Module
 {
     /// <summary>
-    /// CombinationSlotStateModule is the module to use 
+    /// CombinationSlotStateModule is the module to use
     /// CombinationSlotState/AllCombinationSlotState with account.
     /// </summary>
     public static class CombinationSlotStateModule

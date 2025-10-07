@@ -2,7 +2,7 @@ using Bencodex.Types;
 using Libplanet.Action;
 using Libplanet.Action.State;
 
-namespace Nekoyume.Action.ValidatorDelegation
+namespace Lib9c.Action.ValidatorDelegation
 {
     /// <summary>
     /// An action for reward for a transaction.

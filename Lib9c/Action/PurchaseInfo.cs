@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Bencodex.Types;
+using Lib9c.Model.Item;
+using Lib9c.Model.State;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.State;
 using static Lib9c.SerializeKeys;
 
-namespace Nekoyume.Action
+namespace Lib9c.Action
 {
     [Serializable]
     public class PurchaseInfo : IComparable<PurchaseInfo>, IComparable, IPurchaseInfo

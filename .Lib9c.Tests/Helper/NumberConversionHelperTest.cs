@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.Helper
 {
     using System.Numerics;
-    using Nekoyume.Helper;
+    using Lib9c.Helper;
     using Xunit;
 
     /// <summary>

@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nekoyume.Helper;
-using Nekoyume.Model.Elemental;
-using Nekoyume.Model.Item;
-using Nekoyume.Model.Stat;
-using Nekoyume.TableData;
+using Lib9c.Helper;
+using Lib9c.Model.Elemental;
+using Lib9c.Model.Item;
+using Lib9c.Model.Stat;
+using Lib9c.TableData;
+using Lib9c.TableData.Item;
 
-namespace Nekoyume.Extensions
+namespace Lib9c.Extensions
 {
     public static class EquipmentExtensions
     {

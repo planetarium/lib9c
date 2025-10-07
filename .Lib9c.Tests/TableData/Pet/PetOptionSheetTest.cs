@@ -1,7 +1,7 @@
 namespace Lib9c.Tests.TableData.Pet
 {
-    using Nekoyume.Model.Pet;
-    using Nekoyume.TableData.Pet;
+    using Lib9c.Model.Pet;
+    using Lib9c.TableData.Pet;
     using Xunit;
 
     public class PetOptionSheetTest

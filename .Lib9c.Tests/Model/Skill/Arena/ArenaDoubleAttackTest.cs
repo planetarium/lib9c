@@ -2,13 +2,13 @@ namespace Lib9c.Tests.Model.Skill.Arena
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Lib9c.Arena;
+    using Lib9c.Model.Buff;
+    using Lib9c.Model.Character;
+    using Lib9c.Model.Skill.Arena;
+    using Lib9c.Model.Stat;
+    using Lib9c.Model.State;
     using Lib9c.Tests.Action;
-    using Nekoyume.Arena;
-    using Nekoyume.Model;
-    using Nekoyume.Model.Buff;
-    using Nekoyume.Model.Skill.Arena;
-    using Nekoyume.Model.Stat;
-    using Nekoyume.Model.State;
     using Xunit;
 
     public class ArenaDoubleAttackTest
