@@ -7,7 +7,8 @@ namespace Nekoyume.Model.EnumType
         Adventure = 1,
         Arena = 2,
         Raid = 3,
-        End = 4,
+        InfiniteTower = 4,
+        End = 5,
     }
 
     public static class BattleTypeExtensions
@@ -57,6 +58,21 @@ namespace Nekoyume.Model.EnumType
                         case RuneUsePlace.Arena:
                         case RuneUsePlace.Adventure:
                         case RuneUsePlace.AdventureAndArena:
+                            return false;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(runePlace), runePlace, null);
+                    }
+                case BattleType.InfiniteTower:
+                    switch (runePlace)
+                    {
+                        case RuneUsePlace.Adventure:
+                        case RuneUsePlace.AdventureAndArena:
+                        case RuneUsePlace.RaidAndAdventure:
+                        case RuneUsePlace.All:
+                            return true;
+                        case RuneUsePlace.Arena:
+                        case RuneUsePlace.Raid:
+                        case RuneUsePlace.RaidAndArena:
                             return false;
                         default:
                             throw new ArgumentOutOfRangeException(nameof(runePlace), runePlace, null);

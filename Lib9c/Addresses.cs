@@ -52,6 +52,7 @@ namespace Nekoyume
         public static readonly Address AdventureCp           = new("0000000000000000000000000000000000000028");
         public static readonly Address RaidCp                = new("0000000000000000000000000000000000000029");
         public static readonly Address ArenaCp               = new("0000000000000000000000000000000000000030");
+        public static readonly Address InfiniteTowerCp         = new("0000000000000000000000000000000000000031");
 
         // Custom Equipment Craft
         public static readonly Address Relationship          = new("0000000000000000000000000000000000000023");
@@ -68,6 +69,17 @@ namespace Nekoyume
         public static readonly Address BountyBoard           = new("0000000000000000000000000000000000000101");
         public static readonly Address ExploreBoard          = new("0000000000000000000000000000000000000102");
         public static readonly Address ExplorerList          = new("0000000000000000000000000000000000000103");
+
+        // Infinite Tower
+        /// <summary>
+        /// Address for the infinite tower board state.
+        /// </summary>
+        public static readonly Address InfiniteTowerBoard   = new("0000000000000000000000000000000000000104");
+
+        /// <summary>
+        /// Address for the infinite tower info state.
+        /// </summary>
+        public static readonly Address InfiniteTowerInfo    = new("0000000000000000000000000000000000000105");
 
         public static readonly Address MortgagePool = new Address("0000000000000000000000000000000000100000");
         public static readonly Address GasPool = new Address("0000000000000000000000000000000000100001");
@@ -401,6 +413,8 @@ namespace Nekoyume
                     return RaidCp;
                 case BattleType.Arena:
                     return ArenaCp;
+                case BattleType.InfiniteTower:
+                    return InfiniteTowerCp;
                 default:
                     throw new ArgumentException(nameof(battleType));
             }

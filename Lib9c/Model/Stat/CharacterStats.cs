@@ -27,6 +27,7 @@ namespace Nekoyume.Model.Stat
         private readonly Stats _costumeStats = new Stats();
         private readonly Stats _collectionStats = new Stats();
         private readonly Stats _buffStats = new Stats();
+        private readonly Stats _conditionStats = new Stats();
 
         private readonly List<StatModifier> _initialStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _equipmentStatModifiers = new List<StatModifier>();
@@ -35,44 +36,176 @@ namespace Nekoyume.Model.Stat
         private readonly List<StatModifier> _costumeStatModifiers = new List<StatModifier>();
         private readonly List<StatModifier> _collectionStatModifiers = new List<StatModifier>();
         private readonly Dictionary<int, StatModifier> _buffStatModifiers = new Dictionary<int, StatModifier>();
+        private readonly List<StatModifier> _conditionStatModifiers = new List<StatModifier>();
 
+        /// <summary>
+        /// Stat map without buff effects for arena calculations.
+        /// </summary>
         public readonly StatMap StatWithoutBuffs = new StatMap();
 
+        /// <summary>
+        /// Gets the character level.
+        /// </summary>
         public int Level { get; private set; }
 
+        /// <summary>
+        /// Gets the base stats of the character.
+        /// </summary>
         public IStats BaseStats => _baseStats;
+
+        /// <summary>
+        /// Gets the equipment stats of the character.
+        /// </summary>
         public IStats EquipmentStats => _equipmentStats;
+
+        /// <summary>
+        /// Gets the consumable stats of the character.
+        /// </summary>
         public IStats ConsumableStats => _consumableStats;
+
+        /// <summary>
+        /// Gets the rune stats of the character.
+        /// </summary>
         public IStats RuneStats => _runeStats;
+
+        /// <summary>
+        /// Gets the buff stats of the character.
+        /// </summary>
         public IStats BuffStats => _buffStats;
+
+        /// <summary>
+        /// Gets the condition stats of the character.
+        /// </summary>
+        public IStats ConditionStats => _conditionStats;
+
+        /// <summary>
+        /// Gets the costume stats of the character.
+        /// </summary>
         public IStats CostumeStats => _costumeStats;
+
+        /// <summary>
+        /// Gets the collection stats of the character.
+        /// </summary>
         public IStats CollectionStats => _collectionStats;
 
+        /// <summary>
+        /// Gets the base HP stat.
+        /// </summary>
         public long BaseHP => BaseStats.HP;
+
+        /// <summary>
+        /// Gets the base ATK stat.
+        /// </summary>
         public long BaseATK => BaseStats.ATK;
+
+        /// <summary>
+        /// Gets the base DEF stat.
+        /// </summary>
         public long BaseDEF => BaseStats.DEF;
+
+        /// <summary>
+        /// Gets the base CRI stat.
+        /// </summary>
         public long BaseCRI => BaseStats.CRI;
+
+        /// <summary>
+        /// Gets the base HIT stat.
+        /// </summary>
         public long BaseHIT => BaseStats.HIT;
+
+        /// <summary>
+        /// Gets the base SPD stat.
+        /// </summary>
         public long BaseSPD => BaseStats.SPD;
+
+        /// <summary>
+        /// Gets the base DRV stat.
+        /// </summary>
         public long BaseDRV => BaseStats.DRV;
+
+        /// <summary>
+        /// Gets the base DRR stat.
+        /// </summary>
         public long BaseDRR => BaseStats.DRR;
+
+        /// <summary>
+        /// Gets the base CDMG stat.
+        /// </summary>
         public long BaseCDMG => BaseStats.CDMG;
+
+        /// <summary>
+        /// Gets the base ArmorPenetration stat.
+        /// </summary>
         public long BaseArmorPenetration => BaseStats.ArmorPenetration;
+
+        /// <summary>
+        /// Gets the base Thorn stat.
+        /// </summary>
         public long BaseThorn => BaseStats.Thorn;
 
+        /// <summary>
+        /// Gets the additional HP stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalHP => HP - _baseStats.HP;
+
+        /// <summary>
+        /// Gets the additional ATK stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalATK => ATK - _baseStats.ATK;
+
+        /// <summary>
+        /// Gets the additional DEF stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalDEF => DEF - _baseStats.DEF;
+
+        /// <summary>
+        /// Gets the additional CRI stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalCRI => CRI - _baseStats.CRI;
+
+        /// <summary>
+        /// Gets the additional HIT stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalHIT => HIT - _baseStats.HIT;
+
+        /// <summary>
+        /// Gets the additional SPD stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalSPD => SPD - _baseStats.SPD;
+
+        /// <summary>
+        /// Gets the additional DRV stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalDRV => DRV - _baseStats.DRV;
+
+        /// <summary>
+        /// Gets the additional DRR stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalDRR => DRR - _baseStats.DRR;
+
+        /// <summary>
+        /// Gets the additional CDMG stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalCDMG => CDMG - _baseStats.CDMG;
+
+        /// <summary>
+        /// Gets the additional ArmorPenetration stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalArmorPenetration => ArmorPenetration - _baseStats.ArmorPenetration;
+
+        /// <summary>
+        /// Gets the additional Thorn stat from equipment, buffs, etc.
+        /// </summary>
         public long AdditionalThorn => Thorn - _baseStats.Thorn;
 
+        /// <summary>
+        /// Gets or sets whether this character is used in arena battles.
+        /// </summary>
         public bool IsArenaCharacter { private get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the HP increasing modifier for arena battles.
+        /// </summary>
         public long HpIncreasingModifier { private get; set; } = 2;
 
         private readonly Dictionary<StatType, decimal> MinimumStatValues =
@@ -91,6 +224,12 @@ namespace Nekoyume.Model.Stat
                 { StatType.Thorn, 0m },
             };
 
+        /// <summary>
+        /// Initializes a new instance of the CharacterStats class.
+        /// </summary>
+        /// <param name="row">The character sheet row data.</param>
+        /// <param name="level">The character level.</param>
+        /// <param name="initialStatModifiers">Optional initial stat modifiers.</param>
         public CharacterStats(
             CharacterSheet.Row row,
             int level,
@@ -106,6 +245,10 @@ namespace Nekoyume.Model.Stat
             SetStats(level);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the CharacterStats class from world boss wave stat data.
+        /// </summary>
+        /// <param name="stat">The world boss wave stat data.</param>
         public CharacterStats(WorldBossCharacterSheet.WaveStatData stat)
         {
             var stats = stat.ToStats();
@@ -113,6 +256,10 @@ namespace Nekoyume.Model.Stat
             SetStats(stat.Level);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the CharacterStats class by copying from another instance.
+        /// </summary>
+        /// <param name="value">The character stats to copy from.</param>
         public CharacterStats(CharacterStats value) : base(value)
         {
             _row = value._row;
@@ -122,12 +269,14 @@ namespace Nekoyume.Model.Stat
             _consumableStats = new Stats(value._consumableStats);
             _runeStats = new Stats(value._runeStats);
             _buffStats = new Stats(value._buffStats);
+            _conditionStats = new Stats(value._conditionStats);
             _costumeStats = new Stats(value._costumeStats);
 
             _equipmentStatModifiers = value._equipmentStatModifiers;
             _consumableStatModifiers = value._consumableStatModifiers;
             _runeStatModifiers = value._runeStatModifiers;
             _buffStatModifiers = value._buffStatModifiers;
+            _conditionStatModifiers = value._conditionStatModifiers;
             _costumeStatModifiers = value._costumeStatModifiers;
             IsArenaCharacter = value.IsArenaCharacter;
 
@@ -360,6 +509,47 @@ namespace Nekoyume.Model.Stat
             UpdateCostumeStats();
         }
 
+        /// <summary>
+        /// Set stats based on infinite tower conditions.
+        /// This is applied after buffs and is temporary for simulation only.
+        /// </summary>
+        /// <param name="statModifiers">Condition stat modifiers</param>
+        /// <param name="updateImmediate">Whether to update stats immediately</param>
+        /// <returns>This instance for method chaining</returns>
+        public CharacterStats SetConditions(IEnumerable<StatModifier> statModifiers, bool updateImmediate = true)
+        {
+            _conditionStatModifiers.Clear();
+            if (!(statModifiers is null))
+            {
+                _conditionStatModifiers.AddRange(statModifiers);
+            }
+
+            if (updateImmediate)
+            {
+                UpdateConditionStats();
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Clear all condition stat modifiers.
+        /// This should be called after simulation ends to remove temporary conditions.
+        /// </summary>
+        /// <param name="updateImmediate">Whether to update stats immediately</param>
+        /// <returns>This instance for method chaining</returns>
+        public CharacterStats ClearConditions(bool updateImmediate = true)
+        {
+            _conditionStatModifiers.Clear();
+
+            if (updateImmediate)
+            {
+                UpdateConditionStats();
+            }
+
+            return this;
+        }
+
         private void SetCostumes(IEnumerable<Costume> costumes, CostumeStatSheet costumeStatSheet)
         {
             var statModifiers = new List<StatModifier>();
@@ -469,6 +659,13 @@ namespace Nekoyume.Model.Stat
 
             _buffStats.Set(buffModifiers, _baseStats, _equipmentStats, _consumableStats, _runeStats,
                 _costumeStats, _collectionStats);
+            UpdateConditionStats();
+        }
+
+        private void UpdateConditionStats()
+        {
+            _conditionStats.Set(_conditionStatModifiers, _baseStats, _equipmentStats, _consumableStats,
+                _runeStats, _costumeStats, _collectionStats, _buffStats);
             UpdateTotalStats();
         }
 
@@ -505,7 +702,7 @@ namespace Nekoyume.Model.Stat
         private void UpdateTotalStats()
         {
             Set(_statMap, _baseStats, _equipmentStats, _consumableStats, _runeStats, _costumeStats,
-                _collectionStats, _buffStats);
+                _collectionStats, _buffStats, _conditionStats);
 
             foreach (var stat in _statMap.GetDecimalStats(false))
             {

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Nekoyume.Model.EnumType;
 
 namespace Nekoyume.Model.Rune
 {
@@ -210,6 +212,122 @@ namespace Nekoyume.Model.Rune
         protected MismatchRuneSlotTypeException(SerializationInfo info, StreamingContext context) :
             base(info, context)
         {
+        }
+    }
+
+    [Serializable]
+    public class ForbiddenRuneEquippedException : Exception
+    {
+        public ForbiddenRuneEquippedException(string message) : base(message)
+        {
+        }
+
+        public ForbiddenRuneEquippedException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected ForbiddenRuneEquippedException(SerializationInfo info, StreamingContext context) :
+            base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class ForbiddenRuneTypeEquippedException : Exception
+    {
+        /// <summary>
+        /// Gets the list of forbidden rune types that were equipped.
+        /// </summary>
+        public List<RuneType> ForbiddenRuneTypes { get; }
+
+        /// <summary>
+        /// Gets the list of equipped rune types that are forbidden.
+        /// </summary>
+        public List<RuneType> EquippedRuneTypes { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the ForbiddenRuneTypeEquippedException class.
+        /// </summary>
+        public ForbiddenRuneTypeEquippedException()
+        {
+            ForbiddenRuneTypes = new List<RuneType>();
+            EquippedRuneTypes = new List<RuneType>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ForbiddenRuneTypeEquippedException class.
+        /// </summary>
+        /// <param name="message">The error message.</param>
+        public ForbiddenRuneTypeEquippedException(string message) : base(message)
+        {
+            ForbiddenRuneTypes = new List<RuneType>();
+            EquippedRuneTypes = new List<RuneType>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ForbiddenRuneTypeEquippedException class.
+        /// </summary>
+        /// <param name="message">The error message.</param>
+        /// <param name="innerException">The inner exception.</param>
+        public ForbiddenRuneTypeEquippedException(string message, Exception innerException) : base(message, innerException)
+        {
+            ForbiddenRuneTypes = new List<RuneType>();
+            EquippedRuneTypes = new List<RuneType>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ForbiddenRuneTypeEquippedException class.
+        /// </summary>
+        /// <param name="message">The error message.</param>
+        /// <param name="forbiddenRuneTypes">The list of forbidden rune types.</param>
+        /// <param name="equippedRuneTypes">The list of equipped rune types that are forbidden.</param>
+        public ForbiddenRuneTypeEquippedException(
+            string message,
+            List<RuneType> forbiddenRuneTypes,
+            List<RuneType> equippedRuneTypes) : base(message)
+        {
+            ForbiddenRuneTypes = forbiddenRuneTypes ?? new List<RuneType>();
+            EquippedRuneTypes = equippedRuneTypes ?? new List<RuneType>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ForbiddenRuneTypeEquippedException class.
+        /// </summary>
+        /// <param name="forbiddenRuneTypes">The list of forbidden rune types.</param>
+        /// <param name="equippedRuneTypes">The list of equipped rune types that are forbidden.</param>
+        public ForbiddenRuneTypeEquippedException(
+            List<RuneType> forbiddenRuneTypes,
+            List<RuneType> equippedRuneTypes)
+            : this(
+                $"Forbidden rune type(s) equipped for this floor. Forbidden types: {string.Join(", ", forbiddenRuneTypes ?? new List<RuneType>())}, Equipped forbidden types: {string.Join(", ", equippedRuneTypes ?? new List<RuneType>())}",
+                forbiddenRuneTypes,
+                equippedRuneTypes)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ForbiddenRuneTypeEquippedException class for serialization.
+        /// </summary>
+        /// <param name="info">The serialization info.</param>
+        /// <param name="context">The streaming context.</param>
+        protected ForbiddenRuneTypeEquippedException(
+            SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+            ForbiddenRuneTypes = (List<RuneType>)info.GetValue(nameof(ForbiddenRuneTypes), typeof(List<RuneType>)) ?? new List<RuneType>();
+            EquippedRuneTypes = (List<RuneType>)info.GetValue(nameof(EquippedRuneTypes), typeof(List<RuneType>)) ?? new List<RuneType>();
+        }
+
+        /// <summary>
+        /// Gets object data for serialization.
+        /// </summary>
+        /// <param name="info">The serialization info.</param>
+        /// <param name="context">The streaming context.</param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue(nameof(ForbiddenRuneTypes), ForbiddenRuneTypes);
+            info.AddValue(nameof(EquippedRuneTypes), EquippedRuneTypes);
         }
     }
 }

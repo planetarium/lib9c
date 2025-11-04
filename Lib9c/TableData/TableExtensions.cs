@@ -8,6 +8,8 @@ using System.Numerics;
 using Libplanet.Crypto;
 using Libplanet.Types.Assets;
 using Nekoyume.TableData.Swap;
+using Nekoyume.Model.Item;
+using Nekoyume.Model.EnumType;
 
 namespace Nekoyume.TableData
 {
@@ -352,6 +354,91 @@ namespace Nekoyume.TableData
                 result = default;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Parses a colon-separated list of integers.
+        /// Returns an empty list for null/empty input. Invalid tokens are ignored.
+        /// </summary>
+        public static List<int> ParseIntList(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new List<int>();
+            }
+
+            return value
+                .Split(':')
+                .Select(s => s.Trim())
+                .Where(s => int.TryParse(s, out _))
+                .Select(int.Parse)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Parses a colon-separated list of item subtypes.
+        /// Accepts numeric values matching ItemSubType enum.
+        /// Returns an empty list if input is null/empty or no valid items.
+        /// </summary>
+        public static List<ItemSubType> ParseItemSubTypes(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new List<ItemSubType>();
+            }
+
+            return value.Split(':')
+                .Select(s => s.Trim())
+                .Select(s => int.TryParse(s, out var v) ? (int?)v : null)
+                .Where(v => v.HasValue)
+                .Select(v => (ItemSubType)v!.Value)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Parses a comma-separated list of rune types from a string.
+        /// Returns an empty list if input is null/empty or no valid items.
+        /// </summary>
+        public static List<RuneType> ParseRuneTypes(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new List<RuneType>();
+            }
+
+            return value.Split(',')
+                .Select(s => s.Trim())
+                .Select(s => int.TryParse(s, out var v) ? (int?)v : null)
+                .Where(v => v.HasValue)
+                .Select(v => (RuneType)v!.Value)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Parses an integer or returns null for empty input.
+        /// </summary>
+        public static int? ParseIntOrNull(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            return int.TryParse(value.Trim(), out var result) && result > 0 ? result : null;
+        }
+
+        /// <summary>
+        /// Parses a trimmed string or returns null for empty input.
+        /// </summary>
+        public static string? ParseStringOrNull(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
+            }
+
+            var trimmed = value.Trim();
+            return string.IsNullOrEmpty(trimmed) ? null : trimmed;
         }
     }
 }

@@ -1,0 +1,6 @@
+Id,StatType,TargetType,OperationType,Value
+1,2,1,0,50
+2,3,1,0,30
+3,6,1,0,25
+4,1,1,0,100
+5,2,1,0,75
