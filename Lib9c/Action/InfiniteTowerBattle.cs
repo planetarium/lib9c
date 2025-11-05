@@ -286,6 +286,9 @@ Equipments, context.BlockIndex, gameConfigState);
             // Validate schedule timing
             ValidateScheduleTiming(scheduleRow, context.BlockIndex, addressesHex);
 
+            // Validate floor range
+            ValidateFloorRange(scheduleRow, FloorId, addressesHex);
+
             // Check if this is a new season (first time accessing this season)
             if (infiniteTowerInfo.LastResetBlockIndex < scheduleRow.StartBlockIndex)
             {
@@ -697,6 +700,25 @@ FloorId - 1,
                     currentBlockIndex,
                     scheduleRow.StartBlockIndex,
                     scheduleRow.EndBlockIndex);
+            }
+        }
+
+        /// <summary>
+        /// Validates that the floor ID is within the schedule's floor range.
+        /// </summary>
+        /// <param name="scheduleRow">Schedule configuration row</param>
+        /// <param name="floorId">Floor ID to validate</param>
+        /// <param name="addressesHex">Addresses hex for logging</param>
+        private void ValidateFloorRange(
+            InfiniteTowerScheduleSheet.Row scheduleRow,
+            int floorId,
+            string addressesHex)
+        {
+            if (floorId < scheduleRow.FloorBegin || floorId > scheduleRow.FloorEnd)
+            {
+                throw new InvalidOperationException(
+                    $"[InfiniteTowerBattle][{addressesHex}] Floor {floorId} is out of range. " +
+                    $"Valid floor range for this schedule is {scheduleRow.FloorBegin}-{scheduleRow.FloorEnd}");
             }
         }
 

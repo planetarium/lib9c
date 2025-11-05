@@ -633,7 +633,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "2000", // MaxCp

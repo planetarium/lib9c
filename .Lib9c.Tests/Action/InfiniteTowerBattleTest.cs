@@ -269,8 +269,8 @@ namespace Lib9c.Tests.Action
             }
 
             // Modify InfiniteTowerFloorSheet to use invalid item ID
-            var invalidFloorSheet = @"Id,InfiniteTowerId,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalType
-1,1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,";
+            var invalidFloorSheet = @"Id,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalTypes
+1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,";
             sheets["InfiniteTowerFloorSheet"] = invalidFloorSheet;
 
             foreach (var (key, value) in sheets)
@@ -1025,7 +1025,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "2000", // MaxCp
@@ -1071,7 +1070,7 @@ namespace Lib9c.Tests.Action
                 "600201", // MaterialCostId
                 "50", // MaterialCostCount
                 string.Empty, // ForbiddenRuneTypes
-                string.Empty, // RequiredElementalType
+                string.Empty, // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();

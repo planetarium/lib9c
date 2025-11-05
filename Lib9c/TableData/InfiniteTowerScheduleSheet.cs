@@ -58,6 +58,21 @@ namespace Nekoyume.TableData
             /// </summary>
             public int ResetIntervalBlocks { get; private set; }
 
+            /// <summary>
+            /// Gets the starting floor number for this schedule.
+            /// </summary>
+            public int FloorBegin { get; private set; }
+
+            /// <summary>
+            /// Gets the ending floor number for this schedule.
+            /// </summary>
+            public int FloorEnd { get; private set; }
+
+            /// <summary>
+            /// Gets the total number of floors in this schedule.
+            /// </summary>
+            public int FloorsCount => FloorEnd - FloorBegin + 1;
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -67,6 +82,8 @@ namespace Nekoyume.TableData
                 DailyFreeTickets = ParseInt(fields[4]);
                 MaxTickets = ParseInt(fields[5]);
                 ResetIntervalBlocks = ParseInt(fields[6]);
+                FloorBegin = fields.Count > 7 ? ParseInt(fields[7]) : 1;
+                FloorEnd = fields.Count > 8 ? ParseInt(fields[8]) : int.MaxValue;
             }
 
             /// <summary>

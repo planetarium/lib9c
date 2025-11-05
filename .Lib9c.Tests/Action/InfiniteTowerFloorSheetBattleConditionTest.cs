@@ -19,7 +19,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "5000", // MaxCp
@@ -65,7 +64,7 @@ namespace Lib9c.Tests.Action
                 string.Empty, // MaterialCostId
                 string.Empty, // MaterialCostCount
                 "1,2", // ForbiddenRuneTypes
-                "1", // RequiredElementalType
+                "1", // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();
@@ -114,7 +113,8 @@ namespace Lib9c.Tests.Action
             // Check RequiredElementalType condition
             var elementalCondition = conditions.Find(c => c.Type == BattleConditionType.RequiredElementalType);
             Assert.NotNull(elementalCondition);
-            Assert.Equal(ElementalType.Fire, elementalCondition.RequiredElementalType);
+            Assert.Single(elementalCondition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Fire, elementalCondition.RequiredElementalTypes);
 
             // Check ForbiddenItemSubTypes condition
             var itemSubTypesCondition = conditions.Find(c => c.Type == BattleConditionType.ForbiddenItemSubTypes);
@@ -132,7 +132,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 string.Empty, // RequiredCp
                 string.Empty, // MaxCp
@@ -178,7 +177,7 @@ namespace Lib9c.Tests.Action
                 string.Empty, // MaterialCostId
                 string.Empty, // MaterialCostCount
                 string.Empty, // ForbiddenRuneTypes
-                string.Empty, // RequiredElementalType
+                string.Empty, // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();
@@ -198,7 +197,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "5000", // MaxCp
@@ -244,7 +242,7 @@ namespace Lib9c.Tests.Action
                 string.Empty, // MaterialCostId
                 string.Empty, // MaterialCostCount
                 string.Empty, // ForbiddenRuneTypes
-                string.Empty, // RequiredElementalType
+                string.Empty, // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();

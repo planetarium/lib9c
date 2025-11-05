@@ -90,9 +90,9 @@ namespace Nekoyume.Model.InfiniteTower
         public List<RuneType> ForbiddenRuneTypes { get; }
 
         /// <summary>
-        /// Gets the required elemental type (for RequiredElementalType type).
+        /// Gets the list of required elemental types (for RequiredElementalType type).
         /// </summary>
-        public ElementalType? RequiredElementalType { get; }
+        public List<ElementalType> RequiredElementalTypes { get; }
 
         /// <summary>
         /// Gets the list of forbidden item sub types (for ForbiddenItemSubTypes type).
@@ -114,7 +114,7 @@ namespace Nekoyume.Model.InfiniteTower
             MinItemLevel = null;
             MaxItemLevel = null;
             ForbiddenRuneTypes = null;
-            RequiredElementalType = null;
+            RequiredElementalTypes = null;
             ForbiddenItemSubTypes = null;
         }
 
@@ -139,7 +139,7 @@ namespace Nekoyume.Model.InfiniteTower
             MinItemLevel = null;
             MaxItemLevel = null;
             ForbiddenRuneTypes = null;
-            RequiredElementalType = null;
+            RequiredElementalTypes = null;
             ForbiddenItemSubTypes = null;
         }
 
@@ -158,7 +158,7 @@ namespace Nekoyume.Model.InfiniteTower
             MinItemLevel = minItemLevel;
             MaxItemLevel = maxItemLevel;
             ForbiddenRuneTypes = null;
-            RequiredElementalType = null;
+            RequiredElementalTypes = null;
             ForbiddenItemSubTypes = null;
         }
 
@@ -176,16 +176,16 @@ namespace Nekoyume.Model.InfiniteTower
             MinItemLevel = null;
             MaxItemLevel = null;
             ForbiddenRuneTypes = forbiddenRuneTypes ?? new List<RuneType>();
-            RequiredElementalType = null;
+            RequiredElementalTypes = null;
             ForbiddenItemSubTypes = null;
         }
 
         /// <summary>
         /// Initializes a new instance of the InfiniteTowerBattleCondition class for Required Elemental Type.
         /// </summary>
-        /// <param name="requiredElementalType">Required elemental type</param>
+        /// <param name="requiredElementalTypes">List of required elemental types</param>
         /// <param name="isElementalType">Must be true to indicate this is for elemental type</param>
-        public InfiniteTowerBattleCondition(ElementalType? requiredElementalType, bool isElementalType)
+        public InfiniteTowerBattleCondition(List<ElementalType> requiredElementalTypes, bool isElementalType)
         {
             if (!isElementalType)
             {
@@ -200,7 +200,7 @@ namespace Nekoyume.Model.InfiniteTower
             MinItemLevel = null;
             MaxItemLevel = null;
             ForbiddenRuneTypes = null;
-            RequiredElementalType = requiredElementalType;
+            RequiredElementalTypes = requiredElementalTypes ?? new List<ElementalType>();
             ForbiddenItemSubTypes = null;
         }
 
@@ -224,7 +224,7 @@ namespace Nekoyume.Model.InfiniteTower
             MinItemLevel = null;
             MaxItemLevel = null;
             ForbiddenRuneTypes = null;
-            RequiredElementalType = null;
+            RequiredElementalTypes = null;
             ForbiddenItemSubTypes = forbiddenItemSubTypes ?? new List<ItemSubType>();
         }
 
@@ -240,7 +240,7 @@ namespace Nekoyume.Model.InfiniteTower
                 BattleConditionType.ItemGrade => MinItemGrade.HasValue || MaxItemGrade.HasValue,
                 BattleConditionType.ItemLevel => MinItemLevel.HasValue || MaxItemLevel.HasValue,
                 BattleConditionType.ForbiddenRuneTypes => ForbiddenRuneTypes?.Count > 0,
-                BattleConditionType.RequiredElementalType => RequiredElementalType.HasValue,
+                BattleConditionType.RequiredElementalType => RequiredElementalTypes?.Count > 0,
                 BattleConditionType.ForbiddenItemSubTypes => ForbiddenItemSubTypes?.Count > 0,
                 _ => false
             };
@@ -258,7 +258,7 @@ namespace Nekoyume.Model.InfiniteTower
                 BattleConditionType.ItemGrade => $"ItemGrade: Min={MinItemGrade}, Max={MaxItemGrade}",
                 BattleConditionType.ItemLevel => $"ItemLevel: Min={MinItemLevel}, Max={MaxItemLevel}",
                 BattleConditionType.ForbiddenRuneTypes => $"ForbiddenRuneTypes: {string.Join(", ", ForbiddenRuneTypes ?? new List<RuneType>())}",
-                BattleConditionType.RequiredElementalType => $"RequiredElementalType: {RequiredElementalType}",
+                BattleConditionType.RequiredElementalType => $"RequiredElementalTypes: [{string.Join(", ", RequiredElementalTypes ?? new List<ElementalType>())}]",
                 BattleConditionType.ForbiddenItemSubTypes => $"ForbiddenItemSubTypes: {string.Join(", ", ForbiddenItemSubTypes ?? new List<ItemSubType>())}",
                 _ => "Unknown"
             };

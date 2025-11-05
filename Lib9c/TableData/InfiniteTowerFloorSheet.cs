@@ -40,11 +40,6 @@ namespace Nekoyume.TableData
             public int Id { get; private set; }
 
             /// <summary>
-            /// Gets the infinite tower ID this floor belongs to.
-            /// </summary>
-            public int InfiniteTowerId { get; private set; }
-
-            /// <summary>
             /// Gets the floor number.
             /// </summary>
             public int Floor { get; private set; }
@@ -171,9 +166,9 @@ namespace Nekoyume.TableData
             public List<RuneType> ForbiddenRuneTypes { get; private set; } = new();
 
             /// <summary>
-            /// Gets the required elemental type for equipment on this floor.
+            /// Gets the list of required elemental types for equipment on this floor.
             /// </summary>
-            public ElementalType? RequiredElementalType { get; private set; }
+            public List<ElementalType> RequiredElementalTypes { get; private set; } = new();
 
             /// <summary>
             /// Gets the first item reward ID for this floor.
@@ -278,76 +273,75 @@ namespace Nekoyume.TableData
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
-                InfiniteTowerId = ParseInt(fields[1]);
-                Floor = ParseInt(fields[2]);
-                RequiredCp = string.IsNullOrEmpty(fields[3]) ? null : ParseLong(fields[3]);
-                MaxCp = string.IsNullOrEmpty(fields[4]) ? null : ParseLong(fields[4]);
+                Floor = ParseInt(fields[1]);
+                RequiredCp = string.IsNullOrEmpty(fields[2]) ? null : ParseLong(fields[2]);
+                MaxCp = string.IsNullOrEmpty(fields[3]) ? null : ParseLong(fields[3]);
 
                 // Parse item sub-type restrictions
-                ForbiddenItemSubTypes = string.IsNullOrEmpty(fields[5]) ? new List<ItemSubType>() : ParseItemSubTypes(fields[5]);
+                ForbiddenItemSubTypes = string.IsNullOrEmpty(fields[4]) ? new List<ItemSubType>() : ParseItemSubTypes(fields[4]);
 
                 // Parse item grade restrictions
-                MinItemGrade = string.IsNullOrEmpty(fields[6]) ? null : ParseInt(fields[6]);
-                MaxItemGrade = string.IsNullOrEmpty(fields[7]) ? null : ParseInt(fields[7]);
+                MinItemGrade = string.IsNullOrEmpty(fields[5]) ? null : ParseInt(fields[5]);
+                MaxItemGrade = string.IsNullOrEmpty(fields[6]) ? null : ParseInt(fields[6]);
 
                 // Parse item level restrictions
-                MinItemLevel = string.IsNullOrEmpty(fields[8]) ? null : ParseInt(fields[8]);
-                MaxItemLevel = string.IsNullOrEmpty(fields[9]) ? null : ParseInt(fields[9]);
+                MinItemLevel = string.IsNullOrEmpty(fields[7]) ? null : ParseInt(fields[7]);
+                MaxItemLevel = string.IsNullOrEmpty(fields[8]) ? null : ParseInt(fields[8]);
 
-                GuaranteedConditionId = ParseInt(fields[10]);
-                MinRandomConditions = ParseInt(fields[11]);
-                MaxRandomConditions = ParseInt(fields[12]);
+                GuaranteedConditionId = ParseInt(fields[9]);
+                MinRandomConditions = ParseInt(fields[10]);
+                MaxRandomConditions = ParseInt(fields[11]);
 
-                // Parse weighted random conditions (fields 13-22)
-                RandomConditionId1 = ParseIntOrNull(fields[13]);
-                RandomConditionWeight1 = ParseIntOrNull(fields[14]);
-                RandomConditionId2 = ParseIntOrNull(fields[15]);
-                RandomConditionWeight2 = ParseIntOrNull(fields[16]);
-                RandomConditionId3 = ParseIntOrNull(fields[17]);
-                RandomConditionWeight3 = ParseIntOrNull(fields[18]);
-                RandomConditionId4 = ParseIntOrNull(fields[19]);
-                RandomConditionWeight4 = ParseIntOrNull(fields[20]);
-                RandomConditionId5 = ParseIntOrNull(fields[21]);
-                RandomConditionWeight5 = ParseIntOrNull(fields[22]);
+                // Parse weighted random conditions (fields 12-21)
+                RandomConditionId1 = ParseIntOrNull(fields[12]);
+                RandomConditionWeight1 = ParseIntOrNull(fields[13]);
+                RandomConditionId2 = ParseIntOrNull(fields[14]);
+                RandomConditionWeight2 = ParseIntOrNull(fields[15]);
+                RandomConditionId3 = ParseIntOrNull(fields[16]);
+                RandomConditionWeight3 = ParseIntOrNull(fields[17]);
+                RandomConditionId4 = ParseIntOrNull(fields[18]);
+                RandomConditionWeight4 = ParseIntOrNull(fields[19]);
+                RandomConditionId5 = ParseIntOrNull(fields[20]);
+                RandomConditionWeight5 = ParseIntOrNull(fields[21]);
 
                 // Parse reward fields - Item rewards (max 5 types)
-                ItemRewardId1 = ParseIntOrNull(fields[23]);
-                ItemRewardCount1 = ParseIntOrNull(fields[24]);
-                ItemRewardId2 = ParseIntOrNull(fields[25]);
-                ItemRewardCount2 = ParseIntOrNull(fields[26]);
-                ItemRewardId3 = ParseIntOrNull(fields[27]);
-                ItemRewardCount3 = ParseIntOrNull(fields[28]);
-                ItemRewardId4 = ParseIntOrNull(fields[29]);
-                ItemRewardCount4 = ParseIntOrNull(fields[30]);
-                ItemRewardId5 = ParseIntOrNull(fields[31]);
-                ItemRewardCount5 = ParseIntOrNull(fields[32]);
+                ItemRewardId1 = ParseIntOrNull(fields[22]);
+                ItemRewardCount1 = ParseIntOrNull(fields[23]);
+                ItemRewardId2 = ParseIntOrNull(fields[24]);
+                ItemRewardCount2 = ParseIntOrNull(fields[25]);
+                ItemRewardId3 = ParseIntOrNull(fields[26]);
+                ItemRewardCount3 = ParseIntOrNull(fields[27]);
+                ItemRewardId4 = ParseIntOrNull(fields[28]);
+                ItemRewardCount4 = ParseIntOrNull(fields[29]);
+                ItemRewardId5 = ParseIntOrNull(fields[30]);
+                ItemRewardCount5 = ParseIntOrNull(fields[31]);
 
                 // Parse reward fields - Fungible asset rewards (max 5 types)
-                FungibleAssetRewardTicker1 = ParseStringOrNull(fields[33]);
-                FungibleAssetRewardAmount1 = ParseIntOrNull(fields[34]);
-                FungibleAssetRewardTicker2 = ParseStringOrNull(fields[35]);
-                FungibleAssetRewardAmount2 = ParseIntOrNull(fields[36]);
-                FungibleAssetRewardTicker3 = ParseStringOrNull(fields[37]);
-                FungibleAssetRewardAmount3 = ParseIntOrNull(fields[38]);
-                FungibleAssetRewardTicker4 = ParseStringOrNull(fields[39]);
-                FungibleAssetRewardAmount4 = ParseIntOrNull(fields[40]);
-                FungibleAssetRewardTicker5 = ParseStringOrNull(fields[41]);
-                FungibleAssetRewardAmount5 = ParseIntOrNull(fields[42]);
+                FungibleAssetRewardTicker1 = ParseStringOrNull(fields[32]);
+                FungibleAssetRewardAmount1 = ParseIntOrNull(fields[33]);
+                FungibleAssetRewardTicker2 = ParseStringOrNull(fields[34]);
+                FungibleAssetRewardAmount2 = ParseIntOrNull(fields[35]);
+                FungibleAssetRewardTicker3 = ParseStringOrNull(fields[36]);
+                FungibleAssetRewardAmount3 = ParseIntOrNull(fields[37]);
+                FungibleAssetRewardTicker4 = ParseStringOrNull(fields[38]);
+                FungibleAssetRewardAmount4 = ParseIntOrNull(fields[39]);
+                FungibleAssetRewardTicker5 = ParseStringOrNull(fields[40]);
+                FungibleAssetRewardAmount5 = ParseIntOrNull(fields[41]);
 
                 // Parse ticket purchase cost fields
-                NcgCost = ParseIntOrNull(fields[43]);
-                MaterialCostId = ParseIntOrNull(fields[44]);
-                MaterialCostCount = ParseIntOrNull(fields[45]);
+                NcgCost = ParseIntOrNull(fields[42]);
+                MaterialCostId = ParseIntOrNull(fields[43]);
+                MaterialCostCount = ParseIntOrNull(fields[44]);
 
                 // Parse rune restrictions and elemental type (optional trailing columns)
-                if (fields.Count > 46)
+                if (fields.Count > 45)
                 {
-                    ForbiddenRuneTypes = string.IsNullOrEmpty(fields[46]) ? new List<RuneType>() : ParseRuneTypes(fields[46]);
+                    ForbiddenRuneTypes = string.IsNullOrEmpty(fields[45]) ? new List<RuneType>() : ParseRuneTypes(fields[45]);
                 }
 
-                if (fields.Count > 47)
+                if (fields.Count > 46)
                 {
-                    RequiredElementalType = string.IsNullOrEmpty(fields[47]) ? null : (ElementalType?)ParseInt(fields[47]);
+                    RequiredElementalTypes = string.IsNullOrEmpty(fields[46]) ? new List<ElementalType>() : ParseElementalTypes(fields[46]);
                 }
             }
 
@@ -525,14 +519,14 @@ namespace Nekoyume.TableData
             public void ValidateEquipmentElementalType<T>(List<T> equipmentList) where T : ItemBase
             {
                 // Skip validation if no elemental type restriction is set
-                if (!RequiredElementalType.HasValue)
+                if (RequiredElementalTypes == null || RequiredElementalTypes.Count == 0)
                     return;
 
                 foreach (var equipment in equipmentList)
                 {
-                    if (equipment.ElementalType != RequiredElementalType.Value)
+                    if (!RequiredElementalTypes.Contains(equipment.ElementalType))
                     {
-                        throw new Exception($"Invalid equipment elemental type. Equipment '{equipment.Id}' has elemental type '{equipment.ElementalType}' but required type is '{RequiredElementalType.Value}'");
+                        throw new Exception($"Invalid equipment elemental type. Equipment '{equipment.Id}' has elemental type '{equipment.ElementalType}' but required types are: {string.Join(", ", RequiredElementalTypes)}");
                     }
                 }
             }
@@ -657,7 +651,7 @@ namespace Nekoyume.TableData
             public void ValidateEquipmentElementalType(
                 List<Equipment> equipments)
             {
-                if (!RequiredElementalType.HasValue)
+                if (RequiredElementalTypes == null || RequiredElementalTypes.Count == 0)
                 {
                     return;
                 }
@@ -665,7 +659,7 @@ namespace Nekoyume.TableData
                 var invalidEquipment = new List<(int equipmentId, ElementalType actualType)>();
                 foreach (var equipment in equipments ?? new List<Equipment>())
                 {
-                    if (equipment.ElementalType != RequiredElementalType.Value)
+                    if (!RequiredElementalTypes.Contains(equipment.ElementalType))
                     {
                         invalidEquipment.Add((equipment.Id, equipment.ElementalType));
                     }
@@ -675,7 +669,7 @@ namespace Nekoyume.TableData
                 {
                     var invalidEquipmentInfo = string.Join(", ", invalidEquipment.Select(e => $"ID:{e.equipmentId}({e.actualType})"));
                     throw new InvalidElementalException(
-                        $"Invalid equipment elemental type. Required type: '{RequiredElementalType.Value}', Invalid equipment: {invalidEquipmentInfo}");
+                        $"Invalid equipment elemental type. Required types: [{string.Join(", ", RequiredElementalTypes)}], Invalid equipment: {invalidEquipmentInfo}");
                 }
             }
 
@@ -713,9 +707,9 @@ namespace Nekoyume.TableData
                 }
 
                 // Required Elemental Type restrictions
-                if (RequiredElementalType.HasValue)
+                if (RequiredElementalTypes?.Count > 0)
                 {
-                    conditions.Add(new InfiniteTowerBattleCondition(RequiredElementalType, true));
+                    conditions.Add(new InfiniteTowerBattleCondition(RequiredElementalTypes, true));
                 }
 
                 // Forbidden Item Sub Types restrictions
@@ -741,7 +735,7 @@ namespace Nekoyume.TableData
                     BattleConditionType.ItemGrade when MinItemGrade.HasValue || MaxItemGrade.HasValue => new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true),
                     BattleConditionType.ItemLevel when MinItemLevel.HasValue || MaxItemLevel.HasValue => new InfiniteTowerBattleCondition(MinItemLevel, MaxItemLevel),
                     BattleConditionType.ForbiddenRuneTypes when ForbiddenRuneTypes?.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenRuneTypes),
-                    BattleConditionType.RequiredElementalType when RequiredElementalType.HasValue => new InfiniteTowerBattleCondition(RequiredElementalType, true),
+                    BattleConditionType.RequiredElementalType when RequiredElementalTypes?.Count > 0 => new InfiniteTowerBattleCondition(RequiredElementalTypes, true),
                     BattleConditionType.ForbiddenItemSubTypes when ForbiddenItemSubTypes?.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true),
                     _ => null
                 };
