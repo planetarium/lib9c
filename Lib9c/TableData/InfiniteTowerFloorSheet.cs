@@ -55,7 +55,7 @@ namespace Nekoyume.TableData
             public long? MaxCp { get; private set; }
 
             /// <summary>
-            /// Gets the list of forbidden item sub-types for this floor.
+            /// Gets the list of forbidden item subtypes for this floor.
             /// </summary>
             public List<ItemSubType> ForbiddenItemSubTypes { get; private set; } = new();
 
@@ -277,7 +277,7 @@ namespace Nekoyume.TableData
                 RequiredCp = string.IsNullOrEmpty(fields[2]) ? null : ParseLong(fields[2]);
                 MaxCp = string.IsNullOrEmpty(fields[3]) ? null : ParseLong(fields[3]);
 
-                // Parse item sub-type restrictions
+                // Parse item subtype restrictions
                 ForbiddenItemSubTypes = string.IsNullOrEmpty(fields[4]) ? new List<ItemSubType>() : ParseItemSubTypes(fields[4]);
 
                 // Parse item grade restrictions
@@ -354,15 +354,29 @@ namespace Nekoyume.TableData
                 var rewards = new List<(int, int)>();
 
                 if (ItemRewardId1.HasValue && ItemRewardCount1.HasValue)
+                {
                     rewards.Add((ItemRewardId1.Value, ItemRewardCount1.Value));
+                }
+
                 if (ItemRewardId2.HasValue && ItemRewardCount2.HasValue)
+                {
                     rewards.Add((ItemRewardId2.Value, ItemRewardCount2.Value));
+                }
+
                 if (ItemRewardId3.HasValue && ItemRewardCount3.HasValue)
+                {
                     rewards.Add((ItemRewardId3.Value, ItemRewardCount3.Value));
+                }
+
                 if (ItemRewardId4.HasValue && ItemRewardCount4.HasValue)
+                {
                     rewards.Add((ItemRewardId4.Value, ItemRewardCount4.Value));
+                }
+
                 if (ItemRewardId5.HasValue && ItemRewardCount5.HasValue)
+                {
                     rewards.Add((ItemRewardId5.Value, ItemRewardCount5.Value));
+                }
 
                 return rewards;
             }
@@ -375,27 +389,43 @@ namespace Nekoyume.TableData
                 var rewards = new List<(string, int)>();
 
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker1) && FungibleAssetRewardAmount1.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker1, FungibleAssetRewardAmount1.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker2) && FungibleAssetRewardAmount2.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker2, FungibleAssetRewardAmount2.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker3) && FungibleAssetRewardAmount3.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker3, FungibleAssetRewardAmount3.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker4) && FungibleAssetRewardAmount4.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker4, FungibleAssetRewardAmount4.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker5) && FungibleAssetRewardAmount5.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker5, FungibleAssetRewardAmount5.Value));
+                }
 
                 return rewards;
             }
 
             /// <summary>
-            /// Validates item sub-type restrictions for the floor (applies to both equipment and costumes).
+            /// Validates item subtype restrictions for the floor (applies to both equipment and costumes).
             /// </summary>
             public void ValidateItemTypeRestrictions<T>(List<T> itemList) where T : ItemBase
             {
-                // Skip validation if no sub-type restrictions are set
+                // Skip validation if no subtype restrictions are set
                 if (ForbiddenItemSubTypes.Count == 0)
+                {
                     return;
+                }
 
                 foreach (var item in itemList)
                 {
@@ -414,7 +444,9 @@ namespace Nekoyume.TableData
             {
                 // Skip validation if no grade restrictions are set
                 if (!MinItemGrade.HasValue && !MaxItemGrade.HasValue)
+                {
                     return;
+                }
 
                 foreach (var item in itemList)
                 {
@@ -439,7 +471,9 @@ namespace Nekoyume.TableData
             {
                 // Skip validation if no level restrictions are set
                 if (!MinItemLevel.HasValue && !MaxItemLevel.HasValue)
+                {
                     return;
+                }
 
                 foreach (var item in itemList)
                 {
@@ -477,7 +511,9 @@ namespace Nekoyume.TableData
             {
                 // Skip CP validation if no requirements are set
                 if (RequiredCp == null && MaxCp == null)
+                {
                     return;
+                }
 
                 // Check minimum CP requirement
                 if (RequiredCp.HasValue && currentCp < RequiredCp.Value)
@@ -500,15 +536,29 @@ namespace Nekoyume.TableData
                 var conditions = new List<(int, int)>();
 
                 if (RandomConditionId1.HasValue && RandomConditionWeight1.HasValue)
+                {
                     conditions.Add((RandomConditionId1.Value, RandomConditionWeight1.Value));
+                }
+
                 if (RandomConditionId2.HasValue && RandomConditionWeight2.HasValue)
+                {
                     conditions.Add((RandomConditionId2.Value, RandomConditionWeight2.Value));
+                }
+
                 if (RandomConditionId3.HasValue && RandomConditionWeight3.HasValue)
+                {
                     conditions.Add((RandomConditionId3.Value, RandomConditionWeight3.Value));
+                }
+
                 if (RandomConditionId4.HasValue && RandomConditionWeight4.HasValue)
+                {
                     conditions.Add((RandomConditionId4.Value, RandomConditionWeight4.Value));
+                }
+
                 if (RandomConditionId5.HasValue && RandomConditionWeight5.HasValue)
+                {
                     conditions.Add((RandomConditionId5.Value, RandomConditionWeight5.Value));
+                }
 
                 return conditions;
             }
@@ -519,8 +569,10 @@ namespace Nekoyume.TableData
             public void ValidateEquipmentElementalType<T>(List<T> equipmentList) where T : ItemBase
             {
                 // Skip validation if no elemental type restriction is set
-                if (RequiredElementalTypes == null || RequiredElementalTypes.Count == 0)
+                if (RequiredElementalTypes.Count == 0)
+                {
                     return;
+                }
 
                 foreach (var equipment in equipmentList)
                 {
@@ -616,10 +668,10 @@ namespace Nekoyume.TableData
             /// <param name="runeListSheet">Rune list sheet for type lookup</param>
             /// <exception cref="ForbiddenRuneTypeEquippedException">Thrown when forbidden rune types are equipped</exception>
             public void ValidateRuneTypes(
-                List<RuneSlotInfo> runeInfos,
+                List<RuneSlotInfo>? runeInfos,
                 RuneListSheet runeListSheet)
             {
-                if (ForbiddenRuneTypes == null || ForbiddenRuneTypes.Count == 0)
+                if (ForbiddenRuneTypes.Count == 0)
                 {
                     return;
                 }
@@ -649,9 +701,9 @@ namespace Nekoyume.TableData
             /// <param name="equipments">List of equipment to validate</param>
             /// <exception cref="InvalidElementalException">Thrown when equipment has invalid elemental type</exception>
             public void ValidateEquipmentElementalType(
-                List<Equipment> equipments)
+                List<Equipment>? equipments)
             {
-                if (RequiredElementalTypes == null || RequiredElementalTypes.Count == 0)
+                if (RequiredElementalTypes.Count == 0)
                 {
                     return;
                 }
@@ -688,11 +740,11 @@ namespace Nekoyume.TableData
                     conditions.Add(new InfiniteTowerBattleCondition(RequiredCp, MaxCp));
                 }
 
-            // Item Grade restrictions
-            if (MinItemGrade.HasValue || MaxItemGrade.HasValue)
-            {
-                conditions.Add(new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true));
-            }
+                // Item Grade restrictions
+                if (MinItemGrade.HasValue || MaxItemGrade.HasValue)
+                {
+                    conditions.Add(new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true));
+                }
 
                 // Item Level restrictions
                 if (MinItemLevel.HasValue || MaxItemLevel.HasValue)
@@ -701,19 +753,19 @@ namespace Nekoyume.TableData
                 }
 
                 // Forbidden Rune Types restrictions
-                if (ForbiddenRuneTypes?.Count > 0)
+                if (ForbiddenRuneTypes.Count > 0)
                 {
                     conditions.Add(new InfiniteTowerBattleCondition(ForbiddenRuneTypes));
                 }
 
                 // Required Elemental Type restrictions
-                if (RequiredElementalTypes?.Count > 0)
+                if (RequiredElementalTypes.Count > 0)
                 {
                     conditions.Add(new InfiniteTowerBattleCondition(RequiredElementalTypes, true));
                 }
 
                 // Forbidden Item Sub Types restrictions
-                if (ForbiddenItemSubTypes?.Count > 0)
+                if (ForbiddenItemSubTypes.Count > 0)
                 {
                     conditions.Add(new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true));
                 }
@@ -734,9 +786,9 @@ namespace Nekoyume.TableData
                     BattleConditionType.CP when RequiredCp.HasValue || MaxCp.HasValue => new InfiniteTowerBattleCondition(RequiredCp, MaxCp),
                     BattleConditionType.ItemGrade when MinItemGrade.HasValue || MaxItemGrade.HasValue => new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true),
                     BattleConditionType.ItemLevel when MinItemLevel.HasValue || MaxItemLevel.HasValue => new InfiniteTowerBattleCondition(MinItemLevel, MaxItemLevel),
-                    BattleConditionType.ForbiddenRuneTypes when ForbiddenRuneTypes?.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenRuneTypes),
-                    BattleConditionType.RequiredElementalType when RequiredElementalTypes?.Count > 0 => new InfiniteTowerBattleCondition(RequiredElementalTypes, true),
-                    BattleConditionType.ForbiddenItemSubTypes when ForbiddenItemSubTypes?.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true),
+                    BattleConditionType.ForbiddenRuneTypes when ForbiddenRuneTypes.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenRuneTypes),
+                    BattleConditionType.RequiredElementalType when RequiredElementalTypes.Count > 0 => new InfiniteTowerBattleCondition(RequiredElementalTypes, true),
+                    BattleConditionType.ForbiddenItemSubTypes when ForbiddenItemSubTypes.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true),
                     _ => null
                 };
             }

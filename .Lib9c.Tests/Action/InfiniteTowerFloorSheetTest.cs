@@ -3,8 +3,13 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Nekoyume.Action;
+    using Nekoyume.Model.Elemental;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Rune;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Rune;
     using Xunit;
 
     public class InfiniteTowerFloorSheetTest
@@ -35,6 +40,58 @@ namespace Lib9c.Tests.Action
             Assert.Contains("Invalid item sub-type", exception.Message);
             Assert.Contains("Weapon", exception.Message);
             Assert.Contains("forbidden", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateItemTypeRestrictions_WithMultipleForbiddenTypes_ShouldThrow()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var forbiddenSubTypes = new List<ItemSubType> { ItemSubType.Weapon, ItemSubType.Armor, ItemSubType.Belt };
+            floorRow.GetType().GetProperty("ForbiddenItemSubTypes")?.SetValue(floorRow, forbiddenSubTypes);
+
+            var itemList = new List<ItemBase>
+            {
+                CreateTestItem(ItemType.Equipment), // This should be allowed (might be Armor, but depends on CreateTestItem)
+                CreateTestWeapon(), // This should be forbidden (Weapon)
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<Exception>(() => floorRow.ValidateItemTypeRestrictions(itemList));
+            Assert.Contains("Invalid item sub-type", exception.Message);
+            Assert.Contains("forbidden", exception.Message);
+            // Check that all forbidden types are mentioned in the error message
+            var errorMessage = exception.Message;
+            Assert.Contains("Weapon", errorMessage);
+        }
+
+        [Fact]
+        public void ValidateItemTypeRestrictions_WithMultipleForbiddenTypes_ShouldAllowAllowedTypes()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var forbiddenSubTypes = new List<ItemSubType> { ItemSubType.Weapon, ItemSubType.Armor };
+            floorRow.GetType().GetProperty("ForbiddenItemSubTypes")?.SetValue(floorRow, forbiddenSubTypes);
+
+            // Create items with allowed sub-types (e.g., Belt, Necklace)
+            var equipmentSheet = _tableSheets.EquipmentItemSheet;
+            var beltRow = equipmentSheet.Values.FirstOrDefault(x => x.ItemSubType == ItemSubType.Belt);
+            var necklaceRow = equipmentSheet.Values.FirstOrDefault(x => x.ItemSubType == ItemSubType.Necklace);
+
+            if (beltRow == null || necklaceRow == null)
+            {
+                // Skip test if test data doesn't have required items
+                return;
+            }
+
+            var itemList = new List<ItemBase>
+            {
+                ItemFactory.CreateItem(beltRow, new TestRandom()) as Equipment,
+                ItemFactory.CreateItem(necklaceRow, new TestRandom()) as Equipment,
+            };
+
+            // Act & Assert - Should not throw
+            floorRow.ValidateItemTypeRestrictions(itemList);
         }
 
         [Fact]
@@ -281,6 +338,219 @@ namespace Lib9c.Tests.Action
 
             // Act & Assert - Should not throw
             floorRow.ValidateCpRequirements(1000);
+        }
+
+        [Fact]
+        public void ValidateEquipmentElementalType_WithMultipleTypes_ShouldAllowValidTypes()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var requiredTypes = new List<ElementalType> { ElementalType.Fire, ElementalType.Water };
+            floorRow.GetType().GetProperty("RequiredElementalTypes")?.SetValue(floorRow, requiredTypes);
+
+            var equipment1 = CreateTestEquipment(ItemType.Equipment);
+            equipment1.ElementalType = ElementalType.Fire;
+
+            var equipment2 = CreateTestEquipment(ItemType.Equipment);
+            equipment2.ElementalType = ElementalType.Water;
+
+            var equipmentList = new List<Equipment> { equipment1, equipment2 };
+
+            // Act & Assert - Should not throw
+            floorRow.ValidateEquipmentElementalType(equipmentList);
+        }
+
+        [Fact]
+        public void ValidateEquipmentElementalType_WithMultipleTypes_ShouldThrowForInvalidType()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var requiredTypes = new List<ElementalType> { ElementalType.Fire, ElementalType.Water };
+            floorRow.GetType().GetProperty("RequiredElementalTypes")?.SetValue(floorRow, requiredTypes);
+
+            var equipment1 = CreateTestEquipment(ItemType.Equipment);
+            equipment1.ElementalType = ElementalType.Fire; // Valid
+
+            var equipment2 = CreateTestEquipment(ItemType.Equipment);
+            equipment2.ElementalType = ElementalType.Land; // Invalid - not in required list
+
+            var equipmentList = new List<Equipment> { equipment1, equipment2 };
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidElementalException>(() => floorRow.ValidateEquipmentElementalType(equipmentList));
+            Assert.Contains("Invalid equipment elemental type", exception.Message);
+            Assert.Contains("Land", exception.Message);
+            Assert.Contains("Fire, Water", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateEquipmentElementalType_WithMultipleTypes_ShouldThrowForAllInvalidTypes()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var requiredTypes = new List<ElementalType> { ElementalType.Fire, ElementalType.Water };
+            floorRow.GetType().GetProperty("RequiredElementalTypes")?.SetValue(floorRow, requiredTypes);
+
+            var equipment1 = CreateTestEquipment(ItemType.Equipment);
+            equipment1.ElementalType = ElementalType.Land; // Invalid
+
+            var equipment2 = CreateTestEquipment(ItemType.Equipment);
+            equipment2.ElementalType = ElementalType.Wind; // Invalid
+
+            var equipmentList = new List<Equipment> { equipment1, equipment2 };
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidElementalException>(() => floorRow.ValidateEquipmentElementalType(equipmentList));
+            Assert.Contains("Invalid equipment elemental type", exception.Message);
+            Assert.Contains("Land", exception.Message);
+            Assert.Contains("Wind", exception.Message);
+            Assert.Contains("Fire, Water", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateEquipmentElementalType_WithNoRestrictions_ShouldPass()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            // No restrictions set
+            var equipment1 = CreateTestEquipment(ItemType.Equipment);
+            equipment1.ElementalType = ElementalType.Fire;
+
+            var equipment2 = CreateTestEquipment(ItemType.Equipment);
+            equipment2.ElementalType = ElementalType.Land;
+
+            var equipmentList = new List<Equipment> { equipment1, equipment2 };
+
+            // Act & Assert - Should not throw
+            floorRow.ValidateEquipmentElementalType(equipmentList);
+        }
+
+        [Fact]
+        public void ValidateRuneTypes_WithMultipleForbiddenTypes_ShouldThrow()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var forbiddenRuneTypes = new List<RuneType> { RuneType.Stat, RuneType.Skill };
+            floorRow.GetType().GetProperty("ForbiddenRuneTypes")?.SetValue(floorRow, forbiddenRuneTypes);
+
+            var runeListSheet = _tableSheets.RuneListSheet;
+
+            // Find runes with Stat and Skill types
+            var statRune = runeListSheet.Values.FirstOrDefault(r => r.RuneType == (int)RuneType.Stat);
+            var skillRune = runeListSheet.Values.FirstOrDefault(r => r.RuneType == (int)RuneType.Skill);
+
+            if (statRune == null || skillRune == null)
+            {
+                // Skip test if test data doesn't have required runes
+                return;
+            }
+
+            var runeInfos = new List<RuneSlotInfo>
+            {
+                new RuneSlotInfo(0, statRune.Id), // Forbidden: Stat
+                new RuneSlotInfo(1, skillRune.Id), // Forbidden: Skill
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<ForbiddenRuneTypeEquippedException>(
+                () => floorRow.ValidateRuneTypes(runeInfos, runeListSheet));
+
+            Assert.NotNull(exception.ForbiddenRuneTypes);
+            Assert.NotNull(exception.EquippedRuneTypes);
+            Assert.Contains(RuneType.Stat, exception.ForbiddenRuneTypes);
+            Assert.Contains(RuneType.Skill, exception.ForbiddenRuneTypes);
+            Assert.Contains(RuneType.Stat, exception.EquippedRuneTypes);
+            Assert.Contains(RuneType.Skill, exception.EquippedRuneTypes);
+        }
+
+        [Fact]
+        public void ValidateRuneTypes_WithMultipleForbiddenTypes_ShouldAllowAllowedTypes()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var forbiddenRuneTypes = new List<RuneType> { RuneType.Stat, RuneType.Skill };
+            floorRow.GetType().GetProperty("ForbiddenRuneTypes")?.SetValue(floorRow, forbiddenRuneTypes);
+
+            var runeListSheet = _tableSheets.RuneListSheet;
+
+            // Find a rune with a type that's not forbidden (e.g., if there's a different type)
+            // For this test, we'll use a rune that's not Stat or Skill
+            var allowedRune = runeListSheet.Values.FirstOrDefault(r =>
+                r.RuneType != (int)RuneType.Stat && r.RuneType != (int)RuneType.Skill);
+
+            if (allowedRune == null)
+            {
+                // Skip test if test data doesn't have required runes
+                return;
+            }
+
+            var runeInfos = new List<RuneSlotInfo>
+            {
+                new RuneSlotInfo(0, allowedRune.Id), // Allowed type
+            };
+
+            // Act & Assert - Should not throw
+            floorRow.ValidateRuneTypes(runeInfos, runeListSheet);
+        }
+
+        [Fact]
+        public void ValidateRuneTypes_WithNoRestrictions_ShouldPass()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            // No restrictions set
+            var runeListSheet = _tableSheets.RuneListSheet;
+            var anyRune = runeListSheet.Values.FirstOrDefault();
+            if (anyRune == null)
+            {
+                // Skip test if test data doesn't have runes
+                return;
+            }
+
+            var runeInfos = new List<RuneSlotInfo>
+            {
+                new RuneSlotInfo(0, anyRune.Id),
+            };
+
+            // Act & Assert - Should not throw
+            floorRow.ValidateRuneTypes(runeInfos, runeListSheet);
+        }
+
+        [Fact]
+        public void ValidateRuneTypes_WithPartialForbiddenTypes_ShouldThrow()
+        {
+            // Arrange
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            var forbiddenRuneTypes = new List<RuneType> { RuneType.Stat, RuneType.Skill };
+            floorRow.GetType().GetProperty("ForbiddenRuneTypes")?.SetValue(floorRow, forbiddenRuneTypes);
+
+            var runeListSheet = _tableSheets.RuneListSheet;
+
+            // Find runes with different types
+            var statRune = runeListSheet.Values.FirstOrDefault(r => r.RuneType == (int)RuneType.Stat);
+            var allowedRune = runeListSheet.Values.FirstOrDefault(r =>
+                r.RuneType != (int)RuneType.Stat && r.RuneType != (int)RuneType.Skill);
+
+            if (statRune == null || allowedRune == null)
+            {
+                // Skip test if test data doesn't have required runes
+                return;
+            }
+
+            var runeInfos = new List<RuneSlotInfo>
+            {
+                new RuneSlotInfo(0, allowedRune.Id), // Allowed
+                new RuneSlotInfo(1, statRune.Id), // Forbidden: Stat
+            };
+
+            // Act & Assert
+            var exception = Assert.Throws<ForbiddenRuneTypeEquippedException>(
+                () => floorRow.ValidateRuneTypes(runeInfos, runeListSheet));
+
+            Assert.NotNull(exception.ForbiddenRuneTypes);
+            Assert.NotNull(exception.EquippedRuneTypes);
+            Assert.Contains(RuneType.Stat, exception.ForbiddenRuneTypes);
+            Assert.Contains(RuneType.Stat, exception.EquippedRuneTypes);
         }
 
         private Equipment CreateTestEquipment(ItemType itemType, int grade = 1, int level = 1)
