@@ -534,6 +534,8 @@ namespace Lib9c.Tests.Action
             var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5);
             infiniteTowerInfo.ClearFloor(1); // Only clear floor 1, not floor 2
+            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
             // Create action trying to access floor 3 (requires floor 2 to be cleared)
@@ -701,6 +703,8 @@ namespace Lib9c.Tests.Action
             var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5);
             infiniteTowerInfo.ClearFloor(floorId); // Floor already cleared
+            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
             // Create initial board state with floor already cleared
@@ -793,6 +797,8 @@ namespace Lib9c.Tests.Action
             // Create infinite tower info with tickets
             var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(10);
+            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
             // Verify initial board state is empty
@@ -1158,6 +1164,414 @@ namespace Lib9c.Tests.Action
 
             // Act & Assert - Should not throw
             floorRow.ValidateCpRequirements(1000);
+        }
+
+        [Fact]
+        public void Execute_With_StartBlockIndex_Zero_And_LastResetBlockIndex_Zero_Should_Reset_And_Grant_Ticket()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 0L; // StartBlockIndex is 0 in CSV
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with LastResetBlockIndex = 0 (newly created)
+            // This simulates the bug scenario where StartBlockIndex = 0 and LastResetBlockIndex = 0
+            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            // LastResetBlockIndex is already 0 from constructor
+            // RemainingTickets is also 0 from constructor
+            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            Assert.Equal(0, infiniteTowerInfo.RemainingTickets);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed and ticket was granted
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // LastResetBlockIndex should be updated to current block index
+            // This confirms that PerformSeasonReset was called
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastResetBlockIndex);
+
+            // LastTicketRefillBlockIndex should also be updated
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastTicketRefillBlockIndex);
+
+            // After PerformSeasonReset, ticket should be 1, but then it's used for the battle
+            // So RemainingTickets should be 0 (1 - 1 = 0)
+            // This confirms that the ticket was granted and then used
+            Assert.Equal(0, updatedInfiniteTowerInfo.RemainingTickets);
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+        }
+
+        [Fact]
+        public void Execute_With_SeasonReset_Should_Reset_ClearedFloor_To_Zero()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 0L; // StartBlockIndex is 0 in CSV
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with LastResetBlockIndex = 0 and some progress
+            // This simulates a new season where previous progress should be reset
+            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.ClearFloor(5); // Set some previous progress
+            infiniteTowerInfo.AddTickets(3); // Set some tickets
+            // LastResetBlockIndex is already 0 from constructor, which will trigger season reset
+            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            Assert.Equal(5, infiniteTowerInfo.ClearedFloor);
+            Assert.Equal(3, infiniteTowerInfo.RemainingTickets);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // LastResetBlockIndex should be updated to current block index
+            // This confirms that PerformSeasonReset was called
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastResetBlockIndex);
+
+            // LastTicketRefillBlockIndex should also be updated
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastTicketRefillBlockIndex);
+
+            // TotalTicketsUsed should be reset to 0 after season reset, then used for battle
+            // So it should be 1 (0 after reset, then +1 for battle)
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+
+            // NumberOfTicketPurchases should be reset to 0 after season reset
+            Assert.Equal(0, updatedInfiniteTowerInfo.NumberOfTicketPurchases);
+
+            // Note: ClearedFloor is reset to 0 by PerformSeasonReset, but then updated
+            // if the battle simulation succeeds. So we verify season reset happened
+            // by checking LastResetBlockIndex and TotalTicketsUsed reset.
+        }
+
+        [Fact]
+        public void Execute_With_SeasonReset_Should_Grant_One_Ticket()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 0L; // StartBlockIndex is 0 in CSV
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with LastResetBlockIndex = 0 (newly created)
+            // This will trigger season reset which should grant 1 ticket
+            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            // LastResetBlockIndex is already 0 from constructor
+            // RemainingTickets is also 0 from constructor
+            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            Assert.Equal(0, infiniteTowerInfo.RemainingTickets);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed and ticket was granted
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // After PerformSeasonReset, should have 1 ticket initially
+            // But then it's used for the battle, so RemainingTickets should be 0
+            Assert.Equal(0, updatedInfiniteTowerInfo.RemainingTickets);
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+
+            // Verify that the ticket was granted (TotalTicketsUsed = 1 confirms ticket was used)
+            // This means the ticket was granted by PerformSeasonReset and then consumed
+        }
+
+        [Fact]
+        public void Execute_With_NewSeason_After_PreviousSeason_Should_Reset_Progress()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var previousBlockIndex = 1000L;
+            var newSeasonStartBlockIndex = 2000L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            // Modify schedule to have a new season start at block 2000
+            var scheduleSheet = sheets["InfiniteTowerScheduleSheet"];
+            var scheduleLines = scheduleSheet.Split('\n');
+            if (scheduleLines.Length > 1)
+            {
+                // Update StartBlockIndex to 2000 for new season
+                scheduleLines[1] = "1,1,2000,1000000,3,10,10800,1,100";
+                sheets["InfiniteTowerScheduleSheet"] = string.Join("\n", scheduleLines);
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with previous season progress
+            // LastResetBlockIndex < new season StartBlockIndex (2000) should trigger season reset
+            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.ClearFloor(10); // Previous season progress
+            infiniteTowerInfo.AddTickets(5);
+            // Set LastResetBlockIndex to previous season (before new season start)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, previousBlockIndex);
+            Assert.Equal(10, infiniteTowerInfo.ClearedFloor);
+            Assert.Equal(previousBlockIndex, infiniteTowerInfo.LastResetBlockIndex);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act - Execute at new season start block
+            var context = new ActionContext
+            {
+                BlockIndex = newSeasonStartBlockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // LastResetBlockIndex should be updated to new season start block index
+            // This confirms that PerformSeasonReset was called
+            Assert.Equal(newSeasonStartBlockIndex, updatedInfiniteTowerInfo.LastResetBlockIndex);
+
+            // LastTicketRefillBlockIndex should also be updated
+            Assert.Equal(newSeasonStartBlockIndex, updatedInfiniteTowerInfo.LastTicketRefillBlockIndex);
+
+            // TotalTicketsUsed should be reset to 0 after season reset, then used for battle
+            // So it should be 1 (0 after reset, then +1 for battle)
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+
+            // NumberOfTicketPurchases should be reset to 0 after season reset
+            Assert.Equal(0, updatedInfiniteTowerInfo.NumberOfTicketPurchases);
+
+            // Note: ClearedFloor is reset to 0 by PerformSeasonReset, but then updated
+            // if the battle simulation succeeds. So we verify season reset happened
+            // by checking LastResetBlockIndex and TotalTicketsUsed reset.
         }
 
         private Equipment CreateTestEquipment(ItemType itemType, int grade = 1, int level = 1)

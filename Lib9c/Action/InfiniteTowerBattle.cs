@@ -290,7 +290,9 @@ Equipments, context.BlockIndex, gameConfigState);
             ValidateFloorRange(scheduleRow, FloorId, addressesHex);
 
             // Check if this is a new season (first time accessing this season)
-            if (infiniteTowerInfo.LastResetBlockIndex < scheduleRow.StartBlockIndex)
+            // LastResetBlockIndex == 0 means the info was just created and hasn't been reset yet
+            if (infiniteTowerInfo.LastResetBlockIndex < scheduleRow.StartBlockIndex ||
+                infiniteTowerInfo.LastResetBlockIndex == 0)
             {
                 infiniteTowerInfo.PerformSeasonReset(
                     context.BlockIndex,
