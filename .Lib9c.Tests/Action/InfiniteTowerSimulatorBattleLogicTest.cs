@@ -687,13 +687,20 @@ namespace Lib9c.Tests.Action
         // Helper method to test ShouldApplyCondition logic
         private bool ShouldApplyCondition(InfiniteTowerCondition condition, bool isPlayer)
         {
-            return condition.TargetType switch
+            if (condition.TargetType == null || !condition.TargetType.Any())
+            {
+                return false;
+            }
+
+            // Check if any target type matches (OR logic)
+            return condition.TargetType.Any(targetType => targetType switch
             {
                 SkillTargetType.Self => isPlayer,
                 SkillTargetType.Enemy => !isPlayer,
                 SkillTargetType.Enemies => !isPlayer,
+                SkillTargetType.Ally => isPlayer,
                 _ => false
-            };
+            });
         }
     }
 }
