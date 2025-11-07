@@ -13,22 +13,30 @@ namespace Lib9c.Tests.Action
 
     public class InfiniteTowerTicketSystemTest
     {
+        private readonly TableSheets _tableSheets;
+
+        public InfiniteTowerTicketSystemTest()
+        {
+            _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+        }
+
         [Fact]
         public void TryRefillDailyTickets_FirstTime_ShouldNotRefill_ButInitialize()
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1000L;
             var dailyFreeTickets = 5;
             var maxTickets = 10;
+            var initialTickets = GetInitialTickets(1);
 
             // Act
             var result = infiniteTowerInfo.TryRefillDailyTickets(dailyFreeTickets, maxTickets, currentBlockIndex);
 
             // Assert
             Assert.False(result);
-            Assert.Equal(0, infiniteTowerInfo.RemainingTickets);
+            Assert.Equal(initialTickets, infiniteTowerInfo.RemainingTickets);
             Assert.Equal(currentBlockIndex, infiniteTowerInfo.LastTicketRefillBlockIndex);
         }
 
@@ -37,14 +45,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1000L;
             var dailyFreeTickets = 5;
             var maxTickets = 10;
 
             // First call initializes reference; no refill
             infiniteTowerInfo.TryRefillDailyTickets(dailyFreeTickets, maxTickets, currentBlockIndex);
-            var initialTickets = infiniteTowerInfo.RemainingTickets; // 0
+            var initialTickets = infiniteTowerInfo.RemainingTickets;
 
             // Act - Try to refill again before enough time has passed
             var result = infiniteTowerInfo.TryRefillDailyTickets(dailyFreeTickets, maxTickets, currentBlockIndex + 1000);
@@ -59,7 +67,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1000L;
             var dailyFreeTickets = 5;
             var maxTickets = 10;
@@ -86,13 +94,15 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1000L;
             var dailyFreeTickets = 5;
             var maxTickets = 10;
+            var initialTickets = GetInitialTickets(1);
 
             // Set to max tickets (cap 10)
-            infiniteTowerInfo.AddTickets(maxTickets);
+            // Subtract initial tickets to get the exact amount needed to reach max
+            infiniteTowerInfo.AddTickets(maxTickets - initialTickets);
 
             // Act
             var result = infiniteTowerInfo.TryRefillDailyTickets(dailyFreeTickets, maxTickets, currentBlockIndex + 20000);
@@ -107,7 +117,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1000L;
             var dailyFreeTickets = 5;
             var maxTickets = 10;
@@ -133,7 +143,8 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
+            var initialTickets = GetInitialTickets(1);
             infiniteTowerInfo.AddTickets(5);
 
             // Act
@@ -141,7 +152,7 @@ namespace Lib9c.Tests.Action
 
             // Assert
             Assert.True(result);
-            Assert.Equal(2, infiniteTowerInfo.RemainingTickets);
+            Assert.Equal(initialTickets + 5 - 3, infiniteTowerInfo.RemainingTickets);
             Assert.Equal(3, infiniteTowerInfo.TotalTicketsUsed);
         }
 
@@ -150,15 +161,16 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
+            var initialTickets = GetInitialTickets(1);
             infiniteTowerInfo.AddTickets(2);
 
             // Act
-            var result = infiniteTowerInfo.TryUseTickets(5);
+            var result = infiniteTowerInfo.TryUseTickets(initialTickets + 2 + 1); // Try to use more than available
 
             // Assert
             Assert.False(result);
-            Assert.Equal(2, infiniteTowerInfo.RemainingTickets);
+            Assert.Equal(initialTickets + 2, infiniteTowerInfo.RemainingTickets);
             Assert.Equal(0, infiniteTowerInfo.TotalTicketsUsed);
         }
 
@@ -167,7 +179,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var originalInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var originalInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             originalInfo.ClearFloor(5);
             originalInfo.AddTickets(10);
 
@@ -184,6 +196,43 @@ namespace Lib9c.Tests.Action
             Assert.Equal(originalInfo.NumberOfTicketPurchases, deserialized.NumberOfTicketPurchases);
             Assert.Equal(originalInfo.LastResetBlockIndex, deserialized.LastResetBlockIndex);
             Assert.Equal(originalInfo.LastTicketRefillBlockIndex, deserialized.LastTicketRefillBlockIndex);
+        }
+
+        /// <summary>
+        /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
+        /// </summary>
+        private InfiniteTowerInfo CreateInfiniteTowerInfo(Address avatarAddress, int infiniteTowerId)
+        {
+            var initialTickets = 0;
+            if (_tableSheets.InfiniteTowerScheduleSheet != null)
+            {
+                var scheduleRow = _tableSheets.InfiniteTowerScheduleSheet.Values
+                    .FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    initialTickets = Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
+            }
+
+            return new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
+        }
+
+        /// <summary>
+        /// Gets initial tickets from schedule sheet for the given infinite tower ID.
+        /// </summary>
+        private int GetInitialTickets(int infiniteTowerId)
+        {
+            if (_tableSheets.InfiniteTowerScheduleSheet != null)
+            {
+                var scheduleRow = _tableSheets.InfiniteTowerScheduleSheet.Values
+                    .FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    return Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
+            }
+
+            return 0;
         }
     }
 }

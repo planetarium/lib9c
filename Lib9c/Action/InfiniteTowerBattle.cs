@@ -290,9 +290,13 @@ Equipments, context.BlockIndex, gameConfigState);
             ValidateFloorRange(scheduleRow, FloorId, addressesHex);
 
             // Check if this is a new season (first time accessing this season)
-            // LastResetBlockIndex == 0 means the info was just created and hasn't been reset yet
-            if (infiniteTowerInfo.LastResetBlockIndex < scheduleRow.StartBlockIndex ||
-                infiniteTowerInfo.LastResetBlockIndex == 0)
+            // Only reset if LastResetBlockIndex < StartBlockIndex (previous season's info or before season start)
+            // If newly created (LastResetBlockIndex == 0) but current season is already active,
+            // we should NOT reset, just refill tickets
+            var lastResetBlockIndex = infiniteTowerInfo.LastResetBlockIndex;
+            var isNewSeason = lastResetBlockIndex < scheduleRow.StartBlockIndex;
+
+            if (isNewSeason)
             {
                 infiniteTowerInfo.PerformSeasonReset(
                     context.BlockIndex,
@@ -300,13 +304,17 @@ Equipments, context.BlockIndex, gameConfigState);
                     scheduleRow.MaxTickets);
 
                 Log.Verbose(
-                    "[InfiniteTowerBattle][{AddressesHex}] Performed season reset at block {BlockIndex}",
+                    "[InfiniteTowerBattle][{AddressesHex}] Performed season reset at block {BlockIndex} (LastResetBlockIndex: {LastResetBlockIndex} -> {NewLastResetBlockIndex}, StartBlockIndex: {StartBlockIndex})",
                     addressesHex,
-                    context.BlockIndex);
+                    context.BlockIndex,
+                    lastResetBlockIndex,
+                    infiniteTowerInfo.LastResetBlockIndex,
+                    scheduleRow.StartBlockIndex);
             }
             else
             {
                 // Try to refill daily tickets (only during active season)
+                // This will also initialize LastTicketRefillBlockIndex if it's 0
                 if (infiniteTowerInfo.TryRefillDailyTickets(
                     scheduleRow.DailyFreeTickets,
                     scheduleRow.MaxTickets,
@@ -543,7 +551,7 @@ FloorId - 1,
                 if (!wasAlreadyCleared)
                 {
                     sw.Restart();
-                    states = ProcessRewards(floorRow, context, states);
+                    states = ProcessRewards(floorRow, context, states, avatarState);
                     sw.Stop();
                     Log.Verbose(
                         "[InfiniteTowerBattle][{AddressesHex}] Process rewards (first clear): {Elapsed}",
@@ -577,17 +585,6 @@ FloorId - 1,
                         FloorId);
                 }
             }
-
-            // Apply player to avatar state
-            sw.Restart();
-            avatarState.Apply(simulator.Player, context.BlockIndex);
-            sw.Stop();
-            Log.Verbose(
-                "[InfiniteTowerBattle][{AddressesHex}] Apply player to avatar state: {Elapsed}",
-                addressesHex,
-                sw.Elapsed);
-
-            // CP already calculated and validated earlier
 
             // Set states
             sw.Restart();
@@ -929,7 +926,8 @@ FloorId - 1,
         private IWorld ProcessRewards(
             InfiniteTowerFloorSheet.Row floorRow,
             IActionContext context,
-            IWorld states)
+            IWorld states,
+            AvatarState avatarState)
         {
             // Process all fungible asset rewards
             var fungibleAssetRewards = floorRow.GetFungibleAssetRewards();
@@ -953,7 +951,6 @@ FloorId - 1,
             var itemRewards = floorRow.GetItemRewards();
             if (itemRewards.Count > 0)
             {
-                var avatarState = states.GetAvatarState(AvatarAddress);
 
                 foreach (var (itemId, count) in itemRewards)
                 {
@@ -1011,8 +1008,6 @@ FloorId - 1,
                         }
                     }
                 }
-
-                states = states.SetAvatarState(AvatarAddress, avatarState);
             }
 
             return states;
