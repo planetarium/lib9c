@@ -13,6 +13,13 @@ namespace Lib9c.Tests.Action
 
     public class InfiniteTowerIdValidationTest
     {
+        private readonly TableSheets _tableSheets;
+
+        public InfiniteTowerIdValidationTest()
+        {
+            _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+        }
+
         [Fact]
         public void ValidateInfiniteTowerId_MatchingId_ShouldNotThrow()
         {
@@ -42,7 +49,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
@@ -59,7 +66,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
@@ -76,7 +83,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 2500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
@@ -93,7 +100,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
@@ -111,7 +118,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
@@ -129,7 +136,7 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 2500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
@@ -173,6 +180,25 @@ namespace Lib9c.Tests.Action
                     nameof(InfiniteTowerScheduleSheet),
                     $"InfiniteTowerId mismatch. Expected: {expectedInfiniteTowerId}, Found: {scheduleRow.InfiniteTowerId}");
             }
+        }
+
+        /// <summary>
+        /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
+        /// </summary>
+        private InfiniteTowerInfo CreateInfiniteTowerInfo(Address avatarAddress, int infiniteTowerId)
+        {
+            var initialTickets = 0;
+            if (_tableSheets.InfiniteTowerScheduleSheet != null)
+            {
+                var scheduleRow = _tableSheets.InfiniteTowerScheduleSheet.Values
+                    .FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    initialTickets = Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
+            }
+
+            return new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
         }
     }
 }

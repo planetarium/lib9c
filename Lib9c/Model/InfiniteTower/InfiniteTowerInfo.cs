@@ -59,12 +59,13 @@ namespace Nekoyume.Model.InfiniteTower
         /// </summary>
         /// <param name="address">The avatar address.</param>
         /// <param name="infiniteTowerId">The infinite tower ID.</param>
-        public InfiniteTowerInfo(Address address, int infiniteTowerId)
+        /// <param name="initialTickets">The initial number of tickets to grant on creation.</param>
+        public InfiniteTowerInfo(Address address, int infiniteTowerId, int initialTickets)
         {
             Address = address;
             InfiniteTowerId = infiniteTowerId;
             ClearedFloor = 0;
-            RemainingTickets = 0;
+            RemainingTickets = initialTickets;
             TotalTicketsUsed = 0;
             NumberOfTicketPurchases = 0;
             LastResetBlockIndex = 0;

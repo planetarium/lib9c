@@ -1,9 +1,12 @@
+using System;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.InfiniteTower;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Module
 {
@@ -22,9 +25,28 @@ namespace Nekoyume.Module
             var key = avatarAddress;
             var infiniteTowerInfoValue = account.GetState(key);
 
-            return infiniteTowerInfoValue is Bencodex.Types.List serializedInfiniteTowerInfoList
-                ? new InfiniteTowerInfo(serializedInfiniteTowerInfoList)
-                : new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            if (infiniteTowerInfoValue is Bencodex.Types.List serializedInfiniteTowerInfoList)
+            {
+                return new InfiniteTowerInfo(serializedInfiniteTowerInfoList);
+            }
+
+            // Get initial tickets from schedule sheet
+            var initialTickets = 0;
+            try
+            {
+                var scheduleSheet = worldState.GetSheet<InfiniteTowerScheduleSheet>();
+                var scheduleRow = scheduleSheet.Values.FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    initialTickets = Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
+            }
+            catch
+            {
+                // If schedule sheet is not available, use default value (0)
+            }
+
+            return new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
         }
 
         /// <summary>
