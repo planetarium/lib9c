@@ -513,19 +513,27 @@ namespace Nekoyume.Battle
 
         /// <summary>
         /// Determines if a condition should be applied to a character based on targeting rules.
+        /// Checks if any of the target types in the list match the character type (OR logic).
         /// </summary>
         /// <param name="condition">The condition to check.</param>
         /// <param name="isPlayer">Whether the target character is a player.</param>
         /// <returns>True if the condition should be applied to this character.</returns>
         private bool ShouldApplyCondition(Model.InfiniteTower.InfiniteTowerCondition condition, bool isPlayer)
         {
-            return condition.TargetType switch
+            if (condition.TargetType == null || !condition.TargetType.Any())
+            {
+                return false;
+            }
+
+            // Check if any target type matches (OR logic)
+            return condition.TargetType.Any(targetType => targetType switch
             {
                 SkillTargetType.Self => isPlayer,
                 SkillTargetType.Enemy => !isPlayer,
                 SkillTargetType.Enemies => !isPlayer,
+                SkillTargetType.Ally => isPlayer,
                 _ => false
-            };
+            });
         }
 
         /// <summary>

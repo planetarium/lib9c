@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Libplanet.Action;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.Skill;
@@ -25,9 +26,9 @@ namespace Nekoyume.Model.InfiniteTower
         public StatType StatType { get; }
 
         /// <summary>
-        /// Gets the target type for this condition (Self, Enemy, etc.).
+        /// Gets the list of target types for this condition (Self, Enemy, etc.).
         /// </summary>
-        public SkillTargetType TargetType { get; }
+        public List<SkillTargetType> TargetType { get; }
 
         /// <summary>
         /// Gets the operation type for the stat modification.

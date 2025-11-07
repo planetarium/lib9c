@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -85,6 +86,9 @@ namespace Lib9c.Tests.Action
             Assert.Equal(1, conditionRow.Id);
             Assert.Equal(StatType.ATK, conditionRow.StatType);
             Assert.Equal(10, conditionRow.Value);
+            Assert.NotNull(conditionRow.TargetType);
+            Assert.Single(conditionRow.TargetType);
+            Assert.Equal(SkillTargetType.Enemies, conditionRow.TargetType[0]);
         }
 
         [Fact]
