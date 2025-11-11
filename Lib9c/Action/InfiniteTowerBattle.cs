@@ -281,13 +281,13 @@ Equipments, context.BlockIndex, gameConfigState);
             }
 
             // Validate infinite tower ID
-            ValidateInfiniteTowerId(scheduleRow, addressesHex);
+            scheduleRow.ValidateInfiniteTowerId(InfiniteTowerId, addressesHex);
 
             // Validate schedule timing
-            ValidateScheduleTiming(scheduleRow, context.BlockIndex, addressesHex);
+            scheduleRow.ValidateScheduleTiming(context.BlockIndex, InfiniteTowerId, addressesHex);
 
             // Validate floor range
-            ValidateFloorRange(scheduleRow, FloorId, addressesHex);
+            scheduleRow.ValidateFloorRange(FloorId, addressesHex);
 
             // Check if this is a new season (first time accessing this season)
             // Only reset if LastResetBlockIndex < StartBlockIndex (previous season's info or before season start)
@@ -351,7 +351,7 @@ FloorId - 1,
                 }
 
                 // Validate currency availability before purchase
-                ValidateCurrencyForTicketPurchase(context, states, floorRow);
+                floorRow.ValidateCurrencyForTicketPurchase(context, states, AvatarAddress, UseNcgForTicket, addressesHex);
 
                 // Purchase ticket with selected currency
                 states = PurchaseTicket(context, states, floorRow, infiniteTowerInfo);
@@ -424,10 +424,8 @@ FloorId - 1,
             else
             {
                 // If no weighted conditions are specified, select from all available conditions
-                randomConditions = GetRandomConditions(
+                randomConditions = floorRow.GetRandomConditions(
                     conditionSheet,
-                    floorRow.MinRandomConditions,
-                    floorRow.MaxRandomConditions,
                     random,
                     guaranteedCondition?.Id);
             }
@@ -551,7 +549,7 @@ FloorId - 1,
                 if (!wasAlreadyCleared)
                 {
                     sw.Restart();
-                    states = ProcessRewards(floorRow, context, states, avatarState);
+                    states = floorRow.ProcessRewards(context, states, avatarState, AvatarAddress);
                     sw.Stop();
                     Log.Verbose(
                         "[InfiniteTowerBattle][{AddressesHex}] Process rewards (first clear): {Elapsed}",
@@ -606,178 +604,6 @@ FloorId - 1,
             return states;
         }
 
-        private List<InfiniteTowerCondition> GetRandomConditions(
-            InfiniteTowerConditionSheet conditionSheet,
-            int minCount,
-            int maxCount,
-            Libplanet.Action.IRandom random,
-            int? guaranteedConditionId = null)
-        {
-            // Use all available conditions
-            var availableConditions = conditionSheet.Values.ToList();
-
-            // Exclude guaranteed condition from random selection
-            availableConditions = availableConditions
-                .Where(c => guaranteedConditionId == null || c.Id != guaranteedConditionId)
-                .ToList();
-
-            var count = random.Next(minCount, maxCount + 1);
-            var selectedConditions = new List<InfiniteTowerCondition>();
-
-            for (int i = 0; i < count && availableConditions.Any(); i++)
-            {
-                var randomIndex = random.Next(0, availableConditions.Count);
-                var selectedCondition = availableConditions[randomIndex];
-                selectedConditions.Add(new InfiniteTowerCondition(selectedCondition));
-                availableConditions.RemoveAt(randomIndex);
-            }
-
-            return selectedConditions;
-        }
-
-
-
-
-        /// <summary>
-        /// Validates infinite tower ID matches the schedule configuration.
-        /// </summary>
-        /// <param name="scheduleRow">Schedule configuration row</param>
-        /// <param name="addressesHex">Addresses hex for logging</param>
-        private void ValidateInfiniteTowerId(
-            InfiniteTowerScheduleSheet.Row scheduleRow,
-            string addressesHex)
-        {
-            if (scheduleRow.InfiniteTowerId != InfiniteTowerId)
-            {
-                throw new SheetRowNotFoundException(
-                    addressesHex,
-                    nameof(InfiniteTowerScheduleSheet),
-                    $"InfiniteTowerId mismatch. Expected: {InfiniteTowerId}, Found: {scheduleRow.InfiniteTowerId}");
-            }
-        }
-
-        /// <summary>
-        /// Validates schedule timing for the infinite tower.
-        /// </summary>
-        /// <param name="scheduleRow">Schedule configuration row</param>
-        /// <param name="currentBlockIndex">Current block index</param>
-        /// <param name="addressesHex">Addresses hex for logging</param>
-        private void ValidateScheduleTiming(
-            InfiniteTowerScheduleSheet.Row scheduleRow,
-            long currentBlockIndex,
-            string addressesHex)
-        {
-            // Check if schedule has started
-            if (!scheduleRow.HasStarted(currentBlockIndex))
-            {
-                throw new InfiniteTowerScheduleNotStartedException(
-                    "InfiniteTowerBattle",
-                    addressesHex,
-                    InfiniteTowerId,
-                    currentBlockIndex,
-                    scheduleRow.StartBlockIndex);
-            }
-
-            // Check if schedule has ended
-            if (scheduleRow.HasEnded(currentBlockIndex))
-            {
-                throw new InfiniteTowerScheduleEndedException(
-                    "InfiniteTowerBattle",
-                    addressesHex,
-                    InfiniteTowerId,
-                    currentBlockIndex,
-                    scheduleRow.EndBlockIndex);
-            }
-
-            // Check if schedule is currently active
-            if (!scheduleRow.IsActive(currentBlockIndex))
-            {
-                throw new InfiniteTowerScheduleNotActiveException(
-                    "InfiniteTowerBattle",
-                    addressesHex,
-                    InfiniteTowerId,
-                    currentBlockIndex,
-                    scheduleRow.StartBlockIndex,
-                    scheduleRow.EndBlockIndex);
-            }
-        }
-
-        /// <summary>
-        /// Validates that the floor ID is within the schedule's floor range.
-        /// </summary>
-        /// <param name="scheduleRow">Schedule configuration row</param>
-        /// <param name="floorId">Floor ID to validate</param>
-        /// <param name="addressesHex">Addresses hex for logging</param>
-        private void ValidateFloorRange(
-            InfiniteTowerScheduleSheet.Row scheduleRow,
-            int floorId,
-            string addressesHex)
-        {
-            if (floorId < scheduleRow.FloorBegin || floorId > scheduleRow.FloorEnd)
-            {
-                throw new InvalidOperationException(
-                    $"[InfiniteTowerBattle][{addressesHex}] Floor {floorId} is out of range. " +
-                    $"Valid floor range for this schedule is {scheduleRow.FloorBegin}-{scheduleRow.FloorEnd}");
-            }
-        }
-
-
-        /// <summary>
-        /// Validates that the player has enough currency to purchase a ticket.
-        /// </summary>
-        /// <param name="context">The action context.</param>
-        /// <param name="states">The world state.</param>
-        /// <param name="floorRow">The floor configuration.</param>
-        private void ValidateCurrencyForTicketPurchase(
-            IActionContext context,
-            IWorld states,
-            InfiniteTowerFloorSheet.Row floorRow)
-        {
-            var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
-
-            if (UseNcgForTicket)
-            {
-                if (!floorRow.NcgCost.HasValue)
-                {
-                    throw new InvalidOperationException(
-                        $"[InfiniteTowerBattle][{addressesHex}] NCG cost is not configured for this floor");
-                }
-
-                // Validate NCG balance
-                var goldCurrency = states.GetGoldCurrency();
-                var ticketCost = goldCurrency * floorRow.NcgCost.Value;
-                var goldBalance = states.GetBalance(context.Signer, goldCurrency);
-
-                if (goldBalance < ticketCost)
-                {
-                    throw new InsufficientBalanceException(
-                        $"[InfiniteTowerBattle][{addressesHex}] Insufficient NCG balance. Required: {ticketCost}, Available: {goldBalance}",
-                        context.Signer,
-                        goldBalance);
-                }
-            }
-            else
-            {
-                // Validate material inventory
-                var materialSheet = states.GetSheet<MaterialItemSheet>();
-                if (!floorRow.MaterialCostId.HasValue || !floorRow.MaterialCostCount.HasValue)
-                {
-                    throw new InvalidOperationException(
-                        $"[InfiniteTowerBattle][{addressesHex}] Material cost information is not configured for this floor");
-                }
-
-                var materialRow = materialSheet.OrderedList.First(m => m.Id == floorRow.MaterialCostId.Value);
-                var inventory = states.GetInventoryV2(AvatarAddress);
-
-                // Check if player has enough material in inventory
-                var materialCount = inventory.TryGetItem(floorRow.MaterialCostId.Value, out var materialItem) ? materialItem.count : 0;
-                if (materialCount < floorRow.MaterialCostCount.Value)
-                {
-                    throw new NotEnoughMaterialException(
-                        $"[InfiniteTowerBattle][{addressesHex}] Not enough material to purchase ticket: needs {floorRow.MaterialCostCount}, has {materialCount}");
-                }
-            }
-        }
 
         /// <summary>
         /// Purchases a ticket using the selected currency (NCG or Material).
@@ -920,111 +746,6 @@ FloorId - 1,
             }
         }
 
-        /// <summary>
-        /// Processes rewards for successful floor completion.
-        /// </summary>
-        private IWorld ProcessRewards(
-            InfiniteTowerFloorSheet.Row floorRow,
-            IActionContext context,
-            IWorld states,
-            AvatarState avatarState)
-        {
-            // Process all fungible asset rewards
-            var fungibleAssetRewards = floorRow.GetFungibleAssetRewards();
-            foreach (var (ticker, amount) in fungibleAssetRewards)
-            {
-                if (amount > 0)
-                {
-                    var currency = GetCurrencyByTicker(ticker);
-                    var fungibleAsset = currency * amount;
-                    var recipient = Currencies.PickAddress(currency, context.Signer, AvatarAddress);
-
-                    states = states.MintAsset(
-                        context,
-                        recipient,
-                        fungibleAsset
-                    );
-                }
-            }
-
-            // Process Item rewards
-            var itemRewards = floorRow.GetItemRewards();
-            if (itemRewards.Count > 0)
-            {
-
-                foreach (var (itemId, count) in itemRewards)
-                {
-                    if (count > 0)
-                    {
-                        // Try to find item in different sheets
-                        ItemBase? item = null;
-
-                        // Try EquipmentItemSheet first
-                        var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
-                        if (equipmentSheet.TryGetValue(itemId, out var equipmentRow))
-                        {
-                            item = ItemFactory.CreateItem(equipmentRow, context.GetRandom());
-                        }
-                        // Try MaterialItemSheet
-                        else
-                        {
-                            var materialSheet = states.GetSheet<MaterialItemSheet>();
-                            if (materialSheet.TryGetValue(itemId, out var materialRow))
-                            {
-                                item = ItemFactory.CreateItem(materialRow, context.GetRandom());
-                            }
-                        }
-                        // Try ConsumableItemSheet
-                        if (item == null)
-                        {
-                            var consumableSheet = states.GetSheet<ConsumableItemSheet>();
-                            if (consumableSheet.TryGetValue(itemId, out var consumableRow))
-                            {
-                                item = ItemFactory.CreateItem(consumableRow, context.GetRandom());
-                            }
-                        }
-                        // Try CostumeItemSheet
-                        if (item == null)
-                        {
-                            var costumeSheet = states.GetSheet<CostumeItemSheet>();
-                            if (costumeSheet.TryGetValue(itemId, out var costumeRow))
-                            {
-                                item = ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
-                            }
-                        }
-
-                        if (item != null)
-                        {
-                            avatarState.inventory.AddItem(item, count);
-
-                            Log.Verbose(
-                                "[InfiniteTowerBattle] Item reward: ID={ItemId}, Count={Count}",
-                                itemId,
-                                count);
-                        }
-                        else
-                        {
-                            throw new InvalidItemIdException($"Item ID {itemId} not found in any item sheet");
-                        }
-                    }
-                }
-            }
-
-            return states;
-        }
-
-        /// <summary>
-        /// Gets the appropriate currency object for a given ticker.
-        /// </summary>
-        private Currency GetCurrencyByTicker(string ticker)
-        {
-            return ticker switch
-            {
-                "NCG" => Currency.Legacy("NCG", 0, null),
-                "CRYSTAL" => Currencies.Crystal,
-                _ => Currency.Legacy(ticker, 0, null)
-            };
-        }
 
         /// <summary>
         /// Updates the infinite tower board state to track floor clear counts.

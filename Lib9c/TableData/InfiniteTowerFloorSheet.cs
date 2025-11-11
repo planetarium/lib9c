@@ -2,14 +2,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c;
+using Libplanet.Action;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Exceptions;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.InfiniteTower;
 using Nekoyume.Model.Rune;
+using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Rune;
+using Serilog;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
@@ -616,7 +626,16 @@ namespace Nekoyume.TableData
                     return new List<InfiniteTowerCondition>();
                 }
 
+                // Validate that we have enough conditions to meet minimum requirement
+                if (availableWeightedConditions.Count < MinRandomConditions)
+                {
+                    throw new InvalidOperationException(
+                        $"Insufficient available weighted conditions. Required minimum: {MinRandomConditions}, Available: {availableWeightedConditions.Count}");
+                }
+
                 var count = random.Next(MinRandomConditions, MaxRandomConditions + 1);
+                // Ensure we don't select more than available to avoid infinite loop in WeightedSelector
+                count = Math.Min(count, availableWeightedConditions.Count);
                 var selectedConditions = new List<InfiniteTowerCondition>();
 
                 // Use WeightedSelector for weighted random selection
@@ -633,6 +652,61 @@ namespace Nekoyume.TableData
                     {
                         selectedConditions.Add(new InfiniteTowerCondition(conditionRow));
                     }
+                }
+
+                return selectedConditions;
+            }
+
+            /// <summary>
+            /// Selects random conditions from all available conditions using uniform random selection.
+            /// Uses Fisher-Yates shuffle algorithm to avoid index issues when removing items.
+            /// This method can be used by clients for simulation and replay purposes.
+            /// </summary>
+            /// <param name="conditionSheet">The condition sheet containing all available conditions</param>
+            /// <param name="random">Random number generator</param>
+            /// <param name="guaranteedConditionId">Optional guaranteed condition ID to exclude from random selection</param>
+            /// <returns>List of selected random conditions</returns>
+            /// <exception cref="InvalidOperationException">Thrown when available conditions are insufficient for minimum count requirement</exception>
+            public List<InfiniteTowerCondition> GetRandomConditions(
+                InfiniteTowerConditionSheet conditionSheet,
+                Libplanet.Action.IRandom random,
+                int? guaranteedConditionId = null)
+            {
+                // Use all available conditions
+                var availableConditions = conditionSheet.Values.ToList();
+
+                // Exclude guaranteed condition from random selection
+                availableConditions = availableConditions
+                    .Where(c => guaranteedConditionId == null || c.Id != guaranteedConditionId)
+                    .ToList();
+
+                // Validate that we have enough conditions to meet minimum requirement
+                if (availableConditions.Count < MinRandomConditions)
+                {
+                    throw new InvalidOperationException(
+                        $"Insufficient available conditions. Required minimum: {MinRandomConditions}, Available: {availableConditions.Count}");
+                }
+
+                // Determine how many conditions to select
+                var count = random.Next(MinRandomConditions, MaxRandomConditions + 1);
+                // Ensure we don't select more than available
+                count = Math.Min(count, availableConditions.Count);
+
+                var selectedConditions = new List<InfiniteTowerCondition>();
+
+                // Use Fisher-Yates shuffle: swap selected item with last item instead of removing
+                // This avoids index shifting issues
+                var conditions = availableConditions.ToList();
+                for (int i = 0; i < count; i++)
+                {
+                    // Select random index from remaining items
+                    var randomIndex = random.Next(i, conditions.Count);
+
+                    // Swap selected item with current position
+                    (conditions[i], conditions[randomIndex]) = (conditions[randomIndex], conditions[i]);
+
+                    // Add the selected condition
+                    selectedConditions.Add(new InfiniteTowerCondition(conditions[i]));
                 }
 
                 return selectedConditions;
@@ -791,6 +865,187 @@ namespace Nekoyume.TableData
                     BattleConditionType.ForbiddenItemSubTypes when ForbiddenItemSubTypes.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true),
                     _ => null
                 };
+            }
+
+            /// <summary>
+            /// Validates that the player has enough currency to purchase a ticket.
+            /// </summary>
+            /// <param name="context">The action context</param>
+            /// <param name="states">The world state</param>
+            /// <param name="avatarAddress">The avatar address</param>
+            /// <param name="useNcgForTicket">Whether to use NCG for ticket purchase</param>
+            /// <param name="addressesHex">Addresses hex for logging</param>
+            /// <exception cref="InvalidOperationException">Thrown when cost configuration is missing</exception>
+            /// <exception cref="InsufficientBalanceException">Thrown when NCG balance is insufficient</exception>
+            /// <exception cref="NotEnoughMaterialException">Thrown when material count is insufficient</exception>
+            public void ValidateCurrencyForTicketPurchase(
+                IActionContext context,
+                IWorld states,
+                Address avatarAddress,
+                bool useNcgForTicket,
+                string addressesHex)
+            {
+                if (useNcgForTicket)
+                {
+                    if (!NcgCost.HasValue)
+                    {
+                        throw new InvalidOperationException(
+                            $"[InfiniteTowerBattle][{addressesHex}] NCG cost is not configured for this floor");
+                    }
+
+                    // Validate NCG balance
+                    var goldCurrency = states.GetGoldCurrency();
+                    var ticketCost = goldCurrency * NcgCost.Value;
+                    var goldBalance = states.GetBalance(context.Signer, goldCurrency);
+
+                    if (goldBalance < ticketCost)
+                    {
+                        throw new InsufficientBalanceException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Insufficient NCG balance. Required: {ticketCost}, Available: {goldBalance}",
+                            context.Signer,
+                            goldBalance);
+                    }
+                }
+                else
+                {
+                    // Validate material inventory
+                    var materialSheet = states.GetSheet<MaterialItemSheet>();
+                    if (!MaterialCostId.HasValue || !MaterialCostCount.HasValue)
+                    {
+                        throw new InvalidOperationException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Material cost information is not configured for this floor");
+                    }
+
+                    var materialRow = materialSheet.OrderedList.First(m => m.Id == MaterialCostId.Value);
+                    var inventory = states.GetInventoryV2(avatarAddress);
+
+                    // Check if player has enough material in inventory
+                    var materialCount = inventory.TryGetItem(MaterialCostId.Value, out var materialItem) ? materialItem.count : 0;
+                    if (materialCount < MaterialCostCount.Value)
+                    {
+                        throw new NotEnoughMaterialException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Not enough material to purchase ticket: needs {MaterialCostCount}, has {materialCount}");
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Processes rewards for successful floor completion.
+            /// </summary>
+            /// <param name="context">The action context</param>
+            /// <param name="states">The world state</param>
+            /// <param name="avatarState">The avatar state to update</param>
+            /// <param name="avatarAddress">The avatar address</param>
+            /// <returns>Updated world state</returns>
+            /// <exception cref="InvalidItemIdException">Thrown when item ID is not found in any item sheet</exception>
+            public IWorld ProcessRewards(
+                IActionContext context,
+                IWorld states,
+                AvatarState avatarState,
+                Address avatarAddress)
+            {
+                // Process all fungible asset rewards
+                var fungibleAssetRewards = GetFungibleAssetRewards();
+                foreach (var (ticker, amount) in fungibleAssetRewards)
+                {
+                    if (amount > 0)
+                    {
+                        // NCG is not supported as a fungible asset reward
+                        if (ticker == "NCG")
+                        {
+                            throw new InvalidOperationException(
+                                $"NCG is not supported as a fungible asset reward in InfiniteTowerFloorSheet. " +
+                                $"Floor ID: {Id}, Ticker: {ticker}. " +
+                                $"NCG rewards should be handled separately using IWorld.GetGoldCurrency().");
+                        }
+
+                        Currency currency;
+                        try
+                        {
+                            currency = Currencies.GetCurrencyByTicker(ticker);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            throw new InvalidOperationException(
+                                $"Invalid fungible asset reward ticker in InfiniteTowerFloorSheet. " +
+                                $"Floor ID: {Id}, Ticker: {ticker}. " +
+                                $"Error: {ex.Message}", ex);
+                        }
+
+                        var fungibleAsset = currency * amount;
+                        var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
+
+                        states = states.MintAsset(
+                            context,
+                            recipient,
+                            fungibleAsset
+                        );
+                    }
+                }
+
+                // Process Item rewards
+                var itemRewards = GetItemRewards();
+                if (itemRewards.Count > 0)
+                {
+                    foreach (var (itemId, count) in itemRewards)
+                    {
+                        if (count > 0)
+                        {
+                            // Try to find item in different sheets
+                            ItemBase? item = null;
+
+                            // Try EquipmentItemSheet first
+                            var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
+                            if (equipmentSheet.TryGetValue(itemId, out var equipmentRow))
+                            {
+                                item = ItemFactory.CreateItem(equipmentRow, context.GetRandom());
+                            }
+                            // Try MaterialItemSheet
+                            else
+                            {
+                                var materialSheet = states.GetSheet<MaterialItemSheet>();
+                                if (materialSheet.TryGetValue(itemId, out var materialRow))
+                                {
+                                    item = ItemFactory.CreateItem(materialRow, context.GetRandom());
+                                }
+                            }
+                            // Try ConsumableItemSheet
+                            if (item == null)
+                            {
+                                var consumableSheet = states.GetSheet<ConsumableItemSheet>();
+                                if (consumableSheet.TryGetValue(itemId, out var consumableRow))
+                                {
+                                    item = ItemFactory.CreateItem(consumableRow, context.GetRandom());
+                                }
+                            }
+                            // Try CostumeItemSheet
+                            if (item == null)
+                            {
+                                var costumeSheet = states.GetSheet<CostumeItemSheet>();
+                                if (costumeSheet.TryGetValue(itemId, out var costumeRow))
+                                {
+                                    item = ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
+                                }
+                            }
+
+                            if (item != null)
+                            {
+                                avatarState.inventory.AddItem(item, count);
+
+                                Log.Verbose(
+                                    "[InfiniteTowerBattle] Item reward: ID={ItemId}, Count={Count}",
+                                    itemId,
+                                    count);
+                            }
+                            else
+                            {
+                                throw new InvalidItemIdException($"Item ID {itemId} not found in any item sheet");
+                            }
+                        }
+                    }
+                }
+
+                return states;
             }
 
         }
