@@ -553,6 +553,165 @@ namespace Lib9c.Tests.Action
             Assert.Contains(RuneType.Stat, exception.EquippedRuneTypes);
         }
 
+        [Fact]
+        public void GetRandomConditions_WithSufficientConditions_ShouldReturnValidCount()
+        {
+            // Arrange
+            var fields = new List<string>
+            {
+                "1", // Id
+                "1", // Floor
+                string.Empty, // RequiredCp
+                string.Empty, // MaxCp
+                string.Empty, // ForbiddenItemSubTypes
+                string.Empty, // MinItemGrade
+                string.Empty, // MaxItemGrade
+                string.Empty, // MinItemLevel
+                string.Empty, // MaxItemLevel
+                "1", // GuaranteedConditionId
+                "2", // MinRandomConditions
+                "3", // MaxRandomConditions
+                string.Empty, // RandomConditionId1
+                string.Empty, // RandomConditionWeight1
+                string.Empty, // RandomConditionId2
+                string.Empty, // RandomConditionWeight2
+                string.Empty, // RandomConditionId3
+                string.Empty, // RandomConditionWeight3
+                string.Empty, // RandomConditionId4
+                string.Empty, // RandomConditionWeight4
+                string.Empty, // RandomConditionId5
+                string.Empty, // RandomConditionWeight5
+                string.Empty, // ItemRewardId1
+                string.Empty, // ItemRewardCount1
+                string.Empty, // ItemRewardId2
+                string.Empty, // ItemRewardCount2
+                string.Empty, // ItemRewardId3
+                string.Empty, // ItemRewardCount3
+                string.Empty, // ItemRewardId4
+                string.Empty, // ItemRewardCount4
+                string.Empty, // ItemRewardId5
+                string.Empty, // ItemRewardCount5
+                string.Empty, // FungibleAssetRewardTicker1
+                string.Empty, // FungibleAssetRewardAmount1
+                string.Empty, // FungibleAssetRewardTicker2
+                string.Empty, // FungibleAssetRewardAmount2
+                string.Empty, // FungibleAssetRewardTicker3
+                string.Empty, // FungibleAssetRewardAmount3
+                string.Empty, // FungibleAssetRewardTicker4
+                string.Empty, // FungibleAssetRewardAmount4
+                string.Empty, // FungibleAssetRewardTicker5
+                string.Empty, // FungibleAssetRewardAmount5
+                string.Empty, // NcgCost
+                string.Empty, // MaterialCostId
+                string.Empty, // MaterialCostCount
+                string.Empty, // ForbiddenRuneTypes
+                string.Empty, // RequiredElementalTypes
+            };
+
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            floorRow.Set(fields);
+
+            var conditionSheet = _tableSheets.InfiniteTowerConditionSheet;
+            var random = new TestRandom();
+
+            // Act
+            var conditions = floorRow.GetRandomConditions(conditionSheet, random, 1);
+
+            // Assert
+            Assert.NotNull(conditions);
+            Assert.True(conditions.Count >= floorRow.MinRandomConditions);
+            Assert.True(conditions.Count <= floorRow.MaxRandomConditions);
+            Assert.All(conditions, c => Assert.NotEqual(1, c.Id)); // Should exclude guaranteed condition
+            Assert.Equal(conditions.Count, conditions.Select(c => c.Id).Distinct().Count()); // No duplicates
+        }
+
+        [Fact]
+        public void GetRandomConditions_WithInsufficientConditions_ShouldThrow()
+        {
+            // Arrange
+            var fields = new List<string>
+            {
+                "1", // Id
+                "1", // Floor
+                string.Empty, // RequiredCp
+                string.Empty, // MaxCp
+                string.Empty, // ForbiddenItemSubTypes
+                string.Empty, // MinItemGrade
+                string.Empty, // MaxItemGrade
+                string.Empty, // MinItemLevel
+                string.Empty, // MaxItemLevel
+                "1", // GuaranteedConditionId
+                "100", // MinRandomConditions (too high)
+                "100", // MaxRandomConditions
+                string.Empty, // RandomConditionId1
+                string.Empty, // RandomConditionWeight1
+                string.Empty, // RandomConditionId2
+                string.Empty, // RandomConditionWeight2
+                string.Empty, // RandomConditionId3
+                string.Empty, // RandomConditionWeight3
+                string.Empty, // RandomConditionId4
+                string.Empty, // RandomConditionWeight4
+                string.Empty, // RandomConditionId5
+                string.Empty, // RandomConditionWeight5
+                string.Empty, // ItemRewardId1
+                string.Empty, // ItemRewardCount1
+                string.Empty, // ItemRewardId2
+                string.Empty, // ItemRewardCount2
+                string.Empty, // ItemRewardId3
+                string.Empty, // ItemRewardCount3
+                string.Empty, // ItemRewardId4
+                string.Empty, // ItemRewardCount4
+                string.Empty, // ItemRewardId5
+                string.Empty, // ItemRewardCount5
+                string.Empty, // FungibleAssetRewardTicker1
+                string.Empty, // FungibleAssetRewardAmount1
+                string.Empty, // FungibleAssetRewardTicker2
+                string.Empty, // FungibleAssetRewardAmount2
+                string.Empty, // FungibleAssetRewardTicker3
+                string.Empty, // FungibleAssetRewardAmount3
+                string.Empty, // FungibleAssetRewardTicker4
+                string.Empty, // FungibleAssetRewardAmount4
+                string.Empty, // FungibleAssetRewardTicker5
+                string.Empty, // FungibleAssetRewardAmount5
+                string.Empty, // NcgCost
+                string.Empty, // MaterialCostId
+                string.Empty, // MaterialCostCount
+                string.Empty, // ForbiddenRuneTypes
+                string.Empty, // RequiredElementalTypes
+            };
+
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            floorRow.Set(fields);
+
+            var conditionSheet = _tableSheets.InfiniteTowerConditionSheet;
+            var random = new TestRandom();
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                floorRow.GetRandomConditions(conditionSheet, random, 1));
+            Assert.Contains("Insufficient available conditions", exception.Message);
+        }
+
+        private Equipment CreateTestWeapon()
+        {
+            // Weapon 타입의 Equipment 찾기
+            var weaponRow = _tableSheets.EquipmentItemSheet.Values
+                .FirstOrDefault(x => x.ItemSubType == ItemSubType.Weapon);
+
+            if (weaponRow == null)
+            {
+                throw new InvalidOperationException($"No weapon found in EquipmentItemSheet");
+            }
+
+            var item = ItemFactory.CreateItem(weaponRow, new TestRandom());
+            if (item is Equipment equipment)
+            {
+                return equipment;
+            }
+
+            throw new InvalidOperationException($"Created item is not Equipment type: {item.GetType()}");
+        }
+
         private Equipment CreateTestEquipment(ItemType itemType, int grade = 1, int level = 1)
         {
             // EquipmentItemSheet에서 직접 찾아서 사용
@@ -633,26 +792,6 @@ namespace Lib9c.Tests.Action
                 default:
                     throw new InvalidOperationException($"Unsupported ItemType: {itemType}");
             }
-        }
-
-        private Equipment CreateTestWeapon()
-        {
-            // Weapon 타입의 Equipment 찾기
-            var weaponRow = _tableSheets.EquipmentItemSheet.Values
-                .FirstOrDefault(x => x.ItemSubType == ItemSubType.Weapon);
-
-            if (weaponRow == null)
-            {
-                throw new InvalidOperationException($"No weapon found in EquipmentItemSheet");
-            }
-
-            var item = ItemFactory.CreateItem(weaponRow, new TestRandom());
-            if (item is Equipment equipment)
-            {
-                return equipment;
-            }
-
-            throw new InvalidOperationException($"Created item is not Equipment type: {item.GetType()}");
         }
     }
 }
