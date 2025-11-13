@@ -21,7 +21,7 @@ namespace Nekoyume.Module
         /// <returns>InfiniteTowerInfo for the avatar and tower.</returns>
         public static InfiniteTowerInfo GetInfiniteTowerInfo(this IWorld worldState, Address avatarAddress, int infiniteTowerId)
         {
-            var accountAddress = Addresses.InfiniteTowerBoard.Derive($"{infiniteTowerId}");
+            var accountAddress = Addresses.InfiniteTowerInfo.Derive($"{infiniteTowerId}");
             var account = worldState.GetAccountState(accountAddress);
             var key = avatarAddress;
             var infiniteTowerInfoValue = account.GetState(key);
@@ -59,7 +59,7 @@ namespace Nekoyume.Module
         /// <returns>Updated world with the infinite tower info.</returns>
         public static IWorld SetInfiniteTowerInfo(this IWorld world, Address avatarAddress, InfiniteTowerInfo infiniteTowerInfo)
         {
-            var accountAddress = Addresses.InfiniteTowerBoard.Derive($"{infiniteTowerInfo.InfiniteTowerId}");
+            var accountAddress = Addresses.InfiniteTowerInfo.Derive($"{infiniteTowerInfo.InfiniteTowerId}");
             var account = world.GetAccount(accountAddress);
             var key = avatarAddress;
             account = account.SetState(key, infiniteTowerInfo.Serialize());
