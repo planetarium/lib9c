@@ -253,6 +253,9 @@ Equipments, context.BlockIndex, gameConfigState);
             // Validate floor-specific restrictions
             floorRow.ValidateFloorRestrictions(equipmentList, costumeList);
 
+            // Validate equipment elemental type restrictions (costumes are excluded)
+            floorRow.ValidateEquipmentElementalType(equipmentList);
+
             sw.Stop();
             Log.Verbose(
                 "[InfiniteTowerBattle][{AddressesHex}] Validate fields: {Elapsed}",
@@ -390,9 +393,6 @@ FloorId - 1,
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
             states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
-
-            // Validate equipment elemental type restrictions
-            // Note: Equipment validation will be done in the simulator
 
             // Get conditions for this floor
             var conditionSheet = sheets.GetSheet<InfiniteTowerConditionSheet>();
