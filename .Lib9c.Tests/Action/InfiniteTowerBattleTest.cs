@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions;
+    using Nekoyume.Model.Elemental;
     using Nekoyume.Model.InfiniteTower;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -1714,6 +1715,180 @@ namespace Lib9c.Tests.Action
                 $"Food count should not increase. Initial: {initialFoodCount}, Final: {finalFoodCount}");
         }
 
+        [Fact]
+        public void Execute_WithValidElementalType_ShouldSucceed()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            // Modify InfiniteTowerFloorSheet to require Fire and Water elemental types
+            var floorSheetWithElementalRestriction = @"Id,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalTypes
+1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,1:2";
+            sheets["InfiniteTowerFloorSheet"] = floorSheetWithElementalRestriction;
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Create equipment with valid elemental type (Fire = 1)
+            var equipment = CreateTestEquipment(ItemType.Equipment, grade: 1, level: 1);
+            equipment.ElementalType = ElementalType.Fire; // Valid: Fire is in required list (1:2)
+            avatarState.inventory.AddItem(equipment);
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid> { equipment.NonFungibleId },
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert - Should succeed without throwing InvalidElementalException
+            Assert.NotNull(nextState);
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+        }
+
+        [Fact]
+        public void Execute_WithInvalidElementalType_ShouldThrow()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            // Modify InfiniteTowerFloorSheet to require Fire and Water elemental types (1:2)
+            var floorSheetWithElementalRestriction = @"Id,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalTypes
+1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,,1:2";
+            sheets["InfiniteTowerFloorSheet"] = floorSheetWithElementalRestriction;
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Create equipment with invalid elemental type (Land = 3, not in required list 1:2)
+            var equipment = CreateTestEquipment(ItemType.Equipment, grade: 1, level: 1);
+            equipment.ElementalType = ElementalType.Land; // Invalid: Land is not in required list (1:2 = Fire:Water)
+            avatarState.inventory.AddItem(equipment);
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid> { equipment.NonFungibleId },
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act & Assert
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var exception = Assert.Throws<InvalidElementalException>(() => action.Execute(context));
+            Assert.Contains("Invalid equipment elemental type", exception.Message);
+            Assert.Contains("Land", exception.Message);
+            Assert.Contains("Fire, Water", exception.Message);
+        }
+
         /// <summary>
         /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
         /// </summary>
@@ -1754,9 +1929,10 @@ namespace Lib9c.Tests.Action
             if (item is Equipment equipment)
             {
                 // Level 설정
-                if (level > 1)
+                // Equipment의 기본 레벨은 0이므로, level이 1 이상이면 레벨업을 수행
+                if (level >= 1)
                 {
-                    for (int i = 1; i < level; i++)
+                    for (int i = 0; i < level; i++)
                     {
                         equipment.LevelUp(new TestRandom(), _tableSheets.EnhancementCostSheetV2.Values.First(), false);
                     }
