@@ -172,8 +172,8 @@ namespace Nekoyume.Battle
             BuffLinkSheet buffLinkSheet,
             List<Model.InfiniteTower.InfiniteTowerCondition> conditions,
             int shatterStrikeMaxDamage,
-            int turnLimit = 200,
-            bool logEvent = true) : base(random, avatarState, foods, simulatorSheets, logEvent)
+            int turnLimit = 150,
+            bool logEvent = false) : base(random, avatarState, foods, simulatorSheets, logEvent)
         {
             // Store basic properties
             Foods = foods;

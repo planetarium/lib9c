@@ -377,7 +377,8 @@ namespace Lib9c.Tests.Action
                 new BuffLimitSheet(),
                 new BuffLinkSheet(),
                 new List<InfiniteTowerCondition>(),
-                0);
+                0,
+                logEvent: true);
 
             var enemies = new List<Enemy>();
             foreach (var waveData in waveRows)
