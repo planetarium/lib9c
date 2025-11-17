@@ -562,8 +562,9 @@ namespace Nekoyume.Battle
                 }
 
                 // Execute character's turn
+                // TurnNumber is incremented in Player.EndTurn() for player actions
+                // Enemy actions don't increment TurnNumber (consistent with other simulators)
                 character.Tick();
-                TurnNumber++;
 
                 // Update character priorities after action
                 UpdateCharacterPriorities();

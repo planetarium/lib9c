@@ -248,6 +248,95 @@ namespace Lib9c.Tests.Action
             Assert.True(simulator.Log.clearedWaveNumber <= simulator.Log.waveCount);
         }
 
+        [Fact]
+        public void TurnNumber_ShouldIncrementByOne_ForEachPlayerTurn()
+        {
+            // Arrange
+            var (simulator, player, _) = CreateTestSimulator();
+            var initialTurnNumber = simulator.TurnNumber;
+            Assert.Equal(0, initialTurnNumber);
+
+            // Act
+            simulator.Simulate();
+
+            // Assert
+            // TurnNumber should have increased (player must have acted)
+            Assert.True(simulator.TurnNumber > initialTurnNumber);
+
+            // Count WaveTurnEnd events - each represents one player turn
+            var waveTurnEndCount = simulator.Log.OfType<Nekoyume.Model.BattleStatus.WaveTurnEnd>().Count();
+
+            // TurnNumber should exactly match the number of player turns (WaveTurnEnd events)
+            // This verifies that TurnNumber increments by 1 for each player action
+            Assert.Equal(simulator.TurnNumber, waveTurnEndCount);
+        }
+
+        [Fact]
+        public void TurnNumber_ShouldMatchWaveTurnEndEvents_AfterSimulation()
+        {
+            // Arrange
+            var (simulator, player, _) = CreateTestSimulator();
+
+            // Act
+            simulator.Simulate();
+
+            // Assert
+            // Count WaveTurnEnd events (only player turns generate these)
+            var waveTurnEndCount = simulator.Log.OfType<Nekoyume.Model.BattleStatus.WaveTurnEnd>().Count();
+
+            // TurnNumber should match the number of WaveTurnEnd events
+            // This verifies that TurnNumber increments correctly for each player turn
+            Assert.Equal(simulator.TurnNumber, waveTurnEndCount);
+        }
+
+        [Fact]
+        public void TurnNumber_ShouldIncrementCorrectly_AcrossMultipleWaves()
+        {
+            // Arrange
+            var waveRows = new List<InfiniteTowerFloorWaveSheet.WaveData>
+            {
+                CreateTestWaveRow(1, 1, 201000, 1, 1),
+                CreateTestWaveRow(2, 1, 201001, 1, 1),
+            };
+
+            var (simulator, player, _) = CreateTestSimulatorWithWaves(waveRows);
+            var initialTurnNumber = simulator.TurnNumber;
+
+            // Act
+            simulator.Simulate();
+
+            // Assert
+            // TurnNumber should have increased (player must have acted at least once)
+            Assert.True(simulator.TurnNumber > initialTurnNumber);
+
+            // TurnNumber should match WaveTurnEnd events across all waves
+            var waveTurnEndCount = simulator.Log.OfType<Nekoyume.Model.BattleStatus.WaveTurnEnd>().Count();
+            Assert.Equal(simulator.TurnNumber, waveTurnEndCount);
+        }
+
+        [Fact]
+        public void TurnNumber_ShouldRespectTurnLimit()
+        {
+            // Arrange
+            var (simulator, player, _) = CreateTestSimulatorWithTurnLimit(5); // Very low turn limit
+            var initialTurnNumber = simulator.TurnNumber;
+
+            // Act
+            simulator.Simulate();
+
+            // Assert
+            // If TimeOver occurred, TurnNumber should exceed TurnLimit
+            if (simulator.Log.result == Nekoyume.Model.BattleStatus.BattleLog.Result.TimeOver)
+            {
+                Assert.True(simulator.TurnNumber > simulator.TurnLimit);
+            }
+            else
+            {
+                // If battle ended normally (Win/Lose), TurnNumber should be within reasonable bounds
+                Assert.True(simulator.TurnNumber > initialTurnNumber);
+            }
+        }
+
         private (InfiniteTowerSimulator Simulator, Player Player, List<Enemy> Enemies) CreateTestSimulator()
         {
             var waveRows = new List<InfiniteTowerFloorWaveSheet.WaveData>
