@@ -558,6 +558,13 @@ namespace Nekoyume.Battle
                 // Check if character queue is empty
                 if (!Characters.TryDequeue(out var character))
                 {
+                    // Queue is empty - check if wave is cleared
+                    // Use Player.Targets (same approach as StageSimulator)
+                    if (!Player.Targets.Any())
+                    {
+                        waveResult.IsClear = true;
+                        waveResult.Result = BattleLog.Result.Win;
+                    }
                     break;
                 }
 
@@ -566,10 +573,7 @@ namespace Nekoyume.Battle
                 // Enemy actions don't increment TurnNumber (consistent with other simulators)
                 character.Tick();
 
-                // Update character priorities after action
-                UpdateCharacterPriorities();
-
-                // Check if player is dead
+                // Check if player is dead (before updating priorities)
                 if (Player.IsDead)
                 {
                     waveResult.IsClear = false;
@@ -578,13 +582,17 @@ namespace Nekoyume.Battle
                 }
 
                 // Check if all enemies are dead (wave cleared)
-                var aliveEnemies = Characters.Where(c => c is Enemy && !c.IsDead).ToList();
-                if (!aliveEnemies.Any())
+                // Use Player.Targets (same approach as StageSimulator)
+                // Enemies are automatically removed from Player.Targets when they die via Enemy.OnDead()
+                if (!Player.Targets.Any())
                 {
                     waveResult.IsClear = true;
                     waveResult.Result = BattleLog.Result.Win;
                     break;
                 }
+
+                // Update character priorities after action
+                UpdateCharacterPriorities();
 
                 // Re-enqueue character for next turn
                 Characters.Enqueue(character, TurnPriority / character.SPD);
