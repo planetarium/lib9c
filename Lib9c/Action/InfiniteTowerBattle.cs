@@ -374,10 +374,10 @@ FloorId - 1,
                 sw.Elapsed);
 
             // Update rune slot
-            var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+            var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.InfiniteTower);
             var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
                 ? new RuneSlotState(rawRuneSlotState)
-                : new RuneSlotState(BattleType.Adventure);
+                : new RuneSlotState(BattleType.InfiniteTower);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
             states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
