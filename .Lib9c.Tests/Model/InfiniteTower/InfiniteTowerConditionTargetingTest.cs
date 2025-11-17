@@ -182,7 +182,7 @@ namespace Lib9c.Tests.Model.InfiniteTower
                 avatar,
                 new List<System.Guid>(),
                 new AllRuneState(),
-                new RuneSlotState(Nekoyume.Model.EnumType.BattleType.Adventure),
+                new RuneSlotState(Nekoyume.Model.EnumType.BattleType.InfiniteTower),
                 1,
                 1,
                 new InfiniteTowerFloorSheet.Row(),
