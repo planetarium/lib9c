@@ -916,7 +916,12 @@ namespace Nekoyume.TableData
                             $"[InfiniteTowerBattle][{addressesHex}] Material cost information is not configured for this floor");
                     }
 
-                    var materialRow = materialSheet.OrderedList.First(m => m.Id == MaterialCostId.Value);
+                    var materialRow = materialSheet.OrderedList?.FirstOrDefault(m => m.Id == MaterialCostId.Value);
+                    if (materialRow == null)
+                    {
+                        throw new SheetRowNotFoundException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Material with ID {MaterialCostId.Value} not found in MaterialItemSheet");
+                    }
                     var inventory = states.GetInventoryV2(avatarAddress);
 
                     // Check if player has enough material in inventory
@@ -936,13 +941,21 @@ namespace Nekoyume.TableData
             /// <param name="states">The world state</param>
             /// <param name="avatarState">The avatar state to update</param>
             /// <param name="avatarAddress">The avatar address</param>
+            /// <param name="equipmentSheet">The equipment item sheet</param>
+            /// <param name="materialSheet">The material item sheet</param>
+            /// <param name="consumableSheet">The consumable item sheet</param>
+            /// <param name="costumeSheet">The costume item sheet</param>
             /// <returns>Updated world state</returns>
             /// <exception cref="InvalidItemIdException">Thrown when item ID is not found in any item sheet</exception>
             public IWorld ProcessRewards(
                 IActionContext context,
                 IWorld states,
                 AvatarState avatarState,
-                Address avatarAddress)
+                Address avatarAddress,
+                EquipmentItemSheet equipmentSheet,
+                MaterialItemSheet materialSheet,
+                ConsumableItemSheet consumableSheet,
+                CostumeItemSheet costumeSheet)
             {
                 // Process all fungible asset rewards
                 var fungibleAssetRewards = GetFungibleAssetRewards();
@@ -995,37 +1008,24 @@ namespace Nekoyume.TableData
                             ItemBase? item = null;
 
                             // Try EquipmentItemSheet first
-                            var equipmentSheet = states.GetSheet<EquipmentItemSheet>();
                             if (equipmentSheet.TryGetValue(itemId, out var equipmentRow))
                             {
                                 item = ItemFactory.CreateItem(equipmentRow, context.GetRandom());
                             }
                             // Try MaterialItemSheet
-                            else
+                            else if (materialSheet.TryGetValue(itemId, out var materialRow))
                             {
-                                var materialSheet = states.GetSheet<MaterialItemSheet>();
-                                if (materialSheet.TryGetValue(itemId, out var materialRow))
-                                {
-                                    item = ItemFactory.CreateItem(materialRow, context.GetRandom());
-                                }
+                                item = ItemFactory.CreateItem(materialRow, context.GetRandom());
                             }
                             // Try ConsumableItemSheet
-                            if (item == null)
+                            else if (consumableSheet.TryGetValue(itemId, out var consumableRow))
                             {
-                                var consumableSheet = states.GetSheet<ConsumableItemSheet>();
-                                if (consumableSheet.TryGetValue(itemId, out var consumableRow))
-                                {
-                                    item = ItemFactory.CreateItem(consumableRow, context.GetRandom());
-                                }
+                                item = ItemFactory.CreateItem(consumableRow, context.GetRandom());
                             }
                             // Try CostumeItemSheet
-                            if (item == null)
+                            else if (costumeSheet.TryGetValue(itemId, out var costumeRow))
                             {
-                                var costumeSheet = states.GetSheet<CostumeItemSheet>();
-                                if (costumeSheet.TryGetValue(itemId, out var costumeRow))
-                                {
-                                    item = ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
-                                }
+                                item = ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
                             }
 
                             if (item != null)

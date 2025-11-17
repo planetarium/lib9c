@@ -206,6 +206,9 @@ namespace Nekoyume.Action
                 typeof(EquipmentItemRecipeSheet),
                 typeof(EquipmentItemSubRecipeSheetV2),
                 typeof(EquipmentItemOptionSheet),
+                typeof(EquipmentItemSheet),
+                typeof(ConsumableItemSheet),
+                typeof(CostumeItemSheet),
             };
             if (collectionExist)
             {
@@ -357,7 +360,10 @@ FloorId - 1,
                 floorRow.ValidateCurrencyForTicketPurchase(context, states, AvatarAddress, UseNcgForTicket, addressesHex);
 
                 // Purchase ticket with selected currency
-                states = PurchaseTicket(context, states, floorRow, infiniteTowerInfo);
+                var goldCurrency = states.GetGoldCurrency();
+                var feeAddress = states.GetFeeAddress(context.BlockIndex);
+                var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+                states = PurchaseTicket(context, states, floorRow, infiniteTowerInfo, goldCurrency, feeAddress, materialSheet, avatarState);
 
                 // Ensure the purchased ticket is consumed for this play
                 if (!infiniteTowerInfo.TryUseTickets(PlayCount))
@@ -380,7 +386,6 @@ FloorId - 1,
                 : new RuneSlotState(BattleType.InfiniteTower);
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
-            states = states.SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize());
 
             // Validate forbidden runes for this floor
             floorRow.ValidateRuneTypes(RuneInfos, runeListSheet);
@@ -392,7 +397,6 @@ FloorId - 1,
                 : new ItemSlotState(BattleType.InfiniteTower);
             itemSlotState.UpdateEquipment(Equipments);
             itemSlotState.UpdateCostumes(Costumes);
-            states = states.SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize());
 
             // Get conditions for this floor
             var conditionSheet = sheets.GetSheet<InfiniteTowerConditionSheet>();
@@ -460,10 +464,6 @@ FloorId - 1,
             sw.Restart();
             var simulatorSheets = sheets.GetSimulatorSheets();
             var runeStates = states.GetRuneState(AvatarAddress, out var migrateRequired2);
-            if (migrateRequired2)
-            {
-                states = states.SetRuneState(AvatarAddress, runeStates);
-            }
 
             var collectionModifiers = new List<StatModifier>();
             if (collectionExist)
@@ -534,10 +534,11 @@ FloorId - 1,
                 sw.Elapsed);
 
             // Update avatar's infinite tower info and process rewards
+            var wasAlreadyCleared = false;
             if (simulator.Log.IsClear)
             {
                 sw.Restart();
-                var wasAlreadyCleared = infiniteTowerInfo.IsCleared(FloorId);
+                wasAlreadyCleared = infiniteTowerInfo.IsCleared(FloorId);
                 infiniteTowerInfo.ClearFloor(FloorId);
                 sw.Stop();
                 Log.Verbose(
@@ -549,7 +550,19 @@ FloorId - 1,
                 if (!wasAlreadyCleared)
                 {
                     sw.Restart();
-                    states = floorRow.ProcessRewards(context, states, avatarState, AvatarAddress);
+                    var equipmentSheet = sheets.GetSheet<EquipmentItemSheet>();
+                    var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+                    var consumableSheet = sheets.GetSheet<ConsumableItemSheet>();
+                    var costumeSheet = sheets.GetSheet<CostumeItemSheet>();
+                    states = floorRow.ProcessRewards(
+                        context,
+                        states,
+                        avatarState,
+                        AvatarAddress,
+                        equipmentSheet,
+                        materialSheet,
+                        consumableSheet,
+                        costumeSheet);
                     sw.Stop();
                     Log.Verbose(
                         "[InfiniteTowerBattle][{AddressesHex}] Process rewards (first clear): {Elapsed}",
@@ -563,33 +576,28 @@ FloorId - 1,
                         addressesHex,
                         FloorId);
                 }
-
-                // Update infinite tower board state for clear count tracking (only for first-time clears)
-                if (!wasAlreadyCleared)
-                {
-                    sw.Restart();
-                    states = UpdateInfiniteTowerBoardState(states, context, addressesHex);
-                    sw.Stop();
-                    Log.Verbose(
-                        "[InfiniteTowerBattle][{AddressesHex}] Update infinite tower board state (first clear): {Elapsed}",
-                        addressesHex,
-                        sw.Elapsed);
-                }
-                else
-                {
-                    Log.Verbose(
-                        "[InfiniteTowerBattle][{AddressesHex}] Floor {FloorId} already cleared, skipping board state update",
-                        addressesHex,
-                        FloorId);
-                }
             }
 
-            // Set states
+            // Set states - all state updates are consolidated here to avoid overwriting
             sw.Restart();
             states = states
                 .SetAvatarState(AvatarAddress, avatarState)
                 .SetInfiniteTowerInfo(AvatarAddress, infiniteTowerInfo)
+                .SetLegacyState(runeSlotStateAddress, runeSlotState.Serialize())
+                .SetLegacyState(itemSlotStateAddress, itemSlotState.Serialize())
                 .SetCp(AvatarAddress, BattleType.InfiniteTower, cp);
+
+            // Set rune state if migration is required
+            if (migrateRequired2)
+            {
+                states = states.SetRuneState(AvatarAddress, runeStates);
+            }
+
+            // Update infinite tower board state for clear count tracking (only for first-time clears)
+            if (simulator.Log.IsClear && !wasAlreadyCleared)
+            {
+                states = UpdateInfiniteTowerBoardState(states, context, addressesHex);
+            }
 
             sw.Stop();
             Log.Verbose(
@@ -612,12 +620,20 @@ FloorId - 1,
         /// <param name="states">The world state.</param>
         /// <param name="floorRow">The floor configuration.</param>
         /// <param name="infiniteTowerInfo">The infinite tower info to update.</param>
+        /// <param name="goldCurrency">The gold currency.</param>
+        /// <param name="feeAddress">The fee address.</param>
+        /// <param name="materialSheet">The material item sheet.</param>
+        /// <param name="avatarState">The avatar state containing inventory.</param>
         /// <returns>Updated world state.</returns>
         private IWorld PurchaseTicket(
             IActionContext context,
             IWorld states,
             InfiniteTowerFloorSheet.Row floorRow,
-            InfiniteTowerInfo infiniteTowerInfo)
+            InfiniteTowerInfo infiniteTowerInfo,
+            Currency goldCurrency,
+            Address feeAddress,
+            MaterialItemSheet materialSheet,
+            AvatarState avatarState)
         {
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
 
@@ -630,7 +646,6 @@ FloorId - 1,
                 }
 
                 // Purchase with NCG
-                var goldCurrency = states.GetGoldCurrency();
                 var ticketCost = goldCurrency * floorRow.NcgCost.Value;
 
                 // Check if player has enough NCG
@@ -644,7 +659,6 @@ FloorId - 1,
                 }
 
                 // Transfer NCG to fee address
-                var feeAddress = states.GetFeeAddress(context.BlockIndex);
                 states = states.TransferAsset(context, context.Signer, feeAddress, ticketCost);
 
                 Log.Verbose(
@@ -655,21 +669,19 @@ FloorId - 1,
             else
             {
                 // Purchase with material (inventory item)
-                var materialSheet = states.GetSheet<MaterialItemSheet>();
-                var materialRow = materialSheet.OrderedList.First(m => m.Id == floorRow.MaterialCostId);
-
-                // Get avatar's inventory
-                var inventory = states.GetInventoryV2(AvatarAddress);
+                var materialRow = materialSheet.OrderedList?.FirstOrDefault(m => m.Id == floorRow.MaterialCostId);
+                if (materialRow == null)
+                {
+                    throw new SheetRowNotFoundException(
+                        $"[InfiniteTowerBattle][{addressesHex}] Material with ID {floorRow.MaterialCostId} not found in MaterialItemSheet");
+                }
 
                 // Check if player has enough material in inventory
-                if (!inventory.RemoveFungibleItem(materialRow.ItemId, context.BlockIndex, floorRow.MaterialCostCount.Value))
+                if (!avatarState.inventory.RemoveFungibleItem(materialRow.ItemId, context.BlockIndex, floorRow.MaterialCostCount.Value))
                 {
                     throw new NotEnoughMaterialException(
                         $"[InfiniteTowerBattle][{addressesHex}] Not enough material to purchase ticket: needs {floorRow.MaterialCostCount}");
                 }
-
-                // Update inventory
-                states = states.SetInventory(AvatarAddress, inventory);
 
                 Log.Verbose(
                     "[InfiniteTowerBattle][{AddressesHex}] Purchased ticket with Material: {MaterialId} x {Count}",
