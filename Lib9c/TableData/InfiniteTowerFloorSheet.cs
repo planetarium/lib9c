@@ -16,6 +16,7 @@ using Nekoyume.Model.Elemental;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.InfiniteTower;
 using Nekoyume.Model.Rune;
+using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData.Rune;
@@ -169,6 +170,10 @@ namespace Nekoyume.TableData
             /// </summary>
             public int? MaterialCostCount { get; private set; }
 
+            /// <summary>
+            /// Gets the list of initial stat modifiers applied to enemies on this floor.
+            /// </summary>
+            public List<StatModifier> EnemyInitialStatModifiers { get; private set; } = new();
 
             /// <summary>
             /// Gets the list of forbidden rune types for this floor.
@@ -352,6 +357,40 @@ namespace Nekoyume.TableData
                 if (fields.Count > 46)
                 {
                     RequiredElementalTypes = string.IsNullOrEmpty(fields[46]) ? new List<ElementalType>() : ParseElementalTypes(fields[46]);
+                }
+
+                // Parse enemy initial stat modifiers (fields 47-52: HP, ATK, DEF, CRI, HIT, SPD)
+                EnemyInitialStatModifiers = new List<StatModifier>();
+                if (fields.Count > 47)
+                {
+                    for (var i = 0; i < 6; i++)
+                    {
+                        var fieldIndex = 47 + i;
+                        if (fieldIndex < fields.Count && TryParseInt(fields[fieldIndex], out var option) && option != 0)
+                        {
+                            switch (i)
+                            {
+                                case 0:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 1:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 2:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.DEF, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 3:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.CRI, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 4:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.HIT, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 5:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.SPD, StatModifier.OperationType.Percentage, option));
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
 
