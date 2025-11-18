@@ -8,6 +8,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.Rune;
+    using Nekoyume.Model.Stat;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Rune;
     using Xunit;
@@ -551,6 +552,249 @@ namespace Lib9c.Tests.Action
             Assert.NotNull(exception.EquippedRuneTypes);
             Assert.Contains(RuneType.Stat, exception.ForbiddenRuneTypes);
             Assert.Contains(RuneType.Stat, exception.EquippedRuneTypes);
+        }
+
+        [Fact]
+        public void Set_WithEnemyInitialStatModifiers_ShouldParseCorrectly()
+        {
+            // Arrange
+            var fields = new List<string>
+            {
+                "1", // Id
+                "1", // Floor
+                string.Empty, // RequiredCp
+                string.Empty, // MaxCp
+                string.Empty, // ForbiddenItemSubTypes
+                string.Empty, // MinItemGrade
+                string.Empty, // MaxItemGrade
+                string.Empty, // MinItemLevel
+                string.Empty, // MaxItemLevel
+                "1", // GuaranteedConditionId
+                "0", // MinRandomConditions
+                "2", // MaxRandomConditions
+                string.Empty, // RandomConditionId1
+                string.Empty, // RandomConditionWeight1
+                string.Empty, // RandomConditionId2
+                string.Empty, // RandomConditionWeight2
+                string.Empty, // RandomConditionId3
+                string.Empty, // RandomConditionWeight3
+                string.Empty, // RandomConditionId4
+                string.Empty, // RandomConditionWeight4
+                string.Empty, // RandomConditionId5
+                string.Empty, // RandomConditionWeight5
+                string.Empty, // ItemRewardId1
+                string.Empty, // ItemRewardCount1
+                string.Empty, // ItemRewardId2
+                string.Empty, // ItemRewardCount2
+                string.Empty, // ItemRewardId3
+                string.Empty, // ItemRewardCount3
+                string.Empty, // ItemRewardId4
+                string.Empty, // ItemRewardCount4
+                string.Empty, // ItemRewardId5
+                string.Empty, // ItemRewardCount5
+                string.Empty, // FungibleAssetRewardTicker1
+                string.Empty, // FungibleAssetRewardAmount1
+                string.Empty, // FungibleAssetRewardTicker2
+                string.Empty, // FungibleAssetRewardAmount2
+                string.Empty, // FungibleAssetRewardTicker3
+                string.Empty, // FungibleAssetRewardAmount3
+                string.Empty, // FungibleAssetRewardTicker4
+                string.Empty, // FungibleAssetRewardAmount4
+                string.Empty, // FungibleAssetRewardTicker5
+                string.Empty, // FungibleAssetRewardAmount5
+                string.Empty, // NcgCost
+                string.Empty, // MaterialCostId
+                string.Empty, // MaterialCostCount
+                string.Empty, // ForbiddenRuneTypes
+                string.Empty, // RequiredElementalTypes
+                "10", // EnemyInitialStatModifiers[0] - HP
+                "20", // EnemyInitialStatModifiers[1] - ATK
+                "30", // EnemyInitialStatModifiers[2] - DEF
+                "40", // EnemyInitialStatModifiers[3] - CRI
+                "50", // EnemyInitialStatModifiers[4] - HIT
+                "60", // EnemyInitialStatModifiers[5] - SPD
+            };
+
+            // Act
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            floorRow.Set(fields);
+
+            // Assert
+            Assert.NotNull(floorRow.EnemyInitialStatModifiers);
+            Assert.Equal(6, floorRow.EnemyInitialStatModifiers.Count);
+
+            var hpModifier = floorRow.EnemyInitialStatModifiers.FirstOrDefault(m => m.StatType == StatType.HP);
+            Assert.NotNull(hpModifier);
+            Assert.Equal(StatModifier.OperationType.Percentage, hpModifier.Operation);
+            Assert.Equal(10, hpModifier.Value);
+
+            var atkModifier = floorRow.EnemyInitialStatModifiers.FirstOrDefault(m => m.StatType == StatType.ATK);
+            Assert.NotNull(atkModifier);
+            Assert.Equal(StatModifier.OperationType.Percentage, atkModifier.Operation);
+            Assert.Equal(20, atkModifier.Value);
+
+            var defModifier = floorRow.EnemyInitialStatModifiers.FirstOrDefault(m => m.StatType == StatType.DEF);
+            Assert.NotNull(defModifier);
+            Assert.Equal(StatModifier.OperationType.Percentage, defModifier.Operation);
+            Assert.Equal(30, defModifier.Value);
+
+            var criModifier = floorRow.EnemyInitialStatModifiers.FirstOrDefault(m => m.StatType == StatType.CRI);
+            Assert.NotNull(criModifier);
+            Assert.Equal(StatModifier.OperationType.Percentage, criModifier.Operation);
+            Assert.Equal(40, criModifier.Value);
+
+            var hitModifier = floorRow.EnemyInitialStatModifiers.FirstOrDefault(m => m.StatType == StatType.HIT);
+            Assert.NotNull(hitModifier);
+            Assert.Equal(StatModifier.OperationType.Percentage, hitModifier.Operation);
+            Assert.Equal(50, hitModifier.Value);
+
+            var spdModifier = floorRow.EnemyInitialStatModifiers.FirstOrDefault(m => m.StatType == StatType.SPD);
+            Assert.NotNull(spdModifier);
+            Assert.Equal(StatModifier.OperationType.Percentage, spdModifier.Operation);
+            Assert.Equal(60, spdModifier.Value);
+        }
+
+        [Fact]
+        public void Set_WithPartialEnemyInitialStatModifiers_ShouldParseOnlyValidValues()
+        {
+            // Arrange
+            var fields = new List<string>
+            {
+                "1", // Id
+                "1", // Floor
+                string.Empty, // RequiredCp
+                string.Empty, // MaxCp
+                string.Empty, // ForbiddenItemSubTypes
+                string.Empty, // MinItemGrade
+                string.Empty, // MaxItemGrade
+                string.Empty, // MinItemLevel
+                string.Empty, // MaxItemLevel
+                "1", // GuaranteedConditionId
+                "0", // MinRandomConditions
+                "2", // MaxRandomConditions
+                string.Empty, // RandomConditionId1
+                string.Empty, // RandomConditionWeight1
+                string.Empty, // RandomConditionId2
+                string.Empty, // RandomConditionWeight2
+                string.Empty, // RandomConditionId3
+                string.Empty, // RandomConditionWeight3
+                string.Empty, // RandomConditionId4
+                string.Empty, // RandomConditionWeight4
+                string.Empty, // RandomConditionId5
+                string.Empty, // RandomConditionWeight5
+                string.Empty, // ItemRewardId1
+                string.Empty, // ItemRewardCount1
+                string.Empty, // ItemRewardId2
+                string.Empty, // ItemRewardCount2
+                string.Empty, // ItemRewardId3
+                string.Empty, // ItemRewardCount3
+                string.Empty, // ItemRewardId4
+                string.Empty, // ItemRewardCount4
+                string.Empty, // ItemRewardId5
+                string.Empty, // ItemRewardCount5
+                string.Empty, // FungibleAssetRewardTicker1
+                string.Empty, // FungibleAssetRewardAmount1
+                string.Empty, // FungibleAssetRewardTicker2
+                string.Empty, // FungibleAssetRewardAmount2
+                string.Empty, // FungibleAssetRewardTicker3
+                string.Empty, // FungibleAssetRewardAmount3
+                string.Empty, // FungibleAssetRewardTicker4
+                string.Empty, // FungibleAssetRewardAmount4
+                string.Empty, // FungibleAssetRewardTicker5
+                string.Empty, // FungibleAssetRewardAmount5
+                string.Empty, // NcgCost
+                string.Empty, // MaterialCostId
+                string.Empty, // MaterialCostCount
+                string.Empty, // ForbiddenRuneTypes
+                string.Empty, // RequiredElementalTypes
+                "10", // EnemyInitialStatModifiers[0] - HP
+                "0", // EnemyInitialStatModifiers[1] - ATK (should be ignored)
+                string.Empty, // EnemyInitialStatModifiers[2] - DEF (should be ignored)
+                "40", // EnemyInitialStatModifiers[3] - CRI
+                "0", // EnemyInitialStatModifiers[4] - HIT (should be ignored)
+                "60", // EnemyInitialStatModifiers[5] - SPD
+            };
+
+            // Act
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            floorRow.Set(fields);
+
+            // Assert
+            Assert.NotNull(floorRow.EnemyInitialStatModifiers);
+            Assert.Equal(3, floorRow.EnemyInitialStatModifiers.Count); // Only HP, CRI, SPD should be added
+
+            Assert.Contains(floorRow.EnemyInitialStatModifiers, m => m.StatType == StatType.HP && m.Value == 10);
+            Assert.Contains(floorRow.EnemyInitialStatModifiers, m => m.StatType == StatType.CRI && m.Value == 40);
+            Assert.Contains(floorRow.EnemyInitialStatModifiers, m => m.StatType == StatType.SPD && m.Value == 60);
+
+            Assert.DoesNotContain(floorRow.EnemyInitialStatModifiers, m => m.StatType == StatType.ATK);
+            Assert.DoesNotContain(floorRow.EnemyInitialStatModifiers, m => m.StatType == StatType.DEF);
+            Assert.DoesNotContain(floorRow.EnemyInitialStatModifiers, m => m.StatType == StatType.HIT);
+        }
+
+        [Fact]
+        public void Set_WithNoEnemyInitialStatModifiers_ShouldHaveEmptyList()
+        {
+            // Arrange
+            var fields = new List<string>
+            {
+                "1", // Id
+                "1", // Floor
+                string.Empty, // RequiredCp
+                string.Empty, // MaxCp
+                string.Empty, // ForbiddenItemSubTypes
+                string.Empty, // MinItemGrade
+                string.Empty, // MaxItemGrade
+                string.Empty, // MinItemLevel
+                string.Empty, // MaxItemLevel
+                "1", // GuaranteedConditionId
+                "0", // MinRandomConditions
+                "2", // MaxRandomConditions
+                string.Empty, // RandomConditionId1
+                string.Empty, // RandomConditionWeight1
+                string.Empty, // RandomConditionId2
+                string.Empty, // RandomConditionWeight2
+                string.Empty, // RandomConditionId3
+                string.Empty, // RandomConditionWeight3
+                string.Empty, // RandomConditionId4
+                string.Empty, // RandomConditionWeight4
+                string.Empty, // RandomConditionId5
+                string.Empty, // RandomConditionWeight5
+                string.Empty, // ItemRewardId1
+                string.Empty, // ItemRewardCount1
+                string.Empty, // ItemRewardId2
+                string.Empty, // ItemRewardCount2
+                string.Empty, // ItemRewardId3
+                string.Empty, // ItemRewardCount3
+                string.Empty, // ItemRewardId4
+                string.Empty, // ItemRewardCount4
+                string.Empty, // ItemRewardId5
+                string.Empty, // ItemRewardCount5
+                string.Empty, // FungibleAssetRewardTicker1
+                string.Empty, // FungibleAssetRewardAmount1
+                string.Empty, // FungibleAssetRewardTicker2
+                string.Empty, // FungibleAssetRewardAmount2
+                string.Empty, // FungibleAssetRewardTicker3
+                string.Empty, // FungibleAssetRewardAmount3
+                string.Empty, // FungibleAssetRewardTicker4
+                string.Empty, // FungibleAssetRewardAmount4
+                string.Empty, // FungibleAssetRewardTicker5
+                string.Empty, // FungibleAssetRewardAmount5
+                string.Empty, // NcgCost
+                string.Empty, // MaterialCostId
+                string.Empty, // MaterialCostCount
+                string.Empty, // ForbiddenRuneTypes
+                string.Empty, // RequiredElementalTypes
+                // No EnemyInitialStatModifiers fields
+            };
+
+            // Act
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            floorRow.Set(fields);
+
+            // Assert
+            Assert.NotNull(floorRow.EnemyInitialStatModifiers);
+            Assert.Empty(floorRow.EnemyInitialStatModifiers);
         }
 
         [Fact]

@@ -443,8 +443,8 @@ namespace Nekoyume.Battle
                 // Create the specified number of enemies for this monster type
                 for (int i = 0; i < monsterData.Count; i++)
                 {
-                    // Create stats with monster data (level, etc.)
-                    var stat = new CharacterStats(characterRow, monsterData.Level);
+                    // Create stats with monster data (level, etc.) and apply initial stat modifiers
+                    var stat = new CharacterStats(characterRow, monsterData.Level, FloorRow.EnemyInitialStatModifiers);
 
                     // Create enemy with player as target
                     var enemy = new Enemy(Player, stat, characterRow, characterRow.ElementalType);
