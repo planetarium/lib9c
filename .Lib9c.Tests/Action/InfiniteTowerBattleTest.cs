@@ -2099,6 +2099,112 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        [Fact]
+        public void Execute_ShouldMigrateUnlockedRuneSlotsFromAdventure()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create Adventure rune slot state with some unlocked slots
+            var adventureSlotState = new RuneSlotState(BattleType.Adventure);
+            adventureSlotState.Unlock(1); // Unlock slot 1
+            adventureSlotState.Unlock(4); // Unlock slot 4
+            adventureSlotState.Unlock(6); // Unlock slot 6
+            var adventureSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
+            initialState = (World)initialState.SetLegacyState(adventureSlotStateAddress, adventureSlotState.Serialize());
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert - Verify that unlocked slots from Adventure are also unlocked in InfiniteTower
+            var infiniteTowerSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            var rawInfiniteTowerSlotState = nextState.GetLegacyState(infiniteTowerSlotStateAddress);
+            Assert.NotNull(rawInfiniteTowerSlotState);
+            var infiniteTowerSlotState = new RuneSlotState((List)rawInfiniteTowerSlotState);
+            var infiniteTowerSlots = infiniteTowerSlotState.GetRuneSlot();
+
+            // Verify that slots 1, 4, and 6 are unlocked (migrated from Adventure)
+            var slot1 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 1);
+            Assert.NotNull(slot1);
+            Assert.False(slot1.IsLock, "Slot 1 should be unlocked (migrated from Adventure)");
+
+            var slot4 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 4);
+            Assert.NotNull(slot4);
+            Assert.False(slot4.IsLock, "Slot 4 should be unlocked (migrated from Adventure)");
+
+            var slot6 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 6);
+            Assert.NotNull(slot6);
+            Assert.False(slot6.IsLock, "Slot 6 should be unlocked (migrated from Adventure)");
+
+            // Verify that other slots that were locked in Adventure remain locked
+            var slot2 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 2);
+            Assert.NotNull(slot2);
+            Assert.True(slot2.IsLock, "Slot 2 should remain locked (was locked in Adventure)");
+        }
+
         /// <summary>
         /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
         /// </summary>

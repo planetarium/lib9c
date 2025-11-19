@@ -381,9 +381,36 @@ FloorId - 1,
 
             // Update rune slot
             var runeSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.InfiniteTower);
-            var runeSlotState = states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState)
-                ? new RuneSlotState(rawRuneSlotState)
-                : new RuneSlotState(BattleType.InfiniteTower);
+            var isNewRuneSlotState = !states.TryGetLegacyState(runeSlotStateAddress, out List rawRuneSlotState);
+            var runeSlotState = isNewRuneSlotState
+                ? new RuneSlotState(BattleType.InfiniteTower)
+                : new RuneSlotState(rawRuneSlotState);
+
+            // Migrate unlock status from Adventure rune slot state for existing users
+            if (isNewRuneSlotState)
+            {
+                var adventureSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.Adventure);
+                if (states.TryGetLegacyState(adventureSlotStateAddress, out List rawAdventureSlotState))
+                {
+                    var adventureSlotState = new RuneSlotState(rawAdventureSlotState);
+                    var adventureSlots = adventureSlotState.GetRuneSlot();
+                    var infiniteTowerSlots = runeSlotState.GetRuneSlot();
+
+                    // Unlock slots in InfiniteTower that are unlocked in Adventure
+                    foreach (var adventureSlot in adventureSlots)
+                    {
+                        if (!adventureSlot.IsLock)
+                        {
+                            var infiniteTowerSlot = infiniteTowerSlots.FirstOrDefault(s => s.Index == adventureSlot.Index);
+                            if (infiniteTowerSlot != null && infiniteTowerSlot.IsLock)
+                            {
+                                infiniteTowerSlot.Unlock();
+                            }
+                        }
+                    }
+                }
+            }
+
             var runeListSheet = sheets.GetSheet<RuneListSheet>();
             runeSlotState.UpdateSlot(RuneInfos, runeListSheet);
 
