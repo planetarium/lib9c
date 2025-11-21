@@ -550,8 +550,7 @@ FloorId - 1,
                 buffLimitSheet,
                 buffLinkSheet,
                 allConditions,
-                (int)gameConfigState.ShatterStrikeMaxDamage,
-                logEvent: true); // Turn limit for all waves combined
+                (int)gameConfigState.ShatterStrikeMaxDamage); // Turn limit for all waves combined
 
             simulator.Simulate();
             sw.Stop();
