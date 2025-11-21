@@ -984,6 +984,7 @@ namespace Nekoyume.TableData
             /// <param name="materialSheet">The material item sheet</param>
             /// <param name="consumableSheet">The consumable item sheet</param>
             /// <param name="costumeSheet">The costume item sheet</param>
+            /// <param name="random">Random number generator for creating items</param>
             /// <returns>Updated world state</returns>
             /// <exception cref="InvalidItemIdException">Thrown when item ID is not found in any item sheet</exception>
             public IWorld ProcessRewards(
@@ -994,7 +995,8 @@ namespace Nekoyume.TableData
                 EquipmentItemSheet equipmentSheet,
                 MaterialItemSheet materialSheet,
                 ConsumableItemSheet consumableSheet,
-                CostumeItemSheet costumeSheet)
+                CostumeItemSheet costumeSheet,
+                Libplanet.Action.IRandom random)
             {
                 // Process all fungible asset rewards
                 var fungibleAssetRewards = GetFungibleAssetRewards();
@@ -1043,33 +1045,48 @@ namespace Nekoyume.TableData
                     {
                         if (count > 0)
                         {
-                            // Try to find item in different sheets
-                            ItemBase? item = null;
-
-                            // Try EquipmentItemSheet first
-                            if (equipmentSheet.TryGetValue(itemId, out var equipmentRow))
+                            // Determine item type and handle count appropriately
+                            // Material is fungible (count accumulates), others are non-fungible (each needs unique instance)
+                            if (materialSheet.TryGetValue(itemId, out var materialRow))
                             {
-                                item = ItemFactory.CreateItem(equipmentRow, context.GetRandom());
+                                // Material: Fungible item, count accumulates
+                                var materialItem = ItemFactory.CreateItem(materialRow, random);
+                                avatarState.inventory.AddItem(materialItem, count);
                             }
-                            // Try MaterialItemSheet
-                            else if (materialSheet.TryGetValue(itemId, out var materialRow))
+                            else if (equipmentSheet.TryGetValue(itemId, out var equipmentRow))
                             {
-                                item = ItemFactory.CreateItem(materialRow, context.GetRandom());
+                                // Equipment: Non-fungible item, create count instances
+                                for (int i = 0; i < count; i++)
+                                {
+                                    var equipmentItem = ItemFactory.CreateItem(equipmentRow, random);
+                                    avatarState.inventory.AddItem(equipmentItem);
+                                }
                             }
-                            // Try ConsumableItemSheet
                             else if (consumableSheet.TryGetValue(itemId, out var consumableRow))
                             {
-                                item = ItemFactory.CreateItem(consumableRow, context.GetRandom());
+                                // Consumable: Non-fungible item, create count instances
+                                for (int i = 0; i < count; i++)
+                                {
+                                    var consumableItem = ItemFactory.CreateItem(consumableRow, random);
+                                    avatarState.inventory.AddItem(consumableItem);
+                                }
                             }
-                            // Try CostumeItemSheet
                             else if (costumeSheet.TryGetValue(itemId, out var costumeRow))
                             {
-                                item = ItemFactory.CreateCostume(costumeRow, Guid.NewGuid());
+                                // Costume: Non-fungible item, create count instances
+                                for (int i = 0; i < count; i++)
+                                {
+                                    var costumeItem = ItemFactory.CreateCostume(costumeRow, random.GenerateRandomGuid());
+                                    avatarState.inventory.AddItem(costumeItem);
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidItemIdException($"Item ID {itemId} not found in any item sheet");
                             }
 
-                            if (item != null)
+                            if (count > 0)
                             {
-                                avatarState.inventory.AddItem(item, count);
 
                                 Log.Verbose(
                                     "[InfiniteTowerBattle] Item reward: ID={ItemId}, Count={Count}",

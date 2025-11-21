@@ -589,7 +589,8 @@ FloorId - 1,
                         equipmentSheet,
                         materialSheet,
                         consumableSheet,
-                        costumeSheet);
+                        costumeSheet,
+                        random);
                     sw.Stop();
                     Log.Verbose(
                         "[InfiniteTowerBattle][{AddressesHex}] Process rewards (first clear): {Elapsed}",
