@@ -100,6 +100,15 @@ namespace Lib9c.Tests.Action
                 Assert.False(slot.IsLock);
             }
 
+            var infiniteTowerAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            if (state.TryGetLegacyState(infiniteTowerAddr, out List infiniteTowerRaw))
+            {
+                var s = new RuneSlotState(infiniteTowerRaw);
+                var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
+                Assert.NotNull(slot);
+                Assert.False(slot.IsLock);
+            }
+
             var balance = state.GetBalance(agentAddress, ncgCurrency);
             Assert.Equal("0", balance.GetQuantityString());
         }
@@ -222,7 +231,7 @@ namespace Lib9c.Tests.Action
             state = state.MintAsset(context, agentAddress, cost * Currencies.Crystal);
             if (legacyState)
             {
-                foreach (var battleType in new[] { BattleType.Adventure, BattleType.Arena, BattleType.Raid, })
+                foreach (var battleType in new[] { BattleType.Adventure, BattleType.Arena, BattleType.Raid, BattleType.InfiniteTower })
                 {
                     var runeSlotState = new RuneSlotState(battleType);
                     var serialized = (List)runeSlotState.Serialize();
@@ -270,6 +279,15 @@ namespace Lib9c.Tests.Action
             if (state.TryGetLegacyState(raidAddr, out List raidRaw))
             {
                 var s = new RuneSlotState(raidRaw);
+                var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
+                Assert.NotNull(slot);
+                Assert.False(slot.IsLock);
+            }
+
+            var infiniteTowerAddr = RuneSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            if (state.TryGetLegacyState(infiniteTowerAddr, out List infiniteTowerRaw))
+            {
+                var s = new RuneSlotState(infiniteTowerRaw);
                 var slot = s.GetRuneSlot().FirstOrDefault(x => x.Index == slotIndex);
                 Assert.NotNull(slot);
                 Assert.False(slot.IsLock);

@@ -7,8 +7,8 @@ namespace Nekoyume.Model.Stat
     {
         public enum OperationType
         {
-            Add,
-            Percentage
+            Add = 0,
+            Percentage = 1,
         }
 
         public StatType StatType { get; }

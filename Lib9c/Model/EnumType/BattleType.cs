@@ -7,7 +7,8 @@ namespace Nekoyume.Model.EnumType
         Adventure = 1,
         Arena = 2,
         Raid = 3,
-        End = 4,
+        InfiniteTower = 4,
+        End = 5,
     }
 
     public static class BattleTypeExtensions
@@ -17,6 +18,7 @@ namespace Nekoyume.Model.EnumType
             switch (battleType)
             {
                 case BattleType.Adventure:
+                case BattleType.InfiniteTower:
                     switch (runePlace)
                     {
                         case RuneUsePlace.Adventure:

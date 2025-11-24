@@ -6,11 +6,11 @@ namespace Nekoyume.Model.Elemental
 {
     public enum ElementalType
     {
-        Normal,
-        Fire,
-        Water,
-        Land,
-        Wind,
+        Normal = 0,
+        Fire = 1,
+        Water = 2,
+        Land = 3,
+        Wind = 4,
     }
 
     public enum ElementalResult

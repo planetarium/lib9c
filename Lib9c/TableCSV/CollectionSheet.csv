@@ -440,6 +440,10 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 439,10471000,1,0,FALSE,10472000,1,0,FALSE,,,,,,,,,,,,,,,,,HIT,Add,1531875,,,,,,
 440,10570000,1,0,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,211696,,,,,,
 441,10571000,1,0,FALSE,10572000,1,0,FALSE,,,,,,,,,,,,,,,,,DEF,Add,423392,,,,,,
+442,10770001,1,0,TRUE,10770002,1,0,TRUE,10770003,1,0,TRUE,,,,,,,,,,,,,ATK,Percentage,20,HP,Percentage,10,,,
+443,10770004,1,0,TRUE,10770005,1,0,TRUE,10770006,1,0,TRUE,,,,,,,,,,,,,DEF,Percentage,20,HP,Percentage,10,,,
+444,10770007,1,0,TRUE,10770008,1,0,TRUE,10770009,1,0,TRUE,,,,,,,,,,,,,SPD,Percentage,20,HP,Percentage,10,,,
+445,10670000,1,0,TRUE,10670001,1,0,TRUE,10670002,1,0,TRUE,10670003,1,0,TRUE,,,,,,,,,ATK,Percentage,25,HP,Percentage,25,DEF,Percentage,25
 10001,201000,5,,FALSE,,,,,,,,,,,,,,,,,,,,,CDMG,Percentage,1,,,,,,
 10002,201001,5,,FALSE,,,,,,,,,,,,,,,,,,,,,CDMG,Percentage,1,,,,,,
 10003,201020,5,,FALSE,,,,,,,,,,,,,,,,,,,,,CDMG,Percentage,1,,,,,,
@@ -667,6 +671,11 @@ id,item_id1,count1,level1,skill1,item_id2,count2,level2,skill2,item_id3,count3,l
 300039,40100045,1,,FALSE,40100044,1,,FALSE,,,,,,,,,,,,,,,,,DEF,Percentage,20,HP,Percentage,20,HIT,Percentage,20
 300040,40100049,1,,FALSE,40100050,1,,FALSE,,,,,,,,,,,,,,,,,SPD,Percentage,20,HIT,Percentage,20,HP,Percentage,20
 300041,49900043,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,2,SPD,Percentage,2,HIT,Percentage,2
+300042,49900044,1,,FALSE,,,,,,,,,,,,,,,,,,,,,HP,Percentage,2,DEF,Percentage,2,HIT,Percentage,2
+300043,49900045,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Percentage,2,SPD,Percentage,2,HP,Percentage,2
+300044,49900048,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,873042,HP,Add,13095632,DEF,Add,748321
+300045,49900049,1,,FALSE,,,,,,,,,,,,,,,,,,,,,ATK,Add,930396,SPD,Add,4651984,HIT,Add,1820341
+300046,49900048,1,,FALSE,49900049,1,,FALSE,,,,,,,,,,,,,,,,,ATK,Percentage,20,HP,Percentage,20,SPD,Percentage,20
 1000101,500000,10,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,1309,,,,,,
 1000102,500000,100,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,3588,,,,,,
 1000103,500000,300,,FALSE,,,,,,,,,,,,,,,,,,,,,DEF,Add,6185,,,,,,

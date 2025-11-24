@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Model.Skill.Arena
                 ArenaCharacter caster,
                 ArenaCharacter target,
                 int turn,
-                IEnumerable<Nekoyume.Model.Buff.Buff> buffs)
+                IEnumerable<Buff> buffs)
             {
                 // Not used in this test
                 return null;
