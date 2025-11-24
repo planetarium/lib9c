@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Nekoyume.Action.Exceptions;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
@@ -58,6 +59,21 @@ namespace Nekoyume.TableData
             /// </summary>
             public int ResetIntervalBlocks { get; private set; }
 
+            /// <summary>
+            /// Gets the starting floor number for this schedule.
+            /// </summary>
+            public int FloorBegin { get; private set; }
+
+            /// <summary>
+            /// Gets the ending floor number for this schedule.
+            /// </summary>
+            public int FloorEnd { get; private set; }
+
+            /// <summary>
+            /// Gets the total number of floors in this schedule.
+            /// </summary>
+            public int FloorsCount => FloorEnd - FloorBegin + 1;
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
@@ -67,6 +83,8 @@ namespace Nekoyume.TableData
                 DailyFreeTickets = ParseInt(fields[4]);
                 MaxTickets = ParseInt(fields[5]);
                 ResetIntervalBlocks = ParseInt(fields[6]);
+                FloorBegin = fields.Count > 7 ? ParseInt(fields[7]) : 1;
+                FloorEnd = fields.Count > 8 ? ParseInt(fields[8]) : int.MaxValue;
             }
 
             /// <summary>
@@ -110,6 +128,88 @@ namespace Nekoyume.TableData
                     return 0;
 
                 return EndBlockIndex - currentBlockIndex;
+            }
+
+            /// <summary>
+            /// Validates that the infinite tower ID matches this schedule's configuration.
+            /// </summary>
+            /// <param name="expectedInfiniteTowerId">The expected infinite tower ID</param>
+            /// <param name="addressesHex">Addresses hex for logging</param>
+            /// <exception cref="SheetRowNotFoundException">Thrown when infinite tower ID mismatch</exception>
+            public void ValidateInfiniteTowerId(int expectedInfiniteTowerId, string addressesHex)
+            {
+                if (InfiniteTowerId != expectedInfiniteTowerId)
+                {
+                    throw new SheetRowNotFoundException(
+                        addressesHex,
+                        nameof(InfiniteTowerScheduleSheet),
+                        $"InfiniteTowerId mismatch. Expected: {expectedInfiniteTowerId}, Found: {InfiniteTowerId}");
+                }
+            }
+
+            /// <summary>
+            /// Validates schedule timing for the infinite tower.
+            /// </summary>
+            /// <param name="currentBlockIndex">Current block index</param>
+            /// <param name="infiniteTowerId">The infinite tower ID for error messages</param>
+            /// <param name="addressesHex">Addresses hex for logging</param>
+            /// <exception cref="InfiniteTowerScheduleNotStartedException">Thrown when schedule has not started</exception>
+            /// <exception cref="InfiniteTowerScheduleEndedException">Thrown when schedule has ended</exception>
+            /// <exception cref="InfiniteTowerScheduleNotActiveException">Thrown when schedule is not active</exception>
+            public void ValidateScheduleTiming(
+                long currentBlockIndex,
+                int infiniteTowerId,
+                string addressesHex)
+            {
+                // Check if schedule has started
+                if (!HasStarted(currentBlockIndex))
+                {
+                    throw new InfiniteTowerScheduleNotStartedException(
+                        "InfiniteTowerBattle",
+                        addressesHex,
+                        infiniteTowerId,
+                        currentBlockIndex,
+                        StartBlockIndex);
+                }
+
+                // Check if schedule has ended
+                if (HasEnded(currentBlockIndex))
+                {
+                    throw new InfiniteTowerScheduleEndedException(
+                        "InfiniteTowerBattle",
+                        addressesHex,
+                        infiniteTowerId,
+                        currentBlockIndex,
+                        EndBlockIndex);
+                }
+
+                // Check if schedule is currently active
+                if (!IsActive(currentBlockIndex))
+                {
+                    throw new InfiniteTowerScheduleNotActiveException(
+                        "InfiniteTowerBattle",
+                        addressesHex,
+                        infiniteTowerId,
+                        currentBlockIndex,
+                        StartBlockIndex,
+                        EndBlockIndex);
+                }
+            }
+
+            /// <summary>
+            /// Validates that the floor ID is within this schedule's floor range.
+            /// </summary>
+            /// <param name="floorId">Floor ID to validate</param>
+            /// <param name="addressesHex">Addresses hex for logging</param>
+            /// <exception cref="InvalidOperationException">Thrown when floor ID is out of range</exception>
+            public void ValidateFloorRange(int floorId, string addressesHex)
+            {
+                if (floorId < FloorBegin || floorId > FloorEnd)
+                {
+                    throw new InvalidOperationException(
+                        $"[InfiniteTowerBattle][{addressesHex}] Floor {floorId} is out of range. " +
+                        $"Valid floor range for this schedule is {FloorBegin}-{FloorEnd}");
+                }
             }
         }
     }

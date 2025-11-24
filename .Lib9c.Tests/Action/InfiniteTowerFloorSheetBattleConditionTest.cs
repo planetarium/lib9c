@@ -19,7 +19,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "5000", // MaxCp
@@ -65,7 +64,7 @@ namespace Lib9c.Tests.Action
                 string.Empty, // MaterialCostId
                 string.Empty, // MaterialCostCount
                 "1,2", // ForbiddenRuneTypes
-                "1", // RequiredElementalType
+                "1", // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();
@@ -114,7 +113,8 @@ namespace Lib9c.Tests.Action
             // Check RequiredElementalType condition
             var elementalCondition = conditions.Find(c => c.Type == BattleConditionType.RequiredElementalType);
             Assert.NotNull(elementalCondition);
-            Assert.Equal(ElementalType.Fire, elementalCondition.RequiredElementalType);
+            Assert.Single(elementalCondition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Fire, elementalCondition.RequiredElementalTypes);
 
             // Check ForbiddenItemSubTypes condition
             var itemSubTypesCondition = conditions.Find(c => c.Type == BattleConditionType.ForbiddenItemSubTypes);
@@ -132,7 +132,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 string.Empty, // RequiredCp
                 string.Empty, // MaxCp
@@ -178,7 +177,7 @@ namespace Lib9c.Tests.Action
                 string.Empty, // MaterialCostId
                 string.Empty, // MaterialCostCount
                 string.Empty, // ForbiddenRuneTypes
-                string.Empty, // RequiredElementalType
+                string.Empty, // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();
@@ -198,7 +197,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "5000", // MaxCp
@@ -244,7 +242,7 @@ namespace Lib9c.Tests.Action
                 string.Empty, // MaterialCostId
                 string.Empty, // MaterialCostCount
                 string.Empty, // ForbiddenRuneTypes
-                string.Empty, // RequiredElementalType
+                string.Empty, // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();
@@ -288,6 +286,95 @@ namespace Lib9c.Tests.Action
             Assert.Contains(Nekoyume.Model.Item.ItemSubType.Weapon, result);
             Assert.Contains(Nekoyume.Model.Item.ItemSubType.Armor, result);
             Assert.Contains(Nekoyume.Model.Item.ItemSubType.Belt, result);
+        }
+
+        [Fact]
+        public void ParseElementalTypes_WithColonSeparator_ShouldWork()
+        {
+            // Test ParseElementalTypes directly
+            var result = Nekoyume.TableData.TableExtensions.ParseElementalTypes("1:2:3");
+
+            // Assert
+            Assert.Equal(3, result.Count);
+            Assert.Contains(ElementalType.Fire, result);
+            Assert.Contains(ElementalType.Water, result);
+            Assert.Contains(ElementalType.Land, result);
+        }
+
+        [Fact]
+        public void RequiredElementalTypes_WithMultipleTypes_ShouldParseCorrectly()
+        {
+            // Arrange
+            var fields = new List<string>
+            {
+                "1", // Id
+                "1", // Floor
+                "1000", // RequiredCp
+                "5000", // MaxCp
+                string.Empty, // ForbiddenItemSubTypes
+                string.Empty, // MinItemGrade
+                string.Empty, // MaxItemGrade
+                string.Empty, // MinItemLevel
+                string.Empty, // MaxItemLevel
+                "1", // GuaranteedConditionId
+                "1", // MinRandomConditions
+                "2", // MaxRandomConditions
+                string.Empty, // RandomConditionId1
+                string.Empty, // RandomConditionWeight1
+                string.Empty, // RandomConditionId2
+                string.Empty, // RandomConditionWeight2
+                string.Empty, // RandomConditionId3
+                string.Empty, // RandomConditionWeight3
+                string.Empty, // RandomConditionId4
+                string.Empty, // RandomConditionWeight4
+                string.Empty, // RandomConditionId5
+                string.Empty, // RandomConditionWeight5
+                string.Empty, // ItemRewardId1
+                string.Empty, // ItemRewardCount1
+                string.Empty, // ItemRewardId2
+                string.Empty, // ItemRewardCount2
+                string.Empty, // ItemRewardId3
+                string.Empty, // ItemRewardCount3
+                string.Empty, // ItemRewardId4
+                string.Empty, // ItemRewardCount4
+                string.Empty, // ItemRewardId5
+                string.Empty, // ItemRewardCount5
+                string.Empty, // FungibleAssetRewardTicker1
+                string.Empty, // FungibleAssetRewardAmount1
+                string.Empty, // FungibleAssetRewardTicker2
+                string.Empty, // FungibleAssetRewardAmount2
+                string.Empty, // FungibleAssetRewardTicker3
+                string.Empty, // FungibleAssetRewardAmount3
+                string.Empty, // FungibleAssetRewardTicker4
+                string.Empty, // FungibleAssetRewardAmount4
+                string.Empty, // FungibleAssetRewardTicker5
+                string.Empty, // FungibleAssetRewardAmount5
+                string.Empty, // NcgCost
+                string.Empty, // MaterialCostId
+                string.Empty, // MaterialCostCount
+                string.Empty, // ForbiddenRuneTypes
+                "1:2:3", // RequiredElementalTypes (Fire:Water:Land)
+            };
+
+            var floorRow = new InfiniteTowerFloorSheet.Row();
+            floorRow.Set(fields);
+
+            // Act
+            var conditions = floorRow.GetBattleConditions();
+
+            // Assert
+            var elementalCondition = conditions.Find(c => c.Type == BattleConditionType.RequiredElementalType);
+            Assert.NotNull(elementalCondition);
+            Assert.Equal(3, elementalCondition.RequiredElementalTypes.Count);
+            Assert.Contains(ElementalType.Fire, elementalCondition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Water, elementalCondition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Land, elementalCondition.RequiredElementalTypes);
+
+            // Verify floor row directly
+            Assert.Equal(3, floorRow.RequiredElementalTypes.Count);
+            Assert.Contains(ElementalType.Fire, floorRow.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Water, floorRow.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Land, floorRow.RequiredElementalTypes);
         }
     }
 }

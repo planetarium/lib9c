@@ -10,6 +10,8 @@ using Libplanet.Types.Assets;
 using Nekoyume.TableData.Swap;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.EnumType;
+using Nekoyume.Model.Elemental;
+using Nekoyume.Model.Skill;
 
 namespace Nekoyume.TableData
 {
@@ -411,6 +413,46 @@ namespace Nekoyume.TableData
                 .Select(s => int.TryParse(s, out var v) ? (int?)v : null)
                 .Where(v => v.HasValue)
                 .Select(v => (RuneType)v!.Value)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Parses a colon-separated list of elemental types.
+        /// Accepts numeric values matching ElementalType enum.
+        /// Returns an empty list if input is null/empty or no valid items.
+        /// </summary>
+        public static List<ElementalType> ParseElementalTypes(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new List<ElementalType>();
+            }
+
+            return value.Split(':')
+                .Select(s => s.Trim())
+                .Select(s => int.TryParse(s, out var v) ? (int?)v : null)
+                .Where(v => v.HasValue)
+                .Select(v => (ElementalType)v!.Value)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Parses a colon-separated list of skill target types.
+        /// Accepts numeric values matching SkillTargetType enum.
+        /// Returns an empty list if input is null/empty or no valid items.
+        /// </summary>
+        public static List<SkillTargetType> ParseSkillTargetTypes(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return new List<SkillTargetType>();
+            }
+
+            return value.Split(':')
+                .Select(s => s.Trim())
+                .Select(s => int.TryParse(s, out var v) ? (int?)v : null)
+                .Where(v => v.HasValue)
+                .Select(v => (SkillTargetType)v!.Value)
                 .ToList();
         }
 

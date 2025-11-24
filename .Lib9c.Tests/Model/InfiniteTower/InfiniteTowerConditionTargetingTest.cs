@@ -1,6 +1,7 @@
 namespace Lib9c.Tests.Model.InfiniteTower
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Lib9c.Tests.Action;
     using Libplanet.Crypto;
     using Nekoyume.Battle;
@@ -65,15 +66,90 @@ namespace Lib9c.Tests.Model.InfiniteTower
             Assert.True(enemy.Stats.ATK >= enemyAtkBefore + 10);
         }
 
+        [Fact]
+        public void MultipleTargetTypes_AppliesToPlayer_WhenSelfIncluded()
+        {
+            // Self와 Enemy가 모두 포함된 리스트 - 플레이어에게는 Self가 매치되어 적용됨
+            var cond = MakeCondition(new List<SkillTargetType> { SkillTargetType.Self, SkillTargetType.Enemy }, StatType.ATK, 10);
+            var (sim, player, enemy) = MakeSimulator(new List<InfiniteTowerCondition> { cond });
+
+            var playerAtkBefore = player.Stats.ATK;
+            var enemyAtkBefore = enemy.Stats.ATK;
+
+            sim.ApplyConditionsToCharacter(player, isPlayer: true);
+            sim.ApplyConditionsToCharacter(enemy, isPlayer: false);
+
+            // 플레이어에게는 Self가 매치되어 적용됨
+            Assert.True(player.Stats.ATK >= playerAtkBefore + 10);
+            // 적에게는 Enemy가 매치되어 적용됨
+            Assert.True(enemy.Stats.ATK >= enemyAtkBefore + 10);
+        }
+
+        [Fact]
+        public void MultipleTargetTypes_AppliesToEnemy_WhenEnemyIncluded()
+        {
+            // Enemy와 Enemies가 모두 포함된 리스트 - 적에게는 둘 다 매치되어 적용됨
+            var cond = MakeCondition(new List<SkillTargetType> { SkillTargetType.Enemy, SkillTargetType.Enemies }, StatType.ATK, 10);
+            var (sim, player, enemy) = MakeSimulator(new List<InfiniteTowerCondition> { cond });
+
+            var playerAtkBefore = player.Stats.ATK;
+            var enemyAtkBefore = enemy.Stats.ATK;
+
+            sim.ApplyConditionsToCharacter(player, isPlayer: true);
+            sim.ApplyConditionsToCharacter(enemy, isPlayer: false);
+
+            // 플레이어에게는 매치되지 않음
+            Assert.Equal(playerAtkBefore, player.Stats.ATK);
+            // 적에게는 Enemy 또는 Enemies가 매치되어 적용됨
+            Assert.True(enemy.Stats.ATK >= enemyAtkBefore + 10);
+        }
+
+        [Fact]
+        public void MultipleTargetTypes_NotApplies_WhenNoMatch()
+        {
+            // Self만 포함된 리스트 - 적에게는 적용되지 않음
+            var cond = MakeCondition(new List<SkillTargetType> { SkillTargetType.Self }, StatType.ATK, 10);
+            var (sim, player, enemy) = MakeSimulator(new List<InfiniteTowerCondition> { cond });
+
+            var playerAtkBefore = player.Stats.ATK;
+            var enemyAtkBefore = enemy.Stats.ATK;
+
+            sim.ApplyConditionsToCharacter(player, isPlayer: true);
+            sim.ApplyConditionsToCharacter(enemy, isPlayer: false);
+
+            // 플레이어에게는 Self가 매치되어 적용됨
+            Assert.True(player.Stats.ATK >= playerAtkBefore + 10);
+            // 적에게는 매치되지 않음
+            Assert.Equal(enemyAtkBefore, enemy.Stats.ATK);
+        }
+
         private InfiniteTowerCondition MakeCondition(SkillTargetType target, StatType statType, int value)
         {
             var row = new InfiniteTowerConditionSheet.Row();
             // CSV 데이터 형태로 설정 (Set 메서드 사용)
+            // 단일 값도 자동으로 리스트로 변환됨
             var fields = new List<string>
             {
                 "1", // Id
                 ((int)statType).ToString(), // StatType
-                ((int)target).ToString(), // TargetType
+                ((int)target).ToString(), // TargetType (단일 값도 리스트로 파싱됨)
+                "0", // OperationType (Add)
+                value.ToString(), // Value
+            };
+            row.Set(fields);
+            return new InfiniteTowerCondition(row);
+        }
+
+        private InfiniteTowerCondition MakeCondition(List<SkillTargetType> targets, StatType statType, int value)
+        {
+            var row = new InfiniteTowerConditionSheet.Row();
+            // CSV 데이터 형태로 설정 (Set 메서드 사용)
+            // 콜론으로 구분된 리스트
+            var fields = new List<string>
+            {
+                "1", // Id
+                ((int)statType).ToString(), // StatType
+                string.Join(":", targets.Select(t => ((int)t).ToString())), // TargetType (콜론 구분 리스트)
                 "0", // OperationType (Add)
                 value.ToString(), // Value
             };
@@ -106,7 +182,7 @@ namespace Lib9c.Tests.Model.InfiniteTower
                 avatar,
                 new List<System.Guid>(),
                 new AllRuneState(),
-                new RuneSlotState(Nekoyume.Model.EnumType.BattleType.Adventure),
+                new RuneSlotState(Nekoyume.Model.EnumType.BattleType.InfiniteTower),
                 1,
                 1,
                 new InfiniteTowerFloorSheet.Row(),

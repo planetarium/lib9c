@@ -19,7 +19,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "2000", // MaxCp
@@ -74,7 +73,6 @@ namespace Lib9c.Tests.Action
 
             // Assert
             Assert.Equal(1, row.Id);
-            Assert.Equal(1, row.InfiniteTowerId);
             Assert.Equal(1, row.Floor);
             Assert.Equal(1000, row.RequiredCp);
             Assert.Equal(2000, row.MaxCp);
@@ -105,7 +103,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "2000", // MaxCp
@@ -172,7 +169,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "2000", // MaxCp

@@ -33,7 +33,7 @@ namespace Nekoyume.Action
         /// <summary>
         /// The list of invalid item ids for material.
         /// </summary>
-        public static readonly int[] InvalidMaterialItemId = { 10660004, 10760009, 40100042, 40100043, };
+        public static readonly int[] InvalidMaterialItemId = { 10660004, 10670004, 10760009, 10770010, 40100042, 40100043, 40100059, };
 
         private static readonly ItemSubType[] EnableSubTypes =
         {

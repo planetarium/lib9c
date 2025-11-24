@@ -1,9 +1,12 @@
+using System;
+using System.Linq;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Action;
 using Nekoyume.Model.InfiniteTower;
 using Nekoyume.Model.State;
+using Nekoyume.TableData;
 
 namespace Nekoyume.Module
 {
@@ -18,13 +21,33 @@ namespace Nekoyume.Module
         /// <returns>InfiniteTowerInfo for the avatar and tower.</returns>
         public static InfiniteTowerInfo GetInfiniteTowerInfo(this IWorld worldState, Address avatarAddress, int infiniteTowerId)
         {
-            var account = worldState.GetAccountState(Addresses.InfiniteTowerInfo);
+            var accountAddress = Addresses.InfiniteTowerInfo.Derive($"{infiniteTowerId}");
+            var account = worldState.GetAccountState(accountAddress);
             var key = avatarAddress;
             var infiniteTowerInfoValue = account.GetState(key);
 
-            return infiniteTowerInfoValue is Bencodex.Types.List serializedInfiniteTowerInfoList
-                ? new InfiniteTowerInfo(serializedInfiniteTowerInfoList)
-                : new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            if (infiniteTowerInfoValue is Bencodex.Types.List serializedInfiniteTowerInfoList)
+            {
+                return new InfiniteTowerInfo(serializedInfiniteTowerInfoList);
+            }
+
+            // Get initial tickets from schedule sheet
+            var initialTickets = 0;
+            try
+            {
+                var scheduleSheet = worldState.GetSheet<InfiniteTowerScheduleSheet>();
+                var scheduleRow = scheduleSheet.Values.FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    initialTickets = Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
+            }
+            catch
+            {
+                // If schedule sheet is not available, use default value (0)
+            }
+
+            return new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
         }
 
         /// <summary>
@@ -36,10 +59,11 @@ namespace Nekoyume.Module
         /// <returns>Updated world with the infinite tower info.</returns>
         public static IWorld SetInfiniteTowerInfo(this IWorld world, Address avatarAddress, InfiniteTowerInfo infiniteTowerInfo)
         {
-            var account = world.GetAccount(Addresses.InfiniteTowerInfo);
+            var accountAddress = Addresses.InfiniteTowerInfo.Derive($"{infiniteTowerInfo.InfiniteTowerId}");
+            var account = world.GetAccount(accountAddress);
             var key = avatarAddress;
             account = account.SetState(key, infiniteTowerInfo.Serialize());
-            return world.SetAccount(Addresses.InfiniteTowerInfo, account);
+            return world.SetAccount(accountAddress, account);
         }
 
         /// <summary>

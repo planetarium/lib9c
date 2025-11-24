@@ -3,16 +3,21 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Libplanet.Action.State;
     using Libplanet.Crypto;
-    using Nekoyume.Action;
+    using Nekoyume.Action.Exceptions;
     using Nekoyume.Model.InfiniteTower;
-    using Nekoyume.Model.State;
     using Nekoyume.TableData;
     using Xunit;
 
     public class InfiniteTowerIdValidationTest
     {
+        private readonly TableSheets _tableSheets;
+
+        public InfiniteTowerIdValidationTest()
+        {
+            _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+        }
+
         [Fact]
         public void ValidateInfiniteTowerId_MatchingId_ShouldNotThrow()
         {
@@ -22,7 +27,7 @@ namespace Lib9c.Tests.Action
 
             // Act & Assert
             // This should not throw an exception
-            ValidateInfiniteTowerIdInternal(scheduleRow, 1, addressesHex);
+            scheduleRow.ValidateInfiniteTowerId(1, addressesHex);
         }
 
         [Fact]
@@ -34,7 +39,70 @@ namespace Lib9c.Tests.Action
 
             // Act & Assert
             Assert.Throws<SheetRowNotFoundException>(() =>
-                ValidateInfiniteTowerIdInternal(scheduleRow, 1, addressesHex));
+                scheduleRow.ValidateInfiniteTowerId(1, addressesHex));
+        }
+
+        [Fact]
+        public void ValidateScheduleTiming_BeforeStart_ShouldThrow()
+        {
+            // Arrange
+            var scheduleRow = CreateTestScheduleRow(1, 1000, 2000);
+            var addressesHex = "0x1234567890123456789012345678901234567890";
+            var currentBlockIndex = 500L;
+
+            // Act & Assert
+            Assert.Throws<InfiniteTowerScheduleNotStartedException>(() =>
+                scheduleRow.ValidateScheduleTiming(currentBlockIndex, 1, addressesHex));
+        }
+
+        [Fact]
+        public void ValidateScheduleTiming_AfterEnd_ShouldThrow()
+        {
+            // Arrange
+            var scheduleRow = CreateTestScheduleRow(1, 1000, 2000);
+            var addressesHex = "0x1234567890123456789012345678901234567890";
+            var currentBlockIndex = 2500L;
+
+            // Act & Assert
+            Assert.Throws<InfiniteTowerScheduleEndedException>(() =>
+                scheduleRow.ValidateScheduleTiming(currentBlockIndex, 1, addressesHex));
+        }
+
+        [Fact]
+        public void ValidateScheduleTiming_DuringSchedule_ShouldNotThrow()
+        {
+            // Arrange
+            var scheduleRow = CreateTestScheduleRow(1, 1000, 2000);
+            var addressesHex = "0x1234567890123456789012345678901234567890";
+            var currentBlockIndex = 1500L;
+
+            // Act & Assert
+            scheduleRow.ValidateScheduleTiming(currentBlockIndex, 1, addressesHex);
+        }
+
+        [Fact]
+        public void ValidateFloorRange_WithinRange_ShouldNotThrow()
+        {
+            // Arrange
+            var scheduleRow = CreateTestScheduleRow(1, 1000, 2000, 1, 10);
+            var addressesHex = "0x1234567890123456789012345678901234567890";
+            var floorId = 5;
+
+            // Act & Assert
+            scheduleRow.ValidateFloorRange(floorId, addressesHex);
+        }
+
+        [Fact]
+        public void ValidateFloorRange_OutOfRange_ShouldThrow()
+        {
+            // Arrange
+            var scheduleRow = CreateTestScheduleRow(1, 1000, 2000, 1, 10);
+            var addressesHex = "0x1234567890123456789012345678901234567890";
+            var floorId = 15;
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() =>
+                scheduleRow.ValidateFloorRange(floorId, addressesHex));
         }
 
         [Fact]
@@ -42,13 +110,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
 
             // Act
-            var result = infiniteTowerInfo.IsAccessible(currentBlockIndex, startBlockIndex, endBlockIndex);
+            var result =
+                infiniteTowerInfo.IsAccessible(currentBlockIndex, startBlockIndex, endBlockIndex);
 
             // Assert
             Assert.True(result);
@@ -59,13 +128,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
 
             // Act
-            var result = infiniteTowerInfo.IsAccessible(currentBlockIndex, startBlockIndex, endBlockIndex);
+            var result =
+                infiniteTowerInfo.IsAccessible(currentBlockIndex, startBlockIndex, endBlockIndex);
 
             // Assert
             Assert.False(result);
@@ -76,13 +146,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 2500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
 
             // Act
-            var result = infiniteTowerInfo.IsAccessible(currentBlockIndex, startBlockIndex, endBlockIndex);
+            var result =
+                infiniteTowerInfo.IsAccessible(currentBlockIndex, startBlockIndex, endBlockIndex);
 
             // Assert
             Assert.False(result);
@@ -93,13 +164,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 1500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
 
             // Act
-            var result = infiniteTowerInfo.GetScheduleStatus(currentBlockIndex, startBlockIndex, endBlockIndex);
+            var result =
+                infiniteTowerInfo.GetScheduleStatus(currentBlockIndex, startBlockIndex, endBlockIndex);
 
             // Assert
             Assert.Contains("Active", result);
@@ -111,13 +183,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
 
             // Act
-            var result = infiniteTowerInfo.GetScheduleStatus(currentBlockIndex, startBlockIndex, endBlockIndex);
+            var result =
+                infiniteTowerInfo.GetScheduleStatus(currentBlockIndex, startBlockIndex, endBlockIndex);
 
             // Assert
             Assert.Contains("Not started yet", result);
@@ -129,13 +202,14 @@ namespace Lib9c.Tests.Action
         {
             // Arrange
             var avatarAddress = new Address("0x1234567890123456789012345678901234567890");
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, 1);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, 1);
             var currentBlockIndex = 2500L;
             var startBlockIndex = 1000L;
             var endBlockIndex = 2000L;
 
             // Act
-            var result = infiniteTowerInfo.GetScheduleStatus(currentBlockIndex, startBlockIndex, endBlockIndex);
+            var result =
+                infiniteTowerInfo.GetScheduleStatus(currentBlockIndex, startBlockIndex, endBlockIndex);
 
             // Assert
             Assert.Contains("Ended", result);
@@ -143,7 +217,12 @@ namespace Lib9c.Tests.Action
             Assert.Contains("2000", result);
         }
 
-        private InfiniteTowerScheduleSheet.Row CreateTestScheduleRow(int infiniteTowerId, long startBlockIndex, long endBlockIndex)
+        private InfiniteTowerScheduleSheet.Row CreateTestScheduleRow(
+            int infiniteTowerId,
+            long startBlockIndex,
+            long endBlockIndex,
+            int floorBegin = 1,
+            int floorEnd = int.MaxValue)
         {
             var fields = new List<string>
             {
@@ -154,6 +233,8 @@ namespace Lib9c.Tests.Action
                 "5", // DailyFreeTickets
                 "10", // MaxTickets
                 "324000", // ResetIntervalBlocks
+                floorBegin.ToString(), // FloorBegin
+                floorEnd.ToString(), // FloorEnd
             };
 
             var row = new InfiniteTowerScheduleSheet.Row();
@@ -161,18 +242,23 @@ namespace Lib9c.Tests.Action
             return row;
         }
 
-        private void ValidateInfiniteTowerIdInternal(
-            InfiniteTowerScheduleSheet.Row scheduleRow,
-            int expectedInfiniteTowerId,
-            string addressesHex)
+        /// <summary>
+        /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
+        /// </summary>
+        private InfiniteTowerInfo CreateInfiniteTowerInfo(Address avatarAddress, int infiniteTowerId)
         {
-            if (scheduleRow.InfiniteTowerId != expectedInfiniteTowerId)
+            var initialTickets = 0;
+            if (_tableSheets.InfiniteTowerScheduleSheet != null)
             {
-                throw new SheetRowNotFoundException(
-                    addressesHex,
-                    nameof(InfiniteTowerScheduleSheet),
-                    $"InfiniteTowerId mismatch. Expected: {expectedInfiniteTowerId}, Found: {scheduleRow.InfiniteTowerId}");
+                var scheduleRow = _tableSheets.InfiniteTowerScheduleSheet.Values
+                    .FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    initialTickets = Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
             }
+
+            return new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
         }
     }
 }

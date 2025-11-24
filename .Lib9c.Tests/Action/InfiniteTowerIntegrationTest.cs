@@ -10,6 +10,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Action;
     using Nekoyume.Model;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Skill;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
@@ -28,7 +29,7 @@ namespace Lib9c.Tests.Action
             // Arrange - Create a minimal valid CSV data row with all fields
             var fields = new List<string>
             {
-                "1", "1", "1", "100", "10000", string.Empty,  // 0-5: Id, InfiniteTowerId, Floor, RequiredCp, MaxCp, ForbiddenItemSubTypes
+                "1", "1", "100", "10000", string.Empty,  // 0-4: Id, Floor, RequiredCp, MaxCp, ForbiddenItemSubTypes
                 "1", "5", "1", "10", "1",  // 6-10: MinItemGrade, MaxItemGrade, MinItemLevel, MaxItemLevel, GuaranteedConditionId
                 "0", "2",  // 11-12: MinRandomConditions, MaxRandomConditions
                 string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,  // 13-17: RandomConditionId1-5
@@ -38,7 +39,7 @@ namespace Lib9c.Tests.Action
                 "GOLD", "100", string.Empty, string.Empty, string.Empty,  // 33-37: FungibleAssetRewardTicker1-3, Amount1-2
                 string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,  // 38-42: remaining fungible asset rewards
                 "100", string.Empty, string.Empty,  // 43-45: NcgCost, MaterialCostId, MaterialCostCount
-                string.Empty, string.Empty, string.Empty, // 47-49: ForbiddenRuneIds, ForbiddenRuneTypes, RequiredElementalType
+                string.Empty, string.Empty, // 45-46: ForbiddenRuneTypes, RequiredElementalTypes
             };
 
             // Act
@@ -47,7 +48,6 @@ namespace Lib9c.Tests.Action
 
             // Assert - Verify CSV parsing works correctly
             Assert.Equal(1, floorRow.Id);
-            Assert.Equal(1, floorRow.InfiniteTowerId);
             Assert.Equal(1, floorRow.Floor);
             Assert.Equal(100, floorRow.RequiredCp);
             Assert.Equal(10000, floorRow.MaxCp);
@@ -86,6 +86,9 @@ namespace Lib9c.Tests.Action
             Assert.Equal(1, conditionRow.Id);
             Assert.Equal(StatType.ATK, conditionRow.StatType);
             Assert.Equal(10, conditionRow.Value);
+            Assert.NotNull(conditionRow.TargetType);
+            Assert.Single(conditionRow.TargetType);
+            Assert.Equal(SkillTargetType.Enemies, conditionRow.TargetType[0]);
         }
 
         [Fact]

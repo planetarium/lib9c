@@ -106,14 +106,15 @@ namespace Lib9c.Tests.Action
         public void RequiredElementalType_Constructor_ShouldCreateCorrectCondition()
         {
             // Arrange
-            var requiredType = ElementalType.Fire;
+            var requiredTypes = new List<ElementalType> { ElementalType.Fire };
 
             // Act
-            var condition = new InfiniteTowerBattleCondition(requiredType, true);
+            var condition = new InfiniteTowerBattleCondition(requiredTypes, true);
 
             // Assert
             Assert.Equal(BattleConditionType.RequiredElementalType, condition.Type);
-            Assert.Equal(requiredType, condition.RequiredElementalType);
+            Assert.Single(condition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Fire, condition.RequiredElementalTypes);
             Assert.True(condition.HasRestrictions());
         }
 
@@ -121,12 +122,31 @@ namespace Lib9c.Tests.Action
         public void RequiredElementalType_Constructor_WithNull_ShouldCreateConditionWithoutRestrictions()
         {
             // Act
-            var condition = new InfiniteTowerBattleCondition((ElementalType?)null, true);
+            var condition = new InfiniteTowerBattleCondition(new List<ElementalType>(), true);
 
             // Assert
             Assert.Equal(BattleConditionType.RequiredElementalType, condition.Type);
-            Assert.Null(condition.RequiredElementalType);
+            Assert.NotNull(condition.RequiredElementalTypes);
+            Assert.Empty(condition.RequiredElementalTypes);
             Assert.False(condition.HasRestrictions());
+        }
+
+        [Fact]
+        public void RequiredElementalType_Constructor_WithMultipleTypes_ShouldCreateCorrectCondition()
+        {
+            // Arrange
+            var requiredTypes = new List<ElementalType> { ElementalType.Fire, ElementalType.Water, ElementalType.Land };
+
+            // Act
+            var condition = new InfiniteTowerBattleCondition(requiredTypes, true);
+
+            // Assert
+            Assert.Equal(BattleConditionType.RequiredElementalType, condition.Type);
+            Assert.Equal(3, condition.RequiredElementalTypes.Count);
+            Assert.Contains(ElementalType.Fire, condition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Water, condition.RequiredElementalTypes);
+            Assert.Contains(ElementalType.Land, condition.RequiredElementalTypes);
+            Assert.True(condition.HasRestrictions());
         }
 
         [Fact]
@@ -171,7 +191,10 @@ namespace Lib9c.Tests.Action
         public void RequiredElementalType_Constructor_WithFalseFlag_ShouldThrowException()
         {
             // Arrange
-            ElementalType? requiredType = ElementalType.Fire;
+            List<ElementalType> requiredType = new List<ElementalType>
+            {
+                ElementalType.Fire,
+            };
 
             // Act & Assert
             Assert.Throws<ArgumentException>(() => new InfiniteTowerBattleCondition(requiredType, false));
@@ -192,7 +215,8 @@ namespace Lib9c.Tests.Action
             var itemGradeCondition = new InfiniteTowerBattleCondition(3, 7, true);
             var itemLevelCondition = new InfiniteTowerBattleCondition(5, 10);
             var runeTypesCondition = new InfiniteTowerBattleCondition(new List<RuneType> { RuneType.Stat });
-            var elementalCondition = new InfiniteTowerBattleCondition(ElementalType.Fire, true);
+            var elementalCondition = new InfiniteTowerBattleCondition(new List<ElementalType> { ElementalType.Fire }, true);
+            var elementalConditionMultiple = new InfiniteTowerBattleCondition(new List<ElementalType> { ElementalType.Fire, ElementalType.Water }, true);
             var itemSubTypesCondition = new InfiniteTowerBattleCondition(new List<ItemSubType> { ItemSubType.Armor }, true);
 
             // Act & Assert
@@ -200,7 +224,8 @@ namespace Lib9c.Tests.Action
             Assert.Equal("ItemGrade: Min=3, Max=7", itemGradeCondition.ToString());
             Assert.Equal("ItemLevel: Min=5, Max=10", itemLevelCondition.ToString());
             Assert.Equal("ForbiddenRuneTypes: Stat", runeTypesCondition.ToString());
-            Assert.Equal("RequiredElementalType: Fire", elementalCondition.ToString());
+            Assert.Equal("RequiredElementalTypes: [Fire]", elementalCondition.ToString());
+            Assert.Equal("RequiredElementalTypes: [Fire, Water]", elementalConditionMultiple.ToString());
             Assert.Equal("ForbiddenItemSubTypes: Armor", itemSubTypesCondition.ToString());
         }
     }

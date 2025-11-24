@@ -2,14 +2,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Lib9c;
+using Libplanet.Action;
+using Libplanet.Action.State;
+using Libplanet.Crypto;
+using Libplanet.Types.Assets;
 using Nekoyume.Action;
+using Nekoyume.Action.Exceptions;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Elemental;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.InfiniteTower;
 using Nekoyume.Model.Rune;
+using Nekoyume.Model.Stat;
+using Nekoyume.Model.State;
+using Nekoyume.Module;
 using Nekoyume.TableData.Rune;
+using Serilog;
 using static Nekoyume.TableData.TableExtensions;
 
 namespace Nekoyume.TableData
@@ -40,11 +51,6 @@ namespace Nekoyume.TableData
             public int Id { get; private set; }
 
             /// <summary>
-            /// Gets the infinite tower ID this floor belongs to.
-            /// </summary>
-            public int InfiniteTowerId { get; private set; }
-
-            /// <summary>
             /// Gets the floor number.
             /// </summary>
             public int Floor { get; private set; }
@@ -60,7 +66,7 @@ namespace Nekoyume.TableData
             public long? MaxCp { get; private set; }
 
             /// <summary>
-            /// Gets the list of forbidden item sub-types for this floor.
+            /// Gets the list of forbidden item subtypes for this floor.
             /// </summary>
             public List<ItemSubType> ForbiddenItemSubTypes { get; private set; } = new();
 
@@ -164,6 +170,10 @@ namespace Nekoyume.TableData
             /// </summary>
             public int? MaterialCostCount { get; private set; }
 
+            /// <summary>
+            /// Gets the list of initial stat modifiers applied to enemies on this floor.
+            /// </summary>
+            public List<StatModifier> EnemyInitialStatModifiers { get; private set; } = new();
 
             /// <summary>
             /// Gets the list of forbidden rune types for this floor.
@@ -171,9 +181,9 @@ namespace Nekoyume.TableData
             public List<RuneType> ForbiddenRuneTypes { get; private set; } = new();
 
             /// <summary>
-            /// Gets the required elemental type for equipment on this floor.
+            /// Gets the list of required elemental types for equipment on this floor.
             /// </summary>
-            public ElementalType? RequiredElementalType { get; private set; }
+            public List<ElementalType> RequiredElementalTypes { get; private set; } = new();
 
             /// <summary>
             /// Gets the first item reward ID for this floor.
@@ -278,76 +288,109 @@ namespace Nekoyume.TableData
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = ParseInt(fields[0]);
-                InfiniteTowerId = ParseInt(fields[1]);
-                Floor = ParseInt(fields[2]);
-                RequiredCp = string.IsNullOrEmpty(fields[3]) ? null : ParseLong(fields[3]);
-                MaxCp = string.IsNullOrEmpty(fields[4]) ? null : ParseLong(fields[4]);
+                Floor = ParseInt(fields[1]);
+                RequiredCp = string.IsNullOrEmpty(fields[2]) ? null : ParseLong(fields[2]);
+                MaxCp = string.IsNullOrEmpty(fields[3]) ? null : ParseLong(fields[3]);
 
-                // Parse item sub-type restrictions
-                ForbiddenItemSubTypes = string.IsNullOrEmpty(fields[5]) ? new List<ItemSubType>() : ParseItemSubTypes(fields[5]);
+                // Parse item subtype restrictions
+                ForbiddenItemSubTypes = string.IsNullOrEmpty(fields[4]) ? new List<ItemSubType>() : ParseItemSubTypes(fields[4]);
 
                 // Parse item grade restrictions
-                MinItemGrade = string.IsNullOrEmpty(fields[6]) ? null : ParseInt(fields[6]);
-                MaxItemGrade = string.IsNullOrEmpty(fields[7]) ? null : ParseInt(fields[7]);
+                MinItemGrade = string.IsNullOrEmpty(fields[5]) ? null : ParseInt(fields[5]);
+                MaxItemGrade = string.IsNullOrEmpty(fields[6]) ? null : ParseInt(fields[6]);
 
                 // Parse item level restrictions
-                MinItemLevel = string.IsNullOrEmpty(fields[8]) ? null : ParseInt(fields[8]);
-                MaxItemLevel = string.IsNullOrEmpty(fields[9]) ? null : ParseInt(fields[9]);
+                MinItemLevel = string.IsNullOrEmpty(fields[7]) ? null : ParseInt(fields[7]);
+                MaxItemLevel = string.IsNullOrEmpty(fields[8]) ? null : ParseInt(fields[8]);
 
-                GuaranteedConditionId = ParseInt(fields[10]);
-                MinRandomConditions = ParseInt(fields[11]);
-                MaxRandomConditions = ParseInt(fields[12]);
+                GuaranteedConditionId = ParseInt(fields[9]);
+                MinRandomConditions = ParseInt(fields[10]);
+                MaxRandomConditions = ParseInt(fields[11]);
 
-                // Parse weighted random conditions (fields 13-22)
-                RandomConditionId1 = ParseIntOrNull(fields[13]);
-                RandomConditionWeight1 = ParseIntOrNull(fields[14]);
-                RandomConditionId2 = ParseIntOrNull(fields[15]);
-                RandomConditionWeight2 = ParseIntOrNull(fields[16]);
-                RandomConditionId3 = ParseIntOrNull(fields[17]);
-                RandomConditionWeight3 = ParseIntOrNull(fields[18]);
-                RandomConditionId4 = ParseIntOrNull(fields[19]);
-                RandomConditionWeight4 = ParseIntOrNull(fields[20]);
-                RandomConditionId5 = ParseIntOrNull(fields[21]);
-                RandomConditionWeight5 = ParseIntOrNull(fields[22]);
+                // Parse weighted random conditions (fields 12-21)
+                RandomConditionId1 = ParseIntOrNull(fields[12]);
+                RandomConditionWeight1 = ParseIntOrNull(fields[13]);
+                RandomConditionId2 = ParseIntOrNull(fields[14]);
+                RandomConditionWeight2 = ParseIntOrNull(fields[15]);
+                RandomConditionId3 = ParseIntOrNull(fields[16]);
+                RandomConditionWeight3 = ParseIntOrNull(fields[17]);
+                RandomConditionId4 = ParseIntOrNull(fields[18]);
+                RandomConditionWeight4 = ParseIntOrNull(fields[19]);
+                RandomConditionId5 = ParseIntOrNull(fields[20]);
+                RandomConditionWeight5 = ParseIntOrNull(fields[21]);
 
                 // Parse reward fields - Item rewards (max 5 types)
-                ItemRewardId1 = ParseIntOrNull(fields[23]);
-                ItemRewardCount1 = ParseIntOrNull(fields[24]);
-                ItemRewardId2 = ParseIntOrNull(fields[25]);
-                ItemRewardCount2 = ParseIntOrNull(fields[26]);
-                ItemRewardId3 = ParseIntOrNull(fields[27]);
-                ItemRewardCount3 = ParseIntOrNull(fields[28]);
-                ItemRewardId4 = ParseIntOrNull(fields[29]);
-                ItemRewardCount4 = ParseIntOrNull(fields[30]);
-                ItemRewardId5 = ParseIntOrNull(fields[31]);
-                ItemRewardCount5 = ParseIntOrNull(fields[32]);
+                ItemRewardId1 = ParseIntOrNull(fields[22]);
+                ItemRewardCount1 = ParseIntOrNull(fields[23]);
+                ItemRewardId2 = ParseIntOrNull(fields[24]);
+                ItemRewardCount2 = ParseIntOrNull(fields[25]);
+                ItemRewardId3 = ParseIntOrNull(fields[26]);
+                ItemRewardCount3 = ParseIntOrNull(fields[27]);
+                ItemRewardId4 = ParseIntOrNull(fields[28]);
+                ItemRewardCount4 = ParseIntOrNull(fields[29]);
+                ItemRewardId5 = ParseIntOrNull(fields[30]);
+                ItemRewardCount5 = ParseIntOrNull(fields[31]);
 
                 // Parse reward fields - Fungible asset rewards (max 5 types)
-                FungibleAssetRewardTicker1 = ParseStringOrNull(fields[33]);
-                FungibleAssetRewardAmount1 = ParseIntOrNull(fields[34]);
-                FungibleAssetRewardTicker2 = ParseStringOrNull(fields[35]);
-                FungibleAssetRewardAmount2 = ParseIntOrNull(fields[36]);
-                FungibleAssetRewardTicker3 = ParseStringOrNull(fields[37]);
-                FungibleAssetRewardAmount3 = ParseIntOrNull(fields[38]);
-                FungibleAssetRewardTicker4 = ParseStringOrNull(fields[39]);
-                FungibleAssetRewardAmount4 = ParseIntOrNull(fields[40]);
-                FungibleAssetRewardTicker5 = ParseStringOrNull(fields[41]);
-                FungibleAssetRewardAmount5 = ParseIntOrNull(fields[42]);
+                FungibleAssetRewardTicker1 = ParseStringOrNull(fields[32]);
+                FungibleAssetRewardAmount1 = ParseIntOrNull(fields[33]);
+                FungibleAssetRewardTicker2 = ParseStringOrNull(fields[34]);
+                FungibleAssetRewardAmount2 = ParseIntOrNull(fields[35]);
+                FungibleAssetRewardTicker3 = ParseStringOrNull(fields[36]);
+                FungibleAssetRewardAmount3 = ParseIntOrNull(fields[37]);
+                FungibleAssetRewardTicker4 = ParseStringOrNull(fields[38]);
+                FungibleAssetRewardAmount4 = ParseIntOrNull(fields[39]);
+                FungibleAssetRewardTicker5 = ParseStringOrNull(fields[40]);
+                FungibleAssetRewardAmount5 = ParseIntOrNull(fields[41]);
 
                 // Parse ticket purchase cost fields
-                NcgCost = ParseIntOrNull(fields[43]);
-                MaterialCostId = ParseIntOrNull(fields[44]);
-                MaterialCostCount = ParseIntOrNull(fields[45]);
+                NcgCost = ParseIntOrNull(fields[42]);
+                MaterialCostId = ParseIntOrNull(fields[43]);
+                MaterialCostCount = ParseIntOrNull(fields[44]);
 
                 // Parse rune restrictions and elemental type (optional trailing columns)
-                if (fields.Count > 46)
+                if (fields.Count > 45)
                 {
-                    ForbiddenRuneTypes = string.IsNullOrEmpty(fields[46]) ? new List<RuneType>() : ParseRuneTypes(fields[46]);
+                    ForbiddenRuneTypes = string.IsNullOrEmpty(fields[45]) ? new List<RuneType>() : ParseRuneTypes(fields[45]);
                 }
 
+                if (fields.Count > 46)
+                {
+                    RequiredElementalTypes = string.IsNullOrEmpty(fields[46]) ? new List<ElementalType>() : ParseElementalTypes(fields[46]);
+                }
+
+                // Parse enemy initial stat modifiers (fields 47-52: HP, ATK, DEF, CRI, HIT, SPD)
+                EnemyInitialStatModifiers = new List<StatModifier>();
                 if (fields.Count > 47)
                 {
-                    RequiredElementalType = string.IsNullOrEmpty(fields[47]) ? null : (ElementalType?)ParseInt(fields[47]);
+                    for (var i = 0; i < 6; i++)
+                    {
+                        var fieldIndex = 47 + i;
+                        if (fieldIndex < fields.Count && TryParseInt(fields[fieldIndex], out var option) && option != 0)
+                        {
+                            switch (i)
+                            {
+                                case 0:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.HP, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 1:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.ATK, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 2:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.DEF, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 3:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.CRI, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 4:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.HIT, StatModifier.OperationType.Percentage, option));
+                                    break;
+                                case 5:
+                                    EnemyInitialStatModifiers.Add(new StatModifier(StatType.SPD, StatModifier.OperationType.Percentage, option));
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -360,15 +403,29 @@ namespace Nekoyume.TableData
                 var rewards = new List<(int, int)>();
 
                 if (ItemRewardId1.HasValue && ItemRewardCount1.HasValue)
+                {
                     rewards.Add((ItemRewardId1.Value, ItemRewardCount1.Value));
+                }
+
                 if (ItemRewardId2.HasValue && ItemRewardCount2.HasValue)
+                {
                     rewards.Add((ItemRewardId2.Value, ItemRewardCount2.Value));
+                }
+
                 if (ItemRewardId3.HasValue && ItemRewardCount3.HasValue)
+                {
                     rewards.Add((ItemRewardId3.Value, ItemRewardCount3.Value));
+                }
+
                 if (ItemRewardId4.HasValue && ItemRewardCount4.HasValue)
+                {
                     rewards.Add((ItemRewardId4.Value, ItemRewardCount4.Value));
+                }
+
                 if (ItemRewardId5.HasValue && ItemRewardCount5.HasValue)
+                {
                     rewards.Add((ItemRewardId5.Value, ItemRewardCount5.Value));
+                }
 
                 return rewards;
             }
@@ -381,27 +438,43 @@ namespace Nekoyume.TableData
                 var rewards = new List<(string, int)>();
 
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker1) && FungibleAssetRewardAmount1.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker1, FungibleAssetRewardAmount1.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker2) && FungibleAssetRewardAmount2.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker2, FungibleAssetRewardAmount2.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker3) && FungibleAssetRewardAmount3.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker3, FungibleAssetRewardAmount3.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker4) && FungibleAssetRewardAmount4.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker4, FungibleAssetRewardAmount4.Value));
+                }
+
                 if (!string.IsNullOrEmpty(FungibleAssetRewardTicker5) && FungibleAssetRewardAmount5.HasValue)
+                {
                     rewards.Add((FungibleAssetRewardTicker5, FungibleAssetRewardAmount5.Value));
+                }
 
                 return rewards;
             }
 
             /// <summary>
-            /// Validates item sub-type restrictions for the floor (applies to both equipment and costumes).
+            /// Validates item subtype restrictions for the floor (applies to both equipment and costumes).
             /// </summary>
             public void ValidateItemTypeRestrictions<T>(List<T> itemList) where T : ItemBase
             {
-                // Skip validation if no sub-type restrictions are set
+                // Skip validation if no subtype restrictions are set
                 if (ForbiddenItemSubTypes.Count == 0)
+                {
                     return;
+                }
 
                 foreach (var item in itemList)
                 {
@@ -420,7 +493,9 @@ namespace Nekoyume.TableData
             {
                 // Skip validation if no grade restrictions are set
                 if (!MinItemGrade.HasValue && !MaxItemGrade.HasValue)
+                {
                     return;
+                }
 
                 foreach (var item in itemList)
                 {
@@ -445,7 +520,9 @@ namespace Nekoyume.TableData
             {
                 // Skip validation if no level restrictions are set
                 if (!MinItemLevel.HasValue && !MaxItemLevel.HasValue)
+                {
                     return;
+                }
 
                 foreach (var item in itemList)
                 {
@@ -483,7 +560,9 @@ namespace Nekoyume.TableData
             {
                 // Skip CP validation if no requirements are set
                 if (RequiredCp == null && MaxCp == null)
+                {
                     return;
+                }
 
                 // Check minimum CP requirement
                 if (RequiredCp.HasValue && currentCp < RequiredCp.Value)
@@ -506,15 +585,29 @@ namespace Nekoyume.TableData
                 var conditions = new List<(int, int)>();
 
                 if (RandomConditionId1.HasValue && RandomConditionWeight1.HasValue)
+                {
                     conditions.Add((RandomConditionId1.Value, RandomConditionWeight1.Value));
+                }
+
                 if (RandomConditionId2.HasValue && RandomConditionWeight2.HasValue)
+                {
                     conditions.Add((RandomConditionId2.Value, RandomConditionWeight2.Value));
+                }
+
                 if (RandomConditionId3.HasValue && RandomConditionWeight3.HasValue)
+                {
                     conditions.Add((RandomConditionId3.Value, RandomConditionWeight3.Value));
+                }
+
                 if (RandomConditionId4.HasValue && RandomConditionWeight4.HasValue)
+                {
                     conditions.Add((RandomConditionId4.Value, RandomConditionWeight4.Value));
+                }
+
                 if (RandomConditionId5.HasValue && RandomConditionWeight5.HasValue)
+                {
                     conditions.Add((RandomConditionId5.Value, RandomConditionWeight5.Value));
+                }
 
                 return conditions;
             }
@@ -525,14 +618,16 @@ namespace Nekoyume.TableData
             public void ValidateEquipmentElementalType<T>(List<T> equipmentList) where T : ItemBase
             {
                 // Skip validation if no elemental type restriction is set
-                if (!RequiredElementalType.HasValue)
+                if (RequiredElementalTypes.Count == 0)
+                {
                     return;
+                }
 
                 foreach (var equipment in equipmentList)
                 {
-                    if (equipment.ElementalType != RequiredElementalType.Value)
+                    if (!RequiredElementalTypes.Contains(equipment.ElementalType))
                     {
-                        throw new Exception($"Invalid equipment elemental type. Equipment '{equipment.Id}' has elemental type '{equipment.ElementalType}' but required type is '{RequiredElementalType.Value}'");
+                        throw new Exception($"Invalid equipment elemental type. Equipment '{equipment.Id}' has elemental type '{equipment.ElementalType}' but required types are: {string.Join(", ", RequiredElementalTypes)}");
                     }
                 }
             }
@@ -570,7 +665,16 @@ namespace Nekoyume.TableData
                     return new List<InfiniteTowerCondition>();
                 }
 
+                // Validate that we have enough conditions to meet minimum requirement
+                if (availableWeightedConditions.Count < MinRandomConditions)
+                {
+                    throw new InvalidOperationException(
+                        $"Insufficient available weighted conditions. Required minimum: {MinRandomConditions}, Available: {availableWeightedConditions.Count}");
+                }
+
                 var count = random.Next(MinRandomConditions, MaxRandomConditions + 1);
+                // Ensure we don't select more than available to avoid infinite loop in WeightedSelector
+                count = Math.Min(count, availableWeightedConditions.Count);
                 var selectedConditions = new List<InfiniteTowerCondition>();
 
                 // Use WeightedSelector for weighted random selection
@@ -587,6 +691,61 @@ namespace Nekoyume.TableData
                     {
                         selectedConditions.Add(new InfiniteTowerCondition(conditionRow));
                     }
+                }
+
+                return selectedConditions;
+            }
+
+            /// <summary>
+            /// Selects random conditions from all available conditions using uniform random selection.
+            /// Uses Fisher-Yates shuffle algorithm to avoid index issues when removing items.
+            /// This method can be used by clients for simulation and replay purposes.
+            /// </summary>
+            /// <param name="conditionSheet">The condition sheet containing all available conditions</param>
+            /// <param name="random">Random number generator</param>
+            /// <param name="guaranteedConditionId">Optional guaranteed condition ID to exclude from random selection</param>
+            /// <returns>List of selected random conditions</returns>
+            /// <exception cref="InvalidOperationException">Thrown when available conditions are insufficient for minimum count requirement</exception>
+            public List<InfiniteTowerCondition> GetRandomConditions(
+                InfiniteTowerConditionSheet conditionSheet,
+                Libplanet.Action.IRandom random,
+                int? guaranteedConditionId = null)
+            {
+                // Use all available conditions
+                var availableConditions = conditionSheet.Values.ToList();
+
+                // Exclude guaranteed condition from random selection
+                availableConditions = availableConditions
+                    .Where(c => guaranteedConditionId == null || c.Id != guaranteedConditionId)
+                    .ToList();
+
+                // Validate that we have enough conditions to meet minimum requirement
+                if (availableConditions.Count < MinRandomConditions)
+                {
+                    throw new InvalidOperationException(
+                        $"Insufficient available conditions. Required minimum: {MinRandomConditions}, Available: {availableConditions.Count}");
+                }
+
+                // Determine how many conditions to select
+                var count = random.Next(MinRandomConditions, MaxRandomConditions + 1);
+                // Ensure we don't select more than available
+                count = Math.Min(count, availableConditions.Count);
+
+                var selectedConditions = new List<InfiniteTowerCondition>();
+
+                // Use Fisher-Yates shuffle: swap selected item with last item instead of removing
+                // This avoids index shifting issues
+                var conditions = availableConditions.ToList();
+                for (int i = 0; i < count; i++)
+                {
+                    // Select random index from remaining items
+                    var randomIndex = random.Next(i, conditions.Count);
+
+                    // Swap selected item with current position
+                    (conditions[i], conditions[randomIndex]) = (conditions[randomIndex], conditions[i]);
+
+                    // Add the selected condition
+                    selectedConditions.Add(new InfiniteTowerCondition(conditions[i]));
                 }
 
                 return selectedConditions;
@@ -622,10 +781,10 @@ namespace Nekoyume.TableData
             /// <param name="runeListSheet">Rune list sheet for type lookup</param>
             /// <exception cref="ForbiddenRuneTypeEquippedException">Thrown when forbidden rune types are equipped</exception>
             public void ValidateRuneTypes(
-                List<RuneSlotInfo> runeInfos,
+                List<RuneSlotInfo>? runeInfos,
                 RuneListSheet runeListSheet)
             {
-                if (ForbiddenRuneTypes == null || ForbiddenRuneTypes.Count == 0)
+                if (ForbiddenRuneTypes.Count == 0)
                 {
                     return;
                 }
@@ -655,9 +814,9 @@ namespace Nekoyume.TableData
             /// <param name="equipments">List of equipment to validate</param>
             /// <exception cref="InvalidElementalException">Thrown when equipment has invalid elemental type</exception>
             public void ValidateEquipmentElementalType(
-                List<Equipment> equipments)
+                List<Equipment>? equipments)
             {
-                if (!RequiredElementalType.HasValue)
+                if (RequiredElementalTypes.Count == 0)
                 {
                     return;
                 }
@@ -665,7 +824,7 @@ namespace Nekoyume.TableData
                 var invalidEquipment = new List<(int equipmentId, ElementalType actualType)>();
                 foreach (var equipment in equipments ?? new List<Equipment>())
                 {
-                    if (equipment.ElementalType != RequiredElementalType.Value)
+                    if (!RequiredElementalTypes.Contains(equipment.ElementalType))
                     {
                         invalidEquipment.Add((equipment.Id, equipment.ElementalType));
                     }
@@ -675,7 +834,7 @@ namespace Nekoyume.TableData
                 {
                     var invalidEquipmentInfo = string.Join(", ", invalidEquipment.Select(e => $"ID:{e.equipmentId}({e.actualType})"));
                     throw new InvalidElementalException(
-                        $"Invalid equipment elemental type. Required type: '{RequiredElementalType.Value}', Invalid equipment: {invalidEquipmentInfo}");
+                        $"Invalid equipment elemental type. Required types: [{string.Join(", ", RequiredElementalTypes)}], Invalid equipment: {invalidEquipmentInfo}");
                 }
             }
 
@@ -694,11 +853,11 @@ namespace Nekoyume.TableData
                     conditions.Add(new InfiniteTowerBattleCondition(RequiredCp, MaxCp));
                 }
 
-            // Item Grade restrictions
-            if (MinItemGrade.HasValue || MaxItemGrade.HasValue)
-            {
-                conditions.Add(new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true));
-            }
+                // Item Grade restrictions
+                if (MinItemGrade.HasValue || MaxItemGrade.HasValue)
+                {
+                    conditions.Add(new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true));
+                }
 
                 // Item Level restrictions
                 if (MinItemLevel.HasValue || MaxItemLevel.HasValue)
@@ -707,19 +866,19 @@ namespace Nekoyume.TableData
                 }
 
                 // Forbidden Rune Types restrictions
-                if (ForbiddenRuneTypes?.Count > 0)
+                if (ForbiddenRuneTypes.Count > 0)
                 {
                     conditions.Add(new InfiniteTowerBattleCondition(ForbiddenRuneTypes));
                 }
 
                 // Required Elemental Type restrictions
-                if (RequiredElementalType.HasValue)
+                if (RequiredElementalTypes.Count > 0)
                 {
-                    conditions.Add(new InfiniteTowerBattleCondition(RequiredElementalType, true));
+                    conditions.Add(new InfiniteTowerBattleCondition(RequiredElementalTypes, true));
                 }
 
                 // Forbidden Item Sub Types restrictions
-                if (ForbiddenItemSubTypes?.Count > 0)
+                if (ForbiddenItemSubTypes.Count > 0)
                 {
                     conditions.Add(new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true));
                 }
@@ -740,11 +899,209 @@ namespace Nekoyume.TableData
                     BattleConditionType.CP when RequiredCp.HasValue || MaxCp.HasValue => new InfiniteTowerBattleCondition(RequiredCp, MaxCp),
                     BattleConditionType.ItemGrade when MinItemGrade.HasValue || MaxItemGrade.HasValue => new InfiniteTowerBattleCondition(MinItemGrade, MaxItemGrade, true),
                     BattleConditionType.ItemLevel when MinItemLevel.HasValue || MaxItemLevel.HasValue => new InfiniteTowerBattleCondition(MinItemLevel, MaxItemLevel),
-                    BattleConditionType.ForbiddenRuneTypes when ForbiddenRuneTypes?.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenRuneTypes),
-                    BattleConditionType.RequiredElementalType when RequiredElementalType.HasValue => new InfiniteTowerBattleCondition(RequiredElementalType, true),
-                    BattleConditionType.ForbiddenItemSubTypes when ForbiddenItemSubTypes?.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true),
+                    BattleConditionType.ForbiddenRuneTypes when ForbiddenRuneTypes.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenRuneTypes),
+                    BattleConditionType.RequiredElementalType when RequiredElementalTypes.Count > 0 => new InfiniteTowerBattleCondition(RequiredElementalTypes, true),
+                    BattleConditionType.ForbiddenItemSubTypes when ForbiddenItemSubTypes.Count > 0 => new InfiniteTowerBattleCondition(ForbiddenItemSubTypes, true),
                     _ => null
                 };
+            }
+
+            /// <summary>
+            /// Validates that the player has enough currency to purchase a ticket.
+            /// </summary>
+            /// <param name="context">The action context</param>
+            /// <param name="states">The world state</param>
+            /// <param name="avatarAddress">The avatar address</param>
+            /// <param name="useNcgForTicket">Whether to use NCG for ticket purchase</param>
+            /// <param name="addressesHex">Addresses hex for logging</param>
+            /// <exception cref="InvalidOperationException">Thrown when cost configuration is missing</exception>
+            /// <exception cref="InsufficientBalanceException">Thrown when NCG balance is insufficient</exception>
+            /// <exception cref="NotEnoughMaterialException">Thrown when material count is insufficient</exception>
+            public void ValidateCurrencyForTicketPurchase(
+                IActionContext context,
+                IWorld states,
+                Address avatarAddress,
+                bool useNcgForTicket,
+                string addressesHex)
+            {
+                if (useNcgForTicket)
+                {
+                    if (!NcgCost.HasValue)
+                    {
+                        throw new InvalidOperationException(
+                            $"[InfiniteTowerBattle][{addressesHex}] NCG cost is not configured for this floor");
+                    }
+
+                    // Validate NCG balance
+                    var goldCurrency = states.GetGoldCurrency();
+                    var ticketCost = goldCurrency * NcgCost.Value;
+                    var goldBalance = states.GetBalance(context.Signer, goldCurrency);
+
+                    if (goldBalance < ticketCost)
+                    {
+                        throw new InsufficientBalanceException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Insufficient NCG balance. Required: {ticketCost}, Available: {goldBalance}",
+                            context.Signer,
+                            goldBalance);
+                    }
+                }
+                else
+                {
+                    // Validate material inventory
+                    var materialSheet = states.GetSheet<MaterialItemSheet>();
+                    if (!MaterialCostId.HasValue || !MaterialCostCount.HasValue)
+                    {
+                        throw new InvalidOperationException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Material cost information is not configured for this floor");
+                    }
+
+                    var materialRow = materialSheet.OrderedList?.FirstOrDefault(m => m.Id == MaterialCostId.Value);
+                    if (materialRow == null)
+                    {
+                        throw new SheetRowNotFoundException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Material with ID {MaterialCostId.Value} not found in MaterialItemSheet");
+                    }
+                    var inventory = states.GetInventoryV2(avatarAddress);
+
+                    // Check if player has enough material in inventory
+                    var materialCount = inventory.TryGetItem(MaterialCostId.Value, out var materialItem) ? materialItem.count : 0;
+                    if (materialCount < MaterialCostCount.Value)
+                    {
+                        throw new NotEnoughMaterialException(
+                            $"[InfiniteTowerBattle][{addressesHex}] Not enough material to purchase ticket: needs {MaterialCostCount}, has {materialCount}");
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Processes rewards for successful floor completion.
+            /// </summary>
+            /// <param name="context">The action context</param>
+            /// <param name="states">The world state</param>
+            /// <param name="avatarState">The avatar state to update</param>
+            /// <param name="avatarAddress">The avatar address</param>
+            /// <param name="equipmentSheet">The equipment item sheet</param>
+            /// <param name="materialSheet">The material item sheet</param>
+            /// <param name="consumableSheet">The consumable item sheet</param>
+            /// <param name="costumeSheet">The costume item sheet</param>
+            /// <param name="random">Random number generator for creating items</param>
+            /// <returns>Updated world state</returns>
+            /// <exception cref="InvalidItemIdException">Thrown when item ID is not found in any item sheet</exception>
+            public IWorld ProcessRewards(
+                IActionContext context,
+                IWorld states,
+                AvatarState avatarState,
+                Address avatarAddress,
+                EquipmentItemSheet equipmentSheet,
+                MaterialItemSheet materialSheet,
+                ConsumableItemSheet consumableSheet,
+                CostumeItemSheet costumeSheet,
+                Libplanet.Action.IRandom random)
+            {
+                // Process all fungible asset rewards
+                var fungibleAssetRewards = GetFungibleAssetRewards();
+                foreach (var (ticker, amount) in fungibleAssetRewards)
+                {
+                    if (amount > 0)
+                    {
+                        // NCG is not supported as a fungible asset reward
+                        if (ticker == "NCG")
+                        {
+                            throw new InvalidOperationException(
+                                $"NCG is not supported as a fungible asset reward in InfiniteTowerFloorSheet. " +
+                                $"Floor ID: {Id}, Ticker: {ticker}. " +
+                                $"NCG rewards should be handled separately using IWorld.GetGoldCurrency().");
+                        }
+
+                        Currency currency;
+                        try
+                        {
+                            currency = Currencies.GetCurrencyByTicker(ticker);
+                        }
+                        catch (ArgumentException ex)
+                        {
+                            throw new InvalidOperationException(
+                                $"Invalid fungible asset reward ticker in InfiniteTowerFloorSheet. " +
+                                $"Floor ID: {Id}, Ticker: {ticker}. " +
+                                $"Error: {ex.Message}", ex);
+                        }
+
+                        var fungibleAsset = currency * amount;
+                        var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
+
+                        states = states.MintAsset(
+                            context,
+                            recipient,
+                            fungibleAsset
+                        );
+                    }
+                }
+
+                // Process Item rewards
+                var itemRewards = GetItemRewards();
+                if (itemRewards.Count > 0)
+                {
+                    foreach (var (itemId, count) in itemRewards)
+                    {
+                        if (count > 0)
+                        {
+                            // Determine item type and handle count appropriately
+                            // Material is fungible (count accumulates), others are non-fungible (each needs unique instance)
+                            if (materialSheet.TryGetValue(itemId, out var materialRow))
+                            {
+                                // Material: Fungible item, count accumulates
+                                var materialItem = ItemFactory.CreateItem(materialRow, random);
+                                avatarState.inventory.AddItem(materialItem, count);
+                            }
+                            else if (equipmentSheet.TryGetValue(itemId, out var equipmentRow))
+                            {
+                                // Equipment: Non-fungible item, create count instances
+                                for (int i = 0; i < count; i++)
+                                {
+                                    var equipmentItem = ItemFactory.CreateItem(equipmentRow, random);
+                                    avatarState.inventory.AddItem(equipmentItem);
+                                }
+                            }
+                            else if (consumableSheet.TryGetValue(itemId, out var consumableRow))
+                            {
+                                // Consumable: Non-fungible item, create count instances
+                                for (int i = 0; i < count; i++)
+                                {
+                                    var consumableItem = ItemFactory.CreateItem(consumableRow, random);
+                                    avatarState.inventory.AddItem(consumableItem);
+                                }
+                            }
+                            else if (costumeSheet.TryGetValue(itemId, out var costumeRow))
+                            {
+                                // Costume: Non-fungible item, create count instances
+                                for (int i = 0; i < count; i++)
+                                {
+                                    var costumeItem = ItemFactory.CreateCostume(costumeRow, random.GenerateRandomGuid());
+                                    avatarState.inventory.AddItem(costumeItem);
+                                }
+                            }
+                            else
+                            {
+                                throw new InvalidItemIdException($"Item ID {itemId} not found in any item sheet");
+                            }
+
+                            if (count > 0)
+                            {
+
+                                Log.Verbose(
+                                    "[InfiniteTowerBattle] Item reward: ID={ItemId}, Count={Count}",
+                                    itemId,
+                                    count);
+                            }
+                            else
+                            {
+                                throw new InvalidItemIdException($"Item ID {itemId} not found in any item sheet");
+                            }
+                        }
+                    }
+                }
+
+                return states;
             }
 
         }

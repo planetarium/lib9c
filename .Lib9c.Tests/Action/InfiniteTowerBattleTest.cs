@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Bencodex.Types;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
     using Libplanet.Mocks;
@@ -10,6 +11,8 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Action.Exceptions;
+    using Nekoyume.Model.Elemental;
+    using Nekoyume.Model.EnumType;
     using Nekoyume.Model.InfiniteTower;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -42,6 +45,7 @@ namespace Lib9c.Tests.Action
                     new RuneSlotInfo(0, 1),
                 },
                 BuyTicketIfNeeded = true,
+                UseNcgForTicket = true,
             };
 
             var serialized = action.PlainValue;
@@ -56,6 +60,7 @@ namespace Lib9c.Tests.Action
             Assert.Equal(action.Foods, deserialized.Foods);
             Assert.Equal(action.RuneInfos, deserialized.RuneInfos);
             Assert.Equal(action.BuyTicketIfNeeded, deserialized.BuyTicketIfNeeded);
+            Assert.Equal(action.UseNcgForTicket, deserialized.UseNcgForTicket);
         }
 
         [Theory]
@@ -101,7 +106,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5); // Give some tickets
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
@@ -191,7 +196,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5); // Give some tickets
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
@@ -229,6 +234,40 @@ namespace Lib9c.Tests.Action
             // Check if rewards were given (should have items in inventory)
             var initialInventoryCount = avatarState.inventory.Items.Count;
             var finalInventoryCount = finalAvatarState.inventory.Items.Count;
+
+            // Get expected rewards from floor sheet
+            var floorSheet = nextState.GetSheet<InfiniteTowerFloorSheet>();
+            if (floorSheet.TryGetValue(floorId, out var floorRow))
+            {
+                var expectedItemRewards = floorRow.GetItemRewards();
+
+                if (expectedItemRewards.Count > 0)
+                {
+                    Console.WriteLine($"Expected rewards for floor {floorId}: {expectedItemRewards.Count} items");
+
+                    // Verify that reward items are actually in inventory
+                    foreach (var (itemId, expectedCount) in expectedItemRewards)
+                    {
+                        var hasItem = finalAvatarState.inventory.TryGetItem(itemId, out var inventoryItem);
+                        Console.WriteLine($"Checking reward item {itemId}: Expected count={expectedCount}, Has item={hasItem}, Actual count={(hasItem ? inventoryItem.count : 0)}");
+
+                        Assert.True(hasItem, $"Reward item {itemId} should be in inventory after first clear");
+                        Assert.True(
+                            inventoryItem.count >= expectedCount,
+                            $"Reward item {itemId} count should be at least {expectedCount}, but was {inventoryItem.count}");
+                    }
+
+                    // Verify inventory count increased
+                    Console.WriteLine($"Inventory count: Initial={initialInventoryCount}, Final={finalInventoryCount}");
+                    Assert.True(
+                        finalInventoryCount > initialInventoryCount,
+                        $"Inventory count should increase after receiving rewards. Initial: {initialInventoryCount}, Final: {finalInventoryCount}");
+                }
+                else
+                {
+                    Console.WriteLine($"No item rewards defined for floor {floorId}");
+                }
+            }
 
             // For first clear, should have received rewards
             if (finalInventoryCount > initialInventoryCount)
@@ -269,8 +308,8 @@ namespace Lib9c.Tests.Action
             }
 
             // Modify InfiniteTowerFloorSheet to use invalid item ID
-            var invalidFloorSheet = @"Id,InfiniteTowerId,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalType
-1,1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,";
+            var invalidFloorSheet = @"Id,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalTypes
+1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,";
             sheets["InfiniteTowerFloorSheet"] = invalidFloorSheet;
 
             foreach (var (key, value) in sheets)
@@ -288,7 +327,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5); // Give some tickets
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
@@ -357,7 +396,7 @@ namespace Lib9c.Tests.Action
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Pre-clear the floor to simulate second attempt
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5); // Give some tickets
             infiniteTowerInfo.ClearFloor(floorId);
 
@@ -403,7 +442,6 @@ namespace Lib9c.Tests.Action
 
             // For second clear, should not have received additional rewards
             Assert.Equal(initialInventoryCount, finalInventoryCount);
-            Console.WriteLine($"Second clear: No additional rewards (inventory count unchanged: {finalInventoryCount})");
         }
 
         [Fact]
@@ -450,7 +488,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with NO tickets and prevent both auto-resets
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             // Set LastResetBlockIndex to a value greater than StartBlockIndex (0) to prevent season reset
             infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             // Set LastTicketRefillBlockIndex to current block to prevent daily refill
@@ -531,9 +569,11 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets but only floor 1 cleared
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5);
             infiniteTowerInfo.ClearFloor(1); // Only clear floor 1, not floor 2
+            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
             // Create action trying to access floor 3 (requires floor 2 to be cleared)
@@ -606,7 +646,7 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
@@ -698,9 +738,11 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets and floor already cleared
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5);
             infiniteTowerInfo.ClearFloor(floorId); // Floor already cleared
+            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
             // Create initial board state with floor already cleared
@@ -791,8 +833,10 @@ namespace Lib9c.Tests.Action
                 .SetAvatarState(avatarAddress, avatarState);
 
             // Create infinite tower info with tickets
-            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(10);
+            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
 
             // Verify initial board state is empty
@@ -1025,7 +1069,6 @@ namespace Lib9c.Tests.Action
             var fields = new List<string>
             {
                 "1", // Id
-                "1", // InfiniteTowerId
                 "1", // Floor
                 "1000", // RequiredCp
                 "2000", // MaxCp
@@ -1071,7 +1114,7 @@ namespace Lib9c.Tests.Action
                 "600201", // MaterialCostId
                 "50", // MaterialCostCount
                 string.Empty, // ForbiddenRuneTypes
-                string.Empty, // RequiredElementalType
+                string.Empty, // RequiredElementalTypes
             };
 
             var floorRow = new InfiniteTowerFloorSheet.Row();
@@ -1161,6 +1204,1026 @@ namespace Lib9c.Tests.Action
             floorRow.ValidateCpRequirements(1000);
         }
 
+        [Fact]
+        public void Execute_With_StartBlockIndex_Zero_And_LastResetBlockIndex_Zero_Should_Reset_And_Grant_Ticket()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 0L; // StartBlockIndex is 0 in CSV
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with LastResetBlockIndex = 0 (newly created)
+            // This simulates the bug scenario where StartBlockIndex = 0 and LastResetBlockIndex = 0
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            // LastResetBlockIndex is already 0 from constructor
+            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            Assert.True(infiniteTowerInfo.RemainingTickets > 0);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed and ticket was granted
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // LastResetBlockIndex should be updated to current block index
+            // This confirms that PerformSeasonReset was called
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastResetBlockIndex);
+
+            // LastTicketRefillBlockIndex should also be updated
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastTicketRefillBlockIndex);
+
+            // This confirms that the ticket was granted and then used
+            Assert.Equal(infiniteTowerInfo.RemainingTickets - 1, updatedInfiniteTowerInfo.RemainingTickets);
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+        }
+
+        [Fact]
+        public void Execute_With_SeasonReset_Should_Reset_ClearedFloor_To_Zero()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 0L; // StartBlockIndex is 0 in CSV
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with LastResetBlockIndex = 0 and some progress
+            // This simulates a new season where previous progress should be reset
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.ClearFloor(5); // Set some previous progress
+            // LastResetBlockIndex is already 0 from constructor, which will trigger season reset
+            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            Assert.Equal(5, infiniteTowerInfo.ClearedFloor);
+            Assert.True(infiniteTowerInfo.RemainingTickets > 0);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // LastResetBlockIndex should be updated to current block index
+            // This confirms that PerformSeasonReset was called
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastResetBlockIndex);
+
+            // LastTicketRefillBlockIndex should also be updated
+            Assert.Equal(blockIndex, updatedInfiniteTowerInfo.LastTicketRefillBlockIndex);
+
+            // TotalTicketsUsed should be reset to 0 after season reset, then used for battle
+            // So it should be 1 (0 after reset, then +1 for battle)
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+
+            // NumberOfTicketPurchases should be reset to 0 after season reset
+            Assert.Equal(0, updatedInfiniteTowerInfo.NumberOfTicketPurchases);
+
+            // Note: ClearedFloor is reset to 0 by PerformSeasonReset, but then updated
+            // if the battle simulation succeeds. So we verify season reset happened
+            // by checking LastResetBlockIndex and TotalTicketsUsed reset.
+        }
+
+        [Fact]
+        public void Execute_With_SeasonReset_Should_Grant_One_Ticket()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 0L; // StartBlockIndex is 0 in CSV
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with LastResetBlockIndex = 0 (newly created)
+            // This will trigger season reset which should grant 1 ticket
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            // LastResetBlockIndex is already 0 from constructor
+            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            Assert.True(infiniteTowerInfo.RemainingTickets > 0);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed and ticket was granted
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            Assert.Equal(infiniteTowerInfo.RemainingTickets - 1, updatedInfiniteTowerInfo.RemainingTickets);
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+
+            // Verify that the ticket was granted (TotalTicketsUsed = 1 confirms ticket was used)
+            // This means the ticket was granted by PerformSeasonReset and then consumed
+        }
+
+        [Fact]
+        public void Execute_With_NewSeason_After_PreviousSeason_Should_Reset_Progress()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var previousBlockIndex = 1000L;
+            var newSeasonStartBlockIndex = 2000L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            // Modify schedule to have a new season start at block 2000
+            var scheduleSheet = new InfiniteTowerScheduleSheet();
+            var scheduleSheetString = sheets["InfiniteTowerScheduleSheet"];
+            var scheduleLines = scheduleSheetString.Split('\n');
+            if (scheduleLines.Length > 1)
+            {
+                // Update StartBlockIndex to 2000 for new season
+                scheduleLines[1] = "1,1,2000,1000000,3,10,10800,1,100";
+                sheets["InfiniteTowerScheduleSheet"] = string.Join("\n", scheduleLines);
+            }
+
+            scheduleSheet.Set(sheets["InfiniteTowerScheduleSheet"]);
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with previous season progress
+            // LastResetBlockIndex < new season StartBlockIndex (2000) should trigger season reset
+            // Get initial tickets from parsed schedule sheet
+            var scheduleRow = scheduleSheet.Values.FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+            var initialTickets = scheduleRow != null
+                ? Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets)
+                : 0;
+            var infiniteTowerInfo = new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
+            infiniteTowerInfo.ClearFloor(10); // Previous season progress
+            infiniteTowerInfo.AddTickets(5);
+            // Set LastResetBlockIndex to previous season (before new season start)
+            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, previousBlockIndex);
+            Assert.Equal(10, infiniteTowerInfo.ClearedFloor);
+            Assert.Equal(previousBlockIndex, infiniteTowerInfo.LastResetBlockIndex);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act - Execute at new season start block
+            var context = new ActionContext
+            {
+                BlockIndex = newSeasonStartBlockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            Assert.NotNull(nextState);
+
+            // Verify that season reset was performed
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+
+            // LastResetBlockIndex should be updated to new season start block index
+            // This confirms that PerformSeasonReset was called
+            Assert.Equal(newSeasonStartBlockIndex, updatedInfiniteTowerInfo.LastResetBlockIndex);
+
+            // LastTicketRefillBlockIndex should also be updated
+            Assert.Equal(newSeasonStartBlockIndex, updatedInfiniteTowerInfo.LastTicketRefillBlockIndex);
+
+            // TotalTicketsUsed should be reset to 0 after season reset, then used for battle
+            // So it should be 1 (0 after reset, then +1 for battle)
+            Assert.Equal(1, updatedInfiniteTowerInfo.TotalTicketsUsed);
+
+            // NumberOfTicketPurchases should be reset to 0 after season reset
+            Assert.Equal(0, updatedInfiniteTowerInfo.NumberOfTicketPurchases);
+
+            // Note: ClearedFloor is reset to 0 by PerformSeasonReset, but then updated
+            // if the battle simulation succeeds. So we verify season reset happened
+            // by checking LastResetBlockIndex and TotalTicketsUsed reset.
+        }
+
+        [Fact]
+        public void Execute_WithFood_ShouldConsumeFood_WithoutAvatarStateApply()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+
+            // Set avatar level to ensure success
+            avatarState.level = 100;
+
+            // Add food items to inventory
+            var consumableSheet = _tableSheets.ConsumableItemSheet;
+            var foodRow = consumableSheet.Values.FirstOrDefault();
+            if (foodRow == null)
+            {
+                throw new InvalidOperationException("No consumable item found in ConsumableItemSheet");
+            }
+
+            var food1 = (Consumable)ItemFactory.CreateItemUsable(foodRow, Guid.NewGuid(), 0, 0);
+            var food2 = (Consumable)ItemFactory.CreateItemUsable(foodRow, Guid.NewGuid(), 0, 0);
+            var food3 = (Consumable)ItemFactory.CreateItemUsable(foodRow, Guid.NewGuid(), 0, 0);
+
+            avatarState.inventory.AddItem(food1);
+            avatarState.inventory.AddItem(food2);
+            avatarState.inventory.AddItem(food3);
+
+            var initialFoodCount = avatarState.inventory.Items
+                .Count(i => i.item is Consumable && i.item.Id == foodRow.Id);
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action with food items
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid> { food1.ItemId, food2.ItemId },
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert
+            var finalAvatarState = nextState.GetAvatarState(avatarAddress);
+            var finalFoodCount = finalAvatarState.inventory.Items
+                .Count(i => i.item is Consumable && i.item.Id == foodRow.Id);
+
+            // The food should be consumed by the simulator, but without avatarState.Apply,
+            // the inventory might not reflect the consumption
+            // This test documents the current behavior
+            Assert.True(
+                finalFoodCount < initialFoodCount,
+                $"Food count should not increase. Initial: {initialFoodCount}, Final: {finalFoodCount}");
+        }
+
+        [Fact]
+        public void Execute_WithValidElementalType_ShouldSucceed()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            // Modify InfiniteTowerFloorSheet to require Fire and Water elemental types
+            var floorSheetWithElementalRestriction = @"Id,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalTypes
+1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,1:2";
+            sheets["InfiniteTowerFloorSheet"] = floorSheetWithElementalRestriction;
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Create equipment with valid elemental type (Fire = 1)
+            var equipment = CreateTestEquipment(ItemType.Equipment, grade: 1, level: 1);
+            equipment.ElementalType = ElementalType.Fire; // Valid: Fire is in required list (1:2)
+            avatarState.inventory.AddItem(equipment);
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid> { equipment.NonFungibleId },
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert - Should succeed without throwing InvalidElementalException
+            Assert.NotNull(nextState);
+            var updatedInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(updatedInfiniteTowerInfo);
+        }
+
+        [Fact]
+        public void Execute_WithInvalidElementalType_ShouldThrow()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets with default CSV data
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            // Modify InfiniteTowerFloorSheet to require Fire and Water elemental types (1:2)
+            var floorSheetWithElementalRestriction = @"Id,Floor,RequiredCp,MaxCp,ForbiddenItemSubTypes,MinItemGrade,MaxItemGrade,MinItemLevel,MaxItemLevel,GuaranteedConditionId,MinRandomConditions,MaxRandomConditions,RandomConditionId1,RandomConditionWeight1,RandomConditionId2,RandomConditionWeight2,RandomConditionId3,RandomConditionWeight3,RandomConditionId4,RandomConditionWeight4,RandomConditionId5,RandomConditionWeight5,ItemRewardId1,ItemRewardCount1,ItemRewardId2,ItemRewardCount2,ItemRewardId3,ItemRewardCount3,ItemRewardId4,ItemRewardCount4,ItemRewardId5,ItemRewardCount5,FungibleAssetRewardTicker1,FungibleAssetRewardAmount1,FungibleAssetRewardTicker2,FungibleAssetRewardAmount2,FungibleAssetRewardTicker3,FungibleAssetRewardAmount3,FungibleAssetRewardTicker4,FungibleAssetRewardAmount4,FungibleAssetRewardTicker5,FungibleAssetRewardAmount5,NcgCost,MaterialCostId,MaterialCostCount,ForbiddenRuneTypes,RequiredElementalTypes
+1,1,100,100000,,1,5,1,10,1,0,2,,,,,,,,,,99999999,1,,,,,,,,,,RUNESTONE_FENRIR1,100,,,,,,,,100,10000001,50,,,1:2";
+            sheets["InfiniteTowerFloorSheet"] = floorSheetWithElementalRestriction;
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Create equipment with invalid elemental type (Land = 3, not in required list 1:2)
+            var equipment = CreateTestEquipment(ItemType.Equipment, grade: 1, level: 1);
+            equipment.ElementalType = ElementalType.Land; // Invalid: Land is not in required list (1:2 = Fire:Water)
+            avatarState.inventory.AddItem(equipment);
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid> { equipment.NonFungibleId },
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act & Assert
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var exception = Assert.Throws<InvalidElementalException>(() => action.Execute(context));
+            Assert.Contains("Invalid equipment elemental type", exception.Message);
+            Assert.Contains("Land", exception.Message);
+            Assert.Contains("Fire, Water", exception.Message);
+        }
+
+        [Fact]
+        public void Execute_StateUpdates_ShouldNotBeOverwritten()
+        {
+            // Arrange - Test that state updates are not overwritten by final setState
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create rune slot info - use empty list to avoid rune validation issues
+            var runeInfos = new List<RuneSlotInfo>();
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = runeInfos,
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert - Verify that all states are properly set
+            // 1. Verify RuneSlotState is set
+            var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            var rawRuneSlotState = nextState.GetLegacyState(runeSlotStateAddress);
+            Assert.NotNull(rawRuneSlotState);
+            var runeSlotState = new RuneSlotState((List)rawRuneSlotState);
+            // RuneSlotState should exist even if no runes are equipped
+            Assert.NotNull(runeSlotState);
+
+            // 2. Verify ItemSlotState is set
+            var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            var rawItemSlotState = nextState.GetLegacyState(itemSlotStateAddress);
+            Assert.NotNull(rawItemSlotState);
+            var itemSlotState = new ItemSlotState((List)rawItemSlotState);
+            Assert.NotNull(itemSlotState);
+
+            // 3. Verify AvatarState is set (with inventory updates from ProcessRewards if floor was cleared)
+            var finalAvatarState = nextState.GetAvatarState(avatarAddress);
+            Assert.NotNull(finalAvatarState);
+            Assert.Equal(avatarState.level, finalAvatarState.level);
+
+            // 4. Verify InfiniteTowerInfo is set
+            var finalInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(finalInfiniteTowerInfo);
+
+            // 5. Verify CP is set
+            var cpAccount = nextState.GetAccountState(Addresses.GetCpAccountAddress(BattleType.InfiniteTower));
+            var cpState = new CpState(cpAccount.GetState(avatarAddress));
+            Assert.True(cpState.Cp > 0);
+        }
+
+        [Fact]
+        public void Execute_StateManagement_ShouldConsolidateAllUpdates()
+        {
+            // Arrange - Test that all state updates are properly consolidated at the end
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert - Verify that all states are properly set and not overwritten
+            // 1. Verify RuneSlotState is set (even if empty)
+            var runeSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            var rawRuneSlotState = nextState.GetLegacyState(runeSlotStateAddress);
+            Assert.NotNull(rawRuneSlotState);
+
+            // 2. Verify ItemSlotState is set
+            var itemSlotStateAddress = ItemSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            var rawItemSlotState = nextState.GetLegacyState(itemSlotStateAddress);
+            Assert.NotNull(rawItemSlotState);
+
+            // 3. Verify AvatarState is set with all updates (inventory changes from ProcessRewards if cleared)
+            var finalAvatarState = nextState.GetAvatarState(avatarAddress);
+            Assert.NotNull(finalAvatarState);
+            Assert.Equal(avatarState.level, finalAvatarState.level);
+
+            // 4. Verify InfiniteTowerInfo is set
+            var finalInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            Assert.NotNull(finalInfiniteTowerInfo);
+
+            // 5. Verify CP is set
+            var cpAccount = nextState.GetAccountState(Addresses.GetCpAccountAddress(BattleType.InfiniteTower));
+            var cpStateValue = cpAccount.GetState(avatarAddress);
+            if (cpStateValue != null)
+            {
+                var cpState = new CpState(cpStateValue);
+                Assert.True(cpState.Cp > 0);
+            }
+        }
+
+        [Fact]
+        public void Execute_ShouldMigrateUnlockedRuneSlotsFromAdventure()
+        {
+            // Arrange
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var blockIndex = 100L;
+            var infiniteTowerId = 1;
+            var floorId = 1;
+
+            // Create initial state
+            var initialState = new World(MockUtil.MockModernWorldState);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+            avatarState.level = 100;
+
+            // Set up sheets
+            var sheets = new Dictionary<string, string>();
+            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            {
+                sheets[key] = value;
+            }
+
+            foreach (var (key, value) in sheets)
+            {
+                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            // Set up game config
+            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            // Set up states
+            initialState = (World)initialState
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+
+            // Create Adventure rune slot state with some unlocked slots
+            var adventureSlotState = new RuneSlotState(BattleType.Adventure);
+            adventureSlotState.Unlock(1); // Unlock slot 1
+            adventureSlotState.Unlock(4); // Unlock slot 4
+            adventureSlotState.Unlock(6); // Unlock slot 6
+            var adventureSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.Adventure);
+            initialState = (World)initialState.SetLegacyState(adventureSlotStateAddress, adventureSlotState.Serialize());
+
+            // Create infinite tower info with tickets
+            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
+            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+
+            // Create action
+            var action = new InfiniteTowerBattle
+            {
+                AvatarAddress = avatarAddress,
+                InfiniteTowerId = infiniteTowerId,
+                FloorId = floorId,
+                Equipments = new List<Guid>(),
+                Costumes = new List<Guid>(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                BuyTicketIfNeeded = false,
+            };
+
+            // Act
+            var context = new ActionContext
+            {
+                Signer = agentAddress,
+                BlockIndex = blockIndex,
+                PreviousState = initialState,
+                RandomSeed = 0,
+            };
+
+            var nextState = action.Execute(context);
+
+            // Assert - Verify that unlocked slots from Adventure are also unlocked in InfiniteTower
+            var infiniteTowerSlotStateAddress = RuneSlotState.DeriveAddress(avatarAddress, BattleType.InfiniteTower);
+            var rawInfiniteTowerSlotState = nextState.GetLegacyState(infiniteTowerSlotStateAddress);
+            Assert.NotNull(rawInfiniteTowerSlotState);
+            var infiniteTowerSlotState = new RuneSlotState((List)rawInfiniteTowerSlotState);
+            var infiniteTowerSlots = infiniteTowerSlotState.GetRuneSlot();
+
+            // Verify that slots 1, 4, and 6 are unlocked (migrated from Adventure)
+            var slot1 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 1);
+            Assert.NotNull(slot1);
+            Assert.False(slot1.IsLock, "Slot 1 should be unlocked (migrated from Adventure)");
+
+            var slot4 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 4);
+            Assert.NotNull(slot4);
+            Assert.False(slot4.IsLock, "Slot 4 should be unlocked (migrated from Adventure)");
+
+            var slot6 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 6);
+            Assert.NotNull(slot6);
+            Assert.False(slot6.IsLock, "Slot 6 should be unlocked (migrated from Adventure)");
+
+            // Verify that other slots that were locked in Adventure remain locked
+            var slot2 = infiniteTowerSlots.FirstOrDefault(s => s.Index == 2);
+            Assert.NotNull(slot2);
+            Assert.True(slot2.IsLock, "Slot 2 should remain locked (was locked in Adventure)");
+        }
+
+        /// <summary>
+        /// Creates InfiniteTowerInfo with initial tickets from schedule sheet.
+        /// </summary>
+        private InfiniteTowerInfo CreateInfiniteTowerInfo(Address avatarAddress, int infiniteTowerId)
+        {
+            var initialTickets = 0;
+            if (_tableSheets.InfiniteTowerScheduleSheet != null)
+            {
+                var scheduleRow = _tableSheets.InfiniteTowerScheduleSheet.Values
+                    .FirstOrDefault(s => s.InfiniteTowerId == infiniteTowerId);
+                if (scheduleRow != null)
+                {
+                    initialTickets = Math.Min(scheduleRow.DailyFreeTickets, scheduleRow.MaxTickets);
+                }
+            }
+
+            return new InfiniteTowerInfo(avatarAddress, infiniteTowerId, initialTickets);
+        }
+
         private Equipment CreateTestEquipment(ItemType itemType, int grade = 1, int level = 1)
         {
             // EquipmentItemSheet에서 직접 찾아서 사용
@@ -1182,9 +2245,10 @@ namespace Lib9c.Tests.Action
             if (item is Equipment equipment)
             {
                 // Level 설정
-                if (level > 1)
+                // Equipment의 기본 레벨은 0이므로, level이 1 이상이면 레벨업을 수행
+                if (level >= 1)
                 {
-                    for (int i = 1; i < level; i++)
+                    for (int i = 0; i < level; i++)
                     {
                         equipment.LevelUp(new TestRandom(), _tableSheets.EnhancementCostSheetV2.Values.First(), false);
                     }

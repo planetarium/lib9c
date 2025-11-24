@@ -23,7 +23,9 @@ namespace Lib9c.Tests.Action
             Assert.Equal(1, condition.Id);
             Assert.Equal(StatType.ATK, condition.StatType);
             Assert.Equal(50, condition.Value);
-            Assert.Equal(SkillTargetType.Enemies, condition.TargetType);
+            Assert.NotNull(condition.TargetType);
+            Assert.Single(condition.TargetType);
+            Assert.Equal(SkillTargetType.Enemies, condition.TargetType[0]);
         }
 
         [Fact]

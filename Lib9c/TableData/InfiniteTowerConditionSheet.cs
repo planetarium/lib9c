@@ -37,9 +37,9 @@ namespace Nekoyume.TableData
             public StatType StatType { get; private set; }
 
             /// <summary>
-            /// Gets the target type for this condition (Self, Enemy, etc.).
+            /// Gets the list of target types for this condition (Self, Enemy, etc.).
             /// </summary>
-            public SkillTargetType TargetType { get; private set; }
+            public List<SkillTargetType> TargetType { get; private set; }
 
             /// <summary>
             /// Gets the operation type for the stat modification.
@@ -55,7 +55,7 @@ namespace Nekoyume.TableData
             {
                 Id = ParseInt(fields[0]);
                 StatType = (StatType)ParseInt(fields[1]);
-                TargetType = (SkillTargetType)ParseInt(fields[2]);
+                TargetType = ParseSkillTargetTypes(fields[2]);
                 OperationType = (StatModifier.OperationType)ParseInt(fields[3]);
                 Value = ParseInt(fields[4]);
             }

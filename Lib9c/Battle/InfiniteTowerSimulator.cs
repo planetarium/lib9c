@@ -172,8 +172,8 @@ namespace Nekoyume.Battle
             BuffLinkSheet buffLinkSheet,
             List<Model.InfiniteTower.InfiniteTowerCondition> conditions,
             int shatterStrikeMaxDamage,
-            int turnLimit = 200,
-            bool logEvent = true) : base(random, avatarState, foods, simulatorSheets, logEvent)
+            int turnLimit = 150,
+            bool logEvent = false) : base(random, avatarState, foods, simulatorSheets, logEvent)
         {
             // Store basic properties
             Foods = foods;
@@ -326,6 +326,7 @@ namespace Nekoyume.Battle
         /// <summary>
         /// Processes rewards for successful floor completion.
         /// Handles both fungible asset rewards (NCG, Crystal) and item rewards.
+        /// Also adds log events for rewards if LogEvent is enabled.
         /// Note: Infinite Tower does not provide experience rewards.
         /// </summary>
         private void ProcessRewards()
@@ -335,6 +336,22 @@ namespace Nekoyume.Battle
 
             // Process item rewards (equipment, materials, costumes, etc.)
             ProcessItemRewards();
+
+            // Add log events for all rewards (items + fungible assets)
+            // This should be called even if only fungible assets exist
+            if (LogEvent && (RewardItems.Count > 0 || FungibleAssetRewards.Count > 0))
+            {
+                // Add drop box log event for all items
+                if (RewardItems.Count > 0)
+                {
+                    var dropBox = new DropBox(null, RewardItems);
+                    Log.Add(dropBox);
+                }
+
+                // Add get reward log event for all items and fungible assets
+                var getReward = new GetReward(null, RewardItems, FungibleAssetRewards);
+                Log.Add(getReward);
+            }
         }
 
         /// <summary>
@@ -358,7 +375,6 @@ namespace Nekoyume.Battle
         /// <summary>
         /// Processes item rewards from the floor data.
         /// Creates items using ItemSheet and stores them in RewardItems list.
-        /// Also adds log events for item drops and rewards if LogEvent is enabled.
         /// </summary>
         private void ProcessItemRewards()
         {
@@ -387,24 +403,6 @@ namespace Nekoyume.Battle
                                 RewardItems.Add(item);
                             }
                         }
-                    }
-                }
-
-                // Add log events for all rewards (items + fungible assets)
-                if (LogEvent && (RewardItems.Count > 0 || FungibleAssetRewards.Count > 0))
-                {
-                    // Add drop box log event for all items
-                    if (RewardItems.Count > 0)
-                    {
-                        var dropBox = new DropBox(null, RewardItems);
-                        Log.Add(dropBox);
-                    }
-
-                    // Add get reward log event for all items and fungible assets
-                    if (RewardItems.Count > 0 || FungibleAssetRewards.Count > 0)
-                    {
-                        var getReward = new GetReward(null, RewardItems, FungibleAssetRewards);
-                        Log.Add(getReward);
                     }
                 }
             }
@@ -445,8 +443,8 @@ namespace Nekoyume.Battle
                 // Create the specified number of enemies for this monster type
                 for (int i = 0; i < monsterData.Count; i++)
                 {
-                    // Create stats with monster data (level, etc.)
-                    var stat = new CharacterStats(characterRow, monsterData.Level);
+                    // Create stats with monster data (level, etc.) and apply initial stat modifiers
+                    var stat = new CharacterStats(characterRow, monsterData.Level, FloorRow.EnemyInitialStatModifiers);
 
                     // Create enemy with player as target
                     var enemy = new Enemy(Player, stat, characterRow, characterRow.ElementalType);
@@ -513,19 +511,27 @@ namespace Nekoyume.Battle
 
         /// <summary>
         /// Determines if a condition should be applied to a character based on targeting rules.
+        /// Checks if any of the target types in the list match the character type (OR logic).
         /// </summary>
         /// <param name="condition">The condition to check.</param>
         /// <param name="isPlayer">Whether the target character is a player.</param>
         /// <returns>True if the condition should be applied to this character.</returns>
         private bool ShouldApplyCondition(Model.InfiniteTower.InfiniteTowerCondition condition, bool isPlayer)
         {
-            return condition.TargetType switch
+            if (condition.TargetType == null || !condition.TargetType.Any())
+            {
+                return false;
+            }
+
+            // Check if any target type matches (OR logic)
+            return condition.TargetType.Any(targetType => targetType switch
             {
                 SkillTargetType.Self => isPlayer,
                 SkillTargetType.Enemy => !isPlayer,
                 SkillTargetType.Enemies => !isPlayer,
+                SkillTargetType.Ally => isPlayer,
                 _ => false
-            };
+            });
         }
 
         /// <summary>
@@ -550,17 +556,22 @@ namespace Nekoyume.Battle
                 // Check if character queue is empty
                 if (!Characters.TryDequeue(out var character))
                 {
+                    // Queue is empty - check if wave is cleared
+                    // Use Player.Targets (same approach as StageSimulator)
+                    if (!Player.Targets.Any())
+                    {
+                        waveResult.IsClear = true;
+                        waveResult.Result = BattleLog.Result.Win;
+                    }
                     break;
                 }
 
                 // Execute character's turn
+                // TurnNumber is incremented in Player.EndTurn() for player actions
+                // Enemy actions don't increment TurnNumber (consistent with other simulators)
                 character.Tick();
-                TurnNumber++;
 
-                // Update character priorities after action
-                UpdateCharacterPriorities();
-
-                // Check if player is dead
+                // Check if player is dead (before updating priorities)
                 if (Player.IsDead)
                 {
                     waveResult.IsClear = false;
@@ -569,13 +580,17 @@ namespace Nekoyume.Battle
                 }
 
                 // Check if all enemies are dead (wave cleared)
-                var aliveEnemies = Characters.Where(c => c is Enemy && !c.IsDead).ToList();
-                if (!aliveEnemies.Any())
+                // Use Player.Targets (same approach as StageSimulator)
+                // Enemies are automatically removed from Player.Targets when they die via Enemy.OnDead()
+                if (!Player.Targets.Any())
                 {
                     waveResult.IsClear = true;
                     waveResult.Result = BattleLog.Result.Win;
                     break;
                 }
+
+                // Update character priorities after action
+                UpdateCharacterPriorities();
 
                 // Re-enqueue character for next turn
                 Characters.Enqueue(character, TurnPriority / character.SPD);
