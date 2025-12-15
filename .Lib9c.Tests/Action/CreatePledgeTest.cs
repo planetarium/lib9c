@@ -113,5 +113,80 @@ namespace Lib9c.Tests.Action
                 Assert.Throws(exc, () => action.Execute(actionContext));
             }
         }
+
+        [Fact]
+        public void Execute_JoinGuild_WhenAlreadyJoined()
+        {
+            var validatorKey = new PrivateKey();
+            var adminAddress = new PrivateKey().Address;
+            var adminState = new AdminState(adminAddress, 150L);
+            var patronAddress = MeadConfig.PatronAddress;
+            var mead = Currencies.Mead;
+            var pledgedAddress = new PrivateKey().Address;
+            var pledgeAddress = pledgedAddress.GetPledgeAddress();
+            var agentAddress = new Nekoyume.TypedAddress.AgentAddress(pledgedAddress);
+            var context = new ActionContext();
+            var (tables, agentAddr, avatarAddr, states) = InitializeUtil.InitializeStates();
+            states = states
+                .SetLegacyState(Addresses.Admin, adminState.Serialize())
+                .MintAsset(context, patronAddress, 4 * mead);
+
+            states = Lib9c.Tests.Util.DelegationUtil.EnsureValidatorPromotionReady(
+                states,
+                validatorKey.PublicKey,
+                0L
+            );
+
+            var repository = new GuildRepository(states, context);
+            var planetariumGuildOwner = Nekoyume.Action.Guild.GuildConfig.PlanetariumGuildOwner;
+            var random = new System.Random();
+            var guildAddr = new Nekoyume.TypedAddress.GuildAddress(
+                new PrivateKey().Address);
+            var guild = new Nekoyume.Model.Guild.Guild(
+                guildAddr,
+                planetariumGuildOwner,
+                validatorKey.Address,
+                repository);
+            repository.SetGuild(guild);
+            states = repository.JoinGuild(guildAddr, planetariumGuildOwner).World;
+
+            // Join guild first time
+            repository = new GuildRepository(states, context);
+            states = repository.JoinGuild(guildAddr, agentAddress).World;
+
+            // Verify that the agent is already joined to the guild before executing CreatePledge
+            repository = new GuildRepository(states, context);
+            var joinedGuildAddressBefore = repository.GetJoinedGuild(agentAddress);
+            Assert.NotNull(joinedGuildAddressBefore);
+            Assert.Equal(guildAddr, joinedGuildAddressBefore);
+
+            var agentAddresses = new List<(Address, Address)>
+            {
+                (pledgedAddress, pledgeAddress),
+            };
+
+            var action = new CreatePledge
+            {
+                PatronAddress = patronAddress,
+                Mead = RequestPledge.DefaultRefillMead,
+                AgentAddresses = agentAddresses,
+            };
+
+            var actionContext = new ActionContext
+            {
+                Signer = adminAddress,
+                PreviousState = states,
+                Miner = validatorKey.Address,
+            };
+
+            var nextState = action.Execute(actionContext);
+            Assert.Equal(0 * mead, nextState.GetBalance(patronAddress, mead));
+            Assert.Equal(4 * mead, nextState.GetBalance(pledgedAddress, mead));
+
+            var repositoryAfter = new GuildRepository(nextState, context);
+            var joinedGuildAddressAfter = repositoryAfter.GetJoinedGuild(agentAddress);
+            Assert.NotNull(joinedGuildAddressAfter);
+            Assert.Equal(guildAddr, joinedGuildAddressAfter);
+        }
     }
 }

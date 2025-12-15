@@ -103,6 +103,66 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        [InlineData(RequestPledge.DefaultRefillMead)]
+        [InlineData(100)]
+        public void Execute_JoinGuild_WhenAlreadyJoined(int mead)
+        {
+            var address = new PrivateKey().Address;
+            var validatorKey = new PrivateKey();
+            var patron = MeadConfig.PatronAddress;
+            var contractAddress = address.Derive(nameof(RequestPledge));
+            var guildAddress = AddressUtil.CreateGuildAddress();
+            var (tables, agentAddr, avatarAddr, states) = InitializeUtil.InitializeStates();
+            states = states
+                .SetLegacyState(
+                    contractAddress,
+                    List.Empty.Add(patron.Serialize()).Add(false.Serialize()).Add(mead.Serialize())
+                );
+
+            states = DelegationUtil.EnsureValidatorPromotionReady(
+                states, validatorKey.PublicKey, 0L);
+
+            var repository = new GuildRepository(
+                states,
+                new ActionContext
+                {
+                    Signer = GuildConfig.PlanetariumGuildOwner,
+                });
+            states = repository.MakeGuild(guildAddress, validatorKey.Address).World;
+
+            // Join guild first time
+            var agentAddress = new AgentAddress(address);
+            states = repository.JoinGuild(guildAddress, agentAddress).World;
+
+            // Verify that the agent is already joined to the guild before executing ApprovePledge
+            var repositoryBeforeAction = new GuildRepository(states, new ActionContext());
+            var joinedGuildAddressBefore = repositoryBeforeAction.GetJoinedGuild(agentAddress);
+            Assert.NotNull(joinedGuildAddressBefore);
+            Assert.Equal(guildAddress, joinedGuildAddressBefore);
+
+            // Execute ApprovePledge when already joined
+            var action = new ApprovePledge
+            {
+                PatronAddress = patron,
+            };
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    Signer = address,
+                    PreviousState = states,
+                });
+
+            var contract = Assert.IsType<List>(nextState.GetLegacyState(contractAddress));
+            Assert.Equal(patron, contract[0].ToAddress());
+            Assert.True(contract[1].ToBoolean());
+            Assert.Equal(mead, contract[2].ToInteger());
+            var joinedGuildAddress = new GuildRepository(nextState, new ActionContext())
+                .GetJoinedGuild(agentAddress);
+            Assert.NotNull(joinedGuildAddress);
+            Assert.Equal(guildAddress, joinedGuildAddress);
+        }
+
+        [Theory]
         [InlineData(false, false, typeof(FailedLoadStateException))]
         [InlineData(true, false, typeof(InvalidAddressException))]
         [InlineData(false, true, typeof(AlreadyContractedException))]
