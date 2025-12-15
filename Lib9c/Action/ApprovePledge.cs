@@ -54,7 +54,11 @@ namespace Nekoyume.Action
             if (PatronAddress == MeadConfig.PatronAddress
                 && repository.GetJoinedGuild(GuildConfig.PlanetariumGuildOwner) is { } guildAddress)
             {
-                states = repository.JoinGuild(guildAddress, context.GetAgentAddress()).World;
+                var agentAddress = context.GetAgentAddress();
+                if (repository.GetJoinedGuild(agentAddress) is null)
+                {
+                    states = repository.JoinGuild(guildAddress, agentAddress).World;
+                }
             }
 
             return states.SetLegacyState(
