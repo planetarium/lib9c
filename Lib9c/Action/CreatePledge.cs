@@ -85,8 +85,11 @@ namespace Nekoyume.Action
             {
                 if (PatronAddress == MeadConfig.PatronAddress)
                 {
-                    repository = repository.JoinGuild(guildAddress,
-                        new Nekoyume.TypedAddress.AgentAddress(agentAddress));
+                    var agentAddr = new Nekoyume.TypedAddress.AgentAddress(agentAddress);
+                    if (repository.GetJoinedGuild(agentAddr) is null)
+                    {
+                        repository = repository.JoinGuild(guildAddress, agentAddr);
+                    }
                 }
 
                 repository.UpdateWorld(repository.World
