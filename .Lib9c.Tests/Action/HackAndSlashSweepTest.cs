@@ -300,7 +300,7 @@ namespace Lib9c.Tests.Action
             var action = new HackAndSlashSweep
             {
                 runeInfos = new List<RuneSlotInfo>(),
-                apStoneCount = 99,
+                apStoneCount = HackAndSlashSweep.UsableApStoneCount + 10,
                 avatarAddress = _avatarAddress,
                 worldId = 1,
                 stageId = 2,
