@@ -1,6 +1,6 @@
 id,item_sub_type,scroll_amount,circle_amount,required_block
-1,Weapon,10,10,21600
-2,Armor,10,10,21600
-3,Belt,10,10,21600
-4,Necklace,10,10,21600
-5,Ring,10,10,21600
+1,Weapon,10,10,5400
+2,Armor,10,10,5400
+3,Belt,10,10,5400
+4,Necklace,10,10,5400
+5,Ring,10,10,5400

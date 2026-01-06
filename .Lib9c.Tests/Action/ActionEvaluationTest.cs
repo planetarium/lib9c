@@ -97,6 +97,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(ClaimWorldBossReward))]
         [InlineData(typeof(RemoveAddressState))]
         [InlineData(typeof(SetAddressState))]
+        [InlineData(typeof(SetAddressStateCompressed))]
         [InlineData(typeof(PatchTableSheetCompressed))]
         public void Serialize_With_MessagePack(Type actionType)
         {
@@ -523,6 +524,10 @@ namespace Lib9c.Tests.Action
                     Foods = new List<Guid>(),
                     RuneInfos = new List<RuneSlotInfo>(),
                 },
+                SetAddressStateCompressed _ => new SetAddressStateCompressed(new List<(Address accountAddress, Address targetAddress, byte[] compressedState)>
+                {
+                    (new PrivateKey().Address, new PrivateKey().Address, SetAddressStateCompressed.CompressState((Text)"state1")),
+                }),
                 _ => throw new NotSupportedException($"Not supported action type: {type}"),
             };
         }

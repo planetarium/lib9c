@@ -70,6 +70,10 @@ namespace Nekoyume.Action
                 ? new RuneSlotState(rawRaidSlotState)
                 : new RuneSlotState(BattleType.Raid);
 
+            var infiniteTowerSlotStateAddress = RuneSlotState.DeriveAddress(AvatarAddress, BattleType.InfiniteTower);
+            var infiniteTowerSlotState = states.TryGetLegacyState(infiniteTowerSlotStateAddress, out List rawInfiniteTowerSlotState)
+                ? new RuneSlotState(rawInfiniteTowerSlotState)
+                : new RuneSlotState(BattleType.InfiniteTower);
 
             var slot = adventureSlotState.GetRuneSlot().FirstOrDefault(x => x.Index == SlotIndex);
             if (slot == null)
@@ -103,6 +107,7 @@ namespace Nekoyume.Action
             adventureSlotState.Unlock(SlotIndex);
             arenaSlotState.Unlock(SlotIndex);
             raidSlotState.Unlock(SlotIndex);
+            infiniteTowerSlotState.Unlock(SlotIndex);
 
             var feeAddress = states.GetFeeAddress(context.BlockIndex);
 
@@ -110,7 +115,8 @@ namespace Nekoyume.Action
                 .TransferAsset(context, context.Signer, feeAddress, cost * currency)
                 .SetLegacyState(adventureSlotStateAddress, adventureSlotState.Serialize())
                 .SetLegacyState(arenaSlotStateAddress, arenaSlotState.Serialize())
-                .SetLegacyState(raidSlotStateAddress, raidSlotState.Serialize());
+                .SetLegacyState(raidSlotStateAddress, raidSlotState.Serialize())
+                .SetLegacyState(infiniteTowerSlotStateAddress, infiniteTowerSlotState.Serialize());
         }
     }
 }

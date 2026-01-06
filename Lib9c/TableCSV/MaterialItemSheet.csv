@@ -283,13 +283,14 @@ id,_name,item_sub_type,grade,elemental_type
 306102,Water Mucus Crystal (Big),MonsterPart,6,Water
 306103,Earth Mucus Crystal (Big),MonsterPart,6,Land
 306104,Wind Mucus Crystal (Big),MonsterPart,6,Wind
-306105,9월드 신규 재료 (무기),MonsterPart,5,Land
-306106,9월드 신규 재료 (갑옷),MonsterPart,5,Land
-306107,9월드 신규 재료 (벨트),MonsterPart,5,Land
-306108,9월드 신규 재료 (목걸이),MonsterPart,5,Land
-306109,9월드 신규 재료 (반지),MonsterPart,5,Land
-306110,9월드 신규 재료 (무기),MonsterPart,5,Land
-306111,9월드 신규 재료 (갑옷),MonsterPart,5,Land
-306112,9월드 신규 재료 (벨트),MonsterPart,5,Land
-306113,9월드 신규 재료 (목걸이),MonsterPart,5,Land
-306114,9월드 신규 재료 (반지),MonsterPart,5,Land
+306105,9월드 신규 재료 (무기),MonsterPart,5,Wind
+306106,9월드 신규 재료 (갑옷),MonsterPart,5,Wind
+306107,9월드 신규 재료 (벨트),MonsterPart,5,Wind
+306108,9월드 신규 재료 (목걸이),MonsterPart,5,Wind
+306109,9월드 신규 재료 (반지),MonsterPart,5,Wind
+306110,9월드 신규 재료 (무기),MonsterPart,5,Wind
+306111,9월드 신규 재료 (갑옷),MonsterPart,5,Wind
+306112,9월드 신규 재료 (벨트),MonsterPart,5,Wind
+306113,9월드 신규 재료 (목걸이),MonsterPart,5,Wind
+306114,9월드 신규 재료 (반지),MonsterPart,5,Wind
+600206,Sapphire Dust,EquipmentMaterial,7,Normal

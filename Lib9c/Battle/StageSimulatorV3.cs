@@ -268,8 +268,7 @@ namespace Nekoyume.Battle
                         monsterData.CharacterId,
                         out var row,
                         true);
-                    var enemyModel = new Enemy(Player, row, monsterData.Level,
-                        optionalStatModifiers);
+                    var enemyModel = new Enemy(Player, row, monsterData.Level, optionalStatModifiers);
 
                     wave.Add(enemyModel);
                     wave.HasBoss = waveData.HasBoss;

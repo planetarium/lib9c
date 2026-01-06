@@ -30,6 +30,8 @@ namespace Nekoyume.Model.State
             _slots.Add(new RuneSlot(5, RuneSlotType.Stake, RuneType.Skill,true));
             _slots.Add(new RuneSlot(6, RuneSlotType.Crystal, RuneType.Stat, true));
             _slots.Add(new RuneSlot(7, RuneSlotType.Crystal, RuneType.Skill,true));
+            _slots.Add(new RuneSlot(8, RuneSlotType.Default, RuneType.Stat, false));
+            _slots.Add(new RuneSlot(9, RuneSlotType.Default, RuneType.Skill, false));
         }
 
         public RuneSlotState(List serialized)
@@ -40,6 +42,11 @@ namespace Nekoyume.Model.State
             {
                 _slots.Add(new RuneSlot(6, RuneSlotType.Crystal, RuneType.Stat, true));
                 _slots.Add(new RuneSlot(7, RuneSlotType.Crystal, RuneType.Skill,true));
+            }
+            if (_slots.Count == 8)
+            {
+                _slots.Add(new RuneSlot(8, RuneSlotType.Default, RuneType.Stat, false));
+                _slots.Add(new RuneSlot(9, RuneSlotType.Default, RuneType.Skill, false));
             }
         }
 

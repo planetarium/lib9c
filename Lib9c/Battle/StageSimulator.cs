@@ -18,22 +18,72 @@ using Skill = Nekoyume.Model.Skill.Skill;
 
 namespace Nekoyume.Battle
 {
+    /// <summary>
+    /// Simulator for stage battles that handles wave-based combat.
+    /// </summary>
     public class StageSimulator : Simulator, IStageSimulator
     {
         private readonly List<Wave> _waves;
         private readonly List<ItemBase> _waveRewards;
         private readonly List<Model.Skill.Skill> _skillsOnWaveStart;
 
+        /// <summary>
+        /// Gets the collection map for items.
+        /// </summary>
         public CollectionMap ItemMap { get; private set; } = new CollectionMap();
+
+        /// <summary>
+        /// Gets the enemy skill sheet.
+        /// </summary>
         public EnemySkillSheet EnemySkillSheet { get; }
 
+        /// <summary>
+        /// Gets the world ID.
+        /// </summary>
         private int WorldId { get; }
+
+        /// <summary>
+        /// Gets the stage ID.
+        /// </summary>
         public int StageId { get; }
+
+        /// <summary>
+        /// Gets whether the stage is cleared.
+        /// </summary>
         private bool IsCleared { get; }
+
+        /// <summary>
+        /// Gets the experience points.
+        /// </summary>
         private int Exp { get; }
+
+        /// <summary>
+        /// Gets the turn limit for the battle.
+        /// </summary>
         private int TurnLimit { get; }
+
+        /// <summary>
+        /// Gets the rewards from the battle.
+        /// </summary>
         public override IEnumerable<ItemBase> Reward => _waveRewards;
 
+        /// <summary>
+        /// Initializes a new instance of the StageSimulator class.
+        /// </summary>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="avatarState">The avatar state.</param>
+        /// <param name="foods">The food items to use.</param>
+        /// <param name="runeStates">The rune states.</param>
+        /// <param name="runeSlotState">The rune slot state.</param>
+        /// <param name="skillsOnWaveStart">The skills to use at wave start.</param>
+        /// <param name="worldId">The world ID.</param>
+        /// <param name="stageId">The stage ID.</param>
+        /// <param name="stageRow">The stage row data.</param>
+        /// <param name="stageWaveRow">The stage wave row data.</param>
+        /// <param name="isCleared">Whether the stage is cleared.</param>
+        /// <param name="exp">The experience points.</param>
+        /// <param name="simulatorSheets">The simulator sheets.</param>
+        /// <param name="enemySkillSheet">The enemy skill sheet.</param>
         public StageSimulator(IRandom random,
             AvatarState avatarState,
             List<Guid> foods,

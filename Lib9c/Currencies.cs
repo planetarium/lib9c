@@ -228,5 +228,25 @@ namespace Lib9c
             var type = tradable ? "T" : "NT";
             return Currency.Legacy($"Item_{type}_{itemId}", decimalPlaces: 0, minters: null);
         }
+
+        /// <summary>
+        /// Gets the appropriate currency object for a given ticker.
+        /// Uses GetMinterlessCurrency for supported tickers (CRYSTAL, GARAGE, Rune, Soulstone).
+        /// NCG is not supported as it may have minters and requires special handling.
+        /// </summary>
+        /// <param name="ticker">The currency ticker string</param>
+        /// <returns>The currency object for the given ticker</returns>
+        /// <exception cref="ArgumentException">Thrown when ticker is NCG or not supported by GetMinterlessCurrency</exception>
+        public static Currency GetCurrencyByTicker(string ticker)
+        {
+            // NCG is not supported as it may have minters
+            if (ticker == "NCG")
+            {
+                throw new ArgumentException("NCG is not supported by GetCurrencyByTicker. Use Currency.Legacy directly or GetGoldCurrency from IWorld.", nameof(ticker));
+            }
+
+            // Use GetMinterlessCurrency for supported tickers
+            return GetMinterlessCurrency(ticker);
+        }
     }
 }

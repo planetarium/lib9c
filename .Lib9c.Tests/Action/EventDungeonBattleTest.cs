@@ -519,6 +519,31 @@ namespace Lib9c.Tests.Action
             }
         }
 
+        [Fact]
+        public void Execute_Success_With_New_Rune_Slots()
+        {
+            Assert.True(
+                _tableSheets.EventScheduleSheet
+                    .TryGetValue(1001, out var scheduleRow));
+
+            var context = new ActionContext();
+            _initialStates = _initialStates.MintAsset(context, _agentAddress, 99999 * _ncgCurrency);
+
+            // Test with new Default slots (Index 8, 9) - no unlock needed
+            var nextStates = Execute(
+                _initialStates,
+                scheduleRow.Id,
+                10010001,  // eventDungeonId
+                10010001,  // eventDungeonStageId
+                blockIndex: scheduleRow.StartBlockIndex,
+                slotIndex: 8,  // New Default Stat slot
+                runeId: 10002,  // Stat rune
+                slotIndex2: 9,  // New Default Skill slot
+                runeId2: 10013);  // Skill rune
+
+            Assert.NotNull(nextStates);
+        }
+
         private IWorld Execute(
             IWorld previousStates,
             int eventScheduleId,

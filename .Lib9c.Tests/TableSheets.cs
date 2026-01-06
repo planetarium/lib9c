@@ -292,6 +292,15 @@ namespace Lib9c.Tests
 
         public WorldBossContributionRewardSheet WorldBossContributionRewardSheet { get; private set; }
 
+        // Infinite Tower
+        public InfiniteTowerScheduleSheet InfiniteTowerScheduleSheet { get; private set; }
+
+        public InfiniteTowerFloorSheet InfiniteTowerFloorSheet { get; private set; }
+
+        public InfiniteTowerFloorWaveSheet InfiniteTowerFloorWaveSheet { get; private set; }
+
+        public InfiniteTowerConditionSheet InfiniteTowerConditionSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();
