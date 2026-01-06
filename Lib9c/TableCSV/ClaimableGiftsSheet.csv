@@ -1,2 +1,3 @@
 id,started_block_index,ended_block_index,item_1_id,item_1_quantity,item_1_tradable,item_2_id,item_2_quantity,item_2_tradable,item_3_id,item_3_quantity,item_3_tradable,item_4_id,item_4_quantity,item_4_tradable,item_5_id,item_5_quantity,item_5_tradable
 1,12576745,12868845,40100042,1,TRUE,,,,,,,,,,,,
+2,1,20000000,40100059,1,TRUE,49900050,1,TRUE,,,,,,,,,
