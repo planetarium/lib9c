@@ -29,23 +29,70 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
+    /// Action for participating in an event dungeon battle.
+    /// This action allows an avatar to battle in a specific stage of an event dungeon,
+    /// consuming tickets and receiving rewards upon victory.
     /// Hard forked at https://github.com/planetarium/lib9c/pull/2195
     /// </summary>
     [Serializable]
     [ActionType(ActionTypeText)]
     public class EventDungeonBattle : GameAction, IEventDungeonBattleV2
     {
+        /// <summary>
+        /// The action type identifier for event dungeon battle.
+        /// </summary>
         private const string ActionTypeText = "event_dungeon_battle6";
+
+        /// <summary>
+        /// The number of battles to play in a single action execution.
+        /// Currently fixed to 1 for this action type.
+        /// </summary>
         public const int PlayCount = 1;
 
+        /// <summary>
+        /// The address of the avatar that will participate in the event dungeon battle.
+        /// </summary>
         public Address AvatarAddress;
+
+        /// <summary>
+        /// The ID of the event schedule that defines when the event dungeon is available.
+        /// </summary>
         public int EventScheduleId;
+
+        /// <summary>
+        /// The ID of the event dungeon to battle in.
+        /// </summary>
         public int EventDungeonId;
+
+        /// <summary>
+        /// The ID of the specific stage within the event dungeon to battle.
+        /// </summary>
         public int EventDungeonStageId;
+
+        /// <summary>
+        /// A list of equipment item GUIDs to be equipped for the battle.
+        /// </summary>
         public List<Guid> Equipments;
+
+        /// <summary>
+        /// A list of costume item GUIDs to be equipped for the battle.
+        /// </summary>
         public List<Guid> Costumes;
+
+        /// <summary>
+        /// A list of food item GUIDs to be consumed during the battle.
+        /// </summary>
         public List<Guid> Foods;
+
+        /// <summary>
+        /// Whether to automatically purchase a ticket if the avatar doesn't have enough tickets.
+        /// If true and tickets are insufficient, the action will attempt to buy a ticket using currency.
+        /// </summary>
         public bool BuyTicketIfNeeded;
+
+        /// <summary>
+        /// A list of rune slot information specifying which runes to use in the battle.
+        /// </summary>
         public List<RuneSlotInfo> RuneInfos;
 
         Address IEventDungeonBattleV2.AvatarAddress => AvatarAddress;
@@ -59,6 +106,15 @@ namespace Nekoyume.Action
             RuneInfos.Select(x => x.Serialize());
         bool IEventDungeonBattleV2.BuyTicketIfNeeded => BuyTicketIfNeeded;
 
+        /// <summary>
+        /// Serializes the action's data into a Bencodex dictionary.
+        /// The data is stored as a list under the key "l" containing:
+        /// AvatarAddress, EventScheduleId, EventDungeonId, EventDungeonStageId,
+        /// Equipments, Costumes, Foods, BuyTicketIfNeeded, and RuneInfos.
+        /// </summary>
+        /// <returns>
+        /// An immutable dictionary containing the serialized action data.
+        /// </returns>
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
         {
             get
@@ -91,6 +147,19 @@ namespace Nekoyume.Action
             }
         }
 
+        /// <summary>
+        /// Deserializes the action's data from a Bencodex dictionary.
+        /// Expects a list under the key "l" containing at least 9 items in the order:
+        /// AvatarAddress, EventScheduleId, EventDungeonId, EventDungeonStageId,
+        /// Equipments, Costumes, Foods, BuyTicketIfNeeded, and RuneInfos.
+        /// </summary>
+        /// <param name="plainValue">
+        /// The Bencodex dictionary containing the serialized action data.
+        /// </param>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the plainValue doesn't contain the expected key "l",
+        /// when "l" is not a Bencodex list, or when the list has fewer than 9 items.
+        /// </exception>
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
         {
@@ -120,6 +189,35 @@ namespace Nekoyume.Action
             RuneInfos = list[8].ToList(x => new RuneSlotInfo((List)x));
         }
 
+        /// <summary>
+        /// Executes the event dungeon battle action.
+        /// This method performs the following operations:
+        /// 1. Validates the avatar state and event dungeon information
+        /// 2. Checks and consumes event dungeon tickets (or purchases if needed)
+        /// 3. Validates equipment, costumes, foods, and runes
+        /// 4. Updates rune and item slot states
+        /// 5. Simulates the battle using StageSimulator
+        /// 6. Applies battle results to the avatar state (experience, rewards, etc.)
+        /// 7. Updates the event dungeon info if the stage is cleared
+        /// </summary>
+        /// <param name="context">
+        /// The action context containing block index, signer, and random seed.
+        /// </param>
+        /// <returns>
+        /// The updated world state after executing the battle.
+        /// </returns>
+        /// <exception cref="FailedLoadStateException">
+        /// Thrown when the avatar state cannot be loaded.
+        /// </exception>
+        /// <exception cref="NotEnoughEventDungeonTicketsException">
+        /// Thrown when the avatar doesn't have enough tickets and BuyTicketIfNeeded is false.
+        /// </exception>
+        /// <exception cref="StageNotClearedException">
+        /// Thrown when attempting to battle a stage without clearing the previous stage.
+        /// </exception>
+        /// <exception cref="SheetRowNotFoundException">
+        /// Thrown when required sheet data cannot be found.
+        /// </exception>
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
