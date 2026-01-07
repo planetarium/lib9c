@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
     using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Extensions;
     using Nekoyume.Model.AdventureBoss;
+    using Nekoyume.Model.Arena;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
@@ -184,6 +185,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 Costumes = new List<Guid>(),
                 Equipments = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = 1,
             };
 
             if (exc is not null)
@@ -258,6 +260,167 @@ namespace Lib9c.Tests.Action.AdventureBoss
 
                 Assert.True(nextCpState.Cp > 0);
             }
+        }
+
+        [Theory]
+        [InlineData(0, typeof(PlayCountIsZeroException))]
+        [InlineData(101, typeof(ExceedPlayCountException))]
+        public void Execute_PlayCountExceptions(int playCount, Type expectedExceptionType)
+        {
+            var state = _initialState;
+            var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
+            state = state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var validatorKey = new PrivateKey().PublicKey;
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey.Address, 0L);
+
+            state = Stake(state, WantedAddress);
+
+            // Open season
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = WantedAvatarAddress,
+                Bounty = gameConfigState.AdventureBossMinBounty * NCG,
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
+
+            var exp = new Explorer(TesterAvatarAddress, TesterAvatarState.name)
+            {
+                MaxFloor = 5,
+                Floor = 1,
+            };
+            state = state.SetExplorer(1, exp);
+
+            var action = new SweepAdventureBoss
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            Assert.Throws(
+                expectedExceptionType,
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = TesterAddress,
+                        BlockIndex = 1L,
+                    }
+                ));
+        }
+
+        [Fact]
+        public void Execute_WithMultiplePlayCount()
+        {
+            var state = _initialState;
+            var gameConfigState = new GameConfigState(Sheets[nameof(GameConfigSheet)]);
+            state = state.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+            foreach (var (key, value) in Sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var validatorKey = new PrivateKey().PublicKey;
+            state = DelegationUtil.EnsureValidatorPromotionReady(state, validatorKey, 0L);
+            state = DelegationUtil.MakeGuild(state, WantedAddress, validatorKey.Address, 0L);
+
+            state = Stake(state, WantedAddress);
+
+            var sheets = state.GetSheets(
+                new[]
+                {
+                    typeof(MaterialItemSheet),
+                });
+            var materialSheet = sheets.GetSheet<MaterialItemSheet>();
+            var materialRow =
+                materialSheet.OrderedList.First(row => row.ItemSubType == ItemSubType.ApStone);
+            var apPotion = ItemFactory.CreateMaterial(materialRow);
+
+            var inventory = state.GetInventoryV2(TesterAvatarAddress);
+            inventory.AddItem(apPotion, 1000); // Enough potions for multiple plays
+            state = state.SetInventory(TesterAvatarAddress, inventory);
+
+            // Open season
+            state = new Wanted
+            {
+                Season = 1,
+                AvatarAddress = WantedAvatarAddress,
+                Bounty = gameConfigState.AdventureBossMinBounty * NCG,
+            }.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = WantedAddress,
+                    BlockIndex = 0L,
+                    RandomSeed = 1,
+                });
+
+            const int floor = 5;
+            var exp = new Explorer(TesterAvatarAddress, TesterAvatarState.name)
+            {
+                MaxFloor = 5 * Math.Max(floor / 5, 1),
+                Floor = floor,
+            };
+            state = state.SetExplorer(1, exp);
+
+            const int playCount = 3;
+            var action = new SweepAdventureBoss
+            {
+                Season = 1,
+                AvatarAddress = TesterAvatarAddress,
+                Costumes = new List<Guid>(),
+                Equipments = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var previousExploreBoard = state.GetExploreBoard(1);
+            var previousExplorer = state.GetExplorer(1, TesterAvatarAddress);
+            var previousScore = previousExplorer.Score;
+            var previousTotalPoint = previousExploreBoard.TotalPoint;
+
+            state = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = TesterAddress,
+                    BlockIndex = 1L,
+                });
+
+            var unitSweepAp = state.GetSheet<AdventureBossSheet>().OrderedList
+                .First(row => row.BossId == state.GetLatestAdventureBossSeason().BossId)
+                .SweepAp;
+            var exploreBoard = state.GetExploreBoard(1);
+            var explorer = state.GetExplorer(1, TesterAvatarAddress);
+
+            // Verify AP potion consumption
+            var expectedApPotion = playCount * floor * unitSweepAp;
+            Assert.Equal(expectedApPotion, exploreBoard.UsedApPotion - previousExploreBoard.UsedApPotion);
+            Assert.Equal(explorer.UsedApPotion - previousExplorer.UsedApPotion, exploreBoard.UsedApPotion - previousExploreBoard.UsedApPotion);
+
+            // Verify points are accumulated
+            Assert.True(explorer.Score > previousScore);
+            Assert.True(exploreBoard.TotalPoint > previousTotalPoint);
+            Assert.Equal(explorer.Score - previousScore, exploreBoard.TotalPoint - previousTotalPoint);
+
+            // Verify floor remains the same
+            Assert.Equal(floor, explorer.Floor);
         }
 
         private IWorld Stake(IWorld world, Address agentAddress)
