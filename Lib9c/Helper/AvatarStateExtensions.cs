@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Battle;
+using Nekoyume.Extensions;
 using Nekoyume.Model;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Quest;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
+using Nekoyume.TableData.Event;
 
 namespace Nekoyume.Helper
 {
@@ -73,6 +75,78 @@ namespace Nekoyume.Helper
                     currentLevel += 1;
                 }
                 else
+                {
+                    currentExp += stageExp * remainCount;
+                    break;
+                }
+            }
+
+            return (currentLevel, currentExp);
+        }
+
+        /// <summary>
+        /// Calculates level and experience for event dungeon sweep with level-up consideration.
+        /// This method handles experience accumulation correctly without subtracting experience during level up.
+        /// </summary>
+        /// <param name="avatarState">The avatar state to calculate experience for</param>
+        /// <param name="characterLevelSheet">Character level sheet for level information</param>
+        /// <param name="scheduleRow">Event schedule row containing dungeon experience configuration</param>
+        /// <param name="stageNumber">Event dungeon stage number</param>
+        /// <param name="repeatCount">Number of times to repeat the battle</param>
+        /// <returns>Tuple containing final level and experience</returns>
+        public static (int, long) GetLevelAndExpForEventDungeon(
+            this AvatarState avatarState,
+            CharacterLevelSheet characterLevelSheet,
+            EventScheduleSheet.Row scheduleRow,
+            int stageNumber,
+            int repeatCount)
+        {
+            var remainCount = repeatCount;
+            var currentLevel = avatarState.level;
+            var currentExp = avatarState.exp;
+
+            while (remainCount > 0)
+            {
+                // Get current level information
+                if (!characterLevelSheet.TryGetValue(currentLevel, out var levelRow))
+                {
+                    // Maximum level reached
+                    break;
+                }
+
+                var maxExp = levelRow.Exp + levelRow.ExpNeed;
+                var remainExp = maxExp - currentExp;
+                var stageExp = scheduleRow.GetStageExp(stageNumber, 1);
+
+                if (stageExp == 0)
+                {
+                    break;
+                }
+
+                // Calculate required play count to level up
+                var requiredCount = (int)DecimalMath.DecimalEx.Ceiling(remainExp / (decimal)stageExp);
+
+                if (remainCount >= requiredCount) // Level up occurs
+                {
+                    currentExp += stageExp * requiredCount;
+                    remainCount -= requiredCount;
+                    currentLevel += 1;
+
+                    // Check if maximum level is reached
+                    if (!characterLevelSheet.TryGetValue(currentLevel, out _))
+                    {
+                        // Maximum level reached - limit experience
+                        var maxLevelRow = characterLevelSheet.OrderedList.LastOrDefault();
+                        if (maxLevelRow != null)
+                        {
+                            currentLevel = maxLevelRow.Level;
+                            currentExp = (int)(maxLevelRow.Exp + maxLevelRow.ExpNeed - 1);
+                        }
+
+                        break;
+                    }
+                }
+                else // No level up
                 {
                     currentExp += stageExp * remainCount;
                     break;

@@ -521,22 +521,18 @@ namespace Nekoyume.Action
             // Add reward items to avatar's inventory
             avatarState.UpdateInventory(rewardItems);
 
-            // Calculate experience points based on stage and play count (same as EventDungeonBattle)
-            var exp = scheduleRow.GetStageExp(
-                EventDungeonStageId.ToEventDungeonStageNumber(),
+            // Calculate experience points with level-up consideration
+            // Uses GetLevelAndExpForEventDungeon to handle level-ups correctly without subtracting experience
+            var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
+            var stageNumber = EventDungeonStageId.ToEventDungeonStageNumber();
+            var (level, exp) = avatarState.GetLevelAndExpForEventDungeon(
+                levelSheet,
+                scheduleRow,
+                stageNumber,
                 PlayCount);
 
-            // Apply experience and handle level up
-            avatarState.exp += exp;
-
-            // Handle level up manually (since we don't use StageSimulator)
-            var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
-            while (levelSheet.TryGetValue(avatarState.level, out var levelRow) &&
-                   avatarState.exp >= levelRow.Exp + levelRow.ExpNeed)
-            {
-                avatarState.exp -= levelRow.Exp + levelRow.ExpNeed;
-                avatarState.level++;
-            }
+            // Update experience and level with quest update
+            avatarState.UpdateExp(level, exp);
 
             // Note: Sweep does not clear stages - it only works on already cleared stages
             // This is a key difference from regular battle actions
