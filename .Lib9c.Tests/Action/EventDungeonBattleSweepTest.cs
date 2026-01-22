@@ -391,7 +391,7 @@ namespace Lib9c.Tests.Action
         [InlineData(10010011, 20, 1, 2, 0)] // Multiple level up case: from level 1 to 2 (20 * 2 = 40 exp > 15)
         [InlineData(10010011, 30, 1, 3, 0)] // Large level up case: from level 1 to 3 (30 * 2 = 60 exp > 15+30=45)
         [InlineData(10010020, 15, 1, 2, 0)] // Higher stage case: from level 1 to 2 (15 * 2 = 30 exp > 15)
-        [InlineData(10010020, 25, 1, 2, 0)] // Higher stage multiple level up: from level 1 to 2 (25 * 2 = 50 exp > 15)
+        [InlineData(10010020, 25, 1, 3, 0)] // Higher stage multiple level up: from level 1 to 3 (25 * 2 = 50 exp > 15+30=45)
         [InlineData(10010011, 5, 1, 2, 10)] // Non-zero starting exp: from level 1 to 2 (5 * 2 = 10 + 10 = 20 exp > 15)
         [InlineData(10010011, 8, 1, 2, 5)] // Non-zero starting exp with multiple level up: from level 1 to 2 (8 * 2 = 16 + 5 = 21 exp > 15)
         [InlineData(10010020, 10, 1, 2, 8)] // Higher stage with non-zero starting exp: from level 1 to 2 (10 * 2 = 20 + 8 = 28 exp > 15)
@@ -517,7 +517,7 @@ namespace Lib9c.Tests.Action
         [InlineData(10010011, 8, 1, 2, 0)] // Level up quest verification: from level 1 to 2 (8 * 2 = 16 exp > 15)
         [InlineData(10010011, 20, 1, 2, 0)] // Multiple level up quest verification: from level 1 to 2 (20 * 2 = 40 exp > 15)
         [InlineData(10010020, 15, 1, 2, 0)] // Higher stage quest verification: from level 1 to 2 (15 * 2 = 30 exp > 15)
-        [InlineData(10010020, 25, 1, 2, 0)] // Higher stage multiple level up quest: from level 1 to 2 (25 * 2 = 50 exp > 15)
+        [InlineData(10010020, 25, 1, 3, 0)] // Higher stage multiple level up quest: from level 1 to 3 (25 * 2 = 50 exp > 15+30=45)
         [InlineData(10010011, 5, 1, 2, 10)] // Non-zero starting exp quest verification: from level 1 to 2 (5 * 2 = 10 + 10 = 20 exp > 15)
         [InlineData(10010020, 10, 1, 2, 8)] // Higher stage with non-zero starting exp quest: from level 1 to 2 (10 * 2 = 20 + 8 = 28 exp > 15)
         public void Execute_LevelUpQuestUpdate(int stageId, int playCount, int initialLevel, int expectedLevel, int initialExp)
@@ -579,6 +579,248 @@ namespace Lib9c.Tests.Action
             // Check if AvatarStateExtensions.UpdateExp adds level up events to eventMap
             // This is processed through questList.UpdateCompletedQuest
             Assert.NotNull(nextAvatar.questList);
+        }
+
+        [Theory]
+        [InlineData(10010011, 8, 1, 0)] // Level 1, 0 exp, 8 plays -> should level up to 2
+        [InlineData(10010011, 10, 1, 5)] // Level 1, 5 exp, 10 plays -> should level up to 2
+        [InlineData(10010020, 15, 1, 0)] // Level 1, 0 exp, 15 plays -> should level up to 2
+        public void Execute_ExperienceAccumulation_NoSubtractionOnLevelUp(
+            int stageId, int playCount, int initialLevel, int initialExp)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            avatarState.level = initialLevel;
+            avatarState.exp = initialExp;
+
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+            var levelSheet = _tableSheets.CharacterLevelSheet;
+
+            // Calculate expected experience gain
+            var stageNumber = stageId.ToEventDungeonStageNumber();
+            var stageExp = scheduleRow.GetStageExp(stageNumber, 1);
+            var totalExpGain = stageExp * playCount;
+
+            // Get initial level row to calculate expected final state
+            levelSheet.TryGetValue(initialLevel, out var initialLevelRow, true);
+            var initialMaxExp = initialLevelRow.Exp + initialLevelRow.ExpNeed;
+            var remainExp = initialMaxExp - initialExp;
+
+            // Create event dungeon info
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 50);
+            eventDungeonInfo.ClearStage(stageId - 1);
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify that experience was gained (not subtracted)
+            // After level up, experience should be the remaining exp after leveling up
+            var expectedFinalExp = initialExp + totalExpGain;
+            var levelUpCount = 0;
+            var currentLevel = initialLevel;
+            var currentExp = initialExp;
+
+            // Simulate the level-up process to calculate expected final exp
+            var remainCount = playCount;
+            while (remainCount > 0 && levelSheet.TryGetValue(currentLevel, out var levelRow, true))
+            {
+                var maxExp = levelRow.Exp + levelRow.ExpNeed;
+                var remainExpToNext = maxExp - currentExp;
+                var requiredCount = (int)DecimalMath.DecimalEx.Ceiling(remainExpToNext / (decimal)stageExp);
+
+                if (remainCount >= requiredCount)
+                {
+                    currentExp += stageExp * requiredCount;
+                    remainCount -= requiredCount;
+                    currentLevel += 1;
+                    levelUpCount++;
+
+                    if (!levelSheet.TryGetValue(currentLevel, out _))
+                    {
+                        var maxLevelRow = levelSheet.OrderedList.LastOrDefault();
+                        if (maxLevelRow != null)
+                        {
+                            currentLevel = maxLevelRow.Level;
+                            currentExp = (int)(maxLevelRow.Exp + maxLevelRow.ExpNeed - 1);
+                        }
+
+                        break;
+                    }
+                }
+                else
+                {
+                    currentExp += stageExp * remainCount;
+                    break;
+                }
+            }
+
+            // Verify final level and experience match expected values
+            Assert.Equal(currentLevel, nextAvatar.level);
+            Assert.Equal(currentExp, nextAvatar.exp);
+
+            // Verify that experience was not incorrectly subtracted
+            // The final exp should be >= initial exp + total gain (accounting for level ups)
+            Assert.True(
+                nextAvatar.exp >= initialExp,
+                $"Final experience ({nextAvatar.exp}) should be >= initial experience ({initialExp})");
+        }
+
+        [Theory]
+        [InlineData(10010011, 50, 1, 0)] // Level 1 -> multiple level ups
+        [InlineData(10010020, 40, 1, 0)] // Level 1 -> multiple level ups with higher stage
+        [InlineData(10010011, 100, 1, 0)] // Level 1 -> many level ups
+        public void Execute_MultipleLevelUps_StepByStepCalculation(
+            int stageId, int playCount, int initialLevel, int initialExp)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            avatarState.level = initialLevel;
+            avatarState.exp = initialExp;
+
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+            var levelSheet = _tableSheets.CharacterLevelSheet;
+
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 200);
+            eventDungeonInfo.ClearStage(stageId - 1);
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify that level increased
+            Assert.True(nextAvatar.level > initialLevel, "Level should have increased");
+
+            // Verify that experience is valid for the final level
+            if (levelSheet.TryGetValue(nextAvatar.level, out var finalLevelRow, true))
+            {
+                var maxExp = finalLevelRow.Exp + finalLevelRow.ExpNeed;
+                Assert.True(
+                    nextAvatar.exp < maxExp,
+                    $"Final experience ({nextAvatar.exp}) should be less than max exp for level {nextAvatar.level} ({maxExp})");
+                Assert.True(
+                    nextAvatar.exp >= finalLevelRow.Exp,
+                    $"Final experience ({nextAvatar.exp}) should be >= starting exp for level {nextAvatar.level} ({finalLevelRow.Exp})");
+            }
+        }
+
+        [Theory]
+        [InlineData(10010001, 10, 100)] // Max level 100, 10 plays
+        [InlineData(10010011, 20, 100)] // Max level 100, 20 plays with higher stage
+        [InlineData(10010020, 50, 100)] // Max level 100, 50 plays with highest stage
+        public void Execute_MaxLevelExperienceLimit(int stageId, int playCount, int maxLevel)
+        {
+            var avatarState = _initialState.GetAvatarState(_avatarAddress);
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            avatarState.level = maxLevel;
+            avatarState.exp = 0;
+
+            var state = _initialState.SetAvatarState(_avatarAddress, avatarState);
+
+            var scheduleRow = _tableSheets.EventScheduleSheet[1001];
+            var contextBlockIndex = scheduleRow.StartBlockIndex;
+            var levelSheet = _tableSheets.CharacterLevelSheet;
+
+            // Get max level row
+            var maxLevelRow = levelSheet.OrderedList.LastOrDefault();
+            Assert.NotNull(maxLevelRow);
+            var maxExp = maxLevelRow.Exp + maxLevelRow.ExpNeed - 1;
+
+            var eventDungeonInfoAddr = EventDungeonInfo.DeriveAddress(_avatarAddress, 10010001);
+            var eventDungeonInfo = new EventDungeonInfo(remainingTickets: 100);
+
+            // Clear previous stage if not first stage
+            if (stageId != 10010001)
+            {
+                eventDungeonInfo.ClearStage(stageId - 1);
+            }
+
+            state = state.SetLegacyState(eventDungeonInfoAddr, eventDungeonInfo.Serialize());
+
+            var action = new EventDungeonBattleSweep
+            {
+                AvatarAddress = _avatarAddress,
+                EventScheduleId = 1001,
+                EventDungeonId = 10010001,
+                EventDungeonStageId = stageId,
+                Equipments = equipments,
+                Costumes = costumes,
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PlayCount = playCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = contextBlockIndex,
+                });
+
+            var nextAvatar = nextState.GetAvatarState(_avatarAddress);
+
+            // Verify level remains at max
+            Assert.Equal(maxLevel, nextAvatar.level);
+
+            // Verify experience is limited to max - 1
+            Assert.True(
+                nextAvatar.exp <= maxExp,
+                $"Experience at max level should be <= {maxExp}, but got {nextAvatar.exp}");
         }
 
         [Theory]
