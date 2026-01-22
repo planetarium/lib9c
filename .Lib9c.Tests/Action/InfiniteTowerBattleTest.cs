@@ -23,10 +23,16 @@ namespace Lib9c.Tests.Action
     public class InfiniteTowerBattleTest
     {
         private readonly TableSheets _tableSheets;
+        private readonly Dictionary<string, string> _sheets;
 
         public InfiniteTowerBattleTest()
         {
-            _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
+            _sheets = TableSheetsImporter.ImportSheets();
+            _sheets[nameof(InfiniteTowerFloorSheet)] =
+                Fixtures.TableCSV.InfiniteTowerFloorSheetFixture.Default;
+            _sheets[nameof(InfiniteTowerFloorWaveSheet)] = Fixtures.TableCSV.InfiniteTowerFloorWaveSheetFixture.Default;
+            _sheets[nameof(InfiniteTowerScheduleSheet)] = Fixtures.TableCSV.InfiniteTowerScheduleSheetFixture.Default;
+            _tableSheets = new TableSheets(_sheets);
         }
 
         [Fact]
@@ -85,19 +91,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = avatarLevel; // Use parameterized level
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -175,19 +175,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -302,7 +296,7 @@ namespace Lib9c.Tests.Action
 
             // Set up sheets with default CSV data
             var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            foreach (var (key, value) in _sheets)
             {
                 sheets[key] = value;
             }
@@ -380,19 +374,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Pre-clear the floor to simulate second attempt
@@ -467,19 +455,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 10;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -548,19 +530,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 10;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -625,19 +601,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 10;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -717,19 +687,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 10;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -812,19 +776,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 10;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -1227,19 +1185,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -1321,19 +1273,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -1424,19 +1370,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -1515,7 +1455,7 @@ namespace Lib9c.Tests.Action
 
             // Set up sheets with default CSV data
             var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            foreach (var (key, value) in _sheets)
             {
                 sheets[key] = value;
             }
@@ -1657,19 +1597,13 @@ namespace Lib9c.Tests.Action
                 .Count(i => i.item is Consumable && i.item.Id == foodRow.Id);
 
             // Set up sheets with default CSV data
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -1743,7 +1677,7 @@ namespace Lib9c.Tests.Action
 
             // Set up sheets with default CSV data
             var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            foreach (var (key, value) in _sheets)
             {
                 sheets[key] = value;
             }
@@ -1831,7 +1765,7 @@ namespace Lib9c.Tests.Action
 
             // Set up sheets with default CSV data
             var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
+            foreach (var (key, value) in _sheets)
             {
                 sheets[key] = value;
             }
@@ -1916,18 +1850,12 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -2021,18 +1949,12 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
@@ -2122,19 +2044,13 @@ namespace Lib9c.Tests.Action
             avatarState.level = 100;
 
             // Set up sheets
-            var sheets = new Dictionary<string, string>();
-            foreach (var (key, value) in TableSheetsImporter.ImportSheets())
-            {
-                sheets[key] = value;
-            }
-
-            foreach (var (key, value) in sheets)
+            foreach (var (key, value) in _sheets)
             {
                 initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
             }
 
             // Set up game config
-            var gameConfigState = new GameConfigState(sheets[nameof(GameConfigSheet)]);
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
             initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
 
             // Set up states
