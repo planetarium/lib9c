@@ -66,6 +66,7 @@ namespace Nekoyume.Action
             Memo = memo;
         }
 
+        /// <inheritdoc />
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             GetPlainValueInternal();
 
@@ -88,6 +89,7 @@ namespace Nekoyume.Action
             return dict;
         }
 
+        /// <inheritdoc />
         protected override void LoadPlainValueInternal(IImmutableDictionary<string, IValue> plainValue)
         {
             ClaimData = ((List)plainValue[ClaimDataKey])
@@ -112,6 +114,7 @@ namespace Nekoyume.Action
             }
         }
 
+        /// <inheritdoc />
         public override IWorld Execute(IActionContext context)
         {
             GasTracer.UseGas(1);
