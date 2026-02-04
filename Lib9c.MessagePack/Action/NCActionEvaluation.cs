@@ -77,20 +77,35 @@ namespace Nekoyume.Action
             TxId = txId;
         }
 
+        /// <summary>
+        /// Converts this network DTO to <see cref="ActionEvaluation{T}"/> for render pipeline.
+        /// </summary>
+        /// <remarks>
+        /// On iOS (IL2CPP), under certain conditions (e.g., specific stripping/optimization combinations),
+        /// the object-initializer path like
+        /// <c>new ActionEvaluation&lt;ActionBase&gt; { Action = ..., ... }</c>
+        /// was observed to produce incorrect code, leaving <c>ActionEvaluation&lt;ActionBase&gt;.Action</c> null
+        /// even when the source <see cref="Action"/> was non-null.
+        ///
+        /// To avoid that IL2CPP/AOT edge case, this conversion intentionally uses step-by-step assignments
+        /// to follow a more stable codegen path. (No behavioral change intended; stability/reproducibility only.)
+        /// </remarks>
         public ActionEvaluation<ActionBase> ToActionEvaluation()
         {
-            return new ActionEvaluation<ActionBase>
-            {
-                Action =  Action is null ? new RewardGold() : Action,
-                Signer = Signer,
-                BlockIndex = BlockIndex,
-                OutputState = OutputState,
-                Exception = Exception,
-                PreviousState = PreviousState,
-                RandomSeed = RandomSeed,
-                Extra = Extra,
-                TxId = TxId
-            };
+            var eval = new ActionEvaluation<ActionBase>();
+            var actionValue = Action ?? new RewardGold();
+
+            eval.Action = actionValue;
+            eval.Signer = Signer;
+            eval.BlockIndex = BlockIndex;
+            eval.OutputState = OutputState;
+            eval.Exception = Exception;
+            eval.PreviousState = PreviousState;
+            eval.RandomSeed = RandomSeed;
+            eval.Extra = Extra;
+            eval.TxId = TxId;
+
+            return eval;
         }
     }
 }
