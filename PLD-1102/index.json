@@ -2977,7 +2977,7 @@
   "api/Nekoyume.Model.EnumType.Grade.html": {
     "href": "api/Nekoyume.Model.EnumType.Grade.html",
     "title": "Enum Grade | Lib9c",
-    "keywords": "Enum Grade Namespace Nekoyume.Model.EnumType Assembly Lib9c.dll Enumeration of item grades. public enum Grade Extension Methods StateExtensions.Serialize(Enum) Fields Divinity = 6 Epic = 3 Legendary = 5 Mythic = 7 Normal = 1 Rare = 2 Transcendent = 8 Unique = 4"
+    "keywords": "Enum Grade Namespace Nekoyume.Model.EnumType Assembly Lib9c.dll Enumeration of item grades. public enum Grade Extension Methods StateExtensions.Serialize(Enum) Fields Divinity = 6 Divinity grade. Epic = 3 Epic grade. Legendary = 5 Legendary grade. Mythic = 7 Mythic grade. Normal = 1 Normal grade. Rare = 2 Rare grade. Transcendent = 8 Transcendent grade. Unique = 4 Unique grade."
   },
   "api/Nekoyume.Model.EnumType.RuneSlotType.html": {
     "href": "api/Nekoyume.Model.EnumType.RuneSlotType.html",
