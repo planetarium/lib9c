@@ -48,6 +48,8 @@ namespace Nekoyume.Action
             600304,
             600305,
             600306,
+            600307,
+            600308,
         };
 
         public Guid itemId;
