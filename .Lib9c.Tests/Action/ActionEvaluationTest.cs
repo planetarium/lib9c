@@ -99,6 +99,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(SetAddressState))]
         [InlineData(typeof(SetAddressStateCompressed))]
         [InlineData(typeof(PatchTableSheetCompressed))]
+        [InlineData(typeof(GrantItems))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -513,6 +514,7 @@ namespace Lib9c.Tests.Action
                     TableName = "TestSheet",
                     CompressedTableCsv = new byte[] { 1, 2, 3, 4, 5 },
                 },
+                GrantItems _ => new GrantItems(),
                 EventDungeonBattleSweep _ => new EventDungeonBattleSweep
                 {
                     AvatarAddress = default,
