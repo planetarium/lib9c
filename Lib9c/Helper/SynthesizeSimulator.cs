@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Collections.Generic;
@@ -671,7 +671,7 @@ namespace Nekoyume.Helper
 
         /// <summary>
         /// Get the target grade of the item.
-        /// max grade is Divinity
+        /// max grade is Transcendent
         /// </summary>
         /// <param name="grade">grade of the item</param>
         /// <returns>target grade</returns>
@@ -684,13 +684,14 @@ namespace Nekoyume.Helper
             Grade.Unique => Grade.Legendary,
             Grade.Legendary => Grade.Divinity,
             Grade.Divinity => Grade.Mythic,
-            Grade.Mythic => Grade.Mythic,
+            Grade.Mythic => Grade.Transcendent,
+            Grade.Transcendent => Grade.Transcendent,
             _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, null),
         };
 
         /// <summary>
         /// Get the target grade of the item.
-        /// max grade is Divinity
+        /// max grade is Transcendent
         /// </summary>
         /// <param name="gradeId">grade id of the item</param>
         /// <returns>target grade id</returns>
@@ -705,7 +706,8 @@ namespace Nekoyume.Helper
                 4 => 5, // Grade.Unique => Grade.Legendary
                 5 => 6, // Grade.Legendary => Grade.Divinity
                 6 => 7, // Grade.Divinity => Grade.Mythic
-                7 => 7, // Grade.Mythic => Grade.Mythic (Max)
+                7 => 8, // Grade.Mythic => Grade.Transcendent
+                8 => 8, // Grade.Transcendent => Grade.Transcendent (Max)
                 _ => throw new ArgumentOutOfRangeException(nameof(gradeId), gradeId, null),
             };
         }
