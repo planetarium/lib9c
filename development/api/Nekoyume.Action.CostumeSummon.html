@@ -471,7 +471,7 @@ public class CostumeSummon : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_CostumeSummon_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.CostumeSummon.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/CostumeSummon.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/CostumeSummon.cs/#L154"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -538,10 +538,13 @@ public class CostumeSummon : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_CostumeSummon_SimulateSummon_System_String_Nekoyume_TableData_CostumeItemSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_" data-uid="Nekoyume.Action.CostumeSummon.SimulateSummon(System.String,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom)">
   SimulateSummon(string, CostumeItemSheet, Row, int, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/CostumeSummon.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/CostumeSummon.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Simulates costume summoning with optional grade guarantee system.
+Applies 10+1 bonus rule and uses grade guarantee settings from SummonSheet.Row when enabled.
+When grade guarantee is enabled, ensures minimum grade costumes are obtained based on summon count.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -551,21 +554,27 @@ public class CostumeSummon : GameAction, IAction</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>addressesHex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dd><p>Addresses hex for error reporting</p>
+</dd>
     <dt><code>costumeItemSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeItemSheet.html">CostumeItemSheet</a></dt>
-    <dd></dd>
+    <dd><p>Costume item sheet containing costume information</p>
+</dd>
     <dt><code>summonRow</code> <a class="xref" href="Nekoyume.TableData.Summon.SummonSheet.html">SummonSheet</a>.<a class="xref" href="Nekoyume.TableData.Summon.SummonSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>Summon configuration row with recipes and guarantee settings</p>
+</dd>
     <dt><code>summonCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>Number of costumes to summon (before 10+1 bonus)</p>
+</dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
+    <dd><p>Random number generator</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.Costume.html">Costume</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>Collection of summoned costumes</p>
+</dd>
   </dl>
 
 

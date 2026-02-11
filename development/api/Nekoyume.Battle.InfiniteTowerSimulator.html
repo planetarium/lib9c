@@ -1,0 +1,1143 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class InfiniteTowerSimulator | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class InfiniteTowerSimulator | Lib9c ">
+      
+      <meta name="description" content="Simulator for infinite tower battles with conditions and restrictions. Handles turn-based combat with wave progression, special conditions, and reward processing.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/development/apiSpec/new?filename=Nekoyume_Battle_InfiniteTowerSimulator.md&amp;value=---%0Auid%3A%20Nekoyume.Battle.InfiniteTowerSimulator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Battle.InfiniteTowerSimulator">
+
+
+
+  <h1 id="Nekoyume_Battle_InfiniteTowerSimulator" data-uid="Nekoyume.Battle.InfiniteTowerSimulator" class="text-break">
+Class InfiniteTowerSimulator  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Battle.html">Battle</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Simulator for infinite tower battles with conditions and restrictions.
+Handles turn-based combat with wave progression, special conditions, and reward processing.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class InfiniteTowerSimulator : Simulator, IStageSimulator, ISimulator</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Battle.Simulator.html">Simulator</a></div>
+      <div><span class="xref">InfiniteTowerSimulator</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Nekoyume.Battle.IStageSimulator.html">IStageSimulator</a></div>
+      <div><a class="xref" href="Nekoyume.Battle.ISimulator.html">ISimulator</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Random">Simulator.Random</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Log">Simulator.Log</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Player">Simulator.Player</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Result">Simulator.Result</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_Characters">Simulator.Characters</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_TurnPriority">Simulator.TurnPriority</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_MaterialItemSheet">Simulator.MaterialItemSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SkillSheet">Simulator.SkillSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SkillBuffSheet">Simulator.SkillBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_StatBuffSheet">Simulator.StatBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SkillActionBuffSheet">Simulator.SkillActionBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_ActionBuffSheet">Simulator.ActionBuffSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_CharacterSheet">Simulator.CharacterSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_CharacterLevelSheet">Simulator.CharacterLevelSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_EquipmentItemSetEffectSheet">Simulator.EquipmentItemSetEffectSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_BuffLimitSheet">Simulator.BuffLimitSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_BuffLinkSheet">Simulator.BuffLinkSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_ShatterStrikeMaxDamage">Simulator.ShatterStrikeMaxDamage</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_MaxTurn">Simulator.MaxTurn</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_TurnNumber">Simulator.TurnNumber</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_WaveNumber">Simulator.WaveNumber</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_WaveTurn">Simulator.WaveTurn</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_LogEvent">Simulator.LogEvent</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SetReward_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_StageSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_">Simulator.SetReward(WeightedSelector&lt;StageSheet.RewardData&gt;, int, IRandom, MaterialItemSheet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SetRewardV2_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_StageSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_">Simulator.SetRewardV2(WeightedSelector&lt;StageSheet.RewardData&gt;, int, IRandom, MaterialItemSheet)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator__ctor_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.#ctor*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator__ctor_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_System_Int32_System_Int32_Nekoyume_TableData_InfiniteTowerFloorSheet_Row_System_Collections_Generic_List_Nekoyume_TableData_InfiniteTowerFloorWaveSheet_WaveData__System_Boolean_System_Int32_Nekoyume_TableData_SimulatorSheets_Nekoyume_TableData_EnemySkillSheet_Nekoyume_TableData_CostumeStatSheet_Nekoyume_TableData_ItemSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Collections_Generic_List_Nekoyume_Model_InfiniteTower_InfiniteTowerCondition__System_Int32_System_Int32_System_Boolean_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Int32,System.Int32,Nekoyume.TableData.InfiniteTowerFloorSheet.Row,System.Collections.Generic.List{Nekoyume.TableData.InfiniteTowerFloorWaveSheet.WaveData},System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,Nekoyume.TableData.ItemSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Collections.Generic.List{Nekoyume.Model.InfiniteTower.InfiniteTowerCondition},System.Int32,System.Int32,System.Boolean)">
+  InfiniteTowerSimulator(IRandom, AvatarState, List&lt;Guid&gt;, AllRuneState, RuneSlotState, int, int, Row, List&lt;WaveData&gt;, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, ItemSheet, List&lt;StatModifier&gt;, BuffLimitSheet, BuffLinkSheet, List&lt;InfiniteTowerCondition&gt;, int, int, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerSimulator class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerSimulator(IRandom random, AvatarState avatarState, List&lt;Guid&gt; foods, AllRuneState runeStates, RuneSlotState runeSlotState, int infiniteTowerId, int floorId, InfiniteTowerFloorSheet.Row floorRow, List&lt;InfiniteTowerFloorWaveSheet.WaveData&gt; waveRows, bool isCleared, int exp, SimulatorSheets simulatorSheets, EnemySkillSheet enemySkillSheet, CostumeStatSheet costumeStatSheet, ItemSheet itemSheet, List&lt;StatModifier&gt; collectionModifiers, BuffLimitSheet buffLimitSheet, BuffLinkSheet buffLinkSheet, List&lt;InfiniteTowerCondition&gt; conditions, int shatterStrikeMaxDamage, int turnLimit = 150, bool logEvent = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd><p>Random number generator for battle calculations.</p>
+</dd>
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd><p>The player's avatar state.</p>
+</dd>
+    <dt><code>foods</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd><p>List of food items to be consumed.</p>
+</dd>
+    <dt><code>runeStates</code> <a class="xref" href="Nekoyume.Model.State.AllRuneState.html">AllRuneState</a></dt>
+    <dd><p>Player's rune states.</p>
+</dd>
+    <dt><code>runeSlotState</code> <a class="xref" href="Nekoyume.Model.State.RuneSlotState.html">RuneSlotState</a></dt>
+    <dd><p>Player's rune slot configuration.</p>
+</dd>
+    <dt><code>infiniteTowerId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The infinite tower ID.</p>
+</dd>
+    <dt><code>floorId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The floor ID being challenged.</p>
+</dd>
+    <dt><code>floorRow</code> <a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorSheet.html">InfiniteTowerFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorSheet.Row.html">Row</a></dt>
+    <dd><p>Floor data containing rewards and requirements.</p>
+</dd>
+    <dt><code>waveRows</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.html">InfiniteTowerFloorWaveSheet</a>.<a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.WaveData.html">WaveData</a>&gt;</dt>
+    <dd><p>List of wave data for this floor.</p>
+</dd>
+    <dt><code>isCleared</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether this floor has been cleared before.</p>
+</dd>
+    <dt><code>exp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Experience reward (always 0 for infinite tower).</p>
+</dd>
+    <dt><code>simulatorSheets</code> <a class="xref" href="Nekoyume.TableData.SimulatorSheets.html">SimulatorSheets</a></dt>
+    <dd><p>Game data sheets for simulation.</p>
+</dd>
+    <dt><code>enemySkillSheet</code> <a class="xref" href="Nekoyume.TableData.EnemySkillSheet.html">EnemySkillSheet</a></dt>
+    <dd><p>Enemy skill data.</p>
+</dd>
+    <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd><p>Costume stat bonuses.</p>
+</dd>
+    <dt><code>itemSheet</code> <a class="xref" href="Nekoyume.TableData.ItemSheet.html">ItemSheet</a></dt>
+    <dd><p>Item data for reward creation.</p>
+</dd>
+    <dt><code>collectionModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd><p>Collection-based stat modifiers.</p>
+</dd>
+    <dt><code>buffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
+    <dd><p>Buff limit data.</p>
+</dd>
+    <dt><code>buffLinkSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLinkSheet.html">BuffLinkSheet</a></dt>
+    <dd><p>Buff link data.</p>
+</dd>
+    <dt><code>conditions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.InfiniteTower.InfiniteTowerCondition.html">InfiniteTowerCondition</a>&gt;</dt>
+    <dd><p>Infinite tower conditions for this floor.</p>
+</dd>
+    <dt><code>shatterStrikeMaxDamage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Maximum damage for shatter strike.</p>
+</dd>
+    <dt><code>turnLimit</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Turn limit for all waves combined (default: 200).</p>
+</dd>
+    <dt><code>logEvent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether to log battle events (default: true).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_CollectionModifiers_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.CollectionModifiers*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_CollectionModifiers" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.CollectionModifiers">
+  CollectionModifiers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the collection modifiers for stat bonuses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;StatModifier&gt; CollectionModifiers { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_Conditions_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Conditions*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_Conditions" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Conditions">
+  Conditions
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the infinite tower conditions that apply to this floor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;InfiniteTowerCondition&gt; Conditions { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.InfiniteTower.InfiniteTowerCondition.html">InfiniteTowerCondition</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_CostumeStatSheet_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.CostumeStatSheet*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_CostumeStatSheet" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.CostumeStatSheet">
+  CostumeStatSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the costume stat sheet for costume bonuses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CostumeStatSheet CostumeStatSheet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_EnemySkillSheet_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.EnemySkillSheet*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_EnemySkillSheet" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.EnemySkillSheet">
+  EnemySkillSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the enemy skill sheet for enemy abilities.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EnemySkillSheet EnemySkillSheet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.EnemySkillSheet.html">EnemySkillSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_Exp_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Exp*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_Exp" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Exp">
+  Exp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the experience reward (always 0 for infinite tower).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Exp { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_FloorId_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.FloorId*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_FloorId" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.FloorId">
+  FloorId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the floor ID being challenged.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int FloorId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_FloorRow_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.FloorRow*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_FloorRow" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.FloorRow">
+  FloorRow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the floor data containing rewards and requirements.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerFloorSheet.Row FloorRow { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorSheet.html">InfiniteTowerFloorSheet</a>.<a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorSheet.Row.html">Row</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_Foods_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Foods*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_Foods" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Foods">
+  Foods
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of food items used by the player.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Guid&gt; Foods { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_FungibleAssetRewards_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.FungibleAssetRewards*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_FungibleAssetRewards" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.FungibleAssetRewards">
+  FungibleAssetRewards
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the fungible asset rewards (NCG, Crystal, etc.) obtained from this floor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Dictionary&lt;string, int&gt; FungibleAssetRewards { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_InfiniteTowerId_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.InfiniteTowerId*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_InfiniteTowerId" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.InfiniteTowerId">
+  InfiniteTowerId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the infinite tower ID.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int InfiniteTowerId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_IsCleared_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.IsCleared*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_IsCleared" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.IsCleared">
+  IsCleared
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets whether this floor has been cleared before.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsCleared { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_ItemMap_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.ItemMap*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_ItemMap" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.ItemMap">
+  ItemMap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the item map for collection tracking (not used in infinite tower).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CollectionMap ItemMap { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.CollectionMap.html">CollectionMap</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_ItemSheet_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.ItemSheet*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_ItemSheet" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.ItemSheet">
+  ItemSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the item sheet for creating reward items.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemSheet ItemSheet { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.ItemSheet.html">ItemSheet</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_Reward_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Reward*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_Reward" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Reward">
+  Reward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L630"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the reward items obtained from this floor.
+Returns the list of items that were dropped during the battle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IEnumerable&lt;ItemBase&gt; Reward { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_RewardItems_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.RewardItems*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_RewardItems" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.RewardItems">
+  RewardItems
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of reward items obtained from this floor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;ItemBase&gt; RewardItems { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_RuneSlotState_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.RuneSlotState*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_RuneSlotState" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.RuneSlotState">
+  RuneSlotState
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the rune slot state for the player.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RuneSlotState RuneSlotState { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.State.RuneSlotState.html">RuneSlotState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_RuneStates_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.RuneStates*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_RuneStates" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.RuneStates">
+  RuneStates
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the rune states for the player.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AllRuneState RuneStates { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.State.AllRuneState.html">AllRuneState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_SimulatorSheets_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.SimulatorSheets*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_SimulatorSheets" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.SimulatorSheets">
+  SimulatorSheets
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the simulator sheets containing game data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SimulatorSheets SimulatorSheets { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.SimulatorSheets.html">SimulatorSheets</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_StageId_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.StageId*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_StageId" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.StageId">
+  StageId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the stage ID, which is the same as the floor ID for infinite tower.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int StageId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_TurnLimit_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.TurnLimit*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_TurnLimit" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.TurnLimit">
+  TurnLimit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the turn limit for all waves combined.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int TurnLimit { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_WaveRows_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.WaveRows*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_WaveRows" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.WaveRows">
+  WaveRows
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of wave data for this floor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;InfiniteTowerFloorWaveSheet.WaveData&gt; WaveRows { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.html">InfiniteTowerFloorWaveSheet</a>.<a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.WaveData.html">WaveData</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_ApplyConditionsToCharacter_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.ApplyConditionsToCharacter*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_ApplyConditionsToCharacter_Nekoyume_Model_CharacterBase_System_Boolean_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.ApplyConditionsToCharacter(Nekoyume.Model.CharacterBase,System.Boolean)">
+  ApplyConditionsToCharacter(CharacterBase, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L479"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies infinite tower conditions to any character (Player, Enemy, Boss, etc.).
+This unified method works for all CharacterBase subclasses and applies stat modifiers
+based on the condition's targeting rules.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ApplyConditionsToCharacter(CharacterBase character, bool isPlayer)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>character</code> <a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></dt>
+    <dd><p>The character to apply conditions to.</p>
+</dd>
+    <dt><code>isPlayer</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether the character is a player (affects targeting rules).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_SetConditions_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.SetConditions*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_SetConditions_System_Collections_Generic_List_Nekoyume_Model_InfiniteTower_InfiniteTowerCondition__" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.SetConditions(System.Collections.Generic.List{Nekoyume.Model.InfiniteTower.InfiniteTowerCondition})">
+  SetConditions(List&lt;InfiniteTowerCondition&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L234"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sets the infinite tower conditions for this floor.
+This method allows setting conditions after simulator creation.
+The conditions will be applied when Simulate() is called.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetConditions(List&lt;InfiniteTowerCondition&gt; conditions)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>conditions</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.InfiniteTower.InfiniteTowerCondition.html">InfiniteTowerCondition</a>&gt;</dt>
+    <dd><p>The infinite tower conditions to apply.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_InfiniteTowerSimulator_Simulate_" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Simulate*"></a>
+
+  <h3 id="Nekoyume_Battle_InfiniteTowerSimulator_Simulate" data-uid="Nekoyume.Battle.InfiniteTowerSimulator.Simulate">
+  Simulate()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Simulates the infinite tower battle with wave progression and turn-based combat.
+Processes all waves sequentially with integrated turn limit and applies conditions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Simulate()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/InfiniteTowerSimulator.cs/#L20" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

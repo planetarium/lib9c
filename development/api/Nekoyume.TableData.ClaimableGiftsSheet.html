@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class ClaimableGiftsSheet | Lib9c ">
       
-      
+      <meta name="description" content="Sheet for claimable gifts that can be claimed by players during specific block index ranges. Each row contains gift ID, block index range, and a list of items to be given.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_ClaimableGiftsSheet" data-uid="Nekoyume.TableData.ClaimableGiftsSheet" class="text-break">
-Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View s
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Sheet for claimable gifts that can be claimed by players during specific block index ranges.
+Each row contains gift ID, block index range, and a list of items to be given.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -239,10 +241,11 @@ Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_TableData_ClaimableGiftsSheet__ctor" data-uid="Nekoyume.TableData.ClaimableGiftsSheet.#ctor">
   ClaimableGiftsSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the ClaimableGiftsSheet class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -269,10 +272,11 @@ Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_TableData_ClaimableGiftsSheet_TryFindRowByBlockIndex_System_Int64_Nekoyume_TableData_ClaimableGiftsSheet_Row__" data-uid="Nekoyume.TableData.ClaimableGiftsSheet.TryFindRowByBlockIndex(System.Int64,Nekoyume.TableData.ClaimableGiftsSheet.Row@)">
   TryFindRowByBlockIndex(long, out Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Tries to find a row that is claimable at the given block index.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -282,15 +286,18 @@ Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View s
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>Block index to search for</p>
+</dd>
     <dt><code>row</code> <a class="xref" href="Nekoyume.TableData.ClaimableGiftsSheet.html">ClaimableGiftsSheet</a>.<a class="xref" href="Nekoyume.TableData.ClaimableGiftsSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>When this method returns, contains the row if found; otherwise, null</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>True if a claimable row is found; otherwise, false</p>
+</dd>
   </dl>
 
 
@@ -307,7 +314,7 @@ Class ClaimableGiftsSheet  <a class="header-action link-secondary" title="View s
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/Event/ClaimableGiftsSheet.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

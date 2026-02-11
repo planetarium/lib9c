@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Stat_CharacterStats" data-uid="Nekoyume.Model.Stat.CharacterStats" class="text-break">
-Class CharacterStats  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L17"><i class="bi bi-code-slash"></i></a>
+Class CharacterStats  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -238,10 +238,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats__ctor_Nekoyume_Model_Stat_CharacterStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor(Nekoyume.Model.Stat.CharacterStats)">
   CharacterStats(CharacterStats)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L263"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the CharacterStats class by copying from another instance.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -251,7 +252,8 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>value</code> <a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
-    <dd></dd>
+    <dd><p>The character stats to copy from.</p>
+</dd>
   </dl>
 
 
@@ -269,10 +271,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats__ctor_Nekoyume_TableData_CharacterSheet_Row_System_Int32_System_Collections_Generic_IReadOnlyList_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor(Nekoyume.TableData.CharacterSheet.Row,System.Int32,System.Collections.Generic.IReadOnlyList{Nekoyume.Model.Stat.StatModifier})">
   CharacterStats(Row, int, IReadOnlyList&lt;StatModifier&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L233"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the CharacterStats class.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -282,11 +285,14 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>row</code> <a class="xref" href="Nekoyume.TableData.CharacterSheet.html">CharacterSheet</a>.<a class="xref" href="Nekoyume.TableData.CharacterSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>The character sheet row data.</p>
+</dd>
     <dt><code>level</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The character level.</p>
+</dd>
     <dt><code>initialStatModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>Optional initial stat modifiers.</p>
+</dd>
   </dl>
 
 
@@ -304,10 +310,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats__ctor_Nekoyume_TableData_WorldBossCharacterSheet_WaveStatData_" data-uid="Nekoyume.Model.Stat.CharacterStats.#ctor(Nekoyume.TableData.WorldBossCharacterSheet.WaveStatData)">
   CharacterStats(WaveStatData)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L252"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the CharacterStats class from world boss wave stat data.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -317,7 +324,8 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>stat</code> <a class="xref" href="Nekoyume.TableData.WorldBossCharacterSheet.html">WorldBossCharacterSheet</a>.<a class="xref" href="Nekoyume.TableData.WorldBossCharacterSheet.WaveStatData.html">WaveStatData</a></dt>
-    <dd></dd>
+    <dd><p>The world boss wave stat data.</p>
+</dd>
   </dl>
 
 
@@ -338,10 +346,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_StatWithoutBuffs" data-uid="Nekoyume.Model.Stat.CharacterStats.StatWithoutBuffs">
   StatWithoutBuffs
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Stat map without buff effects for arena calculations.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -373,10 +382,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalATK" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalATK">
   AdditionalATK
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L154"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional ATK stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -404,10 +414,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalArmorPenetration" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalArmorPenetration">
   AdditionalArmorPenetration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional ArmorPenetration stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -435,10 +446,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalCDMG" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalCDMG">
   AdditionalCDMG
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L189"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional CDMG stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -466,10 +478,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalCRI" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalCRI">
   AdditionalCRI
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L164"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional CRI stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -497,10 +510,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalDEF" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDEF">
   AdditionalDEF
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional DEF stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -528,10 +542,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalDRR" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDRR">
   AdditionalDRR
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L184"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional DRR stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -559,10 +574,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalDRV" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalDRV">
   AdditionalDRV
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L179"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional DRV stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -590,10 +606,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalHIT" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalHIT">
   AdditionalHIT
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional HIT stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -621,10 +638,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalHP" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalHP">
   AdditionalHP
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional HP stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -652,10 +670,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalSPD" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalSPD">
   AdditionalSPD
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L174"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional SPD stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -683,10 +702,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AdditionalThorn" data-uid="Nekoyume.Model.Stat.CharacterStats.AdditionalThorn">
   AdditionalThorn
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L199"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the additional Thorn stat from equipment, buffs, etc.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -714,10 +734,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseATK" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseATK">
   BaseATK
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base ATK stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -745,10 +766,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseArmorPenetration" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseArmorPenetration">
   BaseArmorPenetration
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L139"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base ArmorPenetration stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -776,10 +798,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseCDMG" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseCDMG">
   BaseCDMG
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L134"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base CDMG stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -807,10 +830,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseCRI" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseCRI">
   BaseCRI
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L109"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base CRI stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -838,10 +862,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseDEF" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDEF">
   BaseDEF
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base DEF stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -869,10 +894,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseDRR" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDRR">
   BaseDRR
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L129"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base DRR stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -900,10 +926,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseDRV" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseDRV">
   BaseDRV
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L124"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base DRV stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -931,10 +958,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseHIT" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseHIT">
   BaseHIT
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base HIT stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -962,10 +990,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseHP" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseHP">
   BaseHP
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base HP stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -993,10 +1022,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseSPD" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseSPD">
   BaseSPD
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L119"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base SPD stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1024,10 +1054,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseStats" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseStats">
   BaseStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1055,10 +1086,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BaseThorn" data-uid="Nekoyume.Model.Stat.CharacterStats.BaseThorn">
   BaseThorn
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L144"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the base Thorn stat.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1086,10 +1118,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_BuffStats" data-uid="Nekoyume.Model.Stat.CharacterStats.BuffStats">
   BuffStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the buff stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1117,10 +1150,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_CollectionStats" data-uid="Nekoyume.Model.Stat.CharacterStats.CollectionStats">
   CollectionStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the collection stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1144,14 +1178,47 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
 
 
+  <a id="Nekoyume_Model_Stat_CharacterStats_ConditionStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.ConditionStats*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_ConditionStats" data-uid="Nekoyume.Model.Stat.CharacterStats.ConditionStats">
+  ConditionStats
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the condition stats of the character.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IStats ConditionStats { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.IStats.html">IStats</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Stat_CharacterStats_ConsumableStats_" data-uid="Nekoyume.Model.Stat.CharacterStats.ConsumableStats*"></a>
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_ConsumableStats" data-uid="Nekoyume.Model.Stat.CharacterStats.ConsumableStats">
   ConsumableStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the consumable stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1179,10 +1246,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_CostumeStats" data-uid="Nekoyume.Model.Stat.CharacterStats.CostumeStats">
   CostumeStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L84"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the costume stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1210,10 +1278,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_EquipmentStats" data-uid="Nekoyume.Model.Stat.CharacterStats.EquipmentStats">
   EquipmentStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the equipment stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1241,10 +1310,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_HpIncreasingModifier" data-uid="Nekoyume.Model.Stat.CharacterStats.HpIncreasingModifier">
   HpIncreasingModifier
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L209"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the HP increasing modifier for arena battles.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1272,10 +1342,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_IsArenaCharacter" data-uid="Nekoyume.Model.Stat.CharacterStats.IsArenaCharacter">
   IsArenaCharacter
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L204"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets whether this character is used in arena battles.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1303,10 +1374,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_Level" data-uid="Nekoyume.Model.Stat.CharacterStats.Level">
   Level
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the character level.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1334,10 +1406,11 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_RuneStats" data-uid="Nekoyume.Model.Stat.CharacterStats.RuneStats">
   RuneStats
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L69"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the rune stats of the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -1369,7 +1442,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AddBuff_Nekoyume_Model_Buff_StatBuff_Nekoyume_TableData_BuffLimitSheet_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddBuff(Nekoyume.Model.Buff.StatBuff,Nekoyume.TableData.BuffLimitSheet,System.Boolean)">
   AddBuff(StatBuff, BuffLimitSheet, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L476"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1404,7 +1477,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AddCostume_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.AddCostume(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
   AddCostume(IEnumerable&lt;StatModifier&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L506"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1435,7 +1508,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AddRune_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.AddRune(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
   AddRune(IEnumerable&lt;StatModifier&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L350"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L500"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1466,7 +1539,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_AddRuneStat_Nekoyume_TableData_RuneOptionSheet_Row_RuneOptionInfo_System_Int32_" data-uid="Nekoyume.Model.Stat.CharacterStats.AddRuneStat(Nekoyume.TableData.RuneOptionSheet.Row.RuneOptionInfo,System.Int32)">
   AddRuneStat(RuneOptionInfo, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L588"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L786"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1495,11 +1568,51 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
 
 
+  <a id="Nekoyume_Model_Stat_CharacterStats_ClearConditions_" data-uid="Nekoyume.Model.Stat.CharacterStats.ClearConditions*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_ClearConditions_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.ClearConditions(System.Boolean)">
+  ClearConditions(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L541"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clear all condition stat modifiers.
+This should be called after simulation ends to remove temporary conditions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats ClearConditions(bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether to update stats immediately</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd><p>This instance for method chaining</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Stat_CharacterStats_Clone_" data-uid="Nekoyume.Model.Stat.CharacterStats.Clone*"></a>
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_Clone" data-uid="Nekoyume.Model.Stat.CharacterStats.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L530"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L728"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -1532,7 +1645,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_ConfigureStats_System_Collections_Generic_IReadOnlyCollection_Nekoyume_Model_Item_Equipment__System_Collections_Generic_IReadOnlyCollection_Nekoyume_Model_Item_Costume__System_Collections_Generic_IReadOnlyCollection_Nekoyume_TableData_RuneOptionSheet_Row_RuneOptionInfo__Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__System_Int32_" data-uid="Nekoyume.Model.Stat.CharacterStats.ConfigureStats(System.Collections.Generic.IReadOnlyCollection{Nekoyume.Model.Item.Equipment},System.Collections.Generic.IReadOnlyCollection{Nekoyume.Model.Item.Costume},System.Collections.Generic.IReadOnlyCollection{Nekoyume.TableData.RuneOptionSheet.Row.RuneOptionInfo},Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},System.Int32)">
   ConfigureStats(IReadOnlyCollection&lt;Equipment&gt;, IReadOnlyCollection&lt;Costume&gt;, IReadOnlyCollection&lt;RuneOptionInfo&gt;, CostumeStatSheet, List&lt;StatModifier&gt;, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L601"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L799"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1573,7 +1686,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_GetAdditionalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetAdditionalStats(System.Boolean)">
   GetAdditionalStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L541"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L739"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1609,7 +1722,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_GetBaseAndAdditionalStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetBaseAndAdditionalStats(System.Boolean)">
   GetBaseAndAdditionalStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L555"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L753"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1645,7 +1758,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_GetBaseStats_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.GetBaseStats(System.Boolean)">
   GetBaseStats(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L535"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L733"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1681,7 +1794,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_IncreaseHpForArena" data-uid="Nekoyume.Model.Stat.CharacterStats.IncreaseHpForArena">
   IncreaseHpForArena()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L386"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L577"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Increases the HP of the character for the arena.</p>
@@ -1708,7 +1821,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_RemoveBuff_Nekoyume_Model_Buff_StatBuff_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.RemoveBuff(Nekoyume.Model.Buff.StatBuff,System.Boolean)">
   RemoveBuff(StatBuff, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L487"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1741,7 +1854,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetBuffs_System_Collections_Generic_IEnumerable_Nekoyume_Model_Buff_StatBuff__Nekoyume_TableData_BuffLimitSheet_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetBuffs(System.Collections.Generic.IEnumerable{Nekoyume.Model.Buff.StatBuff},Nekoyume.TableData.BuffLimitSheet,System.Boolean)">
   SetBuffs(IEnumerable&lt;StatBuff&gt;, BuffLimitSheet, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L419"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set stats based on buffs.</p>
@@ -1782,7 +1895,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetCollections_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCollections(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier},System.Boolean)">
   SetCollections(IEnumerable&lt;StatModifier&gt;, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L439"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1816,11 +1929,54 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
 
 
+  <a id="Nekoyume_Model_Stat_CharacterStats_SetConditions_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetConditions*"></a>
+
+  <h3 id="Nekoyume_Model_Stat_CharacterStats_SetConditions_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetConditions(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier},System.Boolean)">
+  SetConditions(IEnumerable&lt;StatModifier&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L519"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Set stats based on infinite tower conditions.
+This is applied after buffs and is temporary for simulation only.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CharacterStats SetConditions(IEnumerable&lt;StatModifier&gt; statModifiers, bool updateImmediate = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>statModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
+    <dd><p>Condition stat modifiers</p>
+</dd>
+    <dt><code>updateImmediate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Whether to update stats immediately</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Stat.CharacterStats.html">CharacterStats</a></dt>
+    <dd><p>This instance for method chaining</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Stat_CharacterStats_SetConsumables_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetConsumables*"></a>
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetConsumables_System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_Consumable__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetConsumables(System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.Consumable},System.Boolean)">
   SetConsumables(IEnumerable&lt;Consumable&gt;, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L358"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set stats based on consumables. Also recalculates stats from buffs.</p>
@@ -1859,7 +2015,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetCostume_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCostume(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier})">
   SetCostume(IEnumerable&lt;StatModifier&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L568"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1890,7 +2046,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetCostumeStat_System_Collections_Generic_IReadOnlyCollection_Nekoyume_Model_Item_Costume__Nekoyume_TableData_CostumeStatSheet_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetCostumeStat(System.Collections.Generic.IReadOnlyCollection{Nekoyume.Model.Item.Costume},Nekoyume.TableData.CostumeStatSheet)">
   SetCostumeStat(IReadOnlyCollection&lt;Costume&gt;, CostumeStatSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L571"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L769"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1923,7 +2079,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetEquipments_System_Collections_Generic_IEnumerable_Nekoyume_Model_Item_Equipment__Nekoyume_TableData_EquipmentItemSetEffectSheet_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetEquipments(System.Collections.Generic.IEnumerable{Nekoyume.Model.Item.Equipment},Nekoyume.TableData.EquipmentItemSetEffectSheet,System.Boolean)">
   SetEquipments(IEnumerable&lt;Equipment&gt;, EquipmentItemSetEffectSheet, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L313"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set stats based on equipments. Also recalculates stats from consumables and buffs.</p>
@@ -1964,7 +2120,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetRunes_System_Collections_Generic_IEnumerable_Nekoyume_Model_Stat_StatModifier__System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetRunes(System.Collections.Generic.IEnumerable{Nekoyume.Model.Stat.StatModifier},System.Boolean)">
   SetRunes(IEnumerable&lt;StatModifier&gt;, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L243"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L393"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set stats based on runes.</p>
@@ -2003,7 +2159,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 
   <h3 id="Nekoyume_Model_Stat_CharacterStats_SetStats_System_Int32_System_Boolean_" data-uid="Nekoyume.Model.Stat.CharacterStats.SetStats(System.Int32,System.Boolean)">
   SetStats(int, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L292"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Set base stats based on character level.</p>
@@ -2042,7 +2198,7 @@ public class CharacterStats : Stats, IStats, IBaseAndAdditionalStats, ICloneable
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L17" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Model/Stat/CharacterStats.cs/#L18" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -1142,6 +1142,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.EventDungeonBattleSweep.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.EventDungeonBattleSweep.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.EventMaterialItemCrafts.yml",
       "output": {
         ".html": {
@@ -1262,6 +1272,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.CombatPowerException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.CombatPowerException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Exceptions.CustomEquipmentCraft.NotEnoughRelationshipException.yml",
       "output": {
         ".html": {
@@ -1312,10 +1332,80 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.InfiniteTowerScheduleEndedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.InfiniteTowerScheduleEndedException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.InfiniteTowerScheduleNotActiveException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.InfiniteTowerScheduleNotActiveException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.InfiniteTowerScheduleNotStartedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.InfiniteTowerScheduleNotStartedException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.InvalidItemGradeException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.InvalidItemGradeException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.InvalidItemLevelException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.InvalidItemLevelException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.Exceptions.InvalidSummonCountException.yml",
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.Exceptions.InvalidSummonCountException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.NotEnoughInfiniteTowerTicketsException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.NotEnoughInfiniteTowerTicketsException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.Exceptions.StageNotClearedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.Exceptions.StageNotClearedException.html"
         }
       },
       "version": ""
@@ -1456,6 +1546,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.GoldDistribution.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.GrantItems.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.GrantItems.html"
         }
       },
       "version": ""
@@ -1786,6 +1886,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Action.ITransferAssets.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.InfiniteTowerBattle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.InfiniteTowerBattle.html"
         }
       },
       "version": ""
@@ -3042,6 +3152,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.SetAddressStateCompressed.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.SetAddressStateCompressed.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.ShopErrorType.yml",
       "output": {
         ".html": {
@@ -3652,6 +3772,46 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.InfiniteTowerLog.InfiniteTowerResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.InfiniteTowerLog.InfiniteTowerResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.InfiniteTowerLog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.InfiniteTowerLog.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.InfiniteTowerSimulator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.InfiniteTowerSimulator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.InfiniteTowerWave.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.InfiniteTowerWave.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Battle.InvalidCountException.yml",
       "output": {
         ".html": {
@@ -3806,6 +3966,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Battle.Wave.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Battle.WaveResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Battle.WaveResult.html"
         }
       },
       "version": ""
@@ -4136,6 +4306,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Exceptions.InvalidActionFieldException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Exceptions.InvalidItemIdException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Exceptions.InvalidItemIdException.html"
         }
       },
       "version": ""
@@ -6072,6 +6252,56 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.InfiniteTower.BattleConditionType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.InfiniteTower.BattleConditionType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.InfiniteTower.InfiniteTowerCondition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.InfiniteTower.InfiniteTowerCondition.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.InfiniteTower.InfiniteTowerInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.InfiniteTower.InfiniteTowerInfo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.InfiniteTower.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.InfiniteTower.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Item.Armor.yml",
       "output": {
         ".html": {
@@ -7012,6 +7242,26 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Rune.ForbiddenRuneEquippedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Rune.ForbiddenRuneEquippedException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Rune.ForbiddenRuneTypeEquippedException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Rune.ForbiddenRuneTypeEquippedException.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Rune.IsEquippableRuneException.yml",
       "output": {
         ".html": {
@@ -7892,6 +8142,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.State.InfiniteTowerBoardState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.State.InfiniteTowerBoardState.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.State.InvalidRedeemCodeException.yml",
       "output": {
         ".html": {
@@ -8446,6 +8706,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Module.Guild.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Module.InfiniteTowerModule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Module.InfiniteTowerModule.html"
         }
       },
       "version": ""
@@ -10156,6 +10426,106 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.IWorldBossRewardSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerConditionSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerConditionSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerConditionSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerConditionSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.MonsterData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.MonsterData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.WaveData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.WaveData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerFloorWaveSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerScheduleSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerScheduleSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.InfiniteTowerScheduleSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.InfiniteTowerScheduleSheet.html"
         }
       },
       "version": ""

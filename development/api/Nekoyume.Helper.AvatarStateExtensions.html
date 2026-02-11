@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Helper_AvatarStateExtensions" data-uid="Nekoyume.Helper.AvatarStateExtensions" class="text-break">
-Class AvatarStateExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class AvatarStateExtensions  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -156,7 +156,7 @@ Class AvatarStateExtensions  <a class="header-action link-secondary" title="View
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExp_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterLevelSheet_System_Int32_System_Int32_" data-uid="Nekoyume.Helper.AvatarStateExtensions.GetLevelAndExp(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterLevelSheet,System.Int32,System.Int32)">
   GetLevelAndExp(AvatarState, CharacterLevelSheet, int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -194,11 +194,63 @@ Class AvatarStateExtensions  <a class="header-action link-secondary" title="View
 
 
 
+  <a id="Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExpForEventDungeon_" data-uid="Nekoyume.Helper.AvatarStateExtensions.GetLevelAndExpForEventDungeon*"></a>
+
+  <h3 id="Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExpForEventDungeon_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterLevelSheet_Nekoyume_TableData_Event_EventScheduleSheet_Row_System_Int32_System_Int32_" data-uid="Nekoyume.Helper.AvatarStateExtensions.GetLevelAndExpForEventDungeon(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterLevelSheet,Nekoyume.TableData.Event.EventScheduleSheet.Row,System.Int32,System.Int32)">
+  GetLevelAndExpForEventDungeon(AvatarState, CharacterLevelSheet, Row, int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates level and experience for event dungeon sweep with level-up consideration.
+This method handles experience accumulation correctly without subtracting experience during level up.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static (int, long) GetLevelAndExpForEventDungeon(this AvatarState avatarState, CharacterLevelSheet characterLevelSheet, EventScheduleSheet.Row scheduleRow, int stageNumber, int repeatCount)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
+    <dd><p>The avatar state to calculate experience for</p>
+</dd>
+    <dt><code>characterLevelSheet</code> <a class="xref" href="Nekoyume.TableData.CharacterLevelSheet.html">CharacterLevelSheet</a></dt>
+    <dd><p>Character level sheet for level information</p>
+</dd>
+    <dt><code>scheduleRow</code> <a class="xref" href="Nekoyume.TableData.Event.EventScheduleSheet.html">EventScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.Event.EventScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>Event schedule row containing dungeon experience configuration</p>
+</dd>
+    <dt><code>stageNumber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Event dungeon stage number</p>
+</dd>
+    <dt><code>repeatCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of times to repeat the battle</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>)</dt>
+    <dd><p>Tuple containing final level and experience</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExpV1_" data-uid="Nekoyume.Helper.AvatarStateExtensions.GetLevelAndExpV1*"></a>
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_GetLevelAndExpV1_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_CharacterLevelSheet_System_Int32_System_Int32_" data-uid="Nekoyume.Helper.AvatarStateExtensions.GetLevelAndExpV1(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.CharacterLevelSheet,System.Int32,System.Int32)">
   GetLevelAndExpV1(AvatarState, CharacterLevelSheet, int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -241,7 +293,7 @@ public static (int, long) GetLevelAndExpV1(this AvatarState avatarState, Charact
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_UpdateExp_Nekoyume_Model_State_AvatarState_System_Int32_System_Int64_" data-uid="Nekoyume.Helper.AvatarStateExtensions.UpdateExp(Nekoyume.Model.State.AvatarState,System.Int32,System.Int64)">
   UpdateExp(AvatarState, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -276,7 +328,7 @@ public static (int, long) GetLevelAndExpV1(this AvatarState avatarState, Charact
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_UpdateInventory_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__" data-uid="Nekoyume.Helper.AvatarStateExtensions.UpdateInventory(Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase})">
   UpdateInventory(AvatarState, List&lt;ItemBase&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -309,7 +361,7 @@ public static (int, long) GetLevelAndExpV1(this AvatarState avatarState, Charact
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_UpdateMonsterMap_Nekoyume_Model_State_AvatarState_Nekoyume_TableData_StageWaveSheet_System_Int32_" data-uid="Nekoyume.Helper.AvatarStateExtensions.UpdateMonsterMap(Nekoyume.Model.State.AvatarState,Nekoyume.TableData.StageWaveSheet,System.Int32)">
   UpdateMonsterMap(AvatarState, StageWaveSheet, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -344,7 +396,7 @@ public static (int, long) GetLevelAndExpV1(this AvatarState avatarState, Charact
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_ValidEquipmentAndCostume_Nekoyume_Model_State_AvatarState_System_Collections_Generic_IEnumerable_System_Guid__System_Collections_Generic_List_System_Guid__Nekoyume_TableData_ItemRequirementSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_System_Int64_System_String_" data-uid="Nekoyume.Helper.AvatarStateExtensions.ValidEquipmentAndCostume(Nekoyume.Model.State.AvatarState,System.Collections.Generic.IEnumerable{System.Guid},System.Collections.Generic.List{System.Guid},Nekoyume.TableData.ItemRequirementSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,System.Int64,System.String)">
   ValidEquipmentAndCostume(AvatarState, IEnumerable&lt;Guid&gt;, List&lt;Guid&gt;, ItemRequirementSheet, EquipmentItemRecipeSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, long, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -391,7 +443,7 @@ public static (int, long) GetLevelAndExpV1(this AvatarState avatarState, Charact
 
   <h3 id="Nekoyume_Helper_AvatarStateExtensions_ValidEquipmentAndCostumeV2_Nekoyume_Model_State_AvatarState_System_Collections_Generic_IEnumerable_System_Guid__System_Collections_Generic_List_System_Guid__Nekoyume_TableData_ItemRequirementSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_System_Int64_System_String_Nekoyume_Model_State_GameConfigState_" data-uid="Nekoyume.Helper.AvatarStateExtensions.ValidEquipmentAndCostumeV2(Nekoyume.Model.State.AvatarState,System.Collections.Generic.IEnumerable{System.Guid},System.Collections.Generic.List{System.Guid},Nekoyume.TableData.ItemRequirementSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,System.Int64,System.String,Nekoyume.Model.State.GameConfigState)">
   ValidEquipmentAndCostumeV2(AvatarState, IEnumerable&lt;Guid&gt;, List&lt;Guid&gt;, ItemRequirementSheet, EquipmentItemRecipeSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, long, string, GameConfigState)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L216"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -445,7 +497,7 @@ public static (int, long) GetLevelAndExpV1(this AvatarState avatarState, Charact
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AvatarStateExtensions.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 
