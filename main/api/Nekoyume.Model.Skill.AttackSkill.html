@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Skill_AttackSkill" data-uid="Nekoyume.Model.Skill.AttackSkill" class="text-break">
-Class AttackSkill  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class AttackSkill  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -215,7 +215,7 @@ public abstract class AttackSkill : Skill, IState, ISkill</code></pre>
 
   <h3 id="Nekoyume_Model_Skill_AttackSkill__ctor_Nekoyume_TableData_SkillSheet_Row_System_Int64_System_Int32_System_Int32_Nekoyume_Model_Stat_StatType_" data-uid="Nekoyume.Model.Skill.AttackSkill.#ctor(Nekoyume.TableData.SkillSheet.Row,System.Int64,System.Int32,System.Int32,Nekoyume.Model.Stat.StatType)">
   AttackSkill(Row, long, int, int, StatType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -254,14 +254,62 @@ public abstract class AttackSkill : Skill, IState, ISkill</code></pre>
 </h2>
 
 
+  <a id="Nekoyume_Model_Skill_AttackSkill_GetMultiplier_" data-uid="Nekoyume.Model.Skill.AttackSkill.GetMultiplier*"></a>
+
+  <h3 id="Nekoyume_Model_Skill_AttackSkill_GetMultiplier_System_Int32_System_Decimal_" data-uid="Nekoyume.Model.Skill.AttackSkill.GetMultiplier(System.Int32,System.Decimal)">
+  GetMultiplier(int, decimal)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates damage multipliers for multi-hit skills.
+For single hit skills, returns the total damage as is.
+For multi-hit skills, distributes the total damage across hits with the last hit dealing 30% more damage.
+This creates a pattern where the final hit is more impactful than the preceding hits.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected static decimal[] GetMultiplier(int hitCount, decimal totalDamage)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>hitCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of hits for the skill</p>
+</dd>
+    <dt><code>totalDamage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dd><p>Total damage to be distributed across hits</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a>[]</dt>
+    <dd><p>Array of damage multipliers for each hit</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Model_Skill_AttackSkill_ProcessDamage_" data-uid="Nekoyume.Model.Skill.AttackSkill.ProcessDamage*"></a>
 
   <h3 id="Nekoyume_Model_Skill_AttackSkill_ProcessDamage_Nekoyume_Model_CharacterBase_System_Int32_System_Boolean_System_Boolean_" data-uid="Nekoyume.Model.Skill.AttackSkill.ProcessDamage(Nekoyume.Model.CharacterBase,System.Int32,System.Boolean,System.Boolean)">
   ProcessDamage(CharacterBase, int, bool, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>todo: 캐릭터 스탯에 반영된 버프 효과가 스킬의 순수 데미지에는 영향을 주지 않는 로직.
+  <div class="markdown level1 summary"><p>Processes damage calculation for attack skills with improved large value handling.
+Uses NumberConversionHelper.SafeDecimalToInt64 to prevent overflow when dealing with large stat values.
+Implements DamageHelper.GetFinalDefense and DamageHelper.GetReducedDamage for consistent damage calculation.</p>
+<p>todo: 캐릭터 스탯에 반영된 버프 효과가 스킬의 순수 데미지에는 영향을 주지 않는 로직.
 todo: 타겟의 회피 여부와 상관없이 버프의 확률로 발동되고 있음. 고민이 필요함.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -273,19 +321,24 @@ todo: 타겟의 회피 여부와 상관없이 버프의 확률로 발동되고 �
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>caster</code> <a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></dt>
-    <dd></dd>
+    <dd><p>The character casting the skill</p>
+</dd>
     <dt><code>simulatorWaveTurn</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>Current wave turn in the battle simulator</p>
+</dd>
     <dt><code>isNormalAttack</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>Whether this is a normal attack</p>
+</dd>
     <dt><code>copyCharacter</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>Whether to copy the target character for skill info</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Nekoyume.Model.BattleStatus.Skill.html">Skill</a>.<a class="xref" href="Nekoyume.Model.BattleStatus.Skill.SkillInfo.html">SkillInfo</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>Collection of skill information including damage and effects</p>
+</dd>
   </dl>
 
 
@@ -302,7 +355,7 @@ todo: 타겟의 회피 여부와 상관없이 버프의 확률로 발동되고 �
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/Skill/AttackSkill.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

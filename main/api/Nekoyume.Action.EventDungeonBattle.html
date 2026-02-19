@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class EventDungeonBattle | Lib9c ">
       
-      <meta name="description" content="Hard forked at https://github.com/planetarium/lib9c/pull/2195">
+      <meta name="description" content="Action for participating in an event dungeon battle. This action allows an avatar to battle in a specific stage of an event dungeon, consuming tickets and receiving rewards upon victory. Hard forked at https://github.com/planetarium/lib9c/pull/2195">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_EventDungeonBattle" data-uid="Nekoyume.Action.EventDungeonBattle" class="text-break">
-Class EventDungeonBattle  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L33"><i class="bi bi-code-slash"></i></a>
+Class EventDungeonBattle  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,10 @@ Class EventDungeonBattle  <a class="header-action link-secondary" title="View so
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+  <div class="markdown summary"><p>Action for participating in an event dungeon battle.
+This action allows an avatar to battle in a specific stage of an event dungeon,
+consuming tickets and receiving rewards upon victory.
+Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -188,10 +191,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_AvatarAddress" data-uid="Nekoyume.Action.EventDungeonBattle.AvatarAddress">
   AvatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The address of the avatar that will participate in the event dungeon battle.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -218,10 +222,12 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_BuyTicketIfNeeded" data-uid="Nekoyume.Action.EventDungeonBattle.BuyTicketIfNeeded">
   BuyTicketIfNeeded
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether to automatically purchase a ticket if the avatar doesn't have enough tickets.
+If true and tickets are insufficient, the action will attempt to buy a ticket using currency.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -248,10 +254,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_Costumes" data-uid="Nekoyume.Action.EventDungeonBattle.Costumes">
   Costumes
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A list of costume item GUIDs to be equipped for the battle.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -278,10 +285,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_Equipments" data-uid="Nekoyume.Action.EventDungeonBattle.Equipments">
   Equipments
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A list of equipment item GUIDs to be equipped for the battle.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -308,10 +316,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_EventDungeonId" data-uid="Nekoyume.Action.EventDungeonBattle.EventDungeonId">
   EventDungeonId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The ID of the event dungeon to battle in.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -338,10 +347,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_EventDungeonStageId" data-uid="Nekoyume.Action.EventDungeonBattle.EventDungeonStageId">
   EventDungeonStageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The ID of the specific stage within the event dungeon to battle.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -368,10 +378,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_EventScheduleId" data-uid="Nekoyume.Action.EventDungeonBattle.EventScheduleId">
   EventScheduleId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The ID of the event schedule that defines when the event dungeon is available.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -398,10 +409,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_Foods" data-uid="Nekoyume.Action.EventDungeonBattle.Foods">
   Foods
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A list of food item GUIDs to be consumed during the battle.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -428,10 +440,12 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_PlayCount" data-uid="Nekoyume.Action.EventDungeonBattle.PlayCount">
   PlayCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The number of battles to play in a single action execution.
+Currently fixed to 1 for this action type.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -458,10 +472,11 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_RuneInfos" data-uid="Nekoyume.Action.EventDungeonBattle.RuneInfos">
   RuneInfos
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A list of rune slot information specifying which runes to use in the battle.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -493,10 +508,14 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_PlainValueInternal" data-uid="Nekoyume.Action.EventDungeonBattle.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L118"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Serializes the action's data into a Bencodex dictionary.
+The data is stored as a list under the key &quot;l&quot; containing:
+AvatarAddress, EventScheduleId, EventDungeonId, EventDungeonStageId,
+Equipments, Costumes, Foods, BuyTicketIfNeeded, and RuneInfos.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -510,7 +529,8 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.iimmutabledictionary-2">IImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <span class="xref">IValue</span>&gt;</dt>
-    <dd></dd>
+    <dd><p>An immutable dictionary containing the serialized action data.</p>
+</dd>
   </dl>
 
 
@@ -528,10 +548,21 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.EventDungeonBattle.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L221"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the event dungeon battle action.
+This method performs the following operations:</p>
+<ol>
+<li>Validates the avatar state and event dungeon information</li>
+<li>Checks and consumes event dungeon tickets (or purchases if needed)</li>
+<li>Validates equipment, costumes, foods, and runes</li>
+<li>Updates rune and item slot states</li>
+<li>Simulates the battle using StageSimulator</li>
+<li>Applies battle results to the avatar state (experience, rewards, etc.)</li>
+<li>Updates the event dungeon info if the stage is cleared</li>
+</ol>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -541,13 +572,15 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>context</code> <span class="xref">IActionContext</span></dt>
-    <dd></dd>
+    <dd><p>The action context containing block index, signer, and random seed.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The updated world state after executing the battle.</p>
+</dd>
   </dl>
 
 
@@ -557,6 +590,21 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Action.FailedLoadStateException.html">FailedLoadStateException</a></dt>
+    <dd><p>Thrown when the avatar state cannot be loaded.</p>
+</dd>
+    <dt><a class="xref" href="Nekoyume.Exceptions.NotEnoughEventDungeonTicketsException.html">NotEnoughEventDungeonTicketsException</a></dt>
+    <dd><p>Thrown when the avatar doesn't have enough tickets and BuyTicketIfNeeded is false.</p>
+</dd>
+    <dt><a class="xref" href="Nekoyume.Action.StageNotClearedException.html">StageNotClearedException</a></dt>
+    <dd><p>Thrown when attempting to battle a stage without clearing the previous stage.</p>
+</dd>
+    <dt><a class="xref" href="Nekoyume.TableData.SheetRowNotFoundException.html">SheetRowNotFoundException</a></dt>
+    <dd><p>Thrown when required sheet data cannot be found.</p>
+</dd>
+  </dl>
 
 
 
@@ -564,10 +612,14 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
   <h3 id="Nekoyume_Action_EventDungeonBattle_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.EventDungeonBattle.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L163"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Deserializes the action's data from a Bencodex dictionary.
+Expects a list under the key &quot;l&quot; containing at least 9 items in the order:
+AvatarAddress, EventScheduleId, EventDungeonId, EventDungeonStageId,
+Equipments, Costumes, Foods, BuyTicketIfNeeded, and RuneInfos.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -577,7 +629,8 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>plainValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.iimmutabledictionary-2">IImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <span class="xref">IValue</span>&gt;</dt>
-    <dd></dd>
+    <dd><p>The Bencodex dictionary containing the serialized action data.</p>
+</dd>
   </dl>
 
 
@@ -588,6 +641,13 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 
 
 
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentexception">ArgumentException</a></dt>
+    <dd><p>Thrown when the plainValue doesn't contain the expected key &quot;l&quot;,
+when &quot;l&quot; is not a Bencodex list, or when the list has fewer than 9 items.</p>
+</dd>
+  </dl>
 
 
 
@@ -595,7 +655,7 @@ public class EventDungeonBattle : GameAction, IAction, IEventDungeonBattleV2</co
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L33" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattle.cs/#L37" class="edit-link">Edit this page</a>
         </div>
 
 

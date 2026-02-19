@@ -560,8 +560,8 @@ Interface IStage  <a class="header-action link-secondary" title="View source" hr
 
   <a id="Nekoyume_Model_IStage_CoGetReward_" data-uid="Nekoyume.Model.IStage.CoGetReward*"></a>
 
-  <h3 id="Nekoyume_Model_IStage_CoGetReward_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__" data-uid="Nekoyume.Model.IStage.CoGetReward(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase})">
-  CoGetReward(List&lt;ItemBase&gt;)
+  <h3 id="Nekoyume_Model_IStage_CoGetReward_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_Dictionary_System_String_System_Int32__" data-uid="Nekoyume.Model.IStage.CoGetReward(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+  CoGetReward(List&lt;ItemBase&gt;, Dictionary&lt;string, int&gt;)
   <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/IStage.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -569,12 +569,14 @@ Interface IStage  <a class="header-action link-secondary" title="View source" hr
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IEnumerator CoGetReward(List&lt;ItemBase&gt; rewards)</code></pre>
+    <pre><code class="lang-csharp hljs">IEnumerator CoGetReward(List&lt;ItemBase&gt; rewards, Dictionary&lt;string, int&gt; favRewards)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd></dd>
+    <dt><code>favRewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
     <dd></dd>
   </dl>
 

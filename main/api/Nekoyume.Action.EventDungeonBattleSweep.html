@@ -1,0 +1,698 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class EventDungeonBattleSweep | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class EventDungeonBattleSweep | Lib9c ">
+      
+      <meta name="description" content="Represents a sweep action that automatically completes multiple event dungeon battles without player interaction.  This action allows players to automatically repeat battles on already cleared event dungeon stages, consuming tickets and receiving rewards without manual combat interaction.  Key Features: - Only works on previously cleared stages (no stage clearing) - No ticket purchase functionality (uses existing tickets only) - Automatic reward and experience calculation - Multiple battle execution in a single action  This action modifies the following states: - AvatarState: Updates player&#39;s stats, inventory, and experience - EventDungeonInfo: Updates event dungeon progress and ticket usage - RuneState: Updates rune effects and bonuses - ItemSlotState: Updates equipped items - RuneSlotState: Updates equipped runes - CP: Updates character&#39;s combat power  Execution Flow: 1. Validate input parameters and avatar state 2. Load and validate game sheets and configurations 3. Validate event dungeon info and ticket availability 4. Check stage clearance requirements 5. Update rune and item slot states 6. Calculate combat power (CP) 7. Generate rewards and experience 8. Update avatar state and return modified world state  Hard forked at https://github.com/planetarium/lib9c/pull/2195">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/main/apiSpec/new?filename=Nekoyume_Action_EventDungeonBattleSweep.md&amp;value=---%0Auid%3A%20Nekoyume.Action.EventDungeonBattleSweep%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Action.EventDungeonBattleSweep">
+
+
+
+  <h1 id="Nekoyume_Action_EventDungeonBattleSweep" data-uid="Nekoyume.Action.EventDungeonBattleSweep" class="text-break">
+Class EventDungeonBattleSweep  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Action.html">Action</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a sweep action that automatically completes multiple event dungeon battles without player interaction.</p>
+<p>
+This action allows players to automatically repeat battles on already cleared event dungeon stages,
+consuming tickets and receiving rewards without manual combat interaction.
+</p><p>
+Key Features:
+- Only works on previously cleared stages (no stage clearing)
+- No ticket purchase functionality (uses existing tickets only)
+- Automatic reward and experience calculation
+- Multiple battle execution in a single action
+</p><p>
+This action modifies the following states:
+- AvatarState: Updates player's stats, inventory, and experience
+- EventDungeonInfo: Updates event dungeon progress and ticket usage
+- RuneState: Updates rune effects and bonuses
+- ItemSlotState: Updates equipped items
+- RuneSlotState: Updates equipped runes
+- CP: Updates character's combat power
+</p><p>
+Execution Flow:
+1. Validate input parameters and avatar state
+2. Load and validate game sheets and configurations
+3. Validate event dungeon info and ticket availability
+4. Check stage clearance requirements
+5. Update rune and item slot states
+6. Calculate combat power (CP)
+7. Generate rewards and experience
+8. Update avatar state and return modified world state
+</p>
+<p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+[ActionType(&quot;event_dungeon_battle_sweep&quot;)]
+public class EventDungeonBattleSweep : GameAction, IAction, IEventDungeonBattleSweep</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Nekoyume.Action.ActionBase.html">ActionBase</a></div>
+      <div><a class="xref" href="Nekoyume.Action.GameAction.html">GameAction</a></div>
+      <div><span class="xref">EventDungeonBattleSweep</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">IAction</span></div>
+      <div><span class="xref">IEventDungeonBattleSweep</span></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Nekoyume.Action.GameAction.html#Nekoyume_Action_GameAction_Id">GameAction.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.GameAction.html#Nekoyume_Action_GameAction_PlainValue">GameAction.PlainValue</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.GameAction.html#Nekoyume_Action_GameAction_LoadPlainValue_Bencodex_Types_IValue_">GameAction.LoadPlainValue(IValue)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_GetSignerAndOtherAddressesHex_Libplanet_Action_IActionContext_Libplanet_Crypto_Address___">ActionBase.GetSignerAndOtherAddressesHex(IActionContext, params Address[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_TryGetAdminState_Libplanet_Action_IActionContext_Nekoyume_Model_State_AdminState__">ActionBase.TryGetAdminState(IActionContext, out AdminState)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_CheckPermission_Libplanet_Action_IActionContext_">ActionBase.CheckPermission(IActionContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="Nekoyume.Action.ActionBase.html#Nekoyume_Action_ActionBase_CheckObsolete_System_Int64_Libplanet_Action_IActionContext_">ActionBase.CheckObsolete(long, IActionContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_AvatarAddress" data-uid="Nekoyume.Action.EventDungeonBattleSweep.AvatarAddress">
+  AvatarAddress
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The address of the avatar performing the sweep action.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address AvatarAddress</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><span class="xref">Address</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_Costumes" data-uid="Nekoyume.Action.EventDungeonBattleSweep.Costumes">
+  Costumes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of costume item IDs to use during the sweep.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Guid&gt; Costumes</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_Equipments" data-uid="Nekoyume.Action.EventDungeonBattleSweep.Equipments">
+  Equipments
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of equipment item IDs to use during the sweep.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Guid&gt; Equipments</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_EventDungeonId" data-uid="Nekoyume.Action.EventDungeonBattleSweep.EventDungeonId">
+  EventDungeonId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The ID of the event dungeon to sweep.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int EventDungeonId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_EventDungeonStageId" data-uid="Nekoyume.Action.EventDungeonBattleSweep.EventDungeonStageId">
+  EventDungeonStageId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The ID of the event dungeon stage to sweep.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int EventDungeonStageId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_EventScheduleId" data-uid="Nekoyume.Action.EventDungeonBattleSweep.EventScheduleId">
+  EventScheduleId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The ID of the event schedule for the dungeon.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int EventScheduleId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_Foods" data-uid="Nekoyume.Action.EventDungeonBattleSweep.Foods">
+  Foods
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of food item IDs to use during the sweep.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Guid&gt; Foods</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_PlayCount" data-uid="Nekoyume.Action.EventDungeonBattleSweep.PlayCount">
+  PlayCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The number of times to perform the sweep (must be between 1 and MaxPlayCount).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int PlayCount</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_RuneInfos" data-uid="Nekoyume.Action.EventDungeonBattleSweep.RuneInfos">
+  RuneInfos
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of rune slot information for equipped runes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;RuneSlotInfo&gt; RuneInfos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Action.RuneSlotInfo.html">RuneSlotInfo</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Action_EventDungeonBattleSweep_PlainValueInternal_" data-uid="Nekoyume.Action.EventDungeonBattleSweep.PlainValueInternal*"></a>
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_PlainValueInternal" data-uid="Nekoyume.Action.EventDungeonBattleSweep.PlainValueInternal">
+  PlainValueInternal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IImmutableDictionary&lt;string, IValue&gt; PlainValueInternal { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.iimmutabledictionary-2">IImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <span class="xref">IValue</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Action_EventDungeonBattleSweep_Execute_" data-uid="Nekoyume.Action.EventDungeonBattleSweep.Execute*"></a>
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.EventDungeonBattleSweep.Execute(Libplanet.Action.IActionContext)">
+  Execute(IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Executes the event dungeon battle sweep action.</p>
+<p>
+This method performs the following steps:
+1. Validates input parameters and loads avatar state
+2. Loads and validates all required game sheets
+3. Validates event dungeon configuration and ticket availability
+4. Checks stage clearance requirements
+5. Updates rune and item slot states
+6. Calculates combat power (CP)
+7. Generates rewards and experience
+8. Updates all relevant states and returns the modified world
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override IWorld Execute(IActionContext context)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
+    <dd><p>Action context containing previous state, signer, and block information</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">IWorld</span></dt>
+    <dd><p>Modified world state with updated avatar, dungeon info, and other states</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_EventDungeonBattleSweep_GetRewardItems_" data-uid="Nekoyume.Action.EventDungeonBattleSweep.GetRewardItems*"></a>
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_GetRewardItems_Libplanet_Action_IRandom_System_Int32_Nekoyume_TableData_Event_EventDungeonStageSheet_Row_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Action.EventDungeonBattleSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.Event.EventDungeonStageSheet.Row,Nekoyume.TableData.MaterialItemSheet)">
+  GetRewardItems(IRandom, int, Row, MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L579"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets reward items for event dungeon sweep based on play count and stage configuration.</p>
+<p>
+This method simulates multiple battle rewards without actually performing combat.
+It generates items based on the stage's drop configuration and the number of plays requested.
+</p><p>
+Process:
+1. Determine the number of items to drop per play (random between min and max)
+2. For each play, generate rewards using the stage's item selector
+3. Collect all rewards and sort them by item ID for consistency
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; GetRewardItems(IRandom random, int playCount, EventDungeonStageSheet.Row stageRow, MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd><p>Random number generator for deterministic reward generation</p>
+</dd>
+    <dt><code>playCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>Number of plays to simulate (determines total reward count)</p>
+</dd>
+    <dt><code>stageRow</code> <a class="xref" href="Nekoyume.TableData.Event.EventDungeonStageSheet.html">EventDungeonStageSheet</a>.<a class="xref" href="Nekoyume.TableData.Event.EventDungeonStageSheet.Row.html">Row</a></dt>
+    <dd><p>Event dungeon stage configuration containing drop rates and item pools</p>
+</dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd><p>Material item sheet for reward generation and validation</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p>List of reward items sorted by item ID</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Action_EventDungeonBattleSweep_LoadPlainValueInternal_" data-uid="Nekoyume.Action.EventDungeonBattleSweep.LoadPlainValueInternal*"></a>
+
+  <h3 id="Nekoyume_Action_EventDungeonBattleSweep_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.EventDungeonBattleSweep.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
+  LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt; plainValue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>plainValue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.immutable.iimmutabledictionary-2">IImmutableDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <span class="xref">IValue</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/EventDungeonBattleSweep.cs/#L69" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -460,7 +460,44 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1828">https://gith
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.EventDungeonBattle.html">EventDungeonBattle</a></dt>
-      <dd><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+      <dd><p>Action for participating in an event dungeon battle.
+This action allows an avatar to battle in a specific stage of an event dungeon,
+consuming tickets and receiving rewards upon victory.
+Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.EventDungeonBattleSweep.html">EventDungeonBattleSweep</a></dt>
+      <dd><p>Represents a sweep action that automatically completes multiple event dungeon battles without player interaction.</p>
+<p>
+This action allows players to automatically repeat battles on already cleared event dungeon stages,
+consuming tickets and receiving rewards without manual combat interaction.
+</p><p>
+Key Features:
+- Only works on previously cleared stages (no stage clearing)
+- No ticket purchase functionality (uses existing tickets only)
+- Automatic reward and experience calculation
+- Multiple battle execution in a single action
+</p><p>
+This action modifies the following states:
+- AvatarState: Updates player's stats, inventory, and experience
+- EventDungeonInfo: Updates event dungeon progress and ticket usage
+- RuneState: Updates rune effects and bonuses
+- ItemSlotState: Updates equipped items
+- RuneSlotState: Updates equipped runes
+- CP: Updates character's combat power
+</p><p>
+Execution Flow:
+1. Validate input parameters and avatar state
+2. Load and validate game sheets and configurations
+3. Validate event dungeon info and ticket availability
+4. Check stage clearance requirements
+5. Update rune and item slot states
+6. Calculate combat power (CP)
+7. Generate rewards and experience
+8. Update avatar state and return modified world state
+</p>
+<p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></p>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -487,6 +524,14 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1828">https://gith
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.GoldDistribution.html">GoldDistribution</a></dt>
       <dd></dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.GrantItems.html">GrantItems</a></dt>
+      <dd><p>Grants items/assets to target avatars from token-like inputs.
+This action is restricted to a fixed allow-list of signers and the current admin signer.
+Even if the signer does not have sufficient token balance, the grant will proceed
+and will burn only the available amount of the token.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.Grinding.html">Grinding</a></dt>
@@ -525,6 +570,21 @@ This action modifies the following states:</p>
 <li>RuneSlotState: Updates equipped runes</li>
 <li>CP: Updates character's combat power
 Hard forked at <a href="https://github.com/planetarium/lib9c/pull/2195">https://github.com/planetarium/lib9c/pull/2195</a></li>
+</ul>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.InfiniteTowerBattle.html">InfiniteTowerBattle</a></dt>
+      <dd><p>Represents a battle action in the infinite tower where players engage in combat with various conditions and restrictions.
+This action modifies the following states:</p>
+<ul>
+<li>AvatarState: Updates player's stats, inventory, and experience</li>
+<li>InfiniteTowerInfo: Updates tower progress and tickets</li>
+<li>CollectionState: Updates collection progress</li>
+<li>RuneState: Updates rune effects and bonuses</li>
+<li>ItemSlotState: Updates equipped items</li>
+<li>RuneSlotState: Updates equipped runes</li>
+<li>CP: Updates character's combat power</li>
 </ul>
 </dd>
     </dl>
@@ -856,6 +916,20 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1560">https://gith
 </dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.PatchTableSheetCompressed.html">PatchTableSheetCompressed</a></dt>
+      <dd><p>Compressed version of PatchTableSheet to reduce transaction size for large CSV files.
+Uses GZip compression to minimize the size of table data in transactions.</p>
+<p>This action is particularly useful for large CSV files like RuneOptionSheet.csv
+which can be compressed from ~842KB to ~154KB (81% reduction).</p>
+<p>Example usage:</p>
+<pre><code class="lang-csharp">var compressedAction = new PatchTableSheetCompressed
+{
+    TableName = "RuneOptionSheet",
+    CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+};</code></pre>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.PendingActivationDoesNotExistsException.html">PendingActivationDoesNotExistsException</a></dt>
       <dd></dd>
     </dl>
@@ -1014,7 +1088,8 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/1135">https://gith
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.RuneSlotInfo.html">RuneSlotInfo</a></dt>
-      <dd></dd>
+      <dd><p>Represents rune slot information for a character.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.RuneSummon.html">RuneSummon</a></dt>
@@ -1050,6 +1125,21 @@ Updated at <a href="https://github.com/planetarium/lib9c/pull/957">https://githu
       <dt><a class="xref" href="Nekoyume.Action.SetAddressState.html">SetAddressState</a></dt>
       <dd><p>Action to set state for multiple addresses.
 Throws an exception if the state already exists for the target address.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.SetAddressStateCompressed.html">SetAddressStateCompressed</a></dt>
+      <dd><p>Compressed version of SetAddressState to reduce transaction size for large state data.
+Uses GZip compression to minimize the size of state data in transactions.</p>
+<p>This action is particularly useful when setting large state data that would exceed
+transaction policy size limits. The compression can reduce state data size by 60-80%
+depending on the content structure and redundancy.</p>
+<p>Example usage:</p>
+<pre><code class="lang-csharp">var states = new List&lt;(Address, Address, IValue)&gt;
+{
+    (accountAddress, targetAddress, largeStateValue),
+};
+var compressedAction = new SetAddressStateCompressed(states);</code></pre>
 </dd>
     </dl>
     <dl class="jumplist">
@@ -1191,7 +1281,8 @@ Interfaces
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.IHackAndSlashV10.html">IHackAndSlashV10</a></dt>
-      <dd></dd>
+      <dd><p>Interface for hack and slash action version 10.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.IProductInfo.html">IProductInfo</a></dt>

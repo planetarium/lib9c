@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class GetReward | Lib9c ">
       
-      
+      <meta name="description" content="Event that represents a character receiving rewards after battle. Supports both item rewards and fungible asset rewards.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_BattleStatus_GetReward" data-uid="Nekoyume.Model.BattleStatus.GetReward" class="text-break">
-Class GetReward  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Class GetReward  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class GetReward  <a class="header-action link-secondary" title="View source" hre
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Event that represents a character receiving rewards after battle.
+Supports both item rewards and fungible asset rewards.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -161,10 +163,11 @@ public class GetReward : EventBase</code></pre>
 
   <h3 id="Nekoyume_Model_BattleStatus_GetReward__ctor_Nekoyume_Model_CharacterBase_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__" data-uid="Nekoyume.Model.BattleStatus.GetReward.#ctor(Nekoyume.Model.CharacterBase,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase})">
   GetReward(CharacterBase, List&lt;ItemBase&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the GetReward class with item rewards only.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -174,9 +177,50 @@ public class GetReward : EventBase</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>character</code> <a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></dt>
-    <dd></dd>
+    <dd><p>The character receiving the rewards.</p>
+</dd>
     <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>List of item rewards.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_BattleStatus_GetReward__ctor_" data-uid="Nekoyume.Model.BattleStatus.GetReward.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_BattleStatus_GetReward__ctor_Nekoyume_Model_CharacterBase_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_Dictionary_System_String_System_Int32__" data-uid="Nekoyume.Model.BattleStatus.GetReward.#ctor(Nekoyume.Model.CharacterBase,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.Dictionary{System.String,System.Int32})">
+  GetReward(CharacterBase, List&lt;ItemBase&gt;, Dictionary&lt;string, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the GetReward class with both item and fungible asset rewards.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GetReward(CharacterBase character, List&lt;ItemBase&gt; rewards, Dictionary&lt;string, int&gt; fungibleAssetRewards)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>character</code> <a class="xref" href="Nekoyume.Model.CharacterBase.html">CharacterBase</a></dt>
+    <dd><p>The character receiving the rewards.</p>
+</dd>
+    <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p>List of item rewards.</p>
+</dd>
+    <dt><code>fungibleAssetRewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Dictionary of fungible asset rewards.</p>
+</dd>
   </dl>
 
 
@@ -195,12 +239,44 @@ public class GetReward : EventBase</code></pre>
 
 
 
-  <h3 id="Nekoyume_Model_BattleStatus_GetReward_Rewards" data-uid="Nekoyume.Model.BattleStatus.GetReward.Rewards">
-  Rewards
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_BattleStatus_GetReward_FungibleAssetRewards" data-uid="Nekoyume.Model.BattleStatus.GetReward.FungibleAssetRewards">
+  FungibleAssetRewards
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Dictionary of fungible asset rewards (e.g., NCG, Crystal) received by the character.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly Dictionary&lt;string, int&gt; FungibleAssetRewards</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Model_BattleStatus_GetReward_Rewards" data-uid="Nekoyume.Model.BattleStatus.GetReward.Rewards">
+  Rewards
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>List of item rewards received by the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -232,10 +308,11 @@ public class GetReward : EventBase</code></pre>
 
   <h3 id="Nekoyume_Model_BattleStatus_GetReward_CoExecute_Nekoyume_Model_IStage_" data-uid="Nekoyume.Model.BattleStatus.GetReward.CoExecute(Nekoyume.Model.IStage)">
   CoExecute(IStage)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Executes the reward event by giving rewards to the character.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -245,13 +322,15 @@ public class GetReward : EventBase</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>stage</code> <a class="xref" href="Nekoyume.Model.IStage.html">IStage</a></dt>
-    <dd></dd>
+    <dd><p>The stage context for reward processing.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerator">IEnumerator</a></dt>
-    <dd></dd>
+    <dd><p>Coroutine enumerator for reward execution.</p>
+</dd>
   </dl>
 
 
@@ -268,7 +347,7 @@ public class GetReward : EventBase</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Model/BattleStatus/GetReward.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

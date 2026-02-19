@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Battle_DamageHelper" data-uid="Nekoyume.Battle.DamageHelper" class="text-break">
-Class DamageHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L3"><i class="bi bi-code-slash"></i></a>
+Class DamageHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L6"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -156,7 +156,7 @@ Class DamageHelper  <a class="header-action link-secondary" title="View source" 
 
   <h3 id="Nekoyume_Battle_DamageHelper_GetDamageReductionRate_System_Int64_" data-uid="Nekoyume.Battle.DamageHelper.GetDamageReductionRate(System.Int64)">
   GetDamageReductionRate(long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>calculate damage reduction rate.</p>
@@ -191,11 +191,102 @@ Class DamageHelper  <a class="header-action link-secondary" title="View source" 
 
 
 
+  <a id="Nekoyume_Battle_DamageHelper_GetFinalDefense_" data-uid="Nekoyume.Battle.DamageHelper.GetFinalDefense*"></a>
+
+  <h3 id="Nekoyume_Battle_DamageHelper_GetFinalDefense_System_Int64_System_Int64_" data-uid="Nekoyume.Battle.DamageHelper.GetFinalDefense(System.Int64,System.Int64)">
+  GetFinalDefense(long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates final defense after applying armor penetration.
+Uses Math.Clamp to ensure the result is between 0 and long.MaxValue,
+preventing overflow issues when dealing with large defense values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long GetFinalDefense(long targetDefense, long armorPenetration)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>targetDefense</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>enemy <a class="xref" href="Nekoyume.Model.Stat.StatType.html#Nekoyume_Model_Stat_StatType_DEF">DEF</a> stats</p>
+</dd>
+    <dt><code>armorPenetration</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>caster <a class="xref" href="Nekoyume.Model.Stat.StatType.html#Nekoyume_Model_Stat_StatType_ArmorPenetration">ArmorPenetration</a> stats</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>calculated final defense.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_DamageHelper_GetReducedDamage_" data-uid="Nekoyume.Battle.DamageHelper.GetReducedDamage*"></a>
+
+  <h3 id="Nekoyume_Battle_DamageHelper_GetReducedDamage_System_Int64_System_Int64_System_Int64_" data-uid="Nekoyume.Battle.DamageHelper.GetReducedDamage(System.Int64,System.Int64,System.Int64)">
+  GetReducedDamage(long, long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates reduced damage after applying damage reduction values (DRV) and damage reduction rate (DRR).
+Uses NumberConversionHelper.SafeDecimalToInt64 to prevent overflow when dealing with large damage values.
+Ensures minimum damage of 1 to prevent zero damage attacks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long GetReducedDamage(long damage, long drv, long drr)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>damage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>damage</p>
+</dd>
+    <dt><code>drv</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>enemy <a class="xref" href="Nekoyume.Model.Stat.StatType.html#Nekoyume_Model_Stat_StatType_DRV">DRV</a> stats</p>
+</dd>
+    <dt><code>drr</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>enemy <a class="xref" href="Nekoyume.Model.Stat.StatType.html#Nekoyume_Model_Stat_StatType_DRR">DRR</a> stats</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>calculated damage.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L3" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/DamageHelper.cs/#L6" class="edit-link">Edit this page</a>
         </div>
 
 

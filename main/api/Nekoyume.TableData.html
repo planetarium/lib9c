@@ -176,11 +176,15 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.ClaimableGiftsSheet.html">ClaimableGiftsSheet</a></dt>
-      <dd></dd>
+      <dd><p>Sheet for claimable gifts that can be claimed by players during specific block index ranges.
+Each row contains gift ID, block index range, and a list of items to be given.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.ClaimableGiftsSheet.Row.html">ClaimableGiftsSheet.Row</a></dt>
-      <dd></dd>
+      <dd><p>Represents a single row in the ClaimableGiftsSheet.
+Contains gift ID, block index range, and items to be given.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.CollectQuestSheet.html">CollectQuestSheet</a></dt>
@@ -371,6 +375,58 @@ Classes
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerConditionSheet.html">InfiniteTowerConditionSheet</a></dt>
+      <dd><p>Infinite tower condition sheet for managing battle conditions and restrictions.
+Uses StatType, SkillTargetType, and StatModifier.OperationType for flexible stat modifications.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerConditionSheet.Row.html">InfiniteTowerConditionSheet.Row</a></dt>
+      <dd><p>Represents a row in the InfiniteTowerConditionSheet containing condition data.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorSheet.html">InfiniteTowerFloorSheet</a></dt>
+      <dd><p>Infinite tower floor sheet for managing tower floors and their properties.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorSheet.Row.html">InfiniteTowerFloorSheet.Row</a></dt>
+      <dd><p>Represents a row in the InfiniteTowerFloorSheet containing floor data.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.html">InfiniteTowerFloorWaveSheet</a></dt>
+      <dd><p>Infinite tower floor wave sheet for managing wave configurations.
+Supports multiple monster types per wave, similar to StageWaveSheet.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.MonsterData.html">InfiniteTowerFloorWaveSheet.MonsterData</a></dt>
+      <dd><p>Represents a single monster type within a wave.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.Row.html">InfiniteTowerFloorWaveSheet.Row</a></dt>
+      <dd><p>Represents a row in the InfiniteTowerFloorWaveSheet containing wave data for a specific floor.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerFloorWaveSheet.WaveData.html">InfiniteTowerFloorWaveSheet.WaveData</a></dt>
+      <dd><p>Represents a single wave within a floor, containing multiple monster types.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerScheduleSheet.html">InfiniteTowerScheduleSheet</a></dt>
+      <dd><p>Infinite tower schedule sheet for managing season schedules and ticket policies.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.InfiniteTowerScheduleSheet.Row.html">InfiniteTowerScheduleSheet.Row</a></dt>
+      <dd><p>Represents a row in the InfiniteTowerScheduleSheet containing schedule data.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.ItemConfigForGradeSheet.html">ItemConfigForGradeSheet</a></dt>
       <dd></dd>
     </dl>
@@ -552,15 +608,22 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a></dt>
-      <dd></dd>
+      <dd><p>Represents a sheet containing rune cost data organized by level ranges.
+This sheet stores cost information for rune enhancement across different level intervals,
+allowing for efficient data compression and retrieval.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.RuneCostSheet.Row.html">RuneCostSheet.Row</a></dt>
-      <dd></dd>
+      <dd><p>Represents a row in the RuneCostSheet containing cost data for a specific rune.
+Each row can contain multiple cost data entries for different level ranges.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.RuneCostSheet.RuneCostData.html">RuneCostSheet.RuneCostData</a></dt>
-      <dd></dd>
+      <dd><p>Represents cost data for a specific level range of rune enhancement.
+Contains information about required materials and success rates for a given level interval.</p>
+</dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.RuneOptionSheet.html">RuneOptionSheet</a></dt>
