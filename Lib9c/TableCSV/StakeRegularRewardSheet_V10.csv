@@ -1,4 +1,4 @@
-5,required_gold,item_id,rate,type,currency_ticker,currency_decimal_places,decimal_rate,tradable
+lv,required_gold,item_id,rate,type,currency_ticker,currency_decimal_places,decimal_rate,tradable
 1,50,400000,,Item,,,10,TRUE
 1,50,500000,,Item,,,800,TRUE
 1,50,20001,,Rune,,,6000,TRUE
@@ -77,3 +77,5 @@
 8,10000000,600306,,Item,,,50,FALSE
 7,5000000,600206,,Item,,,50,FALSE
 8,10000000,600206,,Item,,,50,FALSE
+7,5000000,600303,,Item,,,50,FALSE
+8,10000000,600303,,Item,,,50,FALSE
