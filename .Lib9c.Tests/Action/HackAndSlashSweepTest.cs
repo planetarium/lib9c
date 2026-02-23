@@ -11,6 +11,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model;
@@ -24,6 +25,10 @@ namespace Lib9c.Tests.Action
 
     public class HackAndSlashSweepTest
     {
+        private const int ExtendedWorldId = 10;
+        private const int ExtendedStageIdOffset = 450;
+        private const int ExtendedEntryMaterialId = 900001;
+
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
 
@@ -233,6 +238,118 @@ namespace Lib9c.Tests.Action
                         PreviousState = state,
                         Signer = _agentAddress,
                         RandomSeed = 0,
+                    }));
+        }
+
+        [Fact]
+        public void Execute_ExtendedWorld_CanPlayWithoutEntryCost()
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1; // 451 (base stage 1)
+            const int actionPointToSpend = 10; // base stage 1 costAP=5 => 2 plays
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+
+            // Prepare WorldInformation: normal cleared up to final stage and trigger hard world unlock.
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId,
+                normalFinalStageId,
+                1,
+                worldSheet,
+                worldUnlockSheet);
+
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlashSweep
+            {
+                runeInfos = new List<RuneSlotInfo>(),
+                apStoneCount = 0,
+                actionPoint = actionPointToSpend,
+                avatarAddress = _avatarAddress,
+                worldId = ExtendedWorldId,
+                stageId = extendedStageId,
+                equipments = equipments,
+                costumes = costumes,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = 1,
+                });
+
+            // Lazy migration: world 10 should be synced to legacy `world_ids`.
+            Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
+            var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+        }
+
+        [Theory]
+        [InlineData(0, 2)] // entryCostItemId not set (0)
+        [InlineData(900001, 0)] // entryCostItemCount not set (0)
+        [InlineData(900001, 1)] // entryCostItemCount off by one (expect 2, got 1)
+        [InlineData(1, 2)] // wrong entryCostItemId
+        public void Execute_ExtendedWorld_ThrowsInvalidActionField_WhenHardMaterialMismatch(
+            int entryCostItemId, int entryCostItemCount)
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1;
+            const int actionPointToSpend = 10; // base stage 1 costAP=5 => 2 plays
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId, normalFinalStageId, 1, worldSheet, worldUnlockSheet);
+
+            var (equipments, costumes) = GetDummyItems(avatarState);
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlashSweep
+            {
+                runeInfos = new List<RuneSlotInfo>(),
+                apStoneCount = 0,
+                actionPoint = actionPointToSpend,
+                avatarAddress = _avatarAddress,
+                worldId = ExtendedWorldId,
+                stageId = extendedStageId,
+                equipments = equipments,
+                costumes = costumes,
+                entryCostItemId = entryCostItemId,
+                entryCostItemCount = entryCostItemCount,
+            };
+
+            Assert.Throws<InvalidActionFieldException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                        BlockIndex = 1,
                     }));
         }
 

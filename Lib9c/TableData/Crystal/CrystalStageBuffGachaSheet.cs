@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
@@ -26,6 +26,28 @@ namespace Nekoyume.TableData.Crystal
 
         public CrystalStageBuffGachaSheet() : base(nameof(CrystalStageBuffGachaSheet))
         {
+        }
+
+        protected override void AddRow(int key, Row value)
+        {
+            base.AddRow(key, value);
+
+            // Extend hard stages as a continuation of normal stages:
+            // stage 451..900 duplicates stage 1..450.
+            if (key >= 1 && key <= 450)
+            {
+                var extendedKey = key + 450;
+                if (!ContainsKey(extendedKey))
+                {
+                    base.AddRow(extendedKey, new Row
+                    {
+                        StageId = extendedKey,
+                        MaxStar = value.MaxStar,
+                        NormalCost = value.NormalCost,
+                        AdvancedCost = value.AdvancedCost,
+                    });
+                }
+            }
         }
     }
 }

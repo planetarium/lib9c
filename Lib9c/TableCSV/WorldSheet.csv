@@ -9,3 +9,12 @@ id,name,stage_begin,stage_end
 7,Niflheim,301,350
 8,Hel,351,400
 9,Vanaheim,401,450
+10,HardMode1,451,500
+11,HardMode2,501,550
+12,HardMode3,551,600
+13,HardMode4,601,650
+14,HardMode5,651,700
+15,HardMode6,701,750
+16,HardMode7,751,800
+17,HardMode8,801,850
+18,HardMode9,851,900

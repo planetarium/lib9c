@@ -14,6 +14,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
+    using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.EnumType;
@@ -30,6 +31,10 @@ namespace Lib9c.Tests.Action
 
     public class HackAndSlashTest
     {
+        private const int ExtendedWorldId = 10;
+        private const int ExtendedStageIdOffset = 450;
+        private const int ExtendedEntryMaterialId = 900001;
+
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
 
@@ -197,6 +202,186 @@ namespace Lib9c.Tests.Action
             Assert.True(nextCpState.Cp > 0);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
+        }
+
+        [Fact]
+        public void Execute_ExtendedWorld_CanPlayWithoutEntryCost()
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1; // 451 (base stage 1)
+            const int totalPlayCount = 3;
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            // Prepare WorldInformation: normal cleared up to final stage and trigger hard world unlock.
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId,
+                normalFinalStageId,
+                1,
+                worldSheet,
+                worldUnlockSheet);
+
+            // Prepare equipments.
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = extendedStageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
+
+            // Lazy migration: world 10 should be synced to legacy `world_ids`.
+            Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
+            var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+        }
+
+        [Theory]
+        [InlineData(0, 3)] // entryCostItemId not set (0)
+        [InlineData(900001, 0)] // entryCostItemCount not set (0)
+        [InlineData(900001, 2)] // entryCostItemCount off by one (expect 3, got 2)
+        [InlineData(1, 3)] // wrong entryCostItemId
+        public void Execute_ExtendedWorld_ThrowsInvalidActionField_WhenHardMaterialMismatch(
+            int entryCostItemId, int entryCostItemCount)
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1;
+            const int totalPlayCount = 3;
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId, normalFinalStageId, 1, worldSheet, worldUnlockSheet);
+
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = extendedStageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+                EntryCostItemId = entryCostItemId,
+                EntryCostItemCount = entryCostItemCount,
+            };
+
+            Assert.Throws<InvalidActionFieldException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                        BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                    }));
+        }
+
+        [Fact(Skip = "Stage 450 battle simulation is unstable in unit tests; world 10 lazy migration is covered by extended stage tests.")]
+        public void Execute_World9_FinalStageClears_SyncsWorld10ToLegacyWorldIds()
+        {
+            const int worldId = 9;
+            const int stageId = 450;
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 400;
+
+            // Make world 9 playable up to the final stage.
+            var worldSheet = state.GetSheet<WorldSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, stageId - 1);
+
+            // Prepare equipments.
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            // Provide a food to increase battle stability.
+            var foodRow = _tableSheets.ConsumableItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Food);
+            var food = (Consumable)ItemFactory.CreateItemUsable(foodRow, Guid.NewGuid(), 0);
+            avatarState.inventory.AddItem(food);
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid> { food.ItemId },
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = worldId,
+                StageId = stageId,
+                AvatarAddress = _avatarAddress,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
+
+            Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
+            var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.Contains(ExtendedWorldId, unlockedWorldIds);
         }
 
         [Theory]

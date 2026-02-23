@@ -34,6 +34,17 @@ namespace Nekoyume.TableData
             public override int Key => Id;
             public int Id { get; private set; }
             public int CostAP { get; private set; }
+            /// <summary>
+            /// Gets the additional entry cost material item ID required to play this stage.
+            /// A value of 0 means no additional entry material cost is required.
+            /// </summary>
+            public int EntryCostItemId { get; private set; }
+
+            /// <summary>
+            /// Gets the additional entry cost material item count required per play for this stage.
+            /// A value of 0 means no additional entry material cost is required.
+            /// </summary>
+            public int EntryCostItemCount { get; private set; }
             public int TurnLimit { get; private set; }
             public List<StatModifier> EnemyInitialStatModifiers { get; private set; }
             public string Background { get; private set; }
@@ -100,11 +111,60 @@ namespace Nekoyume.TableData
 
                 DropItemMin = TryParseInt(fields[51], out var dropMin) ? dropMin : 0;
                 DropItemMax = TryParseInt(fields[52], out var dropMax) ? dropMax : 0;
+
+                // Optional columns may be appended to StageSheet CSV. Guard by fields length.
+                // These columns are appended after max_drop:
+                // - entry_cost_item_id
+                // - entry_cost_item_count
+                EntryCostItemId = fields.Count > 53 && TryParseInt(fields[53], out var entryCostItemId)
+                    ? entryCostItemId
+                    : 0;
+                EntryCostItemCount = fields.Count > 54 && TryParseInt(fields[54], out var entryCostItemCount)
+                    ? entryCostItemCount
+                    : 0;
+            }
+
+            public Row CloneWithId(int newId)
+            {
+                return new Row
+                {
+                    Id = newId,
+                    CostAP = CostAP,
+                    EntryCostItemId = EntryCostItemId,
+                    EntryCostItemCount = EntryCostItemCount,
+                    TurnLimit = TurnLimit,
+                    EnemyInitialStatModifiers = EnemyInitialStatModifiers is null
+                        ? new List<StatModifier>()
+                        : new List<StatModifier>(EnemyInitialStatModifiers),
+                    Background = Background,
+                    BGM = BGM,
+                    Rewards = Rewards is null
+                        ? new List<RewardData>()
+                        : new List<RewardData>(Rewards),
+                    DropItemMin = DropItemMin,
+                    DropItemMax = DropItemMax,
+                };
             }
         }
-        
+
         public StageSheet() : base(nameof(StageSheet))
         {
+        }
+
+        protected override void AddRow(int key, Row value)
+        {
+            base.AddRow(key, value);
+
+            // Extend hard stages as a continuation of normal stages:
+            // stage 451..900 duplicates stage 1..450.
+            if (key >= 1 && key <= 450)
+            {
+                var extendedKey = key + 450;
+                if (!ContainsKey(extendedKey))
+                {
+                    base.AddRow(extendedKey, value.CloneWithId(extendedKey));
+                }
+            }
         }
     }
 }
