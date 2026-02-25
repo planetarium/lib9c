@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -265,6 +266,87 @@ namespace Lib9c.Tests.Action
             Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
             var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+        }
+
+        [Fact]
+        public void Execute_StageFavReward_MintsFavByTotalPlayCount()
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1; // 451 (base stage 1)
+            const int totalPlayCount = 3;
+            const string favTicker = "CRYSTAL";
+            const int favAmountPerPlay = 1000;
+
+            // Build a modified StageSheet where base stage 1 has a FAV reward.
+            // Stage 451 is auto-cloned from stage 1, so it inherits the same FAV data.
+            var lines = _sheets[nameof(StageSheet)].Split('\n').ToList();
+            for (var i = 1; i < lines.Count; i++)
+            {
+                var trimmed = lines[i].TrimEnd('\r');
+                var comma = trimmed.IndexOf(',');
+                if (comma >= 0 && trimmed.Substring(0, comma) == "1")
+                {
+                    // Append: ticker1, ratio1, min1, max1 (min=max=favAmountPerPlay → deterministic amount)
+                    lines[i] = trimmed + "," + favTicker + ",100," + favAmountPerPlay + "," + favAmountPerPlay;
+                    break;
+                }
+            }
+
+            var state = _initialState.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(StageSheet)),
+                string.Join('\n', lines).Serialize());
+
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId,
+                normalFinalStageId,
+                1,
+                worldSheet,
+                worldUnlockSheet);
+
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = extendedStageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
+
+            var favCurrency = Currencies.GetCurrencyByTicker(favTicker);
+            var recipient = Currencies.PickAddress(favCurrency, _agentAddress, _avatarAddress);
+            var expectedBalance = favCurrency * checked(favAmountPerPlay * totalPlayCount);
+            Assert.Equal(expectedBalance, nextState.GetBalance(recipient, favCurrency));
         }
 
         [Theory]

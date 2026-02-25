@@ -26,6 +26,23 @@ namespace Nekoyume.TableData
         }
 
         [Serializable]
+        public class FavRewardData
+        {
+            public string Ticker { get; }
+            public decimal Ratio { get; }
+            public int Min { get; }
+            public int Max { get; }
+
+            public FavRewardData(string ticker, decimal ratio, int min, int max)
+            {
+                Ticker = ticker;
+                Ratio = ratio;
+                Min = min;
+                Max = max;
+            }
+        }
+
+        [Serializable]
         public class Row : SheetRow<int>
         {
             // FIXME AudioController.MusicCode.StageGreen과 중복
@@ -53,6 +70,8 @@ namespace Nekoyume.TableData
 
             public int DropItemMin { get; private set; }
             public int DropItemMax { get; private set; }
+
+            public List<FavRewardData> FavRewards { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
@@ -112,14 +131,28 @@ namespace Nekoyume.TableData
                 DropItemMin = TryParseInt(fields[51], out var dropMin) ? dropMin : 0;
                 DropItemMax = TryParseInt(fields[52], out var dropMax) ? dropMax : 0;
 
-                // Optional columns may be appended to StageSheet CSV. Guard by fields length.
-                // These columns are appended after max_drop:
+                // Optional FAV reward columns (fields 53-72):
+                // fungible_asset_reward_ticker_N, ratio_N, min_N, max_N (4 fields × 5 entries)
+                FavRewards = new List<FavRewardData>();
+                for (var i = 0; i < 5; i++)
+                {
+                    var favBase = 53 + i * 4;
+                    if (fields.Count <= favBase || string.IsNullOrEmpty(fields[favBase]))
+                        break;
+                    if (!TryParseDecimal(fields[favBase + 1], out var favRatio))
+                        break;
+                    var favMin = fields.Count > favBase + 2 && TryParseInt(fields[favBase + 2], out var mn) ? mn : 0;
+                    var favMax = fields.Count > favBase + 3 && TryParseInt(fields[favBase + 3], out var mx) ? mx : favMin;
+                    FavRewards.Add(new FavRewardData(fields[favBase], favRatio, favMin, favMax));
+                }
+
+                // Optional entry cost columns (fields 73-74), appended after FAV rewards:
                 // - entry_cost_item_id
                 // - entry_cost_item_count
-                EntryCostItemId = fields.Count > 53 && TryParseInt(fields[53], out var entryCostItemId)
+                EntryCostItemId = fields.Count > 73 && TryParseInt(fields[73], out var entryCostItemId)
                     ? entryCostItemId
                     : 0;
-                EntryCostItemCount = fields.Count > 54 && TryParseInt(fields[54], out var entryCostItemCount)
+                EntryCostItemCount = fields.Count > 74 && TryParseInt(fields[74], out var entryCostItemCount)
                     ? entryCostItemCount
                     : 0;
             }
@@ -143,6 +176,9 @@ namespace Nekoyume.TableData
                         : new List<RewardData>(Rewards),
                     DropItemMin = DropItemMin,
                     DropItemMax = DropItemMax,
+                    FavRewards = FavRewards is null
+                        ? new List<FavRewardData>()
+                        : new List<FavRewardData>(FavRewards),
                 };
             }
         }

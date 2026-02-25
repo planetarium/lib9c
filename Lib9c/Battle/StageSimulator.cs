@@ -150,6 +150,22 @@ namespace Nekoyume.Battle
             SetWave(stageRow, stageWaveRow);
         }
 
+        public static List<(string ticker, int amount)> GetFavWaveRewards(
+            IRandom random,
+            StageSheet.Row stageRow)
+        {
+            if (stageRow.FavRewards.Count == 0)
+                return new List<(string, int)>();
+
+            var selector = new WeightedSelector<StageSheet.FavRewardData>(random);
+            foreach (var fav in stageRow.FavRewards)
+                selector.Add(fav, fav.Ratio);
+
+            var selected = selector.Select(1).First();
+            var amount = random.Next(selected.Min, selected.Max + 1);
+            return new List<(string, int)> { (selected.Ticker, amount) };
+        }
+
         public static List<ItemBase> GetWaveRewards(
             IRandom random,
             StageSheet.Row stageRow,

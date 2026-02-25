@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -141,18 +142,26 @@ namespace Nekoyume.Action
         {
             GasTracer.UseGas(1);
             var random = context.GetRandom();
-            return Execute(
-                context.PreviousState,
-                context.Signer,
-                context.BlockIndex,
-                random);
+            var earnedFav = new List<(string ticker, int amount)>();
+            var states = Execute(
+                context.PreviousState, context.Signer, context.BlockIndex, random, earnedFav);
+
+            foreach (var (ticker, amount) in earnedFav)
+            {
+                var currency = Currencies.GetCurrencyByTicker(ticker);
+                var recipient = Currencies.PickAddress(currency, context.Signer, AvatarAddress);
+                states = states.MintAsset(context, recipient, currency * amount);
+            }
+
+            return states;
         }
 
         public IWorld Execute(
             IWorld states,
             Address signer,
             long blockIndex,
-            IRandom random)
+            IRandom random,
+            List<(string ticker, int amount)> earnedFavRewards = null)
         {
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
@@ -668,6 +677,9 @@ namespace Nekoyume.Action
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
+                var favRewards = earnedFavRewards != null && stageRow.FavRewards.Count > 0
+                    ? StageSimulator.GetFavWaveRewards(random, stageRow)
+                    : null;
                 sw.Restart();
                 // First simulating will use Foods and Random Skills.
                 // Remainder simulating will not use Foods.
@@ -769,6 +781,8 @@ namespace Nekoyume.Action
 
                 starCount += simulator.Log.clearedWaveNumber;
                 avatarState.Update(simulator);
+                if (favRewards != null && simulator.Log.clearedWaveNumber >= 2)
+                    earnedFavRewards.AddRange(favRewards);
 
                 sw.Stop();
                 Log.Verbose(

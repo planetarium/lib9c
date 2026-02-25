@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
@@ -470,12 +471,26 @@ namespace Nekoyume.Action
             var (level, exp) = avatarState.GetLevelAndExp(levelSheet, stageId, playCount);
             avatarState.UpdateExp(level, exp);
 
+            states = states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
+            if (stageRow.FavRewards.Count > 0)
+            {
+                for (var i = 0; i < playCount; i++)
+                {
+                    foreach (var (ticker, amount) in StageSimulator.GetFavWaveRewards(random, stageRow))
+                    {
+                        var currency = Currencies.GetCurrencyByTicker(ticker);
+                        var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
+                        states = states.MintAsset(context, recipient, currency * amount);
+                    }
+                }
+            }
+
             var ended = DateTimeOffset.UtcNow;
             Log.Debug(
                 "{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}",
                 addressesHex, ended - started
             );
-            return states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
+            return states;
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,
