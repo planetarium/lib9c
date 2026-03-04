@@ -666,9 +666,6 @@ namespace Nekoyume.Action
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
-                var favRewards = context != null && stageRow.FavRewards.Count > 0
-                    ? StageSimulator.GetFavWaveRewards(random, stageRow)
-                    : null;
                 sw.Restart();
                 // First simulating will use Foods and Random Skills.
                 // Remainder simulating will not use Foods.
@@ -770,9 +767,9 @@ namespace Nekoyume.Action
 
                 starCount += simulator.Log.clearedWaveNumber;
                 avatarState.Update(simulator);
-                if (favRewards != null && simulator.Log.clearedWaveNumber >= 2)
+                if (context != null && simulator.FungibleAssetRewards.Count > 0)
                 {
-                    foreach (var (ticker, amount) in favRewards)
+                    foreach (var (ticker, amount) in simulator.FungibleAssetRewards)
                     {
                         var currency = Currencies.GetCurrencyByTicker(ticker);
                         var recipient = Currencies.PickAddress(currency, signer, AvatarAddress);

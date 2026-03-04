@@ -26,11 +26,17 @@ namespace Nekoyume.Battle
         private readonly List<Wave> _waves;
         private readonly List<ItemBase> _waveRewards;
         private readonly List<Model.Skill.Skill> _skillsOnWaveStart;
+        private readonly List<StageSheet.FavRewardData> _favRewards;
 
         /// <summary>
         /// Gets the collection map for items.
         /// </summary>
         public CollectionMap ItemMap { get; private set; } = new CollectionMap();
+
+        /// <summary>
+        /// Gets the fungible asset rewards (e.g., Crystal) obtained from wave 2 clear.
+        /// </summary>
+        public Dictionary<string, int> FungibleAssetRewards { get; private set; } = new Dictionary<string, int>();
 
         /// <summary>
         /// Gets the enemy skill sheet.
@@ -139,6 +145,7 @@ namespace Nekoyume.Battle
 
             _waves = new List<Wave>();
             _waveRewards = waveRewards;
+            _favRewards = stageRow.FavRewards;
             WorldId = worldId;
             StageId = stageId;
             IsCleared = isCleared;
@@ -154,11 +161,18 @@ namespace Nekoyume.Battle
             IRandom random,
             StageSheet.Row stageRow)
         {
-            if (stageRow.FavRewards.Count == 0)
+            return GetFavWaveRewards(random, stageRow.FavRewards);
+        }
+
+        private static List<(string ticker, int amount)> GetFavWaveRewards(
+            IRandom random,
+            List<StageSheet.FavRewardData> favRewards)
+        {
+            if (favRewards.Count == 0)
                 return new List<(string, int)>();
 
             var selector = new WeightedSelector<StageSheet.FavRewardData>(random);
-            foreach (var fav in stageRow.FavRewards)
+            foreach (var fav in favRewards)
                 selector.Add(fav, fav.Ratio);
 
             var selected = selector.Select(1).First();
@@ -296,13 +310,19 @@ namespace Nekoyume.Battle
                             case 2:
                             {
                                 ItemMap = Player.GetRewards(_waveRewards);
+                                foreach (var (ticker, amount) in GetFavWaveRewards(Random, _favRewards))
+                                {
+                                    FungibleAssetRewards[ticker] = amount;
+                                }
+
                                 if (LogEvent)
                                 {
                                     var dropBox = new DropBox(null, _waveRewards);
                                     Log.Add(dropBox);
-                                    var getReward = new GetReward(null, _waveRewards);
+                                    var getReward = new GetReward(null, _waveRewards, FungibleAssetRewards);
                                     Log.Add(getReward);
                                 }
+
                                 break;
                             }
                             default:

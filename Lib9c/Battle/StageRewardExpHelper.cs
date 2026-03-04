@@ -45,13 +45,6 @@ namespace Nekoyume.Battle
 
         public static int GetExp(int characterLevel, int stageNumber)
         {
-            // Extended stages (451..900) are a continuation of 1..450 (hard mode extension).
-            // Normalize stage number so that EXP reward uses the base stage progression table.
-            if (stageNumber >= 451 && stageNumber <= 900)
-            {
-                stageNumber -= 450;
-            }
-
             if (stageNumber >= GameConfig.MimisbrunnrStartStageId)
             {
                 return 0;
