@@ -106,13 +106,6 @@ namespace Nekoyume.TableData
         protected override void AddRow(int key, Row value)
         {
             AddRowInternal(key, value);
-
-            // Extend hard stages as a continuation of normal stages:
-            // stage 451..900 duplicates stage 1..450.
-            if (key >= 1 && key <= 450)
-            {
-                AddRowInternal(key + 450, value.CloneWithStageId(key + 450));
-            }
         }
 
         private void AddRowInternal(int key, Row value)
