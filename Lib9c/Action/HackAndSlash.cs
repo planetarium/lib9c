@@ -98,11 +98,11 @@ namespace Nekoyume.Action
                 };
                 if (EntryCostItemId != 0)
                 {
-                    dict["entryCostItemId"] = EntryCostItemId.Serialize();
+                    dict["entryCostItemId"] = (Integer)EntryCostItemId;
                 }
                 if (EntryCostItemCount != 0)
                 {
-                    dict["entryCostItemCount"] = EntryCostItemCount.Serialize();
+                    dict["entryCostItemCount"] = (Integer)EntryCostItemCount;
                 }
                 if (StageBuffId.HasValue)
                 {
@@ -127,11 +127,11 @@ namespace Nekoyume.Action
             }
             if (plainValue.ContainsKey("entryCostItemId"))
             {
-                EntryCostItemId = plainValue["entryCostItemId"].ToInteger();
+                EntryCostItemId = (Integer)plainValue["entryCostItemId"];
             }
             if (plainValue.ContainsKey("entryCostItemCount"))
             {
-                EntryCostItemCount = plainValue["entryCostItemCount"].ToInteger();
+                EntryCostItemCount = (Integer)plainValue["entryCostItemCount"];
             }
             AvatarAddress = plainValue["avatarAddress"].ToAddress();
             TotalPlayCount = plainValue["totalPlayCount"].ToInteger();
@@ -142,18 +142,7 @@ namespace Nekoyume.Action
         {
             GasTracer.UseGas(1);
             var random = context.GetRandom();
-            var earnedFav = new List<(string ticker, int amount)>();
-            var states = Execute(
-                context.PreviousState, context.Signer, context.BlockIndex, random, earnedFav);
-
-            foreach (var (ticker, amount) in earnedFav)
-            {
-                var currency = Currencies.GetCurrencyByTicker(ticker);
-                var recipient = Currencies.PickAddress(currency, context.Signer, AvatarAddress);
-                states = states.MintAsset(context, recipient, currency * amount);
-            }
-
-            return states;
+            return Execute(context.PreviousState, context.Signer, context.BlockIndex, random, context);
         }
 
         public IWorld Execute(
@@ -161,7 +150,7 @@ namespace Nekoyume.Action
             Address signer,
             long blockIndex,
             IRandom random,
-            List<(string ticker, int amount)> earnedFavRewards = null)
+            IActionContext context = null)
         {
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
@@ -677,7 +666,7 @@ namespace Nekoyume.Action
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
-                var favRewards = earnedFavRewards != null && stageRow.FavRewards.Count > 0
+                var favRewards = context != null && stageRow.FavRewards.Count > 0
                     ? StageSimulator.GetFavWaveRewards(random, stageRow)
                     : null;
                 sw.Restart();
@@ -782,7 +771,14 @@ namespace Nekoyume.Action
                 starCount += simulator.Log.clearedWaveNumber;
                 avatarState.Update(simulator);
                 if (favRewards != null && simulator.Log.clearedWaveNumber >= 2)
-                    earnedFavRewards.AddRange(favRewards);
+                {
+                    foreach (var (ticker, amount) in favRewards)
+                    {
+                        var currency = Currencies.GetCurrencyByTicker(ticker);
+                        var recipient = Currencies.PickAddress(currency, signer, AvatarAddress);
+                        states = states.MintAsset(context, recipient, currency * amount);
+                    }
+                }
 
                 sw.Stop();
                 Log.Verbose(

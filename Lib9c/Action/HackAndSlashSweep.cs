@@ -91,11 +91,11 @@ namespace Nekoyume.Action
                 };
                 if (entryCostItemId != 0)
                 {
-                    dict["entryCostItemId"] = entryCostItemId.Serialize();
+                    dict["entryCostItemId"] = (Integer)entryCostItemId;
                 }
                 if (entryCostItemCount != 0)
                 {
-                    dict["entryCostItemCount"] = entryCostItemCount.Serialize();
+                    dict["entryCostItemCount"] = (Integer)entryCostItemCount;
                 }
                 return dict.ToImmutableDictionary();
             }
@@ -114,11 +114,11 @@ namespace Nekoyume.Action
             stageId = plainValue["stageId"].ToInteger();
             if (plainValue.ContainsKey("entryCostItemId"))
             {
-                entryCostItemId = plainValue["entryCostItemId"].ToInteger();
+                entryCostItemId = (Integer)plainValue["entryCostItemId"];
             }
             if (plainValue.ContainsKey("entryCostItemCount"))
             {
-                entryCostItemCount = plainValue["entryCostItemCount"].ToInteger();
+                entryCostItemCount = (Integer)plainValue["entryCostItemCount"];
             }
         }
 
@@ -468,22 +468,20 @@ namespace Nekoyume.Action
             avatarState.UpdateInventory(rewardItems);
 
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
-            var (level, exp) = avatarState.GetLevelAndExp(levelSheet, stageId, playCount);
-            avatarState.UpdateExp(level, exp);
-
-            states = states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
-            if (stageRow.FavRewards.Count > 0)
+            for (var i = 0; i < playCount; i++)
             {
-                for (var i = 0; i < playCount; i++)
+                var (newLevel, newExp) = avatarState.GetLevelAndExp(levelSheet, stageId, 1);
+                avatarState.UpdateExp(newLevel, newExp);
+
+                foreach (var (ticker, amount) in StageSimulator.GetFavWaveRewards(random, stageRow))
                 {
-                    foreach (var (ticker, amount) in StageSimulator.GetFavWaveRewards(random, stageRow))
-                    {
-                        var currency = Currencies.GetCurrencyByTicker(ticker);
-                        var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
-                        states = states.MintAsset(context, recipient, currency * amount);
-                    }
+                    var currency = Currencies.GetCurrencyByTicker(ticker);
+                    var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
+                    states = states.MintAsset(context, recipient, currency * amount);
                 }
             }
+
+            states = states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug(

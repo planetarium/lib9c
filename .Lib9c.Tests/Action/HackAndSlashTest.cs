@@ -266,6 +266,11 @@ namespace Lib9c.Tests.Action
             Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
             var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+
+            // WorldInformation should also contain world 10 as unlocked.
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.worldInformation.TryGetWorld(ExtendedWorldId, out var extendedWorld));
+            Assert.True(extendedWorld.IsUnlocked);
         }
 
         [Fact]
@@ -409,15 +414,53 @@ namespace Lib9c.Tests.Action
                     }));
         }
 
-        [Fact(Skip = "Stage 450 battle simulation is unstable in unit tests; world 10 lazy migration is covered by extended stage tests.")]
+        [Fact]
         public void Execute_World9_FinalStageClears_SyncsWorld10ToLegacyWorldIds()
         {
             const int worldId = 9;
             const int stageId = 450;
 
-            var state = _initialState;
+            // Override StageWaveSheet so stage 450 has trivially weak enemies,
+            // making the battle deterministically winnable regardless of RNG.
+            var waveLines = _sheets[nameof(StageWaveSheet)].Split('\n')
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .ToList();
+            var weakWave = "450,{0},204010,1,1,,,,,,,,,,{1}";
+            waveLines.RemoveAll(l => l.TrimEnd('\r').StartsWith("450,"));
+            waveLines.Add(string.Format(weakWave, 1, 0));
+            waveLines.Add(string.Format(weakWave, 2, 0));
+            waveLines.Add(string.Format(weakWave, 3, 1));
+
+            // Override StageSheet so stage 450 has zero enemy stat modifiers
+            // (hp/atk/def/cri/hit/spd additional = 0) to ensure the battle is winnable.
+            var stageLines = _sheets[nameof(StageSheet)].Split('\n').ToList();
+            for (var i = 1; i < stageLines.Count; i++)
+            {
+                var trimmed = stageLines[i].TrimEnd('\r');
+                var cols = trimmed.Split(',');
+                if (cols.Length > 0 && cols[0] == "450")
+                {
+                    // Zero out enemy initial stat modifiers (columns 3-8).
+                    for (var c = 3; c <= 8 && c < cols.Length; c++)
+                    {
+                        cols[c] = "0";
+                    }
+
+                    stageLines[i] = string.Join(",", cols);
+                    break;
+                }
+            }
+
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageWaveSheet)),
+                    string.Join('\n', waveLines).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageSheet)),
+                    string.Join('\n', stageLines).Serialize());
+
             var avatarState = state.GetAvatarState(_avatarAddress);
-            avatarState.level = 400;
+            avatarState.level = 100;
 
             // Make world 9 playable up to the final stage.
             var worldSheet = state.GetSheet<WorldSheet>();
@@ -430,11 +473,6 @@ namespace Lib9c.Tests.Action
                 avatarState.inventory.AddItem(equipment, iLock: null);
             }
 
-            // Provide a food to increase battle stability.
-            var foodRow = _tableSheets.ConsumableItemSheet.Values.First(r => r.ItemSubType == ItemSubType.Food);
-            var food = (Consumable)ItemFactory.CreateItemUsable(foodRow, Guid.NewGuid(), 0);
-            avatarState.inventory.AddItem(food);
-
             state = state
                 .SetAvatarState(_avatarAddress, avatarState)
                 .SetLegacyState(
@@ -445,7 +483,7 @@ namespace Lib9c.Tests.Action
             {
                 Costumes = new List<Guid>(),
                 Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
-                Foods = new List<Guid> { food.ItemId },
+                Foods = new List<Guid>(),
                 RuneInfos = new List<RuneSlotInfo>(),
                 WorldId = worldId,
                 StageId = stageId,
@@ -464,6 +502,11 @@ namespace Lib9c.Tests.Action
             Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
             var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+
+            // WorldInformation should also contain world 10 as unlocked.
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.worldInformation.TryGetWorld(ExtendedWorldId, out var extendedWorld));
+            Assert.True(extendedWorld.IsUnlocked);
         }
 
         [Theory]

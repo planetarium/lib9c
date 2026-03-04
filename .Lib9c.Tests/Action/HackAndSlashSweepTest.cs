@@ -297,6 +297,11 @@ namespace Lib9c.Tests.Action
             Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
             var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
             Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+
+            // WorldInformation should also contain world 10 as unlocked.
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.worldInformation.TryGetWorld(ExtendedWorldId, out var extendedWorld));
+            Assert.True(extendedWorld.IsUnlocked);
         }
 
         [Fact]
