@@ -668,16 +668,16 @@ Required when the stage has an entry material cost; must match the sheet value e
 
   <a id="Nekoyume_Action_HackAndSlash_Execute_" data-uid="Nekoyume.Action.HackAndSlash.Execute*"></a>
 
-  <h3 id="Nekoyume_Action_HackAndSlash_Execute_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int64_Libplanet_Action_IRandom_System_Collections_Generic_List_System_ValueTuple_System_String_System_Int32___" data-uid="Nekoyume.Action.HackAndSlash.Execute(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int64,Libplanet.Action.IRandom,System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32}})">
-  Execute(IWorld, Address, long, IRandom, List&lt;(string ticker, int amount)&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/HackAndSlash.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_HackAndSlash_Execute_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int64_Libplanet_Action_IRandom_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.HackAndSlash.Execute(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int64,Libplanet.Action.IRandom,Libplanet.Action.IActionContext)">
+  Execute(IWorld, Address, long, IRandom, IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/HackAndSlash.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IWorld Execute(IWorld states, Address signer, long blockIndex, IRandom random, List&lt;(string ticker, int amount)&gt; earnedFavRewards = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public IWorld Execute(IWorld states, Address signer, long blockIndex, IRandom random, IActionContext context = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -690,7 +690,7 @@ Required when the stage has an entry material cost; must match the sheet value e
     <dd></dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
     <dd></dd>
-    <dt><code>earnedFavRewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.ticker">ticker</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.amount">amount</a>)&gt;</dt>
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
     <dd></dd>
   </dl>
 
