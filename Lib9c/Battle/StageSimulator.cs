@@ -27,6 +27,8 @@ namespace Nekoyume.Battle
         private readonly List<ItemBase> _waveRewards;
         private readonly List<Model.Skill.Skill> _skillsOnWaveStart;
         private readonly List<StageSheet.FavRewardData> _favRewards;
+        private readonly int _favDropMin;
+        private readonly int _favDropMax;
 
         /// <summary>
         /// Gets the collection map for items.
@@ -146,6 +148,8 @@ namespace Nekoyume.Battle
             _waves = new List<Wave>();
             _waveRewards = waveRewards;
             _favRewards = stageRow.FavRewards;
+            _favDropMin = stageRow.FavDropMin;
+            _favDropMax = stageRow.FavDropMax;
             WorldId = worldId;
             StageId = stageId;
             IsCleared = isCleared;
@@ -161,23 +165,38 @@ namespace Nekoyume.Battle
             IRandom random,
             StageSheet.Row stageRow)
         {
-            return GetFavWaveRewards(random, stageRow.FavRewards);
+            return GetFavWaveRewards(random, stageRow.FavRewards, stageRow.FavDropMin, stageRow.FavDropMax);
         }
 
         private static List<(string ticker, int amount)> GetFavWaveRewards(
             IRandom random,
-            List<StageSheet.FavRewardData> favRewards)
+            List<StageSheet.FavRewardData> favRewards,
+            int favDropMin,
+            int favDropMax)
         {
             if (favRewards.Count == 0)
+                return new List<(string, int)>();
+
+            var dropCount = random.Next(favDropMin, favDropMax + 1);
+            if (dropCount <= 0)
                 return new List<(string, int)>();
 
             var selector = new WeightedSelector<StageSheet.FavRewardData>(random);
             foreach (var fav in favRewards)
                 selector.Add(fav, fav.Ratio);
 
-            var selected = selector.Select(1).First();
-            var amount = random.Next(selected.Min, selected.Max + 1);
-            return new List<(string, int)> { (selected.Ticker, amount) };
+            var result = new Dictionary<string, int>();
+            for (var i = 0; i < dropCount; i++)
+            {
+                var selected = selector.Select(1).First();
+                var amount = random.Next(selected.Min, selected.Max + 1);
+                if (result.ContainsKey(selected.Ticker))
+                    result[selected.Ticker] += amount;
+                else
+                    result[selected.Ticker] = amount;
+            }
+
+            return result.Select(kv => (kv.Key, kv.Value)).ToList();
         }
 
         public static List<ItemBase> GetWaveRewards(
@@ -310,7 +329,7 @@ namespace Nekoyume.Battle
                             case 2:
                             {
                                 ItemMap = Player.GetRewards(_waveRewards);
-                                foreach (var (ticker, amount) in GetFavWaveRewards(Random, _favRewards))
+                                foreach (var (ticker, amount) in GetFavWaveRewards(Random, _favRewards, _favDropMin, _favDropMax))
                                 {
                                     FungibleAssetRewards[ticker] = amount;
                                 }

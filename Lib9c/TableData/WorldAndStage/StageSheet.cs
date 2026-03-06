@@ -73,6 +73,10 @@ namespace Nekoyume.TableData
 
             public List<FavRewardData> FavRewards { get; private set; }
 
+            public int FavDropMin { get; private set; }
+
+            public int FavDropMax { get; private set; }
+
             public override void Set(IReadOnlyList<string> fields)
             {
                 Id = TryParseInt(fields[0], out var id) ? id : 0;
@@ -146,13 +150,18 @@ namespace Nekoyume.TableData
                     FavRewards.Add(new FavRewardData(fields[favBase], favRatio, favMin, favMax));
                 }
 
-                // Optional entry cost columns (fields 73-74), appended after FAV rewards:
+                // Optional FAV drop count columns (fields 73-74):
+                // fav_drop_min, fav_drop_max — how many times to draw from the FAV pool.
+                FavDropMin = fields.Count > 73 && TryParseInt(fields[73], out var favDropMin) ? favDropMin : 1;
+                FavDropMax = fields.Count > 74 && TryParseInt(fields[74], out var favDropMax) ? favDropMax : FavDropMin;
+
+                // Optional entry cost columns (fields 75-76), appended after FAV drop count:
                 // - entry_cost_item_id
                 // - entry_cost_item_count
-                EntryCostItemId = fields.Count > 73 && TryParseInt(fields[73], out var entryCostItemId)
+                EntryCostItemId = fields.Count > 75 && TryParseInt(fields[75], out var entryCostItemId)
                     ? entryCostItemId
                     : 0;
-                EntryCostItemCount = fields.Count > 74 && TryParseInt(fields[74], out var entryCostItemCount)
+                EntryCostItemCount = fields.Count > 76 && TryParseInt(fields[76], out var entryCostItemCount)
                     ? entryCostItemCount
                     : 0;
             }
@@ -179,6 +188,8 @@ namespace Nekoyume.TableData
                     FavRewards = FavRewards is null
                         ? new List<FavRewardData>()
                         : new List<FavRewardData>(FavRewards),
+                    FavDropMin = FavDropMin,
+                    FavDropMax = FavDropMax,
                 };
             }
         }
