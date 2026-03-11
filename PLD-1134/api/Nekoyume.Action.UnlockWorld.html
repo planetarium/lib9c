@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class UnlockWorld | Lib9c ">
       
-      <meta name="description" content="Hard forked at https://github.com/planetarium/lib9c/pull/1309">
+      <meta name="description" content="Unlocks one or more worlds for an avatar and records the result to the legacy world_ids state. The required CRYSTAL is calculated from  and transferred to . If the calculated cost is zero, no asset transfer occurs.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_UnlockWorld" data-uid="Nekoyume.Action.UnlockWorld" class="text-break">
-Class UnlockWorld  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L24"><i class="bi bi-code-slash"></i></a>
+Class UnlockWorld  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,9 @@ Class UnlockWorld  <a class="header-action link-secondary" title="View source" h
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Hard forked at <a href="https://github.com/planetarium/lib9c/pull/1309">https://github.com/planetarium/lib9c/pull/1309</a></p>
+  <div class="markdown summary"><p>Unlocks one or more worlds for an avatar and records the result to the legacy <code>world_ids</code> state.
+The required CRYSTAL is calculated from <a class="xref" href="Nekoyume.TableData.WorldUnlockSheet.html">WorldUnlockSheet</a> and transferred to
+<a class="xref" href="Nekoyume.Addresses.html#Nekoyume_Addresses_UnlockWorld">UnlockWorld</a>. If the calculated cost is zero, no asset transfer occurs.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -178,6 +180,9 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 
 
 
+  <h2 id="Nekoyume_Action_UnlockWorld_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Hard-forked at <a href="https://github.com/planetarium/lib9c/pull/1309">https://github.com/planetarium/lib9c/pull/1309</a>.</p>
+</div>
 
 
   <h2 class="section" id="fields">Fields
@@ -187,10 +192,11 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 
   <h3 id="Nekoyume_Action_UnlockWorld_AvatarAddress" data-uid="Nekoyume.Action.UnlockWorld.AvatarAddress">
   AvatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The avatar address to apply the unlock to.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -217,10 +223,11 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 
   <h3 id="Nekoyume_Action_UnlockWorld_WorldIds" data-uid="Nekoyume.Action.UnlockWorld.WorldIds">
   WorldIds
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Target world IDs to unlock.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -252,7 +259,7 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 
   <h3 id="Nekoyume_Action_UnlockWorld_PlainValueInternal" data-uid="Nekoyume.Action.UnlockWorld.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L137"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -287,7 +294,7 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 
   <h3 id="Nekoyume_Action_UnlockWorld_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.UnlockWorld.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -323,7 +330,7 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 
   <h3 id="Nekoyume_Action_UnlockWorld_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.UnlockWorld.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -354,7 +361,7 @@ public class UnlockWorld : GameAction, IAction, IUnlockWorldV1</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L24" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/PLD-1134/Lib9c/Action/UnlockWorld.cs/#L29" class="edit-link">Edit this page</a>
         </div>
 
 
