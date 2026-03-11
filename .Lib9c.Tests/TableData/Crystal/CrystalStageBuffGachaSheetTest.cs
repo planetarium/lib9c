@@ -1,4 +1,4 @@
-namespace Lib9c.Tests.TableData.Crystal
+﻿namespace Lib9c.Tests.TableData.Crystal
 {
     using System.Linq;
     using Nekoyume.TableData.Crystal;
@@ -20,7 +20,8 @@ namespace Lib9c.Tests.TableData.Crystal
             var sheet = new CrystalStageBuffGachaSheet();
             sheet.Set(
                 @"stage_id,max_star,normal_cost,advanced_cost
-1,5,10,30");
+1,5,10,30
+451,5,10,30");
 
             Assert.Equal(2, sheet.Values.Count);
 

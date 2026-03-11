@@ -9,7 +9,8 @@ namespace Lib9c.Tests.TableData
         public void Set()
         {
             const string csv = @"stage_id,required_cp
-1,0";
+1,0
+451,0";
             var sheet = new SweepRequiredCPSheet();
             sheet.Set(csv);
             Assert.Equal(2, sheet.Count);

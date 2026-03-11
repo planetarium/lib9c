@@ -272,6 +272,23 @@ namespace Lib9c.Tests.Action
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(normalFinalWorldId.Serialize()));
 
+            // Stage 451 (extended) can have an entry material cost cloned from base stage 1.
+            // HackAndSlashSweep validates that the declared entry cost matches the expected cost (per play count).
+            var stageRow = state.GetSheet<StageSheet>()[extendedStageId];
+            var expectedPlayCount = stageRow.CostAP > 0 ? actionPointToSpend / stageRow.CostAP : 0;
+            var expectedEntryCostItemCount = stageRow.EntryCostItemId > 0
+                ? checked(stageRow.EntryCostItemCount * expectedPlayCount)
+                : 0;
+
+            if (stageRow.EntryCostItemId > 0 && expectedEntryCostItemCount > 0)
+            {
+                var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+                var entryCostRow = materialItemSheet[stageRow.EntryCostItemId];
+                var entryCostItem = ItemFactory.CreateTradableMaterial(entryCostRow);
+                avatarState.inventory.AddItem(entryCostItem, expectedEntryCostItemCount);
+                state = state.SetAvatarState(_avatarAddress, avatarState);
+            }
+
             var action = new HackAndSlashSweep
             {
                 runeInfos = new List<RuneSlotInfo>(),
@@ -282,6 +299,8 @@ namespace Lib9c.Tests.Action
                 stageId = extendedStageId,
                 equipments = equipments,
                 costumes = costumes,
+                entryCostItemId = stageRow.EntryCostItemId,
+                entryCostItemCount = expectedEntryCostItemCount,
             };
 
             var nextState = action.Execute(
@@ -316,16 +335,88 @@ namespace Lib9c.Tests.Action
             const int favAmountPerPlay = 1000;
 
             // Build a modified StageSheet where base stage 1 has a FAV reward.
-            // Stage 451 is auto-cloned from stage 1, so it inherits the same FAV data.
+            // Stage 451 is used for the extended world stage in this test, so patch that row directly.
             var lines = _sheets[nameof(StageSheet)].Split('\n').ToList();
+            var header = lines[0].TrimEnd('\r').Split(',').ToList();
+            var ticker1Index = header.IndexOf("fungible_asset_reward_ticker_1");
+            var ratio1Index = header.IndexOf("fungible_asset_reward_ratio_1");
+            var min1Index = header.IndexOf("fungible_asset_reward_min_1");
+            var max1Index = header.IndexOf("fungible_asset_reward_max_1");
+            var favDropMinIndex = header.IndexOf("fav_drop_min");
+            var favDropMaxIndex = header.IndexOf("fav_drop_max");
             for (var i = 1; i < lines.Count; i++)
             {
                 var trimmed = lines[i].TrimEnd('\r');
                 var comma = trimmed.IndexOf(',');
-                if (comma >= 0 && trimmed.Substring(0, comma) == "1")
+                if (comma >= 0 && trimmed.Substring(0, comma) == extendedStageId.ToString())
                 {
-                    // Append: ticker1, ratio1, min1, max1 (min=max=favAmountPerPlay → deterministic amount)
-                    lines[i] = trimmed + "," + favTicker + ",100," + favAmountPerPlay + "," + favAmountPerPlay;
+                    var cols = trimmed.Split(',').ToList();
+                    while (cols.Count < header.Count)
+                    {
+                        cols.Add(string.Empty);
+                    }
+
+                    // Force a single deterministic FAV reward per play.
+                    if (ticker1Index >= 0)
+                    {
+                        cols[ticker1Index] = favTicker;
+                    }
+
+                    if (ratio1Index >= 0)
+                    {
+                        cols[ratio1Index] = "100";
+                    }
+
+                    if (min1Index >= 0)
+                    {
+                        cols[min1Index] = favAmountPerPlay.ToString();
+                    }
+
+                    if (max1Index >= 0)
+                    {
+                        cols[max1Index] = favAmountPerPlay.ToString();
+                    }
+
+                    // Clear other FAV reward entries so selection is deterministic.
+                    for (var favIndex = 2; favIndex <= 5; favIndex++)
+                    {
+                        var t = header.IndexOf($"fungible_asset_reward_ticker_{favIndex}");
+                        var r = header.IndexOf($"fungible_asset_reward_ratio_{favIndex}");
+                        var mn = header.IndexOf($"fungible_asset_reward_min_{favIndex}");
+                        var mx = header.IndexOf($"fungible_asset_reward_max_{favIndex}");
+                        if (t >= 0)
+                        {
+                            cols[t] = string.Empty;
+                        }
+
+                        if (r >= 0)
+                        {
+                            cols[r] = string.Empty;
+                        }
+
+                        if (mn >= 0)
+                        {
+                            cols[mn] = string.Empty;
+                        }
+
+                        if (mx >= 0)
+                        {
+                            cols[mx] = string.Empty;
+                        }
+                    }
+
+                    // Exactly one draw from the FAV pool per play.
+                    if (favDropMinIndex >= 0)
+                    {
+                        cols[favDropMinIndex] = "1";
+                    }
+
+                    if (favDropMaxIndex >= 0)
+                    {
+                        cols[favDropMaxIndex] = "1";
+                    }
+
+                    lines[i] = string.Join(",", cols);
                     break;
                 }
             }
@@ -354,6 +445,20 @@ namespace Lib9c.Tests.Action
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(normalFinalWorldId.Serialize()));
 
+            var stageRow = state.GetSheet<StageSheet>()[extendedStageId];
+            var expectedEntryCostItemCount = stageRow.EntryCostItemId > 0
+                ? checked(stageRow.EntryCostItemCount * expectedPlayCount)
+                : 0;
+
+            if (stageRow.EntryCostItemId > 0 && expectedEntryCostItemCount > 0)
+            {
+                var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+                var entryCostRow = materialItemSheet[stageRow.EntryCostItemId];
+                var entryCostItem = ItemFactory.CreateTradableMaterial(entryCostRow);
+                avatarState.inventory.AddItem(entryCostItem, expectedEntryCostItemCount);
+                state = state.SetAvatarState(_avatarAddress, avatarState);
+            }
+
             var action = new HackAndSlashSweep
             {
                 runeInfos = new List<RuneSlotInfo>(),
@@ -364,6 +469,8 @@ namespace Lib9c.Tests.Action
                 stageId = extendedStageId,
                 equipments = equipments,
                 costumes = costumes,
+                entryCostItemId = stageRow.EntryCostItemId,
+                entryCostItemCount = expectedEntryCostItemCount,
             };
 
             var nextState = action.Execute(
