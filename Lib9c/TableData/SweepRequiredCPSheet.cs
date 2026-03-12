@@ -10,17 +10,18 @@ namespace Nekoyume.TableData
         {
             public override int Key => StageId;
             public int StageId { get; private set; }
-            public int RequiredCP { get; private set; }
+            public long RequiredCP { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
             {
                 StageId = ParseInt(fields[0]);
-                RequiredCP = ParseInt(fields[1]);
+                RequiredCP = ParseLong(fields[1]);
             }
         }
 
         public SweepRequiredCPSheet() : base(nameof(SweepRequiredCPSheet))
         {
         }
+
     }
 }

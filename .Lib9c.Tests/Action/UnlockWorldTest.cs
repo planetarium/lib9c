@@ -178,5 +178,53 @@ namespace Lib9c.Tests.Action
                         }));
             }
         }
+
+        [Fact]
+        public void Execute_DoesNotTransferAsset_WhenCostIsZero()
+        {
+            var worldUnlockSheet = new WorldUnlockSheet();
+            worldUnlockSheet.Set(
+                @"id,world_id,stage_id,world_id_to_unlock,required_crystal
+1,1,50,2,0"
+            );
+
+            var avatarState = _avatarState;
+            avatarState.worldInformation.ClearStage(
+                1,
+                50,
+                0,
+                _tableSheets.WorldSheet,
+                worldUnlockSheet
+            );
+
+            var context = new ActionContext();
+            var state = _initialState
+                .SetLegacyState(Addresses.GetSheetAddress<WorldUnlockSheet>(), worldUnlockSheet.Serialize())
+                .SetAvatarState(_avatarAddress, avatarState)
+                .MintAsset(context, _agentAddress, 10 * _currency);
+
+            var action = new UnlockWorld
+            {
+                WorldIds = new List<int> { 2, },
+                AvatarAddress = _avatarAddress,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    BlockIndex = 1,
+                    RandomSeed = _random.Seed,
+                });
+
+            var unlockedWorldIdsAddress = _avatarAddress.Derive("world_ids");
+            Assert.True(nextState.TryGetLegacyState(unlockedWorldIdsAddress, out List rawIds));
+            var unlockedIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.Contains(2, unlockedIds);
+
+            Assert.Equal(10 * _currency, nextState.GetBalance(_agentAddress, _currency));
+            Assert.Equal(0 * _currency, nextState.GetBalance(Addresses.UnlockWorld, _currency));
+        }
     }
 }

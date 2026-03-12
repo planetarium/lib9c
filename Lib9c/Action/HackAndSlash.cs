@@ -4,10 +4,12 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Battle;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
@@ -43,7 +45,6 @@ namespace Nekoyume.Action
     {
         private static readonly ActivitySource ActivitySource = new ActivitySource("Lib9c.Action.HackAndSlash");
         public const int UsableApStoneCount = 10;
-
         public List<Guid> Costumes;
         public List<Guid> Equipments;
         public List<Guid> Foods;
@@ -54,6 +55,18 @@ namespace Nekoyume.Action
         public Address AvatarAddress;
         public int TotalPlayCount = 1;
         public int ApStoneCount = 0;
+        /// <summary>
+        /// Gets or sets the declared entry cost material item ID, matching <see cref="Nekoyume.TableData.StageSheet.Row.EntryCostItemId"/>.
+        /// Required when the stage has an entry material cost; must match the sheet value exactly.
+        /// </summary>
+        public int EntryCostItemId = 0;
+
+        /// <summary>
+        /// Gets or sets the declared total entry cost material item count for this action execution,
+        /// matching <see cref="Nekoyume.TableData.StageSheet.Row.EntryCostItemCount"/> × TotalPlayCount.
+        /// Required when the stage has an entry material cost; must match the computed value exactly.
+        /// </summary>
+        public int EntryCostItemCount = 0;
 
         IEnumerable<Guid> IHackAndSlashV10.Costumes => Costumes;
         IEnumerable<Guid> IHackAndSlashV10.Equipments => Equipments;
@@ -83,6 +96,14 @@ namespace Nekoyume.Action
                     ["totalPlayCount"] = TotalPlayCount.Serialize(),
                     ["apStoneCount"] = ApStoneCount.Serialize(),
                 };
+                if (EntryCostItemId != 0)
+                {
+                    dict["entryCostItemId"] = (Integer)EntryCostItemId;
+                }
+                if (EntryCostItemCount != 0)
+                {
+                    dict["entryCostItemCount"] = (Integer)EntryCostItemCount;
+                }
                 if (StageBuffId.HasValue)
                 {
                     dict["stageBuffId"] = StageBuffId.Serialize();
@@ -104,6 +125,14 @@ namespace Nekoyume.Action
             {
                 StageBuffId = plainValue["stageBuffId"].ToNullableInteger();
             }
+            if (plainValue.ContainsKey("entryCostItemId"))
+            {
+                EntryCostItemId = (Integer)plainValue["entryCostItemId"];
+            }
+            if (plainValue.ContainsKey("entryCostItemCount"))
+            {
+                EntryCostItemCount = (Integer)plainValue["entryCostItemCount"];
+            }
             AvatarAddress = plainValue["avatarAddress"].ToAddress();
             TotalPlayCount = plainValue["totalPlayCount"].ToInteger();
             ApStoneCount = plainValue["apStoneCount"].ToInteger();
@@ -113,18 +142,15 @@ namespace Nekoyume.Action
         {
             GasTracer.UseGas(1);
             var random = context.GetRandom();
-            return Execute(
-                context.PreviousState,
-                context.Signer,
-                context.BlockIndex,
-                random);
+            return Execute(context.PreviousState, context.Signer, context.BlockIndex, random, context);
         }
 
         public IWorld Execute(
             IWorld states,
             Address signer,
             long blockIndex,
-            IRandom random)
+            IRandom random,
+            IActionContext context = null)
         {
             var addressesHex = $"[{signer.ToHex()}, {AvatarAddress.ToHex()}]";
             var started = DateTimeOffset.UtcNow;
@@ -154,8 +180,6 @@ namespace Nekoyume.Action
                     $"Total play count : {TotalPlayCount}");
             }
 
-            states.ValidateWorldId(AvatarAddress, WorldId);
-
             var sw = new Stopwatch();
             sw.Start();
             var avatarStateActivity = ActivitySource.StartActivity(
@@ -167,6 +191,30 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
+
+            // World 10 auto-open + legacy `world_ids` lazy migration:
+            // If the player already cleared stage 450, allow entering world 10 by
+            // syncing `world_ids` without requiring an explicit UnlockWorld action.
+            if (WorldId == 10 && avatarState.worldInformation.IsStageCleared(450))
+            {
+                var worldIdsAddress = AvatarAddress.Derive("world_ids");
+                if (states.TryGetLegacyState(worldIdsAddress, out List rawWorldIds))
+                {
+                    var unlockedWorldIds = rawWorldIds.ToList(StateExtensions.ToInteger);
+                    if (!unlockedWorldIds.Contains(10))
+                    {
+                        unlockedWorldIds.Add(10);
+                        unlockedWorldIds = unlockedWorldIds.Distinct().OrderBy(i => i).ToList();
+                        states = states.SetLegacyState(
+                            worldIdsAddress,
+                            new List(unlockedWorldIds.Select(i => i.Serialize())));
+                    }
+                }
+            }
+
+            // NOTE: World 10 auto-open must patch `states` (world_ids) before ValidateWorldId reads it.
+            // That patch requires avatarState.worldInformation, so avatar state is loaded first.
+            states.ValidateWorldId(AvatarAddress, WorldId);
 
             avatarStateActivity?.Dispose();
             sw.Stop();
@@ -244,6 +292,7 @@ namespace Nekoyume.Action
                 addressesHex, source, "Check StateState", blockIndex, sw.Elapsed.TotalMilliseconds);
 
             var worldSheet = sheets.GetSheet<WorldSheet>();
+
             if (!worldSheet.TryGetValue(WorldId, out var worldRow, false))
             {
                 throw new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), WorldId);
@@ -280,7 +329,8 @@ namespace Nekoyume.Action
             var worldInformation = avatarState.worldInformation;
             if (!worldInformation.TryGetWorld(WorldId, out var world))
             {
-                // NOTE: Add new World from WorldSheet
+                // NOTE: `WorldInformation` for legacy avatars might miss newly added worlds.
+                // Add and unlock worlds based on previous stage clears.
                 worldInformation.AddAndUnlockNewWorld(worldRow, blockIndex, worldSheet);
                 worldInformation.TryGetWorld(WorldId, out world);
             }
@@ -347,6 +397,44 @@ namespace Nekoyume.Action
                 activity?.Id ?? string.Empty);
             var materialItemSheet = sheets.GetSheet<MaterialItemSheet>();
             var apPlayCount = TotalPlayCount;
+
+            if (stageRow.EntryCostItemId > 0)
+            {
+                var expectedEntryCostItemCount = checked(stageRow.EntryCostItemCount * TotalPlayCount);
+
+                if (EntryCostItemId != stageRow.EntryCostItemId || EntryCostItemCount != expectedEntryCostItemCount)
+                {
+                    throw new InvalidActionFieldException(
+                        nameof(HackAndSlash),
+                        addressesHex,
+                        $"{nameof(EntryCostItemId)}/{nameof(EntryCostItemCount)}",
+                        $"Declared entry cost mismatch. Declared: ({EntryCostItemId}, {EntryCostItemCount}), " +
+                        $"Expected: ({stageRow.EntryCostItemId}, {expectedEntryCostItemCount})");
+                }
+
+                if (!materialItemSheet.TryGetValue(stageRow.EntryCostItemId, out var entryCostRow))
+                {
+                    throw new SheetRowNotFoundException(addressesHex, nameof(MaterialItemSheet), stageRow.EntryCostItemId);
+                }
+
+                if (!avatarState.inventory.RemoveFungibleItem(
+                        entryCostRow.ItemId,
+                        blockIndex,
+                        count: expectedEntryCostItemCount))
+                {
+                    throw new NotEnoughMaterialException(
+                        $"{addressesHex}Aborted as the player has no enough material ({entryCostRow.Id})");
+                }
+            }
+            else if (EntryCostItemId != 0 || EntryCostItemCount != 0)
+            {
+                throw new InvalidActionFieldException(
+                    nameof(HackAndSlash),
+                    addressesHex,
+                    $"{nameof(EntryCostItemId)}/{nameof(EntryCostItemCount)}",
+                    "Entry cost must not be set for stages without entry material cost.");
+            }
+
             var minimumCostAp = stageRow.CostAP;
             if (actionPointCoefficientSheet != null && stakingLevel > 0)
             {
@@ -470,6 +558,7 @@ namespace Nekoyume.Action
                 activity?.Id ?? string.Empty);
 
             var skillStateAddress = Addresses.GetSkillStateAddressFromAvatarAddress(AvatarAddress);
+
             var isNotClearedStage = !avatarState.worldInformation.IsStageCleared(StageId);
             var skillsOnWaveStart = new List<Skill>();
             CrystalRandomSkillState skillState = null;
@@ -560,7 +649,7 @@ namespace Nekoyume.Action
                 ActivityKind.Internal,
                 activity?.Id ?? string.Empty);
 
-            var stageWaveRow =  sheets.GetSheet<StageWaveSheet>()[StageId];
+            var stageWaveRow = sheets.GetSheet<StageWaveSheet>()[StageId];
             var enemySkillSheet = sheets.GetSheet<EnemySkillSheet>();
             var costumeStatSheet = sheets.GetSheet<CostumeStatSheet>();
             var stageCleared = !isNotClearedStage;
@@ -626,6 +715,26 @@ namespace Nekoyume.Action
                         worldSheet,
                         worldUnlockSheet
                     );
+
+                    // For hard worlds, also sync the legacy unlocked world list (`world_ids`) so that
+                    // If the player cleared stage 450 in world 9, also sync legacy `world_ids` for world 10
+                    // so that subsequent actions can pass ValidateWorldId without requiring a separate UnlockWorld action.
+                    if (WorldId == 9 && StageId == 450)
+                    {
+                        var worldIdsAddress = AvatarAddress.Derive("world_ids");
+                        if (states.TryGetLegacyState(worldIdsAddress, out List rawIdsForUnlock))
+                        {
+                            var unlockedWorldIds = rawIdsForUnlock.ToList(StateExtensions.ToInteger);
+                            if (!unlockedWorldIds.Contains(10))
+                            {
+                                unlockedWorldIds.Add(10);
+                                unlockedWorldIds = unlockedWorldIds.Distinct().OrderBy(i => i).ToList();
+                                states = states.SetLegacyState(
+                                    worldIdsAddress,
+                                    new List(unlockedWorldIds.Select(i => i.Serialize())));
+                            }
+                        }
+                    }
                     stageCleared = true;
 
                     sw.Stop();
@@ -658,6 +767,15 @@ namespace Nekoyume.Action
 
                 starCount += simulator.Log.clearedWaveNumber;
                 avatarState.Update(simulator);
+                if (context != null && simulator.FungibleAssetRewards.Count > 0)
+                {
+                    foreach (var (ticker, amount) in simulator.FungibleAssetRewards)
+                    {
+                        var currency = Currencies.GetCurrencyByTicker(ticker);
+                        var recipient = Currencies.PickAddress(currency, signer, AvatarAddress);
+                        states = states.MintAsset(context, recipient, currency * amount);
+                    }
+                }
 
                 sw.Stop();
                 Log.Verbose(
@@ -706,7 +824,9 @@ namespace Nekoyume.Action
                 activity?.Id ?? string.Empty);
             if (isNotClearedStage)
             {
-                avatarState.worldInformation.TryGetLastClearedStageId(out var lastClearedStageId);
+                var lastClearedStageId = -1;
+                avatarState.worldInformation.TryGetLastClearedStageId(out lastClearedStageId);
+
                 if (lastClearedStageId >= StageId)
                 {
                     // Make new CrystalRandomSkillState by next stage Id.

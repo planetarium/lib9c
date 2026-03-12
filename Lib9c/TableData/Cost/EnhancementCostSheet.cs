@@ -23,7 +23,7 @@ namespace Nekoyume.TableData
                 ItemSubType = (ItemSubType) Enum.Parse(typeof(ItemSubType), fields[1]);
                 Grade = ParseInt(fields[2]);
                 Level = ParseInt(fields[3]);
-                Cost = ParseInt(fields[4]);
+                Cost = ParseBigInteger(fields[4]);
             }
         }
 

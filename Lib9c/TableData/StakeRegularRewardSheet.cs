@@ -170,7 +170,7 @@ namespace Nekoyume.TableData
             public override void Set(IReadOnlyList<string> fields)
             {
                 Level = ParseInt(fields[0]);
-                RequiredGold = ParseInt(fields[1]);
+                RequiredGold = ParseLong(fields[1]);
                 var info = new RewardInfo(fields.Skip(2).ToArray());
                 Rewards = new List<RewardInfo> { info };
             }

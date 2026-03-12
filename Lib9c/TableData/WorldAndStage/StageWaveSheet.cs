@@ -73,6 +73,15 @@ namespace Nekoyume.TableData
                 Waves.Add(new WaveData(wave, monsters, isBoss));
             }
 
+            public Row CloneWithStageId(int newStageId)
+            {
+                return new Row
+                {
+                    StageId = newStageId,
+                    Waves = Waves is null ? new List<WaveData>() : new List<WaveData>(Waves),
+                };
+            }
+
             public override void EndOfSheetInitialize()
             {
                 Waves.Sort((left, right) =>
@@ -95,6 +104,11 @@ namespace Nekoyume.TableData
         }
 
         protected override void AddRow(int key, Row value)
+        {
+            AddRowInternal(key, value);
+        }
+
+        private void AddRowInternal(int key, Row value)
         {
             if (!TryGetValue(key, out var row))
             {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using static Nekoyume.TableData.TableExtensions;
 
@@ -26,6 +26,11 @@ namespace Nekoyume.TableData.Crystal
 
         public CrystalStageBuffGachaSheet() : base(nameof(CrystalStageBuffGachaSheet))
         {
+        }
+
+        protected override void AddRow(int key, Row value)
+        {
+            base.AddRow(key, value);
         }
     }
 }
