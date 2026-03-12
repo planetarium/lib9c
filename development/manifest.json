@@ -11362,6 +11362,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.StageSheet.FavRewardData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.StageSheet.FavRewardData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.TableData.StageSheet.RewardData.yml",
       "output": {
         ".html": {
