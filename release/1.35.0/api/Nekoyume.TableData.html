@@ -802,6 +802,12 @@ Contains skill metadata and properties used for skill creation and execution.</p
       <dd><p>This sheet is used for setting the regular rewards for staking.
 The difference between this sheet and <a class="xref" href="Nekoyume.TableData.StakeRegularRewardSheet.html">StakeRegularRewardSheet</a> is that
 the <a class="xref" href="Nekoyume.TableData.StakeRegularFixedRewardSheet.RewardInfo.html">StakeRegularFixedRewardSheet.RewardInfo</a> of this sheet has a fixed count of reward.</p>
+<p>CSV column order: level, required_gold, item_id, count[, tradable]</p><p>
+The optional <code>tradable</code> column controls whether material items are created
+as tradable (<a class="xref" href="Nekoyume.Model.Item.TradableMaterial.html">TradableMaterial</a>) or non-tradable
+(<a class="xref" href="Nekoyume.Model.Item.Material.html">Material</a>). Omitting the column defaults to
+<code>true</code>, preserving backward compatibility with existing CSV data.
+</p>
 </dd>
     </dl>
     <dl class="jumplist">

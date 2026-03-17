@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class StakeRegularFixedRewardSheet | Lib9c ">
       
-      <meta name="description" content="This sheet is used for setting the regular rewards for staking. The difference between this sheet and  is that the  of this sheet has a fixed count of reward.">
+      <meta name="description" content="This sheet is used for setting the regular rewards for staking. The difference between this sheet and  is that the  of this sheet has a fixed count of reward. CSV column order: level, required_gold, item_id, count[, tradable] The optional tradable column controls whether material items are created as tradable () or non-tradable (). Omitting the column defaults to true, preserving backward compatibility with existing CSV data.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_StakeRegularFixedRewardSheet" data-uid="Nekoyume.TableData.StakeRegularFixedRewardSheet" class="text-break">
-Class StakeRegularFixedRewardSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class StakeRegularFixedRewardSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -100,6 +100,12 @@ Class StakeRegularFixedRewardSheet  <a class="header-action link-secondary" titl
   <div class="markdown summary"><p>This sheet is used for setting the regular rewards for staking.
 The difference between this sheet and <a class="xref" href="Nekoyume.TableData.StakeRegularRewardSheet.html">StakeRegularRewardSheet</a> is that
 the <a class="xref" href="Nekoyume.TableData.StakeRegularFixedRewardSheet.RewardInfo.html">StakeRegularFixedRewardSheet.RewardInfo</a> of this sheet has a fixed count of reward.</p>
+<p>CSV column order: level, required_gold, item_id, count[, tradable]</p><p>
+The optional <code>tradable</code> column controls whether material items are created
+as tradable (<a class="xref" href="Nekoyume.Model.Item.TradableMaterial.html">TradableMaterial</a>) or non-tradable
+(<a class="xref" href="Nekoyume.Model.Item.Material.html">Material</a>). Omitting the column defaults to
+<code>true</code>, preserving backward compatibility with existing CSV data.
+</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -251,7 +257,7 @@ public class StakeRegularFixedRewardSheet : Sheet&lt;int, StakeRegularFixedRewar
 
   <h3 id="Nekoyume_TableData_StakeRegularFixedRewardSheet__ctor" data-uid="Nekoyume.TableData.StakeRegularFixedRewardSheet.#ctor">
   StakeRegularFixedRewardSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -281,7 +287,7 @@ public class StakeRegularFixedRewardSheet : Sheet&lt;int, StakeRegularFixedRewar
 
   <h3 id="Nekoyume_TableData_StakeRegularFixedRewardSheet_OrderedRows" data-uid="Nekoyume.TableData.StakeRegularFixedRewardSheet.OrderedRows">
   OrderedRows
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -316,7 +322,7 @@ public class StakeRegularFixedRewardSheet : Sheet&lt;int, StakeRegularFixedRewar
 
   <h3 id="Nekoyume_TableData_StakeRegularFixedRewardSheet_AddRow_System_Int32_Nekoyume_TableData_StakeRegularFixedRewardSheet_Row_" data-uid="Nekoyume.TableData.StakeRegularFixedRewardSheet.AddRow(System.Int32,Nekoyume.TableData.StakeRegularFixedRewardSheet.Row)">
   AddRow(int, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -349,7 +355,7 @@ public class StakeRegularFixedRewardSheet : Sheet&lt;int, StakeRegularFixedRewar
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/TableData/StakeRegularFixedRewardSheet.cs/#L21" class="edit-link">Edit this page</a>
         </div>
 
 

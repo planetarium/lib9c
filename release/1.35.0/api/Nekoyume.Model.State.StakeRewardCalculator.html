@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class StakeRewardCalculator | Lib9c ">
       
-      
+      <meta name="description" content="Provides methods for calculating staking rewards from reward sheets.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_State_StakeRewardCalculator" data-uid="Nekoyume.Model.State.StakeRewardCalculator" class="text-break">
-Class StakeRewardCalculator  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class StakeRewardCalculator  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class StakeRewardCalculator  <a class="header-action link-secondary" title="View
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Provides methods for calculating staking rewards from reward sheets.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -156,10 +157,15 @@ Class StakeRewardCalculator  <a class="header-action link-secondary" title="View
 
   <h3 id="Nekoyume_Model_State_StakeRewardCalculator_CalculateFixedRewards_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_StakeRegularFixedRewardSheet_Nekoyume_TableData_ItemSheet_System_Int32_" data-uid="Nekoyume.Model.State.StakeRewardCalculator.CalculateFixedRewards(System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.StakeRegularFixedRewardSheet,Nekoyume.TableData.ItemSheet,System.Int32)">
   CalculateFixedRewards(int, IRandom, StakeRegularFixedRewardSheet, ItemSheet, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Calculates fixed item rewards for a given stake level.
+Fixed rewards have a predetermined item count (unlike rate-based rewards in
+<a class="xref" href="Nekoyume.Model.State.StakeRewardCalculator.html#Nekoyume_Model_State_StakeRewardCalculator_CalculateRewards_Libplanet_Types_Assets_Currency_Libplanet_Types_Assets_FungibleAssetValue_System_Int32_System_Int32_Nekoyume_TableData_StakeRegularRewardSheet_Nekoyume_TableData_ItemSheet_Libplanet_Action_IRandom_">CalculateRewards(Currency, FungibleAssetValue, int, int, StakeRegularRewardSheet, ItemSheet, IRandom)</a>), and the <code>tradable</code> flag on each
+<a class="xref" href="Nekoyume.TableData.StakeRegularFixedRewardSheet.RewardInfo.html">StakeRegularFixedRewardSheet.RewardInfo</a> controls whether
+material items are created as tradable or non-tradable.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -169,21 +175,28 @@ Class StakeRewardCalculator  <a class="header-action link-secondary" title="View
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>stakeLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The current stake level used to look up the reward row.</p>
+</dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
+    <dd><p>Random source used for non-material item creation.</p>
+</dd>
     <dt><code>stakeRegularFixedRewardSheet</code> <a class="xref" href="Nekoyume.TableData.StakeRegularFixedRewardSheet.html">StakeRegularFixedRewardSheet</a></dt>
-    <dd></dd>
+    <dd><p>Sheet containing fixed reward definitions.</p>
+</dd>
     <dt><code>itemSheet</code> <a class="xref" href="Nekoyume.TableData.ItemSheet.html">ItemSheet</a></dt>
-    <dd></dd>
+    <dd><p>Sheet used to look up item metadata by ID.</p>
+</dd>
     <dt><code>rewardSteps</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The number of reward steps accumulated since the last claim.
+Each reward's count is multiplied by this value.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>A dictionary mapping each rewarded <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a> to its total count.</p>
+</dd>
   </dl>
 
 
@@ -200,10 +213,15 @@ Class StakeRewardCalculator  <a class="header-action link-secondary" title="View
 
   <h3 id="Nekoyume_Model_State_StakeRewardCalculator_CalculateRewards_Libplanet_Types_Assets_Currency_Libplanet_Types_Assets_FungibleAssetValue_System_Int32_System_Int32_Nekoyume_TableData_StakeRegularRewardSheet_Nekoyume_TableData_ItemSheet_Libplanet_Action_IRandom_" data-uid="Nekoyume.Model.State.StakeRewardCalculator.CalculateRewards(Libplanet.Types.Assets.Currency,Libplanet.Types.Assets.FungibleAssetValue,System.Int32,System.Int32,Nekoyume.TableData.StakeRegularRewardSheet,Nekoyume.TableData.ItemSheet,Libplanet.Action.IRandom)">
   CalculateRewards(Currency, FungibleAssetValue, int, int, StakeRegularRewardSheet, ItemSheet, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Calculates rate-based item and currency rewards for a given staking level.
+Unlike <a class="xref" href="Nekoyume.Model.State.StakeRewardCalculator.html#Nekoyume_Model_State_StakeRewardCalculator_CalculateFixedRewards_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_StakeRegularFixedRewardSheet_Nekoyume_TableData_ItemSheet_System_Int32_">CalculateFixedRewards(int, IRandom, StakeRegularFixedRewardSheet, ItemSheet, int)</a>, reward quantities are derived from
+the ratio of the staked NCG amount to each reward's
+<a class="xref" href="Nekoyume.TableData.StakeRegularRewardSheet.RewardInfo.html#Nekoyume_TableData_StakeRegularRewardSheet_RewardInfo_DecimalRate">DecimalRate</a>.
+Rewards whose computed quantity is zero or negative are skipped.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -213,25 +231,39 @@ Class StakeRewardCalculator  <a class="header-action link-secondary" title="View
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>ncg</code> <span class="xref">Currency</span></dt>
-    <dd></dd>
+    <dd><p>The NCG currency definition.</p>
+</dd>
     <dt><code>stakedNcg</code> <span class="xref">FungibleAssetValue</span></dt>
-    <dd></dd>
+    <dd><p>The total amount of staked NCG.</p>
+</dd>
     <dt><code>stakingLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The current staking level used to look up the reward row.</p>
+</dd>
     <dt><code>rewardSteps</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The number of reward steps accumulated since the last claim.
+Each reward quantity is multiplied by this value.</p>
+</dd>
     <dt><code>stakeRegularRewardSheet</code> <a class="xref" href="Nekoyume.TableData.StakeRegularRewardSheet.html">StakeRegularRewardSheet</a></dt>
-    <dd></dd>
+    <dd><p>Sheet containing rate-based reward definitions.</p>
+</dd>
     <dt><code>itemSheet</code> <a class="xref" href="Nekoyume.TableData.ItemSheet.html">ItemSheet</a></dt>
-    <dd></dd>
+    <dd><p>Sheet used to look up item metadata by ID.</p>
+</dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
+    <dd><p>Random source used for non-material item creation.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt>(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.collections.generic.dictionary-nekoyume.model.item.itembase,system.int32-,system.collections.generic.list-libplanet.types.assets.fungibleassetvalue--.itemresult">itemResult</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<span class="xref">FungibleAssetValue</span>&gt; <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.collections.generic.dictionary-nekoyume.model.item.itembase,system.int32-,system.collections.generic.list-libplanet.types.assets.fungibleassetvalue--.favresult">favResult</a>)</dt>
-    <dd></dd>
+    <dd><p>A tuple of:</p>
+<ul><li><code>itemResult</code>: a dictionary mapping each rewarded <a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>
+    to its total count.
+  </li><li><code>favResult</code>: a list of <span class="xref">Libplanet.Types.Assets.FungibleAssetValue</span> for rune and
+    currency rewards.
+  </li></ul>
+</dd>
   </dl>
 
 
@@ -248,7 +280,7 @@ Class StakeRewardCalculator  <a class="header-action link-secondary" title="View
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.35.0/Lib9c/Model/State/StakeRewardCalculator.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 
