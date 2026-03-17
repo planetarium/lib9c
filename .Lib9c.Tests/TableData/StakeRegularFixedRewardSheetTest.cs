@@ -22,6 +22,10 @@ namespace Lib9c.Tests.TableData
 #pragma warning restore CS0618
         }
 
+        /// <summary>
+        /// Verifies that the sheet is parsed correctly from the V1 fixture,
+        /// including default <c>Tradable = true</c> for rows without the tradable column.
+        /// </summary>
         [Fact]
         public void SetToSheet()
         {
@@ -32,30 +36,58 @@ namespace Lib9c.Tests.TableData
             Assert.Single(_sheet[1].Rewards);
             Assert.Equal(500000, _sheet[1].Rewards[0].ItemId);
             Assert.Equal(1, _sheet[1].Rewards[0].Count);
+            // tradable column absent → defaults to true
+            Assert.True(_sheet[1].Rewards[0].Tradable);
 
             Assert.Equal(2, _sheet[2].Level);
             Assert.Equal(500, _sheet[2].RequiredGold);
             Assert.Single(_sheet[2].Rewards);
             Assert.Equal(500000, _sheet[2].Rewards[0].ItemId);
             Assert.Equal(2, _sheet[2].Rewards[0].Count);
+            Assert.True(_sheet[2].Rewards[0].Tradable);
 
             Assert.Equal(3, _sheet[3].Level);
             Assert.Equal(5000, _sheet[3].RequiredGold);
             Assert.Single(_sheet[3].Rewards);
             Assert.Equal(500000, _sheet[3].Rewards[0].ItemId);
             Assert.Equal(2, _sheet[3].Rewards[0].Count);
+            Assert.True(_sheet[3].Rewards[0].Tradable);
 
             Assert.Equal(4, _sheet[4].Level);
             Assert.Equal(50000, _sheet[4].RequiredGold);
             Assert.Single(_sheet[4].Rewards);
             Assert.Equal(500000, _sheet[4].Rewards[0].ItemId);
             Assert.Equal(2, _sheet[4].Rewards[0].Count);
+            Assert.True(_sheet[4].Rewards[0].Tradable);
 
             Assert.Equal(5, _sheet[5].Level);
             Assert.Equal(500000, _sheet[5].RequiredGold);
             Assert.Single(_sheet[3].Rewards);
             Assert.Equal(500000, _sheet[5].Rewards[0].ItemId);
             Assert.Equal(2, _sheet[5].Rewards[0].Count);
+            Assert.True(_sheet[5].Rewards[0].Tradable);
+        }
+
+        /// <summary>
+        /// Verifies that explicit <c>tradable</c> column values (true/false) are parsed correctly,
+        /// and that rows without the column still default to <c>true</c>.
+        /// </summary>
+        [Fact]
+        public void SetToSheet_WithTradableColumn()
+        {
+            var sheet = new StakeRegularFixedRewardSheet();
+            sheet.Set(StakeRegularFixedRewardSheetFixtures.V1WithTradable);
+
+            Assert.Equal(5, sheet.Count);
+
+            // Level 1: tradable=true (explicit)
+            Assert.True(sheet[1].Rewards[0].Tradable);
+            // Level 2: tradable=false (explicit)
+            Assert.False(sheet[2].Rewards[0].Tradable);
+            // Level 3~5: tradable=true (explicit)
+            Assert.True(sheet[3].Rewards[0].Tradable);
+            Assert.True(sheet[4].Rewards[0].Tradable);
+            Assert.True(sheet[5].Rewards[0].Tradable);
         }
 
         [Theory]
