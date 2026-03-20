@@ -1,46 +1,122 @@
-id,_name,grade,rune_type,required_level,use_place,bonus_coef
-30001,Adventurer's Rune,1,1,1,7,1
-10001,Fenrir HP Rune,2,1,1,4,1
-10002,Fenrir ATK Rune,3,1,1,5,2
-10003,Fenrir Bleeding Rune,5,2,1,7,5
-10004,Fenrir DHP Rune,3,1,1,1,1
-10005,Fenrir SHT Rune,4,1,1,2,2
-10006,Fenrir SPD Down Rune,5,2,1,7,5
-10011,Saehrimnir HIT Rune,2,1,1,7,1
-10012,Saehrimnir DEF Rune,3,1,1,3,2
-10013,Saehrimnir Skill Rune,5,2,1,7,5
-10014,Saehrimnir AS Rune,3,1,1,4,1
-10015,Saehrimnir  HPA RUne,4,1,1,2,2
-10016,Saehrimnir Thorn Rune,5,2,1,7,5
-20001,Golden leaf Rune,5,2,1,7,20
-20002,Golden Thor,6,1,1,7,20
-10021,Stun Rune (Adventure),5,2,1,1,20
-10022,Stun Rune (Arena),5,2,1,2,20
-10023,Vampiric Rune (Adventure),5,2,1,1,20
-10024,Vampiric Rune (WorldBoss),5,2,1,4,20
-10025,Stamina Rune (Adventure),4,1,1,1,10
-10026,Stamina Rune (Arena),4,1,1,2,10
-10027,Quick Rune (Arena),4,1,1,2,10
-10028,Quick Rune (WorldBoss),4,1,1,4,10
-10029,Freya Liberation Rune,6,2,1,7,30
-10030,Freya Blessing Rune,6,1,1,7,30
-10031,Odin Weakness Rune,6,2,1,7,30
-10032,Odin Wisdom Rune,6,1,1,7,30
-10033,HIT Rune,5,1,1,7,10
-10034,SPD Rune,5,1,1,7,10
-10035,CRI Rune,5,1,1,7,10
-10036,HP Rune,5,1,1,7,10
-10037,ATK Rune,5,1,1,7,10
-10038,DEF Rune,5,1,1,7,10
-10039,Thor Strike Rune (Adventure),6,2,1,1,30
-10040,Thor Strike Rune (WorldBoss),6,2,1,4,30
-10041,Loki Vampiric Rune (Adventure),6,2,1,1,30
-10042,Loki Vampiric Rune (WorldBoss),6,2,1,4,30
-10043,Odin Order Rune,7,2,1,3,50
-10044,Odin Creator Rune,7,1,1,7,50
-10045,Odin Word Rune,7,2,1,6,50
-10046,Odin Mimir's Rune,7,1,1,7,50
-10047,Yggdrasil ATK Rune,7,1,1,7,50
-10048,Yggdrasil HP Rune,7,1,1,7,50
-10049,Yggdrasil SPD Rune,7,1,1,7,50
-10050,Yggdrasil CRI Rune,7,1,1,7,50
+,Folder Name AdventureBoss Arena Character Cost Crystal,CSV Name AdventureBossContributionRewardSheet AdventureBossFloorFirstRewardSheet AdventureBossFloorPointSheet AdventureBossFloorSheet AdventureBossFloorWaveSheet AdventureBossNcgRewardRatioSheet AdventureBossSheet AdventureBossUnlockFloorCostSheet AdventureBossWantedRewardSheet ArenaSheet CharacterLevelSheet CharacterSheet EnhancementCostSheet EnhancementCostSheetV2 EnhancementCostSheetV3 CrystalEquipmentGrindingSheet,공용 링크 AdventureBoss Arena Character Cost Crystal,업데이트 버전 v200240 v200350 v200350 v200350 v200350 v200350 v200200 v200350 v200240 v200280 v200310 v200310 v200030 v200340 v200380,"설명 Adventure boss 의 boss 별 공헌도 보상 목록 층별 첫 클리어 보상 층별 클리어시 얻는 포인트 랜덤 폭 관리 층별 보너스 스텟 및 드롭 재료 관리 층별 등장하는 몬스터 종류 관리 Wanted, Contribution 보상 계산 시 사용되는 운영 NCG - 보상 수량 교환비가 들어있습니다. Adventure boss 탑 종류를 관리하는 데이터 5층 단위 탑 언락 비용 관리 Adventure boss 의 boss 별 운영 보상 목록입니다. 아레나 시즌 온오프를 관리하는 시트 아바타 레벨 별 필요한 경험치량을 관리하는 시트 유닛의 스텟과 성장률을 관리하는 시트 강화 확률과 옵션 성장률을 관리하는 시트 장비 그라인딩 시 드롭되는 크리스탈 양을 관리","비고 25년 2월 이후 사용 안함 (23-01-13) https://app.asana.com/0/1141562434100787/1203506084112099/f
+경험치 요구량 총합에 문제가 있어서 관련하여 수정하였습니다. "
+,,CrystalFluctuationSheet,,22년 06월 21일,,
+,,CrystalHammerPointSheet,,v200380,슈퍼 크래프트 요구 횟수 및 제작 시 필요 크리스탈 관리,
+,,CrystalMaterialCostSheet,,v200310,크래프트 재료의 크리스탈 환산값,
+,,CrystalMonsterCollectionMultiplierSheet,,v200132,,
+,,CrystalRandomBuffSheet,,22년 08월 09일,,Git 업데이트 안됨
+,,CrystalStageBuffGachaSheet,,v200340,스테이지 별 버프 사용하기 위해 필요한 맥스 포인트,
+,CustomEquipmentCraft,CustomEquipmentCraftIconSheet,CustomEquipmentCraft,v200230,아이템 부위별 나올 수 있는 외형 리스트를 관리하는 시트,
+,,CustomEquipmentCraftOptionSheet,,v200230,커스텀 장비 제작 시 붙을 수 있는 스텟 비율 관리,
+,,CustomEquipmentCraftRecipeSheet,,v200370,커스텀 장비 제작에 필요한 재료 갯수를 관리,
+,,CustomEquipmentCraftRecipeSkillSheet,,v200230,커스텀 장비 제작 시 붙을 수 있는 스킬 종류 관리,
+,,CustomEquipmentCraftRelationshipSheet,,v200370,친밀도 수치에 따른 제작되는 Item ID 연결 및 제작에 필요한 갯수 관리,
+,Event,EventConsumableItemRecipeSheet,Event,v200260,,
+,,EventDungeonSheet,,v200390,,
+,,EventDungeonStageSheet,,v200390,,
+,,EventDungeonStageWaveSheet,,v200390,,
+,,EventMaterialItemRecipeSheet,,v100330,이벤트용 소모템 레시피 관리,
+,,EventScheduleSheet,,v200390,이벤트 스케쥴 온/오프 관리,
+,Garages,LoadIntoMyGaragesCostSheet,Garages,v200380,Garage 에 있는 아이템을 token 화 할때 필요한 Garage 토큰 관리,
+,GrandFinale,GrandFinaleParticipantsSheet,GrandFinale,v100330,그랜드 피날레 시즌 블록 관리,
+,,GrandFinaleScheduleSheet,,v100330,그랜드 피날레 참가자 주소 관리,
+,Item,ConsumableItemRecipeSheet,Item,v200240,소모품 제작 레시피 관리,
+,,ConsumableItemSheet,,v200240,소모품 아이템 효과량 관리,
+,,CostumeItemSheet,,v200400,"코스튬, 칭호 종류 및 카테고리 관리",
+,,CostumeStatSheet,,v200400,"코스튬, 칭호의 스텟 종류 및 수치 관리",
+,,EquipmentItemOptionSheet,,v200380,아이템에 붙을 수 있는 옵션 종류를 관리하는 테이블,
+,,EquipmentItemRecipeSheet,,v200380,아이템 제작에 필요한 메인 재료와 레시피 종류를 관리하는 시트,v200230 블록 감소 이벤트 (-20%) 진행중
+,,EquipmentItemSetEffectSheet,,?,,
+,,EquipmentItemSheet,,v200380,아이템의 카테고리 및 메인 옵션을 관리하는 테이블,
+,,EquipmentItemSubRecipeSheet,,,,
+,,EquipmentItemSubRecipeSheetV2,,v200380,아이템 레시피 종류 & 레시피별 필요한 재료 & 붙을 수 있는 옵션 종류를 관리하는 테이블,v200230 블록 감소 이벤트 (-20%) 진행중
+,,ItemConfigForGradeSheet,,?,,
+,,ItemRequirementSheet,,v200400,"아이템 (장비, 요리) 사용 제한 레벨",
+,,MaterialItemSheet,,v200370,제작 재료 관리,
+,,UnlockCombinationSlotCostSheet,,v200230,추가 제작 슬롯 해금 비용 관리,
+,Pet,PetCostSheet,Pet,v200240,,
+,,PetOptionSheet,,v200320,,
+,,PetSheet,,v200240,,
+,Quest,CollectQuestSheet,Quest,,,
+,,CombinationEquipmentQuestSheet,,v200340,아이템 제작 퀘스트를 관리하는 시트,
+,,CombinationQuestSheet,,,종류별 장비 제작 갯수 퀘스트를 관리하는 시트,
+,,GeneralQuestSheet,,,,
+,,GoldQuestSheet,,,,
+,,ItemEnhancementQuestSheet,,,,
+,,ItemGradeQuestSheet,,,,
+,,ItemTypeCollectQuestSheet,,,,
+,,MonsterQuestSheet,,,,
+,,QuestItemRewardSheet,,v200340,퀘스트 보상을 관리하는 시트. 보상을 제작하고 QuestRewardSheet 에서 포장해서 사용해야함.,
+,,QuestRewardSheet,,v200340,퀘스트 보상 묶음을 관리하는 시트 (보상 묶음을 관리),
+,,TradeQuestSheet,,,,
+,,WorldQuestSheet,,v200340,스테이지 클리어 퀘스트를 관리하는 시트,
+,Rune,RuneLevelBonusSheet,Rune,v200180,룬 레벨보너스의 범위와 관계식을 관리하는 시트,
+,,RuneListSheet,,v200410,룬 리스트를 관리하는 시트,
+,,RuneOptionSheet,,v200410,룬 강화시 스탯변화량을 관리하는 시트,
+,,RuneCostSheet,,v200410,룬 강화 비용을 관리하는 시트,
+,,RuneSheet,,v200410,룬 조각 종류를 관리하는 시트,
+,,RuneWeightSheet,,v200240,룬 조각 드랍 확률을 관리하는 시트,
+,Skill,ActionBuffSheet,Skill,v200230,"스킬 베이스는 SkillSheet ID를 가져와서 사용, 월드보스가 사용하는 스킬 상세 스펙을 정의할 수 있다.",
+,,BuffSheet,,22년 12월 14일,안사용하는 시트입니다.,
+,,BuffLinkSheet,,v200180,버프 상호작용에 버프를 연결할때 사용하는 시트,
+,,BuffLimitSheet,,v200350,버프 효과의 최대 Max 수치를 관리하는 시트 ,v200250 DeBuffLimitSheet -> BuffLimitSheet 변경됨
+,,EnemySkillSheet,,v200310,"몬스터 ID,와 스킬을 연결해주는 시트",
+,,SkillActionBuffSheet,,v200230,스킬에 버프를 추가할때 사용 SkillSheet ID에 SkillBuffSheet ID를 연결하여 사용,
+,,SkillBuffSheet,,v200310,StatBuffSheet에서 제작한 버프를 하나의 ID로 묶어주는 시트,
+,,SkillSheet,,v200310,스킬 카테고리 동작방법 등 관리,
+,,StatBuffSheet,,v200310,버프의 효과량을 정의하는 시트,
+,Stake,StakePolicySheet,Stake,v200340,현재 체인의 스테이킹이 바라보는 테이블을 관리하는 시트,
+,Summon,CostumeSummonSheet,Summon,v200400,코스튬 소환 확률 관리 시트,
+,,EquipmentSummonSheet,,v200360,"아우라, 그리모어 소환 확률 관리 시트",
+,,RuneSummonSheet,,v200360,룬 소환 확률 관리 시트,
+,,SummonSheet,,v200200,사용 안함 (장비타입별로 분류됨),
+,WorldAndStage,MimisbrunnrSheet,WorldAndStage,,,
+,,StageDialogSheet,,v200340,,
+,,StageSheet,,v200340,v200200 -> 스테이지 밸런싱,v200220 -> 크리스탈 이벤트 진행중
+,,StageWaveSheet,,v200340,,
+,,WorldSheet,,v200340,,
+,,WorldUnlockSheet,,v200310,,
+,WorldBoss,WorldBossActionPatternSheet,WorldBoss,v100360,보스 공격 패턴 순서,
+,,WorldBossBattleRewardSheet,,v200240,월드보스 매 전투 시 도달한 웨이브 별로 지급되는 보상,
+,,WorldBossCharacterSheet,,v200400,보스 웨이브 별 스텟,
+,,WorldBossContributionRewardSheet,,v200370,월드보스 시즌공헌도 보상,
+,,WorldBossGlobalHpSheet,,v200320,Lv 별 보스 글로벌 체력,
+,,WorldBossKillRewardSheet,,v200230,보스 클리어 보상 (룬 드랍률 & 룬 드랍량 & 크리스탈 획득량),
+,,WorldBossListSheet,,v200370,월드보스 오픈 정보 관리,
+,,WorldBossRankingRewardSheet,,v200240,Ranking 보상. 룬 지급 비율은 RuneWeightSheet 테이블에서 관리,
+,,WorldBossRankRewardSheet,,v200230,Grade 보상. 시즌마다 1회 지급되는 보상 / 룬 지급 비율은 RuneWeightSheet 테이블에서 관리,
+,etc,ClaimableGiftsSheet,etc,v200380,,
+,,CollectionSheet,,v200410,,
+,,CreateAvatarFavSheet,,v70.3,신규 아바타 생성 시 지급되는 재화를 관리하는 시트,
+,,CreateAvatarItemSheet,,v200110,신규 아바타 생성 시 지급되는 장비를 관리하는 시트,
+,,GameConfigSheet,,v200400,"게임 설정 컨트롤 시트(모래시게 블록, 아레나 블록등)",
+,,InfiniteTowerScheduleSheet,,v200410,,
+,,InfiniteTowerFloorSheet,,v200410,,
+,,InfiniteTowerFloorWaveSheet,,v200410,,
+,,InfiniteTowerConditionSheet,,v200410,,
+,,MonsterCollectionRewardSheet,,,,
+,,MonsterCollectionSheet,,,,
+,,PatrolRewardSheet,,v200410,,
+,,RedeemCodeListSheet,,,,
+,,RedeemRewardSheet,,v200110,,
+,,StakeAchievementRewardSheet,,,,
+,,StakeActionPointCoefficientSheet,,v200132,,
+,,StakeRegularFixedRewardSheet,,v200010,V1~2 로 변경됨,
+,,StakeRegularFixedRewardSheet_V1,,v200080,,
+,,StakeRegularFixedRewardSheet_V2,,v200080,,
+,,StakeRegularFixedRewardSheet_V3,,v200132,,
+,,StakeRegularRewardSheet,,v200071,V1~5로 변경됨 / 스테이킹 보상 테이블,
+,,StakeRegularRewardSheet_V1,,v200080,,
+,,StakeRegularRewardSheet_V2,,v200080,,
+,,StakeRegularRewardSheet_V3,,v200080,,
+,,StakeRegularRewardSheet_V4,,v200080,,
+,,StakeRegularRewardSheet_V5,,v200080,,
+,,StakeRegularRewardSheet_V6,,v200132,,
+,,StakeRegularRewardSheet_V7,,v200150,,
+,,StakeRegularRewardSheet_V8,,v200230,,
+,,StakeRegularRewardSheet_V9,,v200240,,
+,,StakeRegularRewardSheet_V10,,v200410,,
+,,SweepRequiredCPSheet,,v200340,스테이지 별 스윕에 필요한 최소 CP,
+,,SynthesizeSheet,,v200410,,
+,,SynthesizeWeightSheet,,v200410,,
+,,WeeklyArenaRewardSheet,,v200160,아레나 플레이 보상을 관리하는 시트 (요리재료),
