@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Action_HackAndSlash" data-uid="Nekoyume.Action.HackAndSlash" class="text-break">
-Class HackAndSlash  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L40"><i class="bi bi-code-slash"></i></a>
+Class HackAndSlash  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -199,7 +199,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_ApStoneCount" data-uid="Nekoyume.Action.HackAndSlash.ApStoneCount">
   ApStoneCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -229,7 +229,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_AvatarAddress" data-uid="Nekoyume.Action.HackAndSlash.AvatarAddress">
   AvatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -259,7 +259,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_Costumes" data-uid="Nekoyume.Action.HackAndSlash.Costumes">
   Costumes
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -287,9 +287,74 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
 
 
+  <h3 id="Nekoyume_Action_HackAndSlash_EntryCostItemCount" data-uid="Nekoyume.Action.HackAndSlash.EntryCostItemCount">
+  EntryCostItemCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the declared total entry cost material item count for this action execution,
+matching <a class="xref" href="Nekoyume.TableData.StageSheet.Row.html#Nekoyume_TableData_StageSheet_Row_EntryCostItemCount">EntryCostItemCount</a> × TotalPlayCount.
+Required when the stage has an entry material cost; must match the computed value exactly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int EntryCostItemCount</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Action_HackAndSlash_EntryCostItemId" data-uid="Nekoyume.Action.HackAndSlash.EntryCostItemId">
+  EntryCostItemId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the declared entry cost material item ID, matching <a class="xref" href="Nekoyume.TableData.StageSheet.Row.html#Nekoyume_TableData_StageSheet_Row_EntryCostItemId">EntryCostItemId</a>.
+Required when the stage has an entry material cost; must match the sheet value exactly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int EntryCostItemId</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_Action_HackAndSlash_Equipments" data-uid="Nekoyume.Action.HackAndSlash.Equipments">
   Equipments
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -319,7 +384,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_Foods" data-uid="Nekoyume.Action.HackAndSlash.Foods">
   Foods
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -349,7 +414,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_RuneInfos" data-uid="Nekoyume.Action.HackAndSlash.RuneInfos">
   RuneInfos
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -379,7 +444,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_StageBuffId" data-uid="Nekoyume.Action.HackAndSlash.StageBuffId">
   StageBuffId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -409,7 +474,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_StageId" data-uid="Nekoyume.Action.HackAndSlash.StageId">
   StageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -439,7 +504,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_TotalPlayCount" data-uid="Nekoyume.Action.HackAndSlash.TotalPlayCount">
   TotalPlayCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -469,7 +534,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_UsableApStoneCount" data-uid="Nekoyume.Action.HackAndSlash.UsableApStoneCount">
   UsableApStoneCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -499,7 +564,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_WorldId" data-uid="Nekoyume.Action.HackAndSlash.WorldId">
   WorldId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -534,7 +599,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_PlainValueInternal" data-uid="Nekoyume.Action.HackAndSlash.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -569,7 +634,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.HackAndSlash.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L141"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -603,16 +668,16 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <a id="Nekoyume_Action_HackAndSlash_Execute_" data-uid="Nekoyume.Action.HackAndSlash.Execute*"></a>
 
-  <h3 id="Nekoyume_Action_HackAndSlash_Execute_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int64_Libplanet_Action_IRandom_" data-uid="Nekoyume.Action.HackAndSlash.Execute(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int64,Libplanet.Action.IRandom)">
-  Execute(IWorld, Address, long, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_HackAndSlash_Execute_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_System_Int64_Libplanet_Action_IRandom_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.HackAndSlash.Execute(Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,System.Int64,Libplanet.Action.IRandom,Libplanet.Action.IActionContext)">
+  Execute(IWorld, Address, long, IRandom, IActionContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IWorld Execute(IWorld states, Address signer, long blockIndex, IRandom random)</code></pre>
+    <pre><code class="lang-csharp hljs">public IWorld Execute(IWorld states, Address signer, long blockIndex, IRandom random, IActionContext context = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -624,6 +689,8 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd></dd>
+    <dt><code>context</code> <span class="xref">IActionContext</span></dt>
     <dd></dd>
   </dl>
 
@@ -647,7 +714,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 
   <h3 id="Nekoyume_Action_HackAndSlash_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.HackAndSlash.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -678,7 +745,7 @@ public class HackAndSlash : GameAction, IAction, IHackAndSlashV10</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L40" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/HackAndSlash.cs/#L42" class="edit-link">Edit this page</a>
         </div>
 
 
