@@ -6,6 +6,7 @@ namespace Lib9c.Tests.Action
     using System.Linq;
     using System.Runtime.Serialization.Formatters.Binary;
     using Bencodex.Types;
+    using Lib9c;
     using Libplanet.Action;
     using Libplanet.Action.State;
     using Libplanet.Crypto;
@@ -14,6 +15,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume;
     using Nekoyume.Action;
     using Nekoyume.Battle;
+    using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Model;
     using Nekoyume.Model.EnumType;
@@ -30,6 +32,10 @@ namespace Lib9c.Tests.Action
 
     public class HackAndSlashTest
     {
+        private const int ExtendedWorldId = 10;
+        private const int ExtendedStageIdOffset = 450;
+        private const int ExtendedEntryMaterialId = 900001;
+
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
 
@@ -197,6 +203,408 @@ namespace Lib9c.Tests.Action
             Assert.True(nextCpState.Cp > 0);
             Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
             Assert.Equal(30, nextAvatarState.mailBox.Count);
+        }
+
+        [Fact]
+        public void Execute_ExtendedWorld_CanPlayWithoutEntryCost()
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1; // 451 (base stage 1)
+            const int totalPlayCount = 3;
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            // Prepare WorldInformation: normal cleared up to final stage and trigger hard world unlock.
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId,
+                normalFinalStageId,
+                1,
+                worldSheet,
+                worldUnlockSheet);
+
+            // Prepare equipments.
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            var stageRow = state.GetSheet<StageSheet>()[extendedStageId];
+            var expectedEntryCostItemCount = stageRow.EntryCostItemId > 0
+                ? checked(stageRow.EntryCostItemCount * totalPlayCount)
+                : 0;
+
+            if (stageRow.EntryCostItemId > 0 && expectedEntryCostItemCount > 0)
+            {
+                var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+                var entryCostRow = materialItemSheet[stageRow.EntryCostItemId];
+                var entryCostItem = ItemFactory.CreateTradableMaterial(entryCostRow);
+                avatarState.inventory.AddItem(entryCostItem, expectedEntryCostItemCount);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = extendedStageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+                EntryCostItemId = stageRow.EntryCostItemId,
+                EntryCostItemCount = expectedEntryCostItemCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
+
+            // Lazy migration: world 10 should be synced to legacy `world_ids`.
+            Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
+            var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+
+            // WorldInformation should also contain world 10 as unlocked.
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.worldInformation.TryGetWorld(ExtendedWorldId, out var extendedWorld));
+            Assert.True(extendedWorld.IsUnlocked);
+        }
+
+        [Fact]
+        public void Execute_StageFavReward_MintsFavByTotalPlayCount()
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1; // 451 (base stage 1)
+            const int totalPlayCount = 3;
+            const string favTicker = "CRYSTAL";
+            const int favAmountPerPlay = 1000;
+
+            // Build a modified StageSheet where stage 451 has a deterministic FAV reward.
+            var lines = _sheets[nameof(StageSheet)].Split('\n').ToList();
+            var header = lines[0].TrimEnd('\r').Split(',').ToList();
+            var ticker1Index = header.IndexOf("fungible_asset_reward_ticker_1");
+            var ratio1Index = header.IndexOf("fungible_asset_reward_ratio_1");
+            var min1Index = header.IndexOf("fungible_asset_reward_min_1");
+            var max1Index = header.IndexOf("fungible_asset_reward_max_1");
+            var favDropMinIndex = header.IndexOf("fav_drop_min");
+            var favDropMaxIndex = header.IndexOf("fav_drop_max");
+            for (var i = 1; i < lines.Count; i++)
+            {
+                var trimmed = lines[i].TrimEnd('\r');
+                var comma = trimmed.IndexOf(',');
+                if (comma >= 0 && trimmed.Substring(0, comma) == extendedStageId.ToString())
+                {
+                    var cols = trimmed.Split(',').ToList();
+                    while (cols.Count < header.Count)
+                    {
+                        cols.Add(string.Empty);
+                    }
+
+                    if (ticker1Index >= 0)
+                    {
+                        cols[ticker1Index] = favTicker;
+                    }
+
+                    if (ratio1Index >= 0)
+                    {
+                        cols[ratio1Index] = "100";
+                    }
+
+                    if (min1Index >= 0)
+                    {
+                        cols[min1Index] = favAmountPerPlay.ToString();
+                    }
+
+                    if (max1Index >= 0)
+                    {
+                        cols[max1Index] = favAmountPerPlay.ToString();
+                    }
+
+                    for (var favIndex = 2; favIndex <= 5; favIndex++)
+                    {
+                        var t = header.IndexOf($"fungible_asset_reward_ticker_{favIndex}");
+                        var r = header.IndexOf($"fungible_asset_reward_ratio_{favIndex}");
+                        var mn = header.IndexOf($"fungible_asset_reward_min_{favIndex}");
+                        var mx = header.IndexOf($"fungible_asset_reward_max_{favIndex}");
+                        if (t >= 0)
+                        {
+                            cols[t] = string.Empty;
+                        }
+
+                        if (r >= 0)
+                        {
+                            cols[r] = string.Empty;
+                        }
+
+                        if (mn >= 0)
+                        {
+                            cols[mn] = string.Empty;
+                        }
+
+                        if (mx >= 0)
+                        {
+                            cols[mx] = string.Empty;
+                        }
+                    }
+
+                    if (favDropMinIndex >= 0)
+                    {
+                        cols[favDropMinIndex] = "1";
+                    }
+
+                    if (favDropMaxIndex >= 0)
+                    {
+                        cols[favDropMaxIndex] = "1";
+                    }
+
+                    lines[i] = string.Join(",", cols);
+                    break;
+                }
+            }
+
+            var state = _initialState.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(StageSheet)),
+                string.Join('\n', lines).Serialize());
+
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId,
+                normalFinalStageId,
+                1,
+                worldSheet,
+                worldUnlockSheet);
+
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            var stageRow = state.GetSheet<StageSheet>()[extendedStageId];
+            var expectedEntryCostItemCount = stageRow.EntryCostItemId > 0
+                ? checked(stageRow.EntryCostItemCount * totalPlayCount)
+                : 0;
+
+            if (stageRow.EntryCostItemId > 0 && expectedEntryCostItemCount > 0)
+            {
+                var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+                var entryCostRow = materialItemSheet[stageRow.EntryCostItemId];
+                var entryCostItem = ItemFactory.CreateTradableMaterial(entryCostRow);
+                avatarState.inventory.AddItem(entryCostItem, expectedEntryCostItemCount);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = extendedStageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+                EntryCostItemId = stageRow.EntryCostItemId,
+                EntryCostItemCount = expectedEntryCostItemCount,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
+
+            var favCurrency = Currencies.GetCurrencyByTicker(favTicker);
+            var recipient = Currencies.PickAddress(favCurrency, _agentAddress, _avatarAddress);
+            var expectedBalance = favCurrency * checked(favAmountPerPlay * totalPlayCount);
+            Assert.Equal(expectedBalance, nextState.GetBalance(recipient, favCurrency));
+        }
+
+        [Theory]
+        [InlineData(0, 3)] // entryCostItemId not set (0)
+        [InlineData(900001, 0)] // entryCostItemCount not set (0)
+        [InlineData(900001, 2)] // entryCostItemCount off by one (expect 3, got 2)
+        [InlineData(1, 3)] // wrong entryCostItemId
+        public void Execute_ExtendedWorld_ThrowsInvalidActionField_WhenHardMaterialMismatch(
+            int entryCostItemId, int entryCostItemCount)
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            const int extendedStageId = ExtendedStageIdOffset + 1;
+            const int totalPlayCount = 3;
+
+            var state = _initialState;
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            var worldSheet = state.GetSheet<WorldSheet>();
+            var worldUnlockSheet = state.GetSheet<WorldUnlockSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId, normalFinalStageId, 1, worldSheet, worldUnlockSheet);
+
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = extendedStageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = totalPlayCount,
+                EntryCostItemId = entryCostItemId,
+                EntryCostItemCount = entryCostItemCount,
+            };
+
+            Assert.Throws<InvalidActionFieldException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        PreviousState = state,
+                        Signer = _agentAddress,
+                        RandomSeed = 0,
+                        BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                    }));
+        }
+
+        [Fact]
+        public void Execute_World9_FinalStageClears_SyncsWorld10ToLegacyWorldIds()
+        {
+            const int worldId = 9;
+            const int stageId = 450;
+
+            // Override StageWaveSheet so stage 450 has trivially weak enemies,
+            // making the battle deterministically winnable regardless of RNG.
+            var waveLines = _sheets[nameof(StageWaveSheet)].Split('\n')
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .ToList();
+            var weakWave = "450,{0},204010,1,1,,,,,,,,,,{1}";
+            waveLines.RemoveAll(l => l.TrimEnd('\r').StartsWith("450,"));
+            waveLines.Add(string.Format(weakWave, 1, 0));
+            waveLines.Add(string.Format(weakWave, 2, 0));
+            waveLines.Add(string.Format(weakWave, 3, 1));
+
+            // Override StageSheet so stage 450 has zero enemy stat modifiers
+            // (hp/atk/def/cri/hit/spd additional = 0) to ensure the battle is winnable.
+            var stageLines = _sheets[nameof(StageSheet)].Split('\n').ToList();
+            for (var i = 1; i < stageLines.Count; i++)
+            {
+                var trimmed = stageLines[i].TrimEnd('\r');
+                var cols = trimmed.Split(',');
+                if (cols.Length > 0 && cols[0] == "450")
+                {
+                    // Zero out enemy initial stat modifiers (columns 3-8).
+                    for (var c = 3; c <= 8 && c < cols.Length; c++)
+                    {
+                        cols[c] = "0";
+                    }
+
+                    stageLines[i] = string.Join(",", cols);
+                    break;
+                }
+            }
+
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageWaveSheet)),
+                    string.Join('\n', waveLines).Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageSheet)),
+                    string.Join('\n', stageLines).Serialize());
+
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+
+            // Make world 9 playable up to the final stage.
+            var worldSheet = state.GetSheet<WorldSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, stageId - 1);
+
+            // Prepare equipments.
+            var equipments = Doomfist.GetAllParts(_tableSheets, avatarState.level).ToList();
+            foreach (var equipment in equipments)
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(worldId.Serialize()));
+
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = worldId,
+                StageId = stageId,
+                AvatarAddress = _avatarAddress,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = ActionObsoleteConfig.V100301ExecutedBlockIndex,
+                });
+
+            Assert.True(nextState.TryGetLegacyState(_avatarAddress.Derive("world_ids"), out List rawIds));
+            var unlockedWorldIds = rawIds.ToList(StateExtensions.ToInteger);
+            Assert.Contains(ExtendedWorldId, unlockedWorldIds);
+
+            // WorldInformation should also contain world 10 as unlocked.
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.worldInformation.TryGetWorld(ExtendedWorldId, out var extendedWorld));
+            Assert.True(extendedWorld.IsUnlocked);
         }
 
         [Theory]

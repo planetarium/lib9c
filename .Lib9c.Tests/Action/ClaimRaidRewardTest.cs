@@ -48,7 +48,7 @@ namespace Lib9c.Tests.Action
             var avatarAddress = new PrivateKey().Address;
             var bossRow = _tableSheets.WorldBossListSheet.OrderedList.First();
             var raiderAddress = Addresses.GetRaiderAddress(avatarAddress, bossRow.Id);
-            var highScore = 0;
+            var highScore = 0L;
             var characterRow = _tableSheets.WorldBossCharacterSheet[bossRow.BossId];
             foreach (var waveInfo in characterRow.WaveStats)
             {
@@ -57,7 +57,7 @@ namespace Lib9c.Tests.Action
                     continue;
                 }
 
-                highScore += (int)waveInfo.HP;
+                highScore += (long)waveInfo.HP;
             }
 
             var raiderState = new RaiderState

@@ -73,6 +73,20 @@ namespace Nekoyume.TableData
                 Waves.Add(new WaveData(wave, monsters, isBoss));
             }
 
+            /// <summary>
+            /// Creates a shallow clone of this row with a new stage ID.
+            /// </summary>
+            /// <param name="newStageId">The stage ID to assign to the cloned row.</param>
+            /// <returns>A new <see cref="Row"/> with copied wave data and the specified stage ID.</returns>
+            public Row CloneWithStageId(int newStageId)
+            {
+                return new Row
+                {
+                    StageId = newStageId,
+                    Waves = Waves is null ? new List<WaveData>() : new List<WaveData>(Waves),
+                };
+            }
+
             public override void EndOfSheetInitialize()
             {
                 Waves.Sort((left, right) =>
@@ -95,6 +109,11 @@ namespace Nekoyume.TableData
         }
 
         protected override void AddRow(int key, Row value)
+        {
+            AddRowInternal(key, value);
+        }
+
+        private void AddRowInternal(int key, Row value)
         {
             if (!TryGetValue(key, out var row))
             {

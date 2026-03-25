@@ -90,8 +90,8 @@ namespace Nekoyume.TableData
                 Steps = new List<Step>
                 {
                     new Step(
-                        ParseInt(fields[1]),
-                        ParseInt(fields[2]),
+                        ParseLong(fields[1]),
+                        ParseLong(fields[2]),
                         new List<RewardInfo>
                         {
                             new RewardInfo(fields.Skip(3).ToArray()),

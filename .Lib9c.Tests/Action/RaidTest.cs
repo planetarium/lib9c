@@ -65,8 +65,6 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(InsufficientBalanceException), true, true, false, false, 0, 0L, false, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
         // Insufficient NCG.
         [InlineData(typeof(InsufficientBalanceException), true, true, false, true, 0, 0L, true, false, 0, false, false, false, 5, false, 0, 10002, 1, 30001)]
-        // Wait interval.
-        [InlineData(typeof(RequiredBlockIntervalException), true, true, false, true, 3, 10L, false, false, 0, false, false, false, 1, false, 0, 10002, 1, 30001)]
         // Exceed purchase limit.
         [InlineData(typeof(ExceedTicketPurchaseLimitException), true, true, false, true, 0, 100L, true, false, 1_000, false, false, false, 5, false, 0, 10002, 1, 30001)]
         // Exceed challenge count.

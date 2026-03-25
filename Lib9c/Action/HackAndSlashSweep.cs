@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bencodex.Types;
+using Lib9c;
 using Lib9c.Abstractions;
 using Libplanet.Action;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Nekoyume.Battle;
+using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
 using Nekoyume.Model.EnumType;
@@ -38,7 +40,6 @@ namespace Nekoyume.Action
     public class HackAndSlashSweep : GameAction, IHackAndSlashSweepV3
     {
         public const int UsableApStoneCount = 100;
-
         public List<Guid> costumes;
         public List<Guid> equipments;
         public List<RuneSlotInfo> runeInfos;
@@ -47,6 +48,18 @@ namespace Nekoyume.Action
         public int actionPoint;
         public int worldId;
         public int stageId;
+        /// <summary>
+        /// Declared entry cost material item ID, matching <see cref="Nekoyume.TableData.StageSheet.Row.EntryCostItemId"/>.
+        /// Required when the stage has an entry material cost; must match the sheet value exactly.
+        /// </summary>
+        public int entryCostItemId;
+
+        /// <summary>
+        /// Declared total entry cost material item count for this sweep execution,
+        /// matching <see cref="Nekoyume.TableData.StageSheet.Row.EntryCostItemCount"/> × playCount.
+        /// Required when the stage has an entry material cost; must match the computed value exactly.
+        /// </summary>
+        public int entryCostItemCount;
 
         IEnumerable<Guid> IHackAndSlashSweepV3.Costumes => costumes;
         IEnumerable<Guid> IHackAndSlashSweepV3.Equipments => equipments;
@@ -60,19 +73,33 @@ namespace Nekoyume.Action
         int IHackAndSlashSweepV3.WorldId => worldId;
         int IHackAndSlashSweepV3.StageId => stageId;
 
-        protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
-            new Dictionary<string, IValue>()
+        protected override IImmutableDictionary<string, IValue> PlainValueInternal
+        {
+            get
             {
-                ["costumes"] = new List(costumes.OrderBy(i => i).Select(e => e.Serialize())),
-                ["equipments"] = new List(equipments.OrderBy(i => i).Select(e => e.Serialize())),
-                ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex)
-                    .Select(x => x.Serialize()).Serialize(),
-                ["avatarAddress"] = avatarAddress.Serialize(),
-                ["apStoneCount"] = apStoneCount.Serialize(),
-                ["actionPoint"] = actionPoint.Serialize(),
-                ["worldId"] = worldId.Serialize(),
-                ["stageId"] = stageId.Serialize(),
-            }.ToImmutableDictionary();
+                var dict = new Dictionary<string, IValue>()
+                {
+                    ["costumes"] = new List(costumes.OrderBy(i => i).Select(e => e.Serialize())),
+                    ["equipments"] = new List(equipments.OrderBy(i => i).Select(e => e.Serialize())),
+                    ["runeInfos"] = runeInfos.OrderBy(x => x.SlotIndex)
+                        .Select(x => x.Serialize()).Serialize(),
+                    ["avatarAddress"] = avatarAddress.Serialize(),
+                    ["apStoneCount"] = apStoneCount.Serialize(),
+                    ["actionPoint"] = actionPoint.Serialize(),
+                    ["worldId"] = worldId.Serialize(),
+                    ["stageId"] = stageId.Serialize(),
+                };
+                if (entryCostItemId != 0)
+                {
+                    dict["entryCostItemId"] = (Integer)entryCostItemId;
+                }
+                if (entryCostItemCount != 0)
+                {
+                    dict["entryCostItemCount"] = (Integer)entryCostItemCount;
+                }
+                return dict.ToImmutableDictionary();
+            }
+        }
 
         protected override void LoadPlainValueInternal(
             IImmutableDictionary<string, IValue> plainValue)
@@ -85,6 +112,14 @@ namespace Nekoyume.Action
             actionPoint = plainValue["actionPoint"].ToInteger();
             worldId = plainValue["worldId"].ToInteger();
             stageId = plainValue["stageId"].ToInteger();
+            if (plainValue.ContainsKey("entryCostItemId"))
+            {
+                entryCostItemId = (Integer)plainValue["entryCostItemId"];
+            }
+            if (plainValue.ContainsKey("entryCostItemCount"))
+            {
+                entryCostItemCount = (Integer)plainValue["entryCostItemCount"];
+            }
         }
 
         public override IWorld Execute(IActionContext context)
@@ -109,8 +144,6 @@ namespace Nekoyume.Action
                 );
             }
 
-            states.ValidateWorldId(avatarAddress, worldId);
-
             if (!states.TryGetAvatarState(
                     context.Signer,
                     avatarAddress,
@@ -119,6 +152,30 @@ namespace Nekoyume.Action
                 throw new FailedLoadStateException(
                     $"{addressesHex}Aborted as the avatar state of the signer was failed to load.");
             }
+
+            // World 10 auto-open + legacy `world_ids` lazy migration:
+            // If the player already cleared stage 450, allow entering world 10 by
+            // syncing `world_ids` without requiring an explicit UnlockWorld action.
+            if (worldId == 10 && avatarState.worldInformation.IsStageCleared(450))
+            {
+                var worldIdsAddress = avatarAddress.Derive("world_ids");
+                if (states.TryGetLegacyState(worldIdsAddress, out List rawWorldIds))
+                {
+                    var unlockedWorldIds = rawWorldIds.ToList(StateExtensions.ToInteger);
+                    if (!unlockedWorldIds.Contains(10))
+                    {
+                        unlockedWorldIds.Add(10);
+                        unlockedWorldIds = unlockedWorldIds.Distinct().OrderBy(i => i).ToList();
+                        states = states.SetLegacyState(
+                            worldIdsAddress,
+                            new List(unlockedWorldIds.Select(i => i.Serialize())));
+                    }
+                }
+            }
+
+            // NOTE: World 10 auto-open must patch `states` (world_ids) before ValidateWorldId reads it.
+            // That patch requires avatarState.worldInformation, so avatar state is loaded first.
+            states.ValidateWorldId(avatarAddress, worldId);
 
             var collectionExist =
                 states.TryGetCollectionState(avatarAddress, out var collectionState) &&
@@ -151,6 +208,7 @@ namespace Nekoyume.Action
                 sheetTypes: sheetTypes);
 
             var worldSheet = sheets.GetSheet<WorldSheet>();
+
             if (!worldSheet.TryGetValue(worldId, out var worldRow, false))
             {
                 throw new SheetRowNotFoundException(addressesHex, nameof(WorldSheet), worldId);
@@ -172,7 +230,8 @@ namespace Nekoyume.Action
             var worldInformation = avatarState.worldInformation;
             if (!worldInformation.TryGetWorld(worldId, out var world))
             {
-                // NOTE: Add new World from WorldSheet
+                // NOTE: `WorldInformation` for legacy avatars might miss newly added worlds.
+                // Add and unlock worlds based on previous stage clears.
                 worldInformation.AddAndUnlockNewWorld(worldRow, context.BlockIndex, worldSheet);
                 if (!worldInformation.TryGetWorld(worldId, out world))
                 {
@@ -361,6 +420,43 @@ namespace Nekoyume.Action
             }
 
             var stageWaveSheet = sheets.GetSheet<StageWaveSheet>();
+            if (stageRow.EntryCostItemId > 0)
+            {
+                var expectedEntryCostItemCount = checked(stageRow.EntryCostItemCount * playCount);
+
+                if (entryCostItemId != stageRow.EntryCostItemId || entryCostItemCount != expectedEntryCostItemCount)
+                {
+                    throw new InvalidActionFieldException(
+                        nameof(HackAndSlashSweep),
+                        addressesHex,
+                        $"{nameof(entryCostItemId)}/{nameof(entryCostItemCount)}",
+                        $"Declared entry cost mismatch. Declared: ({entryCostItemId}, {entryCostItemCount}), " +
+                        $"Expected: ({stageRow.EntryCostItemId}, {expectedEntryCostItemCount})");
+                }
+
+                if (!materialItemSheet.TryGetValue(stageRow.EntryCostItemId, out var entryCostRow))
+                {
+                    throw new SheetRowNotFoundException(addressesHex, nameof(MaterialItemSheet), stageRow.EntryCostItemId);
+                }
+
+                if (!avatarState.inventory.RemoveFungibleItem(
+                        entryCostRow.ItemId,
+                        context.BlockIndex,
+                        count: expectedEntryCostItemCount))
+                {
+                    throw new NotEnoughMaterialException(
+                        $"{addressesHex}Aborted as the player has no enough material ({entryCostRow.Id})");
+                }
+            }
+            else if (entryCostItemId != 0 || entryCostItemCount != 0)
+            {
+                throw new InvalidActionFieldException(
+                    nameof(HackAndSlashSweep),
+                    addressesHex,
+                    $"{nameof(entryCostItemId)}/{nameof(entryCostItemCount)}",
+                    "Entry cost must not be set for stages without entry material cost.");
+            }
+
             avatarState.UpdateMonsterMap(stageWaveSheet, stageId);
 
             var random = context.GetRandom();
@@ -372,15 +468,27 @@ namespace Nekoyume.Action
             avatarState.UpdateInventory(rewardItems);
 
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
-            var (level, exp) = avatarState.GetLevelAndExp(levelSheet, stageId, playCount);
-            avatarState.UpdateExp(level, exp);
+            for (var i = 0; i < playCount; i++)
+            {
+                var (newLevel, newExp) = avatarState.GetLevelAndExp(levelSheet, stageId, 1);
+                avatarState.UpdateExp(newLevel, newExp);
+
+                foreach (var (ticker, amount) in StageSimulator.GetFavWaveRewards(random, stageRow))
+                {
+                    var currency = Currencies.GetCurrencyByTicker(ticker);
+                    var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
+                    states = states.MintAsset(context, recipient, currency * amount);
+                }
+            }
+
+            states = states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug(
                 "{AddressesHex}HackAndSlashSweep Total Executed Time: {Elapsed}",
                 addressesHex, ended - started
             );
-            return states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
+            return states;
         }
 
         public static List<ItemBase> GetRewardItems(IRandom random,

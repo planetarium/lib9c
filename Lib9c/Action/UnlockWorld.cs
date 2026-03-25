@@ -19,12 +19,24 @@ using static Lib9c.SerializeKeys;
 namespace Nekoyume.Action
 {
     /// <summary>
-    /// Hard forked at https://github.com/planetarium/lib9c/pull/1309
+    /// Unlocks one or more worlds for an avatar and records the result to the legacy <c>world_ids</c> state.
+    /// The required CRYSTAL is calculated from <see cref="WorldUnlockSheet"/> and transferred to
+    /// <see cref="Addresses.UnlockWorld"/>. If the calculated cost is zero, no asset transfer occurs.
     /// </summary>
+    /// <remarks>
+    /// Hard-forked at https://github.com/planetarium/lib9c/pull/1309.
+    /// </remarks>
     [ActionType("unlock_world2")]
     public class UnlockWorld: GameAction, IUnlockWorldV1
     {
+        /// <summary>
+        /// Target world IDs to unlock.
+        /// </summary>
         public List<int> WorldIds;
+
+        /// <summary>
+        /// The avatar address to apply the unlock to.
+        /// </summary>
         public Address AvatarAddress;
 
         IEnumerable<int> IUnlockWorldV1.WorldIds => WorldIds;
@@ -112,9 +124,14 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}UnlockWorld Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
-                .SetLegacyState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())))
-                .TransferAsset(context, context.Signer, Addresses.UnlockWorld, cost);
+            var nextState = states
+                .SetLegacyState(unlockedWorldIdsAddress, new List(unlockedIds.Select(i => i.Serialize())));
+            if (cost.Sign > 0)
+            {
+                nextState = nextState.TransferAsset(context, context.Signer, Addresses.UnlockWorld, cost);
+            }
+
+            return nextState;
         }
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal
