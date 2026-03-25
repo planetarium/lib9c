@@ -10,17 +10,49 @@ using Nekoyume.TableData;
 
 namespace Nekoyume.Model.State
 {
+    /// <summary>
+    /// Provides methods for calculating staking rewards from reward sheets.
+    /// </summary>
     public static class StakeRewardCalculator
     {
+        /// <summary>
+        /// Calculates fixed item rewards for a given stake level.
+        /// Fixed rewards have a predetermined item count (unlike rate-based rewards in
+        /// <see cref="CalculateRewards"/>), and the <c>tradable</c> flag on each
+        /// <see cref="StakeRegularFixedRewardSheet.RewardInfo"/> controls whether
+        /// material items are created as tradable or non-tradable.
+        /// </summary>
+        /// <param name="stakeLevel">The current stake level used to look up the reward row.</param>
+        /// <param name="random">Random source used for non-material item creation.</param>
+        /// <param name="stakeRegularFixedRewardSheet">Sheet containing fixed reward definitions.</param>
+        /// <param name="itemSheet">Sheet used to look up item metadata by ID.</param>
+        /// <param name="rewardSteps">
+        /// The number of reward steps accumulated since the last claim.
+        /// Each reward's count is multiplied by this value.
+        /// </param>
+        /// <returns>
+        /// A dictionary mapping each rewarded <see cref="ItemBase"/> to its total count.
+        /// </returns>
         public static Dictionary<ItemBase, int> CalculateFixedRewards(int stakeLevel, IRandom random, StakeRegularFixedRewardSheet stakeRegularFixedRewardSheet, ItemSheet itemSheet, int rewardSteps)
         {
             var result = new Dictionary<ItemBase, int>();
             foreach (var reward in stakeRegularFixedRewardSheet[stakeLevel].Rewards)
             {
                 var itemRow = itemSheet[reward.ItemId];
-                var item = itemRow is MaterialItemSheet.Row materialRow
-                    ? ItemFactory.CreateTradableMaterial(materialRow)
-                    : ItemFactory.CreateItem(itemRow, random);
+                // Use reward.Tradable to determine whether to create a tradable or
+                // non-tradable material, consistent with StakeRegularRewardSheet behavior.
+                ItemBase item;
+                if (itemRow is MaterialItemSheet.Row materialRow)
+                {
+                    item = reward.Tradable
+                        ? ItemFactory.CreateTradableMaterial(materialRow)
+                        : ItemFactory.CreateMaterial(materialRow);
+                }
+                else
+                {
+                    item = ItemFactory.CreateItem(itemRow, random);
+                }
+
                 var count = reward.Count * rewardSteps;
                 result.TryAdd(item, 0);
                 result[item] += count;
@@ -29,6 +61,36 @@ namespace Nekoyume.Model.State
             return result;
         }
 
+        /// <summary>
+        /// Calculates rate-based item and currency rewards for a given staking level.
+        /// Unlike <see cref="CalculateFixedRewards"/>, reward quantities are derived from
+        /// the ratio of the staked NCG amount to each reward's
+        /// <see cref="StakeRegularRewardSheet.RewardInfo.DecimalRate"/>.
+        /// Rewards whose computed quantity is zero or negative are skipped.
+        /// </summary>
+        /// <param name="ncg">The NCG currency definition.</param>
+        /// <param name="stakedNcg">The total amount of staked NCG.</param>
+        /// <param name="stakingLevel">The current staking level used to look up the reward row.</param>
+        /// <param name="rewardSteps">
+        /// The number of reward steps accumulated since the last claim.
+        /// Each reward quantity is multiplied by this value.
+        /// </param>
+        /// <param name="stakeRegularRewardSheet">Sheet containing rate-based reward definitions.</param>
+        /// <param name="itemSheet">Sheet used to look up item metadata by ID.</param>
+        /// <param name="random">Random source used for non-material item creation.</param>
+        /// <returns>
+        /// A tuple of:
+        /// <list type="bullet">
+        ///   <item><description>
+        ///     <c>itemResult</c>: a dictionary mapping each rewarded <see cref="ItemBase"/>
+        ///     to its total count.
+        ///   </description></item>
+        ///   <item><description>
+        ///     <c>favResult</c>: a list of <see cref="FungibleAssetValue"/> for rune and
+        ///     currency rewards.
+        ///   </description></item>
+        /// </list>
+        /// </returns>
         public static (Dictionary<ItemBase, int> itemResult, List<FungibleAssetValue> favResult) CalculateRewards(Currency ncg, FungibleAssetValue stakedNcg, int stakingLevel, int rewardSteps, StakeRegularRewardSheet stakeRegularRewardSheet, ItemSheet itemSheet, IRandom random)
         {
             var stakedNcgDecimal = TableExtensions.ParseDecimal(stakedNcg.GetQuantityString());
@@ -95,16 +157,16 @@ namespace Nekoyume.Model.State
                             rewardCurrency =
                                 Currencies.GetMinterlessCurrency(reward.CurrencyTicker);
                         }
-                        // NOTE: throw exception if reward.CurrencyTicker is null or empty.
+                        // NOTE: throw exception if CurrencyTicker is null or empty.
                         catch (ArgumentNullException)
                         {
                             throw;
                         }
-                        // NOTE: handle the case that reward.CurrencyTicker isn't covered by
+                        // NOTE: handle the case that CurrencyTicker isn't covered by
                         //       Currencies.GetMinterlessCurrency().
                         catch (ArgumentException)
                         {
-                            // NOTE: throw exception if reward.CurrencyDecimalPlaces is null.
+                            // NOTE: throw exception if CurrencyDecimalPlaces is null.
                             if (reward.CurrencyDecimalPlaces is null)
                             {
                                 throw new ArgumentNullException(

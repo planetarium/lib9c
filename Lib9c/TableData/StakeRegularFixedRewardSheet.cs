@@ -10,6 +10,13 @@ namespace Nekoyume.TableData
     /// This sheet is used for setting the regular rewards for staking.
     /// The difference between this sheet and <see cref="StakeRegularRewardSheet"/> is that
     /// the <see cref="RewardInfo"/> of this sheet has a fixed count of reward.
+    /// <para>CSV column order: level, required_gold, item_id, count[, tradable]</para>
+    /// <para>
+    /// The optional <c>tradable</c> column controls whether material items are created
+    /// as tradable (<see cref="Nekoyume.Model.Item.TradableMaterial"/>) or non-tradable
+    /// (<see cref="Nekoyume.Model.Item.Material"/>). Omitting the column defaults to
+    /// <c>true</c>, preserving backward compatibility with existing CSV data.
+    /// </para>
     /// </summary>
     [Serializable]
     public class StakeRegularFixedRewardSheet :
@@ -19,9 +26,50 @@ namespace Nekoyume.TableData
         [Serializable]
         public class RewardInfo
         {
+            public readonly int ItemId;
+            public readonly int Count;
+
+            /// <summary>
+            /// Whether the rewarded item is tradable.
+            /// If <c>true</c>, materials are created as
+            /// <see cref="Nekoyume.Model.Item.TradableMaterial"/>;
+            /// otherwise they are created as non-tradable
+            /// <see cref="Nekoyume.Model.Item.Material"/>.
+            /// Defaults to <c>true</c> when the column is omitted in the CSV.
+            /// </summary>
+            public readonly bool Tradable;
+
+            /// <summary>
+            /// Initializes a <see cref="RewardInfo"/> from CSV field tokens.
+            /// Expected order: item_id, count[, tradable].
+            /// </summary>
+            public RewardInfo(params string[] fields)
+            {
+                ItemId = ParseInt(fields[0]);
+                Count = ParseInt(fields[1]);
+                Tradable = fields.Length >= 3
+                    ? ParseBool(fields[2], true)
+                    : true;
+            }
+
+            /// <param name="itemId">The item ID to reward.</param>
+            /// <param name="count">The fixed count of items to reward.</param>
+            /// <param name="tradable">
+            /// Whether the rewarded material item should be tradable.
+            /// Defaults to <c>true</c>.
+            /// </param>
+            public RewardInfo(int itemId, int count, bool tradable = true)
+            {
+                ItemId = itemId;
+                Count = count;
+                Tradable = tradable;
+            }
+
             protected bool Equals(RewardInfo other)
             {
-                return ItemId == other.ItemId && Count == other.Count;
+                return ItemId == other.ItemId &&
+                       Count == other.Count &&
+                       Tradable == other.Tradable;
             }
 
             public override bool Equals(object obj)
@@ -36,23 +84,8 @@ namespace Nekoyume.TableData
             {
                 unchecked
                 {
-                    return (ItemId * 397) ^ Count;
+                    return ((ItemId * 397) ^ Count) ^ Tradable.GetHashCode();
                 }
-            }
-
-            public readonly int ItemId;
-            public readonly int Count;
-
-            public RewardInfo(params string[] fields)
-            {
-                ItemId = ParseInt(fields[0]);
-                Count = ParseInt(fields[1]);
-            }
-
-            public RewardInfo(int itemId, int count)
-            {
-                ItemId = itemId;
-                Count = count;
             }
         }
 

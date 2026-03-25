@@ -28,11 +28,33 @@ namespace Nekoyume.TableData
         [Serializable]
         public class FavRewardData
         {
+            /// <summary>
+            /// Gets the currency ticker of the fungible asset reward (e.g., <c>CRYSTAL</c>).
+            /// </summary>
             public string Ticker { get; }
+
+            /// <summary>
+            /// Gets the weight used for random selection.
+            /// </summary>
             public decimal Ratio { get; }
+
+            /// <summary>
+            /// Gets the minimum amount granted when selected.
+            /// </summary>
             public int Min { get; }
+
+            /// <summary>
+            /// Gets the maximum amount granted when selected.
+            /// </summary>
             public int Max { get; }
 
+            /// <summary>
+            /// Initializes a new instance of <see cref="FavRewardData"/>.
+            /// </summary>
+            /// <param name="ticker">The fungible asset ticker.</param>
+            /// <param name="ratio">The selection weight.</param>
+            /// <param name="min">Minimum granted amount (inclusive).</param>
+            /// <param name="max">Maximum granted amount (inclusive).</param>
             public FavRewardData(string ticker, decimal ratio, int min, int max)
             {
                 Ticker = ticker;
@@ -71,10 +93,21 @@ namespace Nekoyume.TableData
             public int DropItemMin { get; private set; }
             public int DropItemMax { get; private set; }
 
+            /// <summary>
+            /// Gets the pool of fungible asset reward candidates for this stage.
+            /// Rewards are selected by weight (<see cref="FavRewardData.Ratio"/>) and granted
+            /// as (ticker, amount) pairs.
+            /// </summary>
             public List<FavRewardData> FavRewards { get; private set; }
 
+            /// <summary>
+            /// Gets the minimum number of draws from <see cref="FavRewards"/> (inclusive).
+            /// </summary>
             public int FavDropMin { get; private set; }
 
+            /// <summary>
+            /// Gets the maximum number of draws from <see cref="FavRewards"/> (inclusive).
+            /// </summary>
             public int FavDropMax { get; private set; }
 
             public override void Set(IReadOnlyList<string> fields)
@@ -166,6 +199,11 @@ namespace Nekoyume.TableData
                     : 0;
             }
 
+            /// <summary>
+            /// Creates a shallow clone of this row with a new stage ID.
+            /// </summary>
+            /// <param name="newId">The stage ID to assign to the cloned row.</param>
+            /// <returns>A new <see cref="Row"/> with copied values and the specified ID.</returns>
             public Row CloneWithId(int newId)
             {
                 return new Row
