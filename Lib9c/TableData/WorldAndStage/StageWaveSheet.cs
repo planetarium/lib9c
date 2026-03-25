@@ -73,6 +73,11 @@ namespace Nekoyume.TableData
                 Waves.Add(new WaveData(wave, monsters, isBoss));
             }
 
+            /// <summary>
+            /// Creates a shallow clone of this row with a new stage ID.
+            /// </summary>
+            /// <param name="newStageId">The stage ID to assign to the cloned row.</param>
+            /// <returns>A new <see cref="Row"/> with copied wave data and the specified stage ID.</returns>
             public Row CloneWithStageId(int newStageId)
             {
                 return new Row
