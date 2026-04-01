@@ -1,46 +1,24 @@
-c,_name,ticker
-10001,Fenrir HP Rune,RUNESTONE_FENRIR1
-10002,Fenrir ATK Rune,RUNESTONE_FENRIR2
-10003,Fenrir Bleeding Rune,RUNESTONE_FENRIR3
-10004,Fenrir DHP Rune,RUNESTONE_FENRIR4
-10005,Fenrir SHT Rune,RUNESTONE_FENRIR5
-10006,Fenrir SPD Down Rune,RUNESTONE_FENRIR6
-10011,Saehrimnir HIT Rune,RUNESTONE_SAEHRIMNIR1
-10012,Saehrimnir DEF Rune,RUNESTONE_SAEHRIMNIR2
-10013,Saehrimnir Skill Rune,RUNESTONE_SAEHRIMNIR3
-10014,Saehrimnir  AS Rune,RUNESTONE_SAEHRIMNIR4
-10015,Saehrimnir HPA RUne,RUNESTONE_SAEHRIMNIR5
-10016,Saehrimnir Skill Rune 2,RUNESTONE_SAEHRIMNIR6
-30001,Adventurer's Rune,RUNE_ADVENTURER
-20001,Golden leaf Rune,RUNE_GOLDENLEAF
-20002,Golden Thor,RUNESTONE_GOLDENTHOR
-10021,Stun Rune (Adventure),RUNESTONE_STUN_ADVENTURE
-10022,Stun Rune (Arena),RUNESTONE_STUN_ARENA
-10023,Vampiric Rune (Adventure),RUNESTONE_VAMPIRIC_ADVENTURE
-10024,Vampiric Rune (WorldBoss),RUNESTONE_VAMPIRIC_WORLDBOSS
-10025,Stamina Rune (Adventure),RUNESTONE_STAMINA_ADVENTURE
-10026,Stamina Rune (Arena),RUNESTONE_STAMINA_ARENA
-10027,Quick Rune (Arena),RUNESTONE_QUICK_ARENA
-10028,Quick Rune (WorldBoss),RUNESTONE_QUICK_WORLDBOSS
-10029,Freya Liberation Rune,RUNESTONE_FREYA_LIBERATION
-10030,Freya Blessing Rune,RUNESTONE_FREYA_BLESSING
-10031,Odin Weakness Rune,RUNESTONE_ODIN_WEAKNESS
-10032,Odin Wisdom Rune,RUNESTONE_ODIN_WISDOM
-10033,HIT Rune,RUNESTONE_HIT
-10034,SPD Rune,RUNESTONE_SPD
-10035,CRI Rune,RUNESTONE_CRI
-10036,HP Rune,RUNESTONE_HP
-10037,ATK Rune,RUNESTONE_ATK
-10038,DEF Rune,RUNESTONE_DEF
-10039,Thor Strike Rune (Adventure),RUNESTONE_THOR_STUN1
-10040,Thor Strike Rune (Arena),RUNESTONE_THOR_STUN2
-10041,Loki Vampiric Rune (Adventure),RUNESTONE_LOKI_VAMPIRIC1
-10042,Loki Vampiric Rune (WorldBoss),RUNESTONE_LOKI_VAMPIRIC2
-10043,Odin Order Rune,RUNESTONE_ODIN_ORDER
-10044,Odin Creator Rune,RUNESTONE_ODIN_CREATOR
-10045,Odin Word Rune,RUNESTONE_ODIN_WORD
-10046,Odin Mimir's Rune,RUNESTONE_ODIN_MIMIR
-10047,Yggdrasil ATK Rune,RUNESTONE_YGGATK
-10048,Yggdrasil HP Rune,RUNESTONE_YGGHP
-10049,Yggdrasil SPD Rune,RUNESTONE_YGGSPD
-10050,Yggdrasil CRI Rune,RUNESTONE_YGGCRI
+,Update.Ver,v200420
+,Folder Name,CSV Name
+,상시 업무 & 신규 아이템,
+,etc,CollectionSheet
+,Item,CostumeItemSheet
+,Item,CostumeStatSheet
+,Item,ItemRequirementSheet
+,연말 이벤트 및 무탑 시즌 2 대응,
+,Cost,EnhancementCostSheetV3
+,Crystal,CrystalEquipmentGrindingSheet
+,Item,MaterialItemSheet
+,Item,EquipmentItemSheet
+,Item,EquipmentItemRecipeSheet
+,Item,EquipmentItemSubRecipeSheetV2
+,Item,EquipmentItemOptionSheet
+,Rune,RuneListSheet
+,Rune,RuneOptionSheet
+,Rune,RuneCostSheet
+,Rune,RuneSheet
+,etc,InfiniteTowerScheduleSheet
+,etc,InfiniteTowerFloorSheet
+,etc,InfiniteTowerFloorWaveSheet
+,etc,InfiniteTowerConditionSheet
+,etc,StakeRegularRewardSheet_V10
