@@ -1,46 +1,24 @@
-id,_name,grade,rune_type,required_level,use_place,bonus_coef
-30001,Adventurer's Rune,1,1,1,7,1
-10001,Fenrir HP Rune,2,1,1,4,1
-10002,Fenrir ATK Rune,3,1,1,5,2
-10003,Fenrir Bleeding Rune,5,2,1,7,5
-10004,Fenrir DHP Rune,3,1,1,1,1
-10005,Fenrir SHT Rune,4,1,1,2,2
-10006,Fenrir SPD Down Rune,5,2,1,7,5
-10011,Saehrimnir HIT Rune,2,1,1,7,1
-10012,Saehrimnir DEF Rune,3,1,1,3,2
-10013,Saehrimnir Skill Rune,5,2,1,7,5
-10014,Saehrimnir AS Rune,3,1,1,4,1
-10015,Saehrimnir  HPA RUne,4,1,1,2,2
-10016,Saehrimnir Thorn Rune,5,2,1,7,5
-20001,Golden leaf Rune,5,2,1,7,20
-20002,Golden Thor,6,1,1,7,20
-10021,Stun Rune (Adventure),5,2,1,1,20
-10022,Stun Rune (Arena),5,2,1,2,20
-10023,Vampiric Rune (Adventure),5,2,1,1,20
-10024,Vampiric Rune (WorldBoss),5,2,1,4,20
-10025,Stamina Rune (Adventure),4,1,1,1,10
-10026,Stamina Rune (Arena),4,1,1,2,10
-10027,Quick Rune (Arena),4,1,1,2,10
-10028,Quick Rune (WorldBoss),4,1,1,4,10
-10029,Freya Liberation Rune,6,2,1,7,30
-10030,Freya Blessing Rune,6,1,1,7,30
-10031,Odin Weakness Rune,6,2,1,7,30
-10032,Odin Wisdom Rune,6,1,1,7,30
-10033,HIT Rune,5,1,1,7,10
-10034,SPD Rune,5,1,1,7,10
-10035,CRI Rune,5,1,1,7,10
-10036,HP Rune,5,1,1,7,10
-10037,ATK Rune,5,1,1,7,10
-10038,DEF Rune,5,1,1,7,10
-10039,Thor Strike Rune (Adventure),6,2,1,1,30
-10040,Thor Strike Rune (WorldBoss),6,2,1,4,30
-10041,Loki Vampiric Rune (Adventure),6,2,1,1,30
-10042,Loki Vampiric Rune (WorldBoss),6,2,1,4,30
-10043,Odin Order Rune,7,2,1,3,50
-10044,Odin Creator Rune,7,1,1,7,50
-10045,Odin Word Rune,7,2,1,6,50
-10046,Odin Mimir's Rune,7,1,1,7,50
-10047,Yggdrasil ATK Rune,7,1,1,7,50
-10048,Yggdrasil HP Rune,7,1,1,7,50
-10049,Yggdrasil SPD Rune,7,1,1,7,50
-10050,Yggdrasil CRI Rune,7,1,1,7,50
+,Update.Ver,v200420
+,Folder Name,CSV Name
+,상시 업무 & 신규 아이템,
+,etc,CollectionSheet
+,Item,CostumeItemSheet
+,Item,CostumeStatSheet
+,Item,ItemRequirementSheet
+,연말 이벤트 및 무탑 시즌 2 대응,
+,Cost,EnhancementCostSheetV3
+,Crystal,CrystalEquipmentGrindingSheet
+,Item,MaterialItemSheet
+,Item,EquipmentItemSheet
+,Item,EquipmentItemRecipeSheet
+,Item,EquipmentItemSubRecipeSheetV2
+,Item,EquipmentItemOptionSheet
+,Rune,RuneListSheet
+,Rune,RuneOptionSheet
+,Rune,RuneCostSheet
+,Rune,RuneSheet
+,etc,InfiniteTowerScheduleSheet
+,etc,InfiniteTowerFloorSheet
+,etc,InfiniteTowerFloorWaveSheet
+,etc,InfiniteTowerConditionSheet
+,etc,StakeRegularRewardSheet_V10
