@@ -1,19 +1,24 @@
-grade_id,item_sub_type,required_count,succeed_rate
-_value of successful_rate is between 0 and 10000,,,
-1,Aura,15,10000
-2,Aura,15,10000
-3,Aura,15,10000
-3,Grimoire,10,10000
-3,FullCostume,20,10000
-4,Aura,15,10000
-4,Grimoire,15,10000
-4,FullCostume,20,10000
-5,Aura,16,10000
-5,Grimoire,16,10000
-5,FullCostume,20,10000
-6,Aura,12,10000
-6,Grimoire,12,10000
-6,FullCostume,15,10000
-7,Aura,1,0
-7,Grimoire,1,0
-7,FullCostume,1,0
+,Update.Ver,v200420
+,Folder Name,CSV Name
+,상시 업무 & 신규 아이템,
+,etc,CollectionSheet
+,Item,CostumeItemSheet
+,Item,CostumeStatSheet
+,Item,ItemRequirementSheet
+,연말 이벤트 및 무탑 시즌 2 대응,
+,Cost,EnhancementCostSheetV3
+,Crystal,CrystalEquipmentGrindingSheet
+,Item,MaterialItemSheet
+,Item,EquipmentItemSheet
+,Item,EquipmentItemRecipeSheet
+,Item,EquipmentItemSubRecipeSheetV2
+,Item,EquipmentItemOptionSheet
+,Rune,RuneListSheet
+,Rune,RuneOptionSheet
+,Rune,RuneCostSheet
+,Rune,RuneSheet
+,etc,InfiniteTowerScheduleSheet
+,etc,InfiniteTowerFloorSheet
+,etc,InfiniteTowerFloorWaveSheet
+,etc,InfiniteTowerConditionSheet
+,etc,StakeRegularRewardSheet_V10
