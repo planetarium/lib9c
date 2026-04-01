@@ -41,48 +41,48 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10153001,Surt's Sword,Weapon,6,Land,0,ATK,15473,2,10153001,10000000
 10154001,Surt's Sword,Weapon,6,Wind,0,ATK,15473,2,10154001,10000000
 10155000,Valkyrie’s Sword,Weapon,5,Normal,15,ATK,2902,2,10155000,2
-10200000,Ragged Clothes,Armor,0,Normal,0,HP,30,2,Character/Player/10200000,12
-10210000,Casual Clothes,Armor,1,Normal,1,HP,180,2,Character/Player/10210000,5
-10211000,Casual Clothes,Armor,1,Fire,2,HP,222,2,Character/Player/10211000,5
-10212000,Casual Clothes,Armor,1,Water,3,HP,288,2,Character/Player/10212000,5
-10213000,Casual Clothes,Armor,1,Land,4,HP,915,2,Character/Player/10213000,6
-10214000,Casual Clothes,Armor,1,Wind,5,HP,2182,2,Character/Player/10214000,8
-10220000,Leather Clothes,Armor,2,Normal,6,HP,531,2,Character/Player/10220000,100
-10221000,Leather Clothes,Armor,2,Fire,7,HP,549,2,Character/Player/10221000,144
-10222000,Leather Clothes,Armor,2,Water,8,HP,621,2,Character/Player/10222000,180
-10223000,Leather Clothes,Armor,2,Land,9,HP,2431,2,Character/Player/10223000,180
-10224000,Leather Clothes,Armor,2,Wind,10,HP,5109,2,Character/Player/10224000,180
-10230000,Black Crow Armor,Armor,3,Normal,11,HP,1337,2,Character/Player/10230000,500
-10231000,Black Crow Armor,Armor,3,Fire,12,HP,1418,2,Character/Player/10231000,700
-10232000,Black Crow Armor,Armor,3,Water,13,HP,1580,2,Character/Player/10232000,1560
-10233000,Black Crow Armor,Armor,3,Land,14,HP,8370,2,Character/Player/10233000,2400
-10234000,Black Crow Armor,Armor,3,Wind,15,HP,10571,2,Character/Player/10234000,2400
-10230001,Hermes' Clothes,Armor,3,Normal,11,HP,2811,2,Character/Player/10230001,2040
-10231001,Hermes' Clothes,Armor,3,Fire,12,HP,3009,2,Character/Player/10231001,3600
-10232001,Hermes' Clothes,Armor,3,Water,13,HP,3141,2,Character/Player/10232001,3600
-10233001,Hermes' Clothes,Armor,3,Land,14,HP,11482,2,Character/Player/10233001,3600
-10234001,Hermes' Clothes,Armor,3,Wind,15,HP,12302,2,Character/Player/10234001,3600
-10240000,War Armor,Armor,4,Normal,11,HP,34446,2,Character/Player/10240000,120000
-10241000,War Armor,Armor,4,Fire,12,HP,24604,2,Character/Player/10241000,75000
-10242000,War Armor,Armor,4,Water,13,HP,27064,2,Character/Player/10242000,75000
-10243000,War Armor,Armor,4,Land,14,HP,29525,2,Character/Player/10243000,96000
-10244000,War Armor,Armor,4,Wind,15,HP,31985,2,Character/Player/10244000,96000
-10250001,Ancient Armor,Armor,5,Normal,11,HP,67513,2,Character/Player/10250001,2400000
-10251001,Ancient Armor,Armor,5,Fire,12,HP,48224,2,Character/Player/10251001,1800000
-10252001,Ancient Armor,Armor,5,Water,13,HP,48224,2,Character/Player/10252001,1800000
-10253001,Ancient Armor,Armor,5,Land,14,HP,67513,2,Character/Player/10253001,2400000
-10254001,Ancient Armor,Armor,5,Wind,15,HP,67513,2,Character/Player/10254001,2400000
-10250000,Surt's Armor,Armor,6,Normal,0,HP,172307,2,Character/Player/10250000,10000000
-10251000,Surt's Armor,Armor,6,Fire,0,HP,123076,2,Character/Player/10251000,10000000
-10252000,Surt's Armor,Armor,6,Water,0,HP,123076,2,Character/Player/10252000,10000000
-10253000,Surt's Armor,Armor,6,Land,0,HP,172307,2,Character/Player/10253000,10000000
-10254000,Surt's Armor,Armor,6,Wind,0,HP,172307,2,Character/Player/10254000,10000000
-10240001,Asgardian Armor,Armor,5,Normal,11,HP,10358,2,Character/Player/10240001,2
-10241001,Asgardian Armor,Armor,5,Fire,12,HP,10571,2,Character/Player/10241001,2
-10242001,Asgardian Armor,Armor,5,Water,13,HP,10783,2,Character/Player/10242001,2
-10243001,Asgardian Armor,Armor,5,Land,14,HP,16494,2,Character/Player/10243001,2
-10244001,Asgardian Armor,Armor,5,Wind,15,HP,20647,2,Character/Player/10244001,2
-10255000,Heavenly Cat,Armor,5,Normal,11,HP,42856,2,Character/Player/10235000,2
+10200000,Ragged Clothes,Armor,0,Normal,0,HP,30,2,,12
+10210000,Casual Clothes,Armor,1,Normal,1,HP,180,2,,5
+10211000,Casual Clothes,Armor,1,Fire,2,HP,222,2,,5
+10212000,Casual Clothes,Armor,1,Water,3,HP,288,2,,5
+10213000,Casual Clothes,Armor,1,Land,4,HP,915,2,,6
+10214000,Casual Clothes,Armor,1,Wind,5,HP,2182,2,,8
+10220000,Leather Clothes,Armor,2,Normal,6,HP,531,2,,100
+10221000,Leather Clothes,Armor,2,Fire,7,HP,549,2,,144
+10222000,Leather Clothes,Armor,2,Water,8,HP,621,2,,180
+10223000,Leather Clothes,Armor,2,Land,9,HP,2431,2,,180
+10224000,Leather Clothes,Armor,2,Wind,10,HP,5109,2,,180
+10230000,Black Crow Armor,Armor,3,Normal,11,HP,1337,2,,500
+10231000,Black Crow Armor,Armor,3,Fire,12,HP,1418,2,,700
+10232000,Black Crow Armor,Armor,3,Water,13,HP,1580,2,,1560
+10233000,Black Crow Armor,Armor,3,Land,14,HP,8370,2,,2400
+10234000,Black Crow Armor,Armor,3,Wind,15,HP,10571,2,,2400
+10230001,Hermes' Clothes,Armor,3,Normal,11,HP,2811,2,,2040
+10231001,Hermes' Clothes,Armor,3,Fire,12,HP,3009,2,,3600
+10232001,Hermes' Clothes,Armor,3,Water,13,HP,3141,2,,3600
+10233001,Hermes' Clothes,Armor,3,Land,14,HP,11482,2,,3600
+10234001,Hermes' Clothes,Armor,3,Wind,15,HP,12302,2,,3600
+10240000,War Armor,Armor,4,Normal,11,HP,34446,2,,120000
+10241000,War Armor,Armor,4,Fire,12,HP,24604,2,,75000
+10242000,War Armor,Armor,4,Water,13,HP,27064,2,,75000
+10243000,War Armor,Armor,4,Land,14,HP,29525,2,,96000
+10244000,War Armor,Armor,4,Wind,15,HP,31985,2,,96000
+10250001,Ancient Armor,Armor,5,Normal,11,HP,67513,2,,2400000
+10251001,Ancient Armor,Armor,5,Fire,12,HP,48224,2,,1800000
+10252001,Ancient Armor,Armor,5,Water,13,HP,48224,2,,1800000
+10253001,Ancient Armor,Armor,5,Land,14,HP,67513,2,,2400000
+10254001,Ancient Armor,Armor,5,Wind,15,HP,67513,2,,2400000
+10250000,Surt's Armor,Armor,6,Normal,0,HP,172307,2,,10000000
+10251000,Surt's Armor,Armor,6,Fire,0,HP,123076,2,,10000000
+10252000,Surt's Armor,Armor,6,Water,0,HP,123076,2,,10000000
+10253000,Surt's Armor,Armor,6,Land,0,HP,172307,2,,10000000
+10254000,Surt's Armor,Armor,6,Wind,0,HP,172307,2,,10000000
+10240001,Asgardian Armor,Armor,5,Normal,11,HP,10358,2,,2
+10241001,Asgardian Armor,Armor,5,Fire,12,HP,10571,2,,2
+10242001,Asgardian Armor,Armor,5,Water,13,HP,10783,2,,2
+10243001,Asgardian Armor,Armor,5,Land,14,HP,16494,2,,2
+10244001,Asgardian Armor,Armor,5,Wind,15,HP,20647,2,,2
+10255000,Heavenly Cat,Armor,5,Normal,11,HP,42856,2,,2
 10310000,Basic Belt,Belt,1,Normal,1,SPD,46,2,10310000,5
 10311000,Basic Belt,Belt,1,Fire,2,SPD,62,2,10311000,6
 10312000,Basic Belt,Belt,1,Water,3,SPD,69,2,10312000,8
@@ -282,11 +282,11 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10172000,Valkyrie Sword,Weapon,7,Water,0,ATK,347499,2,10172000,80000000
 10173000,Valkyrie Sword,Weapon,7,Land,0,ATK,596901,2,10173000,100000000
 10174000,Valkyrie Sword,Weapon,7,Wind,0,ATK,446901,2,10174000,100000000
-10270000,Valkyrie Armor,Armor,7,Normal,0,HP,2978571,2,Character/Player/10270000,80000000
-10271000,Valkyrie Armor,Armor,7,Fire,0,HP,5212499,2,Character/Player/10270001,80000000
-10272000,Valkyrie Armor,Armor,7,Water,0,HP,5212499,2,Character/Player/10270002,80000000
-10273000,Valkyrie Armor,Armor,7,Land,0,HP,9535378,2,Character/Player/10270003,100000000
-10274000,Valkyrie Armor,Armor,7,Wind,0,HP,7535378,2,Character/Player/10270004,100000000
+10270000,Valkyrie Armor,Armor,7,Normal,0,HP,2978571,2,,80000000
+10271000,Valkyrie Armor,Armor,7,Fire,0,HP,5212499,2,,80000000
+10272000,Valkyrie Armor,Armor,7,Water,0,HP,5212499,2,,80000000
+10273000,Valkyrie Armor,Armor,7,Land,0,HP,9535378,2,,100000000
+10274000,Valkyrie Armor,Armor,7,Wind,0,HP,7535378,2,,100000000
 10370000,Valkyrie Belt,Belt,7,Normal,0,SPD,906521,2,10370000,80000000
 10371000,Valkyrie Belt,Belt,7,Fire,0,SPD,1586411,2,10371000,80000000
 10372000,Valkyrie Belt,Belt,7,Water,0,SPD,1586411,2,10372000,80000000
@@ -317,3 +317,41 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10770009,기능의 그리모어 (S),Grimoire,7,Normal,0,SPD,10,0,10760000,650000
 10770010,2주년 그리모어,Grimoire,7,Normal,0,ATK,10,0,10760009,1
 10670004,2주년 아우라,Aura,7,Normal,0,ATK,10,0,10620001,1
+10680000,Ymir Aura,Aura,8,Normal,0,ATK,10,0,10620001,1300000
+10680001,Beast Aura,Aura,8,Normal,0,ATK,10,0,10620001,1300000
+10680002,Aegis Aura,Aura,8,Normal,0,HP,10,0,10620001,1300000
+10680003,Barrage Aura,Aura,8,Normal,0,ATK,10,0,10620001,1300000
+10780001,ATK Gri (A),Grimoire,8,Normal,0,ATK,10,0,10860000,1300000
+10780002,ATK Gri (H),Grimoire,8,Normal,0,ATK,10,0,10860000,1300000
+10780003,ATK Gri (S),Grimoire,8,Normal,0,ATK,10,0,10860000,1300000
+10780004,DEF Gri(D),Grimoire,8,Normal,0,DEF,10,0,10860000,1300000
+10780005,DEF Gri(H),Grimoire,8,Normal,0,DEF,10,0,10860000,1300000
+10780006,DEF Gri(S),Grimoire,8,Normal,0,DEF,10,0,10860000,1300000
+10780007,SPD Gri(A),Grimoire,8,Normal,0,SPD,10,0,10860000,1300000
+10780008,SPD Gri(D),Grimoire,8,Normal,0,SPD,10,0,10860000,1300000
+10780009,SPD Gri(S),Grimoire,8,Normal,0,SPD,10,0,10860000,1300000
+10180000,Transcendent Sword,Weapon,8,Normal,11,ATK,2387604,2,10170000,800000000
+10181000,Transcendent Sword,Weapon,8,Fire,12,ATK,2387604,2,10171000,800000000
+10182000,Transcendent Sword,Weapon,8,Water,13,ATK,2387604,2,10172000,800000000
+10183000,Transcendent Sword,Weapon,8,Land,14,ATK,2387604,2,10173000,800000000
+10184000,Transcendent Sword,Weapon,8,Wind,15,ATK,2387604,2,10174000,800000000
+10280000,Transcendent Armor,Armor,8,Normal,11,HP,38141512,2,10270000,800000000
+10281000,Transcendent Armor,Armor,8,Fire,12,HP,38141512,2,10270001,800000000
+10282000,Transcendent Armor,Armor,8,Water,13,HP,38141512,2,10270002,800000000
+10283000,Transcendent Armor,Armor,8,Land,14,HP,38141512,2,10270003,800000000
+10284000,Transcendent Armor,Armor,8,Wind,15,HP,38141512,2,10270004,800000000
+10380000,Transcendent Belt,Belt,8,Normal,11,SPD,13101368,2,10370000,800000000
+10381000,Transcendent Belt,Belt,8,Fire,12,SPD,13101368,2,10371000,800000000
+10382000,Transcendent Belt,Belt,8,Water,13,SPD,13101368,2,10372000,800000000
+10383000,Transcendent Belt,Belt,8,Land,14,SPD,13101368,2,10373000,800000000
+10384000,Transcendent Belt,Belt,8,Wind,15,SPD,13101368,2,10374000,800000000
+10480000,Transcendent Necklace,Necklace,8,Normal,11,HIT,16248896,0,10470000,800000000
+10481000,Transcendent Necklace,Necklace,8,Fire,12,HIT,16248896,0,10471000,800000000
+10482000,Transcendent Necklace,Necklace,8,Water,13,HIT,16248896,0,10472000,800000000
+10483000,Transcendent Necklace,Necklace,8,Land,14,HIT,16248896,0,10473000,800000000
+10484000,Transcendent Necklace,Necklace,8,Wind,15,HIT,16248896,0,10474000,800000000
+10580000,Transcendent Ring,Ring,8,Normal,11,DEF,2337152,0,10570000,800000000
+10581000,Transcendent Ring,Ring,8,Fire,12,DEF,2337152,0,10571000,800000000
+10582000,Transcendent Ring,Ring,8,Water,13,DEF,2337152,0,10572000,800000000
+10583000,Transcendent Ring,Ring,8,Land,14,DEF,2337152,0,10573000,800000000
+10584000,Transcendent Ring,Ring,8,Wind,15,DEF,2337152,0,10574000,800000000
