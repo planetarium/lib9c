@@ -1,4 +1,5 @@
-grade_id _value of successful_rate is between 0 and 10000,item_sub_type ,required_count ,succeed_rate 
+grade_id,item_sub_type,required_count,succeed_rate
+_value of successful_rate is between 0 and 10000,,,
 1,Aura,15,10000
 2,Aura,15,10000
 3,Aura,15,10000
