@@ -1,5 +1,4 @@
-item_id,weight
-_default value for weight is 10000.,
+item_id _default value for weight is 10000.,weight 
 10610000,10000
 10620000,10000
 10630000,10000
@@ -90,3 +89,5 @@ _default value for weight is 10000.,
 10670004,0
 10770010,0
 40100051,0
+40100055,0
+40100056,0
