@@ -79,3 +79,5 @@ lv,required_gold,item_id,rate,type,currency_ticker,currency_decimal_places,decim
 8,10000000,600206,,Item,,,50,FALSE
 7,5000000,600303,,Item,,,50,FALSE
 8,10000000,600303,,Item,,,50,FALSE
+7,5000000,600307,,Item,,,50,FALSE
+8,10000000,600307,,Item,,,50,FALSE
