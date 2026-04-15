@@ -13,6 +13,10 @@ oce = "oce"  # OperationCanceledException
 ist = "ist"  # ItemSubType
 Equipments = "Equipments"  # FIXME: Equipment is noncount word but our team doesn't have the policy about it.
 Hel = "Hel"  # Stage prefix of world 8
+saphire = "saphire"  # legacy item name in MaterialItemSheet.csv
+shemas = "shemas"  # legacy typo in Lib9c.sln.DotSettings (JetBrains namespace)
+Valut = "Valut"  # legacy event dungeon name in CSV data
+gae = "gae"  # Korean name "gae-ddong-i" in JS test fixture
 
 [files]
 extend-exclude = [

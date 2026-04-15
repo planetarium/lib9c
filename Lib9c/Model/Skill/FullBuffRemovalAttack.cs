@@ -13,6 +13,7 @@ namespace Nekoyume.Model.Skill
     [Serializable]
     public class FullBuffRemovalAttack : AttackSkill
     {
+        /// <inheritdoc cref="AttackSkill(SkillSheet.Row, long, int, int, StatType)"/>
         public FullBuffRemovalAttack(
             SkillSheet.Row skillRow,
             long power,
@@ -22,6 +23,7 @@ namespace Nekoyume.Model.Skill
         {
         }
 
+        /// <inheritdoc/>
         public override BattleStatus.Skill Use(CharacterBase caster,
             int simulatorWaveTurn,
             IEnumerable<Buff.Buff> buffs, bool copyCharacter)

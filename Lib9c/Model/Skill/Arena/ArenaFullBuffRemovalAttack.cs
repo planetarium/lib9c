@@ -12,6 +12,7 @@ namespace Nekoyume.Model.Skill.Arena
     [Serializable]
     public class ArenaFullBuffRemovalAttack : ArenaAttackSkill
     {
+        /// <inheritdoc cref="ArenaAttackSkill(SkillSheet.Row, long, int, int, StatType)"/>
         public ArenaFullBuffRemovalAttack(
             SkillSheet.Row skillRow,
             long power,
@@ -21,6 +22,7 @@ namespace Nekoyume.Model.Skill.Arena
         {
         }
 
+        /// <inheritdoc/>
         public override BattleStatus.Arena.ArenaSkill Use(
             ArenaCharacter caster,
             ArenaCharacter target,

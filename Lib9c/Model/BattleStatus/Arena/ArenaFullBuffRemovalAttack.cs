@@ -11,6 +11,7 @@ namespace Nekoyume.Model.BattleStatus.Arena
     [Serializable]
     public class ArenaFullBuffRemovalAttack : ArenaSkill
     {
+        /// <inheritdoc cref="ArenaSkill(int, ArenaCharacter, IEnumerable{ArenaSkillInfo}, IEnumerable{ArenaSkillInfo})"/>
         public ArenaFullBuffRemovalAttack(
             int skillId,
             ArenaCharacter character,
@@ -20,6 +21,7 @@ namespace Nekoyume.Model.BattleStatus.Arena
         {
         }
 
+        /// <inheritdoc/>
         public override IEnumerator CoExecute(IArena arena)
         {
             yield return arena.CoFullBuffRemovalAttack(Character, SkillInfos, BuffInfos);
