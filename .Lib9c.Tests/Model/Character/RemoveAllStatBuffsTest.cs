@@ -65,6 +65,32 @@ namespace Lib9c.Tests.Model.Character
         }
 
         [Fact]
+        public void RemoveAllStatBuffs_Restores_Stats_To_Original()
+        {
+            var character = CreateArenaCharacter();
+            var originalAtk = character.ATK;
+            var originalDef = character.DEF;
+
+            var atkBuff = CreateStatBuff(
+                100001, 100001, 50, StatType.ATK);
+            var defBuff = CreateStatBuff(
+                100002, 100002, 30, StatType.DEF);
+
+            character.AddBuff(atkBuff);
+            character.AddBuff(defBuff);
+
+            // Stats should be modified by buffs
+            Assert.NotEqual(originalAtk, character.ATK);
+            Assert.NotEqual(originalDef, character.DEF);
+
+            character.RemoveAllStatBuffs();
+
+            // Stats should be restored to original values
+            Assert.Equal(originalAtk, character.ATK);
+            Assert.Equal(originalDef, character.DEF);
+        }
+
+        [Fact]
         public void RemoveAllStatBuffs_NoBuffs_DoesNotThrow()
         {
             var character = CreateArenaCharacter();
