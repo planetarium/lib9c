@@ -675,7 +675,8 @@ namespace Nekoyume.Model
                     or SkillCategory.BlowAttack
                     or SkillCategory.DoubleAttack
                     or SkillCategory.AreaAttack
-                    or SkillCategory.BuffRemovalAttack)
+                    or SkillCategory.BuffRemovalAttack
+                    or SkillCategory.FullBuffRemovalAttack)
                 .ToList();
             if (Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
                 { } vampirics)
