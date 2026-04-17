@@ -36,6 +36,8 @@ namespace Nekoyume.Model.Skill
                             return new AreaAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                         case SkillCategory.BuffRemovalAttack:
                             return new BuffRemovalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
+                        case SkillCategory.FullBuffRemovalAttack:
+                            return new FullBuffRemovalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                         case SkillCategory.ShatterStrike:
                             return new ShatterStrike(skillRow, power, chance, statPowerRatio,
                                 referencedStatType);
@@ -74,6 +76,8 @@ namespace Nekoyume.Model.Skill
                             return new AreaAttack(skillRow, power, chance, default, StatType.NONE);
                         case SkillCategory.BuffRemovalAttack:
                             return new BuffRemovalAttack(skillRow, power, chance, default, StatType.NONE);
+                        case SkillCategory.FullBuffRemovalAttack:
+                            return new FullBuffRemovalAttack(skillRow, power, chance, default, StatType.NONE);
                         default:
                             return new NormalAttack(skillRow, power, chance, default, StatType.NONE);
                     }
@@ -111,6 +115,8 @@ namespace Nekoyume.Model.Skill
                             return new ArenaAreaAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                         case SkillCategory.BuffRemovalAttack:
                             return new ArenaBuffRemovalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
+                        case SkillCategory.FullBuffRemovalAttack:
+                            return new ArenaFullBuffRemovalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                         default:
                             return new ArenaNormalAttack(skillRow, power, chance, statPowerRatio, referencedStatType);
                     }

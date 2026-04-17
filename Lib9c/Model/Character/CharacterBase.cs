@@ -480,6 +480,22 @@ namespace Nekoyume.Model
             }
         }
 
+        /// <summary>
+        /// Removes all positive stat buffs from the character.
+        /// Only buffs with a positive value are removed; debuffs (negative value) are preserved.
+        /// </summary>
+        public void RemoveAllStatBuffs()
+        {
+            var buffsToRemove = StatBuffs
+                .Where(buff => buff.RowData.Value > 0)
+                .ToList();
+
+            foreach (var buff in buffsToRemove)
+            {
+                RemoveStatBuff(buff);
+            }
+        }
+
         #endregion
 
         public void ResetCurrentHP()
