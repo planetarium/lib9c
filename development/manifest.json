@@ -5222,6 +5222,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.BattleStatus.Arena.ArenaFullBuffRemovalAttack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.BattleStatus.Arena.ArenaFullBuffRemovalAttack.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.BattleStatus.Arena.ArenaHeal.yml",
       "output": {
         ".html": {
@@ -5446,6 +5456,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.BattleStatus.EventBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.BattleStatus.FullBuffRemovalAttack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.BattleStatus.FullBuffRemovalAttack.html"
         }
       },
       "version": ""
@@ -7502,6 +7522,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Skill.Arena.ArenaFullBuffRemovalAttack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Skill.Arena.ArenaFullBuffRemovalAttack.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Model.Skill.Arena.ArenaHealSkill.yml",
       "output": {
         ".html": {
@@ -7596,6 +7626,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Model.Skill.DoubleAttack.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Model.Skill.FullBuffRemovalAttack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Model.Skill.FullBuffRemovalAttack.html"
         }
       },
       "version": ""
