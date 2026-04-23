@@ -726,7 +726,8 @@ namespace Nekoyume.Model
             }
             else
             {
-                _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, row.Cooldown);
+                var cooldown = RuneSkillCooldownMap[selectedSkill.SkillRow.Id];
+                _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, cooldown);
             }
 
             Simulator.Log.Add(usedSkill);
