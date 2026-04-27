@@ -333,6 +333,7 @@ namespace Lib9c.Tests.Model.Skill
         [InlineData(SkillCategory.BlowAttack)]
         [InlineData(SkillCategory.AreaAttack)]
         [InlineData(SkillCategory.BuffRemovalAttack)]
+        [InlineData(SkillCategory.FullBuffRemovalAttack)]
         [InlineData(SkillCategory.ShatterStrike)]
         public void SkillSheet_Row_Enum_SkillCategory_Consistency(SkillCategory skillCategory)
         {

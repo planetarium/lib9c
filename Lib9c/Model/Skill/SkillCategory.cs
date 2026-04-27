@@ -25,5 +25,7 @@ namespace Nekoyume.Model.Skill
         TickDamage = 17,
         Focus = 18,  // Always hit enemy.
         Dispel = 19, // Remove/defence debuffs
+        /// <summary>Attack enemy and remove ALL positive stat buffs.</summary>
+        FullBuffRemovalAttack = 20,
     }
 }
