@@ -607,7 +607,8 @@ namespace Nekoyume.Model
                     or SkillCategory.BlowAttack
                     or SkillCategory.DoubleAttack
                     or SkillCategory.AreaAttack
-                    or SkillCategory.BuffRemovalAttack)
+                    or SkillCategory.BuffRemovalAttack
+                    or SkillCategory.FullBuffRemovalAttack)
                 .ToList();
             if (Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
                 { } vampirics)
@@ -725,7 +726,8 @@ namespace Nekoyume.Model
             }
             else
             {
-                _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, row.Cooldown);
+                var cooldown = RuneSkillCooldownMap[selectedSkill.SkillRow.Id];
+                _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, cooldown);
             }
 
             Simulator.Log.Add(usedSkill);
