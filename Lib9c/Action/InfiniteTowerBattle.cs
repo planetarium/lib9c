@@ -344,6 +344,16 @@ FloorId - 1,
                     infiniteTowerInfo.ClearedFloor);
             }
 
+            // Prevent re-entering already cleared floors in the same season
+            if (infiniteTowerInfo.IsCleared(FloorId))
+            {
+                throw new FloorAlreadyClearedException(
+                    "InfiniteTowerBattle",
+                    addressesHex,
+                    FloorId,
+                    infiniteTowerInfo.ClearedFloor);
+            }
+
             // Check tickets
             if (!infiniteTowerInfo.TryUseTickets(PlayCount))
             {
