@@ -1,0 +1,790 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class InfiniteTowerBattleCondition | Lib9c </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class InfiniteTowerBattleCondition | Lib9c ">
+      
+      <meta name="description" content="Infinite tower battle condition for managing floor-specific restrictions and requirements. Represents various types of battle conditions that can be applied to infinite tower floors.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/planetarium/lib9c/new/release/1.36.1/apiSpec/new?filename=Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition.md&amp;value=---%0Auid%3A%20Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Lib9c">
+            Lib9c
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition">
+
+
+
+  <h1 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition" class="text-break">
+Class InfiniteTowerBattleCondition  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Nekoyume.html">Nekoyume</a>.<a class="xref" href="Nekoyume.Model.html">Model</a>.<a class="xref" href="Nekoyume.Model.InfiniteTower.html">InfiniteTower</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Infinite tower battle condition for managing floor-specific restrictions and requirements.
+Represents various types of battle conditions that can be applied to infinite tower floors.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class InfiniteTowerBattleCondition</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">InfiniteTowerBattleCondition</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_System_Collections_Generic_List_Nekoyume_Model_Elemental_ElementalType__System_Boolean_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor(System.Collections.Generic.List{Nekoyume.Model.Elemental.ElementalType},System.Boolean)">
+  InfiniteTowerBattleCondition(List&lt;ElementalType&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerBattleCondition class for Required Elemental Type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerBattleCondition(List&lt;ElementalType&gt; requiredElementalTypes, bool isElementalType)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>requiredElementalTypes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Elemental.ElementalType.html">ElementalType</a>&gt;</dt>
+    <dd><p>List of required elemental types</p>
+</dd>
+    <dt><code>isElementalType</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Must be true to indicate this is for elemental type</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_System_Collections_Generic_List_Nekoyume_Model_EnumType_RuneType__" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor(System.Collections.Generic.List{Nekoyume.Model.EnumType.RuneType})">
+  InfiniteTowerBattleCondition(List&lt;RuneType&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerBattleCondition class for Forbidden Rune Types.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerBattleCondition(List&lt;RuneType&gt; forbiddenRuneTypes)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>forbiddenRuneTypes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.EnumType.RuneType.html">RuneType</a>&gt;</dt>
+    <dd><p>List of forbidden rune types</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_System_Collections_Generic_List_Nekoyume_Model_Item_ItemSubType__System_Boolean_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor(System.Collections.Generic.List{Nekoyume.Model.Item.ItemSubType},System.Boolean)">
+  InfiniteTowerBattleCondition(List&lt;ItemSubType&gt;, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L212"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerBattleCondition class for Forbidden Item Sub Types.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerBattleCondition(List&lt;ItemSubType&gt; forbiddenItemSubTypes, bool isItemSubTypes)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>forbiddenItemSubTypes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemSubType.html">ItemSubType</a>&gt;</dt>
+    <dd><p>List of forbidden item sub types</p>
+</dd>
+    <dt><code>isItemSubTypes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Must be true to indicate this is for item sub types</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_System_Nullable_System_Int32__System_Nullable_System_Int32__" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+  InfiniteTowerBattleCondition(int?, int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerBattleCondition class for Item Level restrictions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerBattleCondition(int? minItemLevel, int? maxItemLevel)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>minItemLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd><p>Minimum item level</p>
+</dd>
+    <dt><code>maxItemLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd><p>Maximum item level</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_System_Nullable_System_Int32__System_Nullable_System_Int32__System_Boolean_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Boolean)">
+  InfiniteTowerBattleCondition(int?, int?, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerBattleCondition class for Item Grade restrictions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerBattleCondition(int? minItemGrade, int? maxItemGrade, bool isItemGrade)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>minItemGrade</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd><p>Minimum item grade</p>
+</dd>
+    <dt><code>maxItemGrade</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd><p>Maximum item grade</p>
+</dd>
+    <dt><code>isItemGrade</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Must be true to indicate this is for item grade</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition__ctor_System_Nullable_System_Int64__System_Nullable_System_Int64__" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.#ctor(System.Nullable{System.Int64},System.Nullable{System.Int64})">
+  InfiniteTowerBattleCondition(long?, long?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the InfiniteTowerBattleCondition class for CP restrictions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public InfiniteTowerBattleCondition(long? requiredCp, long? maxCp)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>requiredCp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd><p>Minimum required combat power</p>
+</dd>
+    <dt><code>maxCp</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd><p>Maximum allowed combat power</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_ForbiddenItemSubTypes_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.ForbiddenItemSubTypes*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_ForbiddenItemSubTypes" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.ForbiddenItemSubTypes">
+  ForbiddenItemSubTypes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of forbidden item sub types (for ForbiddenItemSubTypes type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;ItemSubType&gt; ForbiddenItemSubTypes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemSubType.html">ItemSubType</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_ForbiddenRuneTypes_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.ForbiddenRuneTypes*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_ForbiddenRuneTypes" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.ForbiddenRuneTypes">
+  ForbiddenRuneTypes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of forbidden rune types (for ForbiddenRuneTypes type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;RuneType&gt; ForbiddenRuneTypes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.EnumType.RuneType.html">RuneType</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MaxCp_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MaxCp*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MaxCp" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MaxCp">
+  MaxCp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the maximum allowed combat power (for CP type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long? MaxCp { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MaxItemGrade_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MaxItemGrade*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MaxItemGrade" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MaxItemGrade">
+  MaxItemGrade
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the maximum item grade (for ItemGrade type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? MaxItemGrade { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MaxItemLevel_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MaxItemLevel*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MaxItemLevel" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MaxItemLevel">
+  MaxItemLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the maximum item level (for ItemLevel type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? MaxItemLevel { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MinItemGrade_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MinItemGrade*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MinItemGrade" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MinItemGrade">
+  MinItemGrade
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the minimum item grade (for ItemGrade type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? MinItemGrade { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MinItemLevel_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MinItemLevel*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_MinItemLevel" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.MinItemLevel">
+  MinItemLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the minimum item level (for ItemLevel type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? MinItemLevel { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_RequiredCp_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.RequiredCp*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_RequiredCp" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.RequiredCp">
+  RequiredCp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the minimum required combat power (for CP type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long? RequiredCp { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_RequiredElementalTypes_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.RequiredElementalTypes*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_RequiredElementalTypes" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.RequiredElementalTypes">
+  RequiredElementalTypes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of required elemental types (for RequiredElementalType type).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;ElementalType&gt; RequiredElementalTypes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Elemental.ElementalType.html">ElementalType</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_Type_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.Type*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_Type" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the type of this battle condition.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BattleConditionType Type { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.InfiniteTower.BattleConditionType.html">BattleConditionType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_HasRestrictions_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.HasRestrictions*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_HasRestrictions" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.HasRestrictions">
+  HasRestrictions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if this battle condition has any restrictions set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasRestrictions()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the condition has restrictions, false otherwise</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_ToString_" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.ToString*"></a>
+
+  <h3 id="Nekoyume_Model_InfiniteTower_InfiniteTowerBattleCondition_ToString" data-uid="Nekoyume.Model.InfiniteTower.InfiniteTowerBattleCondition.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a description of this battle condition.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>String description of the condition</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/planetarium/lib9c/blob/release/1.36.1/Lib9c/Model/InfiniteTower/InfiniteTowerBattleCondition.cs/#L49" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
