@@ -350,7 +350,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_SecondClear_ShouldNotGiveRewards()
+        public void Execute_SecondClear_ShouldThrowFloorAlreadyCleared()
         {
             // Arrange
             var agentAddress = new PrivateKey().Address;
@@ -359,7 +359,6 @@ namespace Lib9c.Tests.Action
             var infiniteTowerId = 1;
             var floorId = 1;
 
-            // Create initial state
             var initialState = new World(MockUtil.MockModernWorldState);
             var agentState = new AgentState(agentAddress);
             var avatarState = AvatarState.Create(
@@ -369,31 +368,35 @@ namespace Lib9c.Tests.Action
                 _tableSheets.GetAvatarSheets(),
                 default
             );
-
-            // Set avatar level to ensure success
             avatarState.level = 100;
 
-            // Set up sheets with default CSV data
             foreach (var (key, value) in _sheets)
             {
-                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+                initialState = (World)initialState
+                    .SetLegacyState(
+                        Addresses.TableSheet.Derive(key),
+                        value.Serialize());
             }
 
-            // Set up game config
-            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+            var gameConfigState =
+                new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState
+                .SetLegacyState(
+                    gameConfigState.address,
+                    gameConfigState.Serialize());
 
             // Pre-clear the floor to simulate second attempt
-            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
-            infiniteTowerInfo.AddTickets(5); // Give some tickets
+            var infiniteTowerInfo =
+                CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            infiniteTowerInfo.AddTickets(5);
             infiniteTowerInfo.ClearFloor(floorId);
 
             initialState = (World)initialState
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState)
-                .SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+                .SetInfiniteTowerInfo(
+                    avatarAddress, infiniteTowerInfo);
 
-            // Create action for second clear
             var action = new InfiniteTowerBattle
             {
                 AvatarAddress = avatarAddress,
@@ -406,7 +409,6 @@ namespace Lib9c.Tests.Action
                 BuyTicketIfNeeded = false,
             };
 
-            // Act - Second clear
             var context = new ActionContext
             {
                 Signer = agentAddress,
@@ -415,21 +417,9 @@ namespace Lib9c.Tests.Action
                 RandomSeed = 0,
             };
 
-            var nextState = action.Execute(context);
-
-            // Assert - Should not have additional rewards for second clear
-            var finalAvatarState = nextState.GetAvatarState(avatarAddress);
-            var finalInfiniteTowerInfo = nextState.GetInfiniteTowerInfo(avatarAddress, infiniteTowerId);
-
-            // Check if floor is still cleared
-            Assert.True(finalInfiniteTowerInfo.IsCleared(floorId));
-
-            // Check that no additional rewards were given
-            var initialInventoryCount = avatarState.inventory.Items.Count;
-            var finalInventoryCount = finalAvatarState.inventory.Items.Count;
-
-            // For second clear, should not have received additional rewards
-            Assert.Equal(initialInventoryCount, finalInventoryCount);
+            // Act & Assert: re-entering cleared floor now throws
+            Assert.Throws<FloorAlreadyClearedException>(
+                () => action.Execute(context));
         }
 
         [Fact]
@@ -665,7 +655,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_With_AlreadyClearedFloor_ShouldNotUpdateBoardState()
+        public void Execute_With_AlreadyClearedFloor_ShouldThrowException()
         {
             // Arrange
             var agentAddress = new PrivateKey().Address;
@@ -686,39 +676,39 @@ namespace Lib9c.Tests.Action
             );
             avatarState.level = 10;
 
-            // Set up sheets with default CSV data
             foreach (var (key, value) in _sheets)
             {
-                initialState = (World)initialState.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+                initialState = (World)initialState
+                    .SetLegacyState(
+                        Addresses.TableSheet.Derive(key),
+                        value.Serialize());
             }
 
-            // Set up game config
-            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            initialState = (World)initialState.SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+            var gameConfigState =
+                new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            initialState = (World)initialState
+                .SetLegacyState(
+                    gameConfigState.address,
+                    gameConfigState.Serialize());
 
-            // Set up states
             initialState = (World)initialState
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
 
-            // Create infinite tower info with tickets and floor already cleared
-            var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
+            // Create info with floor already cleared and tickets
+            var infiniteTowerInfo =
+                CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
             infiniteTowerInfo.AddTickets(5);
-            infiniteTowerInfo.ClearFloor(floorId); // Floor already cleared
-            // Set LastResetBlockIndex to prevent season reset (StartBlockIndex is 0, so use blockIndex + 1)
-            infiniteTowerInfo.GetType().GetProperty("LastResetBlockIndex")?.SetValue(infiniteTowerInfo, blockIndex + 1);
-            initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
+            infiniteTowerInfo.ClearFloor(floorId);
+            infiniteTowerInfo.GetType()
+                .GetProperty("LastResetBlockIndex")
+                ?.SetValue(infiniteTowerInfo, blockIndex + 1);
+            initialState = (World)initialState
+                .SetInfiniteTowerInfo(
+                    avatarAddress, infiniteTowerInfo);
 
-            // Create initial board state with floor already cleared
-            var initialBoardState = new InfiniteTowerBoardState(infiniteTowerId);
-            initialBoardState.RecordFloorClear(floorId, blockIndex - 1); // Record previous clear
-            initialState = (World)initialState.SetInfiniteTowerBoardState(initialBoardState);
+            var ticketsBefore = infiniteTowerInfo.RemainingTickets;
 
-            // Verify initial board state has one clear
-            var boardStateBefore = initialState.GetInfiniteTowerBoardState(infiniteTowerId);
-            Assert.Equal(1, boardStateBefore.GetFloorClearCount(floorId));
-
-            // Create action
             var action = new InfiniteTowerBattle
             {
                 AvatarAddress = avatarAddress,
@@ -731,7 +721,6 @@ namespace Lib9c.Tests.Action
                 BuyTicketIfNeeded = false,
             };
 
-            // Act
             var context = new ActionContext
             {
                 BlockIndex = blockIndex,
@@ -740,16 +729,14 @@ namespace Lib9c.Tests.Action
                 Signer = agentAddress,
             };
 
-            var nextState = action.Execute(context);
+            // Act & Assert: should throw and not consume tickets
+            Assert.Throws<FloorAlreadyClearedException>(
+                () => action.Execute(context));
 
-            // Assert
-            Assert.NotNull(nextState);
-
-            // Verify board state was NOT updated for already cleared floor
-            var boardStateAfter = nextState.GetInfiniteTowerBoardState(infiniteTowerId);
-            Assert.NotNull(boardStateAfter);
-            Assert.Equal(1, boardStateAfter.GetFloorClearCount(floorId)); // Should remain 1, not increase
-            Assert.Equal(blockIndex - 1, boardStateAfter.LastUpdatedBlockIndex); // Should remain previous block index
+            // Tickets should remain unchanged (exception before consume)
+            var infoAfter = initialState.GetInfiniteTowerInfo(
+                avatarAddress, infiniteTowerId);
+            Assert.Equal(ticketsBefore, infoAfter.RemainingTickets);
         }
 
         [Fact]
@@ -1287,12 +1274,14 @@ namespace Lib9c.Tests.Action
                 .SetAgentState(agentAddress, agentState)
                 .SetAvatarState(avatarAddress, avatarState);
 
-            // Create infinite tower info with LastResetBlockIndex = 0 and some progress
-            // This simulates a new season where previous progress should be reset
+            // Create infinite tower info with previous progress
+            // Set LastResetBlockIndex to -1 so isNewSeason = (-1 < 0) = true
             var infiniteTowerInfo = CreateInfiniteTowerInfo(avatarAddress, infiniteTowerId);
-            infiniteTowerInfo.ClearFloor(5); // Set some previous progress
-            // LastResetBlockIndex is already 0 from constructor, which will trigger season reset
-            Assert.Equal(0, infiniteTowerInfo.LastResetBlockIndex);
+            infiniteTowerInfo.ClearFloor(5);
+            infiniteTowerInfo.GetType()
+                .GetProperty("LastResetBlockIndex")
+                ?.SetValue(infiniteTowerInfo, -1L);
+            Assert.Equal(-1, infiniteTowerInfo.LastResetBlockIndex);
             Assert.Equal(5, infiniteTowerInfo.ClearedFloor);
             Assert.True(infiniteTowerInfo.RemainingTickets > 0);
             initialState = (World)initialState.SetInfiniteTowerInfo(avatarAddress, infiniteTowerInfo);
