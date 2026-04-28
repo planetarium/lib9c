@@ -12,6 +12,7 @@ namespace Lib9c.Tests.Action
     using MessagePack;
     using MessagePack.Resolvers;
     using Nekoyume.Action;
+    using Nekoyume.Action.AdventureBoss;
     using Nekoyume.Helper;
     using Nekoyume.Model.Collection;
     using Nekoyume.Model.Item;
@@ -91,6 +92,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(TransferAssets))]
         [InlineData(typeof(RuneSummon))]
         [InlineData(typeof(EventDungeonBattleSweep))]
+        [InlineData(typeof(SweepAdventureBoss))]
         [InlineData(typeof(ActivateCollection))]
         [InlineData(typeof(RetrieveAvatarAssets))]
         [InlineData(typeof(MigrateFee))]
@@ -525,6 +527,15 @@ namespace Lib9c.Tests.Action
                     Costumes = new List<Guid>(),
                     Foods = new List<Guid>(),
                     RuneInfos = new List<RuneSlotInfo>(),
+                },
+                SweepAdventureBoss _ => new SweepAdventureBoss
+                {
+                    Season = 1,
+                    AvatarAddress = default,
+                    Costumes = new List<Guid>(),
+                    Equipments = new List<Guid>(),
+                    RuneInfos = new List<RuneSlotInfo>(),
+                    PlayCount = 1,
                 },
                 SetAddressStateCompressed _ => new SetAddressStateCompressed(new List<(Address accountAddress, Address targetAddress, byte[] compressedState)>
                 {
