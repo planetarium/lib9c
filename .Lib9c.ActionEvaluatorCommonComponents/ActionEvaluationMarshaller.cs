@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Bencodex;
 using Bencodex.Types;
@@ -33,8 +34,33 @@ namespace Lib9c.ActionEvaluatorCommonComponents
                 dictionary["action"],
                 ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
                 new HashDigest<SHA256>(dictionary["output_states"]),
-                dictionary["exception"] is Text typeName ? new Exception(typeName) : null
+                dictionary["exception"] is Text typeName ? ResolveException(typeName) : null
             );
+        }
+
+        // Reconstruct an Exception whose runtime type matches the original FullName
+        // recorded by Marshal, so that consumers calling GetType().FullName (e.g.
+        // Libplanet's TxExecution) see the real action exception name rather than
+        // a generic "System.Exception".
+        private static Exception ResolveException(string fullName)
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var type = assembly.GetType(fullName, throwOnError: false);
+                if (type is not null && typeof(Exception).IsAssignableFrom(type))
+                {
+                    try
+                    {
+                        return (Exception)FormatterServices.GetUninitializedObject(type);
+                    }
+                    catch
+                    {
+                        // fall through to generic fallback
+                    }
+                }
+            }
+
+            return new Exception(fullName);
         }
 
         public static ICommittedActionEvaluation Deserialize(byte[] serialized)

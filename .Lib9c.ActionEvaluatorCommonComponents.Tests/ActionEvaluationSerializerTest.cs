@@ -55,4 +55,40 @@ public class ActionEvaluationSerializerTest
         Assert.Equal(prevState, deserialized.InputContext.PreviousState);
         Assert.Equal(outputState, deserialized.OutputState);
     }
+
+    [Theory]
+    [InlineData(typeof(InvalidOperationException))]
+    [InlineData(typeof(ArgumentException))]
+    [InlineData(typeof(UnexpectedlyTerminatedActionException))]
+    public void ExceptionTypeNamePreservedAfterRoundTrip(Type exceptionType)
+    {
+        var address = new PrivateKey().Address;
+        var buffer = new byte[HashDigest<SHA256>.Size];
+        new System.Random().NextBytes(buffer);
+        var stateHash = new HashDigest<SHA256>(buffer);
+
+        Exception sourceException = exceptionType == typeof(UnexpectedlyTerminatedActionException)
+            ? new UnexpectedlyTerminatedActionException("", stateHash, 0, null, null, new NullAction(), new Exception())
+            : (Exception)Activator.CreateInstance(exceptionType)!;
+
+        var committed = new CommittedActionEvaluation(
+            action: Null.Value,
+            inputContext: new CommittedActionContext(
+                signer: address,
+                txId: null,
+                miner: address,
+                blockIndex: 0,
+                blockProtocolVersion: 0,
+                previousState: stateHash,
+                randomSeed: 0,
+                isPolicyAction: false),
+            outputState: stateHash,
+            exception: sourceException);
+
+        var serialized = ActionEvaluationMarshaller.Serialize(committed);
+        var deserialized = ActionEvaluationMarshaller.Deserialize(serialized);
+
+        Assert.NotNull(deserialized.Exception);
+        Assert.Equal(exceptionType.FullName, deserialized.Exception!.GetType().FullName);
+    }
 }
