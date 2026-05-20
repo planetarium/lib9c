@@ -324,3 +324,5 @@ id,_name,item_sub_type,grade,elemental_type
 386072,바람의 수액 결정,MonsterPart,8,Wind
 386073,대지의 수액 결정,MonsterPart,8,Land
 386074,물의 수액 결정,MonsterPart,8,Water
+800120,Bifrost Shard,NormalMaterial,5,Normal
+800121,Bifrost Crystal,NormalMaterial,7,Normal
