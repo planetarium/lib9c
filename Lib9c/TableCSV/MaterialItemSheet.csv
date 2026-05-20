@@ -296,3 +296,31 @@ id,_name,item_sub_type,grade,elemental_type
 600206,saphire dust,EquipmentMaterial,7,Normal
 600307,mythic hammer,EquipmentMaterial,7,Normal
 600308,transcendent hammer,EquipmentMaterial,8,Normal
+500001,catalyst potion,EquipmentMaterial,8,Normal
+303008,transcendent sword,EquipmentMaterial,8,Normal
+303108,transcendent armor,EquipmentMaterial,8,Normal
+303208,transcendent belt,EquipmentMaterial,8,Normal
+303308,transcendent necklace,EquipmentMaterial,8,Normal
+303408,transcendent ring,EquipmentMaterial,8,Normal
+383002,단단한 검,EquipmentMaterial,8,Normal
+383102,단단한 옷,EquipmentMaterial,8,Normal
+383202,단단한 벨트,EquipmentMaterial,8,Normal
+383302,단단한 목걸이,EquipmentMaterial,8,Normal
+383402,단단한 반지,EquipmentMaterial,8,Normal
+386006,푸른 빛의 꽃,MonsterPart,8,Water
+386007,푸른 열매,MonsterPart,8,Water
+386008,영혼의 결정,MonsterPart,8,Water
+386015,부서진 마법석,MonsterPart,8,Land
+386016,대지의 정령석,MonsterPart,8,Land
+386017,어둠의 휘장,MonsterPart,8,Land
+386029,단단한 쇳조각,MonsterPart,8,Fire
+386030,반짝이는 돌,MonsterPart,8,Fire
+386031,단단한 쇠사슬,MonsterPart,8,Fire
+386053,날카로운 발톱,MonsterPart,8,Wind
+386054,원한이 깃든 장식,MonsterPart,8,Wind
+386055,고대의 마법서,MonsterPart,8,Wind
+386070,수액 결정,MonsterPart,8,Normal
+386071,화염의 수액 결정,MonsterPart,8,Fire
+386072,바람의 수액 결정,MonsterPart,8,Wind
+386073,대지의 수액 결정,MonsterPart,8,Land
+386074,물의 수액 결정,MonsterPart,8,Water
