@@ -607,7 +607,8 @@ namespace Nekoyume.Model
                     or SkillCategory.BlowAttack
                     or SkillCategory.DoubleAttack
                     or SkillCategory.AreaAttack
-                    or SkillCategory.BuffRemovalAttack)
+                    or SkillCategory.BuffRemovalAttack
+                    or SkillCategory.FullBuffRemovalAttack)
                 .ToList();
             if (Buffs.Values.OfType<Vampiric>().OrderBy(x => x.BuffInfo.Id) is
                 { } vampirics)
@@ -725,7 +726,8 @@ namespace Nekoyume.Model
             }
             else
             {
-                _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, row.Cooldown);
+                var cooldown = RuneSkillCooldownMap[selectedSkill.SkillRow.Id];
+                _runeSkills.SetCooldown(selectedSkill.SkillRow.Id, cooldown);
             }
 
             Simulator.Log.Add(usedSkill);
@@ -908,6 +910,22 @@ namespace Nekoyume.Model
             if (removedBuff != null)
             {
                 RemoveStatBuff(removedBuff);
+            }
+        }
+
+        /// <summary>
+        /// Removes all positive stat buffs from the character.
+        /// Only buffs with a positive value are removed; debuffs (negative value) are preserved.
+        /// </summary>
+        public void RemoveAllStatBuffs()
+        {
+            var buffsToRemove = StatBuffs
+                .Where(buff => buff.RowData.Value > 0)
+                .ToList();
+
+            foreach (var buff in buffsToRemove)
+            {
+                RemoveStatBuff(buff);
             }
         }
 
