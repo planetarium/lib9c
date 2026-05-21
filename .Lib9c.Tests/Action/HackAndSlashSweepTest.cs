@@ -271,6 +271,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(normalFinalWorldId.Serialize()));
+            state = AvatarCpBooster.Apply(state, _sheets, _avatarAddress);
 
             // Stage 451 (extended) can have an entry material cost cloned from base stage 1.
             // HackAndSlashSweep validates that the declared entry cost matches the expected cost (per play count).
@@ -329,8 +330,7 @@ namespace Lib9c.Tests.Action
             const int normalFinalWorldId = 9;
             const int normalFinalStageId = 450;
             const int extendedStageId = ExtendedStageIdOffset + 1; // 451 (base stage 1)
-            const int actionPointToSpend = 10; // base stage 1 costAP=5 => 2 plays
-            const int expectedPlayCount = 2;
+            const int actionPointToSpend = 30; // enough AP for at least one full sweep play of stage 451
             const string favTicker = "CRYSTAL";
             const int favAmountPerPlay = 1000;
 
@@ -444,8 +444,10 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(normalFinalWorldId.Serialize()));
+            state = AvatarCpBooster.Apply(state, _sheets, _avatarAddress);
 
             var stageRow = state.GetSheet<StageSheet>()[extendedStageId];
+            var expectedPlayCount = stageRow.CostAP > 0 ? actionPointToSpend / stageRow.CostAP : 0;
             var expectedEntryCostItemCount = stageRow.EntryCostItemId > 0
                 ? checked(stageRow.EntryCostItemCount * expectedPlayCount)
                 : 0;
@@ -517,6 +519,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(normalFinalWorldId.Serialize()));
+            state = AvatarCpBooster.Apply(state, _sheets, _avatarAddress);
 
             var action = new HackAndSlashSweep
             {

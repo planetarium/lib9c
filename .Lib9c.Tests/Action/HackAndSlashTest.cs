@@ -422,6 +422,7 @@ namespace Lib9c.Tests.Action
                 .SetLegacyState(
                     _avatarAddress.Derive("world_ids"),
                     List.Empty.Add(normalFinalWorldId.Serialize()));
+            state = AvatarCpBooster.Apply(state, _sheets, _avatarAddress);
 
             var action = new HackAndSlash
             {
