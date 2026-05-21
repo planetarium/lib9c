@@ -56,6 +56,12 @@ public class ActionEvaluationSerializerTest
         Assert.Equal(outputState, deserialized.OutputState);
     }
 
+    /// <summary>
+    /// Verifies that the runtime type of an <see cref="Exception"/> attached to a
+    /// <see cref="CommittedActionEvaluation"/> survives a marshal/unmarshal round trip,
+    /// so that consumers reading <c>GetType().FullName</c> recover the original type.
+    /// </summary>
+    /// <param name="exceptionType">The exception type to instantiate and round trip.</param>
     [Theory]
     [InlineData(typeof(InvalidOperationException))]
     [InlineData(typeof(ArgumentException))]
@@ -92,6 +98,12 @@ public class ActionEvaluationSerializerTest
         Assert.Equal(exceptionType.FullName, deserialized.Exception!.GetType().FullName);
     }
 
+    /// <summary>
+    /// Verifies that the full <see cref="Exception.InnerException"/> chain round
+    /// trips through the marshaller. Mirrors the real PAEV path where Libplanet
+    /// wraps the action exception in <see cref="UnexpectedlyTerminatedActionException"/>
+    /// and later unwraps one level to record the original cause's type name.
+    /// </summary>
     [Fact]
     public void InnerExceptionChainPreservedAfterRoundTrip()
     {
@@ -141,6 +153,11 @@ public class ActionEvaluationSerializerTest
             deserialized.Exception.InnerException!.GetType().FullName);
     }
 
+    /// <summary>
+    /// Verifies backward compatibility with the legacy on-the-wire format that
+    /// stored the exception as a single Bencodex <c>Text</c> type name, ensuring a
+    /// new headless build can still parse messages produced by an older plugin DLL.
+    /// </summary>
     [Fact]
     public void UnmarshalBackwardCompatibleWithLegacyTextFormat()
     {
