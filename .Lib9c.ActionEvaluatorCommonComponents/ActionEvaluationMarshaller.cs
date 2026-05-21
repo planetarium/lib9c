@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Bencodex;
@@ -11,6 +12,15 @@ namespace Lib9c.ActionEvaluatorCommonComponents
     {
         private static readonly Codec Codec = new Codec();
 
+        // Libplanet's TxExecution unwraps one level of InnerException before
+        // recording the type name, so without serializing the chain a wrapping
+        // exception (e.g. UnexpectedlyTerminatedActionException) hides the real
+        // action exception.
+        private static readonly FieldInfo InnerExceptionField =
+            typeof(Exception).GetField(
+                "_innerException",
+                BindingFlags.Instance | BindingFlags.NonPublic)!;
+
         public static byte[] Serialize(this ICommittedActionEvaluation actionEvaluation)
         {
             return Codec.Encode(Marshal(actionEvaluation));
@@ -21,7 +31,7 @@ namespace Lib9c.ActionEvaluatorCommonComponents
                 .Add("action", actionEvaluation.Action)
                 .Add("output_states", actionEvaluation.OutputState.ByteArray)
                 .Add("input_context", actionEvaluation.InputContext.Marshal())
-                .Add("exception", actionEvaluation.Exception?.GetType().FullName is { } typeName ? (Text)typeName : Null.Value);
+                .Add("exception", MarshalException(actionEvaluation.Exception));
 
         public static ICommittedActionEvaluation Unmarshal(IValue value)
         {
@@ -34,8 +44,61 @@ namespace Lib9c.ActionEvaluatorCommonComponents
                 dictionary["action"],
                 ActionContextMarshaller.Unmarshal((Dictionary)dictionary["input_context"]),
                 new HashDigest<SHA256>(dictionary["output_states"]),
-                dictionary["exception"] is Text typeName ? ResolveException(typeName) : null
+                UnmarshalException(dictionary["exception"])
             );
+        }
+
+        // Serialize the InnerException chain (outer -> inner) so that consumers
+        // can recover both the wrapping exception type and the original cause.
+        private static IValue MarshalException(Exception? exception)
+        {
+            if (exception is null)
+            {
+                return Null.Value;
+            }
+
+            var chain = new System.Collections.Generic.List<IValue>();
+            for (var current = exception; current is not null; current = current.InnerException)
+            {
+                var fullName = current.GetType().FullName ?? typeof(Exception).FullName!;
+                chain.Add((Text)fullName);
+            }
+
+            return new Bencodex.Types.List(chain);
+        }
+
+        private static Exception? UnmarshalException(IValue value)
+        {
+            switch (value)
+            {
+                case Null:
+                    return null;
+                case Text singleTypeName:
+                    // Backward compatibility with the previous format that
+                    // stored only the outer exception's type name.
+                    return ResolveException(singleTypeName);
+                case Bencodex.Types.List list when list.Count > 0:
+                    Exception? inner = null;
+                    for (var i = list.Count - 1; i >= 0; i--)
+                    {
+                        if (list[i] is not Text typeName)
+                        {
+                            continue;
+                        }
+
+                        var outer = ResolveException(typeName);
+                        if (inner is not null)
+                        {
+                            InnerExceptionField.SetValue(outer, inner);
+                        }
+
+                        inner = outer;
+                    }
+
+                    return inner;
+                default:
+                    return null;
+            }
         }
 
         // Reconstruct an Exception whose runtime type matches the original FullName
