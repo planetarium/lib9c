@@ -55,4 +55,141 @@ public class ActionEvaluationSerializerTest
         Assert.Equal(prevState, deserialized.InputContext.PreviousState);
         Assert.Equal(outputState, deserialized.OutputState);
     }
+
+    /// <summary>
+    /// Verifies that the runtime type of an <see cref="Exception"/> attached to a
+    /// <see cref="CommittedActionEvaluation"/> survives a marshal/unmarshal round trip,
+    /// so that consumers reading <c>GetType().FullName</c> recover the original type.
+    /// </summary>
+    /// <param name="exceptionType">The exception type to instantiate and round trip.</param>
+    [Theory]
+    [InlineData(typeof(InvalidOperationException))]
+    [InlineData(typeof(ArgumentException))]
+    [InlineData(typeof(UnexpectedlyTerminatedActionException))]
+    public void ExceptionTypeNamePreservedAfterRoundTrip(Type exceptionType)
+    {
+        var address = new PrivateKey().Address;
+        var buffer = new byte[HashDigest<SHA256>.Size];
+        new System.Random().NextBytes(buffer);
+        var stateHash = new HashDigest<SHA256>(buffer);
+
+        Exception sourceException = exceptionType == typeof(UnexpectedlyTerminatedActionException)
+            ? new UnexpectedlyTerminatedActionException("", stateHash, 0, null, null, new NullAction(), new Exception())
+            : (Exception)Activator.CreateInstance(exceptionType)!;
+
+        var committed = new CommittedActionEvaluation(
+            action: Null.Value,
+            inputContext: new CommittedActionContext(
+                signer: address,
+                txId: null,
+                miner: address,
+                blockIndex: 0,
+                blockProtocolVersion: 0,
+                previousState: stateHash,
+                randomSeed: 0,
+                isPolicyAction: false),
+            outputState: stateHash,
+            exception: sourceException);
+
+        var serialized = ActionEvaluationMarshaller.Serialize(committed);
+        var deserialized = ActionEvaluationMarshaller.Deserialize(serialized);
+
+        Assert.NotNull(deserialized.Exception);
+        Assert.Equal(exceptionType.FullName, deserialized.Exception!.GetType().FullName);
+    }
+
+    /// <summary>
+    /// Verifies that the full <see cref="Exception.InnerException"/> chain round
+    /// trips through the marshaller. Mirrors the real PAEV path where Libplanet
+    /// wraps the action exception in <see cref="UnexpectedlyTerminatedActionException"/>
+    /// and later unwraps one level to record the original cause's type name.
+    /// </summary>
+    [Fact]
+    public void InnerExceptionChainPreservedAfterRoundTrip()
+    {
+        // Mirrors the real PAEV path: Libplanet wraps the action exception in
+        // UnexpectedlyTerminatedActionException whose InnerException is the
+        // original cause. Both must round-trip so that Libplanet's TxExecution
+        // unwrap step can surface the inner type name.
+        var address = new PrivateKey().Address;
+        var buffer = new byte[HashDigest<SHA256>.Size];
+        new System.Random().NextBytes(buffer);
+        var stateHash = new HashDigest<SHA256>(buffer);
+
+        var inner = new InvalidOperationException("inner cause");
+        var outer = new UnexpectedlyTerminatedActionException(
+            "wrapped",
+            stateHash,
+            0,
+            null,
+            null,
+            new NullAction(),
+            inner);
+
+        var committed = new CommittedActionEvaluation(
+            action: Null.Value,
+            inputContext: new CommittedActionContext(
+                signer: address,
+                txId: null,
+                miner: address,
+                blockIndex: 0,
+                blockProtocolVersion: 0,
+                previousState: stateHash,
+                randomSeed: 0,
+                isPolicyAction: false),
+            outputState: stateHash,
+            exception: outer);
+
+        var serialized = ActionEvaluationMarshaller.Serialize(committed);
+        var deserialized = ActionEvaluationMarshaller.Deserialize(serialized);
+
+        Assert.NotNull(deserialized.Exception);
+        Assert.Equal(
+            typeof(UnexpectedlyTerminatedActionException).FullName,
+            deserialized.Exception!.GetType().FullName);
+        Assert.NotNull(deserialized.Exception.InnerException);
+        Assert.Equal(
+            typeof(InvalidOperationException).FullName,
+            deserialized.Exception.InnerException!.GetType().FullName);
+    }
+
+    /// <summary>
+    /// Verifies backward compatibility with the legacy on-the-wire format that
+    /// stored the exception as a single Bencodex <c>Text</c> type name, ensuring a
+    /// new headless build can still parse messages produced by an older plugin DLL.
+    /// </summary>
+    [Fact]
+    public void UnmarshalBackwardCompatibleWithLegacyTextFormat()
+    {
+        // The previous on-the-wire format stored a single Text typeName for
+        // the exception field. Make sure new headless can still parse messages
+        // produced by an older plugin DLL.
+        var buffer = new byte[HashDigest<SHA256>.Size];
+        new System.Random().NextBytes(buffer);
+        var stateHash = new HashDigest<SHA256>(buffer);
+        var address = new PrivateKey().Address;
+
+        var legacy = Bencodex.Types.Dictionary.Empty
+            .Add("action", Null.Value)
+            .Add("output_states", stateHash.ByteArray)
+            .Add(
+                "input_context",
+                new CommittedActionContext(
+                    signer: address,
+                    txId: null,
+                    miner: address,
+                    blockIndex: 0,
+                    blockProtocolVersion: 0,
+                    previousState: stateHash,
+                    randomSeed: 0,
+                    isPolicyAction: false).Marshal())
+            .Add("exception", (Text)typeof(InvalidOperationException).FullName!);
+
+        var deserialized = ActionEvaluationMarshaller.Unmarshal(legacy);
+
+        Assert.NotNull(deserialized.Exception);
+        Assert.Equal(
+            typeof(InvalidOperationException).FullName,
+            deserialized.Exception!.GetType().FullName);
+    }
 }
