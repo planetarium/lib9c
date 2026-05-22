@@ -31,7 +31,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 103001,103000,방어 강화,100,25,Self,DEF,Percentage,50,true,
 103002,103000,방어 강화,100,10,Self,DEF,Percentage,25,true,
 103003,103000,DEF UP (Stat conversion),100,10,Self,DEF,Add,0,true,
-103004,103001,DEF UP (Stat conversion),100,10,Self,DEF,Percentage,0,true,
+103004,103000,DEF UP (Stat conversion),100,10,Self,DEF,Percentage,0,true,
 103005,103005,수르트 (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,50,true,
 103006,103005,수르트 (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,75,true,
 103007,103005,수르트 (AdventureBoss Stage Buff),100,150,Self,DEF,Percentage,100,true,
@@ -62,6 +62,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 104010,104008,CRI UP (Custom Item),100,10,Self,CRI,Percentage,32,true,
 104011,104008,CRI UP (Custom Item),100,10,Self,CRI,Percentage,25,true,
 104012,104008,CRI UP (Custom Item),100,10,Self,CRI,Percentage,20,true,
+104013,104003,Frenzied CRI(Self) Lv3,100,20,Self,CRI,Percentage,0,true,
 105000,105000,회피 증가,20,10,Self,HIT,Percentage,50,true,
 105001,105000,회피 증가,100,25,Self,HIT,Percentage,75,true,
 105002,105000,회피 증가,100,10,Self,HIT,Percentage,25,true,
@@ -130,6 +131,7 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 204006,204004,CRI Down (Custom Item),100,10,Enemy,CRI,Percentage,-16,true,
 204007,204004,CRI Down (Custom Item),100,10,Enemy,CRI,Percentage,-13,true,
 204008,204004,CRI Down (Custom Item),100,10,Enemy,CRI,Percentage,-11,true,
+204009,204002,Frenzied CRI(Enemy) Lv2_3,100,20,Enemies,CRI,Percentage,-1000,false,
 205001,205000,회피 감소,100,10,Enemy,HIT,Percentage,-25,true,
 205002,205000,HIT Down (Stat conversion),100,10,Enemy,HIT,Add,0,true,
 205003,205003,HIT Down (Odin Rune),100,0,Enemies,HIT,Percentage,0,true,
@@ -246,3 +248,4 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 709000,709000,Frostbite 1 (Aura),100,5,Enemy,SPD,Percentage,-3,true,5
 709001,709000,Frostbite 2 (Aura),100,5,Enemy,SPD,Percentage,-7,true,5
 709002,709000,Frostbite 3 (Aura),100,5,Enemy,SPD,Percentage,-10,true,5
+709003,709003,ATK UP (PETPOP Rune),100,0,Self,ATK,Percentage,0,true,
