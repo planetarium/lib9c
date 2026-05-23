@@ -925,7 +925,7 @@ namespace Nekoyume.Model.Item
             outItem = _items.FirstOrDefault(i =>
                 i.item is ITradableItem item &&
                 item.TradableId.Equals(tradeId) &&
-                item.RequiredBlockIndex == blockIndex &&
+                item.RequiredBlockIndex <= blockIndex &&
                 i.count >= count
             );
             return !(outItem is null);
