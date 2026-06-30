@@ -196,8 +196,8 @@ namespace Lib9c.Tests.Action.CustomEquipmentCraft
                 {
                     new ()
                     {
-                        MinCp = 4667969,
-                        MaxCp = 6794312,
+                        MinCp = 7000001,
+                        MaxCp = 11000000,
                         ItemSubType = ItemSubType.Weapon,
                         ElementalType = ElementalType.Wind,
                     },
