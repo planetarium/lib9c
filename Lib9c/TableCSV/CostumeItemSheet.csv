@@ -1,4 +1,10 @@
-id _item_sub_type _elemental_type _spine_resource_path _spine_resource_path _spine_resource_path _spine_resource_path,_name FullCostume|HairCostume|EarCostume|EyeCostume|TailCostume|Title Normal|Fire|Water|Land|Wind 값이 비어 있으면 `item_sub_type`에 따라서 자동 설정됩니다. `default`: `Character/PlayerSpineTexture/{item_sub_type}/{id}` `FullCostume`: `Character/{item_sub_type}/{id}` `Title`: ``,item_sub_type ,grade ,elemental_type ,spine_resource_path 
+id,_name,item_sub_type,grade,elemental_type,spine_resource_path
+_item_sub_type,FullCostume|HairCostume|EarCostume|EyeCostume|TailCostume|Title,,,,
+_elemental_type,Normal|Fire|Water|Land|Wind,,,,
+_spine_resource_path,값이 비어 있으면 `item_sub_type`에 따라서 자동 설정됩니다.,,,,
+_spine_resource_path,`default`: `Character/PlayerSpineTexture/{item_sub_type}/{id}`,,,,
+_spine_resource_path,`FullCostume`: `Character/{item_sub_type}/{id}`,,,,
+_spine_resource_path,`Title`: ``,,,,
 40100000,발키리,FullCostume,4,Normal,
 40100001,새벽의 사자,FullCostume,3,Normal,
 40100002,헬라의 환영,FullCostume,5,Normal,
