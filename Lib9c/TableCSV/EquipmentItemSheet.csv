@@ -355,3 +355,6 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 10582000,Transcendent Ring,Ring,8,Water,13,DEF,2337152,0,10572000,800000000
 10583000,Transcendent Ring,Ring,8,Land,14,DEF,2337152,0,10573000,800000000
 10584000,Transcendent Ring,Ring,8,Wind,15,DEF,2337152,0,10574000,800000000
+20160005,Custom Mythic Sword,Weapon,7,Normal,0,ATK,347499,2,20160000,1
+20460005,Custom Mythic Necklace,Necklace,7,Normal,0,HIT,1216250,0,20460000,1
+20560005,Custom Mythic Ring,Ring,7,Normal,0,DEF,347499,0,20560000,1
