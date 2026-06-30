@@ -249,3 +249,5 @@ id,group,_name,chance,duration,target_type,stat_type,modify_type,modify_value,is
 709001,709000,Frostbite 2 (Aura),100,5,Enemy,SPD,Percentage,-7,true,5
 709002,709000,Frostbite 3 (Aura),100,5,Enemy,SPD,Percentage,-10,true,5
 709003,709003,ATK UP (PETPOP Rune),100,0,Self,ATK,Percentage,0,true,
+204050,204050,Cri Debuff,100,8,Enemies,CRI,Percentage,0,true,
+703050,703050,CDMG Debuff,100,8,Enemies,CDMG,Add,0,true,
