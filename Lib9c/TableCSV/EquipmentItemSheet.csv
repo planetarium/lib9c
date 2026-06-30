@@ -257,6 +257,7 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 20160002,커스텀 장비 무기,Weapon,5,Normal,0,ATK,500,0,20160000,1
 20160003,커스텀 장비 무기,Weapon,6,Normal,0,ATK,800,0,20160000,1
 20160004,커스텀 장비 무기,Weapon,6,Normal,0,ATK,1200,0,20160000,1
+20160005,Custom Mythic Sword,Weapon,7,Normal,0,ATK,347499,2,20160000,1
 20260000,커스텀 장비 갑옷,Armor,3,Normal,0,HP,10,0,20260000,1
 20260001,커스텀 장비 갑옷,Armor,4,Normal,0,HP,100,0,20260000,1
 20260002,커스텀 장비 갑옷,Armor,5,Normal,0,HP,500,0,20260000,1
@@ -272,11 +273,13 @@ id,_name,item_sub_type,grade,elemental_type,set_id,stat_type,stat_value,attack_r
 20460002,커스텀 장비 목걸이,Necklace,5,Normal,0,HIT,500,0,20460000,1
 20460003,커스텀 장비 목걸이,Necklace,6,Normal,0,HIT,800,0,20460000,1
 20460004,커스텀 장비 목걸이,Necklace,6,Normal,0,HIT,1200,0,20460000,1
+20460005,Custom Mythic Necklace,Necklace,7,Normal,0,HIT,1216250,0,20460000,1
 20560000,커스텀 장비 반지,Ring,3,Normal,0,DEF,10,0,20560000,1
 20560001,커스텀 장비 반지,Ring,4,Normal,0,DEF,100,0,20560000,1
 20560002,커스텀 장비 반지,Ring,5,Normal,0,DEF,500,0,20560000,1
 20560003,커스텀 장비 반지,Ring,6,Normal,0,DEF,800,0,20560000,1
 20560004,커스텀 장비 반지,Ring,6,Normal,0,DEF,1200,0,20560000,1
+20560005,Custom Mythic Ring,Ring,7,Normal,0,DEF,347499,0,20560000,1
 10170000,Valkyrie Sword,Weapon,7,Normal,0,ATK,198571,2,10170000,80000000
 10171000,Valkyrie Sword,Weapon,7,Fire,0,ATK,347499,2,10171000,80000000
 10172000,Valkyrie Sword,Weapon,7,Water,0,ATK,347499,2,10172000,80000000
