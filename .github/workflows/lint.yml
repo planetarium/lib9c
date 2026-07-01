@@ -44,7 +44,7 @@ jobs:
             - id: count-no-docs
               run: |
                 set -ev
-                count=$(dotnet build -p GenerateDocumentationFile=true -p 'DocumentationFile=docs.xml' -consoleloggerparameters:WarningsOnly | grep -c -E "CS(1573|1591)")
+                count=$(dotnet build -p GenerateDocumentationFile=true -p 'DocumentationFile=docs.xml' -p TreatWarningsAsErrors=false -consoleloggerparameters:WarningsOnly | grep -c -E "CS(1573|1591)" || true)
                 echo "count=$count" >> "$GITHUB_OUTPUT"
     count-no-docs-on-headref:
         runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
             - id: count-no-docs
               run: |
                 set -ev
-                count=$(dotnet build -p GenerateDocumentationFile=true -p 'DocumentationFile=docs.xml' -consoleloggerparameters:WarningsOnly | grep -c -E "CS(1573|1591)")
+                count=$(dotnet build -p GenerateDocumentationFile=true -p 'DocumentationFile=docs.xml' -p TreatWarningsAsErrors=false -consoleloggerparameters:WarningsOnly | grep -c -E "CS(1573|1591)" || true)
                 echo "count=$count" >> "$GITHUB_OUTPUT"
     check-items-without-docs-increased:
         runs-on: ubuntu-latest
