@@ -27,6 +27,9 @@ namespace Lib9c.Tests.Model
         private readonly TableSheets _tableSheets;
         private readonly AvatarState _avatarState;
 
+        /// <summary>
+        /// Initializes shared table sheets and a default avatar state for the tests.
+        /// </summary>
         public RuneSkillOverflowTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -38,6 +41,11 @@ namespace Lib9c.Tests.Model
                 default);
         }
 
+        /// <summary>
+        /// Verifies that <see cref="Player.SetRuneSkills"/> no longer throws
+        /// <see cref="OverflowException"/> for a high-stat caster and that the resulting
+        /// rune skill power is kept as the full <c>long</c> value.
+        /// </summary>
         [Fact]
         public void SetRuneSkills_DoesNotOverflow_On_High_ATK()
         {
@@ -85,6 +93,10 @@ namespace Lib9c.Tests.Model
             Assert.Equal(expectedPower, runeSkill.CustomField.Value.BuffValue);
         }
 
+        /// <summary>
+        /// Confirms that the conversion used by the fix keeps the full value where a raw
+        /// <c>(int)</c> cast of the same decimal would overflow.
+        /// </summary>
         [Fact]
         public void SafeDecimalToInt64_Preserves_Value_Where_Int_Cast_Overflows()
         {
