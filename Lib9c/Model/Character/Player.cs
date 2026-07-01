@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nekoyume.Action;
 using Nekoyume.Battle;
+using Nekoyume.Helper;
 using Nekoyume.Model.BattleStatus;
 using Nekoyume.Model.Buff;
 using Nekoyume.Model.Item;
@@ -599,16 +600,17 @@ namespace Nekoyume.Model
                     continue;
                 }
 
-                var power = 0;
+                long power = 0;
 
                 if (optionInfo.SkillValueType == StatModifier.OperationType.Add)
                 {
-                    power = (int)optionInfo.SkillValue;
+                    power = NumberConversionHelper.SafeDecimalToInt64(optionInfo.SkillValue);
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
                     var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
-                    power = (int)Math.Round(value * optionInfo.SkillValue);
+                    power = NumberConversionHelper.SafeDecimalToInt64(
+                        Math.Round(value * optionInfo.SkillValue));
                 }
                 var skill = SkillFactory.GetV1(skillRow, power, optionInfo.SkillChance);
                 var customField = new SkillCustomField
