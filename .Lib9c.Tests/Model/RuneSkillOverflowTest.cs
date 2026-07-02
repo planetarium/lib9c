@@ -4,9 +4,12 @@ namespace Lib9c.Tests.Model
     using System.Collections.Generic;
     using System.Linq;
     using Lib9c.Tests.Action;
+    using Nekoyume.Action;
+    using Nekoyume.Arena;
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.EnumType;
+    using Nekoyume.Model.Rune;
     using Nekoyume.Model.Stat;
     using Nekoyume.Model.State;
     using Xunit;
@@ -16,20 +19,28 @@ namespace Lib9c.Tests.Model
     /// (e.g. rune 10003, ATK% Caster) used to throw an <see cref="OverflowException"/>
     /// inside <see cref="Player.SetRuneSkills"/> when <c>stat * SkillValue</c> exceeded
     /// <see cref="int.MaxValue"/>, because the resulting power was cast to <c>int</c>.
-    /// The power is now computed as <c>long</c>, matching the rest of the skill/damage
-    /// pipeline (<see cref="Nekoyume.Model.Skill.SkillFactory"/>, <c>Skill.Power</c>,
+    /// The arena counterpart (<see cref="ArenaCharacter.SetRuneSkills"/>) clamped the same
+    /// value to <see cref="int.MaxValue"/> instead. Both now compute the power as
+    /// <c>long</c>, matching the rest of the skill/damage pipeline
+    /// (<see cref="Nekoyume.Model.Skill.SkillFactory"/>, <c>Skill.Power</c>,
     /// <c>SkillCustomField.BuffValue</c> are all <c>long</c>).
     /// Based on the real failing transaction
     /// 1ab27944f05a195c1d5a1906513bd15e7c2e97253ba077e9bd0272965abf556a.
     /// </summary>
     public class RuneSkillOverflowTest
     {
+        private const int RuneId = 10003;
+        private const int RuneLevel = 200;
+
+        // Values taken from the real failing tx: ATK 629,550,973, rune 10003 lv200
+        // (ATK% Caster, SkillValue 4.47). (int)Math.Round(629_550_973 * 4.47m) =
+        // 2,814,092,849 > int.MaxValue.
+        private const long Atk = 629_550_973L;
+        private const long ExpectedPower = 2_814_092_849L;
+
         private readonly TableSheets _tableSheets;
         private readonly AvatarState _avatarState;
 
-        /// <summary>
-        /// Initializes shared table sheets and a default avatar state for the tests.
-        /// </summary>
         public RuneSkillOverflowTest()
         {
             _tableSheets = new TableSheets(TableSheetsImporter.ImportSheets());
@@ -41,22 +52,9 @@ namespace Lib9c.Tests.Model
                 default);
         }
 
-        /// <summary>
-        /// Verifies that <see cref="Player.SetRuneSkills"/> no longer throws
-        /// <see cref="OverflowException"/> for a high-stat caster and that the resulting
-        /// rune skill power is kept as the full <c>long</c> value.
-        /// </summary>
         [Fact]
         public void SetRuneSkills_DoesNotOverflow_On_High_ATK()
         {
-            // Values taken from the real failing tx.
-            const long atk = 629_550_973L;
-            const int runeId = 10003;
-            const int runeLevel = 200;
-
-            // (int)Math.Round(629_550_973 * 4.47m) = 2_814_092_849 > int.MaxValue (used to throw).
-            const long expectedPower = 2_814_092_849L;
-
             var player = new Player(
                 _avatarState,
                 _tableSheets.CharacterSheet,
@@ -67,19 +65,19 @@ namespace Lib9c.Tests.Model
             var baseAtk = player.Stats.GetStatAsLong(StatType.ATK);
             player.Stats.SetCollections(new[]
             {
-                new StatModifier(StatType.ATK, StatModifier.OperationType.Add, atk - baseAtk),
+                new StatModifier(StatType.ATK, StatModifier.OperationType.Add, Atk - baseAtk),
             });
-            Assert.Equal(atk, player.Stats.GetStatAsLong(StatType.ATK));
+            Assert.Equal(Atk, player.Stats.GetStatAsLong(StatType.ATK));
 
             // Sanity-check the sheet row matches the on-chain rune option.
             Assert.True(
-                _tableSheets.RuneOptionSheet.TryGetOptionInfo(runeId, runeLevel, out var optionInfo));
+                _tableSheets.RuneOptionSheet.TryGetOptionInfo(RuneId, RuneLevel, out var optionInfo));
             Assert.Equal(4.47m, optionInfo.SkillValue);
             Assert.Equal(StatModifier.OperationType.Percentage, optionInfo.SkillValueType);
             Assert.Equal(StatType.ATK, optionInfo.SkillStatType);
             Assert.Equal(StatReferenceType.Caster, optionInfo.StatReferenceType);
 
-            var runeState = new RuneState(runeId, runeLevel);
+            var runeState = new RuneState(RuneId, RuneLevel);
 
             // Must not throw, and the power must be the full long value (no int truncation).
             player.SetRuneSkills(
@@ -88,15 +86,52 @@ namespace Lib9c.Tests.Model
                 _tableSheets.SkillSheet);
 
             var runeSkill = player.RuneSkills.Single();
-            Assert.Equal(expectedPower, runeSkill.Power);
+            Assert.Equal(ExpectedPower, runeSkill.Power);
             Assert.True(runeSkill.CustomField.HasValue);
-            Assert.Equal(expectedPower, runeSkill.CustomField.Value.BuffValue);
+            Assert.Equal(ExpectedPower, runeSkill.CustomField.Value.BuffValue);
         }
 
-        /// <summary>
-        /// Confirms that the conversion used by the fix keeps the full value where a raw
-        /// <c>(int)</c> cast of the same decimal would overflow.
-        /// </summary>
+        [Fact]
+        public void ArenaCharacter_SetRuneSkills_KeepsFullLong_On_High_ATK()
+        {
+            // The arena path used to clamp the power to int.MaxValue via SafeDecimalToInt32;
+            // it now keeps the full long value so PvE and arena stay consistent.
+            var allRuneState = new AllRuneState();
+            allRuneState.AddRuneState(new RuneState(RuneId, RuneLevel));
+
+            // Rune 10003 is a Skill-type rune (rune_type 2) -> Skill slot (index 3).
+            var runeSlotState = new RuneSlotState(BattleType.Arena);
+            runeSlotState.UpdateSlot(
+                new List<RuneSlotInfo> { new RuneSlotInfo(3, RuneId) },
+                _tableSheets.RuneListSheet);
+
+            var digest = new ArenaPlayerDigest(
+                _avatarState,
+                new List<Nekoyume.Model.Item.Costume>(),
+                new List<Nekoyume.Model.Item.Equipment>(),
+                allRuneState,
+                runeSlotState);
+
+            var simulator = new ArenaSimulator(new TestRandom());
+            var character = new ArenaCharacter(
+                simulator,
+                digest,
+                _tableSheets.GetArenaSimulatorSheets(),
+                simulator.HpModifier,
+                new List<StatModifier>
+                {
+                    new StatModifier(StatType.ATK, StatModifier.OperationType.Add, Atk),
+                });
+
+            Assert.True(
+                _tableSheets.RuneOptionSheet.TryGetOptionInfo(RuneId, RuneLevel, out var optionInfo));
+            var expectedPower = (long)Math.Round(character.ATK * optionInfo.SkillValue);
+
+            var runeSkill = character._runeSkills.Single();
+            Assert.Equal(expectedPower, runeSkill.Power);
+            Assert.True(runeSkill.Power > int.MaxValue);
+        }
+
         [Fact]
         public void SafeDecimalToInt64_Preserves_Value_Where_Int_Cast_Overflows()
         {
