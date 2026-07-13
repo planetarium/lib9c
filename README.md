@@ -26,16 +26,16 @@ Each model has its own structure and read/write with blockchain store through de
 ### Action (Core game logic changes state)
 
 State can be created/updated by `action`s.
-In [Lib9c/Action](Lib9c/Action), you can find all actions can be executed in the game Nine
+In [Lib9c/Action](Lib9c/Action), you can find all actions that can be executed in the game Nine
 Chronicles.
-When someone do the action in game, action data is loaded on Libplanet transaction and be propagated
+When someone does the action in game, action data is loaded on Libplanet transaction and propagated
 through blockchain network.
 Then after the transaction is accepted by validators, this action is executed and related states are
 updated with action result.
 
 ### Data
 
-All game has its own game data such as item table, exp-level table, etc.
+All game has their own game data such as item table, exp-level table, etc.
 Thus Nine Chronicles is a blockchain game, all the gme data also should be stored into blockchain.
 To achieve this, special models to handle data are present in [Lib9c/TableData](Lib9c/TableData)
 and [Lib9c/TableCSV](Lib9c/TableCSV).
