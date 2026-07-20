@@ -48,3 +48,6 @@ id,_name,grade,rune_type,required_level,use_place,bonus_coef
 10052,Runestone of Ragnarok,8,1,1,7,200
 10053,Freya PETPOP Rune,8,2,1,1,200
 10054,Breaker Rune,8,2,1,7,200
+20003,Golden Apple Rune,8,2,1,7,200
+10055,Sight,8,2,1,7,200
+10056,Bifrost,8,1,1,7,200

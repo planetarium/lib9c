@@ -470,16 +470,17 @@ namespace Nekoyume.Model
                     continue;
                 }
 
-                var power = 0;
+                long power = 0;
 
                 if (optionInfo.SkillValueType == StatModifier.OperationType.Add)
                 {
-                    power = NumberConversionHelper.SafeDecimalToInt32(optionInfo.SkillValue);
+                    power = NumberConversionHelper.SafeDecimalToInt64(optionInfo.SkillValue);
                 }
                 else if (optionInfo.StatReferenceType == EnumType.StatReferenceType.Caster)
                 {
                     var value = Stats.GetStatAsLong(optionInfo.SkillStatType);
-                    power = NumberConversionHelper.SafeDecimalToInt32(Math.Round(value * optionInfo.SkillValue));
+                    power = NumberConversionHelper.SafeDecimalToInt64(
+                        Math.Round(value * optionInfo.SkillValue));
                 }
                 var skill = SkillFactory.GetForArena(skillRow, power, optionInfo.SkillChance, default, StatType.NONE);
                 var customField = new SkillCustomField
