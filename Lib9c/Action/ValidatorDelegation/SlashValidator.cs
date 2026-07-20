@@ -10,6 +10,7 @@ using Nekoyume.Action.Guild.Migration.LegacyModels;
 using Nekoyume.Model.Guild;
 using Nekoyume.Module.ValidatorDelegation;
 using Nekoyume.ValidatorDelegation;
+using Serilog;
 
 namespace Nekoyume.Action.ValidatorDelegation
 {
@@ -34,6 +35,7 @@ namespace Nekoyume.Action.ValidatorDelegation
         public override IWorld Execute(IActionContext context)
         {
             var world = context.PreviousState;
+            Log.Information("[SlashValidator] Start block #{BlockIndex}", context.BlockIndex);
 
             if (world.GetDelegationMigrationHeight() is null)
             {
@@ -48,12 +50,19 @@ namespace Nekoyume.Action.ValidatorDelegation
                     .Select(vote => vote.ValidatorPublicKey),
                 context.BlockIndex);
             repository.SetAbstainHistory(abstainHistory);
+            Log.Information(
+                "[SlashValidator] AbstainsToSlash count={Count}",
+                abstainsToSlash.Count());
 
             foreach (var abstain in abstainsToSlash)
             {
+                Log.Information(
+                    "[SlashValidator] Slashing abstainer {Address}",
+                    abstain.Address);
                 var validatorDelegatee = repository.GetDelegatee(abstain.Address);
                 if (validatorDelegatee.Jailed)
                 {
+                    Log.Information("[SlashValidator] Already jailed, skip {Address}", abstain.Address);
                     continue;
                 }
 
@@ -65,13 +74,20 @@ namespace Nekoyume.Action.ValidatorDelegation
                 guildDelegatee.Slash(LivenessSlashFactor, context.BlockIndex, context.BlockIndex);
                 guildDelegatee.Jail(context.BlockIndex + AbstainJailTime);
                 repository.UpdateWorld(guildRepository.World);
+                Log.Information("[SlashValidator] Slashed and jailed {Address}", abstain.Address);
             }
 
+            Log.Information(
+                "[SlashValidator] Processing evidence, count={Count}",
+                context.Evidence.Count());
             foreach (var evidence in context.Evidence)
             {
                 switch (evidence)
                 {
                     case DuplicateVoteEvidence e:
+                        Log.Information(
+                            "[SlashValidator] DuplicateVoteEvidence target={Address}, height={Height}",
+                            e.TargetAddress, e.Height);
                         if (e.Height > context.BlockIndex)
                         {
                             throw new Exception("Evidence height is greater than block index.");
@@ -86,12 +102,14 @@ namespace Nekoyume.Action.ValidatorDelegation
                         guildDelegatee.Slash(DuplicateVoteSlashFactor, e.Height, context.BlockIndex);
                         guildDelegatee.Tombstone();
                         repository.UpdateWorld(guildRepository.World);
+                        Log.Information("[SlashValidator] DuplicateVote slashed {Address}", e.TargetAddress);
                         break;
                     default:
                         break;
                 }
             }
 
+            Log.Information("[SlashValidator] Complete block #{BlockIndex}", context.BlockIndex);
             return repository.World;
         }
     }
