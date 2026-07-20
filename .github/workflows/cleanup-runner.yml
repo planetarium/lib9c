@@ -1,0 +1,84 @@
+name: Cleanup Runner Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_cleanup:
+        description: 'Force aggressive cleanup'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check initial disk space
+        run: |
+          echo "=== Initial Disk Space ==="
+          df -h
+          echo ""
+          echo "=== Available space ==="
+          df -h | grep -E "(Filesystem|/dev/)" | awk '{print $4}' | tail -1
+
+      - name: Basic cleanup
+        run: |
+          echo "=== Performing basic cleanup ==="
+
+          # APT 패키지 캐시 정리
+          sudo apt-get clean
+          sudo apt-get autoclean
+          sudo apt-get autoremove -y
+
+          # 임시 파일 정리
+          sudo rm -rf /tmp/*
+          sudo rm -rf /var/tmp/*
+
+          # 로그 파일 정리
+          sudo find /var/log -name "*.log" -size +5M -delete 2>/dev/null || true
+          sudo find /var/log -name "*.gz" -delete 2>/dev/null || true
+
+          echo "=== Disk space after basic cleanup ==="
+          df -h
+
+      - name: Advanced cleanup
+        if: ${{ inputs.force_cleanup == 'true' }}
+        run: |
+          echo "=== Performing aggressive cleanup ==="
+
+          # Docker 완전 정리
+          sudo docker system prune -af 2>/dev/null || true
+          sudo docker volume prune -f 2>/dev/null || true
+          sudo docker network prune -f 2>/dev/null || true
+
+          # 모든 캐시 정리
+          sudo rm -rf /var/cache/*
+          sudo rm -rf /var/lib/apt/lists/*
+
+          # 큰 파일 찾아서 정리
+          echo "=== Large files found ==="
+          sudo find / -type f -size +100M 2>/dev/null | head -10
+
+          # 홈 디렉토리 정리
+          rm -rf ~/.cache/* 2>/dev/null || true
+          rm -rf ~/.local/share/* 2>/dev/null || true
+
+          echo "=== Disk space after aggressive cleanup ==="
+          df -h
+
+      - name: Final disk space report
+        run: |
+          echo "=== Final Disk Space Report ==="
+          df -h
+          echo ""
+          echo "=== Available space ==="
+          available=$(df -h / | awk 'NR==2 {print $4}')
+          echo "Available space: $available"
+
+          # 경고 메시지
+          if [[ $(df / | awk 'NR==2 {print $4}' | sed 's/G//') -lt 5 ]]; then
+            echo "⚠️  WARNING: Less than 5GB available!"
+            exit 1
+          else
+            echo "✅ Sufficient disk space available"
+          fi
