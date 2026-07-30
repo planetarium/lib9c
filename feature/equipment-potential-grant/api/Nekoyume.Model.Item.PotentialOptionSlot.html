@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Model_Item_PotentialOptionSlot" data-uid="Nekoyume.Model.Item.PotentialOptionSlot" class="text-break">
-Class PotentialOptionSlot  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L159"><i class="bi bi-code-slash"></i></a>
+Class PotentialOptionSlot  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -158,7 +158,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot__ctor_Bencodex_Types_IValue_" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.#ctor(Bencodex.Types.IValue)">
   PotentialOptionSlot(IValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L193"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Deserializes an option slot from its List serialization.</p>
@@ -195,9 +195,9 @@ public class PotentialOptionSlot</code></pre>
 
   <a id="Nekoyume_Model_Item_PotentialOptionSlot__ctor_" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.#ctor*"></a>
 
-  <h3 id="Nekoyume_Model_Item_PotentialOptionSlot__ctor_System_Int32_System_Decimal_" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.#ctor(System.Int32,System.Decimal)">
-  PotentialOptionSlot(int, decimal)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Model_Item_PotentialOptionSlot__ctor_System_Int32_System_Int64_" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.#ctor(System.Int32,System.Int64)">
+  PotentialOptionSlot(int, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L182"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an option slot from a row id and a rolled value.</p>
@@ -205,7 +205,7 @@ public class PotentialOptionSlot</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public PotentialOptionSlot(int optionRowId, decimal value)</code></pre>
+    <pre><code class="lang-csharp hljs">public PotentialOptionSlot(int optionRowId, long value)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -213,7 +213,7 @@ public class PotentialOptionSlot</code></pre>
     <dt><code>optionRowId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd><p>The option pool row id.</p>
 </dd>
-    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd><p>The rolled value.</p>
 </dd>
   </dl>
@@ -237,7 +237,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot_OptionRowId" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.OptionRowId">
   OptionRowId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The option pool row id this slot was rolled from.</p>
@@ -269,15 +269,16 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot_Value" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.Value">
   Value
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L175"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>The value rolled for this option at grant time. Fixed once granted, regardless of later sheet revisions.</p>
+  <div class="markdown level1 summary"><p>The value rolled for this option at grant time. Fixed once granted, regardless of later sheet revisions.
+Interpreted by the resolver according to the option pool row (e.g. flat add, integer percent, or basis points).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public decimal Value { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public long Value { get; }</code></pre>
   </div>
 
 
@@ -286,7 +287,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd></dd>
   </dl>
 
@@ -305,7 +306,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot_Equals_Nekoyume_Model_Item_PotentialOptionSlot_" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.Equals(Nekoyume.Model.Item.PotentialOptionSlot)">
   Equals(PotentialOptionSlot)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L225"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -341,7 +342,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot_Equals_System_Object_" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.Equals(System.Object)">
   Equals(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L228"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L230"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified object is equal to the current object.</p>
@@ -380,7 +381,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot_GetHashCode" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.GetHashCode">
   GetHashCode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L236"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L238"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serves as the default hash function.</p>
@@ -413,7 +414,7 @@ public class PotentialOptionSlot</code></pre>
 
   <h3 id="Nekoyume_Model_Item_PotentialOptionSlot_Serialize" data-uid="Nekoyume.Model.Item.PotentialOptionSlot.Serialize">
   Serialize()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L218"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Serializes the option slot to List format.
@@ -447,7 +448,7 @@ Order: [optionRowId, value].</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L159" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/equipment-potential-grant/Lib9c/Model/Item/EquipmentPotential.cs/#L160" class="edit-link">Edit this page</a>
         </div>
 
 

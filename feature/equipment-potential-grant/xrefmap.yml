@@ -56041,15 +56041,15 @@ references:
   fullName.vb: Nekoyume.Model.Item.PotentialOptionSlot.New(Bencodex.Types.IValue)
   nameWithType: PotentialOptionSlot.PotentialOptionSlot(IValue)
   nameWithType.vb: PotentialOptionSlot.New(IValue)
-- uid: Nekoyume.Model.Item.PotentialOptionSlot.#ctor(System.Int32,System.Decimal)
-  name: PotentialOptionSlot(int, decimal)
-  href: api/Nekoyume.Model.Item.PotentialOptionSlot.html#Nekoyume_Model_Item_PotentialOptionSlot__ctor_System_Int32_System_Decimal_
-  commentId: M:Nekoyume.Model.Item.PotentialOptionSlot.#ctor(System.Int32,System.Decimal)
-  name.vb: New(Integer, Decimal)
-  fullName: Nekoyume.Model.Item.PotentialOptionSlot.PotentialOptionSlot(int, decimal)
-  fullName.vb: Nekoyume.Model.Item.PotentialOptionSlot.New(Integer, Decimal)
-  nameWithType: PotentialOptionSlot.PotentialOptionSlot(int, decimal)
-  nameWithType.vb: PotentialOptionSlot.New(Integer, Decimal)
+- uid: Nekoyume.Model.Item.PotentialOptionSlot.#ctor(System.Int32,System.Int64)
+  name: PotentialOptionSlot(int, long)
+  href: api/Nekoyume.Model.Item.PotentialOptionSlot.html#Nekoyume_Model_Item_PotentialOptionSlot__ctor_System_Int32_System_Int64_
+  commentId: M:Nekoyume.Model.Item.PotentialOptionSlot.#ctor(System.Int32,System.Int64)
+  name.vb: New(Integer, Long)
+  fullName: Nekoyume.Model.Item.PotentialOptionSlot.PotentialOptionSlot(int, long)
+  fullName.vb: Nekoyume.Model.Item.PotentialOptionSlot.New(Integer, Long)
+  nameWithType: PotentialOptionSlot.PotentialOptionSlot(int, long)
+  nameWithType.vb: PotentialOptionSlot.New(Integer, Long)
 - uid: Nekoyume.Model.Item.PotentialOptionSlot.#ctor*
   name: PotentialOptionSlot
   href: api/Nekoyume.Model.Item.PotentialOptionSlot.html#Nekoyume_Model_Item_PotentialOptionSlot__ctor_
