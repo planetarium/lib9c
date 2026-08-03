@@ -1562,6 +1562,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Action.GrantEquipmentPotential.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Action.GrantEquipmentPotential.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Action.GrantItems.yml",
       "output": {
         ".html": {
@@ -4686,6 +4696,16 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.Helper.PetHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.PotentialHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.PotentialHelper.html"
         }
       },
       "version": ""
@@ -10146,6 +10166,46 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.EquipmentItemSubRecipeSheetV2.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.EquipmentPotentialGradeSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.EquipmentPotentialGradeSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.EquipmentPotentialGradeSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.EquipmentPotentialGradeSheet.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.html"
         }
       },
       "version": ""

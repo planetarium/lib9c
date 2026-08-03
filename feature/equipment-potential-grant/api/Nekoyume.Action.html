@@ -526,6 +526,20 @@ Execution Flow:
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.Action.GrantEquipmentPotential.html">GrantEquipmentPotential</a></dt>
+      <dd><p>Grants (rolls) latent &quot;potential&quot; options onto an existing equipment owned by the avatar.
+The number of slots is determined by the equipment's grade and a material cost is consumed,
+both driven by <a class="xref" href="Nekoyume.TableData.EquipmentPotentialGradeSheet.html">EquipmentPotentialGradeSheet</a>; the rolled options come from
+<a class="xref" href="Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.html">EquipmentPotentialOptionPoolSheet</a>. This is the granting phase only — the rolled
+options are stored on the equipment as (option id, value) pairs, and their interpretation
+into stat effects is handled elsewhere.</p>
+<p>
+Re-rolling is intentional: running this action again on the same equipment overwrites the
+existing potential with a fresh roll and charges the cost again. It does not accumulate slots.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Action.GrantItems.html">GrantItems</a></dt>
       <dd><p>Grants items/assets to target avatars from token-like inputs.
 This action is restricted to a fixed allow-list of signers and the current admin signer.

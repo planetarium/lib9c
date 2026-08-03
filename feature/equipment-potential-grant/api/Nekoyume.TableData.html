@@ -351,6 +351,39 @@ Contains gift ID, block index range, and items to be given.</p>
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.EquipmentPotentialGradeSheet.html">EquipmentPotentialGradeSheet</a></dt>
+      <dd><p>Per-equipment-grade configuration for the equipment potential option feature.
+A single row per grade defines how many potential slots that grade grants and the material
+cost consumed to grant (roll) the options. Both the slot count and the cost share the same
+key (grade), so they are managed together in one sheet.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.EquipmentPotentialGradeSheet.Row.html">EquipmentPotentialGradeSheet.Row</a></dt>
+      <dd><p>A single grade's potential configuration.
+Column order: grade, slot_count, cost_material_id, cost_material_count.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.html">EquipmentPotentialOptionPoolSheet</a></dt>
+      <dd><p>The pool of potential options that can be rolled onto equipment.
+Each row is a single option definition keyed by <a class="xref" href="Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.Row.html#Nekoyume_TableData_EquipmentPotentialOptionPoolSheet_Row_Id">Id</a>. When an option is
+granted, only the row id and the rolled value are stored on the equipment
+(<a class="xref" href="Nekoyume.Model.Item.PotentialOptionSlot.html">PotentialOptionSlot</a>); the remaining columns describe how the
+option is later interpreted (resolved) into a stat effect.</p>
+<p>
+v1 supports stat options only. Additional effect kinds (content-limited damage, skills, etc.)
+will be added as new columns alongside a resolver, without changing how options are stored.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.EquipmentPotentialOptionPoolSheet.Row.html">EquipmentPotentialOptionPoolSheet.Row</a></dt>
+      <dd><p>A single potential option definition.
+Column order: id, item_sub_type, stat_type, modify_type, value_min, value_max, weight.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.GameConfigSheet.html">GameConfigSheet</a></dt>
       <dd></dd>
     </dl>
