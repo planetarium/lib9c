@@ -23,6 +23,16 @@ namespace Lib9c
         //     2,
         //     new Address("0x47D082a115c63E7b58B1532d20E631538eaFADde"));
 
+        /// <summary>
+        /// Ticker prefix shared by every item currency.
+        /// </summary>
+        public const string ItemCurrencyTickerPrefix = "Item_";
+
+        /// <summary>
+        /// Ticker prefix <see cref="GetWrappedCurrency"/> puts in front of the wrapped ticker.
+        /// </summary>
+        public const string WrappedCurrencyTickerPrefix = "FAV__";
+
         public static readonly Currency Crystal = Currency.Legacy(
             "CRYSTAL",
             18,
@@ -179,9 +189,19 @@ namespace Lib9c
             return agentCurrencies.Contains(currency) || currency.Ticker == "NCG" ? agentAddress : avatarAddress;
         }
 
+        /// <summary>
+        /// Returns the wrapped counterpart of the currency: a minterless currency whose ticker
+        /// carries <see cref="WrappedCurrencyTickerPrefix"/>. <see cref="GetUnwrappedCurrency"/>
+        /// reverses it.
+        /// </summary>
+        /// <param name="currency">The currency to wrap.</param>
+        /// <returns>The wrapped currency.</returns>
         public static Currency GetWrappedCurrency(Currency currency)
         {
-            return Currency.Legacy($"FAV__{currency.Ticker}", currency.DecimalPlaces, minters: null);
+            return Currency.Legacy(
+                $"{WrappedCurrencyTickerPrefix}{currency.Ticker}",
+                currency.DecimalPlaces,
+                minters: null);
         }
 
         public static bool IsWrappedCurrency(Currency currency)
@@ -201,11 +221,6 @@ namespace Lib9c
             var ticker = parsedTicker[1];
             return GetMinterlessCurrency(ticker);
         }
-
-        /// <summary>
-        /// Ticker prefix shared by every item currency.
-        /// </summary>
-        public const string ItemCurrencyTickerPrefix = "Item_";
 
         public static (bool tradable, int itemId) ParseItemCurrency(Currency currency)
         {
@@ -228,6 +243,17 @@ namespace Lib9c
             return (parsedTicker[1] == "T", itemId);
         }
 
+        /// <summary>
+        /// Returns the currency that stands in for an item, which <c>ClaimItems</c> burns back
+        /// into inventory items.
+        /// </summary>
+        /// <param name="itemId">The item the currency stands in for.</param>
+        /// <param name="tradable">
+        /// Whether the claimed item should be tradable. Note that this only takes effect for
+        /// material rows — <c>InventoryExtensions.MintItem</c> ignores it for every other item
+        /// type, so a costume claimed through a non tradable ticker is tradable all the same.
+        /// </param>
+        /// <returns>The currency for the item.</returns>
         public static Currency GetItemCurrency(int itemId, bool tradable)
         {
             var type = tradable ? "T" : "NT";
@@ -239,11 +265,15 @@ namespace Lib9c
 
         /// <summary>
         /// Whether the ticker denotes an item wrapped into a currency by
-        /// <see cref="GetItemCurrency"/>. Such a ticker exists per item id, so a policy sheet
+        /// <see cref="GetItemCurrency"/>, either directly or wrapped once more by
+        /// <see cref="GetWrappedCurrency"/>. Such a ticker exists per item id, so a policy sheet
         /// cannot enumerate them as rows.
         /// </summary>
         public static bool IsItemCurrencyTicker(string ticker) =>
-            ticker.StartsWith(ItemCurrencyTickerPrefix, StringComparison.Ordinal);
+            ticker.StartsWith(ItemCurrencyTickerPrefix, StringComparison.Ordinal) ||
+            ticker.StartsWith(
+                WrappedCurrencyTickerPrefix + ItemCurrencyTickerPrefix,
+                StringComparison.Ordinal);
 
         /// <summary>
         /// Gets the appropriate currency object for a given ticker.

@@ -1,5 +1,6 @@
 key,market_registrable,synthesize_material
 _key is an item id for items and a ticker for currencies. an empty cell means unspecified.,,
+_while this sheet exists an item currency (Item_*) cannot be a market product at all.,,
 10660004,,false
 10670004,,false
 10760009,,false

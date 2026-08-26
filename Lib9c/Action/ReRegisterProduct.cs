@@ -45,7 +45,7 @@ namespace Nekoyume.Action
 
             // Absent until the sheet is patched onto this chain, in which case only the
             // hardcoded restrictions apply, exactly as they did before the sheet existed.
-            states.TryGetExistingSheet<TradePolicySheet>(out var tradePolicySheet);
+            states.TryGetPatchedSheet<RestrictionSheet>(out var restrictionSheet);
             foreach (var (productInfo, registerInfo) in ReRegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -178,7 +178,7 @@ namespace Nekoyume.Action
                     productsState,
                     states,
                     random,
-                    tradePolicySheet);
+                    restrictionSheet);
             }
 
             states = states

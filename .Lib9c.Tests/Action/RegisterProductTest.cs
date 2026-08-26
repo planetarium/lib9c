@@ -462,7 +462,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_Throw_InvalidItemIdException_WhenTradePolicyForbidsItem()
+        public void Execute_Throw_InvalidItemIdException_WhenRestrictionSheetForbidsItem()
         {
             var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0L);
@@ -471,7 +471,7 @@ namespace Lib9c.Tests.Action
                       $"{equipmentRow.Id},false,\n";
             var state = _initialState
                 .SetAvatarState(AvatarAddress, _avatarState)
-                .SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+                .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)csv);
             var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
@@ -501,7 +501,7 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_ItemUnlistedByTradePolicyStaysRegistrable()
+        public void Execute_ItemUnlistedByRestrictionSheetStaysRegistrable()
         {
             var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
             var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0L);
@@ -510,7 +510,7 @@ namespace Lib9c.Tests.Action
                       $"{equipmentRow.Id + 1},false,\n";
             var state = _initialState
                 .SetAvatarState(AvatarAddress, _avatarState)
-                .SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+                .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)csv);
             var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
@@ -540,14 +540,14 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_Throw_InvalidCurrencyException_WhenTradePolicyForbidsTicker()
+        public void Execute_Throw_InvalidCurrencyException_WhenRestrictionSheetForbidsTicker()
         {
             var asset = 3 * RuneHelper.DailyRewardRune;
             var csv = "key,market_registrable,synthesize_material\n" +
                       $"{asset.Currency.Ticker},false,\n";
             var state = _initialState
                 .MintAsset(new ActionContext(), AvatarAddress, asset)
-                .SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+                .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)csv);
             var action = new RegisterProduct
             {
                 AvatarAddress = AvatarAddress,
@@ -576,20 +576,32 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void Execute_ItemCurrencyIsRegistrableOnlyBeforeTradePolicyArrives(bool patched)
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        public void Execute_ItemCurrencyIsRegistrableOnlyBeforeRestrictionSheetArrives(
+            bool patched,
+            bool wrapped)
         {
             // An item currency product hands the buyer a balance at their avatar address, which
             // has no withdrawal path for anything but NCG. The sheet's presence is what turns the
             // rule on, so that re-evaluating a block older than the patch keeps its outcome.
             var materialRow = _tableSheets.MaterialItemSheet.Values.First();
-            var asset = 3 * Currencies.GetItemCurrency(materialRow.Id, false);
+            var currency = Currencies.GetItemCurrency(materialRow.Id, false);
+            if (wrapped)
+            {
+                // IssueTokensFromGarage hands out this form, and it reaches the buyer just as
+                // unusable as the unwrapped one.
+                currency = Currencies.GetWrappedCurrency(currency);
+            }
+
+            var asset = 3 * currency;
             var state = _initialState.MintAsset(new ActionContext(), AvatarAddress, asset);
             if (patched)
             {
                 state = state.SetLegacyState(
-                    Addresses.GetSheetAddress<TradePolicySheet>(),
+                    Addresses.GetSheetAddress<RestrictionSheet>(),
                     (Text)"key,market_registrable,synthesize_material\n1,false,\n");
             }
 
@@ -626,6 +638,44 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 0 * asset.Currency,
                 nextState.GetBalance(AvatarAddress, asset.Currency));
+        }
+
+        [Fact]
+        public void Execute_Throw_WhenRestrictionSheetIsUnreadable()
+        {
+            // A sheet that carries restrictions must not be able to switch itself off by
+            // becoming unreadable, so an unparsable sheet has to stop the action.
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0L);
+            _avatarState.inventory.AddItem(equipment);
+            var state = _initialState
+                .SetAvatarState(AvatarAddress, _avatarState)
+                .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)string.Empty);
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new RegisterInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        ItemCount = 1,
+                        Price = 1 * Gold,
+                        TradableId = equipment.ItemId,
+                        Type = ProductType.NonFungible,
+                    },
+                },
+            };
+
+            Assert.Throws<ArgumentNullException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1L,
+                        PreviousState = state,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
         }
 
         public class ValidateMember

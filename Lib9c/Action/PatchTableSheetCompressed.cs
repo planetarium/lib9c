@@ -135,9 +135,9 @@ namespace Nekoyume.Action
 
             // Reject a malformed policy here: once it is on the chain a row no lookup can
             // match reads as "unrestricted", and nothing reports that it went missing.
-            if (TableName == nameof(TradePolicySheet))
+            if (TableName == nameof(RestrictionSheet))
             {
-                TradePolicySheet.ValidateCsv(tableCsv);
+                RestrictionSheet.ValidateCsv(tableCsv);
             }
 
             states = states.SetLegacyState(sheetAddress, tableCsv.Serialize());

@@ -61,7 +61,7 @@ namespace Nekoyume.Action
 
             // Absent until the sheet is patched onto this chain, in which case only the
             // hardcoded restrictions apply, exactly as they did before the sheet existed.
-            states.TryGetExistingSheet<TradePolicySheet>(out var tradePolicySheet);
+            states.TryGetPatchedSheet<RestrictionSheet>(out var restrictionSheet);
             foreach (var registerInfo in RegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -125,7 +125,7 @@ namespace Nekoyume.Action
                     productsState,
                     states,
                     random,
-                    tradePolicySheet);
+                    restrictionSheet);
             }
             sw.Stop();
             Log.Debug("{Source} {Process} from #{BlockIndex}: {Elapsed}, ProductCount: {ProductCount}",
@@ -144,15 +144,16 @@ namespace Nekoyume.Action
             return states;
         }
 
-        /// <param name="tradePolicySheet">
+        /// <param name="restrictionSheet">
         /// Restrictions on top of the hardcoded ones, or <see langword="null"/> on a chain that
-        /// has not been patched with <see cref="TradePolicySheet"/> yet. The sheet only adds:
+        /// has not been patched with <see cref="RestrictionSheet"/> yet. The sheet only adds:
         /// a patched sheet that forgets an entry must not lift a restriction that code already
-        /// enforces.
+        /// enforces. Required rather than optional so that a new call site has to decide instead
+        /// of silently registering without the policy.
         /// </param>
         public static IWorld Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
             ProductsState productsState, IWorld states, IRandom random,
-            TradePolicySheet tradePolicySheet = null)
+            RestrictionSheet restrictionSheet)
         {
             switch (info)
             {
@@ -225,8 +226,8 @@ namespace Nekoyume.Action
 
                             // Every ITradableItem an inventory can hold derives from ItemBase.
                             var itemId = ((ItemBase)tradableItem).Id;
-                            if (tradePolicySheet is not null &&
-                                !tradePolicySheet.IsItemMarketRegistrable(itemId))
+                            if (restrictionSheet is not null &&
+                                !restrictionSheet.IsItemMarketRegistrable(itemId))
                             {
                                 throw new InvalidItemIdException(
                                     $"{itemId} is not registrable on the market.");
@@ -261,13 +262,13 @@ namespace Nekoyume.Action
                 case AssetInfo assetInfo:
                 {
                     var ticker = assetInfo.Asset.Currency.Ticker;
-                    if (tradePolicySheet is not null)
+                    if (restrictionSheet is not null)
                     {
                         // An item currency reaches the buyer's avatar address, which has no
                         // withdrawal path for anything but NCG, so a product denominated in one
                         // hands over a balance its buyer can never spend.
                         if (Currencies.IsItemCurrencyTicker(ticker) ||
-                            !tradePolicySheet.IsCurrencyMarketRegistrable(ticker))
+                            !restrictionSheet.IsCurrencyMarketRegistrable(ticker))
                         {
                             throw new InvalidCurrencyException($"{ticker} does not allow register.");
                         }

@@ -16,8 +16,10 @@ namespace Nekoyume.TableData
     /// </para>
     /// <para>
     /// Columns: <c>key</c>, <c>market_registrable</c>, <c>synthesize_material</c>.
-    /// Both axes govern whether the target can leave its owner: market registration moves it to
-    /// another account, and synthesis converts it into a different item.
+    /// The first governs the market registration path only — a fungible item can still reach
+    /// another account through a garage or by being wrapped into a currency, so a row here does
+    /// not make its target account bound by itself. The second closes the conversion path that
+    /// would otherwise turn a restricted item into an unrestricted one.
     /// </para>
     /// <para>
     /// An empty cell means "unspecified" and leaves the behavior that predates this sheet
@@ -34,7 +36,7 @@ namespace Nekoyume.TableData
     /// </para>
     /// </summary>
     [Serializable]
-    public class TradePolicySheet : Sheet<string, TradePolicySheet.Row>
+    public class RestrictionSheet : Sheet<string, RestrictionSheet.Row>
     {
         /// <summary>
         /// Column names in their expected order, after <c>_</c> prefixed columns are dropped.
@@ -118,7 +120,7 @@ namespace Nekoyume.TableData
             }
         }
 
-        public TradePolicySheet() : base(nameof(TradePolicySheet))
+        public RestrictionSheet() : base(nameof(RestrictionSheet))
         {
         }
 
@@ -276,7 +278,7 @@ namespace Nekoyume.TableData
             }
 
             // Guards against this validator and Sheet.Set disagreeing about which rows exist.
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set(csv);
             if (sheet.Count != keys.Count)
             {

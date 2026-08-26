@@ -405,8 +405,8 @@ namespace Nekoyume.Module
         }
 
         /// <summary>
-        /// Loads <typeparamref name="T"/> only when the chain already carries it, and lets a
-        /// malformed sheet throw instead of reporting it as missing.
+        /// Loads <typeparamref name="T"/> only when the chain has already been patched with it,
+        /// and lets a malformed sheet throw instead of reporting it as missing.
         /// </summary>
         /// <returns>
         /// <see langword="false"/> when the sheet has never been patched onto this chain.
@@ -417,7 +417,7 @@ namespace Nekoyume.Module
         /// becoming unreadable; only genuine absence may fall back, and that is also what keeps
         /// re-evaluation of blocks older than the patch identical.
         /// </remarks>
-        public static bool TryGetExistingSheet<T>(this IWorldState worldState, out T sheet)
+        public static bool TryGetPatchedSheet<T>(this IWorldState worldState, out T sheet)
             where T : ISheet, new()
         {
             var address = Addresses.GetSheetAddress<T>();

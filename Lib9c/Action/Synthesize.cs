@@ -137,7 +137,7 @@ namespace Nekoyume.Action
 
             // Absent until the sheet is patched onto this chain, in which case only
             // InvalidMaterialItemId applies, exactly as it did before the sheet existed.
-            states.TryGetExistingSheet<TradePolicySheet>(out var tradePolicySheet);
+            states.TryGetPatchedSheet<RestrictionSheet>(out var restrictionSheet);
 
             // Check Invalid Item
             foreach (var materialItem in materialItems)
@@ -149,8 +149,8 @@ namespace Nekoyume.Action
 
                 // The sheet only adds to InvalidMaterialItemId: a patched sheet that forgets an
                 // id must not lift a restriction that code already enforces.
-                if (tradePolicySheet is not null &&
-                    !tradePolicySheet.IsItemSynthesizeMaterial(materialItem.Id))
+                if (restrictionSheet is not null &&
+                    !restrictionSheet.IsItemSynthesizeMaterial(materialItem.Id))
                 {
                     throw new InvalidItemIdException(
                         $"{materialItem.Id} is not allowed as a synthesis material.");

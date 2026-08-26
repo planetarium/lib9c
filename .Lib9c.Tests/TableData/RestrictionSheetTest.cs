@@ -5,15 +5,15 @@ namespace Lib9c.Tests.TableData
     using Nekoyume.TableData;
     using Xunit;
 
-    public class TradePolicySheetTest
+    public class RestrictionSheetTest
     {
         private const string Header = "key,market_registrable,synthesize_material\n";
 
         [Fact]
         public void ShippedCsvPassesItsOwnValidator()
         {
-            Assert.True(TableSheetsImporter.TryGetCsv(nameof(TradePolicySheet), out var csv));
-            TradePolicySheet.ValidateCsv(csv);
+            Assert.True(TableSheetsImporter.TryGetCsv(nameof(RestrictionSheet), out var csv));
+            RestrictionSheet.ValidateCsv(csv);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void EmptyCellMeansUnspecified()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1,,\n");
 
             Assert.True(sheet.IsItemMarketRegistrable(1));
@@ -60,7 +60,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void UnlistedTargetIsUnrestricted()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1,false,false\n");
 
             Assert.True(sheet.IsItemMarketRegistrable(2));
@@ -71,7 +71,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void UnparsableCellRestricts()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1,flase,\n");
 
             Assert.False(sheet.IsItemMarketRegistrable(1));
@@ -79,13 +79,13 @@ namespace Lib9c.Tests.TableData
 
             // The tolerant runtime and the strict patch time validator disagree on purpose.
             Assert.Throws<SheetRowValidateException>(
-                () => TradePolicySheet.ValidateCsv($"{Header}1,flase,\n"));
+                () => RestrictionSheet.ValidateCsv($"{Header}1,flase,\n"));
         }
 
         [Fact]
         public void MissingColumnsAreUnspecified()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1\n");
 
             Assert.True(sheet.IsItemMarketRegistrable(1));
@@ -95,7 +95,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void OneUnusableRowDoesNotDropTheRest()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
 
             // Blank lines would collide on the same key, and a short row has no policy at all;
             // neither may take the sheet down with it.
@@ -109,7 +109,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void DuplicatedKeyMergesTowardRestriction()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1,true,\n1,false,false\n");
 
             Assert.Single(sheet.Values);
@@ -120,7 +120,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void DuplicatedKeyMergesRegardlessOfOrder()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1,false,false\n1,true,\n");
 
             Assert.Single(sheet.Values);
@@ -131,7 +131,7 @@ namespace Lib9c.Tests.TableData
         [Fact]
         public void DuplicatedKeyKeepsSpecifiedValueOverUnspecified()
         {
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set($"{Header}1,,\n1,false,\n");
 
             Assert.Single(sheet.Values);
@@ -146,9 +146,9 @@ namespace Lib9c.Tests.TableData
                       ",another commented row,\n" +
                       "1,false,\n";
 
-            TradePolicySheet.ValidateCsv(csv);
+            RestrictionSheet.ValidateCsv(csv);
 
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set(csv);
             Assert.Single(sheet.Values);
             Assert.False(sheet.IsItemMarketRegistrable(1));
@@ -165,9 +165,9 @@ namespace Lib9c.Tests.TableData
             bool marketRegistrable,
             bool synthesizeMaterial)
         {
-            TradePolicySheet.ValidateCsv(csv);
+            RestrictionSheet.ValidateCsv(csv);
 
-            var sheet = new TradePolicySheet();
+            var sheet = new RestrictionSheet();
             sheet.Set(csv);
             Assert.Equal(marketRegistrable, sheet.IsItemMarketRegistrable(10));
             Assert.Equal(synthesizeMaterial, sheet.IsItemSynthesizeMaterial(10));
@@ -182,7 +182,7 @@ namespace Lib9c.Tests.TableData
         [InlineData("RUNESTONE_FENRIR1,false,")]
         [InlineData("Item_NT_600202,false,")]
         [InlineData("Mead,false,")]
-        public void ValidateCsv(string row) => TradePolicySheet.ValidateCsv($"{Header}{row}\n");
+        public void ValidateCsv(string row) => RestrictionSheet.ValidateCsv($"{Header}{row}\n");
 
         [Theory]
         [InlineData(" ,false,")] // no key
@@ -198,7 +198,7 @@ namespace Lib9c.Tests.TableData
         [InlineData("CRYSTAL,,false")] // synthesis does not apply to a currency
         public void ValidateCsv_Throws(string body) =>
             Assert.Throws<SheetRowValidateException>(
-                () => TradePolicySheet.ValidateCsv($"{Header}{body}\n"));
+                () => RestrictionSheet.ValidateCsv($"{Header}{body}\n"));
 
         [Theory]
         [InlineData("key,synthesize_material,market_registrable\n1,false,\n")] // swapped columns
@@ -207,12 +207,12 @@ namespace Lib9c.Tests.TableData
         [InlineData("key,market_registrable,synthesize_material,extra\n1,false,,\n")] // extra column
         [InlineData("")] // nothing at all
         public void ValidateCsv_ThrowsOnBadHeader(string csv) =>
-            Assert.Throws<SheetRowValidateException>(() => TradePolicySheet.ValidateCsv(csv));
+            Assert.Throws<SheetRowValidateException>(() => RestrictionSheet.ValidateCsv(csv));
 
-        private static TradePolicySheet Shipped()
+        private static RestrictionSheet Shipped()
         {
-            Assert.True(TableSheetsImporter.TryGetCsv(nameof(TradePolicySheet), out var csv));
-            var sheet = new TradePolicySheet();
+            Assert.True(TableSheetsImporter.TryGetCsv(nameof(RestrictionSheet), out var csv));
+            var sheet = new RestrictionSheet();
             sheet.Set(csv);
             return sheet;
         }

@@ -112,12 +112,12 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
-        public void Execute_TradePolicySheet()
+        public void Execute_RestrictionSheet()
         {
             const string csv = "key,market_registrable,synthesize_material\n10660004,,false\n";
             var action = new PatchTableSheet
             {
-                TableName = nameof(TradePolicySheet),
+                TableName = nameof(RestrictionSheet),
                 TableCsv = csv,
             };
 
@@ -128,19 +128,19 @@ namespace Lib9c.Tests.Action
                     PreviousState = _initialState,
                 });
 
-            Assert.Equal(csv, nextState.GetSheetCsv<TradePolicySheet>());
+            Assert.Equal(csv, nextState.GetSheetCsv<RestrictionSheet>());
         }
 
         [Theory]
         [InlineData("key,market_registrable,synthesize_material\n10660004,flase,\n")]
         [InlineData("key,market_registrable,synthesize_material\ncrystal,false,\n")]
         [InlineData("key,synthesize_material,market_registrable\n10660004,false,\n")]
-        public void Execute_Throw_SheetRowValidateException_WhenTradePolicySheetIsMalformed(
+        public void Execute_Throw_SheetRowValidateException_WhenRestrictionSheetIsMalformed(
             string csv)
         {
             var action = new PatchTableSheet
             {
-                TableName = nameof(TradePolicySheet),
+                TableName = nameof(RestrictionSheet),
                 TableCsv = csv,
             };
 

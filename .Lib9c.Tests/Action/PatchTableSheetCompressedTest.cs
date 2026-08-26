@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Action
     using Libplanet.Mocks;
     using Nekoyume.Action;
     using Nekoyume.Model.State;
+    using Nekoyume.Module;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -120,6 +121,38 @@ namespace Lib9c.Tests.Action
 
             // Assert
             Assert.NotNull(nextState);
+        }
+
+        /// <summary>
+        /// The compressed variant is the one a large sheet actually travels in, so it has to
+        /// reject a malformed policy too.
+        /// </summary>
+        [Fact]
+        public void Execute_RestrictionSheet()
+        {
+            const string csvData = "key,market_registrable,synthesize_material\n10660004,,false\n";
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(RestrictionSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+            };
+
+            var nextState = action.Execute(_context);
+
+            Assert.Equal(csvData, nextState.GetSheetCsv<RestrictionSheet>());
+        }
+
+        [Fact]
+        public void Execute_Throw_SheetRowValidateException_WhenRestrictionSheetIsMalformed()
+        {
+            const string csvData = "key,market_registrable,synthesize_material\n10660004,flase,\n";
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(RestrictionSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+            };
+
+            Assert.Throws<SheetRowValidateException>(() => action.Execute(_context));
         }
 
         /// <summary>

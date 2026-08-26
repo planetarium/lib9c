@@ -402,11 +402,11 @@ public class SynthesizeTest
     }
 
     /// <summary>
-    /// A patched <see cref="TradePolicySheet"/> keeps an item out of synthesis, which is what
+    /// A patched <see cref="RestrictionSheet"/> keeps an item out of synthesis, which is what
     /// stops an account bound costume from being converted into a tradable one.
     /// </summary>
     [Fact]
-    public void ExecuteTradePolicyForbiddenMaterial()
+    public void ExecuteRestrictionSheetForbiddenMaterial()
     {
         const Grade grade = (Grade)3;
         const ItemSubType itemSubType = ItemSubType.FullCostume;
@@ -418,7 +418,7 @@ public class SynthesizeTest
 
         var forbidden = items.First().Id;
         var csv = "key,market_registrable,synthesize_material\n" + $"{forbidden},,false\n";
-        state = state.SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+        state = state.SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)csv);
 
         var action = new Synthesize
         {
@@ -439,6 +439,45 @@ public class SynthesizeTest
 
         var exc = Assert.Throws<InvalidItemIdException>(() => action.Execute(ctx));
         Assert.Contains(forbidden.ToString(), exc.Message);
+    }
+
+    /// <summary>
+    /// Synthesis on a chain that has not been patched with <see cref="RestrictionSheet"/> keeps
+    /// behaving exactly as it did before the sheet existed, which is what lets blocks older than
+    /// the patch be re-evaluated to the same result.
+    /// </summary>
+    [Fact]
+    public void ExecuteWithoutRestrictionSheet()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), Null.Value);
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        state = action.Execute(
+            new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+
+        Assert.Single(state.GetInventoryV2(avatarAddress).Items);
     }
 
     private static (IWorld, List<ItemBase>) UpdateItemsFromSubType(Grade grade, ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)
