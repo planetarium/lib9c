@@ -301,6 +301,8 @@ namespace Lib9c.Tests
 
         public InfiniteTowerConditionSheet InfiniteTowerConditionSheet { get; private set; }
 
+        public TradePolicySheet TradePolicySheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

@@ -1,0 +1,14 @@
+key,market_registrable,synthesize_material
+_key is an item id for items and a ticker for currencies. an empty cell means unspecified.,,
+10660004,,false
+10670004,,false
+10760009,,false
+10770010,,false
+40100042,,false
+40100043,,false
+40100059,,false
+CRYSTAL,false,
+RUNESTONE_FREYA_BLESSING,false,
+RUNESTONE_FREYA_LIBERATION,false,
+RUNESTONE_ODIN_WEAKNESS,false,
+RUNESTONE_ODIN_WISDOM,false,
