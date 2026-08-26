@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
@@ -398,6 +399,46 @@ public class SynthesizeTest
         };
 
         Assert.Throws<InvalidMaterialException>(() => action.Execute(ctx));
+    }
+
+    /// <summary>
+    /// A patched <see cref="TradePolicySheet"/> keeps an item out of synthesis, which is what
+    /// stops an account bound costume from being converted into a tradable one.
+    /// </summary>
+    [Fact]
+    public void ExecuteTradePolicyForbiddenMaterial()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
+
+        var forbidden = items.First().Id;
+        var csv = "key,market_registrable,synthesize_material\n" + $"{forbidden},,false\n";
+        state = state.SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        var exc = Assert.Throws<InvalidItemIdException>(() => action.Execute(ctx));
+        Assert.Contains(forbidden.ToString(), exc.Message);
     }
 
     private static (IWorld, List<ItemBase>) UpdateItemsFromSubType(Grade grade, ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)

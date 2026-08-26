@@ -202,6 +202,11 @@ namespace Lib9c
             return GetMinterlessCurrency(ticker);
         }
 
+        /// <summary>
+        /// Ticker prefix shared by every item currency.
+        /// </summary>
+        public const string ItemCurrencyTickerPrefix = "Item_";
+
         public static (bool tradable, int itemId) ParseItemCurrency(Currency currency)
         {
             if (currency.DecimalPlaces != 0)
@@ -226,8 +231,19 @@ namespace Lib9c
         public static Currency GetItemCurrency(int itemId, bool tradable)
         {
             var type = tradable ? "T" : "NT";
-            return Currency.Legacy($"Item_{type}_{itemId}", decimalPlaces: 0, minters: null);
+            return Currency.Legacy(
+                $"{ItemCurrencyTickerPrefix}{type}_{itemId}",
+                decimalPlaces: 0,
+                minters: null);
         }
+
+        /// <summary>
+        /// Whether the ticker denotes an item wrapped into a currency by
+        /// <see cref="GetItemCurrency"/>. Such a ticker exists per item id, so a policy sheet
+        /// cannot enumerate them as rows.
+        /// </summary>
+        public static bool IsItemCurrencyTicker(string ticker) =>
+            ticker.StartsWith(ItemCurrencyTickerPrefix, StringComparison.Ordinal);
 
         /// <summary>
         /// Gets the appropriate currency object for a given ticker.

@@ -58,6 +58,10 @@ namespace Nekoyume.Action
             }
 
             var ncg = states.GetGoldCurrency();
+
+            // Absent until the sheet is patched onto this chain, in which case only the
+            // hardcoded restrictions apply, exactly as they did before the sheet existed.
+            states.TryGetExistingSheet<TradePolicySheet>(out var tradePolicySheet);
             foreach (var registerInfo in RegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -114,7 +118,14 @@ namespace Nekoyume.Action
             var random = context.GetRandom();
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productsState, states, random);
+                states = Register(
+                    context,
+                    info,
+                    avatarState,
+                    productsState,
+                    states,
+                    random,
+                    tradePolicySheet);
             }
             sw.Stop();
             Log.Debug("{Source} {Process} from #{BlockIndex}: {Elapsed}, ProductCount: {ProductCount}",
@@ -133,8 +144,15 @@ namespace Nekoyume.Action
             return states;
         }
 
+        /// <param name="tradePolicySheet">
+        /// Restrictions on top of the hardcoded ones, or <see langword="null"/> on a chain that
+        /// has not been patched with <see cref="TradePolicySheet"/> yet. The sheet only adds:
+        /// a patched sheet that forgets an entry must not lift a restriction that code already
+        /// enforces.
+        /// </param>
         public static IWorld Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductsState productsState, IWorld states, IRandom random)
+            ProductsState productsState, IWorld states, IRandom random,
+            TradePolicySheet tradePolicySheet = null)
         {
             switch (info)
             {
@@ -205,6 +223,15 @@ namespace Nekoyume.Action
                                 throw new ItemDoesNotExistException($"can't find item: {tradableId}");
                             }
 
+                            // Every ITradableItem an inventory can hold derives from ItemBase.
+                            var itemId = ((ItemBase)tradableItem).Id;
+                            if (tradePolicySheet is not null &&
+                                !tradePolicySheet.IsItemMarketRegistrable(itemId))
+                            {
+                                throw new InvalidItemIdException(
+                                    $"{itemId} is not registrable on the market.");
+                            }
+
                             Guid productId = random.GenerateRandomGuid();
                             var productAddress = Product.DeriveAddress(productId);
                             // 중복된 ProductId가 발급되면 상태를 덮어씌우는 현상을 방지하기위해 예외발생
@@ -233,6 +260,19 @@ namespace Nekoyume.Action
                     break;
                 case AssetInfo assetInfo:
                 {
+                    var ticker = assetInfo.Asset.Currency.Ticker;
+                    if (tradePolicySheet is not null)
+                    {
+                        // An item currency reaches the buyer's avatar address, which has no
+                        // withdrawal path for anything but NCG, so a product denominated in one
+                        // hands over a balance its buyer can never spend.
+                        if (Currencies.IsItemCurrencyTicker(ticker) ||
+                            !tradePolicySheet.IsCurrencyMarketRegistrable(ticker))
+                        {
+                            throw new InvalidCurrencyException($"{ticker} does not allow register.");
+                        }
+                    }
+
                     Guid productId = random.GenerateRandomGuid();
                     Address productAddress = Product.DeriveAddress(productId);
                     // 중복된 ProductId가 발급되면 상태를 덮어씌우는 현상을 방지하기위해 예외발생

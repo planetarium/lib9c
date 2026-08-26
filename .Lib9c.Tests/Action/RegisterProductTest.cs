@@ -461,6 +461,173 @@ namespace Lib9c.Tests.Action
                     }));
         }
 
+        [Fact]
+        public void Execute_Throw_InvalidItemIdException_WhenTradePolicyForbidsItem()
+        {
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0L);
+            _avatarState.inventory.AddItem(equipment);
+            var csv = "key,market_registrable,synthesize_material\n" +
+                      $"{equipmentRow.Id},false,\n";
+            var state = _initialState
+                .SetAvatarState(AvatarAddress, _avatarState)
+                .SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new RegisterInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        ItemCount = 1,
+                        Price = 1 * Gold,
+                        TradableId = equipment.ItemId,
+                        Type = ProductType.NonFungible,
+                    },
+                },
+            };
+
+            var exc = Assert.Throws<InvalidItemIdException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1L,
+                        PreviousState = state,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
+            Assert.Contains(equipmentRow.Id.ToString(), exc.Message);
+        }
+
+        [Fact]
+        public void Execute_ItemUnlistedByTradePolicyStaysRegistrable()
+        {
+            var equipmentRow = _tableSheets.EquipmentItemSheet.Values.First();
+            var equipment = ItemFactory.CreateItemUsable(equipmentRow, Guid.NewGuid(), 0L);
+            _avatarState.inventory.AddItem(equipment);
+            var csv = "key,market_registrable,synthesize_material\n" +
+                      $"{equipmentRow.Id + 1},false,\n";
+            var state = _initialState
+                .SetAvatarState(AvatarAddress, _avatarState)
+                .SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new RegisterInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        ItemCount = 1,
+                        Price = 1 * Gold,
+                        TradableId = equipment.ItemId,
+                        Type = ProductType.NonFungible,
+                    },
+                },
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 1L,
+                    PreviousState = state,
+                    RandomSeed = 0,
+                    Signer = _agentAddress,
+                });
+
+            Assert.Empty(nextState.GetAvatarState(AvatarAddress).inventory.Items);
+        }
+
+        [Fact]
+        public void Execute_Throw_InvalidCurrencyException_WhenTradePolicyForbidsTicker()
+        {
+            var asset = 3 * RuneHelper.DailyRewardRune;
+            var csv = "key,market_registrable,synthesize_material\n" +
+                      $"{asset.Currency.Ticker},false,\n";
+            var state = _initialState
+                .MintAsset(new ActionContext(), AvatarAddress, asset)
+                .SetLegacyState(Addresses.GetSheetAddress<TradePolicySheet>(), (Text)csv);
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new AssetInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        Asset = asset,
+                        Price = 1 * Gold,
+                        Type = ProductType.FungibleAssetValue,
+                    },
+                },
+            };
+
+            var exc = Assert.Throws<InvalidCurrencyException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1L,
+                        PreviousState = state,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
+            Assert.Contains(asset.Currency.Ticker, exc.Message);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Execute_ItemCurrencyIsRegistrableOnlyBeforeTradePolicyArrives(bool patched)
+        {
+            // An item currency product hands the buyer a balance at their avatar address, which
+            // has no withdrawal path for anything but NCG. The sheet's presence is what turns the
+            // rule on, so that re-evaluating a block older than the patch keeps its outcome.
+            var materialRow = _tableSheets.MaterialItemSheet.Values.First();
+            var asset = 3 * Currencies.GetItemCurrency(materialRow.Id, false);
+            var state = _initialState.MintAsset(new ActionContext(), AvatarAddress, asset);
+            if (patched)
+            {
+                state = state.SetLegacyState(
+                    Addresses.GetSheetAddress<TradePolicySheet>(),
+                    (Text)"key,market_registrable,synthesize_material\n1,false,\n");
+            }
+
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new AssetInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        Asset = asset,
+                        Price = 1 * Gold,
+                        Type = ProductType.FungibleAssetValue,
+                    },
+                },
+            };
+            var context = new ActionContext
+            {
+                BlockIndex = 1L,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = _agentAddress,
+            };
+
+            if (patched)
+            {
+                var exc = Assert.Throws<InvalidCurrencyException>(() => action.Execute(context));
+                Assert.Contains(Currencies.ItemCurrencyTickerPrefix, exc.Message);
+                return;
+            }
+
+            var nextState = action.Execute(context);
+            Assert.Equal(
+                0 * asset.Currency,
+                nextState.GetBalance(AvatarAddress, asset.Currency));
+        }
+
         public class ValidateMember
         {
             public IEnumerable<IRegisterInfo> RegisterInfos { get; set; }

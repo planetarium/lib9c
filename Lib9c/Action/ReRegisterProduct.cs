@@ -42,6 +42,10 @@ namespace Nekoyume.Action
             }
 
             var ncg = states.GetGoldCurrency();
+
+            // Absent until the sheet is patched onto this chain, in which case only the
+            // hardcoded restrictions apply, exactly as they did before the sheet existed.
+            states.TryGetExistingSheet<TradePolicySheet>(out var tradePolicySheet);
             foreach (var (productInfo, registerInfo) in ReRegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -167,7 +171,14 @@ namespace Nekoyume.Action
                         states, avatarState, context);
                 }
 
-                states = RegisterProduct.Register(context, info, avatarState, productsState, states, random);
+                states = RegisterProduct.Register(
+                    context,
+                    info,
+                    avatarState,
+                    productsState,
+                    states,
+                    random,
+                    tradePolicySheet);
             }
 
             states = states
