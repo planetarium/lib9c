@@ -518,14 +518,6 @@ namespace Nekoyume.Helper
                 totalWeight += weight;
             }
 
-            if (!synthesizeWeightSheet.IsStrict)
-            {
-                // Random selection based on weight. The bound is inclusive, so this can land on
-                // totalWeight, walk past every item and throw; kept as is because changing which
-                // number is drawn would change what past blocks produced.
-                return random.Next(totalWeight + 1);
-            }
-
             if (totalWeight <= 0)
             {
                 throw new InvalidOperationException(
@@ -533,6 +525,9 @@ namespace Nekoyume.Helper
                     " a weight above 0.");
             }
 
+            // Exclusive upper bound: the draw stays inside the cumulative range, so the walk over
+            // the weights always selects. An inclusive bound could land on totalWeight and fall
+            // through every item.
             return random.Next(totalWeight);
         }
 
@@ -647,16 +642,10 @@ namespace Nekoyume.Helper
         /// <returns>weight of the item that can be obtained by synthesizing the item</returns>
         public static int GetWeight(int itemId, SynthesizeWeightSheet sheet)
         {
+            // An unlisted item is not drawn: a result pool is what this sheet spells out, not
+            // everything the item sheet happens to carry for that grade and sub type.
             var gradeRow = sheet.Values.FirstOrDefault(r => r.Key == itemId);
-            if (gradeRow is not null)
-            {
-                return gradeRow.Weight;
-            }
-
-            // An unlisted item is drawn by default, which is why adding one to an item sheet
-            // silently adds it to a result pool. A chain that has patched
-            // SynthesizeWeightSheet.StrictModeKey into the sheet excludes it instead.
-            return sheet.IsStrict ? 0 : SynthesizeWeightSheet.DefaultWeight;
+            return gradeRow?.Weight ?? SynthesizeWeightSheet.DefaultWeight;
         }
 
         // TODO: move to ItemExtensions

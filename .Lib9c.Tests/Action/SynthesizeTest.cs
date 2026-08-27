@@ -481,42 +481,56 @@ public class SynthesizeTest
     }
 
     /// <summary>
-    /// Without the strict mode row an item the weight sheet does not list keeps being drawn with
-    /// <see cref="SynthesizeWeightSheet.DefaultWeight"/>, which is what a chain that has not been
-    /// patched has to keep doing.
+    /// A result pool is what the weight sheet spells out. An item it does not list is not drawn,
+    /// so adding one to an item sheet no longer puts it into circulation on its own.
     /// </summary>
     [Fact]
-    public void GetWeightDefaultsToIncluded()
+    public void GetWeightExcludesUnlistedItems()
     {
         var sheet = new SynthesizeWeightSheet();
         sheet.Set("item_id,weight\n40100000,7\n");
 
-        Assert.False(sheet.IsStrict);
-        Assert.Equal(7, SynthesizeSimulator.GetWeight(40100000, sheet));
-        Assert.Equal(SynthesizeWeightSheet.DefaultWeight, SynthesizeSimulator.GetWeight(40100001, sheet));
-    }
-
-    /// <summary>
-    /// With the row patched in, an unlisted item is excluded instead, so adding an item to an item
-    /// sheet no longer puts it into a result pool on its own.
-    /// </summary>
-    [Fact]
-    public void GetWeightExcludesUnlistedInStrictMode()
-    {
-        var sheet = new SynthesizeWeightSheet();
-        sheet.Set($"item_id,weight\n{SynthesizeWeightSheet.StrictModeKey},0\n40100000,7\n");
-
-        Assert.True(sheet.IsStrict);
         Assert.Equal(7, SynthesizeSimulator.GetWeight(40100000, sheet));
         Assert.Equal(0, SynthesizeSimulator.GetWeight(40100001, sheet));
+        Assert.Equal(0, SynthesizeWeightSheet.DefaultWeight);
     }
 
     /// <summary>
-    /// In strict mode a result pool whose every item is unlisted has nothing to draw, and the
-    /// action says so instead of falling through the weight walk.
+    /// The shipped weight sheet lists every item that used to be drawn by the implicit default, so
+    /// flipping the default leaves the odds of the existing pools untouched.
+    /// </summary>
+    [Theory]
+    [InlineData(ItemSubType.FullCostume)]
+    [InlineData(ItemSubType.Title)]
+    [InlineData(ItemSubType.Aura)]
+    [InlineData(ItemSubType.Grimoire)]
+    public void EveryPoolOfASynthesizableSubTypeHasWeight(ItemSubType itemSubType)
+    {
+        var costumeSheet = TableSheets.CostumeItemSheet;
+        var equipmentSheet = TableSheets.EquipmentItemSheet;
+        var grades = itemSubType is ItemSubType.FullCostume or ItemSubType.Title
+            ? costumeSheet.Values.Where(r => r.ItemSubType == itemSubType).Select(r => (Grade)r.Grade)
+            : equipmentSheet.Values.Where(r => r.ItemSubType == itemSubType).Select(r => (Grade)r.Grade);
+
+        foreach (var grade in grades.Distinct())
+        {
+            var pool = itemSubType is ItemSubType.FullCostume or ItemSubType.Title
+                ? SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, costumeSheet)
+                : SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, equipmentSheet);
+            var total = pool.Sum(id => SynthesizeSimulator.GetWeight(id, TableSheets.SynthesizeWeightSheet));
+
+            var message = $"{itemSubType} grade {(int)grade} has {pool.Count} item(s) and no" +
+                          " weight at all, so synthesizing into it would have nothing to draw.";
+            Assert.True(total > 0, message);
+        }
+    }
+
+    /// <summary>
+    /// A pool whose every item is unlisted has nothing to draw, and the action says so instead of
+    /// walking past every weight and failing at the end.
     /// </summary>
     [Fact]
-    public void ExecuteThrowsWhenStrictModeEmptiesTheResultPool()
+    public void ExecuteThrowsWhenTheResultPoolHasNoWeight()
     {
         const Grade grade = (Grade)3;
         const ItemSubType itemSubType = ItemSubType.FullCostume;
@@ -528,7 +542,7 @@ public class SynthesizeTest
             .SetActionPoint(avatarAddress, 120)
             .SetLegacyState(
                 Addresses.GetSheetAddress<SynthesizeWeightSheet>(),
-                (Text)$"item_id,weight\n{SynthesizeWeightSheet.StrictModeKey},0\n");
+                (Text)"item_id,weight\n");
 
         var action = new Synthesize
         {
@@ -552,11 +566,10 @@ public class SynthesizeTest
     }
 
     /// <summary>
-    /// In strict mode only what the sheet lists can come out, so a pool narrowed to one item
-    /// yields that item every time.
+    /// Only what the sheet lists can come out, so a pool narrowed to one item yields that item.
     /// </summary>
     [Fact]
-    public void ExecuteDrawsOnlyListedItemsInStrictMode()
+    public void ExecuteDrawsOnlyListedItems()
     {
         const Grade grade = (Grade)3;
         const ItemSubType itemSubType = ItemSubType.FullCostume;
@@ -566,12 +579,13 @@ public class SynthesizeTest
         (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
 
         var wanted = TableSheets.CostumeItemSheet.Values
-            .First(r => r.ItemSubType == itemSubType && (Grade)r.Grade == SynthesizeSimulator.GetTargetGrade(grade));
+            .First(r => r.ItemSubType == itemSubType &&
+                        (Grade)r.Grade == SynthesizeSimulator.GetTargetGrade(grade));
         state = state
             .SetActionPoint(avatarAddress, 120)
             .SetLegacyState(
                 Addresses.GetSheetAddress<SynthesizeWeightSheet>(),
-                (Text)$"item_id,weight\n{SynthesizeWeightSheet.StrictModeKey},0\n{wanted.Id},1\n");
+                (Text)$"item_id,weight\n{wanted.Id},1\n");
 
         var action = new Synthesize
         {
