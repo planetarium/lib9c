@@ -634,8 +634,8 @@ able to cancel but not to reprice, and it does not retract listings that are alr
 <code>BuyProduct</code> does not consult this sheet, so a restriction added after the fact
 still needs those products cancelled. A false <code>synthesize_material</code> only stops the
 item from being consumed as a material — an item that must not be handed out by synthesis
-needs a <code>SynthesizeWeightSheet</code> weight of 0 as well, since the result pool is built
-from grade and sub type alone.
+is kept out of the result pool by leaving it out of <code>SynthesizeWeightSheet</code>, which is
+a separate sheet from this one.
 </p><p>
 Callers must tolerate the sheet being absent — it reaches an existing chain only by
 <code>patch_table_sheet</code>, so loading it as a required sheet would fail every affected
