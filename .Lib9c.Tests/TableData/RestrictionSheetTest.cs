@@ -34,6 +34,22 @@ namespace Lib9c.Tests.TableData
             }
         }
 
+        [Theory]
+        [InlineData(40100062)]
+        [InlineData(40100063)]
+        [InlineData(40100064)]
+        [InlineData(40100065)]
+        public void ShippedCsvKeepsTheGrade8ChampionCostumesOutOfSynthesis(int itemId)
+        {
+            // These were handed out by synthesis in 2026-08 while the weight sheet still let an
+            // unlisted item be drawn. They stay out of synthesis as materials so that a leaked
+            // copy cannot be rerolled into a tradable one.
+            var sheet = Shipped();
+
+            Assert.False(sheet.IsItemSynthesizeMaterial(itemId));
+            Assert.True(sheet.IsItemMarketRegistrable(itemId));
+        }
+
         [Fact]
         public void HardcodedDenyListsAreWhatTheSheetWasSeededFrom()
         {
