@@ -417,6 +417,9 @@ namespace Nekoyume.Module
         /// becoming unreadable; only genuine absence may fall back, and that is also what keeps
         /// re-evaluation of blocks older than the patch identical.
         /// </remarks>
+        /// <param name="worldState">The world to read the sheet from.</param>
+        /// <param name="sheet">The parsed sheet, or <see langword="null"/> when absent.</param>
+        /// <typeparam name="T">The sheet to load.</typeparam>
         public static bool TryGetPatchedSheet<T>(this IWorldState worldState, out T sheet)
             where T : ISheet, new()
         {

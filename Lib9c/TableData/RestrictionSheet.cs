@@ -48,9 +48,15 @@ namespace Nekoyume.TableData
             "synthesize_material",
         };
 
+        /// <summary>
+        /// One target and what it may not be used for.
+        /// </summary>
         [Serializable]
         public class Row : SheetRow<string>
         {
+            /// <summary>
+            /// The item id or ticker this row restricts, which is also how it is looked up.
+            /// </summary>
             public override string Key => Target;
 
             /// <summary>
@@ -70,6 +76,10 @@ namespace Nekoyume.TableData
             /// </summary>
             public bool? SynthesizeMaterial { get; private set; }
 
+            /// <summary>
+            /// Reads one row.
+            /// </summary>
+            /// <param name="fields">The row's cells, with "_" prefixed columns already dropped.</param>
             /// <remarks>
             /// Total by design: <see cref="Sheet{TKey,TValue}"/> does not guard this call, so a
             /// throw here would abort the whole sheet and take every restriction with it.
@@ -120,6 +130,9 @@ namespace Nekoyume.TableData
             }
         }
 
+        /// <summary>
+        /// Creates an empty sheet.
+        /// </summary>
         public RestrictionSheet() : base(nameof(RestrictionSheet))
         {
         }
@@ -149,6 +162,11 @@ namespace Nekoyume.TableData
         public bool IsItemSynthesizeMaterial(int itemId) =>
             !TryGetValue(ToKey(itemId), out var row) || row.SynthesizeMaterial is not false;
 
+        /// <summary>
+        /// Adds a parsed row to the sheet.
+        /// </summary>
+        /// <param name="key">The row's key.</param>
+        /// <param name="value">The row to add.</param>
         /// <remarks>
         /// Blank keys are dropped and duplicate keys are merged toward the restrictive value
         /// instead of throwing, because a throw here would take the entire policy offline and
@@ -175,6 +193,7 @@ namespace Nekoyume.TableData
         /// <c>patch_table_sheet</c> transaction instead of silently landing on the chain, where
         /// a row that no lookup can match reads as "unrestricted".
         /// </summary>
+        /// <param name="csv">The sheet's CSV, as the patch would write it.</param>
         /// <exception cref="SheetRowValidateException">
         /// The header does not match <see cref="ColumnNames"/>, or a row has no key, a key no
         /// lookup can produce, an unparsable policy cell, no policy at all, a synthesis policy

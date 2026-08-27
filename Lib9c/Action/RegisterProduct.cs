@@ -144,6 +144,12 @@ namespace Nekoyume.Action
             return states;
         }
 
+        /// <param name="context">The action context the registration runs in.</param>
+        /// <param name="info">What to register: an item or a fungible asset.</param>
+        /// <param name="avatarState">The seller's avatar, whose inventory the item leaves.</param>
+        /// <param name="productsState">The seller's product list the new product id joins.</param>
+        /// <param name="states">The world the product is written into.</param>
+        /// <param name="random">Source of the product id.</param>
         /// <param name="restrictionSheet">
         /// Restrictions on top of the hardcoded ones, or <see langword="null"/> on a chain that
         /// has not been patched with <see cref="RestrictionSheet"/> yet. The sheet only adds:

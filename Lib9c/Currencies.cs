@@ -269,6 +269,7 @@ namespace Lib9c
         /// <see cref="GetWrappedCurrency"/>. Such a ticker exists per item id, so a policy sheet
         /// cannot enumerate them as rows.
         /// </summary>
+        /// <param name="ticker">The ticker to test.</param>
         public static bool IsItemCurrencyTicker(string ticker) =>
             ticker.StartsWith(ItemCurrencyTickerPrefix, StringComparison.Ordinal) ||
             ticker.StartsWith(
