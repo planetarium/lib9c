@@ -521,8 +521,8 @@ namespace Nekoyume.Helper
             if (totalWeight <= 0)
             {
                 throw new InvalidOperationException(
-                    $"None of the {synthesizeResultPool.Count} item(s) in the pool is listed with" +
-                    " a weight above 0.");
+                    $"The pool of {synthesizeResultPool.Count} item(s) adds up to a weight of" +
+                    $" {totalWeight}, so there is nothing to draw from it.");
             }
 
             // Exclusive upper bound: the draw stays inside the cumulative range, so the walk over
@@ -644,8 +644,9 @@ namespace Nekoyume.Helper
         {
             // An unlisted item is not drawn: a result pool is what this sheet spells out, not
             // everything the item sheet happens to carry for that grade and sub type.
-            var gradeRow = sheet.Values.FirstOrDefault(r => r.Key == itemId);
-            return gradeRow?.Weight ?? SynthesizeWeightSheet.DefaultWeight;
+            return sheet.TryGetValue(itemId, out var row)
+                ? row.Weight
+                : SynthesizeWeightSheet.DefaultWeight;
         }
 
         // TODO: move to ItemExtensions

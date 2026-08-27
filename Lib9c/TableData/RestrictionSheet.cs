@@ -36,8 +36,8 @@ namespace Nekoyume.TableData
     /// <c>BuyProduct</c> does not consult this sheet, so a restriction added after the fact
     /// still needs those products cancelled. A false <c>synthesize_material</c> only stops the
     /// item from being consumed as a material — an item that must not be handed out by synthesis
-    /// needs a <c>SynthesizeWeightSheet</c> weight of 0 as well, since the result pool is built
-    /// from grade and sub type alone.
+    /// is kept out of the result pool by leaving it out of <c>SynthesizeWeightSheet</c>, which is
+    /// a separate sheet from this one.
     /// </para>
     /// <para>
     /// Callers must tolerate the sheet being absent — it reaches an existing chain only by

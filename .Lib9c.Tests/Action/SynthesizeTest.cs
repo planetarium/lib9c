@@ -496,31 +496,36 @@ public class SynthesizeTest
     }
 
     /// <summary>
-    /// The shipped weight sheet lists every item that used to be drawn by the implicit default, so
-    /// flipping the default leaves the odds of the existing pools untouched.
+    /// Now that an unlisted item is not drawn, a result pool that synthesis can actually reach has
+    /// to carry weight, or synthesizing into it would have nothing to draw. The reachable pools are
+    /// what <see cref="SynthesizeSheet"/> defines: the grade a recipe consumes (a failure redraws
+    /// the same grade) and the grade above it (a success).
     /// </summary>
-    [Theory]
-    [InlineData(ItemSubType.FullCostume)]
-    [InlineData(ItemSubType.Title)]
-    [InlineData(ItemSubType.Aura)]
-    [InlineData(ItemSubType.Grimoire)]
-    public void EveryPoolOfASynthesizableSubTypeHasWeight(ItemSubType itemSubType)
+    [Fact]
+    public void EveryReachableResultPoolHasWeight()
     {
-        var costumeSheet = TableSheets.CostumeItemSheet;
-        var equipmentSheet = TableSheets.EquipmentItemSheet;
-        var grades = itemSubType is ItemSubType.FullCostume or ItemSubType.Title
-            ? costumeSheet.Values.Where(r => r.ItemSubType == itemSubType).Select(r => (Grade)r.Grade)
-            : equipmentSheet.Values.Where(r => r.ItemSubType == itemSubType).Select(r => (Grade)r.Grade);
+        var weightSheet = TableSheets.SynthesizeWeightSheet;
+        var reachable = new HashSet<(Grade Grade, ItemSubType ItemSubType)>();
+        foreach (var row in TableSheets.SynthesizeSheet.Values)
+        {
+            foreach (var itemSubType in row.RequiredCountDict.Keys)
+            {
+                var grade = (Grade)row.GradeId;
+                reachable.Add((grade, itemSubType));
+                reachable.Add((SynthesizeSimulator.GetTargetGrade(grade), itemSubType));
+            }
+        }
 
-        foreach (var grade in grades.Distinct())
+        Assert.NotEmpty(reachable);
+        foreach (var (grade, itemSubType) in reachable)
         {
             var pool = itemSubType is ItemSubType.FullCostume or ItemSubType.Title
-                ? SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, costumeSheet)
-                : SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, equipmentSheet);
-            var total = pool.Sum(id => SynthesizeSimulator.GetWeight(id, TableSheets.SynthesizeWeightSheet));
+                ? SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.CostumeItemSheet)
+                : SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.EquipmentItemSheet);
+            var total = pool.Sum(id => SynthesizeSimulator.GetWeight(id, weightSheet));
+            var message = $"{itemSubType} grade {(int)grade} has {pool.Count} item(s) and a total" +
+                          $" weight of {total}, so synthesizing into it would have nothing to draw.";
 
-            var message = $"{itemSubType} grade {(int)grade} has {pool.Count} item(s) and no" +
-                          " weight at all, so synthesizing into it would have nothing to draw.";
             Assert.True(total > 0, message);
         }
     }
@@ -562,7 +567,7 @@ public class SynthesizeTest
                     RandomSeed = 0,
                     Signer = agentAddress,
                 }));
-        Assert.Contains("weight above 0", exc.Message);
+        Assert.Contains("nothing to draw", exc.Message);
     }
 
     /// <summary>
