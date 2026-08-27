@@ -322,6 +322,22 @@ references:
   commentId: F:Lib9c.Currencies.StakeRune
   fullName: Lib9c.Currencies.StakeRune
   nameWithType: Currencies.StakeRune
+- uid: Lib9c.Currencies.UnwrapTicker(System.String)
+  name: UnwrapTicker(string)
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_UnwrapTicker_System_String_
+  commentId: M:Lib9c.Currencies.UnwrapTicker(System.String)
+  name.vb: UnwrapTicker(String)
+  fullName: Lib9c.Currencies.UnwrapTicker(string)
+  fullName.vb: Lib9c.Currencies.UnwrapTicker(String)
+  nameWithType: Currencies.UnwrapTicker(string)
+  nameWithType.vb: Currencies.UnwrapTicker(String)
+- uid: Lib9c.Currencies.UnwrapTicker*
+  name: UnwrapTicker
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_UnwrapTicker_
+  commentId: Overload:Lib9c.Currencies.UnwrapTicker
+  isSpec: "True"
+  fullName: Lib9c.Currencies.UnwrapTicker
+  nameWithType: Currencies.UnwrapTicker
 - uid: Lib9c.Currencies.WrappedCurrencyTickerPrefix
   name: WrappedCurrencyTickerPrefix
   href: api/Lib9c.Currencies.html#Lib9c_Currencies_WrappedCurrencyTickerPrefix
@@ -100422,6 +100438,19 @@ references:
   commentId: F:Nekoyume.TableData.SynthesizeWeightSheet.DefaultWeight
   fullName: Nekoyume.TableData.SynthesizeWeightSheet.DefaultWeight
   nameWithType: SynthesizeWeightSheet.DefaultWeight
+- uid: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
+  name: IsStrict
+  href: api/Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_IsStrict
+  commentId: P:Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
+  fullName: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
+  nameWithType: SynthesizeWeightSheet.IsStrict
+- uid: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict*
+  name: IsStrict
+  href: api/Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_IsStrict_
+  commentId: Overload:Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
+  isSpec: "True"
+  fullName: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
+  nameWithType: SynthesizeWeightSheet.IsStrict
 - uid: Nekoyume.TableData.SynthesizeWeightSheet.Row
   name: SynthesizeWeightSheet.Row
   href: api/Nekoyume.TableData.SynthesizeWeightSheet.Row.html
@@ -100483,6 +100512,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.SynthesizeWeightSheet.Row.Weight
   nameWithType: SynthesizeWeightSheet.Row.Weight
+- uid: Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey
+  name: StrictModeKey
+  href: api/Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_StrictModeKey
+  commentId: F:Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey
+  fullName: Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey
+  nameWithType: SynthesizeWeightSheet.StrictModeKey
 - uid: Nekoyume.TableData.TableExtensions
   name: TableExtensions
   href: api/Nekoyume.TableData.TableExtensions.html

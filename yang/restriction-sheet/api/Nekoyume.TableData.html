@@ -627,6 +627,16 @@ fails toward blocking, which is recoverable, rather than toward leaking.
 <a class="xref" href="Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> rejects such a cell at patch time so it should not reach the
 chain in the first place.
 </p><p>
+A key is an item id, not an item instance, so a row applies to every copy that exists —
+give a restricted item a new id rather than reusing one players already hold. A false
+<code>market_registrable</code> also stops <code>ReRegisterProduct</code>, leaving an existing seller
+able to cancel but not to reprice, and it does not retract listings that are already up:
+<code>BuyProduct</code> does not consult this sheet, so a restriction added after the fact
+still needs those products cancelled. A false <code>synthesize_material</code> only stops the
+item from being consumed as a material — an item that must not be handed out by synthesis
+needs a <code>SynthesizeWeightSheet</code> weight of 0 as well, since the result pool is built
+from grade and sub type alone.
+</p><p>
 Callers must tolerate the sheet being absent — it reaches an existing chain only by
 <code>patch_table_sheet</code>, so loading it as a required sheet would fail every affected
 action until each chain is patched. Absence has to fall back to the restrictions that are

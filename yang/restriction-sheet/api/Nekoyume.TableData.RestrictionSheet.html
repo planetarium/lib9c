@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class RestrictionSheet | Lib9c ">
       
-      <meta name="description" content="Declares what a given item or currency may not be used for, so that a restriction can be adjusted with patch_table_sheet instead of a headless and client release.  A row targets either an item id (numeric key) or a currency ticker (non-numeric key). Which one is looked up is decided by the call site — a market action already holds an item id or a ticker — so the sheet needs no discriminator column.  Columns: key, market_registrable, synthesize_material. The first governs the market registration path only — a fungible item can still reach another account through a garage or by being wrapped into a currency, so a row here does not make its target account bound by itself. The second closes the conversion path that would otherwise turn a restricted item into an unrestricted one.  An empty cell means &quot;unspecified&quot; and leaves the behavior that predates this sheet untouched. An unparsable cell is read as false(= restricted) on purpose: a typo then fails toward blocking, which is recoverable, rather than toward leaking.  rejects such a cell at patch time so it should not reach the chain in the first place.  Callers must tolerate the sheet being absent — it reaches an existing chain only by patch_table_sheet, so loading it as a required sheet would fail every affected action until each chain is patched. Absence has to fall back to the restrictions that are still hardcoded, which is also what keeps re-evaluation of pre-patch blocks identical.">
+      <meta name="description" content="Declares what a given item or currency may not be used for, so that a restriction can be adjusted with patch_table_sheet instead of a headless and client release.  A row targets either an item id (numeric key) or a currency ticker (non-numeric key). Which one is looked up is decided by the call site — a market action already holds an item id or a ticker — so the sheet needs no discriminator column.  Columns: key, market_registrable, synthesize_material. The first governs the market registration path only — a fungible item can still reach another account through a garage or by being wrapped into a currency, so a row here does not make its target account bound by itself. The second closes the conversion path that would otherwise turn a restricted item into an unrestricted one.  An empty cell means &quot;unspecified&quot; and leaves the behavior that predates this sheet untouched. An unparsable cell is read as false(= restricted) on purpose: a typo then fails toward blocking, which is recoverable, rather than toward leaking.  rejects such a cell at patch time so it should not reach the chain in the first place.  A key is an item id, not an item instance, so a row applies to every copy that exists — give a restricted item a new id rather than reusing one players already hold. A false market_registrable also stops ReRegisterProduct, leaving an existing seller able to cancel but not to reprice, and it does not retract listings that are already up: BuyProduct does not consult this sheet, so a restriction added after the fact still needs those products cancelled. A false synthesize_material only stops the item from being consumed as a material — an item that must not be handed out by synthesis needs a SynthesizeWeightSheet weight of 0 as well, since the result pool is built from grade and sub type alone.  Callers must tolerate the sheet being absent — it reaches an existing chain only by patch_table_sheet, so loading it as a required sheet would fail every affected action until each chain is patched. Absence has to fall back to the restrictions that are still hardcoded, which is also what keeps re-evaluation of pre-patch blocks identical.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_RestrictionSheet" data-uid="Nekoyume.TableData.RestrictionSheet" class="text-break">
-Class RestrictionSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L38"><i class="bi bi-code-slash"></i></a>
+Class RestrictionSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -115,6 +115,16 @@ untouched. An unparsable cell is read as <code>false</code>(= restricted) on pur
 fails toward blocking, which is recoverable, rather than toward leaking.
 <a class="xref" href="Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> rejects such a cell at patch time so it should not reach the
 chain in the first place.
+</p><p>
+A key is an item id, not an item instance, so a row applies to every copy that exists —
+give a restricted item a new id rather than reusing one players already hold. A false
+<code>market_registrable</code> also stops <code>ReRegisterProduct</code>, leaving an existing seller
+able to cancel but not to reprice, and it does not retract listings that are already up:
+<code>BuyProduct</code> does not consult this sheet, so a restriction added after the fact
+still needs those products cancelled. A false <code>synthesize_material</code> only stops the
+item from being consumed as a material — an item that must not be handed out by synthesis
+needs a <code>SynthesizeWeightSheet</code> weight of 0 as well, since the result pool is built
+from grade and sub type alone.
 </p><p>
 Callers must tolerate the sheet being absent — it reaches an existing chain only by
 <code>patch_table_sheet</code>, so loading it as a required sheet would fail every affected
@@ -264,7 +274,7 @@ public class RestrictionSheet : Sheet&lt;string, RestrictionSheet.Row&gt;, IDict
 
   <h3 id="Nekoyume_TableData_RestrictionSheet__ctor" data-uid="Nekoyume.TableData.RestrictionSheet.#ctor">
   RestrictionSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L147"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
@@ -294,7 +304,7 @@ public class RestrictionSheet : Sheet&lt;string, RestrictionSheet.Row&gt;, IDict
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_ColumnNames" data-uid="Nekoyume.TableData.RestrictionSheet.ColumnNames">
   ColumnNames
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Column names in their expected order, after <code>_</code> prefixed columns are dropped.</p>
@@ -330,7 +340,7 @@ public class RestrictionSheet : Sheet&lt;string, RestrictionSheet.Row&gt;, IDict
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_AddRow_System_String_Nekoyume_TableData_RestrictionSheet_Row_" data-uid="Nekoyume.TableData.RestrictionSheet.AddRow(System.String,Nekoyume.TableData.RestrictionSheet.Row)">
   AddRow(string, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L175"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L186"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a parsed row to the sheet.</p>
@@ -371,7 +381,7 @@ with it every restriction the sheet carries.</p>
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_IsCurrencyMarketRegistrable_System_String_" data-uid="Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable(System.String)">
   IsCurrencyMarketRegistrable(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L166"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Whether the currency may be registered on the market as a fungible asset product.
@@ -409,7 +419,7 @@ True when unlisted or unspecified.</p>
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_IsItemMarketRegistrable_System_Int32_" data-uid="Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable(System.Int32)">
   IsItemMarketRegistrable(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Whether the item may be registered on the market. True when unlisted or unspecified.</p>
@@ -446,7 +456,7 @@ True when unlisted or unspecified.</p>
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_IsItemSynthesizeMaterial_System_Int32_" data-uid="Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial(System.Int32)">
   IsItemSynthesizeMaterial(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L173"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Whether the item may be consumed as a synthesis material.
@@ -484,7 +494,7 @@ True when unlisted or unspecified.</p>
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_ToKey_System_Int32_" data-uid="Nekoyume.TableData.RestrictionSheet.ToKey(System.Int32)">
   ToKey(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L154"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Renders an item id the way a row key spells it.</p>
@@ -521,7 +531,7 @@ True when unlisted or unspecified.</p>
 
   <h3 id="Nekoyume_TableData_RestrictionSheet_ValidateCsv_System_String_" data-uid="Nekoyume.TableData.RestrictionSheet.ValidateCsv(System.String)">
   ValidateCsv(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L213"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Parses <code class="paramref">csv</code> strictly so that a malformed policy fails the
@@ -564,7 +574,7 @@ on a currency, or a key an earlier row already claimed.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L38" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/RestrictionSheet.cs/#L49" class="edit-link">Edit this page</a>
         </div>
 
 
