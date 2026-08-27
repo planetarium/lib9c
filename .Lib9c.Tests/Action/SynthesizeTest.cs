@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
 using Libplanet.Mocks;
@@ -398,6 +399,220 @@ public class SynthesizeTest
         };
 
         Assert.Throws<InvalidMaterialException>(() => action.Execute(ctx));
+    }
+
+    /// <summary>
+    /// A patched <see cref="RestrictionSheet"/> keeps an item out of synthesis, which is what
+    /// stops an account bound costume from being converted into a tradable one.
+    /// </summary>
+    [Fact]
+    public void ExecuteRestrictionSheetForbiddenMaterial()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
+
+        var forbidden = items.First().Id;
+        var csv = "key,market_registrable,synthesize_material\n" + $"{forbidden},,false\n";
+        state = state.SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)csv);
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        var ctx = new ActionContext
+        {
+            BlockIndex = blockIndex,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        var exc = Assert.Throws<InvalidItemIdException>(() => action.Execute(ctx));
+        Assert.Contains(forbidden.ToString(), exc.Message);
+    }
+
+    /// <summary>
+    /// Synthesis on a chain that has not been patched with <see cref="RestrictionSheet"/> keeps
+    /// behaving exactly as it did before the sheet existed, which is what lets blocks older than
+    /// the patch be re-evaluated to the same result.
+    /// </summary>
+    [Fact]
+    public void ExecuteWithoutRestrictionSheet()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), Null.Value);
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        state = action.Execute(
+            new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+
+        Assert.Single(state.GetInventoryV2(avatarAddress).Items);
+    }
+
+    /// <summary>
+    /// A result pool is what the weight sheet spells out. An item it does not list is not drawn,
+    /// so adding one to an item sheet no longer puts it into circulation on its own.
+    /// </summary>
+    [Fact]
+    public void GetWeightExcludesUnlistedItems()
+    {
+        var sheet = new SynthesizeWeightSheet();
+        sheet.Set("item_id,weight\n40100000,7\n");
+
+        Assert.Equal(7, SynthesizeSimulator.GetWeight(40100000, sheet));
+        Assert.Equal(0, SynthesizeSimulator.GetWeight(40100001, sheet));
+        Assert.Equal(0, SynthesizeWeightSheet.DefaultWeight);
+    }
+
+    /// <summary>
+    /// Now that an unlisted item is not drawn, a result pool that synthesis can actually reach has
+    /// to carry weight, or synthesizing into it would have nothing to draw. The reachable pools are
+    /// what <see cref="SynthesizeSheet"/> defines: the grade a recipe consumes (a failure redraws
+    /// the same grade) and the grade above it (a success).
+    /// </summary>
+    [Fact]
+    public void EveryReachableResultPoolHasWeight()
+    {
+        var weightSheet = TableSheets.SynthesizeWeightSheet;
+        var reachable = new HashSet<(Grade Grade, ItemSubType ItemSubType)>();
+        foreach (var row in TableSheets.SynthesizeSheet.Values)
+        {
+            foreach (var itemSubType in row.RequiredCountDict.Keys)
+            {
+                var grade = (Grade)row.GradeId;
+                reachable.Add((grade, itemSubType));
+                reachable.Add((SynthesizeSimulator.GetTargetGrade(grade), itemSubType));
+            }
+        }
+
+        Assert.NotEmpty(reachable);
+        foreach (var (grade, itemSubType) in reachable)
+        {
+            var pool = itemSubType is ItemSubType.FullCostume or ItemSubType.Title
+                ? SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.CostumeItemSheet)
+                : SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.EquipmentItemSheet);
+            var total = pool.Sum(id => SynthesizeSimulator.GetWeight(id, weightSheet));
+            var message = $"{itemSubType} grade {(int)grade} has {pool.Count} item(s) and a total" +
+                          $" weight of {total}, so synthesizing into it would have nothing to draw.";
+
+            Assert.True(total > 0, message);
+        }
+    }
+
+    /// <summary>
+    /// A pool whose every item is unlisted has nothing to draw, and the action says so instead of
+    /// walking past every weight and failing at the end.
+    /// </summary>
+    [Fact]
+    public void ExecuteThrowsWhenTheResultPoolHasNoWeight()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(
+                Addresses.GetSheetAddress<SynthesizeWeightSheet>(),
+                (Text)"item_id,weight\n");
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        var exc = Assert.Throws<InvalidOperationException>(
+            () => action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = state,
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                }));
+        Assert.Contains("nothing to draw", exc.Message);
+    }
+
+    /// <summary>
+    /// Only what the sheet lists can come out, so a pool narrowed to one item yields that item.
+    /// </summary>
+    [Fact]
+    public void ExecuteDrawsOnlyListedItems()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+
+        var wanted = TableSheets.CostumeItemSheet.Values
+            .First(r => r.ItemSubType == itemSubType &&
+                        (Grade)r.Grade == SynthesizeSimulator.GetTargetGrade(grade));
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(
+                Addresses.GetSheetAddress<SynthesizeWeightSheet>(),
+                (Text)$"item_id,weight\n{wanted.Id},1\n");
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        state = action.Execute(
+            new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+
+        var inventory = state.GetInventoryV2(avatarAddress);
+        Assert.Single(inventory.Items);
+        Assert.Equal(wanted.Id, inventory.Items.First().item.Id);
     }
 
     private static (IWorld, List<ItemBase>) UpdateItemsFromSubType(Grade grade, ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)

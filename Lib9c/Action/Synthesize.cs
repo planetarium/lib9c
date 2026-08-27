@@ -135,12 +135,25 @@ namespace Nekoyume.Action
                 addressesHex
             );
 
+            // Absent until the sheet is patched onto this chain, in which case only
+            // InvalidMaterialItemId applies, exactly as it did before the sheet existed.
+            states.TryGetPatchedSheet<RestrictionSheet>(out var restrictionSheet);
+
             // Check Invalid Item
             foreach (var materialItem in materialItems)
             {
                 if (InvalidMaterialItemId.Contains(materialItem.Id))
                 {
                     throw new InvalidItemIdException($"{materialItem.Id} is invalid item id.");
+                }
+
+                // The sheet only adds to InvalidMaterialItemId: a patched sheet that forgets an
+                // id must not lift a restriction that code already enforces.
+                if (restrictionSheet is not null &&
+                    !restrictionSheet.IsItemSynthesizeMaterial(materialItem.Id))
+                {
+                    throw new InvalidItemIdException(
+                        $"{materialItem.Id} is not allowed as a synthesis material.");
                 }
             }
 

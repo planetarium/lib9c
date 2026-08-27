@@ -80,6 +80,13 @@ namespace Nekoyume.Action
                 TableCsv
             );
 
+            // Reject a malformed policy here: once it is on the chain a row no lookup can
+            // match reads as "unrestricted", and nothing reports that it went missing.
+            if (TableName == nameof(RestrictionSheet))
+            {
+                RestrictionSheet.ValidateCsv(TableCsv);
+            }
+
             states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))

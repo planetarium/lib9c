@@ -58,6 +58,10 @@ namespace Nekoyume.Action
             }
 
             var ncg = states.GetGoldCurrency();
+
+            // Absent until the sheet is patched onto this chain, in which case only the
+            // hardcoded restrictions apply, exactly as they did before the sheet existed.
+            states.TryGetPatchedSheet<RestrictionSheet>(out var restrictionSheet);
             foreach (var registerInfo in RegisterInfos)
             {
                 registerInfo.ValidateAddress(AvatarAddress);
@@ -114,7 +118,14 @@ namespace Nekoyume.Action
             var random = context.GetRandom();
             foreach (var info in RegisterInfos.OrderBy(r => r.Type).ThenBy(r => r.Price))
             {
-                states = Register(context, info, avatarState, productsState, states, random);
+                states = Register(
+                    context,
+                    info,
+                    avatarState,
+                    productsState,
+                    states,
+                    random,
+                    restrictionSheet);
             }
             sw.Stop();
             Log.Debug("{Source} {Process} from #{BlockIndex}: {Elapsed}, ProductCount: {ProductCount}",
@@ -133,8 +144,22 @@ namespace Nekoyume.Action
             return states;
         }
 
+        /// <param name="context">The action context the registration runs in.</param>
+        /// <param name="info">What to register: an item or a fungible asset.</param>
+        /// <param name="avatarState">The seller's avatar, whose inventory the item leaves.</param>
+        /// <param name="productsState">The seller's product list the new product id joins.</param>
+        /// <param name="states">The world the product is written into.</param>
+        /// <param name="random">Source of the product id.</param>
+        /// <param name="restrictionSheet">
+        /// Restrictions on top of the hardcoded ones, or <see langword="null"/> on a chain that
+        /// has not been patched with <see cref="RestrictionSheet"/> yet. The sheet only adds:
+        /// a patched sheet that forgets an entry must not lift a restriction that code already
+        /// enforces. Required rather than optional so that a new call site has to decide instead
+        /// of silently registering without the policy.
+        /// </param>
         public static IWorld Register(IActionContext context, IRegisterInfo info, AvatarState avatarState,
-            ProductsState productsState, IWorld states, IRandom random)
+            ProductsState productsState, IWorld states, IRandom random,
+            RestrictionSheet restrictionSheet)
         {
             switch (info)
             {
@@ -205,6 +230,16 @@ namespace Nekoyume.Action
                                 throw new ItemDoesNotExistException($"can't find item: {tradableId}");
                             }
 
+                            // Every ITradableItem an inventory can hold derives from ItemBase,
+                            // which is where the item id lives; IItem does not carry one.
+                            if (restrictionSheet is not null &&
+                                tradableItem is ItemBase itemBase &&
+                                !restrictionSheet.IsItemMarketRegistrable(itemBase.Id))
+                            {
+                                throw new InvalidItemIdException(
+                                    $"{itemBase.Id} is not registrable on the market.");
+                            }
+
                             Guid productId = random.GenerateRandomGuid();
                             var productAddress = Product.DeriveAddress(productId);
                             // 중복된 ProductId가 발급되면 상태를 덮어씌우는 현상을 방지하기위해 예외발생
@@ -233,6 +268,22 @@ namespace Nekoyume.Action
                     break;
                 case AssetInfo assetInfo:
                 {
+                    // A wrapped ticker is the same asset a claim unwraps straight back, so the
+                    // policy has to see through the wrapping: FAV__CRYSTAL would otherwise walk
+                    // past a CRYSTAL row.
+                    var ticker = Currencies.UnwrapTicker(assetInfo.Asset.Currency.Ticker);
+                    if (restrictionSheet is not null)
+                    {
+                        // An item currency reaches the buyer's avatar address, which has no
+                        // withdrawal path for anything but NCG, so a product denominated in one
+                        // hands over a balance its buyer can never spend.
+                        if (Currencies.IsItemCurrencyTicker(ticker) ||
+                            !restrictionSheet.IsCurrencyMarketRegistrable(ticker))
+                        {
+                            throw new InvalidCurrencyException($"{ticker} does not allow register.");
+                        }
+                    }
+
                     Guid productId = random.GenerateRandomGuid();
                     Address productAddress = Product.DeriveAddress(productId);
                     // 중복된 ProductId가 발급되면 상태를 덮어씌우는 현상을 방지하기위해 예외발생
