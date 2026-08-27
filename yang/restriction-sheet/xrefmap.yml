@@ -100438,19 +100438,6 @@ references:
   commentId: F:Nekoyume.TableData.SynthesizeWeightSheet.DefaultWeight
   fullName: Nekoyume.TableData.SynthesizeWeightSheet.DefaultWeight
   nameWithType: SynthesizeWeightSheet.DefaultWeight
-- uid: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
-  name: IsStrict
-  href: api/Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_IsStrict
-  commentId: P:Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
-  fullName: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
-  nameWithType: SynthesizeWeightSheet.IsStrict
-- uid: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict*
-  name: IsStrict
-  href: api/Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_IsStrict_
-  commentId: Overload:Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
-  isSpec: "True"
-  fullName: Nekoyume.TableData.SynthesizeWeightSheet.IsStrict
-  nameWithType: SynthesizeWeightSheet.IsStrict
 - uid: Nekoyume.TableData.SynthesizeWeightSheet.Row
   name: SynthesizeWeightSheet.Row
   href: api/Nekoyume.TableData.SynthesizeWeightSheet.Row.html
@@ -100512,12 +100499,6 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.SynthesizeWeightSheet.Row.Weight
   nameWithType: SynthesizeWeightSheet.Row.Weight
-- uid: Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey
-  name: StrictModeKey
-  href: api/Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_StrictModeKey
-  commentId: F:Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey
-  fullName: Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey
-  nameWithType: SynthesizeWeightSheet.StrictModeKey
 - uid: Nekoyume.TableData.TableExtensions
   name: TableExtensions
   href: api/Nekoyume.TableData.TableExtensions.html

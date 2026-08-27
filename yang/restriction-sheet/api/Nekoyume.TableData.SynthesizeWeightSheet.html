@@ -241,7 +241,7 @@ public class SynthesizeWeightSheet : Sheet&lt;int, SynthesizeWeightSheet.Row&gt;
 
   <h3 id="Nekoyume_TableData_SynthesizeWeightSheet__ctor" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.#ctor">
   SynthesizeWeightSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
@@ -271,14 +271,15 @@ public class SynthesizeWeightSheet : Sheet&lt;int, SynthesizeWeightSheet.Row&gt;
 
   <h3 id="Nekoyume_TableData_SynthesizeWeightSheet_DefaultWeight" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.DefaultWeight">
   DefaultWeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Weight of an item this sheet does not list, or lists with an unreadable weight.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const int DefaultWeight = 10000</code></pre>
+    <pre><code class="lang-csharp hljs">public const int DefaultWeight = 0</code></pre>
   </div>
 
 
@@ -294,83 +295,12 @@ public class SynthesizeWeightSheet : Sheet&lt;int, SynthesizeWeightSheet.Row&gt;
 
 
 
-
-
-
-
-
-  <h3 id="Nekoyume_TableData_SynthesizeWeightSheet_StrictModeKey" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.StrictModeKey">
-  StrictModeKey
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L21"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Key of the row that switches the sheet from &quot;unlisted means <a class="xref" href="Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_DefaultWeight">DefaultWeight</a>&quot;
-to &quot;unlisted means 0&quot;. No item carries id 0, so the row is a flag and never a weight.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const int StrictModeKey = 0</code></pre>
-  </div>
-
-
-
-
-  <h4 class="section">Field Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-  <h2 class="section" id="properties">Properties
-</h2>
-
-
-  <a id="Nekoyume_TableData_SynthesizeWeightSheet_IsStrict_" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.IsStrict*"></a>
-
-  <h3 id="Nekoyume_TableData_SynthesizeWeightSheet_IsStrict" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.IsStrict">
-  IsStrict
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/restriction-sheet/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L51"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Whether an item the sheet does not list is excluded from synthesis results instead of
-being drawn with <a class="xref" href="Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_DefaultWeight">DefaultWeight</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool IsStrict { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-  <h4 class="section" id="Nekoyume_TableData_SynthesizeWeightSheet_IsStrict_remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>The default is &quot;included&quot;, so a new item enters every result pool of its grade and sub
-type the moment it is added to an item sheet, and stays there until someone remembers
-to write a 0 here. That is how four grade 8 costumes were handed out in 2026-08.
-Flipping the default is a consensus change, so it is switched on per chain by patching
-<a class="xref" href="Nekoyume.TableData.SynthesizeWeightSheet.html#Nekoyume_TableData_SynthesizeWeightSheet_StrictModeKey">StrictModeKey</a> into the sheet rather than by a release: a chain that has
-not been patched replays exactly as it did before, and the switch is undone by deleting
-the row.</p>
+  <h4 class="section" id="Nekoyume_TableData_SynthesizeWeightSheet_DefaultWeight_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This used to be 10000, which meant a result pool held every item of its grade and sub
+type until someone remembered to write a 0 here. An item sheet row was therefore enough
+to put a costume into circulation, which is how four grade 8 costumes were handed out
+in 2026-08. A pool is spelled out now instead: what this sheet does not list is not
+drawn.</p>
 </div>
 
 
