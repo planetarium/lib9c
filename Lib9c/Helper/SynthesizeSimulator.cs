@@ -518,8 +518,22 @@ namespace Nekoyume.Helper
                 totalWeight += weight;
             }
 
-            // Random selection based on weight
-            return random.Next(totalWeight + 1);
+            if (!synthesizeWeightSheet.IsStrict)
+            {
+                // Random selection based on weight. The bound is inclusive, so this can land on
+                // totalWeight, walk past every item and throw; kept as is because changing which
+                // number is drawn would change what past blocks produced.
+                return random.Next(totalWeight + 1);
+            }
+
+            if (totalWeight <= 0)
+            {
+                throw new InvalidOperationException(
+                    $"None of the {synthesizeResultPool.Count} item(s) in the pool is listed with" +
+                    " a weight above 0.");
+            }
+
+            return random.Next(totalWeight);
         }
 
 #endregion GetRandomItem
@@ -633,9 +647,16 @@ namespace Nekoyume.Helper
         /// <returns>weight of the item that can be obtained by synthesizing the item</returns>
         public static int GetWeight(int itemId, SynthesizeWeightSheet sheet)
         {
-            var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
             var gradeRow = sheet.Values.FirstOrDefault(r => r.Key == itemId);
-            return gradeRow?.Weight ?? defaultWeight;
+            if (gradeRow is not null)
+            {
+                return gradeRow.Weight;
+            }
+
+            // An unlisted item is drawn by default, which is why adding one to an item sheet
+            // silently adds it to a result pool. A chain that has patched
+            // SynthesizeWeightSheet.StrictModeKey into the sheet excludes it instead.
+            return sheet.IsStrict ? 0 : SynthesizeWeightSheet.DefaultWeight;
         }
 
         // TODO: move to ItemExtensions

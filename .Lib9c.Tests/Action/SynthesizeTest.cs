@@ -480,6 +480,122 @@ public class SynthesizeTest
         Assert.Single(state.GetInventoryV2(avatarAddress).Items);
     }
 
+    /// <summary>
+    /// Without the strict mode row an item the weight sheet does not list keeps being drawn with
+    /// <see cref="SynthesizeWeightSheet.DefaultWeight"/>, which is what a chain that has not been
+    /// patched has to keep doing.
+    /// </summary>
+    [Fact]
+    public void GetWeightDefaultsToIncluded()
+    {
+        var sheet = new SynthesizeWeightSheet();
+        sheet.Set("item_id,weight\n40100000,7\n");
+
+        Assert.False(sheet.IsStrict);
+        Assert.Equal(7, SynthesizeSimulator.GetWeight(40100000, sheet));
+        Assert.Equal(SynthesizeWeightSheet.DefaultWeight, SynthesizeSimulator.GetWeight(40100001, sheet));
+    }
+
+    /// <summary>
+    /// With the row patched in, an unlisted item is excluded instead, so adding an item to an item
+    /// sheet no longer puts it into a result pool on its own.
+    /// </summary>
+    [Fact]
+    public void GetWeightExcludesUnlistedInStrictMode()
+    {
+        var sheet = new SynthesizeWeightSheet();
+        sheet.Set($"item_id,weight\n{SynthesizeWeightSheet.StrictModeKey},0\n40100000,7\n");
+
+        Assert.True(sheet.IsStrict);
+        Assert.Equal(7, SynthesizeSimulator.GetWeight(40100000, sheet));
+        Assert.Equal(0, SynthesizeSimulator.GetWeight(40100001, sheet));
+    }
+
+    /// <summary>
+    /// In strict mode a result pool whose every item is unlisted has nothing to draw, and the
+    /// action says so instead of falling through the weight walk.
+    /// </summary>
+    [Fact]
+    public void ExecuteThrowsWhenStrictModeEmptiesTheResultPool()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(
+                Addresses.GetSheetAddress<SynthesizeWeightSheet>(),
+                (Text)$"item_id,weight\n{SynthesizeWeightSheet.StrictModeKey},0\n");
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        var exc = Assert.Throws<InvalidOperationException>(
+            () => action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = state,
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                }));
+        Assert.Contains("weight above 0", exc.Message);
+    }
+
+    /// <summary>
+    /// In strict mode only what the sheet lists can come out, so a pool narrowed to one item
+    /// yields that item every time.
+    /// </summary>
+    [Fact]
+    public void ExecuteDrawsOnlyListedItemsInStrictMode()
+    {
+        const Grade grade = (Grade)3;
+        const ItemSubType itemSubType = ItemSubType.FullCostume;
+        var itemSubTypes = GetSubTypeArray(itemSubType, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(grade, itemSubTypes, state, avatarAddress);
+
+        var wanted = TableSheets.CostumeItemSheet.Values
+            .First(r => r.ItemSubType == itemSubType && (Grade)r.Grade == SynthesizeSimulator.GetTargetGrade(grade));
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(
+                Addresses.GetSheetAddress<SynthesizeWeightSheet>(),
+                (Text)$"item_id,weight\n{SynthesizeWeightSheet.StrictModeKey},0\n{wanted.Id},1\n");
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+
+        state = action.Execute(
+            new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+
+        var inventory = state.GetInventoryV2(avatarAddress);
+        Assert.Single(inventory.Items);
+        Assert.Equal(wanted.Id, inventory.Items.First().item.Id);
+    }
+
     private static (IWorld, List<ItemBase>) UpdateItemsFromSubType(Grade grade, ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)
     {
         var avatarState = state.GetAvatarState(avatarAddress);

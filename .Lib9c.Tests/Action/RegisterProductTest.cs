@@ -591,8 +591,8 @@ namespace Lib9c.Tests.Action
             var currency = Currencies.GetItemCurrency(materialRow.Id, false);
             if (wrapped)
             {
-                // IssueTokensFromGarage hands out this form, and it reaches the buyer just as
-                // unusable as the unwrapped one.
+                // Wrapping is what a garage round trip does to a currency, and the wrapped form
+                // reaches the buyer just as unusable as the plain one.
                 currency = Currencies.GetWrappedCurrency(currency);
             }
 
@@ -668,6 +668,51 @@ namespace Lib9c.Tests.Action
             };
 
             Assert.Throws<ArgumentNullException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 1L,
+                        PreviousState = state,
+                        RandomSeed = 0,
+                        Signer = _agentAddress,
+                    }));
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Execute_Throw_InvalidCurrencyException_ThroughWrapping(bool wrapped)
+        {
+            // A wrapped ticker is the same asset once claimed, so a row keyed by the plain
+            // ticker has to cover it too.
+            var currency = Currencies.Crystal;
+            if (wrapped)
+            {
+                currency = Currencies.GetWrappedCurrency(currency);
+            }
+
+            var asset = 3 * currency;
+            var csv = "key,market_registrable,synthesize_material\n" +
+                      $"{Currencies.Crystal.Ticker},false,\n";
+            var state = _initialState
+                .MintAsset(new ActionContext(), AvatarAddress, asset)
+                .SetLegacyState(Addresses.GetSheetAddress<RestrictionSheet>(), (Text)csv);
+            var action = new RegisterProduct
+            {
+                AvatarAddress = AvatarAddress,
+                RegisterInfos = new List<IRegisterInfo>
+                {
+                    new AssetInfo
+                    {
+                        AvatarAddress = AvatarAddress,
+                        Asset = asset,
+                        Price = 1 * Gold,
+                        Type = ProductType.FungibleAssetValue,
+                    },
+                },
+            };
+
+            Assert.Throws<InvalidCurrencyException>(
                 () => action.Execute(
                     new ActionContext
                     {

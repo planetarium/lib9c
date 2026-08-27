@@ -29,6 +29,17 @@ namespace Nekoyume.TableData
     /// chain in the first place.
     /// </para>
     /// <para>
+    /// A key is an item id, not an item instance, so a row applies to every copy that exists —
+    /// give a restricted item a new id rather than reusing one players already hold. A false
+    /// <c>market_registrable</c> also stops <c>ReRegisterProduct</c>, leaving an existing seller
+    /// able to cancel but not to reprice, and it does not retract listings that are already up:
+    /// <c>BuyProduct</c> does not consult this sheet, so a restriction added after the fact
+    /// still needs those products cancelled. A false <c>synthesize_material</c> only stops the
+    /// item from being consumed as a material — an item that must not be handed out by synthesis
+    /// needs a <c>SynthesizeWeightSheet</c> weight of 0 as well, since the result pool is built
+    /// from grade and sub type alone.
+    /// </para>
+    /// <para>
     /// Callers must tolerate the sheet being absent — it reaches an existing chain only by
     /// <c>patch_table_sheet</c>, so loading it as a required sheet would fail every affected
     /// action until each chain is patched. Absence has to fall back to the restrictions that are

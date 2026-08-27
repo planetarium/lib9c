@@ -264,17 +264,29 @@ namespace Lib9c
         }
 
         /// <summary>
+        /// Strips every <see cref="WrappedCurrencyTickerPrefix"/> the ticker was wrapped with, so
+        /// that a policy keyed by the plain ticker also covers the wrapped form. A wrapper is not
+        /// a different asset — <c>claim_items</c> unwraps it straight back.
+        /// </summary>
+        /// <param name="ticker">The ticker to unwrap.</param>
+        public static string UnwrapTicker(string ticker)
+        {
+            while (ticker.StartsWith(WrappedCurrencyTickerPrefix, StringComparison.Ordinal))
+            {
+                ticker = ticker.Substring(WrappedCurrencyTickerPrefix.Length);
+            }
+
+            return ticker;
+        }
+
+        /// <summary>
         /// Whether the ticker denotes an item wrapped into a currency by
-        /// <see cref="GetItemCurrency"/>, either directly or wrapped once more by
-        /// <see cref="GetWrappedCurrency"/>. Such a ticker exists per item id, so a policy sheet
-        /// cannot enumerate them as rows.
+        /// <see cref="GetItemCurrency"/>, however many times it was wrapped afterwards. Such a
+        /// ticker exists per item id, so a policy sheet cannot enumerate them as rows.
         /// </summary>
         /// <param name="ticker">The ticker to test.</param>
         public static bool IsItemCurrencyTicker(string ticker) =>
-            ticker.StartsWith(ItemCurrencyTickerPrefix, StringComparison.Ordinal) ||
-            ticker.StartsWith(
-                WrappedCurrencyTickerPrefix + ItemCurrencyTickerPrefix,
-                StringComparison.Ordinal);
+            UnwrapTicker(ticker).StartsWith(ItemCurrencyTickerPrefix, StringComparison.Ordinal);
 
         /// <summary>
         /// Gets the appropriate currency object for a given ticker.

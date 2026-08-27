@@ -17,31 +17,41 @@ namespace Lib9c.Tests.TableData
         }
 
         [Fact]
-        public void ShippedCsvMatchesHardcodedSynthesizeDenyList()
+        public void ShippedCsvCoversTheHardcodedDenyLists()
         {
+            // The sheet may grow past the constants — that is the point of it — but it may not
+            // fall short of them, so that dropping a constant later leaves the same ids and
+            // tickers restricted.
             var sheet = Shipped();
             foreach (var itemId in Synthesize.InvalidMaterialItemId)
             {
                 Assert.False(sheet.IsItemSynthesizeMaterial(itemId));
             }
 
-            Assert.Equal(
-                Synthesize.InvalidMaterialItemId.Length,
-                sheet.Values.Count(row => row.SynthesizeMaterial is false));
-        }
-
-        [Fact]
-        public void ShippedCsvMatchesHardcodedCurrencyDenyList()
-        {
-            var sheet = Shipped();
             foreach (var currency in RegisterProduct.NonTradableTickerCurrencies)
             {
                 Assert.False(sheet.IsCurrencyMarketRegistrable(currency.Ticker));
             }
+        }
 
+        [Fact]
+        public void HardcodedDenyListsAreWhatTheSheetWasSeededFrom()
+        {
+            // Changing either constant without the sheet is what this catches: the seeded rows
+            // are a copy, and a copy that silently diverges is worse than no copy.
             Assert.Equal(
-                RegisterProduct.NonTradableTickerCurrencies.Count,
-                sheet.Values.Count(row => row.MarketRegistrable is false));
+                new[] { 10660004, 10670004, 10760009, 10770010, 40100042, 40100043, 40100059 },
+                Synthesize.InvalidMaterialItemId);
+            Assert.Equal(
+                new[]
+                {
+                    "RUNESTONE_FREYA_BLESSING",
+                    "RUNESTONE_FREYA_LIBERATION",
+                    "CRYSTAL",
+                    "RUNESTONE_ODIN_WEAKNESS",
+                    "RUNESTONE_ODIN_WISDOM",
+                },
+                RegisterProduct.NonTradableTickerCurrencies.Select(c => c.Ticker));
         }
 
         [Fact]

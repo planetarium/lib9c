@@ -230,13 +230,14 @@ namespace Nekoyume.Action
                                 throw new ItemDoesNotExistException($"can't find item: {tradableId}");
                             }
 
-                            // Every ITradableItem an inventory can hold derives from ItemBase.
-                            var itemId = ((ItemBase)tradableItem).Id;
+                            // Every ITradableItem an inventory can hold derives from ItemBase,
+                            // which is where the item id lives; IItem does not carry one.
                             if (restrictionSheet is not null &&
-                                !restrictionSheet.IsItemMarketRegistrable(itemId))
+                                tradableItem is ItemBase itemBase &&
+                                !restrictionSheet.IsItemMarketRegistrable(itemBase.Id))
                             {
                                 throw new InvalidItemIdException(
-                                    $"{itemId} is not registrable on the market.");
+                                    $"{itemBase.Id} is not registrable on the market.");
                             }
 
                             Guid productId = random.GenerateRandomGuid();
@@ -267,7 +268,10 @@ namespace Nekoyume.Action
                     break;
                 case AssetInfo assetInfo:
                 {
-                    var ticker = assetInfo.Asset.Currency.Ticker;
+                    // A wrapped ticker is the same asset a claim unwraps straight back, so the
+                    // policy has to see through the wrapping: FAV__CRYSTAL would otherwise walk
+                    // past a CRYSTAL row.
+                    var ticker = Currencies.UnwrapTicker(assetInfo.Asset.Currency.Ticker);
                     if (restrictionSheet is not null)
                     {
                         // An item currency reaches the buyer's avatar address, which has no
