@@ -370,7 +370,7 @@ public class RegisterProduct : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_RegisterProduct_PlainValueInternal" data-uid="Nekoyume.Action.RegisterProduct.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RegisterProduct.cs/#L267"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RegisterProduct.cs/#L318"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -441,7 +441,7 @@ public class RegisterProduct : GameAction, IAction</code></pre>
 
   <h3 id="Nekoyume_Action_RegisterProduct_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.RegisterProduct.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RegisterProduct.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RegisterProduct.cs/#L326"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -470,32 +470,45 @@ public class RegisterProduct : GameAction, IAction</code></pre>
 
   <a id="Nekoyume_Action_RegisterProduct_Register_" data-uid="Nekoyume.Action.RegisterProduct.Register*"></a>
 
-  <h3 id="Nekoyume_Action_RegisterProduct_Register_Libplanet_Action_IActionContext_Nekoyume_Action_IRegisterInfo_Nekoyume_Model_State_AvatarState_Nekoyume_Model_Market_ProductsState_Libplanet_Action_State_IWorld_Libplanet_Action_IRandom_" data-uid="Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext,Nekoyume.Action.IRegisterInfo,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Market.ProductsState,Libplanet.Action.State.IWorld,Libplanet.Action.IRandom)">
-  Register(IActionContext, IRegisterInfo, AvatarState, ProductsState, IWorld, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RegisterProduct.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_RegisterProduct_Register_Libplanet_Action_IActionContext_Nekoyume_Action_IRegisterInfo_Nekoyume_Model_State_AvatarState_Nekoyume_Model_Market_ProductsState_Libplanet_Action_State_IWorld_Libplanet_Action_IRandom_Nekoyume_TableData_RestrictionSheet_" data-uid="Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext,Nekoyume.Action.IRegisterInfo,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Market.ProductsState,Libplanet.Action.State.IWorld,Libplanet.Action.IRandom,Nekoyume.TableData.RestrictionSheet)">
+  Register(IActionContext, IRegisterInfo, AvatarState, ProductsState, IWorld, IRandom, RestrictionSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/RegisterProduct.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IWorld Register(IActionContext context, IRegisterInfo info, AvatarState avatarState, ProductsState productsState, IWorld states, IRandom random)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IWorld Register(IActionContext context, IRegisterInfo info, AvatarState avatarState, ProductsState productsState, IWorld states, IRandom random, RestrictionSheet restrictionSheet)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>context</code> <span class="xref">IActionContext</span></dt>
-    <dd></dd>
+    <dd><p>The action context the registration runs in.</p>
+</dd>
     <dt><code>info</code> <a class="xref" href="Nekoyume.Action.IRegisterInfo.html">IRegisterInfo</a></dt>
-    <dd></dd>
+    <dd><p>What to register: an item or a fungible asset.</p>
+</dd>
     <dt><code>avatarState</code> <a class="xref" href="Nekoyume.Model.State.AvatarState.html">AvatarState</a></dt>
-    <dd></dd>
+    <dd><p>The seller's avatar, whose inventory the item leaves.</p>
+</dd>
     <dt><code>productsState</code> <a class="xref" href="Nekoyume.Model.Market.ProductsState.html">ProductsState</a></dt>
-    <dd></dd>
+    <dd><p>The seller's product list the new product id joins.</p>
+</dd>
     <dt><code>states</code> <span class="xref">IWorld</span></dt>
-    <dd></dd>
+    <dd><p>The world the product is written into.</p>
+</dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
+    <dd><p>Source of the product id.</p>
+</dd>
+    <dt><code>restrictionSheet</code> <a class="xref" href="Nekoyume.TableData.RestrictionSheet.html">RestrictionSheet</a></dt>
+    <dd><p>Restrictions on top of the hardcoded ones, or <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a> on a chain that
+has not been patched with <a class="xref" href="Nekoyume.TableData.RestrictionSheet.html">RestrictionSheet</a> yet. The sheet only adds:
+a patched sheet that forgets an entry must not lift a restriction that code already
+enforces. Required rather than optional so that a new call site has to decide instead
+of silently registering without the policy.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>

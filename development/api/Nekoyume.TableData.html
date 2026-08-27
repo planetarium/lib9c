@@ -607,6 +607,49 @@ Supports multiple monster types per wave, similar to StageWaveSheet.</p>
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.RestrictionSheet.html">RestrictionSheet</a></dt>
+      <dd><p>Declares what a given item or currency may not be used for, so that a restriction can be
+adjusted with <code>patch_table_sheet</code> instead of a headless and client release.</p>
+<p>
+A row targets either an item id (numeric key) or a currency ticker (non-numeric key).
+Which one is looked up is decided by the call site — a market action already holds an item
+id or a ticker — so the sheet needs no discriminator column.
+</p><p>
+Columns: <code>key</code>, <code>market_registrable</code>, <code>synthesize_material</code>.
+The first governs the market registration path only — a fungible item can still reach
+another account through a garage or by being wrapped into a currency, so a row here does
+not make its target account bound by itself. The second closes the conversion path that
+would otherwise turn a restricted item into an unrestricted one.
+</p><p>
+An empty cell means "unspecified" and leaves the behavior that predates this sheet
+untouched. An unparsable cell is read as <code>false</code>(= restricted) on purpose: a typo then
+fails toward blocking, which is recoverable, rather than toward leaking.
+<a class="xref" href="Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> rejects such a cell at patch time so it should not reach the
+chain in the first place.
+</p><p>
+A key is an item id, not an item instance, so a row applies to every copy that exists —
+give a restricted item a new id rather than reusing one players already hold. A false
+<code>market_registrable</code> also stops <code>ReRegisterProduct</code>, leaving an existing seller
+able to cancel but not to reprice, and it does not retract listings that are already up:
+<code>BuyProduct</code> does not consult this sheet, so a restriction added after the fact
+still needs those products cancelled. A false <code>synthesize_material</code> only stops the
+item from being consumed as a material — an item that must not be handed out by synthesis
+is kept out of the result pool by leaving it out of <code>SynthesizeWeightSheet</code>, which is
+a separate sheet from this one.
+</p><p>
+Callers must tolerate the sheet being absent — it reaches an existing chain only by
+<code>patch_table_sheet</code>, so loading it as a required sheet would fail every affected
+action until each chain is patched. Absence has to fall back to the restrictions that are
+still hardcoded, which is also what keeps re-evaluation of pre-patch blocks identical.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.RestrictionSheet.Row.html">RestrictionSheet.Row</a></dt>
+      <dd><p>One target and what it may not be used for.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a></dt>
       <dd><p>Represents a sheet containing rune cost data organized by level ranges.
 This sheet stores cost information for rune enhancement across different level intervals,
