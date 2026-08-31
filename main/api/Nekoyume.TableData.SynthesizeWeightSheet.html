@@ -241,10 +241,11 @@ public class SynthesizeWeightSheet : Sheet&lt;int, SynthesizeWeightSheet.Row&gt;
 
   <h3 id="Nekoyume_TableData_SynthesizeWeightSheet__ctor" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.#ctor">
   SynthesizeWeightSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -270,14 +271,15 @@ public class SynthesizeWeightSheet : Sheet&lt;int, SynthesizeWeightSheet.Row&gt;
 
   <h3 id="Nekoyume_TableData_SynthesizeWeightSheet_DefaultWeight" data-uid="Nekoyume.TableData.SynthesizeWeightSheet.DefaultWeight">
   DefaultWeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/TableData/Item/SynthesizeWeightSheet.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Weight of an item this sheet does not list, or lists with an unreadable weight.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const int DefaultWeight = 10000</code></pre>
+    <pre><code class="lang-csharp hljs">public const int DefaultWeight = 0</code></pre>
   </div>
 
 
@@ -293,6 +295,13 @@ public class SynthesizeWeightSheet : Sheet&lt;int, SynthesizeWeightSheet.Row&gt;
 
 
 
+  <h4 class="section" id="Nekoyume_TableData_SynthesizeWeightSheet_DefaultWeight_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This used to be 10000, which meant a result pool held every item of its grade and sub
+type until someone remembered to write a 0 here. An item sheet row was therefore enough
+to put a costume into circulation, which is how four grade 8 costumes were handed out
+in 2026-08. A pool is spelled out now instead: what this sheet does not list is not
+drawn.</p>
+</div>
 
 
 

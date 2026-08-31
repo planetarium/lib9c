@@ -205,6 +205,22 @@ references:
   commentId: F:Lib9c.Currencies.GuildGold
   fullName: Lib9c.Currencies.GuildGold
   nameWithType: Currencies.GuildGold
+- uid: Lib9c.Currencies.IsItemCurrencyTicker(System.String)
+  name: IsItemCurrencyTicker(string)
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_IsItemCurrencyTicker_System_String_
+  commentId: M:Lib9c.Currencies.IsItemCurrencyTicker(System.String)
+  name.vb: IsItemCurrencyTicker(String)
+  fullName: Lib9c.Currencies.IsItemCurrencyTicker(string)
+  fullName.vb: Lib9c.Currencies.IsItemCurrencyTicker(String)
+  nameWithType: Currencies.IsItemCurrencyTicker(string)
+  nameWithType.vb: Currencies.IsItemCurrencyTicker(String)
+- uid: Lib9c.Currencies.IsItemCurrencyTicker*
+  name: IsItemCurrencyTicker
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_IsItemCurrencyTicker_
+  commentId: Overload:Lib9c.Currencies.IsItemCurrencyTicker
+  isSpec: "True"
+  fullName: Lib9c.Currencies.IsItemCurrencyTicker
+  nameWithType: Currencies.IsItemCurrencyTicker
 - uid: Lib9c.Currencies.IsRuneTicker(System.String)
   name: IsRuneTicker(string)
   href: api/Lib9c.Currencies.html#Lib9c_Currencies_IsRuneTicker_System_String_
@@ -250,6 +266,12 @@ references:
   isSpec: "True"
   fullName: Lib9c.Currencies.IsWrappedCurrency
   nameWithType: Currencies.IsWrappedCurrency
+- uid: Lib9c.Currencies.ItemCurrencyTickerPrefix
+  name: ItemCurrencyTickerPrefix
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_ItemCurrencyTickerPrefix
+  commentId: F:Lib9c.Currencies.ItemCurrencyTickerPrefix
+  fullName: Lib9c.Currencies.ItemCurrencyTickerPrefix
+  nameWithType: Currencies.ItemCurrencyTickerPrefix
 - uid: Lib9c.Currencies.Mead
   name: Mead
   href: api/Lib9c.Currencies.html#Lib9c_Currencies_Mead
@@ -300,6 +322,28 @@ references:
   commentId: F:Lib9c.Currencies.StakeRune
   fullName: Lib9c.Currencies.StakeRune
   nameWithType: Currencies.StakeRune
+- uid: Lib9c.Currencies.UnwrapTicker(System.String)
+  name: UnwrapTicker(string)
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_UnwrapTicker_System_String_
+  commentId: M:Lib9c.Currencies.UnwrapTicker(System.String)
+  name.vb: UnwrapTicker(String)
+  fullName: Lib9c.Currencies.UnwrapTicker(string)
+  fullName.vb: Lib9c.Currencies.UnwrapTicker(String)
+  nameWithType: Currencies.UnwrapTicker(string)
+  nameWithType.vb: Currencies.UnwrapTicker(String)
+- uid: Lib9c.Currencies.UnwrapTicker*
+  name: UnwrapTicker
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_UnwrapTicker_
+  commentId: Overload:Lib9c.Currencies.UnwrapTicker
+  isSpec: "True"
+  fullName: Lib9c.Currencies.UnwrapTicker
+  nameWithType: Currencies.UnwrapTicker
+- uid: Lib9c.Currencies.WrappedCurrencyTickerPrefix
+  name: WrappedCurrencyTickerPrefix
+  href: api/Lib9c.Currencies.html#Lib9c_Currencies_WrappedCurrencyTickerPrefix
+  commentId: F:Lib9c.Currencies.WrappedCurrencyTickerPrefix
+  fullName: Lib9c.Currencies.WrappedCurrencyTickerPrefix
+  nameWithType: Currencies.WrappedCurrencyTickerPrefix
 - uid: Lib9c.Exceptions
   name: Lib9c.Exceptions
   href: api/Lib9c.Exceptions.html
@@ -21582,12 +21626,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.RegisterProduct.PlainValueInternal
   nameWithType: RegisterProduct.PlainValueInternal
-- uid: Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext,Nekoyume.Action.IRegisterInfo,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Market.ProductsState,Libplanet.Action.State.IWorld,Libplanet.Action.IRandom)
-  name: Register(IActionContext, IRegisterInfo, AvatarState, ProductsState, IWorld, IRandom)
-  href: api/Nekoyume.Action.RegisterProduct.html#Nekoyume_Action_RegisterProduct_Register_Libplanet_Action_IActionContext_Nekoyume_Action_IRegisterInfo_Nekoyume_Model_State_AvatarState_Nekoyume_Model_Market_ProductsState_Libplanet_Action_State_IWorld_Libplanet_Action_IRandom_
-  commentId: M:Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext,Nekoyume.Action.IRegisterInfo,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Market.ProductsState,Libplanet.Action.State.IWorld,Libplanet.Action.IRandom)
-  fullName: Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext, Nekoyume.Action.IRegisterInfo, Nekoyume.Model.State.AvatarState, Nekoyume.Model.Market.ProductsState, Libplanet.Action.State.IWorld, Libplanet.Action.IRandom)
-  nameWithType: RegisterProduct.Register(IActionContext, IRegisterInfo, AvatarState, ProductsState, IWorld, IRandom)
+- uid: Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext,Nekoyume.Action.IRegisterInfo,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Market.ProductsState,Libplanet.Action.State.IWorld,Libplanet.Action.IRandom,Nekoyume.TableData.RestrictionSheet)
+  name: Register(IActionContext, IRegisterInfo, AvatarState, ProductsState, IWorld, IRandom, RestrictionSheet)
+  href: api/Nekoyume.Action.RegisterProduct.html#Nekoyume_Action_RegisterProduct_Register_Libplanet_Action_IActionContext_Nekoyume_Action_IRegisterInfo_Nekoyume_Model_State_AvatarState_Nekoyume_Model_Market_ProductsState_Libplanet_Action_State_IWorld_Libplanet_Action_IRandom_Nekoyume_TableData_RestrictionSheet_
+  commentId: M:Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext,Nekoyume.Action.IRegisterInfo,Nekoyume.Model.State.AvatarState,Nekoyume.Model.Market.ProductsState,Libplanet.Action.State.IWorld,Libplanet.Action.IRandom,Nekoyume.TableData.RestrictionSheet)
+  fullName: Nekoyume.Action.RegisterProduct.Register(Libplanet.Action.IActionContext, Nekoyume.Action.IRegisterInfo, Nekoyume.Model.State.AvatarState, Nekoyume.Model.Market.ProductsState, Libplanet.Action.State.IWorld, Libplanet.Action.IRandom, Nekoyume.TableData.RestrictionSheet)
+  nameWithType: RegisterProduct.Register(IActionContext, IRegisterInfo, AvatarState, ProductsState, IWorld, IRandom, RestrictionSheet)
 - uid: Nekoyume.Action.RegisterProduct.Register*
   name: Register
   href: api/Nekoyume.Action.RegisterProduct.html#Nekoyume_Action_RegisterProduct_Register_
@@ -81296,6 +81340,22 @@ references:
   fullName.vb: Nekoyume.Module.LegacyModule.TryGetLegacyState(Of T)(Libplanet.Action.State.IWorldState, Libplanet.Crypto.Address, T)
   nameWithType: LegacyModule.TryGetLegacyState<T>(IWorldState, Address, out T)
   nameWithType.vb: LegacyModule.TryGetLegacyState(Of T)(IWorldState, Address, T)
+- uid: Nekoyume.Module.LegacyModule.TryGetPatchedSheet*
+  name: TryGetPatchedSheet
+  href: api/Nekoyume.Module.LegacyModule.html#Nekoyume_Module_LegacyModule_TryGetPatchedSheet_
+  commentId: Overload:Nekoyume.Module.LegacyModule.TryGetPatchedSheet
+  isSpec: "True"
+  fullName: Nekoyume.Module.LegacyModule.TryGetPatchedSheet
+  nameWithType: LegacyModule.TryGetPatchedSheet
+- uid: Nekoyume.Module.LegacyModule.TryGetPatchedSheet``1(Libplanet.Action.State.IWorldState,``0@)
+  name: TryGetPatchedSheet<T>(IWorldState, out T)
+  href: api/Nekoyume.Module.LegacyModule.html#Nekoyume_Module_LegacyModule_TryGetPatchedSheet__1_Libplanet_Action_State_IWorldState___0__
+  commentId: M:Nekoyume.Module.LegacyModule.TryGetPatchedSheet``1(Libplanet.Action.State.IWorldState,``0@)
+  name.vb: TryGetPatchedSheet(Of T)(IWorldState, T)
+  fullName: Nekoyume.Module.LegacyModule.TryGetPatchedSheet<T>(Libplanet.Action.State.IWorldState, out T)
+  fullName.vb: Nekoyume.Module.LegacyModule.TryGetPatchedSheet(Of T)(Libplanet.Action.State.IWorldState, T)
+  nameWithType: LegacyModule.TryGetPatchedSheet<T>(IWorldState, out T)
+  nameWithType.vb: LegacyModule.TryGetPatchedSheet(Of T)(IWorldState, T)
 - uid: Nekoyume.Module.LegacyModule.TryGetSheet*
   name: TryGetSheet
   href: api/Nekoyume.Module.LegacyModule.html#Nekoyume_Module_LegacyModule_TryGetSheet_
@@ -94703,6 +94763,207 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.RedeemRewardSheet.Row.Set
   nameWithType: RedeemRewardSheet.Row.Set
+- uid: Nekoyume.TableData.RestrictionSheet
+  name: RestrictionSheet
+  href: api/Nekoyume.TableData.RestrictionSheet.html
+  commentId: T:Nekoyume.TableData.RestrictionSheet
+  fullName: Nekoyume.TableData.RestrictionSheet
+  nameWithType: RestrictionSheet
+- uid: Nekoyume.TableData.RestrictionSheet.#ctor
+  name: RestrictionSheet()
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet__ctor
+  commentId: M:Nekoyume.TableData.RestrictionSheet.#ctor
+  name.vb: New()
+  fullName: Nekoyume.TableData.RestrictionSheet.RestrictionSheet()
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.New()
+  nameWithType: RestrictionSheet.RestrictionSheet()
+  nameWithType.vb: RestrictionSheet.New()
+- uid: Nekoyume.TableData.RestrictionSheet.#ctor*
+  name: RestrictionSheet
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet__ctor_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.RestrictionSheet.RestrictionSheet
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.New
+  nameWithType: RestrictionSheet.RestrictionSheet
+  nameWithType.vb: RestrictionSheet.New
+- uid: Nekoyume.TableData.RestrictionSheet.AddRow(System.String,Nekoyume.TableData.RestrictionSheet.Row)
+  name: AddRow(string, Row)
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_AddRow_System_String_Nekoyume_TableData_RestrictionSheet_Row_
+  commentId: M:Nekoyume.TableData.RestrictionSheet.AddRow(System.String,Nekoyume.TableData.RestrictionSheet.Row)
+  name.vb: AddRow(String, Row)
+  fullName: Nekoyume.TableData.RestrictionSheet.AddRow(string, Nekoyume.TableData.RestrictionSheet.Row)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.AddRow(String, Nekoyume.TableData.RestrictionSheet.Row)
+  nameWithType: RestrictionSheet.AddRow(string, RestrictionSheet.Row)
+  nameWithType.vb: RestrictionSheet.AddRow(String, RestrictionSheet.Row)
+- uid: Nekoyume.TableData.RestrictionSheet.AddRow*
+  name: AddRow
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_AddRow_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.AddRow
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.AddRow
+  nameWithType: RestrictionSheet.AddRow
+- uid: Nekoyume.TableData.RestrictionSheet.ColumnNames
+  name: ColumnNames
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ColumnNames
+  commentId: F:Nekoyume.TableData.RestrictionSheet.ColumnNames
+  fullName: Nekoyume.TableData.RestrictionSheet.ColumnNames
+  nameWithType: RestrictionSheet.ColumnNames
+- uid: Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable(System.String)
+  name: IsCurrencyMarketRegistrable(string)
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_IsCurrencyMarketRegistrable_System_String_
+  commentId: M:Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable(System.String)
+  name.vb: IsCurrencyMarketRegistrable(String)
+  fullName: Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable(string)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable(String)
+  nameWithType: RestrictionSheet.IsCurrencyMarketRegistrable(string)
+  nameWithType.vb: RestrictionSheet.IsCurrencyMarketRegistrable(String)
+- uid: Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable*
+  name: IsCurrencyMarketRegistrable
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_IsCurrencyMarketRegistrable_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.IsCurrencyMarketRegistrable
+  nameWithType: RestrictionSheet.IsCurrencyMarketRegistrable
+- uid: Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable(System.Int32)
+  name: IsItemMarketRegistrable(int)
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_IsItemMarketRegistrable_System_Int32_
+  commentId: M:Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable(System.Int32)
+  name.vb: IsItemMarketRegistrable(Integer)
+  fullName: Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable(int)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable(Integer)
+  nameWithType: RestrictionSheet.IsItemMarketRegistrable(int)
+  nameWithType.vb: RestrictionSheet.IsItemMarketRegistrable(Integer)
+- uid: Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable*
+  name: IsItemMarketRegistrable
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_IsItemMarketRegistrable_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.IsItemMarketRegistrable
+  nameWithType: RestrictionSheet.IsItemMarketRegistrable
+- uid: Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial(System.Int32)
+  name: IsItemSynthesizeMaterial(int)
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_IsItemSynthesizeMaterial_System_Int32_
+  commentId: M:Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial(System.Int32)
+  name.vb: IsItemSynthesizeMaterial(Integer)
+  fullName: Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial(int)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial(Integer)
+  nameWithType: RestrictionSheet.IsItemSynthesizeMaterial(int)
+  nameWithType.vb: RestrictionSheet.IsItemSynthesizeMaterial(Integer)
+- uid: Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial*
+  name: IsItemSynthesizeMaterial
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_IsItemSynthesizeMaterial_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.IsItemSynthesizeMaterial
+  nameWithType: RestrictionSheet.IsItemSynthesizeMaterial
+- uid: Nekoyume.TableData.RestrictionSheet.Row
+  name: RestrictionSheet.Row
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html
+  commentId: T:Nekoyume.TableData.RestrictionSheet.Row
+  fullName: Nekoyume.TableData.RestrictionSheet.Row
+  nameWithType: RestrictionSheet.Row
+- uid: Nekoyume.TableData.RestrictionSheet.Row.Key
+  name: Key
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_Key
+  commentId: P:Nekoyume.TableData.RestrictionSheet.Row.Key
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.Key
+  nameWithType: RestrictionSheet.Row.Key
+- uid: Nekoyume.TableData.RestrictionSheet.Row.Key*
+  name: Key
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_Key_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.Row.Key
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.Key
+  nameWithType: RestrictionSheet.Row.Key
+- uid: Nekoyume.TableData.RestrictionSheet.Row.MarketRegistrable
+  name: MarketRegistrable
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_MarketRegistrable
+  commentId: P:Nekoyume.TableData.RestrictionSheet.Row.MarketRegistrable
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.MarketRegistrable
+  nameWithType: RestrictionSheet.Row.MarketRegistrable
+- uid: Nekoyume.TableData.RestrictionSheet.Row.MarketRegistrable*
+  name: MarketRegistrable
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_MarketRegistrable_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.Row.MarketRegistrable
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.MarketRegistrable
+  nameWithType: RestrictionSheet.Row.MarketRegistrable
+- uid: Nekoyume.TableData.RestrictionSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name: Set(IReadOnlyList<string>)
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__
+  commentId: M:Nekoyume.TableData.RestrictionSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name.vb: Set(IReadOnlyList(Of String))
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.Set(System.Collections.Generic.IReadOnlyList<string>)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.Row.Set(System.Collections.Generic.IReadOnlyList(Of String))
+  nameWithType: RestrictionSheet.Row.Set(IReadOnlyList<string>)
+  nameWithType.vb: RestrictionSheet.Row.Set(IReadOnlyList(Of String))
+- uid: Nekoyume.TableData.RestrictionSheet.Row.Set*
+  name: Set
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_Set_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.Row.Set
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.Set
+  nameWithType: RestrictionSheet.Row.Set
+- uid: Nekoyume.TableData.RestrictionSheet.Row.SynthesizeMaterial
+  name: SynthesizeMaterial
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_SynthesizeMaterial
+  commentId: P:Nekoyume.TableData.RestrictionSheet.Row.SynthesizeMaterial
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.SynthesizeMaterial
+  nameWithType: RestrictionSheet.Row.SynthesizeMaterial
+- uid: Nekoyume.TableData.RestrictionSheet.Row.SynthesizeMaterial*
+  name: SynthesizeMaterial
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_SynthesizeMaterial_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.Row.SynthesizeMaterial
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.SynthesizeMaterial
+  nameWithType: RestrictionSheet.Row.SynthesizeMaterial
+- uid: Nekoyume.TableData.RestrictionSheet.Row.Target
+  name: Target
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_Target
+  commentId: P:Nekoyume.TableData.RestrictionSheet.Row.Target
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.Target
+  nameWithType: RestrictionSheet.Row.Target
+- uid: Nekoyume.TableData.RestrictionSheet.Row.Target*
+  name: Target
+  href: api/Nekoyume.TableData.RestrictionSheet.Row.html#Nekoyume_TableData_RestrictionSheet_Row_Target_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.Row.Target
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.Row.Target
+  nameWithType: RestrictionSheet.Row.Target
+- uid: Nekoyume.TableData.RestrictionSheet.ToKey(System.Int32)
+  name: ToKey(int)
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ToKey_System_Int32_
+  commentId: M:Nekoyume.TableData.RestrictionSheet.ToKey(System.Int32)
+  name.vb: ToKey(Integer)
+  fullName: Nekoyume.TableData.RestrictionSheet.ToKey(int)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.ToKey(Integer)
+  nameWithType: RestrictionSheet.ToKey(int)
+  nameWithType.vb: RestrictionSheet.ToKey(Integer)
+- uid: Nekoyume.TableData.RestrictionSheet.ToKey*
+  name: ToKey
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ToKey_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.ToKey
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.ToKey
+  nameWithType: RestrictionSheet.ToKey
+- uid: Nekoyume.TableData.RestrictionSheet.ValidateCsv(System.String)
+  name: ValidateCsv(string)
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ValidateCsv_System_String_
+  commentId: M:Nekoyume.TableData.RestrictionSheet.ValidateCsv(System.String)
+  name.vb: ValidateCsv(String)
+  fullName: Nekoyume.TableData.RestrictionSheet.ValidateCsv(string)
+  fullName.vb: Nekoyume.TableData.RestrictionSheet.ValidateCsv(String)
+  nameWithType: RestrictionSheet.ValidateCsv(string)
+  nameWithType.vb: RestrictionSheet.ValidateCsv(String)
+- uid: Nekoyume.TableData.RestrictionSheet.ValidateCsv*
+  name: ValidateCsv
+  href: api/Nekoyume.TableData.RestrictionSheet.html#Nekoyume_TableData_RestrictionSheet_ValidateCsv_
+  commentId: Overload:Nekoyume.TableData.RestrictionSheet.ValidateCsv
+  isSpec: "True"
+  fullName: Nekoyume.TableData.RestrictionSheet.ValidateCsv
+  nameWithType: RestrictionSheet.ValidateCsv
 - uid: Nekoyume.TableData.RewardType
   name: RewardType
   href: api/Nekoyume.TableData.RewardType.html
