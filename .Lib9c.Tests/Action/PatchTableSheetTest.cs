@@ -112,6 +112,48 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
+        public void Execute_RestrictionSheet()
+        {
+            const string csv = "key,market_registrable,synthesize_material\n10660004,,false\n";
+            var action = new PatchTableSheet
+            {
+                TableName = nameof(RestrictionSheet),
+                TableCsv = csv,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                    PreviousState = _initialState,
+                });
+
+            Assert.Equal(csv, nextState.GetSheetCsv<RestrictionSheet>());
+        }
+
+        [Theory]
+        [InlineData("key,market_registrable,synthesize_material\n10660004,flase,\n")]
+        [InlineData("key,market_registrable,synthesize_material\ncrystal,false,\n")]
+        [InlineData("key,synthesize_material,market_registrable\n10660004,false,\n")]
+        public void Execute_Throw_SheetRowValidateException_WhenRestrictionSheetIsMalformed(
+            string csv)
+        {
+            var action = new PatchTableSheet
+            {
+                TableName = nameof(RestrictionSheet),
+                TableCsv = csv,
+            };
+
+            Assert.Throws<SheetRowValidateException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 0,
+                        PreviousState = _initialState,
+                    }));
+        }
+
+        [Fact]
         public void CheckPermission()
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");

@@ -404,6 +404,36 @@ namespace Nekoyume.Module
             }
         }
 
+        /// <summary>
+        /// Loads <typeparamref name="T"/> only when the chain has already been patched with it,
+        /// and lets a malformed sheet throw instead of reporting it as missing.
+        /// </summary>
+        /// <returns>
+        /// <see langword="false"/> when the sheet has never been patched onto this chain.
+        /// </returns>
+        /// <remarks>
+        /// Unlike <see cref="TryGetSheet{T}(IWorldState, out T)"/> this does not swallow a parse
+        /// failure. A sheet that carries restrictions must not be able to switch itself off by
+        /// becoming unreadable; only genuine absence may fall back, and that is also what keeps
+        /// re-evaluation of blocks older than the patch identical.
+        /// </remarks>
+        /// <param name="worldState">The world to read the sheet from.</param>
+        /// <param name="sheet">The parsed sheet, or <see langword="null"/> when absent.</param>
+        /// <typeparam name="T">The sheet to load.</typeparam>
+        public static bool TryGetPatchedSheet<T>(this IWorldState worldState, out T sheet)
+            where T : ISheet, new()
+        {
+            var address = Addresses.GetSheetAddress<T>();
+            if (worldState.GetLegacyState(address) is null or Null)
+            {
+                sheet = default;
+                return false;
+            }
+
+            sheet = GetSheet<T>(worldState, address);
+            return true;
+        }
+
         public static bool TryGetSheet<T>(this IWorldState worldState, out T sheet) where T : ISheet, new()
         {
             try

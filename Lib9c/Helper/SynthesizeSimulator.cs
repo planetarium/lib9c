@@ -518,8 +518,17 @@ namespace Nekoyume.Helper
                 totalWeight += weight;
             }
 
-            // Random selection based on weight
-            return random.Next(totalWeight + 1);
+            if (totalWeight <= 0)
+            {
+                throw new InvalidOperationException(
+                    $"The pool of {synthesizeResultPool.Count} item(s) adds up to a weight of" +
+                    $" {totalWeight}, so there is nothing to draw from it.");
+            }
+
+            // Exclusive upper bound: the draw stays inside the cumulative range, so the walk over
+            // the weights always selects. An inclusive bound could land on totalWeight and fall
+            // through every item.
+            return random.Next(totalWeight);
         }
 
 #endregion GetRandomItem
@@ -633,9 +642,11 @@ namespace Nekoyume.Helper
         /// <returns>weight of the item that can be obtained by synthesizing the item</returns>
         public static int GetWeight(int itemId, SynthesizeWeightSheet sheet)
         {
-            var defaultWeight = SynthesizeWeightSheet.DefaultWeight;
-            var gradeRow = sheet.Values.FirstOrDefault(r => r.Key == itemId);
-            return gradeRow?.Weight ?? defaultWeight;
+            // An unlisted item is not drawn: a result pool is what this sheet spells out, not
+            // everything the item sheet happens to carry for that grade and sub type.
+            return sheet.TryGetValue(itemId, out var row)
+                ? row.Weight
+                : SynthesizeWeightSheet.DefaultWeight;
         }
 
         // TODO: move to ItemExtensions
