@@ -15,6 +15,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - run: .github/bin/dist-pack.sh
+    - run: .github/bin/dist-release-note.sh CHANGES.md obj/release_note.txt
+    - uses: actions/upload-artifact@main
+      with:
+        name: dist-obj
+        path: obj/
     - run: .github/bin/dist-github-release.sh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

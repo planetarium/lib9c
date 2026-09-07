@@ -16,6 +16,13 @@ elif [ "${GITHUB_REF:0:10}" != "refs/tags/" ]; then
 fi
 
 tag="${GITHUB_REF#refs/*/}"
+if [ ! -f obj/release_note.txt ]; then
+  {
+    echo "obj/release_note.txt file is missing."
+    echo "dist:release-note action must be run first."
+  } > /dev/stderr
+  exit 1
+fi
 
 if command -v apk; then
     apk add --no-cache ca-certificates
@@ -36,7 +43,7 @@ while ! "$(dirname "$0")/github-release.sh" info \
         --repo "$github_repo" \
         --tag "$tag" \
         --name "$tag" \
-        --description "" || true
+        --description - < obj/release_note.txt || true
     trial=$((trial + 1))
     if [[ "$trial" -gt 5 ]]; then break; fi
 done
