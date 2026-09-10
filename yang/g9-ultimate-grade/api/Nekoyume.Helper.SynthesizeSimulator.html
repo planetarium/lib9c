@@ -613,7 +613,7 @@ matches no row. Callers that switch on it should keep a default arm.</p>
 
   <h3 id="Nekoyume_Helper_SynthesizeSimulator_GetTargetGrade_System_Int32_" data-uid="Nekoyume.Helper.SynthesizeSimulator.GetTargetGrade(System.Int32)">
   GetTargetGrade(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/g9-ultimate-grade/Lib9c/Helper/SynthesizeSimulator.cs/#L714"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/g9-ultimate-grade/Lib9c/Helper/SynthesizeSimulator.cs/#L715"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the target grade of the item: the grade id one step above the given one.</p>
@@ -655,7 +655,8 @@ added. Callers outside this class have to arrange that fallback themselves.</p>
   <h4 class="section">Exceptions</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
-    <dd><p>Thrown when <code class="paramref">gradeId</code> is below the first grade.</p>
+    <dd><p>Thrown when <code class="paramref">gradeId</code> is below the first grade, or so high that the
+grade above it does not fit in an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>.</p>
 </dd>
   </dl>
 
