@@ -1,0 +1,10 @@
+id,item_sub_type,stat_type,modify_type,value_min,value_max,weight
+700001,Weapon,ATK,Percentage,1,2,100
+700002,Weapon,HIT,Percentage,2,3,100
+700003,Weapon,ATK,Percentage,9,12,40
+700004,Weapon,CDMG,Add,1000,1600,20
+700101,Armor,HP,Percentage,2,3,100
+700102,Armor,DEF,Percentage,2,3,100
+700201,Belt,SPD,Percentage,1,2,100
+700301,Necklace,ATK,Add,10,20,100
+700401,Ring,CRI,Add,1,2,100
