@@ -49749,6 +49749,12 @@ references:
   commentId: F:Nekoyume.Model.EnumType.Grade.Transcendent
   fullName: Nekoyume.Model.EnumType.Grade.Transcendent
   nameWithType: Grade.Transcendent
+- uid: Nekoyume.Model.EnumType.Grade.Ultimate
+  name: Ultimate
+  href: api/Nekoyume.Model.EnumType.Grade.html#Nekoyume_Model_EnumType_Grade_Ultimate
+  commentId: F:Nekoyume.Model.EnumType.Grade.Ultimate
+  fullName: Nekoyume.Model.EnumType.Grade.Ultimate
+  nameWithType: Grade.Ultimate
 - uid: Nekoyume.Model.EnumType.Grade.Unique
   name: Unique
   href: api/Nekoyume.Model.EnumType.Grade.html#Nekoyume_Model_EnumType_Grade_Unique
