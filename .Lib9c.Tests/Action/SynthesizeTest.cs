@@ -501,32 +501,51 @@ public class SynthesizeTest
     /// what <see cref="SynthesizeSheet"/> defines: the grade a recipe consumes (a failure redraws
     /// the same grade) and the grade above it (a success).
     /// </summary>
+    /// <remarks>
+    /// The two are not equally strict. A source grade must have items: a failure redraws it, so an
+    /// empty source pool means every failed roll aborts the action. A target grade need not — when
+    /// the grade above carries no items yet, synthesis redraws the source grade instead, which is
+    /// checked as a source pool in its own right. Either way, a pool that does have items must
+    /// carry weight, which is what catches shipping a new grade's items without listing them in
+    /// <see cref="SynthesizeWeightSheet"/>.
+    /// </remarks>
     [Fact]
     public void EveryReachableResultPoolHasWeight()
     {
-        var weightSheet = TableSheets.SynthesizeWeightSheet;
-        var reachable = new HashSet<(Grade Grade, ItemSubType ItemSubType)>();
+        var sourceGrades = new HashSet<(Grade Grade, ItemSubType ItemSubType)>();
+        var targetGrades = new HashSet<(Grade Grade, ItemSubType ItemSubType)>();
         foreach (var row in TableSheets.SynthesizeSheet.Values)
         {
             foreach (var itemSubType in row.RequiredCountDict.Keys)
             {
                 var grade = (Grade)row.GradeId;
-                reachable.Add((grade, itemSubType));
-                reachable.Add((SynthesizeSimulator.GetTargetGrade(grade), itemSubType));
+                sourceGrades.Add((grade, itemSubType));
+                targetGrades.Add((SynthesizeSimulator.GetTargetGrade(grade), itemSubType));
             }
         }
 
-        Assert.NotEmpty(reachable);
-        foreach (var (grade, itemSubType) in reachable)
+        Assert.NotEmpty(sourceGrades);
+        foreach (var (grade, itemSubType) in sourceGrades)
         {
-            var pool = itemSubType is ItemSubType.FullCostume or ItemSubType.Title
-                ? SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.CostumeItemSheet)
-                : SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.EquipmentItemSheet);
-            var total = pool.Sum(id => SynthesizeSimulator.GetWeight(id, weightSheet));
-            var message = $"{itemSubType} grade {(int)grade} has {pool.Count} item(s) and a total" +
-                          $" weight of {total}, so synthesizing into it would have nothing to draw.";
+            var pool = GetResultPool(grade, itemSubType);
+            var message = $"{itemSubType} grade {(int)grade} is synthesize material but the item" +
+                          " sheets carry no item of that grade, so a failed roll would have" +
+                          " nothing to redraw.";
 
-            Assert.True(total > 0, message);
+            Assert.True(pool.Count > 0, message);
+            AssertPoolHasWeight(grade, itemSubType, pool);
+        }
+
+        foreach (var (grade, itemSubType) in targetGrades.Except(sourceGrades))
+        {
+            var pool = GetResultPool(grade, itemSubType);
+            if (pool.Count == 0)
+            {
+                // The grade above carries no items yet: see the remarks above.
+                continue;
+            }
+
+            AssertPoolHasWeight(grade, itemSubType, pool);
         }
     }
 
@@ -613,6 +632,79 @@ public class SynthesizeTest
         var inventory = state.GetInventoryV2(avatarAddress);
         Assert.Single(inventory.Items);
         Assert.Equal(wanted.Id, inventory.Items.First().item.Id);
+    }
+
+    /// <summary>
+    /// A grade above the highest one the sheets currently carry arrives by sheet rows alone. Give
+    /// <see cref="Grade.Ultimate"/> an Aura to be, a recipe to be built from and a weight to be
+    /// drawn by, open the grade 8 row for synthesis, and grade 8 material synthesizes into it with
+    /// no code change. This is what removing the hard-coded cap in
+    /// <see cref="SynthesizeSimulator.GetTargetGrade(int)"/> buys.
+    /// </summary>
+    [Fact]
+    public void SynthesizingIntoAGradeTheSheetsAddNeedsNoCodeChange()
+    {
+        const int ultimateAuraId = 10690000;
+        var sheets = new Dictionary<string, string>(Sheets);
+        sheets["EquipmentItemSheet"] = AppendRow(
+            sheets["EquipmentItemSheet"],
+            $"{ultimateAuraId},Ymir Aura G9,Aura,{(int)Grade.Ultimate},Normal,0,ATK,10,0,10620001,1300000");
+        sheets["EquipmentItemRecipeSheet"] = AppendRow(
+            sheets["EquipmentItemRecipeSheet"],
+            $"336,{ultimateAuraId},0,0,0,0,10000000,999,106900001,,,0,Aura");
+
+        // Reuses the Aegis Aura option rows: this test is about the grade, not the stats.
+        sheets["EquipmentItemSubRecipeSheetV2"] = AppendRow(
+            sheets["EquipmentItemSubRecipeSheetV2"],
+            "106900001,0,0,1,,,,,,,1068000211,10000,0,1068000212,10000,0,1068000213,10000,0,,,,FALSE,1");
+        sheets["SynthesizeWeightSheet"] = AppendRow(
+            sheets["SynthesizeWeightSheet"],
+            $"{ultimateAuraId},10000");
+
+        // Grade 8 Aura ships closed (`8,Aura,1,0`); open it at the coefficient the plan calls for.
+        var openedSynthesizeSheet = sheets["SynthesizeSheet"].Replace("8,Aura,1,0", "8,Aura,4,10000");
+        Assert.NotEqual(sheets["SynthesizeSheet"], openedSynthesizeSheet);
+        sheets["SynthesizeSheet"] = openedSynthesizeSheet;
+
+        var tableSheets = new TableSheets(sheets);
+        var inputData = new SynthesizeSimulator.InputData
+        {
+            Grade = Grade.Transcendent,
+            ItemSubType = ItemSubType.Aura,
+            MaterialCount = 4,
+            SynthesizeSheet = tableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = tableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = tableSheets.CostumeItemSheet,
+            EquipmentItemSheet = tableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = tableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = tableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = tableSheets.EquipmentItemOptionSheet,
+            SkillSheet = tableSheets.SkillSheet,
+            RandomObject = new TestRandom(),
+        };
+
+        var result = Assert.Single(SynthesizeSimulator.Simulate(inputData));
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ultimateAuraId, result.ItemBase.Id);
+        Assert.Equal((int)Grade.Ultimate, result.ItemBase.Grade);
+    }
+
+    private static string AppendRow(string csv, string row) =>
+        csv.EndsWith("\n") ? csv + row + "\n" : csv + "\n" + row + "\n";
+
+    private static HashSet<int> GetResultPool(Grade grade, ItemSubType itemSubType) =>
+        itemSubType is ItemSubType.FullCostume or ItemSubType.Title
+            ? SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.CostumeItemSheet)
+            : SynthesizeSimulator.GetSynthesizeResultPool(grade, itemSubType, TableSheets.EquipmentItemSheet);
+
+    private static void AssertPoolHasWeight(Grade grade, ItemSubType itemSubType, HashSet<int> pool)
+    {
+        var total = pool.Sum(id => SynthesizeSimulator.GetWeight(id, TableSheets.SynthesizeWeightSheet));
+        var message = $"{itemSubType} grade {(int)grade} has {pool.Count} item(s) and a total" +
+                      $" weight of {total}, so synthesizing into it would have nothing to draw.";
+
+        Assert.True(total > 0, message);
     }
 
     private static (IWorld, List<ItemBase>) UpdateItemsFromSubType(Grade grade, ItemSubType[] itemSubTypes, IWorld state, Address avatarAddress)

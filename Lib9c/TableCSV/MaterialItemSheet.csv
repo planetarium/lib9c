@@ -326,3 +326,11 @@ id,_name,item_sub_type,grade,elemental_type
 386074,물의 수액 결정,MonsterPart,8,Water
 800120,Bifrost Shard,NormalMaterial,5,Normal
 800121,Bifrost Crystal,NormalMaterial,7,Normal
+800122,Bifrost Keystone,NormalMaterial,3,Normal
+800123,Bifrost Vestige,NormalMaterial,6,Normal
+800124,Bifrost Halo,NormalMaterial,8,Normal
+800125,Distorted Attack Essence,NormalMaterial,8,Normal
+800126,Distorted Defense Essence,NormalMaterial,8,Normal
+800127,Distorted HP Essence,NormalMaterial,8,Normal
+800128,Distorted Hit Essence,NormalMaterial,8,Normal
+800129,Distorted Speed Essence,NormalMaterial,8,Normal

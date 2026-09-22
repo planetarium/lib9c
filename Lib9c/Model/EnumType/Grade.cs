@@ -44,5 +44,10 @@ namespace Nekoyume.Model.EnumType
         /// Transcendent grade.
         /// </summary>
         Transcendent = 8,
+
+        /// <summary>
+        /// Ultimate grade.
+        /// </summary>
+        Ultimate = 9,
     }
 }

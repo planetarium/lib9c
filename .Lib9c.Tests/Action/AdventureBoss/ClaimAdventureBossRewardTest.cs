@@ -137,8 +137,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 336 },
-                        { 600202, 36 },
+                        // fixed 336 + random 144: the random reward now draws 600201 too
+                        { 600201, 480 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -157,10 +158,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        {
-                            600201, 336
-                        }, // (200*1.2) * 0.7 / 0.5 * (120/240)
-                        { 600202, 36 }, // (200*1.2) * 0.3 / 2 * (120/240)
+                        // fixed (200*1.2)*0.7/0.25 * (120/240) = 336,
+                        // random (200*1.2)*0.3/0.25 * (120/240) = 144
+                        { 600201, 480 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -179,10 +180,10 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No Wanted Raffle
                     ItemReward = new Dictionary<int, int>
                     {
-                        {
-                            600201, 280
-                        }, // (300*1.2) * 0.7 / 0.5 * (100/360)
-                        { 600202, 30 }, // (300*1.2) * 0.3 / 2 * (100/360)
+                        // fixed (300*1.2)*0.7/0.25 * (100/360) = 280,
+                        // random (300*1.2)*0.3/0.25 * (100/360) = 120
+                        { 600201, 400 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -203,7 +204,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = (5 + 30) * NCG, // 5NCG for raffle, 30NCG for 30% distribution
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 160 }, // 100AP * 0.4 Exchange / 0.5 ratio * 100% contribution
+                        { 600201, 160 }, // 100AP * 0.4 Exchange / 0.25 ratio * 100% contribution
                         { 600202, 0 },
                         { 600203, 0 },
                     },
@@ -230,7 +231,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     {
                         {
                             600201, 159
-                        }, // total 200 AP * 0.4 Exchange / 0.5 ratio * 50% contribution
+                        }, // total 199 AP * 0.4 Exchange / 0.25 ratio * 50% contribution
                         { 600202, 0 },
                         { 600203, 0 },
                     },
@@ -254,7 +255,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     {
                         {
                             600201, 159
-                        }, // Total 200 AP * 0.4 Exchange / 1.5 Ratio * 50% Contribution
+                        }, // Total 199 AP * 0.4 Exchange / 0.25 Ratio * 50% Contribution
                         { 600202, 0 },
                         { 600203, 0 },
                     },
@@ -298,8 +299,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 0 * NCG, // No NCG Reward
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 336 },
-                        { 600202, 36 },
+                        // fixed 336 + random 144: the random reward now draws 600201 too
+                        { 600201, 480 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -337,8 +339,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     NcgReward = 35 * NCG,
                     ItemReward = new Dictionary<int, int>
                     {
-                        { 600201, 496 },
-                        { 600202, 36 },
+                        // wanted 480 + explore 160
+                        { 600201, 640 },
+                        { 600202, 0 },
                         { 600203, 0 },
                     },
                     FavReward = new Dictionary<int, int>
@@ -468,10 +471,12 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 336 }, // 100NCG * 1.2 * 0.7 Fixed / 0.5 Ratio for season 1
-                    // 100NCG * 1.2 * 0.3 Random / 2 Ratio for season 1
-                    // 100NCG * 1.3 * 0.3 Random / 2 Ratio for season 3
-                    { 600202, 72 },
+                    // 100NCG * 1.2 * 0.7 Fixed / 0.25 Ratio for season 1
+                    // 100NCG * 1.2 * 0.3 Random / 0.25 Ratio for season 1
+                    // 100NCG * 1.2 * 0.3 Random / 0.25 Ratio for season 3
+                    // (season 3's fixed reward is rune 10036, counted in FavReward)
+                    { 600201, 624 },
+                    { 600202, 0 },
                     { 600203, 0 },
                 },
             };
@@ -754,7 +759,7 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     {
                         600201, 160
-                    }, // (100 AP * 0.4 Exchange / 0.5 Ratio * 100% contribution) for season 1
+                    }, // (100 AP * 0.4 Exchange / 0.25 Ratio * 100% contribution) for season 1
                     { 600202, 0 },
                     { 600203, 0 },
                 },
@@ -892,8 +897,9 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 },
                 ItemReward = new Dictionary<int, int>
                 {
-                    { 600201, 496 },
-                    { 600202, 36 },
+                    // wanted 480 + explore 160
+                    { 600201, 640 },
+                    { 600202, 0 },
                     { 600203, 0 },
                 },
             };

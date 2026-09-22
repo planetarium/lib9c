@@ -8,6 +8,7 @@ _while this sheet exists an item currency (Item_*) cannot be a market product at
 40100042,,false
 40100043,,false
 40100059,,false
+40100060,false,false
 CRYSTAL,false,
 RUNESTONE_FREYA_BLESSING,false,
 RUNESTONE_FREYA_LIBERATION,false,

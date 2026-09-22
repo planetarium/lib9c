@@ -681,46 +681,47 @@ namespace Nekoyume.Helper
             }).ToList();
 
         /// <summary>
-        /// Get the target grade of the item.
-        /// max grade is Transcendent
+        /// Get the target grade of the item: the grade one step above the given one.
         /// </summary>
+        /// <remarks>
+        /// Since there is no upper bound (see the <see cref="int"/> overload), the returned value
+        /// is one step above whatever it is given and so need not be a defined <see cref="Grade"/>
+        /// member. Callers that hand it to a sheet lookup are fine — an unlisted grade simply
+        /// matches no row. Callers that switch on it should keep a default arm.
+        /// </remarks>
         /// <param name="grade">grade of the item</param>
         /// <returns>target grade</returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static Grade GetTargetGrade(Grade grade) => grade switch
-        {
-            Grade.Normal => Grade.Rare,
-            Grade.Rare => Grade.Epic,
-            Grade.Epic => Grade.Unique,
-            Grade.Unique => Grade.Legendary,
-            Grade.Legendary => Grade.Divinity,
-            Grade.Divinity => Grade.Mythic,
-            Grade.Mythic => Grade.Transcendent,
-            Grade.Transcendent => Grade.Transcendent,
-            _ => throw new ArgumentOutOfRangeException(nameof(grade), grade, null),
-        };
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="grade"/> is below the first grade.
+        /// </exception>
+        public static Grade GetTargetGrade(Grade grade) => (Grade)GetTargetGrade((int)grade);
 
         /// <summary>
-        /// Get the target grade of the item.
-        /// max grade is Transcendent
+        /// Get the target grade of the item: the grade id one step above the given one.
         /// </summary>
+        /// <remarks>
+        /// There is deliberately no upper bound here. Whether the grade above exists is a question
+        /// the item sheets answer, and both callers inside this class ask them: the result-pool
+        /// lookups fall back to the source grade when the pool for the grade above comes back
+        /// empty. Capping here as well would only mean editing this method every time a grade is
+        /// added. Callers outside this class have to arrange that fallback themselves.
+        /// </remarks>
         /// <param name="gradeId">grade id of the item</param>
         /// <returns>target grade id</returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="gradeId"/> is below the first grade, or so high that the
+        /// grade above it does not fit in an <see cref="int"/>.
+        /// </exception>
         public static int GetTargetGrade(int gradeId)
         {
-            return gradeId switch
+            // No cap is not the same as wrapping around: this arithmetic is unchecked, so the step
+            // above int.MaxValue would silently come back as int.MinValue.
+            if (gradeId < (int)Grade.Normal || gradeId == int.MaxValue)
             {
-                1 => 2, // Grade.Normal => Grade.Rare
-                2 => 3, // Grade.Rare => Grade.Epic
-                3 => 4, // Grade.Epic => Grade.Unique
-                4 => 5, // Grade.Unique => Grade.Legendary
-                5 => 6, // Grade.Legendary => Grade.Divinity
-                6 => 7, // Grade.Divinity => Grade.Mythic
-                7 => 8, // Grade.Mythic => Grade.Transcendent
-                8 => 8, // Grade.Transcendent => Grade.Transcendent (Max)
-                _ => throw new ArgumentOutOfRangeException(nameof(gradeId), gradeId, null),
-            };
+                throw new ArgumentOutOfRangeException(nameof(gradeId), gradeId, null);
+            }
+
+            return gradeId + 1;
         }
 #endregion Helper
     }

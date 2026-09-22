@@ -218,8 +218,11 @@ namespace Lib9c.Tests.Action.AdventureBoss
                     : new ItemSlotState(BattleType.Adventure);
             Assert.True(itemSlotState.Equipments.Count == 0);
 
-            var expectedItemRewards = new List<(int, int)>();
-            var expectedFavRewards = new List<(int, int)>();
+            // Two floors in the same range can grant the same item, and the assertions below
+            // compare against the inventory's aggregate count, so accumulate per item id
+            // instead of keeping one entry per floor.
+            var expectedItemRewards = new Dictionary<int, int>();
+            var expectedFavRewards = new Dictionary<int, int>();
             var firstRewardSheet = TableSheets.AdventureBossFloorFirstRewardSheet;
             foreach (var row in firstRewardSheet.Values.Where(
                 r =>
@@ -229,14 +232,18 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 {
                     switch (reward.ItemType)
                     {
+                        // The loop below resolves every key through RuneSheet, so a
+                        // Crystal row in the sheet would not work here yet.
                         case "Rune":
-                            expectedFavRewards.Add((reward.ItemId, reward.Amount));
-                            break;
                         case "Crystal":
-                            expectedFavRewards.Add((reward.ItemId, reward.Amount));
+                            expectedFavRewards[reward.ItemId] =
+                                expectedFavRewards.GetValueOrDefault(reward.ItemId) +
+                                reward.Amount;
                             break;
                         case "Material":
-                            expectedItemRewards.Add((reward.ItemId, reward.Amount));
+                            expectedItemRewards[reward.ItemId] =
+                                expectedItemRewards.GetValueOrDefault(reward.ItemId) +
+                                reward.Amount;
                             break;
                     }
                 }
