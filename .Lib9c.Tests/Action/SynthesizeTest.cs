@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -635,63 +636,57 @@ public class SynthesizeTest
     }
 
     /// <summary>
-    /// A grade above the highest one the sheets currently carry arrives by sheet rows alone. Give
-    /// <see cref="Grade.Ultimate"/> an Aura to be, a recipe to be built from and a weight to be
-    /// drawn by, open the grade 8 row for synthesis, and grade 8 material synthesizes into it with
-    /// no code change. This is what removing the hard-coded cap in
+    /// <see cref="Grade.Ultimate"/> arrived by sheet rows alone: the sheets ship its items with a
+    /// weight to be drawn by and open the grade 8 rows for synthesis, and grade 8 material
+    /// synthesizes into it with no code change. This is what removing the hard-coded cap in
     /// <see cref="SynthesizeSimulator.GetTargetGrade(int)"/> buys.
     /// </summary>
-    [Fact]
-    public void SynthesizingIntoAGradeTheSheetsAddNeedsNoCodeChange()
+    /// <param name="itemSubType">The item sub type synthesized from grade 8 into grade 9.</param>
+    [Theory]
+    [InlineData(ItemSubType.Aura)]
+    [InlineData(ItemSubType.Grimoire)]
+    [InlineData(ItemSubType.FullCostume)]
+    public void SynthesizingIntoAGradeTheSheetsAddNeedsNoCodeChange(ItemSubType itemSubType)
     {
-        const int ultimateAuraId = 10690000;
-        var sheets = new Dictionary<string, string>(Sheets);
-        sheets["EquipmentItemSheet"] = AppendRow(
-            sheets["EquipmentItemSheet"],
-            $"{ultimateAuraId},Ymir Aura G9,Aura,{(int)Grade.Ultimate},Normal,0,ATK,10,0,10620001,1300000");
-        sheets["EquipmentItemRecipeSheet"] = AppendRow(
-            sheets["EquipmentItemRecipeSheet"],
-            $"336,{ultimateAuraId},0,0,0,0,10000000,999,106900001,,,0,Aura");
+        // Grade 8 shipped closed (`8,<type>,1,0`) until the Ultimate items did; it must be open now.
+        var synthesizeData = TableSheets.SynthesizeSheet[(int)Grade.Transcendent]
+            .RequiredCountDict[itemSubType];
+        Assert.True(synthesizeData.SucceedRate > SynthesizeSheet.SucceedRateMin);
 
-        // Reuses the Aegis Aura option rows: this test is about the grade, not the stats.
-        sheets["EquipmentItemSubRecipeSheetV2"] = AppendRow(
-            sheets["EquipmentItemSubRecipeSheetV2"],
-            "106900001,0,0,1,,,,,,,1068000211,10000,0,1068000212,10000,0,1068000213,10000,0,,,,FALSE,1");
-        sheets["SynthesizeWeightSheet"] = AppendRow(
-            sheets["SynthesizeWeightSheet"],
-            $"{ultimateAuraId},10000");
+        // Only whether the roll succeeds is left to the rate the sheet ships, so pin it to certain:
+        // this test is about the grade being reachable, not about how often.
+        var synthesizeSheet = new SynthesizeSheet();
+        synthesizeSheet.Set(Regex.Replace(
+            Sheets[nameof(SynthesizeSheet)],
+            $@"^{(int)Grade.Transcendent},{itemSubType},(\d+),\d+",
+            $"{(int)Grade.Transcendent},{itemSubType},$1,{SynthesizeSheet.SucceedRateMax}",
+            RegexOptions.Multiline));
+        Assert.Equal(
+            SynthesizeSheet.SucceedRateMax,
+            synthesizeSheet[(int)Grade.Transcendent].RequiredCountDict[itemSubType].SucceedRate);
 
-        // Grade 8 Aura ships closed (`8,Aura,1,0`); open it at the coefficient the plan calls for.
-        var openedSynthesizeSheet = sheets["SynthesizeSheet"].Replace("8,Aura,1,0", "8,Aura,4,10000");
-        Assert.NotEqual(sheets["SynthesizeSheet"], openedSynthesizeSheet);
-        sheets["SynthesizeSheet"] = openedSynthesizeSheet;
-
-        var tableSheets = new TableSheets(sheets);
         var inputData = new SynthesizeSimulator.InputData
         {
             Grade = Grade.Transcendent,
-            ItemSubType = ItemSubType.Aura,
-            MaterialCount = 4,
-            SynthesizeSheet = tableSheets.SynthesizeSheet,
-            SynthesizeWeightSheet = tableSheets.SynthesizeWeightSheet,
-            CostumeItemSheet = tableSheets.CostumeItemSheet,
-            EquipmentItemSheet = tableSheets.EquipmentItemSheet,
-            EquipmentItemRecipeSheet = tableSheets.EquipmentItemRecipeSheet,
-            EquipmentItemSubRecipeSheetV2 = tableSheets.EquipmentItemSubRecipeSheetV2,
-            EquipmentItemOptionSheet = tableSheets.EquipmentItemOptionSheet,
-            SkillSheet = tableSheets.SkillSheet,
+            ItemSubType = itemSubType,
+            MaterialCount = synthesizeData.RequiredCount,
+            SynthesizeSheet = synthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
             RandomObject = new TestRandom(),
         };
 
         var result = Assert.Single(SynthesizeSimulator.Simulate(inputData));
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(ultimateAuraId, result.ItemBase.Id);
+        Assert.Equal(itemSubType, result.ItemBase.ItemSubType);
         Assert.Equal((int)Grade.Ultimate, result.ItemBase.Grade);
     }
-
-    private static string AppendRow(string csv, string row) =>
-        csv.EndsWith("\n") ? csv + row + "\n" : csv + "\n" + row + "\n";
 
     private static HashSet<int> GetResultPool(Grade grade, ItemSubType itemSubType) =>
         itemSubType is ItemSubType.FullCostume or ItemSubType.Title
