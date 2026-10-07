@@ -15,6 +15,7 @@ using Nekoyume.Helper;
 using Nekoyume.Model.AdventureBoss;
 using Nekoyume.Model.Arena;
 using Nekoyume.Model.EnumType;
+using Serilog;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
 using Nekoyume.Model.State;
@@ -43,11 +44,21 @@ namespace Nekoyume.Action.AdventureBoss
     {
         public const string TypeIdentifier = "sweep_adventure_boss";
 
+        /// <summary>
+        /// Maximum allowed play count per sweep action to prevent abuse and excessive resource consumption.
+        /// </summary>
+        private const int MaxPlayCount = 100;
+
         public int Season;
         public Address AvatarAddress;
         public List<Guid> Costumes;
         public List<Guid> Equipments;
         public List<RuneSlotInfo> RuneInfos;
+
+        /// <summary>
+        /// The number of times to perform the sweep (must be between 1 and MaxPlayCount).
+        /// </summary>
+        public int PlayCount;
 
         protected override IImmutableDictionary<string, IValue> PlainValueInternal =>
             new Dictionary<string, IValue>
@@ -59,6 +70,7 @@ namespace Nekoyume.Action.AdventureBoss
                     new List(Equipments.OrderBy(i => i).Select(e => e.Serialize())),
                 ["r"] = RuneInfos.OrderBy(x => x.SlotIndex).Select(x => x.Serialize())
                     .Serialize(),
+                ["p"] = (Integer)PlayCount,
             }.ToImmutableDictionary();
 
         protected override void LoadPlainValueInternal(
@@ -69,6 +81,9 @@ namespace Nekoyume.Action.AdventureBoss
             Costumes = ((List)plainValue["c"]).Select(e => e.ToGuid()).ToList();
             Equipments = ((List)plainValue["e"]).Select(e => e.ToGuid()).ToList();
             RuneInfos = plainValue["r"].ToList(x => new RuneSlotInfo((List)x));
+            PlayCount = plainValue.TryGetValue("p", out var playCountValue)
+                ? (Integer)playCountValue
+                : 1; // Default to 1 for backward compatibility
         }
 
         public override IWorld Execute(IActionContext context)
@@ -76,15 +91,31 @@ namespace Nekoyume.Action.AdventureBoss
             GasTracer.UseGas(1);
             var addressesHex = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             var states = context.PreviousState;
+            var started = DateTimeOffset.UtcNow;
+            Log.Debug("{AddressesHex}SweepAdventureBoss exec started", addressesHex);
+
+            // Validate play count - must be greater than 0 and within maximum limit
+            if (PlayCount <= 0)
+            {
+                throw new PlayCountIsZeroException(
+                    $"{addressesHex}playCount must be greater than 0. " +
+                    $"current playCount : {PlayCount}");
+            }
+
+            if (PlayCount > MaxPlayCount)
+            {
+                throw new ExceedPlayCountException(
+                    $"{addressesHex}playCount exceeds maximum allowed value. " +
+                    $"Requested: {PlayCount}, Maximum: {MaxPlayCount}");
+            }
 
             // Validation
-            var addresses = GetSignerAndOtherAddressesHex(context, AvatarAddress);
             // NOTE: The `AvatarAddress` must contained in `Signer`'s `AgentState.avatarAddresses`.
             if (!Addresses.CheckAvatarAddrIsContainedInAgent(context.Signer, AvatarAddress))
             {
                 throw new InvalidActionFieldException(
                     TypeIdentifier,
-                    addresses,
+                    addressesHex,
                     nameof(AvatarAddress),
                     $"Signer({context.Signer}) is not contained in" +
                     $" AvatarAddress({AvatarAddress}).");
@@ -124,7 +155,7 @@ namespace Nekoyume.Action.AdventureBoss
             // Use AP Potions
             var unitSweepAp = states.GetSheet<AdventureBossSheet>().OrderedList
                 .First(row => row.BossId == latestSeason.BossId).SweepAp;
-            var requiredPotion = explorer.Floor * unitSweepAp;
+            var requiredPotion = PlayCount * explorer.Floor * unitSweepAp;
             var sheets = states.GetSheets(
                 containSimulatorSheets: true,
                 sheetTypes: new[]
@@ -219,37 +250,43 @@ namespace Nekoyume.Action.AdventureBoss
             simulator.AddBreakthrough(floorIdList, sheets.GetSheet<AdventureBossFloorWaveSheet>());
 
             // Add point, reward
-            var point = 0;
+            var totalPoint = 0;
             var rewardList = new List<AdventureBossSheet.RewardAmountData>();
             var random = context.GetRandom();
             var selector = new WeightedSelector<AdventureBossFloorSheet.RewardData>(random);
-            var bossId = states.GetSheet<AdventureBossSheet>().Values
-                .First(row => row.BossId == latestSeason.BossId).Id;
             var floorPointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
             var floorSheet = states.GetSheet<AdventureBossFloorSheet>();
-            for (var fl = 1; fl <= explorer.Floor; fl++)
-            {
-                var floorRow = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
-                    .First(row => row.Floor == fl);
-                var pointRow = floorPointSheet[floorRow.Id];
-                point += random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
 
-                selector.Clear();
-                foreach (var reward in floorRow.Rewards)
+            // Repeat reward calculation for PlayCount times
+            for (var play = 0; play < PlayCount; play++)
+            {
+                var point = 0;
+                for (var fl = 1; fl <= explorer.Floor; fl++)
                 {
-                    selector.Add(reward, reward.Ratio);
+                    var floorRow = floorSheet.Values.Where(row => row.AdventureBossId == adventureBossId)
+                        .First(row => row.Floor == fl);
+                    var pointRow = floorPointSheet[floorRow.Id];
+                    point += random.Next(pointRow.MinPoint, pointRow.MaxPoint + 1);
+
+                    selector.Clear();
+                    foreach (var reward in floorRow.Rewards)
+                    {
+                        selector.Add(reward, reward.Ratio);
+                    }
+
+                    var selected = selector.Select(1).First();
+                    rewardList.Add(new AdventureBossSheet.RewardAmountData(
+                        selected.ItemType,
+                        selected.ItemId,
+                        random.Next(selected.Min, selected.Max + 1)
+                    ));
                 }
 
-                var selected = selector.Select(1).First();
-                rewardList.Add(new AdventureBossSheet.RewardAmountData(
-                    selected.ItemType,
-                    selected.ItemId,
-                    random.Next(selected.Min, selected.Max + 1)
-                ));
+                totalPoint += point;
             }
 
-            exploreBoard.TotalPoint += point;
-            explorer.Score += point;
+            exploreBoard.TotalPoint += totalPoint;
+            explorer.Score += totalPoint;
             states = AdventureBossHelper.AddExploreRewards(
                 context, states, AvatarAddress, inventory, rewardList
             );
@@ -303,6 +340,12 @@ namespace Nekoyume.Action.AdventureBoss
                 costumeStatSheet,
                 collectionModifiers,
                 runeLevelBonus
+            );
+
+            var ended = DateTimeOffset.UtcNow;
+            Log.Debug(
+                "{AddressesHex}SweepAdventureBoss Total Executed Time: {Elapsed}",
+                addressesHex, ended - started
             );
 
             return states
