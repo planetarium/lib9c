@@ -15,6 +15,11 @@ namespace Nekoyume.TableData
     /// column, is dropped on load and may be used for notes.
     /// </para>
     /// <para>
+    /// <c>target_id</c> is a single id (<c>50</c>), an inclusive range (<c>1~50</c>) or
+    /// <c>*</c> for every id. <c>~</c> rather than <c>-</c> keeps a spreadsheet from reading a
+    /// range as a date on its way to the CSV.
+    /// </para>
+    /// <para>
     /// <c>target</c> names what is adjusted and is matched as a plain string by the call site that
     /// owns it, so the sheet itself never needs to know which targets exist. A node that predates a
     /// target simply finds no match for it instead of failing to read the sheet.
@@ -44,6 +49,11 @@ namespace Nekoyume.TableData
         /// The <c>target_id</c> cell that matches every id of a target.
         /// </summary>
         public const string AnyTargetId = "*";
+
+        /// <summary>
+        /// Separates the two ends of a <c>target_id</c> range, as in <c>1~50</c>.
+        /// </summary>
+        public const char TargetIdRangeSeparator = '~';
 
         /// <summary>
         /// Upper bound of <c>|value|</c>. Keeps every <see cref="Row.Apply"/> inside
@@ -135,9 +145,15 @@ namespace Nekoyume.TableData
             public string Target { get; private set; } = string.Empty;
 
             /// <summary>
-            /// The id within <see cref="Target"/> this row applies to, or <c>null</c> for all.
+            /// First id within <see cref="Target"/> this row applies to, or <c>null</c> for all.
             /// </summary>
-            public int? TargetId { get; private set; }
+            public int? TargetIdBegin { get; private set; }
+
+            /// <summary>
+            /// Last id within <see cref="Target"/> this row applies to, inclusive, or
+            /// <c>null</c> for all. Equals <see cref="TargetIdBegin"/> for a single id.
+            /// </summary>
+            public int? TargetIdEnd { get; private set; }
 
             /// <summary>
             /// How <see cref="Value"/> is combined with the adjusted value.
@@ -176,9 +192,10 @@ namespace Nekoyume.TableData
             {
                 Id = Cell(fields, 0) is { } idCell && TryParseInt(idCell, out var id) ? id : 0;
                 Target = Cell(fields, 1) ?? string.Empty;
-                IsValid = TryParseRest(fields, out var targetId, out var op, out var value,
-                    out var start, out var end);
-                TargetId = targetId;
+                IsValid = TryParseRest(fields, out var targetIdBegin, out var targetIdEnd,
+                    out var op, out var value, out var start, out var end);
+                TargetIdBegin = targetIdBegin;
+                TargetIdEnd = targetIdEnd;
                 Op = op;
                 Value = value;
                 StartBlockIndex = start;
@@ -197,7 +214,7 @@ namespace Nekoyume.TableData
             public bool Matches(string target, int targetId, long blockIndex) =>
                 IsValid &&
                 string.Equals(Target, target, StringComparison.Ordinal) &&
-                (TargetId is null || TargetId == targetId) &&
+                (TargetIdBegin is null || (TargetIdBegin <= targetId && targetId <= TargetIdEnd)) &&
                 StartBlockIndex <= blockIndex &&
                 blockIndex < EndBlockIndex;
 
@@ -228,35 +245,22 @@ namespace Nekoyume.TableData
 
             private static bool TryParseRest(
                 IReadOnlyList<string> fields,
-                out int? targetId,
+                out int? targetIdBegin,
+                out int? targetIdEnd,
                 out Operation op,
                 out decimal value,
                 out long start,
                 out long end)
             {
-                targetId = null;
+                targetIdBegin = null;
+                targetIdEnd = null;
                 op = default;
                 value = default;
                 start = default;
                 end = default;
 
-                var targetIdCell = Cell(fields, 2);
-                if (targetIdCell is null)
-                {
-                    return false;
-                }
-
-                if (targetIdCell != AnyTargetId)
-                {
-                    if (!TryParseInt(targetIdCell, out var parsedTargetId) || parsedTargetId <= 0)
-                    {
-                        return false;
-                    }
-
-                    targetId = parsedTargetId;
-                }
-
-                if (!TryParseOperation(Cell(fields, 3), out op) ||
+                if (!TryParseTargetIds(Cell(fields, 2), out targetIdBegin, out targetIdEnd) ||
+                    !TryParseOperation(Cell(fields, 3), out op) ||
                     !(Cell(fields, 4) is { } valueCell && TryParseDecimal(valueCell, out value)) ||
                     !(Cell(fields, 5) is { } startCell && TryParseLong(startCell, out start)) ||
                     !(Cell(fields, 6) is { } endCell && TryParseLong(endCell, out end)))
@@ -437,10 +441,11 @@ namespace Nekoyume.TableData
             }
 
             var targetId = fields[2].Trim();
-            if (targetId != AnyTargetId &&
-                !(TryParseInt(targetId, out var parsedTargetId) && parsedTargetId > 0))
+            if (!TryParseTargetIds(targetId, out _, out _))
             {
-                return $"target_id({targetId}) must be a positive integer or \"{AnyTargetId}\".";
+                return $"target_id({targetId}) must be a positive integer, a range such as" +
+                       $" \"1{TargetIdRangeSeparator}50\" whose ends are positive and in order," +
+                       $" or \"{AnyTargetId}\".";
             }
 
             if (!TryParseOperation(fields[3].Trim(), out var op))
@@ -470,6 +475,37 @@ namespace Nekoyume.TableData
 
             return "row is invalid.";
         }
+
+        private static bool TryParseTargetIds(string cell, out int? begin, out int? end)
+        {
+            begin = null;
+            end = null;
+            if (cell is null)
+            {
+                return false;
+            }
+
+            if (cell == AnyTargetId)
+            {
+                return true;
+            }
+
+            var ends = cell.Split(TargetIdRangeSeparator);
+            if (ends.Length > 2 ||
+                !TryParsePositiveInt(ends[0], out var parsedBegin) ||
+                !TryParsePositiveInt(ends[ends.Length - 1], out var parsedEnd) ||
+                parsedBegin > parsedEnd)
+            {
+                return false;
+            }
+
+            begin = parsedBegin;
+            end = parsedEnd;
+            return true;
+        }
+
+        private static bool TryParsePositiveInt(string cell, out int value) =>
+            TryParseInt(cell.Trim(), out value) && value > 0;
 
         private static bool TryParseOperation(string cell, out Operation op)
         {

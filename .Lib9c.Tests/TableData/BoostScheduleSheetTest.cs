@@ -34,7 +34,8 @@ namespace Lib9c.Tests.TableData
             var row = sheet[1];
             Assert.True(row.IsValid);
             Assert.Equal(Target, row.Target);
-            Assert.Equal(10001, row.TargetId);
+            Assert.Equal(10001, row.TargetIdBegin);
+            Assert.Equal(10001, row.TargetIdEnd);
             Assert.Equal(BoostScheduleSheet.Operation.Mul, row.Op);
             Assert.Equal(1.5m, row.Value);
             Assert.Equal(100, row.StartBlockIndex);
@@ -57,15 +58,52 @@ namespace Lib9c.Tests.TableData
         {
             var sheet = Parse($"1,{Target},*,ADD,1,100,200\n");
 
-            Assert.Null(sheet[1].TargetId);
+            Assert.Null(sheet[1].TargetIdBegin);
+            Assert.Null(sheet[1].TargetIdEnd);
             Assert.NotNull(sheet.FindActive(Target, 10001, 150));
             Assert.NotNull(sheet.FindActive(Target, 99999, 150));
+        }
+
+        [Theory]
+        [InlineData(0, false)]
+        [InlineData(1, true)] // both ends are inclusive
+        [InlineData(25, true)]
+        [InlineData(50, true)]
+        [InlineData(51, false)]
+        public void TargetIdRangeIsInclusive(int targetId, bool expected)
+        {
+            var sheet = Parse($"1,{Target},1~50,MUL,0.6,100,200\n");
+
+            Assert.Equal(1, sheet[1].TargetIdBegin);
+            Assert.Equal(50, sheet[1].TargetIdEnd);
+            Assert.Equal(expected, sheet.FindActive(Target, targetId, 150) is not null);
+        }
+
+        [Fact]
+        public void TargetIdRangesSplitATargetIntoTiers()
+        {
+            // How a tiered discount is written: one row per tier instead of one per id.
+            var sheet = Parse(
+                $"1,{Target},1~50,MUL,0.6,100,200\n" +
+                $"2,{Target},51~100,MUL,0.65,100,200\n" +
+                $"3,{Target},101~200,MUL,0.75,100,200\n");
+
+            Assert.Equal(0.6m, sheet.FindActive(Target, 50, 150).Value);
+            Assert.Equal(0.65m, sheet.FindActive(Target, 51, 150).Value);
+            Assert.Equal(0.75m, sheet.FindActive(Target, 200, 150).Value);
+            Assert.Null(sheet.FindActive(Target, 201, 150));
         }
 
         [Theory]
         [InlineData("1,,10001,MUL,1.5,100,200")] // empty target
         [InlineData("1,TARGET,abc,MUL,1.5,100,200")] // target_id not a number
         [InlineData("1,TARGET,0,MUL,1.5,100,200")] // target_id not positive
+        [InlineData("1,TARGET,50~1,MUL,1.5,100,200")] // reversed range
+        [InlineData("1,TARGET,0~50,MUL,1.5,100,200")] // range starting at 0
+        [InlineData("1,TARGET,1~,MUL,1.5,100,200")] // open range
+        [InlineData("1,TARGET,~50,MUL,1.5,100,200")]
+        [InlineData("1,TARGET,1~20~50,MUL,1.5,100,200")]
+        [InlineData("1,TARGET,1-50,MUL,1.5,100,200")] // "-" is not the separator
         [InlineData("1,TARGET,10001,POW,1.5,100,200")] // unknown op
         [InlineData("1,TARGET,10001,mul,1.5,100,200")] // op is case sensitive
         [InlineData("1,TARGET,10001,MUL,1.5x,100,200")] // value not a number
@@ -197,6 +235,7 @@ namespace Lib9c.Tests.TableData
                 "id,target,target_id,op,value,start_block,end_block,_memo\n" +
                 $"1,{Target},10001,MUL,1.5,100,200,memo\n" +
                 $"2,{Target},*,ADD,-1,0,1,\n" +
+                $"4,{Target},1~50,MUL,0.6,0,1,\n" +
                 "3,SOME_FUTURE_TARGET,1,MUL,2,100,200,\n");
         }
 
@@ -245,6 +284,7 @@ namespace Lib9c.Tests.TableData
         [InlineData(Header + "1,T,10001,ADD,1,100,200\n1,T,10001,ADD,1,100,200\n")] // duplicated id
         [InlineData(Header + "1,,10001,ADD,1,100,200\n")] // empty target
         [InlineData(Header + "1,T,x,ADD,1,100,200\n")] // target_id
+        [InlineData(Header + "1,T,50~1,ADD,1,100,200\n")] // target_id range
         [InlineData(Header + "1,T,10001,SET,1,100,200\n")] // op
         [InlineData(Header + "1,T,10001,MUL,0,100,200\n")] // value
         [InlineData(Header + "1,T,10001,ADD,1.5,100,200\n")] // value
