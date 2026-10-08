@@ -216,6 +216,73 @@
             Assert.Contains("summon group 77777", exception.Message);
         }
 
+        [Theory]
+        [InlineData(150, true)] // inside [100, 200)
+        [InlineData(250, false)] // after the schedule ends
+        public void Execute_AppliesScheduledGuaranteeBoost(long blockIndex, bool scheduled)
+        {
+            // Group 50001 guarantees 3 costumes of grade >= 6 per 110 summons; the schedule adds 20.
+            const int groupId = 50001;
+            const int seed = 1;
+            var random = new TestRandom(seed);
+            var summonRow = _tableSheets.CostumeSummonSheet[groupId];
+            var state = _initialState.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)),
+                BoostCsv(groupId).Serialize());
+            var material = _tableSheets.MaterialItemSheet[summonRow.CostMaterial];
+            _avatarState.inventory.AddItem(
+                ItemFactory.CreateItem(material, random),
+                100 * summonRow.CostMaterialCount);
+            state = state.SetAvatarState(_avatarAddress, _avatarState);
+
+            var ctx = new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                BlockIndex = blockIndex,
+            };
+            ctx.SetRandom(random);
+            var nextState = new CostumeSummon
+            {
+                AvatarAddress = _avatarAddress,
+                GroupId = groupId,
+                SummonCount = 100,
+            }.Execute(ctx);
+
+            var boost = ExpectedBoost(groupId, blockIndex);
+            Assert.Equal(scheduled, boost is not null);
+            var expected = CostumeSummon.SimulateSummon(
+                string.Empty,
+                _tableSheets.CostumeItemSheet,
+                summonRow,
+                100,
+                new TestRandom(seed),
+                boost).ToList();
+            var inventory = nextState.GetAvatarState(_avatarAddress).inventory;
+            foreach (var costume in expected)
+            {
+                inventory.TryGetNonFungibleItem(costume.ItemId, out Costume outItem);
+                Assert.Equal(costume, outItem);
+            }
+
+            if (scheduled)
+            {
+                var highGrade = expected.Count(c => c.Grade >= summonRow.MinimumGrade110);
+                Assert.True(highGrade >= 23, $"expected at least 23 but got {highGrade}");
+            }
+        }
+
+        private static string BoostCsv(int groupId) =>
+            "id,target,target_id,op,value,start_block,end_block\n" +
+            $"1,{BoostScheduleSheet.Targets.CostumeSummonGuarantee},{groupId},ADD,20,100,200\n";
+
+        private static BoostScheduleSheet.Row ExpectedBoost(int groupId, long blockIndex)
+        {
+            var sheet = new BoostScheduleSheet();
+            sheet.Set(BoostCsv(groupId));
+            return sheet.FindActive(BoostScheduleSheet.Targets.CostumeSummonGuarantee, groupId, blockIndex);
+        }
+
         /// <summary>
         /// Creates a test CostumeSummonSheet.Row with grade guarantee settings for testing.
         /// </summary>

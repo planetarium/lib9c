@@ -213,6 +213,120 @@ namespace Lib9c.Tests.Helper
             Assert.Contains("data consistency issue with recipe ratios", exception.Message);
         }
 
+        [Fact]
+        public void GetGuaranteeSettings_WithoutBoost_IsUnchanged()
+        {
+            var summonRow = CreateTestSummonRow();
+
+            Assert.Equal((true, 3, 1), SummonHelper.GetGuaranteeSettings(summonRow, 11));
+            Assert.Equal((true, 4, 2), SummonHelper.GetGuaranteeSettings(summonRow, 110));
+            Assert.Equal((false, 0, 0), SummonHelper.GetGuaranteeSettings(summonRow, 1));
+        }
+
+        [Theory]
+        [InlineData("MUL", "1.5", 11, 1)] // 1 x 1.5 rounds down to 1: a multiplier can be a no-op
+        [InlineData("MUL", "1.5", 110, 3)] // 2 x 1.5
+        [InlineData("ADD", "1", 11, 2)]
+        [InlineData("ADD", "3", 110, 5)]
+        [InlineData("MUL", "0.5", 110, 1)] // a boost may lower the count too
+        public void GetGuaranteeSettings_AppliesBoostToGuaranteeCountOnly(
+            string op,
+            string value,
+            int summonCount,
+            int expectedCount)
+        {
+            var summonRow = CreateTestSummonRow();
+            var boost = CreateBoostRow(op, value);
+
+            var (useGuarantee, minimumGrade, guaranteeCount) =
+                SummonHelper.GetGuaranteeSettings(summonRow, summonCount, boost);
+
+            Assert.True(useGuarantee);
+            Assert.Equal(summonCount >= 110 ? 4 : 3, minimumGrade);
+            Assert.Equal(expectedCount, guaranteeCount);
+        }
+
+        [Theory]
+        [InlineData(11, 10)]
+        [InlineData(110, 109)]
+        public void GetGuaranteeSettings_BoostLeavesAtLeastOneNormalDraw(
+            int summonCount,
+            int expectedCount)
+        {
+            var summonRow = CreateTestSummonRow();
+            var boost = CreateBoostRow("ADD", "1000");
+
+            var (_, _, guaranteeCount) =
+                SummonHelper.GetGuaranteeSettings(summonRow, summonCount, boost);
+
+            Assert.Equal(expectedCount, guaranteeCount);
+        }
+
+        [Fact]
+        public void GetGuaranteeSettings_BoostNeverCreatesAGuarantee()
+        {
+            var boost = CreateBoostRow("ADD", "5");
+
+            // Below 11 summons there is no guarantee to adjust.
+            Assert.Equal(
+                (false, 0, 0),
+                SummonHelper.GetGuaranteeSettings(CreateTestSummonRow(), 1, boost));
+
+            // A group without guarantee settings stays without one.
+            var withoutGuarantee = new SummonSheet.Row();
+            withoutGuarantee.Set(new List<string> { "10002", "800201", "10", "0", "101", "1000", "102", "500" });
+            Assert.Equal(
+                (false, 0, 0),
+                SummonHelper.GetGuaranteeSettings(withoutGuarantee, 11, boost));
+
+            // Nor does a group whose guarantee count is configured as 0: its guaranteed-grade
+            // path has never run and could fail for want of an eligible recipe.
+            var zeroCount = new SummonSheet.Row();
+            zeroCount.Set(new List<string>
+            {
+                "10003", "800201", "10", "0", "GUARANTEE", "3", "0", "4", "0", "101", "1000", "102", "500",
+            });
+            Assert.Equal(
+                (true, 3, 0),
+                SummonHelper.GetGuaranteeSettings(zeroCount, 11, boost));
+        }
+
+        [Fact]
+        public void GetSummonRecipeIdsWithGradeGuarantee_AppliesBoost()
+        {
+            var summonRow = CreateTestSummonRow();
+            var equipmentItemSheet = CreateTestEquipmentItemSheet();
+            var equipmentItemRecipeSheet = CreateTestEquipmentItemRecipeSheet();
+            var boost = CreateBoostRow("ADD", "5");
+
+            // 110 summons guarantee 2 at grade 4; the boost raises that to 7.
+            var result = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
+                summonRow, 110, new TestRandom(), equipmentItemSheet, equipmentItemRecipeSheet, boost);
+
+            var atLeastMinimumGrade = result.Count(recipeId =>
+                TryGetItemGradeFromRecipeId(recipeId, equipmentItemSheet, equipmentItemRecipeSheet, out var grade) &&
+                grade >= 4);
+            Assert.Equal(110, result.Count);
+            Assert.True(atLeastMinimumGrade >= 7, $"expected at least 7 but got {atLeastMinimumGrade}");
+        }
+
+        private static BoostScheduleSheet.Row CreateBoostRow(string op, string value)
+        {
+            var row = new BoostScheduleSheet.Row();
+            row.Set(new List<string>
+            {
+                "1",
+                BoostScheduleSheet.Targets.EquipmentSummonGuarantee,
+                "10001",
+                op,
+                value,
+                "0",
+                "100",
+            });
+            Assert.True(row.IsValid);
+            return row;
+        }
+
         private static SummonSheet.Row CreateTestSummonRow()
         {
             var row = new SummonSheet.Row();
