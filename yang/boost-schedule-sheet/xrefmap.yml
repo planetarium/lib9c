@@ -84122,19 +84122,32 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Target
   nameWithType: BoostScheduleSheet.Row.Target
-- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetId
-  name: TargetId
-  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetId
-  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.TargetId
-  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetId
-  nameWithType: BoostScheduleSheet.Row.TargetId
-- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetId*
-  name: TargetId
-  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetId_
-  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.TargetId
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  name: TargetIdBegin
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdBegin
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  nameWithType: BoostScheduleSheet.Row.TargetIdBegin
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin*
+  name: TargetIdBegin
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdBegin_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
   isSpec: "True"
-  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetId
-  nameWithType: BoostScheduleSheet.Row.TargetId
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  nameWithType: BoostScheduleSheet.Row.TargetIdBegin
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  name: TargetIdEnd
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdEnd
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  nameWithType: BoostScheduleSheet.Row.TargetIdEnd
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd*
+  name: TargetIdEnd
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdEnd_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  nameWithType: BoostScheduleSheet.Row.TargetIdEnd
 - uid: Nekoyume.TableData.BoostScheduleSheet.Row.Value
   name: Value
   href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Value
@@ -84148,6 +84161,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Value
   nameWithType: BoostScheduleSheet.Row.Value
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
+  name: TargetIdRangeSeparator
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_TargetIdRangeSeparator
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
+  nameWithType: BoostScheduleSheet.TargetIdRangeSeparator
 - uid: Nekoyume.TableData.BoostScheduleSheet.Targets
   name: BoostScheduleSheet.Targets
   href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html

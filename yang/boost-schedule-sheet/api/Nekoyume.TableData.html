@@ -139,6 +139,9 @@ instead of rewriting the value's own sheet and patching it back afterwards.</p>
 Columns: <code>id</code>, <code>target</code>, <code>target_id</code>, <code>op</code>, <code>value</code>,
 <code>start_block</code>, <code>end_block</code>. A <code>_memo</code> column, like any <code>_</code> prefixed
 column, is dropped on load and may be used for notes.
+</p><p><code>target_id</code> is a single id (<code>50</code>), an inclusive range (<code>1~50</code>) or
+<code>*</code> for every id. <code>~</code> rather than <code>-</code> keeps a spreadsheet from reading a
+range as a date on its way to the CSV.
 </p><p><code>target</code> names what is adjusted and is matched as a plain string by the call site that
 owns it, so the sheet itself never needs to know which targets exist. A node that predates a
 target simply finds no match for it instead of failing to read the sheet.

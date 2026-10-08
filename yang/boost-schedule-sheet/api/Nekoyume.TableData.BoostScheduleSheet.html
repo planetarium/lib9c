@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class BoostScheduleSheet | Lib9c ">
       
-      <meta name="description" content="Schedules a temporary adjustment of a game value — a reward amount, a cost, a guarantee count — for a block range, so that an event can be run with patch_table_sheet instead of rewriting the value&#39;s own sheet and patching it back afterwards.  Columns: id, target, target_id, op, value, start_block, end_block. A _memo column, like any _ prefixed column, is dropped on load and may be used for notes. target names what is adjusted and is matched as a plain string by the call site that owns it, so the sheet itself never needs to know which targets exist. A node that predates a target simply finds no match for it instead of failing to read the sheet.  lists the targets this version applies.  A row applies in [start_block, end_block). When several rows match, the one with the lowest id wins; rows are never combined, so overlapping rows cannot stack into a larger adjustment than any single row declares.  Reading is total: a row that does not parse is kept but marked invalid and never matches, so a typo fails toward &quot;no adjustment&quot; instead of aborting every action that reads the sheet.  rejects such a row at patch time so it should not reach the chain in the first place.  Callers must tolerate the sheet being absent — it reaches an existing chain only by patch_table_sheet. Absence means no adjustment, which is also what keeps re-evaluation of pre-patch blocks identical.">
+      <meta name="description" content="Schedules a temporary adjustment of a game value — a reward amount, a cost, a guarantee count — for a block range, so that an event can be run with patch_table_sheet instead of rewriting the value&#39;s own sheet and patching it back afterwards.  Columns: id, target, target_id, op, value, start_block, end_block. A _memo column, like any _ prefixed column, is dropped on load and may be used for notes. target_id is a single id (50), an inclusive range (1~50) or * for every id. ~ rather than - keeps a spreadsheet from reading a range as a date on its way to the CSV. target names what is adjusted and is matched as a plain string by the call site that owns it, so the sheet itself never needs to know which targets exist. A node that predates a target simply finds no match for it instead of failing to read the sheet.  lists the targets this version applies.  A row applies in [start_block, end_block). When several rows match, the one with the lowest id wins; rows are never combined, so overlapping rows cannot stack into a larger adjustment than any single row declares.  Reading is total: a row that does not parse is kept but marked invalid and never matches, so a typo fails toward &quot;no adjustment&quot; instead of aborting every action that reads the sheet.  rejects such a row at patch time so it should not reach the chain in the first place.  Callers must tolerate the sheet being absent — it reaches an existing chain only by patch_table_sheet. Absence means no adjustment, which is also what keeps re-evaluation of pre-patch blocks identical.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_BoostScheduleSheet" data-uid="Nekoyume.TableData.BoostScheduleSheet" class="text-break">
-Class BoostScheduleSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L40"><i class="bi bi-code-slash"></i></a>
+Class BoostScheduleSheet  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,6 +104,9 @@ instead of rewriting the value's own sheet and patching it back afterwards.</p>
 Columns: <code>id</code>, <code>target</code>, <code>target_id</code>, <code>op</code>, <code>value</code>,
 <code>start_block</code>, <code>end_block</code>. A <code>_memo</code> column, like any <code>_</code> prefixed
 column, is dropped on load and may be used for notes.
+</p><p><code>target_id</code> is a single id (<code>50</code>), an inclusive range (<code>1~50</code>) or
+<code>*</code> for every id. <code>~</code> rather than <code>-</code> keeps a spreadsheet from reading a
+range as a date on its way to the CSV.
 </p><p><code>target</code> names what is adjusted and is matched as a plain string by the call site that
 owns it, so the sheet itself never needs to know which targets exist. A node that predates a
 target simply finds no match for it instead of failing to read the sheet.
@@ -265,7 +268,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet__ctor" data-uid="Nekoyume.TableData.BoostScheduleSheet.#ctor">
   BoostScheduleSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L274"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L278"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
@@ -295,7 +298,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_AnyTargetId" data-uid="Nekoyume.TableData.BoostScheduleSheet.AnyTargetId">
   AnyTargetId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The <code>target_id</code> cell that matches every id of a target.</p>
@@ -326,7 +329,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_ColumnNames" data-uid="Nekoyume.TableData.BoostScheduleSheet.ColumnNames">
   ColumnNames
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Column names in their expected order, after <code>_</code> prefixed columns are dropped.</p>
@@ -357,7 +360,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_MaxAbsoluteValue" data-uid="Nekoyume.TableData.BoostScheduleSheet.MaxAbsoluteValue">
   MaxAbsoluteValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Upper bound of <code>|value|</code>. Keeps every <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int32_">Apply(int)</a> inside
@@ -386,6 +389,37 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
 
 
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_TargetIdRangeSeparator" data-uid="Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator">
+  TargetIdRangeSeparator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Separates the two ends of a <code>target_id</code> range, as in <code>1~50</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const char TargetIdRangeSeparator = &#39;~&#39;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.char">char</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -394,7 +428,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_AddRow_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.TableData.BoostScheduleSheet.AddRow(System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)">
   AddRow(int, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L313"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L317"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a parsed row to the sheet.</p>
@@ -434,7 +468,7 @@ throwing, because a throw here would fail every action that reads the sheet.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_FindActive_System_String_System_Int32_System_Int64_" data-uid="Nekoyume.TableData.BoostScheduleSheet.FindActive(System.String,System.Int32,System.Int64)">
   FindActive(string, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L286"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L290"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Finds the row that applies to <code class="paramref">targetId</code> of
@@ -480,7 +514,7 @@ throwing, because a throw here would fail every action that reads the sheet.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_ValidateCsv_System_String_" data-uid="Nekoyume.TableData.BoostScheduleSheet.ValidateCsv(System.String)">
   ValidateCsv(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L339"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L343"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Parses <code class="paramref">csv</code> strictly so that a malformed schedule fails the
@@ -528,7 +562,7 @@ operation, or a block range that is empty.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L40" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/yang/boost-schedule-sheet/Lib9c/TableData/BoostScheduleSheet.cs/#L45" class="edit-link">Edit this page</a>
         </div>
 
 
