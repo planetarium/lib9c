@@ -65,6 +65,11 @@ namespace Nekoyume.Action
             var raiderAddress = Addresses.GetRaiderAddress(AvatarAddress, raidId);
             RaiderState raiderState = states.GetRaiderState(raiderAddress);
             int rank = WorldBossHelper.CalculateRank(bossRow, raiderState.HighScore);
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var rankRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.WorldBossRankReward,
+                row.BossId,
+                context.BlockIndex);
             var random = context.GetRandom();
             var inventory = states.GetInventoryV2(AvatarAddress);
             if (raiderState.LatestRewardRank < rank)
@@ -78,7 +83,8 @@ namespace Nekoyume.Action
                         sheets.GetSheet<WorldBossRankRewardSheet>(),
                         sheets.GetSheet<RuneSheet>(),
                         sheets.GetSheet<MaterialItemSheet>(),
-                        random
+                        random,
+                        rankRewardBoost
                     );
 
                     foreach (var reward in rewards.assets)

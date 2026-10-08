@@ -122,6 +122,111 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
+        [InlineData(typeof(WorldBossRankRewardSheet), "2")]
+        [InlineData(typeof(WorldBossKillRewardSheet), "2")]
+        [InlineData(typeof(WorldBossBattleRewardSheet), "2")]
+        [InlineData(typeof(WorldBossRankRewardSheet), "1.5")]
+        [InlineData(typeof(WorldBossKillRewardSheet), "0.5")]
+        public void CalculateReward_MultipliesEveryGrantedAmountWithoutChangingTheDraws(
+            Type sheetType,
+            string value)
+        {
+            var sheet = RewardSheet(sheetType);
+            var boost = CreateBoostRow("MUL", value);
+            var multiplier = decimal.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+            foreach (var rewardRow in sheet.OrderedRows)
+            {
+                var baseRandom = new TestRandom(rewardRow.Rank);
+                var boostedRandom = new TestRandom(rewardRow.Rank);
+                var (baseAssets, baseMaterials) = Calculate(rewardRow, sheet, baseRandom, null);
+                var (boostedAssets, boostedMaterials) =
+                    Calculate(rewardRow, sheet, boostedRandom, boost);
+
+                // Every amount is floor(base x value), and one that rounds to 0 is not granted.
+                var expectedAssets = baseAssets
+                    .Select(a => (a.Currency, (int)decimal.Floor((int)a.MajorUnit * multiplier)))
+                    .Where(pair => pair.Item2 > 0)
+                    .Select(pair => pair.Item2 * pair.Currency)
+                    .ToList();
+                Assert.Equal(expectedAssets, boostedAssets);
+                Assert.Equal(
+                    baseMaterials
+                        .Select(kv => (int)decimal.Floor(kv.Value * multiplier))
+                        .Where(count => count > 0),
+                    boostedMaterials.Values);
+
+                // The same number of draws was made, so whatever follows draws the same.
+                Assert.Equal(baseRandom.Next(), boostedRandom.Next());
+            }
+        }
+
+        [Fact]
+        public void CalculateReward_MulOf2DoublesEachDrawnRuneCrystalAndCircle()
+        {
+            var sheet = _tableSheets.WorldBossRankRewardSheet;
+            var rewardRow = sheet.OrderedRows.Last(r => r.Circle > 0 && r.Crystal > 0);
+            var (assets, materials) = Calculate(
+                rewardRow, sheet, new TestRandom(), CreateBoostRow("MUL", "2"));
+
+            Assert.Equal(
+                2 * rewardRow.Rune,
+                assets.Where(a => !a.Currency.Equals(_crystalCurrency)).Sum(a => (int)a.MajorUnit));
+            Assert.Equal(
+                2 * rewardRow.Crystal * _crystalCurrency,
+                assets.Single(a => a.Currency.Equals(_crystalCurrency)));
+            Assert.Equal(2 * rewardRow.Circle, materials.Values.Single());
+        }
+
+        [Fact]
+        public void CalculateReward_AddAppliesToEachAmountButNeverAddsAKindTheRowDoesNotGrant()
+        {
+            // Battle rewards grant runes only.
+            var sheet = _tableSheets.WorldBossBattleRewardSheet;
+            var rewardRow = sheet.OrderedRows.First(r => r.Crystal == 0 && r.Circle == 0);
+            var (baseAssets, _) = Calculate(rewardRow, sheet, new TestRandom(), null);
+            var (assets, materials) = Calculate(
+                rewardRow, sheet, new TestRandom(), CreateBoostRow("ADD", "10"));
+
+            Assert.Equal(baseAssets.Select(a => a + 10 * a.Currency), assets);
+            Assert.DoesNotContain(assets, a => a.Currency.Equals(_crystalCurrency));
+            Assert.Empty(materials);
+        }
+
+        [Fact]
+        public void CalculateReward_DropsAmountsABoostTakesToZero()
+        {
+            var sheet = _tableSheets.WorldBossRankRewardSheet;
+            var rewardRow = sheet.OrderedRows.First();
+            var (assets, materials) = Calculate(
+                rewardRow, sheet, new TestRandom(), CreateBoostRow("ADD", "-100000000"));
+
+            Assert.Empty(assets);
+            Assert.Empty(materials);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(123)]
+        public void ApplyRewardBoost_WithoutBoost_IsUnchanged(int amount)
+        {
+            Assert.Equal(amount, WorldBossHelper.ApplyRewardBoost(null, amount));
+        }
+
+        [Theory]
+        [InlineData("MUL", "2", 0, 0)]
+        [InlineData("ADD", "5", 0, 0)]
+        [InlineData("MUL", "2", 7, 14)]
+        [InlineData("MUL", "1.5", 1, 1)]
+        [InlineData("MUL", "1.5", 3, 4)]
+        [InlineData("ADD", "5", 7, 12)]
+        [InlineData("ADD", "-10", 7, 0)]
+        public void ApplyRewardBoost(string op, string value, int amount, int expected)
+        {
+            Assert.Equal(expected, WorldBossHelper.ApplyRewardBoost(CreateBoostRow(op, value), amount));
+        }
+
+        [Theory]
         [InlineData(1000, 250, "25")]
         [InlineData(1000000, 1, "0.0001")]
         [InlineData(1000, 0, "0.0000")]
@@ -166,5 +271,42 @@ namespace Lib9c.Tests.Action
             Assert.All(items, i => Assert.Equal(count, i.count));
             Assert.All(fav, asset => Assert.Equal(count * asset.Currency, asset));
         }
+
+        private static BoostScheduleSheet.Row CreateBoostRow(string op, string value)
+        {
+            var sheet = new BoostScheduleSheet();
+            sheet.Set(
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                $"1,{BoostScheduleSheet.Targets.WorldBossRankReward},*,{op},{value},0,100\n");
+            return sheet[1];
+        }
+
+        private IWorldBossRewardSheet RewardSheet(Type sheetType)
+        {
+            if (sheetType == typeof(WorldBossRankRewardSheet))
+            {
+                return _tableSheets.WorldBossRankRewardSheet;
+            }
+
+            return sheetType == typeof(WorldBossKillRewardSheet)
+                ? _tableSheets.WorldBossKillRewardSheet
+                : _tableSheets.WorldBossBattleRewardSheet;
+        }
+
+        private (System.Collections.Generic.List<FungibleAssetValue> assets,
+            System.Collections.Generic.Dictionary<TradableMaterial, int> materials) Calculate(
+                IWorldBossRewardRow rewardRow,
+                IWorldBossRewardSheet sheet,
+                TestRandom random,
+                BoostScheduleSheet.Row boost) =>
+            WorldBossHelper.CalculateReward(
+                rewardRow.Rank,
+                rewardRow.BossId,
+                _tableSheets.RuneWeightSheet,
+                sheet,
+                _tableSheets.RuneSheet,
+                _tableSheets.MaterialItemSheet,
+                random,
+                boost);
     }
 }
