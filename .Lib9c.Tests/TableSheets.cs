@@ -303,6 +303,8 @@ namespace Lib9c.Tests
 
         public RestrictionSheet RestrictionSheet { get; private set; }
 
+        public BoostScheduleSheet BoostScheduleSheet { get; private set; }
+
         public void ItemSheetInitialize()
         {
             ItemSheet ??= new ItemSheet();

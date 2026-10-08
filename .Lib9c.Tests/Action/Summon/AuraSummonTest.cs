@@ -16,6 +16,7 @@ namespace Lib9c.Tests.Action.Summon
     using Nekoyume.Model.Item;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
+    using Nekoyume.TableData;
     using Nekoyume.TableData.Summon;
     using Xunit;
 
@@ -330,6 +331,73 @@ namespace Lib9c.Tests.Action.Summon
             Assert.Equal(resultCount, result.Count); // 10+1 rule applied
             // No grade guarantee, so we just verify the count is correct
             Assert.DoesNotContain(result, i => i.Item2.Grade >= minGrade);
+        }
+
+        [Theory]
+        [InlineData(150, true)] // inside [100, 200)
+        [InlineData(250, false)] // after the schedule ends
+        public void Execute_AppliesScheduledGuaranteeBoost(long blockIndex, bool scheduled)
+        {
+            // Group 10001 guarantees 2 auras of grade >= 4 per 110 summons; the schedule adds 20.
+            const int groupId = 10001;
+            const int seed = 1;
+            var random = new TestRandom(seed);
+            var summonRow = _tableSheets.EquipmentSummonSheet[groupId];
+            var state = _initialState.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)),
+                BoostCsv(groupId).Serialize());
+            var material = _tableSheets.MaterialItemSheet[summonRow.CostMaterial];
+            _avatarState.inventory.AddItem(
+                ItemFactory.CreateItem(material, random),
+                100 * summonRow.CostMaterialCount);
+            state = state.SetAvatarState(_avatarAddress, _avatarState);
+
+            var ctx = new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                BlockIndex = blockIndex,
+            };
+            ctx.SetRandom(random);
+            var nextState = new AuraSummon(_avatarAddress, groupId, 100).Execute(ctx);
+
+            var boost = ExpectedBoost(groupId, blockIndex);
+            Assert.Equal(scheduled, boost is not null);
+            var expected = AuraSummon.SimulateSummon(
+                    string.Empty,
+                    _tableSheets.EquipmentItemRecipeSheet,
+                    _tableSheets.EquipmentItemSheet,
+                    _tableSheets.EquipmentItemSubRecipeSheetV2,
+                    _tableSheets.EquipmentItemOptionSheet,
+                    _tableSheets.SkillSheet,
+                    summonRow,
+                    100,
+                    new TestRandom(seed),
+                    blockIndex,
+                    boost)
+                .Select(pair => pair.Item2)
+                .ToList();
+            var actual = nextState.GetAvatarState(_avatarAddress).inventory.Equipments.ToList();
+            Assert.Equal(
+                expected.Select(e => e.Id).OrderBy(id => id),
+                actual.Select(e => e.Id).OrderBy(id => id));
+
+            if (scheduled)
+            {
+                var highGrade = expected.Count(e => e.Grade >= summonRow.MinimumGrade110);
+                Assert.True(highGrade >= 22, $"expected at least 22 but got {highGrade}");
+            }
+        }
+
+        private static string BoostCsv(int groupId) =>
+            "id,target,target_id,op,value,start_block,end_block\n" +
+            $"1,{BoostScheduleSheet.Targets.EquipmentSummonGuarantee},{groupId},ADD,20,100,200\n";
+
+        private static BoostScheduleSheet.Row ExpectedBoost(int groupId, long blockIndex)
+        {
+            var sheet = new BoostScheduleSheet();
+            sheet.Set(BoostCsv(groupId));
+            return sheet.FindActive(BoostScheduleSheet.Targets.EquipmentSummonGuarantee, groupId, blockIndex);
         }
 
         /// <summary>

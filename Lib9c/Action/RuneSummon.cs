@@ -107,6 +107,12 @@ namespace Nekoyume.Action
                 );
             }
 
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var guaranteeBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.RuneSummonGuarantee,
+                GroupId,
+                context.BlockIndex);
+
             var random = context.GetRandom();
             states = Summon(
                 context,
@@ -116,7 +122,8 @@ namespace Nekoyume.Action
                 SummonCount,
                 random,
                 states,
-                runeListSheet
+                runeListSheet,
+                guaranteeBoost
             );
 
             Log.Debug(
@@ -157,10 +164,12 @@ namespace Nekoyume.Action
             int summonCount,
             IRandom random,
             IWorld states,
-            RuneListSheet runeListSheet
+            RuneListSheet runeListSheet,
+            BoostScheduleSheet.Row guaranteeBoost = null
         )
         {
-            var result = SimulateSummon(runeSheet, summonRow, summonCount, random, runeListSheet);
+            var result = SimulateSummon(
+                runeSheet, summonRow, summonCount, random, runeListSheet, guaranteeBoost);
 #pragma warning disable LAA1002
             foreach (var pair in result)
 #pragma warning restore LAA1002
@@ -182,13 +191,18 @@ namespace Nekoyume.Action
         /// <param name="summonCount">Number of summons to perform (before 10+1 bonus)</param>
         /// <param name="random">Random number generator</param>
         /// <param name="runeListSheet">Rune list sheet for grade information</param>
+        /// <param name="guaranteeBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting this group's guarantee count, or
+        /// <c>null</c> for none. A caller replaying a summon must pass what the action resolved.
+        /// </param>
         /// <returns>Dictionary mapping rune currencies to quantities</returns>
         public static Dictionary<Currency, int> SimulateSummon(
             RuneSheet runeSheet,
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
-            RuneListSheet runeListSheet
+            RuneListSheet runeListSheet,
+            BoostScheduleSheet.Row guaranteeBoost = null
         )
         {
             summonCount = SummonHelper.CalculateSummonCount(summonCount);
@@ -202,7 +216,7 @@ namespace Nekoyume.Action
                 // For runes, we'll use a simplified approach since runes don't have traditional grades
                 // We'll use the same logic but with rune-specific grade checking
                 recipeIds = GetRuneSummonRecipeIdsWithGradeGuarantee(
-                    summonRow, summonCount, random, runeSheet, runeListSheet);
+                    summonRow, summonCount, random, runeSheet, runeListSheet, guaranteeBoost);
             }
             else
             {
@@ -270,19 +284,22 @@ namespace Nekoyume.Action
         /// <param name="random">Random number generator</param>
         /// <param name="runeSheet">Rune sheet containing rune information</param>
         /// <param name="runeListSheet">Rune list sheet for grade information</param>
+        /// <param name="guaranteeBoost">Guarantee count adjustment, or <c>null</c> for none.</param>
         /// <returns>List of recipe IDs with grade guarantee applied</returns>
         private static List<int> GetRuneSummonRecipeIdsWithGradeGuarantee(
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
             RuneSheet runeSheet,
-            RuneListSheet runeListSheet)
+            RuneListSheet runeListSheet,
+            BoostScheduleSheet.Row guaranteeBoost)
         {
             var result = new List<int>();
             var guaranteedCount = 0;
 
             // Get guarantee settings
-            var (useGuarantee, minimumGrade, guaranteeCount) = SummonHelper.GetGuaranteeSettings(summonRow, summonCount);
+            var (useGuarantee, minimumGrade, guaranteeCount) =
+                SummonHelper.GetGuaranteeSettings(summonRow, summonCount, guaranteeBoost);
 
             // Process each item one by one to maintain random call order
             for (var i = 0; i < summonCount; i++)

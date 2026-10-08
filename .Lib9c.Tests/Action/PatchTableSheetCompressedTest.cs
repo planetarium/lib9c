@@ -155,6 +155,38 @@ namespace Lib9c.Tests.Action
             Assert.Throws<SheetRowValidateException>(() => action.Execute(_context));
         }
 
+        [Fact]
+        public void Execute_BoostScheduleSheet()
+        {
+            const string csvData =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                "1,EQUIPMENT_SUMMON_GUARANTEE,10001,ADD,1,100,200\n";
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(BoostScheduleSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+            };
+
+            var nextState = action.Execute(_context);
+
+            Assert.Equal(csvData, nextState.GetSheetCsv<BoostScheduleSheet>());
+        }
+
+        [Fact]
+        public void Execute_Throw_SheetRowValidateException_WhenBoostScheduleSheetIsMalformed()
+        {
+            const string csvData =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                "1,EQUIPMENT_SUMMON_GUARANTEE,10001,MUL,0,100,200\n";
+            var action = new PatchTableSheetCompressed
+            {
+                TableName = nameof(BoostScheduleSheet),
+                CompressedTableCsv = PatchTableSheetCompressed.CompressCsv(csvData),
+            };
+
+            Assert.Throws<SheetRowValidateException>(() => action.Execute(_context));
+        }
+
         /// <summary>
         /// Tests and analyzes the compression benefits using RuneOptionSheet.csv data.
         ///

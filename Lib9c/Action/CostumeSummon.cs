@@ -71,13 +71,18 @@ namespace Nekoyume.Action
         /// <param name="summonRow">Summon configuration row with recipes and guarantee settings</param>
         /// <param name="summonCount">Number of costumes to summon (before 10+1 bonus)</param>
         /// <param name="random">Random number generator</param>
+        /// <param name="guaranteeBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting this group's guarantee count, or
+        /// <c>null</c> for none. A caller replaying a summon must pass what the action resolved.
+        /// </param>
         /// <returns>Collection of summoned costumes</returns>
         public static IEnumerable<Costume> SimulateSummon(
             string addressesHex,
             CostumeItemSheet costumeItemSheet,
             SummonSheet.Row summonRow,
             int summonCount,
-            IRandom random
+            IRandom random,
+            BoostScheduleSheet.Row guaranteeBoost = null
         )
         {
             summonCount = SummonHelper.CalculateSummonCount(summonCount);
@@ -89,7 +94,7 @@ namespace Nekoyume.Action
             {
                 // Use grade guarantee system with settings from SummonSheet.Row based on summon count
                 recipeIds = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
-                    summonRow, summonCount, random, costumeItemSheet, null);
+                    summonRow, summonCount, random, costumeItemSheet, null, guaranteeBoost);
             }
             else
             {
@@ -221,13 +226,20 @@ namespace Nekoyume.Action
                 );
             }
 
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var guaranteeBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.CostumeSummonGuarantee,
+                GroupId,
+                context.BlockIndex);
+
             var random = context.GetRandom();
             var summonResult = SimulateSummon(
                 addressesHex,
                 sheets.GetSheet<CostumeItemSheet>(),
                 summonRow,
                 SummonCount,
-                random
+                random,
+                guaranteeBoost
             );
 
             foreach (var costume in summonResult)
