@@ -260,6 +260,7 @@ namespace Nekoyume.Action.AdventureBoss
                 .Where(row => row.AdventureBossId == bossId).ToList();
             var firstRewardSheet = states.GetSheet<AdventureBossFloorFirstRewardSheet>();
             var pointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
 
             AdventureBossSimulator simulator = null;
             var firstFloorId = 0;
@@ -331,11 +332,16 @@ namespace Nekoyume.Action.AdventureBoss
                     exploreBoard.TotalPoint += point;
 
                     var firstReward = firstRewardSheet[floorRow.Id];
+                    var firstClearBoost = boostScheduleSheet?.FindActive(
+                        BoostScheduleSheet.Targets.AdventureBossFirstClearReward,
+                        fl,
+                        context.BlockIndex);
                     foreach (var reward in firstReward.Rewards)
                     {
-                        rewardList.Add(new AdventureBossSheet.RewardAmountData(
-                            reward.ItemType, reward.ItemId, reward.Amount
-                        ));
+                        rewardList.Add(AdventureBossHelper.ApplyRewardBoost(
+                            new AdventureBossSheet.RewardAmountData(
+                                reward.ItemType, reward.ItemId, reward.Amount),
+                            firstClearBoost));
                     }
 
                     selector.Clear();
@@ -345,11 +351,16 @@ namespace Nekoyume.Action.AdventureBoss
                     }
 
                     var selected = selector.Select(1).First();
-                    rewardList.Add(new AdventureBossSheet.RewardAmountData(
-                        selected.ItemType,
-                        selected.ItemId,
-                        random.Next(selected.Min, selected.Max + 1))
-                    );
+                    var floorBoost = boostScheduleSheet?.FindActive(
+                        BoostScheduleSheet.Targets.AdventureBossFloorReward,
+                        fl,
+                        context.BlockIndex);
+                    rewardList.Add(AdventureBossHelper.ApplyRewardBoost(
+                        new AdventureBossSheet.RewardAmountData(
+                            selected.ItemType,
+                            selected.ItemId,
+                            random.Next(selected.Min, selected.Max + 1)),
+                        floorBoost));
 
                     // Add floorId for breakthrough
                     if (fl < explorer.MaxFloor + 1)

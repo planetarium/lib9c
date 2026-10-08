@@ -364,6 +364,41 @@ namespace Nekoyume.Helper
             return true;
         }
 
+        /// <summary>
+        /// Applies a <see cref="BoostScheduleSheet"/> row to one explore or sweep reward entry.
+        /// </summary>
+        /// <param name="reward">The reward as the sheets and the random draws decided it.</param>
+        /// <param name="rewardBoost">
+        /// The row adjusting this floor's reward at the current block — see
+        /// <see cref="BoostScheduleSheet.Targets.AdventureBossFloorReward"/> and
+        /// <see cref="BoostScheduleSheet.Targets.AdventureBossFirstClearReward"/> — or
+        /// <c>null</c> for none. A caller replaying an action must pass what the action resolved.
+        /// </param>
+        /// <returns>
+        /// <paramref name="reward"/> itself when there is no row or nothing to adjust, otherwise a
+        /// copy whose <see cref="AdventureBossSheet.RewardAmountData.Amount"/> is adjusted.
+        /// </returns>
+        /// <remarks>
+        /// Only the granted amount changes: the entry was already drawn, so a boost never adds or
+        /// reorders random draws. A boost adjusts a reward but never creates one, so an entry with
+        /// no amount stays as it is; and it never takes a reward below 1, because granting 0 of
+        /// an item or a currency fails the action.
+        /// </remarks>
+        public static AdventureBossSheet.RewardAmountData ApplyRewardBoost(
+            AdventureBossSheet.RewardAmountData reward,
+            BoostScheduleSheet.Row rewardBoost)
+        {
+            if (rewardBoost is null || reward.Amount <= 0)
+            {
+                return reward;
+            }
+
+            return new AdventureBossSheet.RewardAmountData(
+                reward.ItemType,
+                reward.ItemId,
+                Math.Max(1, rewardBoost.Apply(reward.Amount)));
+        }
+
         public static IWorld AddExploreRewards(IActionContext context, IWorld states,
             Address avatarAddress, Inventory inventory,
             IEnumerable<AdventureBossSheet.RewardAmountData> rewardList)

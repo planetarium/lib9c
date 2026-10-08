@@ -9,6 +9,7 @@ namespace Lib9c.Tests.Helper
     using Nekoyume.Helper;
     using Nekoyume.Model.AdventureBoss;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.AdventureBoss;
     using Xunit;
 
     public class AdventureBossHelperTest
@@ -125,6 +126,44 @@ namespace Lib9c.Tests.Helper
 
             Assert.Equal(expectedNcgReward * NCG, ncgReward);
             Assert.Equal(expectedNcgReward * NCG, claimableReward.NcgReward);
+        }
+
+        [Theory]
+        [InlineData("MUL", "2", 3, 6)]
+        [InlineData("MUL", "1.5", 3, 4)]
+        [InlineData("MUL", "1.5", 1, 1)]
+        [InlineData("MUL", "0.1", 3, 1)]
+        [InlineData("ADD", "5", 3, 8)]
+        [InlineData("ADD", "-10", 3, 1)]
+        [InlineData("MUL", "2", 0, 0)]
+        [InlineData("ADD", "5", 0, 0)]
+        public void ApplyRewardBoost(string op, string value, int amount, int expected)
+        {
+            var boost = RewardBoost(op, value);
+            var reward = new AdventureBossSheet.RewardAmountData("Material", 600302, amount);
+
+            var actual = AdventureBossHelper.ApplyRewardBoost(reward, boost);
+
+            Assert.Equal("Material", actual.ItemType);
+            Assert.Equal(600302, actual.ItemId);
+            Assert.Equal(expected, actual.Amount);
+        }
+
+        [Fact]
+        public void ApplyRewardBoost_ReturnsTheSameRewardWithoutBoost()
+        {
+            var reward = new AdventureBossSheet.RewardAmountData("Rune", 10037, 3);
+
+            Assert.Same(reward, AdventureBossHelper.ApplyRewardBoost(reward, null));
+        }
+
+        private static BoostScheduleSheet.Row RewardBoost(string op, string value)
+        {
+            var sheet = new BoostScheduleSheet();
+            sheet.Set(
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                $"1,{BoostScheduleSheet.Targets.AdventureBossFloorReward},*,{op},{value},0,10\n");
+            return sheet.FindActive(BoostScheduleSheet.Targets.AdventureBossFloorReward, 1, 0);
         }
     }
 }
