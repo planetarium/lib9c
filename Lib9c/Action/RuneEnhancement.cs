@@ -121,9 +121,11 @@ namespace Nekoyume.Action
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
             }
 
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+
             var random = context.GetRandom();
             if (!RuneHelper.TryEnhancement(runeState.Level, costRow, random, TryCount,
-                    out var levelUpResult))
+                    out var levelUpResult, boostScheduleSheet, context.BlockIndex))
             {
                 // Rune cost not found while level up
                 throw new RuneCostDataNotFoundException(

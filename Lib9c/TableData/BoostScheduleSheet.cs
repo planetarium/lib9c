@@ -99,6 +99,21 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// Crystal cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level.
+            /// <c>target_id</c> is the rune level the try attempts to reach — the current level
+            /// plus one — for every rune id, so <c>1~50</c> discounts the tries from level 0 up to
+            /// level 50. The adjusted cost never exceeds the sheet's cost and never drops below 1
+            /// while the sheet's cost is positive. NCG cost and success rate are not adjustable.
+            /// </summary>
+            public const string RuneEnhancementCrystalCost = "RUNE_ENHANCEMENT_CRYSTAL_COST";
+
+            /// <summary>
+            /// Rune stone cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level.
+            /// <c>target_id</c> and bounds as in <see cref="RuneEnhancementCrystalCost"/>.
+            /// </summary>
+            public const string RuneEnhancementRuneStoneCost = "RUNE_ENHANCEMENT_RUNE_STONE_COST";
+
+            /// <summary>
             /// Every target above, for tooling that warns about rows no running code applies.
             /// </summary>
             public static readonly IReadOnlyCollection<string> Applied = new[]
@@ -106,6 +121,8 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                RuneEnhancementCrystalCost,
+                RuneEnhancementRuneStoneCost,
             };
         }
 

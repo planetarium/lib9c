@@ -18,6 +18,13 @@ namespace Lib9c.Tests.Action
 
     public class RuneEnhancementTest
     {
+        private const string BoostCsv =
+            "id,target,target_id,op,value,start_block,end_block\n" +
+            "1,RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.60,100,200\n" +
+            "2,RUNE_ENHANCEMENT_CRYSTAL_COST,51~100,MUL,0.65,100,200\n" +
+            "3,RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.70,100,200\n" +
+            "4,RUNE_ENHANCEMENT_RUNE_STONE_COST,51~100,MUL,0.80,100,200\n";
+
         private readonly Currency _goldCurrency;
 
         public RuneEnhancementTest()
@@ -262,6 +269,89 @@ namespace Lib9c.Tests.Action
                 Assert.Equal((initialRune - expectedRuneCost) * runeCurrency, nextRuneBal);
                 Assert.Equal(expectedLevel, nextRuneState.Level);
             }
+        }
+
+        [Theory]
+        // Rune 10001 from level 48, four sure tries reaching 49, 50, 51 and 52:
+        // base 3000 stones (240 + 2400 + 180 + 180), 70000 crystal (20000 * 2 + 15000 * 2), 50 NCG.
+        [InlineData(150, true, 2136, 43500)] // stones * 0.7 / 0.8, crystal * 0.6 / 0.65
+        [InlineData(99, true, 3000, 70000)] // before start_block
+        [InlineData(200, true, 3000, 70000)] // end_block is exclusive
+        [InlineData(150, false, 3000, 70000)] // never patched
+        public void Execute_AppliesScheduledCostBoost(
+            long blockIndex,
+            bool patched,
+            int expectedRuneCost,
+            int expectedCrystalCost)
+        {
+            const int runeId = 10001;
+            const int initialNcg = 10_000;
+            const int initialCrystal = 1_000_000;
+            const int initialRune = 10_000;
+            var agentAddress = new PrivateKey().Address;
+            var avatarAddress = new PrivateKey().Address;
+            var sheets = TableSheetsImporter.ImportSheets();
+            var tableSheets = new TableSheets(sheets);
+            var agentState = new AgentState(agentAddress);
+            var avatarState = AvatarState.Create(
+                avatarAddress,
+                agentAddress,
+                0,
+                tableSheets.GetAvatarSheets(),
+                avatarAddress.Derive("ranking_map"));
+            agentState.avatarAddresses.Add(0, avatarAddress);
+            var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
+            var context = new ActionContext();
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(agentAddress, agentState)
+                .SetAvatarState(avatarAddress, avatarState);
+            foreach (var (key, value) in sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var boostAddress = Addresses.TableSheet.Derive(nameof(BoostScheduleSheet));
+            state = patched
+                ? state.SetLegacyState(boostAddress, BoostCsv.Serialize())
+                : state.SetLegacyState(boostAddress, Bencodex.Types.Null.Value);
+
+            var allRuneState = new AllRuneState(runeId);
+            allRuneState.GetRuneState(runeId).LevelUp(48);
+            state = state.SetRuneState(avatarAddress, allRuneState);
+
+            var ncgCurrency = state.GetGoldCurrency();
+            var crystalCurrency = CrystalCalculator.CRYSTAL;
+            var runeTicker = tableSheets.RuneSheet[runeId].Ticker;
+            var runeCurrency = Currency.Legacy(runeTicker, 0, null);
+            state = state.MintAsset(context, agentAddress, ncgCurrency * initialNcg);
+            state = state.MintAsset(context, agentAddress, crystalCurrency * initialCrystal);
+            state = state.MintAsset(context, avatarAddress, runeCurrency * initialRune);
+
+            var action = new RuneEnhancement
+            {
+                AvatarAddress = avatarAddress,
+                RuneId = runeId,
+                TryCount = 4,
+            };
+            var nextState = action.Execute(new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = 0,
+                Signer = agentAddress,
+            });
+
+            Assert.Equal(52, nextState.GetRuneState(avatarAddress, out _).GetRuneState(runeId).Level);
+            Assert.Equal(
+                (initialNcg - 50) * ncgCurrency,
+                nextState.GetBalance(agentAddress, ncgCurrency));
+            Assert.Equal(
+                (initialCrystal - expectedCrystalCost) * crystalCurrency,
+                nextState.GetBalance(agentAddress, crystalCurrency));
+            Assert.Equal(
+                (initialRune - expectedRuneCost) * runeCurrency,
+                nextState.GetBalance(avatarAddress, runeCurrency));
         }
 
         [Fact]
