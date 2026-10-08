@@ -12,12 +12,14 @@ namespace Lib9c.Tests.Action
     using Libplanet.Types.Assets;
     using Nekoyume;
     using Nekoyume.Action;
+    using Nekoyume.Battle;
     using Nekoyume.Exceptions;
     using Nekoyume.Extensions;
     using Nekoyume.Helper;
     using Nekoyume.Model;
     using Nekoyume.Model.EnumType;
     using Nekoyume.Model.Item;
+    using Nekoyume.Model.Quest;
     using Nekoyume.Model.Rune;
     using Nekoyume.Model.State;
     using Nekoyume.Module;
@@ -1177,6 +1179,354 @@ namespace Lib9c.Tests.Action
                                 RandomSeed = 0,
                             }));
             }
+        }
+
+        [Theory]
+        [InlineData(150, true)] // inside [100, 200)
+        [InlineData(250, false)] // after the schedule ends
+        public void Execute_AppliesScheduledStageRewardBoost(long blockIndex, bool scheduled)
+        {
+            const int stageId = 1;
+            var (state, prevMaterials) = PrepareStageRewardBoost(stageId);
+
+            var plain = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithoutBoostSchedule(state),
+                stageId,
+                blockIndex);
+            var patched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, StageRewardBoostFixture.BoostCsv(stageId)),
+                stageId,
+                blockIndex);
+
+            Assert.Equal(plain.Exp, patched.Exp);
+            Assert.True(plain.Fav.MajorUnit >= 2000, "the sweep should cover several clears");
+            if (!scheduled)
+            {
+                Assert.Equal(plain.Inventory, patched.Inventory);
+                Assert.Equal(plain.Fav, patched.Fav);
+                return;
+            }
+
+            // Every clear of the sweep is doubled, exactly as HackAndSlash doubles each clear.
+            Assert.Equal(plain.Fav * 2, patched.Fav);
+            var gained = 0;
+            foreach (var id in plain.Materials.Keys.Union(patched.Materials.Keys))
+            {
+                prevMaterials.TryGetValue(id, out var prev);
+                plain.Materials.TryGetValue(id, out var plainCount);
+                patched.Materials.TryGetValue(id, out var patchedCount);
+                Assert.Equal(2 * (plainCount - prev), patchedCount - prev);
+                gained += plainCount - prev;
+            }
+
+            Assert.True(gained > 0, "the stage should reward items");
+        }
+
+        [Fact]
+        public void Execute_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
+        {
+            const int stageId = 1;
+            const long blockIndex = 150;
+            var (state, _) = PrepareStageRewardBoost(stageId);
+
+            var unpatched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithoutBoostSchedule(state),
+                stageId,
+                blockIndex);
+            var empty = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, StageRewardBoostFixture.EmptyCsv),
+                stageId,
+                blockIndex);
+            var unmatched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, StageRewardBoostFixture.UnmatchedCsv(stageId)),
+                stageId,
+                blockIndex);
+
+            foreach (var other in new[] { empty, unmatched })
+            {
+                Assert.Equal(unpatched.Inventory, other.Inventory);
+                Assert.Equal(unpatched.Fav, other.Fav);
+                Assert.Equal(unpatched.Exp, other.Exp);
+            }
+        }
+
+        [Theory]
+        [InlineData("ADD", "1")]
+        [InlineData("MUL", "1.5")]
+        public void Execute_AppliesStageRewardBoostPerClear(string op, string value)
+        {
+            // Unlike MUL 2, these differ between applying per clear and applying once to the
+            // sweep's total, so they pin down that each clear is boosted on its own.
+            const int stageId = 1;
+            const long blockIndex = 150;
+            var (state, prevMaterials) = PrepareStageRewardBoost(stageId);
+            var csv = StageRewardBoostFixture.BoostCsv(stageId, op, value);
+            var boost = new BoostScheduleSheet();
+            boost.Set(csv);
+            var itemBoost = boost[1];
+            var favBoost = boost[2];
+
+            var plain = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithoutBoostSchedule(state),
+                stageId,
+                blockIndex);
+            var patched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, csv),
+                stageId,
+                blockIndex);
+
+            // Replay the sweep's draws (ActionContext.GetRandom is a fresh TestRandom(seed)) and
+            // boost every clear independently of the code under test.
+            var stageRow = state.GetSheet<StageSheet>()[stageId];
+            var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+            var playCount = (int)(plain.Fav.MajorUnit / 1000);
+            var random = new TestRandom(0);
+            var maxCount = random.Next(stageRow.DropItemMin, stageRow.DropItemMax + 1);
+            var perClear = new Dictionary<int, int>();
+            var drawnTotal = new Dictionary<int, int>();
+            for (var i = 0; i < playCount; i++)
+            {
+                var selector = StageSimulatorV1.SetItemSelector(stageRow, random);
+                var drawn = Simulator.SetRewardV2(selector, maxCount, random, materialItemSheet);
+                foreach (var group in drawn.GroupBy(item => item.Id))
+                {
+                    perClear.TryGetValue(group.Key, out var boosted);
+                    perClear[group.Key] = boosted + itemBoost.Apply(group.Count());
+                    drawnTotal.TryGetValue(group.Key, out var total);
+                    drawnTotal[group.Key] = total + group.Count();
+                }
+            }
+
+            Assert.True(playCount > 1, "the sweep should cover several clears");
+            Assert.Contains(perClear, pair => pair.Value != itemBoost.Apply(drawnTotal[pair.Key]));
+
+            foreach (var id in perClear.Keys.Union(patched.Materials.Keys))
+            {
+                prevMaterials.TryGetValue(id, out var prev);
+                patched.Materials.TryGetValue(id, out var patchedCount);
+                perClear.TryGetValue(id, out var expected);
+                Assert.Equal(expected, patchedCount - prev);
+            }
+
+            var favCurrency = Currencies.GetCurrencyByTicker(StageRewardBoostFixture.FavTicker);
+            Assert.Equal(favCurrency * (favBoost.Apply(1000) * playCount), patched.Fav);
+
+            // The client replays the sweep with GetRewardItems, which must add up to the grant.
+            var replayed = HackAndSlashSweep.GetRewardItems(
+                new TestRandom(0),
+                playCount,
+                stageRow,
+                materialItemSheet,
+                itemBoost);
+            Assert.Equal(
+                perClear.OrderBy(pair => pair.Key),
+                replayed.GroupBy(item => item.Id)
+                    .Select(group => new KeyValuePair<int, int>(group.Key, group.Count()))
+                    .OrderBy(pair => pair.Key));
+        }
+
+        [Fact]
+        public void Execute_AddsBoostedExtrasLikeTheExpandedRewards()
+        {
+            // Stage 11 is rewritten to drop several ids per clear, a circle among them, each up to
+            // twice per draw, so that MUL 2 counts extras for several ids across the sweep.
+            const int stageId = 11;
+            const int circleId = 600402;
+            const int otherDropId = 306024;
+            const long blockIndex = 150;
+            var collectQuestCsv = _sheets[nameof(CollectQuestSheet)].TrimEnd('\n', '\r') +
+                                  $"\n299998,1000000,22,{circleId}\n299999,1000000,22,{otherDropId}\n";
+            var state = StageRewardBoostFixture.WithBoostSchedule(
+                    _initialState,
+                    StageRewardBoostFixture.BoostCsv(stageId, "MUL", "2"))
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(StageSheet)),
+                    StageRewardBoostFixture.WithItemReward(_sheets[nameof(StageSheet)], stageId, circleId, 4, 6)
+                        .Serialize())
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(CollectQuestSheet)),
+                    collectQuestCsv.Serialize());
+            var avatarState = AvatarState.Create(
+                _avatarAddress,
+                _agentAddress,
+                0,
+                state.GetAvatarSheets(),
+                _rankingMapAddress);
+            avatarState.level = 3;
+            avatarState.worldInformation = new WorldInformation(0, state.GetSheet<WorldSheet>(), 25);
+            state = AvatarCpBooster.Apply(
+                state.SetAvatarState(_avatarAddress, avatarState),
+                _sheets,
+                _avatarAddress);
+            Assert.Contains(avatarState.questList.OfType<CollectQuest>(), q => q.ItemId == circleId);
+
+            var actionPoint = (int)state.GetActionPoint(_avatarAddress);
+            var nextState = new HackAndSlashSweep
+            {
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                runeInfos = new List<RuneSlotInfo>(),
+                avatarAddress = _avatarAddress,
+                actionPoint = actionPoint,
+                apStoneCount = 0,
+                worldId = 1,
+                stageId = stageId,
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                RandomSeed = 0,
+                BlockIndex = blockIndex,
+            });
+            var actual = nextState.GetAvatarState(_avatarAddress);
+
+            // Expected: the same sweep granted one object per unit, the way the client replays it,
+            // through the plain UpdateInventory, on a copy of the avatar.
+            var stageRow = state.GetSheet<StageSheet>()[stageId];
+            var materialItemSheet = state.GetSheet<MaterialItemSheet>();
+            var levelSheet = state.GetSheet<CharacterLevelSheet>();
+            var boost = new BoostScheduleSheet();
+            boost.Set(StageRewardBoostFixture.BoostCsv(stageId, "MUL", "2"));
+            var playCount = actionPoint / stageRow.CostAP;
+            var expanded = HackAndSlashSweep.GetRewardItems(
+                new TestRandom(0),
+                playCount,
+                stageRow,
+                materialItemSheet,
+                boost[1]);
+            var expected = state.GetAvatarState(_avatarAddress);
+            expected.UpdateMonsterMap(state.GetSheet<StageWaveSheet>(), stageId);
+            expected.UpdateInventory(expanded);
+            for (var i = 0; i < playCount; i++)
+            {
+                var (level, exp) = expected.GetLevelAndExp(levelSheet, stageId, 1);
+                expected.UpdateExp(level, exp);
+            }
+
+            Assert.True(expanded.Select(item => item.Id).Distinct().Count() > 1, "several ids");
+            Assert.Contains(expanded, item => item.Id == circleId);
+            Assert.Contains(expanded, item => item.Id == otherDropId);
+            var redraw = new TestRandom(0);
+            var maxCount = redraw.Next(stageRow.DropItemMin, stageRow.DropItemMax + 1);
+            var repeatedInAClear = false;
+            for (var i = 0; i < playCount; i++)
+            {
+                var selector = StageSimulatorV1.SetItemSelector(stageRow, redraw);
+                var drawn = Simulator.SetRewardV2(selector, maxCount, redraw, materialItemSheet);
+                repeatedInAClear |= drawn.GroupBy(item => item.Id).Any(group => group.Count() > 1);
+            }
+
+            Assert.True(repeatedInAClear, "an id should be drawn several times in one clear");
+
+            // Per id and tradability rather than raw bytes: the action calls AddItem (and so
+            // List.Sort, which is unstable) fewer times, so equal entries may sit in another order.
+            Assert.Equal(Stacks(expected), Stacks(actual));
+            Assert.All(
+                actual.inventory.Items.Where(i => i.item.Id == circleId),
+                i => Assert.IsType<TradableMaterial>(i.item));
+            Assert.Equal(expected.questList.Serialize(), actual.questList.Serialize());
+            var circleQuest = (Dictionary)actual.questList.OfType<CollectQuest>()
+                .Single(q => q.ItemId == circleId)
+                .Serialize();
+            Assert.Equal(expanded.Count(item => item.Id == circleId), (int)(Integer)circleQuest["current"]);
+        }
+
+        [Fact]
+        public void GetRewardItems_IsUnchangedWithoutARow()
+        {
+            var stageRow = _tableSheets.StageSheet[1];
+            var before = HackAndSlashSweep.GetRewardItems(
+                new TestRandom(11),
+                10,
+                stageRow,
+                _tableSheets.MaterialItemSheet);
+            var after = HackAndSlashSweep.GetRewardItems(
+                new TestRandom(11),
+                10,
+                stageRow,
+                _tableSheets.MaterialItemSheet,
+                null);
+            var boosted = HackAndSlashSweep.GetRewardItems(
+                new TestRandom(11),
+                10,
+                stageRow,
+                _tableSheets.MaterialItemSheet,
+                StageRewardBoostFixture.Row(BoostScheduleSheet.Targets.StageItemReward, "MUL", 2));
+
+            Assert.Equal(before.Select(item => item.Id), after.Select(item => item.Id));
+            Assert.Equal(
+                before.SelectMany(item => new[] { item.Id, item.Id }),
+                boosted.Select(item => item.Id));
+        }
+
+        private static List<(int Id, bool Tradable, int Count)> Stacks(AvatarState avatarState) =>
+            avatarState.inventory.Items
+                .GroupBy(i => (i.item.Id, Tradable: i.item is ITradableItem))
+                .Select(g => (g.Key.Id, g.Key.Tradable, g.Sum(i => i.count)))
+                .OrderBy(t => t.Id)
+                .ThenBy(t => t.Tradable)
+                .ToList();
+
+        private static Dictionary<int, int> CountMaterials(AvatarState avatarState) =>
+            avatarState.inventory.Items
+                .Where(i => i.item is Material)
+                .GroupBy(i => i.item.Id)
+                .ToDictionary(g => g.Key, g => g.Sum(i => i.count));
+
+        /// <summary>
+        /// An avatar that can sweep <paramref name="stageId"/>, which grants 1000 crystal per
+        /// clear.
+        /// </summary>
+        private (IWorld State, Dictionary<int, int> Materials) PrepareStageRewardBoost(int stageId)
+        {
+            var state = _initialState.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(StageSheet)),
+                StageRewardBoostFixture.WithFavReward(_sheets[nameof(StageSheet)], stageId, 1000).Serialize());
+            var avatarState = AvatarState.Create(
+                _avatarAddress,
+                _agentAddress,
+                0,
+                state.GetAvatarSheets(),
+                _rankingMapAddress);
+            avatarState.level = 3;
+            avatarState.worldInformation =
+                new WorldInformation(0, state.GetSheet<WorldSheet>(), 25);
+            state = state.SetAvatarState(_avatarAddress, avatarState);
+            return (state, CountMaterials(avatarState));
+        }
+
+        private (IValue Inventory, Dictionary<int, int> Materials, FungibleAssetValue Fav, long Exp)
+            ExecuteStageRewardBoost(IWorld state, int stageId, long blockIndex)
+        {
+            var action = new HackAndSlashSweep
+            {
+                costumes = new List<Guid>(),
+                equipments = new List<Guid>(),
+                runeInfos = new List<RuneSlotInfo>(),
+                avatarAddress = _avatarAddress,
+                actionPoint = (int)state.GetActionPoint(_avatarAddress),
+                apStoneCount = 0,
+                worldId = 1,
+                stageId = stageId,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = blockIndex,
+                });
+
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            var favCurrency = Currencies.GetCurrencyByTicker(StageRewardBoostFixture.FavTicker);
+            var recipient = Currencies.PickAddress(favCurrency, _agentAddress, _avatarAddress);
+            return (
+                nextAvatarState.inventory.Serialize(),
+                CountMaterials(nextAvatarState),
+                nextState.GetBalance(recipient, favCurrency),
+                nextAvatarState.exp);
         }
     }
 }

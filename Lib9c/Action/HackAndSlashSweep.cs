@@ -12,6 +12,7 @@ using Nekoyume.Battle;
 using Nekoyume.Exceptions;
 using Nekoyume.Extensions;
 using Nekoyume.Helper;
+using Nekoyume.Model;
 using Nekoyume.Model.EnumType;
 using Nekoyume.Model.Item;
 using Nekoyume.Model.Stat;
@@ -459,13 +460,35 @@ namespace Nekoyume.Action
 
             avatarState.UpdateMonsterMap(stageWaveSheet, stageId);
 
+            // Never GetSheets: the sheet exists only once patched, and an unpatched chain must
+            // evaluate exactly as before.
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var itemRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.StageItemReward,
+                stageId,
+                context.BlockIndex);
+            var favRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.StageFavReward,
+                stageId,
+                context.BlockIndex);
+
             var random = context.GetRandom();
+            var extraRewardCounts = new Dictionary<int, int>();
             var rewardItems = GetRewardItems(
                 random,
                 playCount,
                 stageRow,
-                materialItemSheet);
-            avatarState.UpdateInventory(rewardItems);
+                materialItemSheet,
+                itemRewardBoost,
+                extraRewardCounts);
+            if (extraRewardCounts.Count == 0)
+            {
+                avatarState.UpdateInventory(rewardItems);
+            }
+            else
+            {
+                UpdateInventory(avatarState, rewardItems, extraRewardCounts, materialItemSheet);
+            }
 
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
             for (var i = 0; i < playCount; i++)
@@ -473,7 +496,7 @@ namespace Nekoyume.Action
                 var (newLevel, newExp) = avatarState.GetLevelAndExp(levelSheet, stageId, 1);
                 avatarState.UpdateExp(newLevel, newExp);
 
-                foreach (var (ticker, amount) in StageSimulator.GetFavWaveRewards(random, stageRow))
+                foreach (var (ticker, amount) in StageSimulator.GetFavWaveRewards(random, stageRow, favRewardBoost))
                 {
                     var currency = Currencies.GetCurrencyByTicker(ticker);
                     var recipient = Currencies.PickAddress(currency, context.Signer, avatarAddress);
@@ -491,10 +514,75 @@ namespace Nekoyume.Action
             return states;
         }
 
+        /// <summary>
+        /// Draws the item rewards of <paramref name="playCount"/> sweeps of
+        /// <paramref name="stageRow"/>, one object per unit.
+        /// </summary>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="playCount">The number of clears swept.</param>
+        /// <param name="stageRow">The stage being swept.</param>
+        /// <param name="materialItemSheet">The sheet the rewards are created from.</param>
+        /// <param name="itemRewardBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting each clear's items, or <c>null</c>
+        /// for none. Applied per clear exactly as <c>HackAndSlash</c> applies it; see
+        /// <see cref="StageSimulator.ApplyItemRewardBoost"/>. It never changes the random draws.
+        /// A caller replaying a sweep must pass what the action resolved.
+        /// </param>
+        /// <returns>
+        /// The items of every clear, one object per unit, ordered by item id. Their count per
+        /// item id is exactly what the action grants, although the action adds the units a
+        /// boost adds with one count per item id instead of creating these objects.
+        /// </returns>
         public static List<ItemBase> GetRewardItems(IRandom random,
             int playCount,
             StageSheet.Row stageRow,
-            MaterialItemSheet materialItemSheet)
+            MaterialItemSheet materialItemSheet,
+            BoostScheduleSheet.Row itemRewardBoost = null)
+        {
+            var extraCounts = new Dictionary<int, int>();
+            var rewardItems = GetRewardItems(
+                random,
+                playCount,
+                stageRow,
+                materialItemSheet,
+                itemRewardBoost,
+                extraCounts);
+            if (extraCounts.Count == 0)
+            {
+                return rewardItems;
+            }
+
+            rewardItems.AddRange(
+                StageSimulator.CreateItemRewardBoostExtras(extraCounts, materialItemSheet));
+            return rewardItems.OrderBy(x => x.Id).ToList();
+        }
+
+        /// <summary>
+        /// Draws the item rewards of <paramref name="playCount"/> sweeps of
+        /// <paramref name="stageRow"/>, counting the units a boost adds instead of creating them.
+        /// </summary>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="playCount">The number of clears swept.</param>
+        /// <param name="stageRow">The stage being swept.</param>
+        /// <param name="materialItemSheet">The sheet the rewards are created from.</param>
+        /// <param name="itemRewardBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting each clear's items, or <c>null</c>
+        /// for none. See <see cref="StageSimulator.SplitItemRewardBoost"/>.
+        /// </param>
+        /// <param name="extraCounts">
+        /// Accumulates, per item id, the units the boost adds on top of the returned items over
+        /// every clear. Stays empty without a row.
+        /// </param>
+        /// <returns>
+        /// The drawn items that remain after the boost, one object per unit, ordered by item id.
+        /// Without a row, exactly the items the sweep drew.
+        /// </returns>
+        public static List<ItemBase> GetRewardItems(IRandom random,
+            int playCount,
+            StageSheet.Row stageRow,
+            MaterialItemSheet materialItemSheet,
+            BoostScheduleSheet.Row itemRewardBoost,
+            IDictionary<int, int> extraCounts)
         {
             var rewardItems = new List<ItemBase>();
             var maxCount = random.Next(stageRow.DropItemMin, stageRow.DropItemMax + 1);
@@ -503,11 +591,50 @@ namespace Nekoyume.Action
                 var selector = StageSimulatorV1.SetItemSelector(stageRow, random);
                 var rewards = Simulator.SetRewardV2(selector, maxCount, random,
                     materialItemSheet);
-                rewardItems.AddRange(rewards);
+                rewardItems.AddRange(
+                    StageSimulator.SplitItemRewardBoost(rewards, itemRewardBoost, extraCounts));
             }
 
             rewardItems = rewardItems.OrderBy(x => x.Id).ToList();
             return rewardItems;
+        }
+
+        /// <summary>
+        /// <see cref="AvatarStateExtensions.UpdateInventory"/> plus the units a boost adds, each
+        /// item id added once with its count so that the cost does not grow with the boost.
+        /// Grants the same counts, tradability and collect quest progress as adding the expanded
+        /// rewards one object per unit.
+        /// </summary>
+        /// <param name="avatarState">The avatar receiving the rewards.</param>
+        /// <param name="rewardItems">The drawn items that remain after the boost.</param>
+        /// <param name="extraCounts">The units the boost adds, per item id.</param>
+        /// <param name="materialItemSheet">The sheet the rewards are created from.</param>
+        private static void UpdateInventory(
+            AvatarState avatarState,
+            List<ItemBase> rewardItems,
+            IReadOnlyDictionary<int, int> extraCounts,
+            MaterialItemSheet materialItemSheet)
+        {
+            var itemMap = new CollectionMap();
+            foreach (var reward in rewardItems)
+            {
+                itemMap.Add(avatarState.inventory.AddItem(reward));
+            }
+
+            foreach (var (itemId, count) in extraCounts.OrderBy(pair => pair.Key))
+            {
+                // Unreachable: every counted id came from an item created from this sheet.
+                if (!materialItemSheet.TryGetValue(itemId, out var materialRow))
+                {
+                    continue;
+                }
+
+                itemMap.Add(avatarState.inventory.AddItem(
+                    StageSimulator.CreateItemRewardBoostItem(materialRow),
+                    count));
+            }
+
+            avatarState.questList.UpdateCollectQuest(itemMap);
         }
     }
 }

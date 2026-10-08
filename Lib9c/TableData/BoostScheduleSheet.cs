@@ -99,6 +99,41 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// Material item rewards of an adventure stage clear (<c>HackAndSlash</c>,
+            /// <c>HackAndSlashSweep</c>). <c>target_id</c> is the <c>StageSheet</c> stage id, so
+            /// <c>1~300</c> covers stages 1 through 300. Event dungeon stages are not covered.
+            /// <para>
+            /// Applied per clear to the count of each distinct item after the items are drawn, so
+            /// the random draws are the same as without the row: <c>MUL 2</c> grants exactly
+            /// twice each drawn item and <c>ADD 1</c> one more of each. See
+            /// <c>StageSimulator.ApplyItemRewardBoost</c>.
+            /// </para>
+            /// <para>
+            /// Boosted items are ordinary rewards everywhere else too: they count toward
+            /// collect quest progress, and a circle stays tradable.
+            /// </para>
+            /// <para>
+            /// Rounding is per item id per clear, so a <c>MUL</c> between 1 and 2 has no effect on
+            /// an item drawn once in a clear — which is how most stages drop. Prefer <c>ADD</c> or
+            /// an integer <c>MUL</c> for items; <see cref="StageFavReward"/> amounts are large, so a
+            /// fractional <c>MUL</c> scales them as expected.
+            /// </para>
+            /// </summary>
+            public const string StageItemReward = "STAGE_ITEM_REWARD";
+
+            /// <summary>
+            /// Fungible asset rewards (e.g. crystal, rune stones) of an adventure stage clear
+            /// (<c>HackAndSlash</c>, <c>HackAndSlashSweep</c>). <c>target_id</c> is the
+            /// <c>StageSheet</c> stage id. Event dungeon stages are not covered.
+            /// <para>
+            /// Applied per clear to the amount of each drawn ticker after it is drawn, so the
+            /// random draws are the same as without the row. See
+            /// <c>StageSimulator.ApplyFavRewardBoost</c>.
+            /// </para>
+            /// </summary>
+            public const string StageFavReward = "STAGE_FAV_REWARD";
+
+            /// <summary>
             /// Every target above, for tooling that warns about rows no running code applies.
             /// </summary>
             public static readonly IReadOnlyCollection<string> Applied = new[]
@@ -106,6 +141,8 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                StageItemReward,
+                StageFavReward,
             };
         }
 
