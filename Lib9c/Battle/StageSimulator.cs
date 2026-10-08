@@ -29,6 +29,19 @@ namespace Nekoyume.Battle
         private readonly List<StageSheet.FavRewardData> _favRewards;
         private readonly int _favDropMin;
         private readonly int _favDropMax;
+        private readonly BoostScheduleSheet.Row _favRewardBoost;
+
+        /// <summary>
+        /// Upper bound of the boosted count of each distinct item in one clear, as a multiple of
+        /// how many times it was drawn in that clear: a <see cref="BoostScheduleSheet"/> row
+        /// grants at most this many times the drawn items per clear, whatever its value. It
+        /// bounds a mistyped value (e.g. <c>MUL 200</c> for <c>MUL 2.00</c>) to a tenfold
+        /// over-reward, and the objects <see cref="ApplyItemRewardBoost"/> creates per clear to
+        /// this many times <c>DropItemMax</c>. It is not a per-transaction bound;
+        /// <c>HackAndSlashSweep</c> adds its extra units with one count per item id instead of one
+        /// object per unit, so its cost does not grow with the value.
+        /// </summary>
+        public const int MaxItemRewardBoostFactor = 10;
 
         /// <summary>
         /// Gets the collection map for items.
@@ -92,6 +105,18 @@ namespace Nekoyume.Battle
         /// <param name="exp">The experience points.</param>
         /// <param name="simulatorSheets">The simulator sheets.</param>
         /// <param name="enemySkillSheet">The enemy skill sheet.</param>
+        /// <param name="costumeStatSheet">The costume stat sheet.</param>
+        /// <param name="waveRewards">The item rewards already drawn for this clear.</param>
+        /// <param name="collectionModifiers">The stat modifiers from activated collections.</param>
+        /// <param name="buffLimitSheet">The buff limit sheet.</param>
+        /// <param name="buffLinkSheet">The buff link sheet.</param>
+        /// <param name="logEvent">Whether to record the battle log.</param>
+        /// <param name="shatterStrikeMaxDamage">Maximum damage for shatter strike.</param>
+        /// <param name="favRewardBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting this stage's fungible asset rewards,
+        /// or <c>null</c> for none. See <see cref="ApplyFavRewardBoost"/>. A caller replaying a
+        /// battle must pass what the action resolved.
+        /// </param>
         public StageSimulator(IRandom random,
             AvatarState avatarState,
             List<Guid> foods,
@@ -112,7 +137,8 @@ namespace Nekoyume.Battle
             BuffLimitSheet buffLimitSheet,
             BuffLinkSheet buffLinkSheet,
             bool logEvent = true,
-            long shatterStrikeMaxDamage = 400_000
+            long shatterStrikeMaxDamage = 400_000,
+            BoostScheduleSheet.Row favRewardBoost = null
         )
             : base(
                 random,
@@ -150,6 +176,7 @@ namespace Nekoyume.Battle
             _favRewards = stageRow.FavRewards;
             _favDropMin = stageRow.FavDropMin;
             _favDropMax = stageRow.FavDropMax;
+            _favRewardBoost = favRewardBoost;
             WorldId = worldId;
             StageId = stageId;
             IsCleared = isCleared;
@@ -161,18 +188,217 @@ namespace Nekoyume.Battle
             SetWave(stageRow, stageWaveRow);
         }
 
+        /// <summary>
+        /// Draws the fungible asset rewards of one clear of <paramref name="stageRow"/>.
+        /// </summary>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="stageRow">The stage being cleared.</param>
+        /// <param name="favRewardBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting the amounts, or <c>null</c> for none.
+        /// See <see cref="ApplyFavRewardBoost"/>. It never changes the random draws.
+        /// </param>
+        /// <returns>The amount drawn for each ticker.</returns>
         public static List<(string ticker, int amount)> GetFavWaveRewards(
             IRandom random,
-            StageSheet.Row stageRow)
+            StageSheet.Row stageRow,
+            BoostScheduleSheet.Row favRewardBoost = null)
         {
-            return GetFavWaveRewards(random, stageRow.FavRewards, stageRow.FavDropMin, stageRow.FavDropMax);
+            return GetFavWaveRewards(
+                random,
+                stageRow.FavRewards,
+                stageRow.FavDropMin,
+                stageRow.FavDropMax,
+                favRewardBoost);
         }
+
+        /// <summary>
+        /// Applies a <see cref="BoostScheduleSheet"/> row to the fungible asset rewards of one
+        /// clear.
+        /// </summary>
+        /// <param name="rewards">The amount drawn for each ticker.</param>
+        /// <param name="favRewardBoost">The row to apply, or <c>null</c> for none.</param>
+        /// <returns>
+        /// <paramref name="rewards"/> itself when <paramref name="favRewardBoost"/> is
+        /// <c>null</c>; otherwise a new list with each positive amount replaced by
+        /// <see cref="BoostScheduleSheet.Row.Apply"/> of it, in the same order. A ticker whose
+        /// adjusted amount is 0 is left out so that nothing mints a zero amount.
+        /// </returns>
+        /// <remarks>
+        /// Draws nothing, so the random sequence is the same as without a row. A boost adjusts
+        /// what was drawn and never creates a reward: a ticker that was not drawn, or drawn as 0,
+        /// stays as it is.
+        /// </remarks>
+        public static List<(string ticker, int amount)> ApplyFavRewardBoost(
+            List<(string ticker, int amount)> rewards,
+            BoostScheduleSheet.Row favRewardBoost)
+        {
+            if (favRewardBoost is null)
+            {
+                return rewards;
+            }
+
+            var result = new List<(string ticker, int amount)>(rewards.Count);
+            foreach (var (ticker, amount) in rewards)
+            {
+                if (amount <= 0)
+                {
+                    result.Add((ticker, amount));
+                    continue;
+                }
+
+                var boosted = favRewardBoost.Apply(amount);
+                if (boosted > 0)
+                {
+                    result.Add((ticker, boosted));
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Applies a <see cref="BoostScheduleSheet"/> row to the item rewards of one clear, one
+        /// object per unit.
+        /// </summary>
+        /// <param name="rewards">The items drawn in one clear, one object per unit.</param>
+        /// <param name="itemRewardBoost">The row to apply, or <c>null</c> for none.</param>
+        /// <param name="materialItemSheet">The sheet the rewards were created from.</param>
+        /// <returns>
+        /// <paramref name="rewards"/> itself when <paramref name="itemRewardBoost"/> is
+        /// <c>null</c>; otherwise a new list, ordered by item id, in which each distinct item
+        /// drawn <c>n</c> times appears <see cref="BoostScheduleSheet.Row.Apply"/>(<c>n</c>)
+        /// times, at most <see cref="MaxItemRewardBoostFactor"/> × <c>n</c>.
+        /// </returns>
+        /// <remarks>
+        /// Draws nothing, so the random sequence is the same as without a row. <c>MUL 2</c>
+        /// grants exactly twice each drawn item; <c>ADD 1</c> one more of each distinct item; a
+        /// multiplier below 1 takes items away. The count can exceed the stage's
+        /// <c>DropItemMax</c>, which only limits the draws. Added items are created the way
+        /// <see cref="Simulator.SetRewardV2"/> creates them, so a circle is tradable as usual.
+        /// Equivalent to <see cref="SplitItemRewardBoost"/> followed by
+        /// <see cref="CreateItemRewardBoostExtras"/>.
+        /// </remarks>
+        public static List<ItemBase> ApplyItemRewardBoost(
+            List<ItemBase> rewards,
+            BoostScheduleSheet.Row itemRewardBoost,
+            MaterialItemSheet materialItemSheet)
+        {
+            if (itemRewardBoost is null)
+            {
+                return rewards;
+            }
+
+            var extraCounts = new Dictionary<int, int>();
+            var kept = SplitItemRewardBoost(rewards, itemRewardBoost, extraCounts);
+            if (extraCounts.Count == 0)
+            {
+                return kept;
+            }
+
+            var extras = CreateItemRewardBoostExtras(extraCounts, materialItemSheet);
+            var result = new List<ItemBase>(kept.Count + extras.Count);
+            result.AddRange(kept);
+            result.AddRange(extras);
+            return result.OrderBy(item => item.Id).ToList();
+        }
+
+        /// <summary>
+        /// Applies a <see cref="BoostScheduleSheet"/> row to the item rewards of one clear
+        /// without creating an object per added unit: units taken away are dropped from the
+        /// returned list, and units added are only counted into
+        /// <paramref name="extraCounts"/>.
+        /// </summary>
+        /// <param name="rewards">The items drawn in one clear, one object per unit.</param>
+        /// <param name="itemRewardBoost">The row to apply, or <c>null</c> for none.</param>
+        /// <param name="extraCounts">
+        /// Accumulates, per item id, how many units the row adds on top of the returned list.
+        /// Left untouched when nothing is added, so one dictionary can collect several clears.
+        /// </param>
+        /// <returns>
+        /// <paramref name="rewards"/> itself when <paramref name="itemRewardBoost"/> is
+        /// <c>null</c>; otherwise the drawn items that remain, ordered by item id. Together with
+        /// <paramref name="extraCounts"/> they add up to exactly what
+        /// <see cref="ApplyItemRewardBoost"/> grants for the clear.
+        /// </returns>
+        public static List<ItemBase> SplitItemRewardBoost(
+            List<ItemBase> rewards,
+            BoostScheduleSheet.Row itemRewardBoost,
+            IDictionary<int, int> extraCounts)
+        {
+            if (itemRewardBoost is null)
+            {
+                return rewards;
+            }
+
+            var kept = new List<ItemBase>(rewards.Count);
+            foreach (var group in rewards.GroupBy(item => item.Id).OrderBy(group => group.Key))
+            {
+                var drawn = group.ToList();
+                var count = drawn.Count;
+                var boosted = (int)Math.Min(
+                    itemRewardBoost.Apply(count),
+                    (long)count * MaxItemRewardBoostFactor);
+                if (boosted <= count)
+                {
+                    kept.AddRange(drawn.Take(boosted));
+                    continue;
+                }
+
+                kept.AddRange(drawn);
+                extraCounts.TryGetValue(group.Key, out var extra);
+                extraCounts[group.Key] = checked(extra + boosted - count);
+            }
+
+            return kept;
+        }
+
+        /// <summary>
+        /// Creates the items <see cref="SplitItemRewardBoost"/> counted, one object per unit,
+        /// for a caller that needs objects (a battle's drop log, a result view).
+        /// </summary>
+        /// <param name="extraCounts">Units to create per item id.</param>
+        /// <param name="materialItemSheet">The sheet the rewards were created from.</param>
+        /// <returns>The items, ordered by item id.</returns>
+        public static List<ItemBase> CreateItemRewardBoostExtras(
+            IReadOnlyDictionary<int, int> extraCounts,
+            MaterialItemSheet materialItemSheet)
+        {
+            var result = new List<ItemBase>();
+            foreach (var (itemId, count) in extraCounts.OrderBy(pair => pair.Key))
+            {
+                // Unreachable: every counted id came from an item created from this sheet.
+                if (!materialItemSheet.TryGetValue(itemId, out var materialRow))
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    result.Add(CreateItemRewardBoostItem(materialRow));
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Creates one unit of a boosted item reward the way <see cref="Simulator.SetRewardV2"/>
+        /// creates a drawn one, so a circle is tradable as usual. A fungible item, so one object
+        /// may stand for any number of units when added with a count.
+        /// </summary>
+        /// <param name="materialRow">The item's row.</param>
+        /// <returns>The item.</returns>
+        public static ItemBase CreateItemRewardBoostItem(MaterialItemSheet.Row materialRow) =>
+            materialRow.ItemSubType is ItemSubType.Circle
+                ? ItemFactory.CreateTradableMaterial(materialRow)
+                : ItemFactory.CreateMaterial(materialRow);
 
         private static List<(string ticker, int amount)> GetFavWaveRewards(
             IRandom random,
             List<StageSheet.FavRewardData> favRewards,
             int favDropMin,
-            int favDropMax)
+            int favDropMax,
+            BoostScheduleSheet.Row favRewardBoost)
         {
             if (favRewards.Count == 0)
                 return new List<(string, int)>();
@@ -196,14 +422,31 @@ namespace Nekoyume.Battle
                     result[selected.Ticker] = amount;
             }
 
-            return result.Select(kv => (kv.Key, kv.Value)).ToList();
+            return ApplyFavRewardBoost(
+                result.Select(kv => (kv.Key, kv.Value)).ToList(),
+                favRewardBoost);
         }
 
+        /// <summary>
+        /// Draws the item rewards of <paramref name="playCount"/> clears of
+        /// <paramref name="stageRow"/>.
+        /// </summary>
+        /// <param name="random">The random number generator.</param>
+        /// <param name="stageRow">The stage being cleared.</param>
+        /// <param name="materialItemSheet">The sheet the rewards are created from.</param>
+        /// <param name="playCount">The number of clears.</param>
+        /// <param name="itemRewardBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting each clear's items, or <c>null</c>
+        /// for none. See <see cref="ApplyItemRewardBoost"/>. It never changes the random draws.
+        /// A caller replaying a battle must pass what the action resolved.
+        /// </param>
+        /// <returns>The items, one object per unit, each clear's ordered by item id.</returns>
         public static List<ItemBase> GetWaveRewards(
             IRandom random,
             StageSheet.Row stageRow,
             MaterialItemSheet materialItemSheet,
-            int playCount = 1)
+            int playCount = 1,
+            BoostScheduleSheet.Row itemRewardBoost = null)
         {
             var maxCountForItemDrop = random.Next(
                 stageRow.DropItemMin,
@@ -219,7 +462,8 @@ namespace Nekoyume.Battle
                     materialItemSheet
                 );
 
-                waveRewards.AddRange(rewards);
+                waveRewards.AddRange(
+                    ApplyItemRewardBoost(rewards, itemRewardBoost, materialItemSheet));
             }
 
             return waveRewards;
@@ -329,7 +573,7 @@ namespace Nekoyume.Battle
                             case 2:
                             {
                                 ItemMap = Player.GetRewards(_waveRewards);
-                                foreach (var (ticker, amount) in GetFavWaveRewards(Random, _favRewards, _favDropMin, _favDropMax))
+                                foreach (var (ticker, amount) in GetFavWaveRewards(Random, _favRewards, _favDropMin, _favDropMax, _favRewardBoost))
                                 {
                                     FungibleAssetRewards[ticker] = amount;
                                 }

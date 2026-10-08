@@ -35,6 +35,7 @@ namespace Lib9c.Tests.Action
         private const int ExtendedWorldId = 10;
         private const int ExtendedStageIdOffset = 450;
         private const int ExtendedEntryMaterialId = 900001;
+        private const int StageRewardBoostTotalPlayCount = 3;
 
         private readonly Dictionary<string, string> _sheets;
         private readonly TableSheets _tableSheets;
@@ -2163,6 +2164,75 @@ namespace Lib9c.Tests.Action
                     }));
         }
 
+        [Theory]
+        [InlineData(150, true)] // inside [100, 200)
+        [InlineData(250, false)] // after the schedule ends
+        public void Execute_AppliesScheduledStageRewardBoost(long blockIndex, bool scheduled)
+        {
+            const int stageId = ExtendedStageIdOffset + 1;
+            var (state, prevMaterials) = PrepareStageRewardBoost(stageId);
+
+            var plain = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithoutBoostSchedule(state),
+                stageId,
+                blockIndex);
+            var patched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, StageRewardBoostFixture.BoostCsv(stageId)),
+                stageId,
+                blockIndex);
+
+            // The boost draws nothing, so every battle plays out the same.
+            Assert.Equal(plain.Exp, patched.Exp);
+            Assert.Equal(StageRewardBoostTotalPlayCount * 1000, plain.Fav.MajorUnit);
+            if (!scheduled)
+            {
+                Assert.Equal(plain.Inventory, patched.Inventory);
+                Assert.Equal(plain.Fav, patched.Fav);
+                return;
+            }
+
+            Assert.Equal(plain.Fav * 2, patched.Fav);
+            var gained = 0;
+            foreach (var id in plain.Materials.Keys.Union(patched.Materials.Keys))
+            {
+                prevMaterials.TryGetValue(id, out var prev);
+                plain.Materials.TryGetValue(id, out var plainCount);
+                patched.Materials.TryGetValue(id, out var patchedCount);
+                Assert.Equal(2 * (plainCount - prev), patchedCount - prev);
+                gained += plainCount - prev;
+            }
+
+            Assert.True(gained > 0, "the stage should reward items");
+        }
+
+        [Fact]
+        public void Execute_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
+        {
+            const int stageId = ExtendedStageIdOffset + 1;
+            var (state, _) = PrepareStageRewardBoost(stageId);
+            const long blockIndex = 150;
+
+            var unpatched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithoutBoostSchedule(state),
+                stageId,
+                blockIndex);
+            var empty = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, StageRewardBoostFixture.EmptyCsv),
+                stageId,
+                blockIndex);
+            var unmatched = ExecuteStageRewardBoost(
+                StageRewardBoostFixture.WithBoostSchedule(state, StageRewardBoostFixture.UnmatchedCsv(stageId)),
+                stageId,
+                blockIndex);
+
+            foreach (var other in new[] { empty, unmatched })
+            {
+                Assert.Equal(unpatched.Inventory, other.Inventory);
+                Assert.Equal(unpatched.Fav, other.Fav);
+                Assert.Equal(unpatched.Exp, other.Exp);
+            }
+        }
+
         private static void SerializeException<T>(Exception exec)
             where T : Exception
         {
@@ -2174,6 +2244,116 @@ namespace Lib9c.Tests.Action
             var deserialized = (T)formatter.Deserialize(ms);
 
             Assert.Equal(exec.Message, deserialized.Message);
+        }
+
+        private static Dictionary<int, int> CountMaterials(AvatarState avatarState) =>
+            avatarState.inventory.Items
+                .Where(i => i.item is Material)
+                .GroupBy(i => i.item.Id)
+                .ToDictionary(g => g.Key, g => g.Sum(i => i.count));
+
+        /// <summary>
+        /// An avatar that wins every play of <paramref name="stageId"/>, which grants 1000 crystal
+        /// per clear, with every quest removed so that only stage rewards reach the inventory.
+        /// </summary>
+        private (IWorld State, Dictionary<int, int> Materials) PrepareStageRewardBoost(int stageId)
+        {
+            const int normalFinalWorldId = 9;
+            const int normalFinalStageId = 450;
+            var state = _initialState.SetLegacyState(
+                Addresses.TableSheet.Derive(nameof(StageSheet)),
+                StageRewardBoostFixture.WithFavReward(_sheets[nameof(StageSheet)], stageId, 1000).Serialize());
+            foreach (var name in new[]
+                     {
+                         nameof(WorldQuestSheet), nameof(CollectQuestSheet), nameof(CombinationQuestSheet),
+                         nameof(TradeQuestSheet), nameof(MonsterQuestSheet), nameof(ItemEnhancementQuestSheet),
+                         nameof(GeneralQuestSheet), nameof(ItemGradeQuestSheet), nameof(ItemTypeCollectQuestSheet),
+                         nameof(GoldQuestSheet), nameof(CombinationEquipmentQuestSheet),
+                     })
+            {
+                var header = _sheets[name].Split('\n')[0].TrimEnd('\r');
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(name), header.Serialize());
+            }
+
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            avatarState.level = 100;
+            avatarState.questList = new QuestList(
+                state.GetQuestSheet(),
+                state.GetSheet<QuestRewardSheet>(),
+                state.GetSheet<QuestItemRewardSheet>(),
+                state.GetSheet<EquipmentItemRecipeSheet>(),
+                state.GetSheet<EquipmentItemSubRecipeSheet>());
+            var worldSheet = state.GetSheet<WorldSheet>();
+            avatarState.worldInformation = new WorldInformation(0, worldSheet, normalFinalStageId);
+            avatarState.worldInformation.ClearStage(
+                normalFinalWorldId,
+                normalFinalStageId,
+                1,
+                worldSheet,
+                state.GetSheet<WorldUnlockSheet>());
+
+            foreach (var equipment in Doomfist.GetAllParts(_tableSheets, avatarState.level))
+            {
+                avatarState.inventory.AddItem(equipment, iLock: null);
+            }
+
+            var stageRow = state.GetSheet<StageSheet>()[stageId];
+            if (stageRow.EntryCostItemId > 0)
+            {
+                var entryCostRow = state.GetSheet<MaterialItemSheet>()[stageRow.EntryCostItemId];
+                avatarState.inventory.AddItem(
+                    ItemFactory.CreateTradableMaterial(entryCostRow),
+                    stageRow.EntryCostItemCount * StageRewardBoostTotalPlayCount);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(
+                    _avatarAddress.Derive("world_ids"),
+                    List.Empty.Add(normalFinalWorldId.Serialize()));
+            state = AvatarCpBooster.Apply(state, _sheets, _avatarAddress);
+            return (state, CountMaterials(state.GetAvatarState(_avatarAddress)));
+        }
+
+        private (IValue Inventory, Dictionary<int, int> Materials, FungibleAssetValue Fav, long Exp)
+            ExecuteStageRewardBoost(IWorld state, int stageId, long blockIndex)
+        {
+            var avatarState = state.GetAvatarState(_avatarAddress);
+            var stageRow = state.GetSheet<StageSheet>()[stageId];
+            var action = new HackAndSlash
+            {
+                Costumes = new List<Guid>(),
+                Equipments = avatarState.inventory.Equipments.Select(e => e.NonFungibleId).ToList(),
+                Foods = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                WorldId = ExtendedWorldId,
+                StageId = stageId,
+                AvatarAddress = _avatarAddress,
+                TotalPlayCount = StageRewardBoostTotalPlayCount,
+                EntryCostItemId = stageRow.EntryCostItemId,
+                EntryCostItemCount = stageRow.EntryCostItemId > 0
+                    ? stageRow.EntryCostItemCount * StageRewardBoostTotalPlayCount
+                    : 0,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    PreviousState = state,
+                    Signer = _agentAddress,
+                    RandomSeed = 0,
+                    BlockIndex = blockIndex,
+                });
+
+            var nextAvatarState = nextState.GetAvatarState(_avatarAddress);
+            Assert.True(nextAvatarState.worldInformation.IsStageCleared(stageId));
+            var favCurrency = Currencies.GetCurrencyByTicker(StageRewardBoostFixture.FavTicker);
+            var recipient = Currencies.PickAddress(favCurrency, _agentAddress, _avatarAddress);
+            return (
+                nextAvatarState.inventory.Serialize(),
+                CountMaterials(nextAvatarState),
+                nextState.GetBalance(recipient, favCurrency),
+                nextAvatarState.exp);
         }
     }
 }
