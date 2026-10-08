@@ -99,6 +99,33 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of the
+            /// <c>WorldBossBattleRewardSheet</c> reward a <c>Raid</c> grants for its battle.
+            /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>, e.g.
+            /// <c>900001</c>), and the block is the one the raid is played in.
+            /// </summary>
+            public const string WorldBossBattleReward = "WORLD_BOSS_BATTLE_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of each
+            /// <c>WorldBossKillRewardSheet</c> reward, granted either by the <c>Raid</c> that
+            /// raises the boss level or by <c>ClaimWordBossKillReward</c>. <c>target_id</c> is the
+            /// boss id (<c>WorldBossListSheet.boss_id</c>), and the block is the one the reward is
+            /// granted in, not the one the boss was killed in: a kill left unclaimed until the
+            /// event is boosted when it is claimed during the event.
+            /// </summary>
+            public const string WorldBossKillReward = "WORLD_BOSS_KILL_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of each
+            /// <c>WorldBossRankRewardSheet</c> reward <c>ClaimRaidReward</c> grants.
+            /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>), and the block
+            /// is the one the reward is claimed in, not the one the rank was reached in: a rank
+            /// left unclaimed until the event is boosted when it is claimed during the event.
+            /// </summary>
+            public const string WorldBossRankReward = "WORLD_BOSS_RANK_REWARD";
+
+            /// <summary>
             /// Every target above, for tooling that warns about rows no running code applies.
             /// </summary>
             public static readonly IReadOnlyCollection<string> Applied = new[]
@@ -106,6 +133,9 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                WorldBossBattleReward,
+                WorldBossKillReward,
+                WorldBossRankReward,
             };
         }
 

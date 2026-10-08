@@ -474,6 +474,105 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void Execute_With_Reward()
         {
+            ExecuteWithReward(null, 1, 1);
+        }
+
+        [Theory]
+        [InlineData(0L, 2, 3)] // both schedules cover the raid's block
+        [InlineData(1L, 1, 1)] // both schedules end at the raid's block
+        [InlineData(-1L, 1, 1)] // both schedules start right after the raid's block
+        public void Execute_With_Reward_AppliesScheduledBoost(
+            long offset,
+            int battleMultiplier,
+            int killMultiplier)
+        {
+            // The raid runs at StartedBlockIndex + WorldBossRequiredInterval of the first season.
+            var bossRow = _tableSheets.WorldBossListSheet.First().Value;
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            var raidBlock = bossRow.StartedBlockIndex + gameConfigState.WorldBossRequiredInterval;
+            var (start, end) = offset switch
+            {
+                0L => (raidBlock, raidBlock + 1),
+                1L => (raidBlock - 1, raidBlock),
+                _ => (raidBlock + 1, raidBlock + 2),
+            };
+            var csv =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                $"1,{BoostScheduleSheet.Targets.WorldBossBattleReward},{bossRow.BossId},MUL,2,{start},{end}\n" +
+                $"2,{BoostScheduleSheet.Targets.WorldBossKillReward},{bossRow.BossId},MUL,3,{start},{end}\n" +
+                $"3,{BoostScheduleSheet.Targets.WorldBossRankReward},*,MUL,5,0,{long.MaxValue}\n";
+
+            ExecuteWithReward(csv.Serialize(), battleMultiplier, killMultiplier);
+        }
+
+        [Fact]
+        public void Execute_With_Reward_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
+        {
+            ExecuteWithReward(Null.Value, 1, 1);
+        }
+
+        [Fact]
+        public void Execute_With_Free_Crystal_Fee()
+        {
+            var action = new Raid
+            {
+                AvatarAddress = _avatarAddress,
+                EquipmentIds = new List<Guid>(),
+                CostumeIds = new List<Guid>(),
+                FoodIds = new List<Guid>(),
+                RuneInfos = new List<RuneSlotInfo>(),
+                PayNcg = false,
+            };
+            var crystal = CrystalCalculator.CRYSTAL;
+
+            _sheets[nameof(WorldBossListSheet)] =
+                "id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count\r\n" +
+                "1,900002,0,100,0,1,1,40";
+
+            var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
+            var state = new World(MockUtil.MockModernWorldState)
+                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
+                .SetAgentState(_agentAddress, new AgentState(_agentAddress));
+
+            foreach (var (key, value) in _sheets)
+            {
+                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
+            }
+
+            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
+            var avatarState = AvatarState.Create(
+                _avatarAddress,
+                _agentAddress,
+                0,
+                _tableSheets.GetAvatarSheets(),
+                default
+            );
+
+            for (var i = 0; i < 50; i++)
+            {
+                avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+            }
+
+            state = state
+                .SetAvatarState(_avatarAddress, avatarState)
+                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
+
+            var blockIndex = gameConfigState.WorldBossRequiredInterval;
+            var randomSeed = 0;
+            var ctx = new ActionContext
+            {
+                BlockIndex = blockIndex,
+                PreviousState = state,
+                RandomSeed = randomSeed,
+                Signer = _agentAddress,
+            };
+            action.Execute(ctx);
+        }
+
+        // boostScheduleSheet: the BoostScheduleSheet state to set, or null to keep the imported one.
+        // battleMultiplier / killMultiplier: how many times the unboosted reward is expected.
+        private void ExecuteWithReward(IValue boostScheduleSheet, int battleMultiplier, int killMultiplier)
+        {
             var action = new Raid
             {
                 AvatarAddress = _avatarAddress,
@@ -544,6 +643,13 @@ namespace Lib9c.Tests.Action
                     Level = 2,
                 };
             state = state.SetLegacyState(bossAddress, bossState.Serialize());
+            if (boostScheduleSheet is not null)
+            {
+                state = state.SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)),
+                    boostScheduleSheet);
+            }
+
             var randomSeed = 0;
             var random = new TestRandom(randomSeed);
 
@@ -562,10 +668,12 @@ namespace Lib9c.Tests.Action
             );
             simulator.Simulate();
 
+            // The simulator and the kill reward below run unboosted: a boost only scales what is
+            // drawn, so the unboosted draws times the multiplier are what the action must grant.
             var rewardMap = new Dictionary<Currency, FungibleAssetValue>();
             foreach (var reward in simulator.AssetReward)
             {
-                rewardMap[reward.Currency] = reward;
+                rewardMap[reward.Currency] = reward * battleMultiplier;
             }
 
             var materialRewardMap = new Dictionary<TradableMaterial, int>();
@@ -575,7 +683,7 @@ namespace Lib9c.Tests.Action
                 if (reward is TradableMaterial tradableMaterial)
                 {
                     materialRewardMap.TryAdd(tradableMaterial, 0);
-                    materialRewardMap[tradableMaterial]++;
+                    materialRewardMap[tradableMaterial] += battleMultiplier;
                 }
             }
 
@@ -607,20 +715,22 @@ namespace Lib9c.Tests.Action
             {
                 if (!rewardMap.ContainsKey(reward.Currency))
                 {
-                    rewardMap[reward.Currency] = reward;
+                    rewardMap[reward.Currency] = reward * killMultiplier;
                 }
                 else
                 {
-                    rewardMap[reward.Currency] += reward;
+                    rewardMap[reward.Currency] += reward * killMultiplier;
                 }
             }
 
             foreach (var reward in killRewards.materials)
             {
                 materialRewardMap.TryAdd(reward.Key, 0);
-                materialRewardMap[reward.Key] += reward.Value;
+                materialRewardMap[reward.Key] += reward.Value * killMultiplier;
             }
 
+            Assert.Contains(simulator.AssetReward, r => !r.Currency.Equals(CrystalCalculator.CRYSTAL));
+            Assert.Contains(killRewards.assets, r => r.Currency.Equals(CrystalCalculator.CRYSTAL));
             foreach (var reward in rewardMap)
             {
                 if (reward.Key.Equals(CrystalCalculator.CRYSTAL))
@@ -652,64 +762,6 @@ namespace Lib9c.Tests.Action
             Assert.True(nextState.TryGetLegacyState(worldBossKillRewardRecordAddress, out List rawRewardInfo));
             var nextRewardInfo = new WorldBossKillRewardRecord(rawRewardInfo);
             Assert.True(nextRewardInfo[1]);
-        }
-
-        [Fact]
-        public void Execute_With_Free_Crystal_Fee()
-        {
-            var action = new Raid
-            {
-                AvatarAddress = _avatarAddress,
-                EquipmentIds = new List<Guid>(),
-                CostumeIds = new List<Guid>(),
-                FoodIds = new List<Guid>(),
-                RuneInfos = new List<RuneSlotInfo>(),
-                PayNcg = false,
-            };
-            var crystal = CrystalCalculator.CRYSTAL;
-
-            _sheets[nameof(WorldBossListSheet)] =
-                "id,boss_id,started_block_index,ended_block_index,fee,ticket_price,additional_ticket_price,max_purchase_count\r\n" +
-                "1,900002,0,100,0,1,1,40";
-
-            var goldCurrencyState = new GoldCurrencyState(_goldCurrency);
-            var state = new World(MockUtil.MockModernWorldState)
-                .SetLegacyState(goldCurrencyState.address, goldCurrencyState.Serialize())
-                .SetAgentState(_agentAddress, new AgentState(_agentAddress));
-
-            foreach (var (key, value) in _sheets)
-            {
-                state = state.SetLegacyState(Addresses.TableSheet.Derive(key), value.Serialize());
-            }
-
-            var gameConfigState = new GameConfigState(_sheets[nameof(GameConfigSheet)]);
-            var avatarState = AvatarState.Create(
-                _avatarAddress,
-                _agentAddress,
-                0,
-                _tableSheets.GetAvatarSheets(),
-                default
-            );
-
-            for (var i = 0; i < 50; i++)
-            {
-                avatarState.worldInformation.ClearStage(1, i + 1, 0, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
-            }
-
-            state = state
-                .SetAvatarState(_avatarAddress, avatarState)
-                .SetLegacyState(gameConfigState.address, gameConfigState.Serialize());
-
-            var blockIndex = gameConfigState.WorldBossRequiredInterval;
-            var randomSeed = 0;
-            var ctx = new ActionContext
-            {
-                BlockIndex = blockIndex,
-                PreviousState = state,
-                RandomSeed = randomSeed,
-                Signer = _agentAddress,
-            };
-            action.Execute(ctx);
         }
     }
 }
