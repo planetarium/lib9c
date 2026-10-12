@@ -99,6 +99,22 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// <c>required_count</c> of a <c>SynthesizeSheet</c> grade — how many materials one
+            /// synthesis consumes. <c>target_id</c> is the material grade id (<c>grade_id</c>,
+            /// e.g. <c>1~4</c>), and a row applies to every <c>item_sub_type</c> of that grade
+            /// alike. The adjusted count never drops below 1 — which keeps synthesis from being
+            /// free, not from being cheap: a typo such as <c>MUL 0.06</c> brings every grade down
+            /// to 1, so keep values within the range planning intended.
+            /// <para>
+            /// Patch a row only after a client that picks materials by the adjusted count is
+            /// released: the action still requires the material count to be a multiple of it, so
+            /// a client choosing by the configured count fails every synthesis while the row is
+            /// active.
+            /// </para>
+            /// </summary>
+            public const string SynthesizeRequiredCount = "SYNTHESIZE_REQUIRED_COUNT";
+
+            /// <summary>
             /// Every target above, for tooling that warns about rows no running code applies.
             /// </summary>
             public static readonly IReadOnlyCollection<string> Applied = new[]
@@ -106,6 +122,7 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                SynthesizeRequiredCount,
             };
         }
 
