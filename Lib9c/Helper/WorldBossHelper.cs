@@ -53,6 +53,30 @@ namespace Nekoyume.Helper
                    (refilledIndex - startedIndex) / refillInterval;
         }
 
+        /// <summary>
+        /// Calculates a world boss reward — runes drawn by <see cref="RuneWeightSheet"/>, crystal
+        /// and circles — for <paramref name="rank"/> of <paramref name="bossId"/>.
+        /// </summary>
+        /// <param name="rank">The rank whose reward row is granted.</param>
+        /// <param name="bossId">The boss id, as in <c>WorldBossListSheet.boss_id</c>.</param>
+        /// <param name="sheet">Weights the drawn runes.</param>
+        /// <param name="rewardSheet">
+        /// The battle, kill or rank reward sheet the reward row is taken from.
+        /// </param>
+        /// <param name="runeSheet">Maps a drawn rune id to its currency.</param>
+        /// <param name="materialSheet">Supplies the circle material.</param>
+        /// <param name="random">Draws the rune count, for a ranged row, and each rune.</param>
+        /// <param name="rewardBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting this reward at the current block, or
+        /// <c>null</c> for none. A caller replaying a reward must pass what the action resolved.
+        /// See <see cref="ApplyRewardBoost"/>.
+        /// </param>
+        /// <returns>The granted assets, runes first and crystal last, and circles.</returns>
+        /// <remarks>
+        /// <paramref name="rewardBoost"/> scales what was drawn rather than how many draws are made,
+        /// so <paramref name="random"/> is consumed exactly as without it and everything drawn after
+        /// this reward (e.g. the next kill reward of the same action) stays the same.
+        /// </remarks>
         public static (List<FungibleAssetValue> assets, Dictionary<TradableMaterial, int> materials) CalculateReward(
             int rank,
             int bossId,
@@ -60,7 +84,8 @@ namespace Nekoyume.Helper
             IWorldBossRewardSheet rewardSheet,
             RuneSheet runeSheet,
             MaterialItemSheet materialSheet,
-            IRandom random
+            IRandom random,
+            BoostScheduleSheet.Row rewardBoost = null
         )
         {
             var row = sheet.Values.First(r => r.Rank == rank && r.BossId == bossId);
@@ -95,25 +120,57 @@ namespace Nekoyume.Helper
 #pragma warning disable LAA1002
             var assets = dictionary
 #pragma warning restore LAA1002
-                .Select(kv => RuneHelper.ToFungibleAssetValue(runeSheet[kv.Key], kv.Value))
+                .Select(kv => (runeId: kv.Key, count: ApplyRewardBoost(rewardBoost, kv.Value)))
+                .Where(pair => pair.count > 0)
+                .Select(pair => RuneHelper.ToFungibleAssetValue(runeSheet[pair.runeId], pair.count))
                 .ToList();
 
-            if (rewardRow.Crystal > 0)
+            var crystal = ApplyRewardBoost(rewardBoost, rewardRow.Crystal);
+            if (crystal > 0)
             {
-                assets.Add(rewardRow.Crystal * CrystalCalculator.CRYSTAL);
+                assets.Add(crystal * CrystalCalculator.CRYSTAL);
             }
 
             var materials = new Dictionary<TradableMaterial, int>();
-            if (rewardRow.Circle > 0)
+            var circle = ApplyRewardBoost(rewardBoost, rewardRow.Circle);
+            if (circle > 0)
             {
                 var materialRow =
                     materialSheet.Values.First(r => r.ItemSubType == ItemSubType.Circle);
                 var material = ItemFactory.CreateTradableMaterial(materialRow);
                 materials.TryAdd(material, 0);
-                materials[material] += rewardRow.Circle;
+                materials[material] += circle;
             }
 
             return (assets, materials);
+        }
+
+        /// <summary>
+        /// Applies a <see cref="BoostScheduleSheet"/> row to one granted amount of a world boss
+        /// reward: the count of one drawn rune, the crystal or the circles.
+        /// </summary>
+        /// <param name="rewardBoost">The row to apply, or <c>null</c> for none.</param>
+        /// <param name="amount">The amount the reward row and the draws grant.</param>
+        /// <returns>
+        /// <paramref name="amount"/> unchanged when there is no row or nothing is granted;
+        /// otherwise <see cref="BoostScheduleSheet.Row.Apply"/> of it. A result of 0 means the
+        /// amount is not granted at all.
+        /// </returns>
+        /// <remarks>
+        /// A boost adjusts what a reward grants but never adds a kind the row does not grant — a
+        /// row with no crystal stays without crystal under <c>ADD</c> — since a reward that exists
+        /// only during an event reads as one taken away when the event ends. <c>ADD</c> applies to
+        /// every amount separately, i.e. once per distinct rune drawn; use <c>MUL</c> to scale a
+        /// reward as a whole.
+        /// </remarks>
+        public static int ApplyRewardBoost(BoostScheduleSheet.Row rewardBoost, int amount)
+        {
+            if (rewardBoost is null || amount <= 0)
+            {
+                return amount;
+            }
+
+            return rewardBoost.Apply(amount);
         }
 
         /// <summary>
