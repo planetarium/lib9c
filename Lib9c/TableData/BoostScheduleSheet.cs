@@ -138,6 +138,27 @@ namespace Nekoyume.TableData
             public const string StageFavReward = "STAGE_FAV_REWARD";
 
             /// <summary>
+            /// Experience one enhancement hammer gives an equipment in <c>ItemEnhancement</c>
+            /// (<c>EnhancementCostSheetV3</c> hammer rows). <c>target_id</c> is the hammer item id
+            /// (<c>600301~600308</c>), so grades can get different multipliers.
+            /// <para>
+            /// The adjusted experience is stored on the equipment like any other experience: the
+            /// equipment ends up exactly as if it had gathered that much normally, so it neither
+            /// owes the boost back on its next enhancement nor is worth less as a material. The
+            /// result is kept between the configured experience and
+            /// <c>ItemEnhancement.MaxHammerExpBoostFactor</c> times it — a row can only raise it.
+            /// See <c>ItemEnhancement.GetHammerExp</c>.
+            /// </para>
+            /// <para>
+            /// Patch a row only after a client that previews with the adjusted experience is
+            /// released: an old client shows a lower target level and a lower NCG cost than the
+            /// action charges (cost follows the level reached), so an avatar holding only the
+            /// shown NCG fails, and it lets players add more hammers than the max level needs.
+            /// </para>
+            /// </summary>
+            public const string EnhancementHammerExp = "ENHANCEMENT_HAMMER_EXP";
+
+            /// <summary>
             /// Amount of the reward an adventure boss floor drops on every clear — the one entry
             /// drawn from <c>AdventureBossFloorSheet</c> rewards per floor, by both
             /// <c>ExploreAdventureBoss</c> and <c>SweepAdventureBoss</c>. <c>target_id</c> is the
@@ -364,6 +385,18 @@ namespace Nekoyume.TableData
                     "Each drawn ticker amount is scaled after the draw and floored.",
                     "Event dungeon stages are not covered. An old client shows the unboosted rewards (granted correctly).",
                     "13,STAGE_FAV_REWARD,1~300,MUL,1.5,<start>,<end>"),
+                new TargetInfo(
+                    EnhancementHammerExp,
+                    "Experience one enhancement hammer gives an equipment (ItemEnhancement).",
+                    "hammer item id (600301~600308; e.g. 600301~600304 for normal to unique)",
+                    "EnhancementCostSheetV3",
+                    "MUL above 1",
+                    "Floored, computed in 64 bits, kept between the configured experience and 3 times it: " +
+                    "a row can only raise it. The boosted experience stays on the equipment like any experience.",
+                    "Aura and grimoire cannot use hammers. An old client previews the unboosted level and NCG cost; " +
+                    "the action charges the cost of the level actually reached, so an avatar holding only the shown " +
+                    "NCG fails: release a client that previews with the row first.",
+                    "14,ENHANCEMENT_HAMMER_EXP,600301~600304,MUL,2,<start>,<end>"),
             };
 
             /// <summary>
@@ -573,6 +606,27 @@ namespace Nekoyume.TableData
                 }
 
                 return result >= int.MaxValue ? int.MaxValue : (int)result;
+            }
+
+            /// <summary>
+            /// <see cref="Apply(int)"/> for 64-bit values: same rounding (down) and lower bound
+            /// (<c>0</c>), clamped to <see cref="long.MaxValue"/> instead of
+            /// <see cref="int.MaxValue"/> so that large bases such as hammer experience are not cut.
+            /// </summary>
+            /// <param name="baseValue">The value before adjustment.</param>
+            /// <returns>The adjusted value.</returns>
+            public long Apply(long baseValue)
+            {
+                var result = Op == Operation.Add
+                    ? baseValue + Value
+                    : baseValue * Value;
+                result = decimal.Floor(result);
+                if (result <= 0m)
+                {
+                    return 0;
+                }
+
+                return result >= long.MaxValue ? long.MaxValue : (long)result;
             }
 
             private static bool TryParseRest(
