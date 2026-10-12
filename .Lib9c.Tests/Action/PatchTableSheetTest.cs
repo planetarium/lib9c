@@ -154,6 +154,50 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
+        public void Execute_BoostScheduleSheet()
+        {
+            const string csv =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                "1,EQUIPMENT_SUMMON_GUARANTEE,10001,ADD,1,100,200\n";
+            var action = new PatchTableSheet
+            {
+                TableName = nameof(BoostScheduleSheet),
+                TableCsv = csv,
+            };
+
+            var nextState = action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = 0,
+                    PreviousState = _initialState,
+                });
+
+            Assert.Equal(csv, nextState.GetSheetCsv<BoostScheduleSheet>());
+        }
+
+        [Theory]
+        [InlineData("id,target,target_id,op,value,start_block,end_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,ADD,1.5,100,200\n")]
+        [InlineData("id,target,target_id,op,value,start_block,end_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,MUL,1.5,200,100\n")]
+        [InlineData("id,target,target_id,op,value,end_block,start_block\n1,EQUIPMENT_SUMMON_GUARANTEE,10001,ADD,1,100,200\n")]
+        public void Execute_Throw_SheetRowValidateException_WhenBoostScheduleSheetIsMalformed(
+            string csv)
+        {
+            var action = new PatchTableSheet
+            {
+                TableName = nameof(BoostScheduleSheet),
+                TableCsv = csv,
+            };
+
+            Assert.Throws<SheetRowValidateException>(
+                () => action.Execute(
+                    new ActionContext
+                    {
+                        BlockIndex = 0,
+                        PreviousState = _initialState,
+                    }));
+        }
+
+        [Fact]
         public void CheckPermission()
         {
             var adminAddress = new Address("399bddF9F7B6d902ea27037B907B2486C9910730");
