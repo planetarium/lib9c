@@ -99,6 +99,45 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// Material item rewards of an adventure stage clear (<c>HackAndSlash</c>,
+            /// <c>HackAndSlashSweep</c>). <c>target_id</c> is the <c>StageSheet</c> stage id, so
+            /// <c>1~300</c> covers stages 1 through 300. Event dungeon stages are not covered.
+            /// <para>
+            /// Applied per clear to the count of each distinct item after the items are drawn, so
+            /// the random draws are the same as without the row: <c>MUL 2</c> grants exactly
+            /// twice each drawn item and <c>ADD 1</c> one more of each. See
+            /// <c>StageSimulator.GetBoostedItemRewardCount</c>.
+            /// </para>
+            /// <para>
+            /// Boosted items are ordinary rewards everywhere else too: they count toward
+            /// collect quest progress, and a circle stays tradable.
+            /// </para>
+            /// <para>
+            /// Rounding is down, per item id per clear, with one exception: a <c>MUL</c> above 1
+            /// turns an item drawn once in a clear (how most stages drop) into at least 2, so
+            /// <c>MUL 1.5</c> grants 2 of a single drop. A count of 2 or more keeps the plain floor
+            /// (<c>MUL 1.2</c> on 2 stays 2, <c>MUL 1.5</c> on 2 becomes 3); this is not a general
+            /// "at least one more". <c>ADD</c> and a <c>MUL</c> of 1 or below are unaffected.
+            /// Beware that any <c>MUL</c> just above 1 (e.g. <c>MUL 1.01</c>) also turns a single
+            /// drop into 2 — effectively a 100% boost for those items, however small the value.
+            /// <see cref="StageFavReward"/> amounts are large and always plainly floored.
+            /// </para>
+            /// </summary>
+            public const string StageItemReward = "STAGE_ITEM_REWARD";
+
+            /// <summary>
+            /// Fungible asset rewards (e.g. crystal, rune stones) of an adventure stage clear
+            /// (<c>HackAndSlash</c>, <c>HackAndSlashSweep</c>). <c>target_id</c> is the
+            /// <c>StageSheet</c> stage id. Event dungeon stages are not covered.
+            /// <para>
+            /// Applied per clear to the amount of each drawn ticker after it is drawn, so the
+            /// random draws are the same as without the row. See
+            /// <c>StageSimulator.ApplyFavRewardBoost</c>.
+            /// </para>
+            /// </summary>
+            public const string StageFavReward = "STAGE_FAV_REWARD";
+
+            /// <summary>
             /// Amount of the reward an adventure boss floor drops on every clear — the one entry
             /// drawn from <c>AdventureBossFloorSheet</c> rewards per floor, by both
             /// <c>ExploreAdventureBoss</c> and <c>SweepAdventureBoss</c>. <c>target_id</c> is the
@@ -191,6 +230,8 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                StageItemReward,
+                StageFavReward,
                 AdventureBossFloorReward,
                 AdventureBossFirstClearReward,
                 WorldBossBattleReward,
