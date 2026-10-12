@@ -268,7 +268,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet__ctor" data-uid="Nekoyume.TableData.BoostScheduleSheet.#ctor">
   BoostScheduleSheet()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L610"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L667"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates an empty sheet.</p>
@@ -329,7 +329,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_ColumnNames" data-uid="Nekoyume.TableData.BoostScheduleSheet.ColumnNames">
   ColumnNames
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Column names in their expected order, after <code>_</code> prefixed columns are dropped.</p>
@@ -360,11 +360,14 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_MaxAbsoluteValue" data-uid="Nekoyume.TableData.BoostScheduleSheet.MaxAbsoluteValue">
   MaxAbsoluteValue
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Upper bound of <code>|value|</code>. Keeps every <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int32_">Apply(int)</a> inside
-<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a> range so that applying a row can never throw.</p>
+  <div class="markdown level1 summary"><p>Upper bound of <code>|value|</code>. Keeps every <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int32_">Apply(int)</a> and
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int64_">Apply(long)</a> inside <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal">decimal</a> range so that applying a row
+can never throw: the worst case, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64.maxvalue">MaxValue</a> × <code>int.MaxValue</code>
+≈ 2e28, stays under <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.decimal.maxvalue">MaxValue</a> ≈ 7.9e28. Raising this bound must keep
+that true, or a row would make every action it applies to fail.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -428,7 +431,7 @@ public class BoostScheduleSheet : Sheet&lt;int, BoostScheduleSheet.Row&gt;, IDic
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_AddRow_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.TableData.BoostScheduleSheet.AddRow(System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)">
   AddRow(int, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L649"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L706"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a parsed row to the sheet.</p>
@@ -468,7 +471,7 @@ throwing, because a throw here would fail every action that reads the sheet.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_FindActive_System_String_System_Int32_System_Int64_" data-uid="Nekoyume.TableData.BoostScheduleSheet.FindActive(System.String,System.Int32,System.Int64)">
   FindActive(string, int, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L622"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L679"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Finds the row that applies to <code class="paramref">targetId</code> of
@@ -514,7 +517,7 @@ throwing, because a throw here would fail every action that reads the sheet.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_ValidateCsv_System_String_" data-uid="Nekoyume.TableData.BoostScheduleSheet.ValidateCsv(System.String)">
   ValidateCsv(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L675"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L732"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Parses <code class="paramref">csv</code> strictly so that a malformed schedule fails the

@@ -15966,6 +15966,22 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.ItemEnhancement.GetEquipmentMaxLevel
   nameWithType: ItemEnhancement.GetEquipmentMaxLevel
+- uid: Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetHammerExp(EnhancementCostSheetV3, int, Row)
+  href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_GetHammerExp_Nekoyume_TableData_EnhancementCostSheetV3_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetHammerExp(EnhancementCostSheetV3, Integer, Row)
+  fullName: Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3, int, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3, Integer, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: ItemEnhancement.GetHammerExp(EnhancementCostSheetV3, int, BoostScheduleSheet.Row)
+  nameWithType.vb: ItemEnhancement.GetHammerExp(EnhancementCostSheetV3, Integer, BoostScheduleSheet.Row)
+- uid: Nekoyume.Action.ItemEnhancement.GetHammerExp*
+  name: GetHammerExp
+  href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_GetHammerExp_
+  commentId: Overload:Nekoyume.Action.ItemEnhancement.GetHammerExp
+  isSpec: "True"
+  fullName: Nekoyume.Action.ItemEnhancement.GetHammerExp
+  nameWithType: ItemEnhancement.GetHammerExp
 - uid: Nekoyume.Action.ItemEnhancement.GetRequiredBlockCount(Nekoyume.Model.Item.Equipment,Nekoyume.Model.Item.Equipment,Nekoyume.TableData.EnhancementCostSheetV3)
   name: GetRequiredBlockCount(Equipment, Equipment, EnhancementCostSheetV3)
   href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_GetRequiredBlockCount_Nekoyume_Model_Item_Equipment_Nekoyume_Model_Item_Equipment_Nekoyume_TableData_EnhancementCostSheetV3_
@@ -16013,6 +16029,12 @@ references:
   commentId: F:Nekoyume.Action.ItemEnhancement.MaterialCountLimit
   fullName: Nekoyume.Action.ItemEnhancement.MaterialCountLimit
   nameWithType: ItemEnhancement.MaterialCountLimit
+- uid: Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor
+  name: MaxHammerExpBoostFactor
+  href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_MaxHammerExpBoostFactor
+  commentId: F:Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor
+  fullName: Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor
+  nameWithType: ItemEnhancement.MaxHammerExpBoostFactor
 - uid: Nekoyume.Action.ItemEnhancement.PlainValueInternal
   name: PlainValueInternal
   href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_PlainValueInternal
@@ -84218,6 +84240,15 @@ references:
   fullName.vb: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(Integer)
   nameWithType: BoostScheduleSheet.Row.Apply(int)
   nameWithType.vb: BoostScheduleSheet.Row.Apply(Integer)
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(System.Int64)
+  name: Apply(long)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int64_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.Row.Apply(System.Int64)
+  name.vb: Apply(Long)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(long)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(Long)
+  nameWithType: BoostScheduleSheet.Row.Apply(long)
+  nameWithType.vb: BoostScheduleSheet.Row.Apply(Long)
 - uid: Nekoyume.TableData.BoostScheduleSheet.Row.Apply*
   name: Apply
   href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_
@@ -84552,6 +84583,12 @@ references:
   commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.CostumeSummonGuarantee
   fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.CostumeSummonGuarantee
   nameWithType: BoostScheduleSheet.Targets.CostumeSummonGuarantee
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp
+  name: EnhancementHammerExp
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_EnhancementHammerExp
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp
+  nameWithType: BoostScheduleSheet.Targets.EnhancementHammerExp
 - uid: Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee
   name: EquipmentSummonGuarantee
   href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_EquipmentSummonGuarantee

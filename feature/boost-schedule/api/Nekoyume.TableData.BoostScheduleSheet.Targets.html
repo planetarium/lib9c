@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_TableData_BoostScheduleSheet_Targets" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets" class="text-break">
-Class BoostScheduleSheet.Targets  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L82"><i class="bi bi-code-slash"></i></a>
+Class BoostScheduleSheet.Targets  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -157,7 +157,7 @@ no effect until a version that applies it is running.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFirstClearReward">
   AdventureBossFirstClearReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L178"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Amount of each <code>AdventureBossFloorFirstRewardSheet</code> reward, granted by
@@ -190,7 +190,7 @@ no effect until a version that applies it is running.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFloorReward">
   AdventureBossFloorReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L171"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Amount of the reward an adventure boss floor drops on every clear — the one entry
@@ -225,7 +225,7 @@ every boss), not the floor row id.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Applied" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Applied">
   Applied
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L388"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L424"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every target above, for tooling that warns about rows no running code applies.</p>
@@ -256,7 +256,7 @@ every boss), not the floor row id.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_CostumeSummonGuarantee" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.CostumeSummonGuarantee">
   CostumeSummonGuarantee
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L102"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Guarantee count of a <code>CostumeSummonSheet</code> group. <code>target_id</code> is the
@@ -286,9 +286,55 @@ group id.</p>
 
 
 
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_EnhancementHammerExp" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp">
+  EnhancementHammerExp
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Experience one enhancement hammer gives an equipment in <code>ItemEnhancement</code>
+(<code>EnhancementCostSheetV3</code> hammer rows). <code>target_id</code> is the hammer item id
+(<code>600301~600308</code>), so grades can get different multipliers.</p>
+<p>
+The adjusted experience is stored on the equipment like any other experience: the
+equipment ends up exactly as if it had gathered that much normally, so it neither
+owes the boost back on its next enhancement nor is worth less as a material. The
+result is kept between the configured experience and
+<code>ItemEnhancement.MaxHammerExpBoostFactor</code> times it — a row can only raise it.
+See <code>ItemEnhancement.GetHammerExp</code>.
+</p><p>
+Patch a row only after a client that previews with the adjusted experience is
+released: an old client shows a lower target level and a lower NCG cost than the
+action charges (cost follows the level reached), so an avatar holding only the
+shown NCG fails, and it lets players add more hammers than the max level needs.
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string EnhancementHammerExp = &quot;ENHANCEMENT_HAMMER_EXP&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_EquipmentSummonGuarantee" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee">
   EquipmentSummonGuarantee
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Guarantee count of an <code>EquipmentSummonSheet</code> group. <code>target_id</code> is the
@@ -320,7 +366,7 @@ group id.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Infos" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Infos">
   Infos
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L231"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L255"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>How to write a row for each target above, for tooling that helps people fill the
@@ -354,7 +400,7 @@ it, so changing it never changes what a row does. Rules shared by every row are 
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_RowRules" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules">
   RowRules
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L373"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L409"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Rules every row follows whatever its target, for the same tooling as
@@ -386,7 +432,7 @@ it, so changing it never changes what a row does. Rules shared by every row are 
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_RuneSummonGuarantee" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.RuneSummonGuarantee">
   RuneSummonGuarantee
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Guarantee count of a <code>RuneSummonSheet</code> group. <code>target_id</code> is the group id.</p>
@@ -417,7 +463,7 @@ it, so changing it never changes what a row does. Rules shared by every row are 
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_StageFavReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.StageFavReward">
   StageFavReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L141"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Fungible asset rewards (e.g. crystal, rune stones) of an adventure stage clear
@@ -455,7 +501,7 @@ random draws are the same as without the row. See
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_StageItemReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.StageItemReward">
   StageItemReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L129"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Material item rewards of an adventure stage clear (<code>HackAndSlash</code>,
@@ -506,7 +552,7 @@ drop into 2 — effectively a 100% boost for those items, however small the valu
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost">
   SummonRuneEnhancementCrystalCost
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L222"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Crystal cost of one <code>RuneEnhancement</code> try, per <code>RuneCostSheet</code> level, for
@@ -548,7 +594,7 @@ success rate are not adjustable.
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementRuneStoneCost" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost">
   SummonRuneEnhancementRuneStoneCost
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L230"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Rune stone cost of one <code>RuneEnhancement</code> try, per <code>RuneCostSheet</code> level,
@@ -581,7 +627,7 @@ for summonable runes only. Scope, <code>target_id</code> and bounds as in
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SynthesizeRequiredCount" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SynthesizeRequiredCount">
   SynthesizeRequiredCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L247"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p><code>required_count</code> of a <code>SynthesizeSheet</code> grade — how many materials one
@@ -623,7 +669,7 @@ active.
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossBattleReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossBattleReward">
   WorldBossBattleReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L186"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of the
@@ -657,7 +703,7 @@ active.
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossKillReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossKillReward">
   WorldBossKillReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L196"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of each
@@ -693,7 +739,7 @@ event is boosted when it is claimed during the event.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossRankReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossRankReward">
   WorldBossRankReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L205"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of each
@@ -729,7 +775,7 @@ left unclaimed until the event is boosted when it is claimed during the event.</
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L82" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L85" class="edit-link">Edit this page</a>
         </div>
 
 
