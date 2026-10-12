@@ -84,7 +84,7 @@ namespace Lib9c.Tests.Action
         {
             var cost = new RuneCostSheet.RuneCostData(level, level, 240, 20000, 50, 7000);
 
-            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, level, Resolve(TieredSheet()), 150);
+            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, 101, level, Resolve(TieredSheet()), 150);
 
             Assert.Equal(expectedCrystal, boosted.CrystalQuantity);
             Assert.Equal(expectedRuneStone, boosted.RuneStoneQuantity);
@@ -101,8 +101,8 @@ namespace Lib9c.Tests.Action
         {
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
-            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, Resolve(TieredSheet()), blockIndex));
-            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, null, 150));
+            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 101, 1, Resolve(TieredSheet()), blockIndex));
+            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 101, 1, null, 150));
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace Lib9c.Tests.Action
                 "3,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,100~200,MUL,0.5,0,10");
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
-            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, Resolve(sheet, 5), 5));
+            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 101, 1, Resolve(sheet, 5), 5));
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace Lib9c.Tests.Action
             var sheet = CreateBoostSheet("1,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~10,MUL,0.5,0,10");
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
-            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, 1, Resolve(sheet, 5), 5);
+            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, 101, 1, Resolve(sheet, 5), 5);
 
             Assert.Equal(120, boosted.RuneStoneQuantity);
             Assert.Equal(20000, boosted.CrystalQuantity);
@@ -137,10 +137,10 @@ namespace Lib9c.Tests.Action
             var costSheet = new RuneCostSheet();
             costSheet.Set(
                 "id,level_start,level_end,rune_stone_quantity,crystal_quantity,ncg_quantity,level_up_success_rate\n" +
-                "1,1,48,1,1,1,10000\n" +
-                "1,49,50,240,20000,0,5000\n" +
-                "1,51,52,180,15000,50,5000\n");
-            var costRow = costSheet[1];
+                "101,1,48,1,1,1,10000\n" +
+                "101,49,50,240,20000,0,5000\n" +
+                "101,51,52,180,15000,50,5000\n");
+            var costRow = costSheet[101];
             const int seed = 7;
             const int tryCount = 6;
 
@@ -207,7 +207,12 @@ namespace Lib9c.Tests.Action
             Assert.Null(empty);
             RuneHelper.TryEnhancement(48, costRow, emptyRandom, 4, out var withEmptySheet, empty, 150);
             var outsideRandom = new TestRandom(3);
-            var resolved = Resolve(TieredSheet());
+            var resolved = RuneHelper.ResolveEnhancementCostBoost(
+                TieredSheet(),
+                10001,
+                150,
+                () => _tableSheets.RuneSummonSheet);
+            Assert.NotNull(resolved);
             RuneHelper.TryEnhancement(48, costRow, outsideRandom, 4, out var outsideSchedule, resolved, 250);
 
             Assert.Equal(expected.ToString(), withEmptySheet.ToString());
@@ -292,6 +297,36 @@ namespace Lib9c.Tests.Action
                 () => _tableSheets.RuneSummonSheet);
             RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var expected);
             RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var actual, resolved, 150);
+
+            Assert.Equal(expected.ToString(), actual.ToString());
+        }
+
+        [Fact]
+        public void ApplyEnhancementCostBoost_IgnoresABoostResolvedForAnotherRune()
+        {
+            var boost = Resolve(TieredSheet());
+            Assert.NotNull(boost);
+            Assert.Equal(101, boost.RuneId);
+            var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
+
+            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 999, 1, boost, 150));
+            Assert.NotSame(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 101, 1, boost, 150));
+        }
+
+        [Fact]
+        public void TryEnhancement_IgnoresABoostResolvedForAnotherRune()
+        {
+            // Resolved for summonable 10001, then reused with non-summonable 10036's cost row.
+            var boost = RuneHelper.ResolveEnhancementCostBoost(
+                TieredSheet(),
+                10001,
+                150,
+                () => _tableSheets.RuneSummonSheet);
+            Assert.NotNull(boost);
+            var costRow = _tableSheets.RuneCostSheet[10036];
+
+            RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var expected);
+            RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var actual, boost, 150);
 
             Assert.Equal(expected.ToString(), actual.ToString());
         }

@@ -44,7 +44,9 @@ namespace Nekoyume.Helper
         /// <param name="boost">
         /// What <see cref="ResolveEnhancementCostBoost"/> returned for this rune, or <c>null</c>
         /// for none. Adjusts each try's crystal and rune stone cost; see
-        /// <see cref="ApplyEnhancementCostBoost"/>.
+        /// <see cref="ApplyEnhancementCostBoost"/>. Ignored, not rejected, when it was resolved
+        /// for a rune other than <paramref name="costRow"/>'s, so a preview holding on to a stale
+        /// boost shows the undiscounted cost the chain would charge.
         /// </param>
         /// <param name="blockIndex">
         /// The block being evaluated, against which <paramref name="boost"/> rows are matched.
@@ -74,7 +76,7 @@ namespace Nekoyume.Helper
                     return false;
                 }
 
-                cost = ApplyEnhancementCostBoost(cost, targetLevel, boost, blockIndex);
+                cost = ApplyEnhancementCostBoost(cost, costRow.RuneId, targetLevel, boost, blockIndex);
 
                 // Cost burns in every try
                 levelUpResult.NcgCost += cost.NcgQuantity;
@@ -142,7 +144,7 @@ namespace Nekoyume.Helper
                 {
                     if (recipeId == runeId)
                     {
-                        return new RuneEnhancementCostBoost(boostScheduleSheet);
+                        return new RuneEnhancementCostBoost(boostScheduleSheet, runeId);
                     }
                 }
             }
@@ -164,12 +166,16 @@ namespace Nekoyume.Helper
         /// <paramref name="targetLevel"/>.
         /// </summary>
         /// <param name="cost">The sheet's cost for <paramref name="targetLevel"/>.</param>
+        /// <param name="runeId">
+        /// The rune <paramref name="cost"/> belongs to. <paramref name="boost"/> applies only when
+        /// it was resolved for this rune.
+        /// </param>
         /// <param name="targetLevel">
         /// The level the try attempts to reach, matched against <c>target_id</c>.
         /// </param>
         /// <param name="boost">
         /// What <see cref="ResolveEnhancementCostBoost"/> returned for the rune, or <c>null</c>
-        /// for none.
+        /// for none. Ignored when resolved for a rune other than <paramref name="runeId"/>.
         /// </param>
         /// <param name="blockIndex">The block being evaluated.</param>
         /// <returns>
@@ -185,11 +191,12 @@ namespace Nekoyume.Helper
         /// </remarks>
         public static RuneCostSheet.RuneCostData ApplyEnhancementCostBoost(
             RuneCostSheet.RuneCostData cost,
+            int runeId,
             int targetLevel,
             RuneEnhancementCostBoost? boost,
             long blockIndex)
         {
-            if (boost is null)
+            if (boost is null || boost.RuneId != runeId)
             {
                 return cost;
             }
