@@ -99,6 +99,32 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// Crystal cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level, for
+            /// <b>summonable runes only</b>: a rune whose id is a recipe id of any
+            /// <c>RuneSummonSheet</c> row, whatever its ratio and whether or not that group is
+            /// currently sold. Other runes are never adjusted.
+            /// The summon pool is read from the chain when the try is evaluated, so a rune added to
+            /// or removed from <c>RuneSummonSheet</c> gains or loses the adjustment with it.
+            /// <para>
+            /// <c>target_id</c> is the rune level the try attempts to reach — the current level
+            /// plus one — so <c>1~50</c> adjusts the tries from level 0 up to level 50. It cannot
+            /// narrow the row to particular rune ids. The adjusted cost never exceeds the sheet's
+            /// cost and never drops below 1 while the sheet's cost is positive. NCG cost and
+            /// success rate are not adjustable.
+            /// </para>
+            /// </summary>
+            public const string SummonRuneEnhancementCrystalCost =
+                "SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST";
+
+            /// <summary>
+            /// Rune stone cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level,
+            /// for summonable runes only. Scope, <c>target_id</c> and bounds as in
+            /// <see cref="SummonRuneEnhancementCrystalCost"/>.
+            /// </summary>
+            public const string SummonRuneEnhancementRuneStoneCost =
+                "SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST";
+
+            /// <summary>
             /// <c>required_count</c> of a <c>SynthesizeSheet</c> grade — how many materials one
             /// synthesis consumes. <c>target_id</c> is the material grade id (<c>grade_id</c>,
             /// e.g. <c>1~4</c>), and a row applies to every <c>item_sub_type</c> of that grade
@@ -122,6 +148,8 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                SummonRuneEnhancementCrystalCost,
+                SummonRuneEnhancementRuneStoneCost,
                 SynthesizeRequiredCount,
             };
         }
