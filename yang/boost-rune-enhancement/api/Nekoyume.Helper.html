@@ -133,11 +133,13 @@ Classes
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html">RuneEnhancementCostBoost</a></dt>
-      <dd><p>A <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_BoostScheduleSheet">BoostScheduleSheet</a> already checked to apply to one rune's enhancement cost:
-an enhancement cost row is active and the rune is summonable. Only
-<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a> creates one, so a cost can never be
-adjusted by handing the raw patched sheet to <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> or
-<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">ApplyEnhancementCostBoost(RuneCostData, int, RuneEnhancementCostBoost?, long)</a> and skipping that check.</p>
+      <dd><p>A <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_BoostScheduleSheet">BoostScheduleSheet</a> already checked to apply to the enhancement cost of one
+rune, <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_RuneId">RuneId</a>: an enhancement cost row was active and the rune was summonable
+when it was resolved. Only <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a> creates
+one, and <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> and
+<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)</a> ignore it for any other rune, so a
+boost only ever discounts the rune it was resolved for — neither handing over the raw
+patched sheet nor reusing a boost after switching runes can skip the check.</p>
 </dd>
     </dl>
     <dl class="jumplist">

@@ -40445,21 +40445,34 @@ references:
   commentId: T:Nekoyume.Helper.RuneEnhancementCostBoost
   fullName: Nekoyume.Helper.RuneEnhancementCostBoost
   nameWithType: RuneEnhancementCostBoost
+- uid: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  name: RuneId
+  href: api/Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_RuneId
+  commentId: P:Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  fullName: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  nameWithType: RuneEnhancementCostBoost.RuneId
+- uid: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId*
+  name: RuneId
+  href: api/Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_RuneId_
+  commentId: Overload:Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  isSpec: "True"
+  fullName: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  nameWithType: RuneEnhancementCostBoost.RuneId
 - uid: Nekoyume.Helper.RuneHelper
   name: RuneHelper
   href: api/Nekoyume.Helper.RuneHelper.html
   commentId: T:Nekoyume.Helper.RuneHelper
   fullName: Nekoyume.Helper.RuneHelper
   nameWithType: RuneHelper
-- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
-  name: ApplyEnhancementCostBoost(RuneCostData, int, RuneEnhancementCostBoost?, long)
-  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_
-  commentId: M:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
-  name.vb: ApplyEnhancementCostBoost(RuneCostData, Integer, RuneEnhancementCostBoost, Long)
-  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData, int, Nekoyume.Helper.RuneEnhancementCostBoost?, long)
-  fullName.vb: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData, Integer, Nekoyume.Helper.RuneEnhancementCostBoost, Long)
-  nameWithType: RuneHelper.ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, int, RuneEnhancementCostBoost?, long)
-  nameWithType.vb: RuneHelper.ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, Integer, RuneEnhancementCostBoost, Long)
+- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
+  name: ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_
+  commentId: M:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
+  name.vb: ApplyEnhancementCostBoost(RuneCostData, Integer, Integer, RuneEnhancementCostBoost, Long)
+  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData, int, int, Nekoyume.Helper.RuneEnhancementCostBoost?, long)
+  fullName.vb: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData, Integer, Integer, Nekoyume.Helper.RuneEnhancementCostBoost, Long)
+  nameWithType: RuneHelper.ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, int, int, RuneEnhancementCostBoost?, long)
+  nameWithType.vb: RuneHelper.ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, Integer, Integer, RuneEnhancementCostBoost, Long)
 - uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost*
   name: ApplyEnhancementCostBoost
   href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_

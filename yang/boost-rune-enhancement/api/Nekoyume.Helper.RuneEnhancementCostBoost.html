@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class RuneEnhancementCostBoost | Lib9c ">
       
-      <meta name="description" content="A  already checked to apply to one rune&#39;s enhancement cost: an enhancement cost row is active and the rune is summonable. Only  creates one, so a cost can never be adjusted by handing the raw patched sheet to  or  and skipping that check.">
+      <meta name="description" content="A  already checked to apply to the enhancement cost of one rune, : an enhancement cost row was active and the rune was summonable when it was resolved. Only  creates one, and  and  ignore it for any other rune, so a boost only ever discounts the rune it was resolved for — neither handing over the raw patched sheet nor reusing a boost after switching runes can skip the check.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Helper_RuneEnhancementCostBoost" data-uid="Nekoyume.Helper.RuneEnhancementCostBoost" class="text-break">
-Class RuneEnhancementCostBoost  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-rune-enhancement/Lib9c/Helper/RuneEnhancementCostBoost.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class RuneEnhancementCostBoost  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-rune-enhancement/Lib9c/Helper/RuneEnhancementCostBoost.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,11 +97,13 @@ Class RuneEnhancementCostBoost  <a class="header-action link-secondary" title="V
   <dl><dt>Assembly</dt><dd>Lib9c.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>A <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_BoostScheduleSheet">BoostScheduleSheet</a> already checked to apply to one rune's enhancement cost:
-an enhancement cost row is active and the rune is summonable. Only
-<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a> creates one, so a cost can never be
-adjusted by handing the raw patched sheet to <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> or
-<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">ApplyEnhancementCostBoost(RuneCostData, int, RuneEnhancementCostBoost?, long)</a> and skipping that check.</p>
+  <div class="markdown summary"><p>A <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_BoostScheduleSheet">BoostScheduleSheet</a> already checked to apply to the enhancement cost of one
+rune, <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_RuneId">RuneId</a>: an enhancement cost row was active and the rune was summonable
+when it was resolved. Only <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a> creates
+one, and <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> and
+<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)</a> ignore it for any other rune, so a
+boost only ever discounts the rune it was resolved for — neither handing over the raw
+patched sheet nor reusing a boost after switching runes can skip the check.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -150,11 +152,47 @@ adjusted by handing the raw patched sheet to <a class="xref" href="Nekoyume.Help
 
 
 
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Nekoyume_Helper_RuneEnhancementCostBoost_RuneId_" data-uid="Nekoyume.Helper.RuneEnhancementCostBoost.RuneId*"></a>
+
+  <h3 id="Nekoyume_Helper_RuneEnhancementCostBoost_RuneId" data-uid="Nekoyume.Helper.RuneEnhancementCostBoost.RuneId">
+  RuneId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/yang/boost-rune-enhancement/Lib9c/Helper/RuneEnhancementCostBoost.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The rune this boost was resolved for, and the only one it adjusts.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RuneId { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/yang/boost-rune-enhancement/Lib9c/Helper/RuneEnhancementCostBoost.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/yang/boost-rune-enhancement/Lib9c/Helper/RuneEnhancementCostBoost.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 
