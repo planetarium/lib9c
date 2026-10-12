@@ -1,5 +1,6 @@
 namespace Lib9c.Tests.TableData
 {
+    using System.Linq;
     using Nekoyume.TableData;
     using Xunit;
 
@@ -24,6 +25,38 @@ namespace Lib9c.Tests.TableData
             var sheet = new BoostScheduleSheet();
             sheet.Set(csv);
             Assert.Empty(sheet);
+        }
+
+        [Fact]
+        public void EveryTargetIsDescribedOnce()
+        {
+            var targets = typeof(BoostScheduleSheet.Targets)
+                .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Where(f => f.IsLiteral && f.FieldType == typeof(string))
+                .Select(f => (string)f.GetRawConstantValue())
+                .OrderBy(t => t);
+
+            Assert.Equal(
+                targets,
+                BoostScheduleSheet.Targets.Infos.Select(i => i.Target).OrderBy(t => t));
+            Assert.Equal(
+                BoostScheduleSheet.Targets.Infos.Count,
+                BoostScheduleSheet.Targets.Infos.Select(i => i.Target).Distinct().Count());
+        }
+
+        [Fact]
+        public void EveryExampleIsAValidRowOfItsTarget()
+        {
+            foreach (var info in BoostScheduleSheet.Targets.Infos)
+            {
+                var row = info.Example.Replace("<start>", "100").Replace("<end>", "200");
+                BoostScheduleSheet.ValidateCsv(Header + row + "\n");
+                var sheet = Parse(row + "\n");
+                Assert.Equal(info.Target, Assert.Single(sheet.Values).Target);
+                Assert.All(
+                    new[] { info.Adjusts, info.TargetId, info.TargetIdSheet, info.UsualOp, info.ValueRule, info.Notes },
+                    text => Assert.False(string.IsNullOrWhiteSpace(text)));
+            }
         }
 
         [Fact]
