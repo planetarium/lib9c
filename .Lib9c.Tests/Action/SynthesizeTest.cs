@@ -482,6 +482,150 @@ public class SynthesizeTest
     }
 
     /// <summary>
+    /// A <see cref="BoostScheduleSheet.Targets.SynthesizeRequiredCount"/> row changes how many
+    /// materials one synthesis consumes, but only inside its block range. Grade 4 auras need 11;
+    /// the schedule makes it 6, so 12 materials synthesize twice in range and do not divide
+    /// outside it.
+    /// </summary>
+    /// <param name="offset">The executed block, relative to the schedule's first block.</param>
+    /// <param name="scheduled">Whether that block is inside the schedule.</param>
+    [Theory]
+    [InlineData(0, true)]
+    [InlineData(9, true)]
+    [InlineData(-1, false)]
+    [InlineData(10, false)]
+    public void Execute_AppliesScheduledRequiredCountBoost(long offset, bool scheduled)
+    {
+        const Grade grade = Grade.Unique;
+        const ItemSubType itemSubType = ItemSubType.Aura;
+        const int materialCount = 12;
+        Assert.Equal(11, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var start);
+        (state, var items) = UpdateItemsFromSubType(
+            grade,
+            GetSubTypeArray(itemSubType, materialCount),
+            state,
+            avatarAddress);
+        var csv = RequiredCountBoostCsv((int)grade, start);
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)), csv.Serialize());
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+        var ctx = new ActionContext
+        {
+            BlockIndex = start + offset,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        if (!scheduled)
+        {
+            Assert.Throws<NotEnoughMaterialException>(() => action.Execute(ctx));
+            return;
+        }
+
+        var nextState = action.Execute(ctx);
+
+        var boostScheduleSheet = new BoostScheduleSheet();
+        boostScheduleSheet.Set(csv);
+        var boost = boostScheduleSheet.FindActive(
+            BoostScheduleSheet.Targets.SynthesizeRequiredCount,
+            (int)grade,
+            ctx.BlockIndex);
+        Assert.NotNull(boost);
+        var expected = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData
+        {
+            Grade = grade,
+            ItemSubType = itemSubType,
+            MaterialCount = materialCount,
+            SynthesizeSheet = TableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
+            BlockIndex = ctx.BlockIndex,
+            RandomObject = new TestRandom(0),
+            RequiredCountBoost = boost,
+        });
+        Assert.Equal(2, expected.Count);
+
+        var actual = nextState.GetInventoryV2(avatarAddress).Items.Select(i => i.item).ToList();
+        Assert.Equal(
+            SynthesizeSimulator.GetItemGuids(expected.Select(r => r.ItemBase)).OrderBy(id => id),
+            SynthesizeSimulator.GetItemGuids(actual).OrderBy(id => id));
+    }
+
+    /// <summary>
+    /// A chain never patched with <see cref="BoostScheduleSheet"/>, one patched with an empty
+    /// sheet, and one whose rows miss this grade or this block all synthesize exactly as before
+    /// the sheet existed: same materials consumed, same draws, same items.
+    /// </summary>
+    [Fact]
+    public void Execute_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
+    {
+        const Grade grade = Grade.Unique;
+        const ItemSubType itemSubType = ItemSubType.Aura;
+        var target = BoostScheduleSheet.Targets.SynthesizeRequiredCount;
+        var materialCount = GetSucceededMaterialCount(itemSubType, grade) * 2;
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(
+            grade,
+            GetSubTypeArray(itemSubType, materialCount),
+            state,
+            avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
+
+        var sheetAddress = Addresses.TableSheet.Derive(nameof(BoostScheduleSheet));
+        var missingCsv =
+            "id,target,target_id,op,value,start_block,end_block\n" +
+            $"1,{target},5~9,MUL,0.5,{blockIndex},{blockIndex + 10}\n" +
+            $"2,{target},{(int)grade},MUL,0.5,{blockIndex + 1},{blockIndex + 10}\n";
+        IValue[] sheets =
+        {
+            Null.Value,
+            "id,target,target_id,op,value,start_block,end_block\n".Serialize(),
+            missingCsv.Serialize(),
+        };
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+        var inventories = sheets
+            .Select(sheet => action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = state.SetLegacyState(sheetAddress, sheet),
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                }))
+            .Select(nextState => nextState.GetInventoryV2(avatarAddress))
+            .ToList();
+
+        Assert.Equal(2, inventories[0].Items.Count);
+        Assert.All(inventories, inventory => Assert.Equal(inventories[0].Serialize(), inventory.Serialize()));
+    }
+
+    /// <summary>
     /// A result pool is what the weight sheet spells out. An item it does not list is not drawn,
     /// so adding one to an item sheet no longer puts it into circulation on its own.
     /// </summary>
@@ -805,4 +949,8 @@ public class SynthesizeTest
         var row = synthesizeSheet.Values.First(r => (Grade)r.GradeId == grade);
         return row.RequiredCountDict[itemSubType].RequiredCount;
     }
+
+    private static string RequiredCountBoostCsv(int grade, long start) =>
+        "id,target,target_id,op,value,start_block,end_block\n" +
+        $"1,{BoostScheduleSheet.Targets.SynthesizeRequiredCount},1~{grade},MUL,0.6,{start},{start + 10}\n";
 }
