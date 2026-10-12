@@ -155,9 +155,77 @@ no effect until a version that applies it is running.</p>
 
 
 
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFirstClearReward">
+  AdventureBossFirstClearReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Amount of each <code>AdventureBossFloorFirstRewardSheet</code> reward, granted by
+<code>ExploreAdventureBoss</code> when a floor is cleared for the first time in a season.
+<code>target_id</code> is the floor number, as for <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string AdventureBossFirstClearReward = &quot;ADVENTURE_BOSS_FIRST_CLEAR_REWARD&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFloorReward">
+  AdventureBossFloorReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Amount of the reward an adventure boss floor drops on every clear — the one entry
+drawn from <code>AdventureBossFloorSheet</code> rewards per floor, by both
+<code>ExploreAdventureBoss</code> and <code>SweepAdventureBoss</code>. <code>target_id</code> is the
+floor number (<code>AdventureBossFloorSheet</code><code>floor</code>, 1 for the first floor of
+every boss), not the floor row id.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string AdventureBossFloorReward = &quot;ADVENTURE_BOSS_FLOOR_REWARD&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Applied" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Applied">
   Applied
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L228"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every target above, for tooling that warns about rows no running code applies.</p>
@@ -281,9 +349,173 @@ group id.</p>
 
 
 
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_StageFavReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.StageFavReward">
+  StageFavReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Fungible asset rewards (e.g. crystal, rune stones) of an adventure stage clear
+(<code>HackAndSlash</code>, <code>HackAndSlashSweep</code>). <code>target_id</code> is the
+<code>StageSheet</code> stage id. Event dungeon stages are not covered.</p>
+<p>
+Applied per clear to the amount of each drawn ticker after it is drawn, so the
+random draws are the same as without the row. See
+<code>StageSimulator.ApplyFavRewardBoost</code>.
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string StageFavReward = &quot;STAGE_FAV_REWARD&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_StageItemReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.StageItemReward">
+  StageItemReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Material item rewards of an adventure stage clear (<code>HackAndSlash</code>,
+<code>HackAndSlashSweep</code>). <code>target_id</code> is the <code>StageSheet</code> stage id, so
+<code>1~300</code> covers stages 1 through 300. Event dungeon stages are not covered.</p>
+<p>
+Applied per clear to the count of each distinct item after the items are drawn, so
+the random draws are the same as without the row: <code>MUL 2</code> grants exactly
+twice each drawn item and <code>ADD 1</code> one more of each. See
+<code>StageSimulator.GetBoostedItemRewardCount</code>.
+</p><p>
+Boosted items are ordinary rewards everywhere else too: they count toward
+collect quest progress, and a circle stays tradable.
+</p><p>
+Rounding is down, per item id per clear, with one exception: a <code>MUL</code> above 1
+turns an item drawn once in a clear (how most stages drop) into at least 2, so
+<code>MUL 1.5</code> grants 2 of a single drop. A count of 2 or more keeps the plain floor
+(<code>MUL 1.2</code> on 2 stays 2, <code>MUL 1.5</code> on 2 becomes 3); this is not a general
+"at least one more". <code>ADD</code> and a <code>MUL</code> of 1 or below are unaffected.
+Beware that any <code>MUL</code> just above 1 (e.g. <code>MUL 1.01</code>) also turns a single
+drop into 2 — effectively a 100% boost for those items, however small the value.
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_StageFavReward">StageFavReward</a> amounts are large and always plainly floored.
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string StageItemReward = &quot;STAGE_ITEM_REWARD&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost">
+  SummonRuneEnhancementCrystalCost
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L198"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Crystal cost of one <code>RuneEnhancement</code> try, per <code>RuneCostSheet</code> level, for
+<b>summonable runes only</b>: a rune whose id is a recipe id of any
+<code>RuneSummonSheet</code> row, whatever its ratio and whether or not that group is
+currently sold. Other runes are never adjusted.
+The summon pool is read from the chain when the try is evaluated, so a rune added to
+or removed from <code>RuneSummonSheet</code> gains or loses the adjustment with it.</p>
+<p><code>target_id</code> is the rune level the try attempts to reach — the current level
+plus one — so <code>1~50</code> adjusts the tries from level 0 up to level 50. It cannot
+narrow the row to particular rune ids. The adjusted cost never exceeds the sheet's
+cost and never drops below 1 while the sheet's cost is positive. NCG cost and
+success rate are not adjustable.
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string SummonRuneEnhancementCrystalCost = &quot;SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementRuneStoneCost" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost">
+  SummonRuneEnhancementRuneStoneCost
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Rune stone cost of one <code>RuneEnhancement</code> try, per <code>RuneCostSheet</code> level,
+for summonable runes only. Scope, <code>target_id</code> and bounds as in
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost">SummonRuneEnhancementCrystalCost</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string SummonRuneEnhancementRuneStoneCost = &quot;SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SynthesizeRequiredCount" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SynthesizeRequiredCount">
   SynthesizeRequiredCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L223"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p><code>required_count</code> of a <code>SynthesizeSheet</code> grade — how many materials one
@@ -303,6 +535,111 @@ active.
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const string SynthesizeRequiredCount = &quot;SYNTHESIZE_REQUIRED_COUNT&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossBattleReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossBattleReward">
+  WorldBossBattleReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of the
+<code>WorldBossBattleRewardSheet</code> reward a <code>Raid</code> grants for its battle.
+<code>target_id</code> is the boss id (<code>WorldBossListSheet.boss_id</code>, e.g.
+<code>900001</code>), and the block is the one the raid is played in.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string WorldBossBattleReward = &quot;WORLD_BOSS_BATTLE_REWARD&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossKillReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossKillReward">
+  WorldBossKillReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of each
+<code>WorldBossKillRewardSheet</code> reward, granted either by the <code>Raid</code> that
+raises the boss level or by <code>ClaimWordBossKillReward</code>. <code>target_id</code> is the
+boss id (<code>WorldBossListSheet.boss_id</code>), and the block is the one the reward is
+granted in, not the one the boss was killed in: a kill left unclaimed until the
+event is boosted when it is claimed during the event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string WorldBossKillReward = &quot;WORLD_BOSS_KILL_REWARD&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossRankReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossRankReward">
+  WorldBossRankReward
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of each
+<code>WorldBossRankRewardSheet</code> reward <code>ClaimRaidReward</code> grants.
+<code>target_id</code> is the boss id (<code>WorldBossListSheet.boss_id</code>), and the block
+is the one the reward is claimed in, not the one the rank was reached in: a rank
+left unclaimed until the event is boosted when it is claimed during the event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string WorldBossRankReward = &quot;WORLD_BOSS_RANK_REWARD&quot;</code></pre>
   </div>
 
 
