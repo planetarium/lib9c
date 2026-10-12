@@ -54,9 +54,19 @@ namespace Lib9c.Tests.TableData
                 var sheet = Parse(row + "\n");
                 Assert.Equal(info.Target, Assert.Single(sheet.Values).Target);
                 Assert.All(
-                    new[] { info.Adjusts, info.TargetId, info.TargetIdSheet, info.UsualOp, info.ValueRule, info.Notes },
+                    new[] { info.Adjusts, info.TargetIdMeaning, info.TargetIdSheet, info.UsualOp, info.ValueRule, info.Notes },
                     text => Assert.False(string.IsNullOrWhiteSpace(text)));
             }
+        }
+
+        [Fact]
+        public void ExamplesTogetherFormAValidSheet()
+        {
+            // Pasting every example at once must not trip on duplicate ids.
+            var rows = string.Concat(BoostScheduleSheet.Targets.Infos.Select(i =>
+                i.Example.Replace("<start>", "100").Replace("<end>", "200") + "\n"));
+            BoostScheduleSheet.ValidateCsv(Header + rows);
+            Assert.NotEmpty(BoostScheduleSheet.Targets.RowRules);
         }
 
         [Fact]
