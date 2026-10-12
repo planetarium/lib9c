@@ -99,6 +99,22 @@ namespace Nekoyume.TableData
             public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
 
             /// <summary>
+            /// Amount of the reward an adventure boss floor drops on every clear — the one entry
+            /// drawn from <c>AdventureBossFloorSheet</c> rewards per floor, by both
+            /// <c>ExploreAdventureBoss</c> and <c>SweepAdventureBoss</c>. <c>target_id</c> is the
+            /// floor number (<c>AdventureBossFloorSheet</c> <c>floor</c>, 1 for the first floor of
+            /// every boss), not the floor row id.
+            /// </summary>
+            public const string AdventureBossFloorReward = "ADVENTURE_BOSS_FLOOR_REWARD";
+
+            /// <summary>
+            /// Amount of each <c>AdventureBossFloorFirstRewardSheet</c> reward, granted by
+            /// <c>ExploreAdventureBoss</c> when a floor is cleared for the first time in a season.
+            /// <c>target_id</c> is the floor number, as for <see cref="AdventureBossFloorReward"/>.
+            /// </summary>
+            public const string AdventureBossFirstClearReward = "ADVENTURE_BOSS_FIRST_CLEAR_REWARD";
+
+            /// <summary>
             /// Every amount — each drawn rune, crystal, circle — of the
             /// <c>WorldBossBattleRewardSheet</c> reward a <c>Raid</c> grants for its battle.
             /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>, e.g.
@@ -175,6 +191,8 @@ namespace Nekoyume.TableData
                 EquipmentSummonGuarantee,
                 RuneSummonGuarantee,
                 CostumeSummonGuarantee,
+                AdventureBossFloorReward,
+                AdventureBossFirstClearReward,
                 WorldBossBattleReward,
                 WorldBossKillReward,
                 WorldBossRankReward,
