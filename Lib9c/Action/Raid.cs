@@ -239,6 +239,16 @@ namespace Nekoyume.Action
                 var collectionSheet = sheets.GetSheet<CollectionSheet>();
                 collectionModifiers = collectionState.GetModifiers(collectionSheet);
             }
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var battleRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.WorldBossBattleReward,
+                row.BossId,
+                context.BlockIndex);
+            var killRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.WorldBossKillReward,
+                bossState.Id,
+                context.BlockIndex);
+
             // Simulate.
             var random = context.GetRandom();
             var simulator = new RaidSimulator(
@@ -253,7 +263,8 @@ namespace Nekoyume.Action
                 collectionModifiers,
                 sheets.GetSheet<BuffLimitSheet>(),
                 sheets.GetSheet<BuffLinkSheet>(),
-                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage
+                shatterStrikeMaxDamage: gameConfigState.ShatterStrikeMaxDamage,
+                battleRewardBoost: battleRewardBoost
             );
             simulator.Simulate();
             avatarState.inventory = simulator.Player.Inventory;
@@ -356,7 +367,8 @@ namespace Nekoyume.Action
                         random,
                         avatarState.inventory,
                         AvatarAddress,
-                        context.Signer
+                        context.Signer,
+                        killRewardBoost
                     );
                 }
                 else
