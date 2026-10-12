@@ -76,7 +76,12 @@ namespace Nekoyume.Helper
                     return false;
                 }
 
-                cost = ApplyEnhancementCostBoost(cost, costRow.RuneId, targetLevel, boost, blockIndex);
+                cost = ApplyEnhancementCostBoost(
+                    cost,
+                    runeId: costRow.RuneId,
+                    targetLevel: targetLevel,
+                    boost: boost,
+                    blockIndex: blockIndex);
 
                 // Cost burns in every try
                 levelUpResult.NcgCost += cost.NcgQuantity;
