@@ -225,7 +225,7 @@ every boss), not the floor row id.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Applied" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Applied">
   Applied
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L228"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L388"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every target above, for tooling that warns about rows no running code applies.</p>
@@ -306,6 +306,72 @@ group id.</p>
   <h4 class="section">Field Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Infos" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Infos">
+  Infos
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L231"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>How to write a row for each target above, for tooling that helps people fill the
+sheet (the backoffice serves this as is). It is reference text only: no action reads
+it, so changing it never changes what a row does. Rules shared by every row are in
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_RowRules">RowRules</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly IReadOnlyList&lt;BoostScheduleSheet.TargetInfo&gt; Infos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html">TargetInfo</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_RowRules" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules">
+  RowRules
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/feature/boost-schedule/Lib9c/TableData/BoostScheduleSheet.cs/#L373"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Rules every row follows whatever its target, for the same tooling as
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_Infos">Infos</a>. Reference text only.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly IReadOnlyList&lt;string&gt; RowRules</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1">IReadOnlyList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
     <dd></dd>
   </dl>
 

@@ -84393,6 +84393,135 @@ references:
   commentId: F:Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
   fullName: Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
   nameWithType: BoostScheduleSheet.TargetIdRangeSeparator
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo
+  name: BoostScheduleSheet.TargetInfo
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html
+  commentId: T:Nekoyume.TableData.BoostScheduleSheet.TargetInfo
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo
+  nameWithType: BoostScheduleSheet.TargetInfo
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)
+  name: TargetInfo(string, string, string, string, string, string, string, string)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo__ctor_System_String_System_String_System_String_System_String_System_String_System_String_System_String_System_String_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)
+  name.vb: New(String, String, String, String, String, String, String, String)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetInfo(string, string, string, string, string, string, string, string)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.New(String, String, String, String, String, String, String, String)
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetInfo(string, string, string, string, string, string, string, string)
+  nameWithType.vb: BoostScheduleSheet.TargetInfo.New(String, String, String, String, String, String, String, String)
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor*
+  name: TargetInfo
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo__ctor_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetInfo
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.New
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetInfo
+  nameWithType.vb: BoostScheduleSheet.TargetInfo.New
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  name: Adjusts
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Adjusts
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  nameWithType: BoostScheduleSheet.TargetInfo.Adjusts
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts*
+  name: Adjusts
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Adjusts_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  nameWithType: BoostScheduleSheet.TargetInfo.Adjusts
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  name: Example
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Example
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  nameWithType: BoostScheduleSheet.TargetInfo.Example
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example*
+  name: Example
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Example_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  nameWithType: BoostScheduleSheet.TargetInfo.Example
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  name: Notes
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Notes
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  nameWithType: BoostScheduleSheet.TargetInfo.Notes
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes*
+  name: Notes
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Notes_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  nameWithType: BoostScheduleSheet.TargetInfo.Notes
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  name: Target
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Target
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  nameWithType: BoostScheduleSheet.TargetInfo.Target
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target*
+  name: Target
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Target_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  nameWithType: BoostScheduleSheet.TargetInfo.Target
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  name: TargetIdMeaning
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdMeaning
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdMeaning
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning*
+  name: TargetIdMeaning
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdMeaning_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdMeaning
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  name: TargetIdSheet
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdSheet
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdSheet
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet*
+  name: TargetIdSheet
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdSheet_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdSheet
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  name: UsualOp
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_UsualOp
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  nameWithType: BoostScheduleSheet.TargetInfo.UsualOp
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp*
+  name: UsualOp
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_UsualOp_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  nameWithType: BoostScheduleSheet.TargetInfo.UsualOp
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  name: ValueRule
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_ValueRule
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  nameWithType: BoostScheduleSheet.TargetInfo.ValueRule
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule*
+  name: ValueRule
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_ValueRule_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  nameWithType: BoostScheduleSheet.TargetInfo.ValueRule
 - uid: Nekoyume.TableData.BoostScheduleSheet.Targets
   name: BoostScheduleSheet.Targets
   href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html
@@ -84429,6 +84558,18 @@ references:
   commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee
   fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee
   nameWithType: BoostScheduleSheet.Targets.EquipmentSummonGuarantee
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.Infos
+  name: Infos
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_Infos
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.Infos
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.Infos
+  nameWithType: BoostScheduleSheet.Targets.Infos
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules
+  name: RowRules
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_RowRules
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules
+  nameWithType: BoostScheduleSheet.Targets.RowRules
 - uid: Nekoyume.TableData.BoostScheduleSheet.Targets.RuneSummonGuarantee
   name: RuneSummonGuarantee
   href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_RuneSummonGuarantee
