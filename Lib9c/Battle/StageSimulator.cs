@@ -220,7 +220,7 @@ namespace Nekoyume.Battle
         /// <returns>
         /// <paramref name="rewards"/> itself when <paramref name="favRewardBoost"/> is
         /// <c>null</c>; otherwise a new list with each positive amount replaced by
-        /// <see cref="BoostScheduleSheet.Row.Apply"/> of it, in the same order. A ticker whose
+        /// <see cref="BoostScheduleSheet.Row.Apply(int)"/> of it, in the same order. A ticker whose
         /// adjusted amount is 0 is left out so that nothing mints a zero amount.
         /// </returns>
         /// <remarks>
@@ -358,7 +358,7 @@ namespace Nekoyume.Battle
         /// <param name="itemRewardBoost">The row to apply.</param>
         /// <param name="count">How many times the item was drawn in the clear.</param>
         /// <returns>
-        /// <see cref="BoostScheduleSheet.Row.Apply"/>(<paramref name="count"/>), except that a
+        /// <see cref="BoostScheduleSheet.Row.Apply(int)"/>(<paramref name="count"/>), except that a
         /// <see cref="BoostScheduleSheet.Operation.Mul"/> above 1 turns an item drawn once into
         /// at least 2, so that a fractional multiplier still rewards the single drops most stages
         /// make. A count of 2 or more keeps the plain floor (<c>MUL 1.2</c> on 2 stays 2). Capped
