@@ -223,24 +223,222 @@ namespace Nekoyume.TableData
             public const string SynthesizeRequiredCount = "SYNTHESIZE_REQUIRED_COUNT";
 
             /// <summary>
+            /// How to write a row for each target above, for tooling that helps people fill the
+            /// sheet (the backoffice serves this as is). It is reference text only: no action reads
+            /// it, so changing it never changes what a row does. Rules shared by every row are in
+            /// <see cref="RowRules"/>.
+            /// </summary>
+            public static readonly IReadOnlyList<TargetInfo> Infos = new[]
+            {
+                new TargetInfo(
+                    EquipmentSummonGuarantee,
+                    "Guaranteed count of minimum-grade results in one equipment (aura) summon.",
+                    "EquipmentSummonSheet group id",
+                    "EquipmentSummonSheet",
+                    "ADD",
+                    "Applied to the group's configured guarantee count, floored. One row adjusts both the 11-summon " +
+                    "(GuaranteeCount11) and the 110-summon (GuaranteeCount110) guarantee: ADD 1 turns 1 into 2 for 11 " +
+                    "but e.g. 10 into 11 for 110. Capped at the summon count minus one unless the sheet already " +
+                    "configures more. MUL below 1 or a negative ADD lowers it, down to 0.",
+                    "Never creates a guarantee: a group configured with 0 stays 0, and single summons have none. " +
+                    "An old client replays the summon without the row and shows results that differ from what is granted: release a client that passes the row first.",
+                    "1,EQUIPMENT_SUMMON_GUARANTEE,*,ADD,1,<start>,<end>"),
+                new TargetInfo(
+                    RuneSummonGuarantee,
+                    "Guaranteed count of minimum-grade results in one rune summon.",
+                    "RuneSummonSheet group id",
+                    "RuneSummonSheet",
+                    "ADD",
+                    "As EQUIPMENT_SUMMON_GUARANTEE (11 and 110 summons alike).",
+                    "As EQUIPMENT_SUMMON_GUARANTEE. An old client replays the summon without the row and shows results that differ from what is granted: release a client that passes the row first.",
+                    "2,RUNE_SUMMON_GUARANTEE,*,ADD,1,<start>,<end>"),
+                new TargetInfo(
+                    CostumeSummonGuarantee,
+                    "Guaranteed count of minimum-grade results in one costume summon.",
+                    "CostumeSummonSheet group id",
+                    "CostumeSummonSheet",
+                    "ADD",
+                    "As EQUIPMENT_SUMMON_GUARANTEE (11 and 110 summons alike).",
+                    "As EQUIPMENT_SUMMON_GUARANTEE. An old client replays the summon without the row and shows results that differ from what is granted: release a client that passes the row first.",
+                    "3,COSTUME_SUMMON_GUARANTEE,*,ADD,1,<start>,<end>"),
+                new TargetInfo(
+                    SynthesizeRequiredCount,
+                    "Materials one synthesis consumes (SynthesizeSheet required_count).",
+                    "material grade id (SynthesizeSheet grade_id, e.g. 1~4); applies to every item_sub_type of the grade",
+                    "SynthesizeSheet",
+                    "MUL below 1 (cheaper) or a negative ADD",
+                    "Floored, never below 1. A typo such as MUL 0.06 brings every grade down to 1.",
+                    "Patch only after a client that picks materials by the adjusted count is released: an old " +
+                    "client fails every synthesis while the row is active (the action requires a multiple of the " +
+                    "adjusted count).",
+                    "4,SYNTHESIZE_REQUIRED_COUNT,1~4,MUL,0.5,<start>,<end>"),
+                new TargetInfo(
+                    SummonRuneEnhancementCrystalCost,
+                    "Crystal cost of one rune enhancement try, for summonable runes only (rune ids in any RuneSummonSheet recipe).",
+                    "the rune level the try reaches (current level + 1): 1~50 covers the tries 0→1 through 49→50",
+                    "RuneCostSheet",
+                    "MUL below 1",
+                    "Floored, kept between 1 and the sheet's cost: a row can only discount.",
+                    "Cannot narrow to particular rune ids. NCG cost and success rate are not adjustable. " +
+                    "An old client shows and checks the sheet's cost (charged correctly, displayed wrong): release a client first.",
+                    "5,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.5,<start>,<end>"),
+                new TargetInfo(
+                    SummonRuneEnhancementRuneStoneCost,
+                    "Rune stone cost of one rune enhancement try, for summonable runes only.",
+                    "the rune level the try reaches, as SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST",
+                    "RuneCostSheet",
+                    "MUL below 1",
+                    "As SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST.",
+                    "As SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST.",
+                    "6,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.5,<start>,<end>"),
+                new TargetInfo(
+                    WorldBossBattleReward,
+                    "Every amount (runes, crystal, circles) of the reward a raid battle grants.",
+                    "boss id (WorldBossListSheet boss_id, e.g. 900001), not the raid id (the row id); a boss id " +
+                    "is reused across seasons, so the row covers every season of that boss within the block range",
+                    "WorldBossListSheet",
+                    "MUL above 1",
+                    "Each drawn amount is scaled after the draw and floored, so the draws are unchanged.",
+                    "The block is the one the raid is played in. An old client shows the unboosted battle reward " +
+                    "(granted correctly).",
+                    "7,WORLD_BOSS_BATTLE_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    WorldBossKillReward,
+                    "Every amount of each boss kill (level up) reward.",
+                    "boss id (WorldBossListSheet boss_id), not the raid id; as WORLD_BOSS_BATTLE_REWARD",
+                    "WorldBossListSheet",
+                    "MUL above 1",
+                    "As WORLD_BOSS_BATTLE_REWARD.",
+                    "Judged at the block the reward is granted or claimed, not when the boss was killed: kills " +
+                    "left unclaimed before the event are boosted if claimed during it. An old client shows the " +
+                    "unboosted reward (granted correctly).",
+                    "8,WORLD_BOSS_KILL_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    WorldBossRankReward,
+                    "Every amount of each rank reward ClaimRaidReward grants.",
+                    "boss id (WorldBossListSheet boss_id), not the raid id; as WORLD_BOSS_BATTLE_REWARD",
+                    "WorldBossListSheet",
+                    "MUL above 1",
+                    "As WORLD_BOSS_BATTLE_REWARD.",
+                    "Judged at the claim block, not when the rank was reached: unclaimed ranks are boosted if " +
+                    "claimed during the event. The contribution reward is not adjustable. An old client shows the " +
+                    "unboosted reward (granted correctly).",
+                    "9,WORLD_BOSS_RANK_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    AdventureBossFloorReward,
+                    "Amount of the reward an adventure boss floor drops on every clear (explore and sweep).",
+                    "floor number (AdventureBossFloorSheet floor, 1 is every boss's first floor), not the row id",
+                    "AdventureBossFloorSheet",
+                    "MUL above 1",
+                    "Scaled after the draw, floored, never below 1.",
+                    "NCG and season-end claim rewards are not adjustable. An old client shows the unboosted " +
+                    "reward (granted correctly).",
+                    "10,ADVENTURE_BOSS_FLOOR_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    AdventureBossFirstClearReward,
+                    "Amount of each first-clear reward of an adventure boss floor (once per season).",
+                    "floor number, as ADVENTURE_BOSS_FLOOR_REWARD",
+                    "AdventureBossFloorFirstRewardSheet",
+                    "MUL above 1",
+                    "Scaled, floored, never below 1.",
+                    "As ADVENTURE_BOSS_FLOOR_REWARD.",
+                    "11,ADVENTURE_BOSS_FIRST_CLEAR_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    StageItemReward,
+                    "Material item rewards of an adventure stage clear (HackAndSlash, sweep).",
+                    "StageSheet stage id (1~300 covers stages 1 to 300)",
+                    "StageSheet",
+                    "MUL 2 or more, or ADD",
+                    "Per item id per clear, after the draw, floored. The result is capped at 10 times the drawn " +
+                    "count (ADD too); the value itself is not rejected, so MUL 20 grants 10×. Any MUL above 1 " +
+                    "turns an item drawn once into 2, so MUL 1.01 doubles single drops.",
+                    "Event dungeon stages are not covered. Boosted items count toward quests like any reward. " +
+                    "An old client shows the unboosted rewards (granted correctly).",
+                    "12,STAGE_ITEM_REWARD,1~300,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    StageFavReward,
+                    "Fungible asset rewards (crystal, rune stones) of an adventure stage clear.",
+                    "StageSheet stage id",
+                    "StageSheet",
+                    "MUL above 1",
+                    "Each drawn ticker amount is scaled after the draw and floored.",
+                    "Event dungeon stages are not covered. An old client shows the unboosted rewards (granted correctly).",
+                    "13,STAGE_FAV_REWARD,1~300,MUL,1.5,<start>,<end>"),
+            };
+
+            /// <summary>
+            /// Rules every row follows whatever its target, for the same tooling as
+            /// <see cref="Infos"/>. Reference text only.
+            /// </summary>
+            public static readonly IReadOnlyList<string> RowRules = new[]
+            {
+                "Columns: id,target,target_id,op,value,start_block,end_block, optionally followed by \"_\" memo columns (never first).",
+                "id: a unique positive integer. When rows for the same target and target_id overlap, the lowest id wins; rows never add up.",
+                "target_id: \"*\" for every id, a single id such as 3, or an inclusive range such as 1~50.",
+                "op MUL: value greater than 0 (decimals allowed). op ADD: an integer, negative allowed. |value| at most 2147483647.",
+                "Period: start_block inclusive, end_block exclusive, start_block < end_block. Blocks differ per planet.",
+                "A patch replaces the whole sheet: keep every row that should stay.",
+                "Results are floored and never negative; each target adds its own bounds (see its value rule).",
+                "Patch a row only after every node runs a lib9c that applies its target, or nodes disagree while it is active.",
+            };
+
+            /// <summary>
             /// Every target above, for tooling that warns about rows no running code applies.
             /// </summary>
-            public static readonly IReadOnlyCollection<string> Applied = new[]
+            public static readonly IReadOnlyCollection<string> Applied =
+                Infos.Select(info => info.Target).ToArray();
+        }
+
+        /// <summary>
+        /// How to write a row for one target: reference text for people and tools, never read by
+        /// an action. See <see cref="Targets.Infos"/>.
+        /// </summary>
+        public sealed class TargetInfo
+        {
+            /// <summary>Creates a description.</summary>
+            public TargetInfo(
+                string target,
+                string adjusts,
+                string targetIdMeaning,
+                string targetIdSheet,
+                string usualOp,
+                string valueRule,
+                string notes,
+                string example)
             {
-                EquipmentSummonGuarantee,
-                RuneSummonGuarantee,
-                CostumeSummonGuarantee,
-                StageItemReward,
-                StageFavReward,
-                AdventureBossFloorReward,
-                AdventureBossFirstClearReward,
-                WorldBossBattleReward,
-                WorldBossKillReward,
-                WorldBossRankReward,
-                SummonRuneEnhancementCrystalCost,
-                SummonRuneEnhancementRuneStoneCost,
-                SynthesizeRequiredCount,
-            };
+                Target = target;
+                Adjusts = adjusts;
+                TargetIdMeaning = targetIdMeaning;
+                TargetIdSheet = targetIdSheet;
+                UsualOp = usualOp;
+                ValueRule = valueRule;
+                Notes = notes;
+                Example = example;
+            }
+
+            /// <summary>The <c>target</c> cell.</summary>
+            public string Target { get; }
+
+            /// <summary>What a row changes.</summary>
+            public string Adjusts { get; }
+
+            /// <summary>What the <c>target_id</c> cell names (a description, not a value).</summary>
+            public string TargetIdMeaning { get; }
+
+            /// <summary>The sheet whose ids <c>target_id</c> takes.</summary>
+            public string TargetIdSheet { get; }
+
+            /// <summary>The <c>op</c> and value direction an event normally uses.</summary>
+            public string UsualOp { get; }
+
+            /// <summary>How the value is applied: rounding and bounds.</summary>
+            public string ValueRule { get; }
+
+            /// <summary>What the row does not cover, and what to release first.</summary>
+            public string Notes { get; }
+
+            /// <summary>An example row, with the block range left as placeholders.</summary>
+            public string Example { get; }
         }
 
         /// <summary>
