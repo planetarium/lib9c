@@ -115,6 +115,75 @@ namespace Nekoyume.TableData
             public const string AdventureBossFirstClearReward = "ADVENTURE_BOSS_FIRST_CLEAR_REWARD";
 
             /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of the
+            /// <c>WorldBossBattleRewardSheet</c> reward a <c>Raid</c> grants for its battle.
+            /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>, e.g.
+            /// <c>900001</c>), and the block is the one the raid is played in.
+            /// </summary>
+            public const string WorldBossBattleReward = "WORLD_BOSS_BATTLE_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of each
+            /// <c>WorldBossKillRewardSheet</c> reward, granted either by the <c>Raid</c> that
+            /// raises the boss level or by <c>ClaimWordBossKillReward</c>. <c>target_id</c> is the
+            /// boss id (<c>WorldBossListSheet.boss_id</c>), and the block is the one the reward is
+            /// granted in, not the one the boss was killed in: a kill left unclaimed until the
+            /// event is boosted when it is claimed during the event.
+            /// </summary>
+            public const string WorldBossKillReward = "WORLD_BOSS_KILL_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of each
+            /// <c>WorldBossRankRewardSheet</c> reward <c>ClaimRaidReward</c> grants.
+            /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>), and the block
+            /// is the one the reward is claimed in, not the one the rank was reached in: a rank
+            /// left unclaimed until the event is boosted when it is claimed during the event.
+            /// </summary>
+            public const string WorldBossRankReward = "WORLD_BOSS_RANK_REWARD";
+
+            /// <summary>
+            /// Crystal cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level, for
+            /// <b>summonable runes only</b>: a rune whose id is a recipe id of any
+            /// <c>RuneSummonSheet</c> row, whatever its ratio and whether or not that group is
+            /// currently sold. Other runes are never adjusted.
+            /// The summon pool is read from the chain when the try is evaluated, so a rune added to
+            /// or removed from <c>RuneSummonSheet</c> gains or loses the adjustment with it.
+            /// <para>
+            /// <c>target_id</c> is the rune level the try attempts to reach — the current level
+            /// plus one — so <c>1~50</c> adjusts the tries from level 0 up to level 50. It cannot
+            /// narrow the row to particular rune ids. The adjusted cost never exceeds the sheet's
+            /// cost and never drops below 1 while the sheet's cost is positive. NCG cost and
+            /// success rate are not adjustable.
+            /// </para>
+            /// </summary>
+            public const string SummonRuneEnhancementCrystalCost =
+                "SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST";
+
+            /// <summary>
+            /// Rune stone cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level,
+            /// for summonable runes only. Scope, <c>target_id</c> and bounds as in
+            /// <see cref="SummonRuneEnhancementCrystalCost"/>.
+            /// </summary>
+            public const string SummonRuneEnhancementRuneStoneCost =
+                "SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST";
+
+            /// <summary>
+            /// <c>required_count</c> of a <c>SynthesizeSheet</c> grade — how many materials one
+            /// synthesis consumes. <c>target_id</c> is the material grade id (<c>grade_id</c>,
+            /// e.g. <c>1~4</c>), and a row applies to every <c>item_sub_type</c> of that grade
+            /// alike. The adjusted count never drops below 1 — which keeps synthesis from being
+            /// free, not from being cheap: a typo such as <c>MUL 0.06</c> brings every grade down
+            /// to 1, so keep values within the range planning intended.
+            /// <para>
+            /// Patch a row only after a client that picks materials by the adjusted count is
+            /// released: the action still requires the material count to be a multiple of it, so
+            /// a client choosing by the configured count fails every synthesis while the row is
+            /// active.
+            /// </para>
+            /// </summary>
+            public const string SynthesizeRequiredCount = "SYNTHESIZE_REQUIRED_COUNT";
+
+            /// <summary>
             /// Every target above, for tooling that warns about rows no running code applies.
             /// </summary>
             public static readonly IReadOnlyCollection<string> Applied = new[]
@@ -124,6 +193,12 @@ namespace Nekoyume.TableData
                 CostumeSummonGuarantee,
                 AdventureBossFloorReward,
                 AdventureBossFirstClearReward,
+                WorldBossBattleReward,
+                WorldBossKillReward,
+                WorldBossRankReward,
+                SummonRuneEnhancementCrystalCost,
+                SummonRuneEnhancementRuneStoneCost,
+                SynthesizeRequiredCount,
             };
         }
 

@@ -30,6 +30,11 @@ namespace Nekoyume.Battle
         private MaterialItemSheet _materialItemSheet;
         private WorldBossCharacterSheet.Row _currentBossRow;
 
+        // The BoostScheduleSheet row of BoostScheduleSheet.Targets.WorldBossBattleReward active at
+        // the raid's block, or null. A client replaying a raid must pass what the action resolved
+        // to show the same reward.
+        private readonly BoostScheduleSheet.Row _battleRewardBoost;
+
         public RaidSimulator(int bossId,
             IRandom random,
             AvatarState avatarState,
@@ -41,9 +46,11 @@ namespace Nekoyume.Battle
             List<StatModifier> collectionModifiers,
             BuffLimitSheet buffLimitSheet,
             BuffLinkSheet buffLinkSheet,
-            long shatterStrikeMaxDamage = 400_000) : base(random, avatarState, foods, simulatorSheets,
+            long shatterStrikeMaxDamage = 400_000,
+            BoostScheduleSheet.Row battleRewardBoost = null) : base(random, avatarState, foods, simulatorSheets,
             shatterStrikeMaxDamage: shatterStrikeMaxDamage)
         {
+            _battleRewardBoost = battleRewardBoost;
             BuffLimitSheet = buffLimitSheet;
             BuffLinkSheet = buffLinkSheet;
             var runeOptionSheet = simulatorSheets.RuneOptionSheet;
@@ -220,7 +227,8 @@ namespace Nekoyume.Battle
                 _worldBossBattleRewardSheet,
                 _runeSheet,
                 _materialItemSheet,
-                Random);
+                Random,
+                _battleRewardBoost);
             AssetReward = rewards.assets;
 
             var materialReward = new List<ItemBase>();

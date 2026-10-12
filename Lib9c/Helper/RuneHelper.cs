@@ -10,6 +10,7 @@ using Nekoyume.Battle;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
+using Nekoyume.TableData.Summon;
 
 namespace Nekoyume.Helper
 {
@@ -30,23 +31,57 @@ namespace Nekoyume.Helper
             return Currencies.GetRune(runeRow.Ticker) * quantity;
         }
 
+        /// <summary>
+        /// Simulates <paramref name="tryCount"/> enhancement tries from
+        /// <paramref name="startRuneLevel"/>, summing the cost of every try and drawing one random
+        /// number per try for its success.
+        /// </summary>
+        /// <param name="startRuneLevel">The rune level before the first try.</param>
+        /// <param name="costRow">The rune's cost row.</param>
+        /// <param name="random">The random source; one draw per try.</param>
+        /// <param name="tryCount">The number of tries.</param>
+        /// <param name="levelUpResult">The level-ups and the summed cost.</param>
+        /// <param name="boost">
+        /// What <see cref="ResolveEnhancementCostBoost"/> returned for this rune, or <c>null</c>
+        /// for none. Adjusts each try's crystal and rune stone cost; see
+        /// <see cref="ApplyEnhancementCostBoost"/>. Ignored, not rejected, when it was resolved
+        /// for a rune other than <paramref name="costRow"/>'s, so a preview holding on to a stale
+        /// boost shows the undiscounted cost the chain would charge.
+        /// </param>
+        /// <param name="blockIndex">
+        /// The block being evaluated, against which <paramref name="boost"/> rows are matched.
+        /// Ignored when <paramref name="boost"/> is <c>null</c>.
+        /// </param>
+        /// <returns>
+        /// <c>false</c> when a try reaches a level <paramref name="costRow"/> has no cost for.
+        /// </returns>
         public static bool TryEnhancement(
             int startRuneLevel,
             RuneCostSheet.Row costRow,
             IRandom random,
             int tryCount,
-            out RuneEnhancement.LevelUpResult levelUpResult)
+            out RuneEnhancement.LevelUpResult levelUpResult,
+            RuneEnhancementCostBoost? boost = null,
+            long blockIndex = 0)
         {
             levelUpResult = new RuneEnhancement.LevelUpResult();
 
             for (var i = 0; i < tryCount; i++)
             {
+                var targetLevel = startRuneLevel + levelUpResult.LevelUpCount + 1;
+
                 // No cost Found : throw exception at caller
-                if (!costRow.TryGetCost(startRuneLevel + levelUpResult.LevelUpCount + 1,
-                        out var cost))
+                if (!costRow.TryGetCost(targetLevel, out var cost))
                 {
                     return false;
                 }
+
+                cost = ApplyEnhancementCostBoost(
+                    cost,
+                    runeId: costRow.RuneId,
+                    targetLevel: targetLevel,
+                    boost: boost,
+                    blockIndex: blockIndex);
 
                 // Cost burns in every try
                 levelUpResult.NcgCost += cost.NcgQuantity;
@@ -60,6 +95,172 @@ namespace Nekoyume.Helper
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Decides whether a rune's enhancement cost may be adjusted at all, and returns what to
+        /// pass to <see cref="TryEnhancement"/> and <see cref="ApplyEnhancementCostBoost"/>.
+        /// </summary>
+        /// <param name="boostScheduleSheet">
+        /// The patched <see cref="BoostScheduleSheet"/>, or <c>null</c> when the chain has none.
+        /// </param>
+        /// <param name="runeId">The rune being enhanced.</param>
+        /// <param name="blockIndex">The block being evaluated.</param>
+        /// <param name="getRuneSummonSheet">
+        /// Loads the <see cref="RuneSummonSheet"/>, returning <c>null</c> when it is absent or
+        /// unreadable. Called only when an enhancement cost row is active at
+        /// <paramref name="blockIndex"/>, so that evaluation without one reads no extra state.
+        /// </param>
+        /// <returns>
+        /// A <see cref="RuneEnhancementCostBoost"/> over <paramref name="boostScheduleSheet"/>
+        /// when a
+        /// <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost"/> or
+        /// <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost"/> row is
+        /// active at <paramref name="blockIndex"/> and <paramref name="runeId"/> is a recipe id of
+        /// any <see cref="RuneSummonSheet"/> group; otherwise <c>null</c>, meaning no adjustment.
+        /// </returns>
+        /// <remarks>
+        /// The summon pool is derived from the sheet rather than listed, so the adjustment
+        /// follows later changes to it. A recipe counts whatever its ratio and whether or not its
+        /// group is currently sold. A missing
+        /// <see cref="RuneSummonSheet"/> means no rune is summonable, never an error.
+        /// </remarks>
+        public static RuneEnhancementCostBoost? ResolveEnhancementCostBoost(
+            BoostScheduleSheet? boostScheduleSheet,
+            int runeId,
+            long blockIndex,
+            Func<RuneSummonSheet?> getRuneSummonSheet)
+        {
+            if (boostScheduleSheet?.OrderedList is null ||
+                !boostScheduleSheet.OrderedList.Any(row => IsActiveEnhancementCostRow(row, blockIndex)))
+            {
+                return null;
+            }
+
+            var runeSummonSheet = getRuneSummonSheet();
+            if (runeSummonSheet?.OrderedList is null)
+            {
+                return null;
+            }
+
+            foreach (var summonRow in runeSummonSheet.OrderedList)
+            {
+                foreach (var (recipeId, _) in summonRow.Recipes)
+                {
+                    if (recipeId == runeId)
+                    {
+                        return new RuneEnhancementCostBoost(boostScheduleSheet, runeId);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsActiveEnhancementCostRow(BoostScheduleSheet.Row row, long blockIndex) =>
+            row.IsValid &&
+            (row.Target == BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost ||
+             row.Target == BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost) &&
+            row.StartBlockIndex <= blockIndex &&
+            blockIndex < row.EndBlockIndex;
+
+        /// <summary>
+        /// Applies the <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost"/> and
+        /// <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost"/> rows active at
+        /// <paramref name="blockIndex"/> to the cost of one try that reaches
+        /// <paramref name="targetLevel"/>.
+        /// </summary>
+        /// <param name="cost">The sheet's cost for <paramref name="targetLevel"/>.</param>
+        /// <param name="runeId">
+        /// The rune <paramref name="cost"/> belongs to. <paramref name="boost"/> applies only when
+        /// it was resolved for this rune.
+        /// </param>
+        /// <param name="targetLevel">
+        /// The level the try attempts to reach, matched against <c>target_id</c>.
+        /// </param>
+        /// <param name="boost">
+        /// What <see cref="ResolveEnhancementCostBoost"/> returned for the rune, or <c>null</c>
+        /// for none. Ignored when resolved for a rune other than <paramref name="runeId"/>.
+        /// </param>
+        /// <param name="blockIndex">The block being evaluated.</param>
+        /// <returns>
+        /// <paramref name="cost"/> itself when no row applies; otherwise a copy whose crystal and
+        /// rune stone quantities are adjusted by
+        /// <see cref="ApplyEnhancementCostBoostQuantity"/>. NCG quantity and
+        /// success rate are always copied unchanged.
+        /// </returns>
+        /// <remarks>
+        /// Callers showing a cost — or a maximum try count — should pass every per-level cost
+        /// through this, with the boost from <see cref="ResolveEnhancementCostBoost"/>, so that
+        /// they agree with <see cref="RuneEnhancement"/>.
+        /// </remarks>
+        public static RuneCostSheet.RuneCostData ApplyEnhancementCostBoost(
+            RuneCostSheet.RuneCostData cost,
+            int runeId,
+            int targetLevel,
+            RuneEnhancementCostBoost? boost,
+            long blockIndex)
+        {
+            if (boost is null || boost.RuneId != runeId)
+            {
+                return cost;
+            }
+
+            var boostScheduleSheet = boost.BoostScheduleSheet;
+
+            var crystalBoost = boostScheduleSheet.FindActive(
+                BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost,
+                targetLevel,
+                blockIndex);
+            var runeStoneBoost = boostScheduleSheet.FindActive(
+                BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost,
+                targetLevel,
+                blockIndex);
+            if (crystalBoost is null && runeStoneBoost is null)
+            {
+                return cost;
+            }
+
+            return new RuneCostSheet.RuneCostData(
+                cost.LevelStart,
+                cost.LevelEnd,
+                ApplyEnhancementCostBoostQuantity(runeStoneBoost, cost.RuneStoneQuantity),
+                ApplyEnhancementCostBoostQuantity(crystalBoost, cost.CrystalQuantity),
+                cost.NcgQuantity,
+                cost.LevelUpSuccessRate);
+        }
+
+        /// <summary>
+        /// Applies one <see cref="BoostScheduleSheet"/> row to one enhancement cost quantity.
+        /// </summary>
+        /// <param name="boost">The row to apply, or <c>null</c> for none.</param>
+        /// <param name="baseCost">The sheet's quantity.</param>
+        /// <returns>
+        /// The adjusted quantity, kept within <c>[1, baseCost]</c> when <paramref name="baseCost"/>
+        /// is positive. A non-positive <paramref name="baseCost"/> is returned unchanged.
+        /// </returns>
+        /// <remarks>
+        /// <para>
+        /// Discount only: a row can never raise a cost. Raising one is not an event anyone has
+        /// asked for, and it would let a mistyped row push the per-try sum in
+        /// <see cref="TryEnhancement"/> past <see cref="int.MaxValue"/>, where it wraps negative
+        /// and the cost is skipped instead of charged.
+        /// </para>
+        /// <para>
+        /// At least 1: rounding down a small cost (4 stones × 0.2 = 0.8) would otherwise make the
+        /// try free, turning a discount into a giveaway that the row never declared. A free
+        /// enhancement has to be configured in <see cref="RuneCostSheet"/> itself. A cost the
+        /// sheet already sets to 0 stays 0, so a boost never creates a cost either.
+        /// </para>
+        /// </remarks>
+        public static int ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row? boost, int baseCost)
+        {
+            if (boost is null || baseCost <= 0)
+            {
+                return baseCost;
+            }
+
+            return Math.Min(Math.Max(boost.Apply(baseCost), 1), baseCost);
         }
 
         public static FungibleAssetValue CalculateStakeReward(FungibleAssetValue stakeAmount,
