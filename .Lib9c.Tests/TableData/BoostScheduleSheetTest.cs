@@ -79,6 +79,18 @@ namespace Lib9c.Tests.TableData
             Assert.Equal(expected, sheet.FindActive(Target, targetId, 150) is not null);
         }
 
+        [Theory]
+        [InlineData("1~1", 1, true)] // a range of one id
+        [InlineData("1~1", 2, false)]
+        [InlineData(" 1 ~ 50 ", 50, true)] // blanks around the ends are allowed
+        public void TargetIdRangeAcceptsDegenerateAndSpacedForms(string targetId, int id, bool expected)
+        {
+            var sheet = Parse($"1,{Target},{targetId},MUL,0.6,100,200\n");
+
+            Assert.True(sheet[1].IsValid);
+            Assert.Equal(expected, sheet.FindActive(Target, id, 150) is not null);
+        }
+
         [Fact]
         public void TargetIdRangesSplitATargetIntoTiers()
         {
@@ -104,6 +116,10 @@ namespace Lib9c.Tests.TableData
         [InlineData("1,TARGET,~50,MUL,1.5,100,200")]
         [InlineData("1,TARGET,1~20~50,MUL,1.5,100,200")]
         [InlineData("1,TARGET,1-50,MUL,1.5,100,200")] // "-" is not the separator
+        [InlineData("1,TARGET,~,MUL,1.5,100,200")] // separator only
+        [InlineData("1,TARGET,*~5,MUL,1.5,100,200")] // "*" is not a range end
+        [InlineData("1,TARGET,1~99999999999,MUL,1.5,100,200")] // beyond int
+        [InlineData("1,TARGET,1～50,MUL,1.5,100,200")] // full-width tilde from an IME
         [InlineData("1,TARGET,10001,POW,1.5,100,200")] // unknown op
         [InlineData("1,TARGET,10001,mul,1.5,100,200")] // op is case sensitive
         [InlineData("1,TARGET,10001,MUL,1.5x,100,200")] // value not a number

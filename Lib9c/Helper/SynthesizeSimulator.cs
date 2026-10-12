@@ -97,6 +97,13 @@ namespace Nekoyume.Helper
             /// Caution: Must have the same seed as when the action is executed
             /// </summary>
             public IRandom RandomObject;
+            /// <summary>
+            /// The <see cref="BoostScheduleSheet"/> row adjusting the required material count of
+            /// <see cref="Grade"/> at <see cref="BlockIndex"/>, or <c>null</c> for none.
+            /// See <see cref="GetRequiredCount"/>.
+            /// Caution: Must be the row the action resolved, or the material count may not divide.
+            /// </summary>
+            public BoostScheduleSheet.Row? RequiredCountBoost;
         }
 
         private struct EquipmentData
@@ -138,7 +145,9 @@ namespace Nekoyume.Helper
             var itemSubType = inputData.ItemSubType;
             var materialCount = inputData.MaterialCount;
 
-            var requiredCount = synthesizeRow.RequiredCountDict[itemSubType].RequiredCount;
+            var requiredCount = GetRequiredCount(
+                synthesizeRow.RequiredCountDict[itemSubType].RequiredCount,
+                inputData.RequiredCountBoost);
             var succeedRate = synthesizeRow.RequiredCountDict[itemSubType].SucceedRate;
             var synthesizeCount = materialCount / requiredCount;
             var remainder = materialCount % requiredCount;
@@ -191,6 +200,38 @@ namespace Nekoyume.Helper
             }
 
             return synthesizeResults;
+        }
+
+        /// <summary>
+        /// Returns how many materials one synthesis consumes, after a
+        /// <see cref="BoostScheduleSheet"/> adjustment.
+        /// </summary>
+        /// <param name="requiredCount">
+        /// The <c>required_count</c> that <see cref="SynthesizeSheet"/> configures.
+        /// </param>
+        /// <param name="requiredCountBoost">
+        /// The row found for <see cref="BoostScheduleSheet.Targets.SynthesizeRequiredCount"/> and
+        /// the material grade at the current block, or <c>null</c> for none.
+        /// </param>
+        /// <returns>
+        /// <paramref name="requiredCount"/> itself when there is no row or it is not positive;
+        /// otherwise the adjusted count, rounded down but never below 1.
+        /// </returns>
+        /// <remarks>
+        /// The floor of 1 keeps a discount from making a synthesis free (and the division by the
+        /// count from failing): <c>1 × 0.6</c> stays <c>1</c>. A count the sheet configures as 0
+        /// or less is left alone so that it fails exactly as it did without the boost.
+        /// </remarks>
+        public static int GetRequiredCount(
+            int requiredCount,
+            BoostScheduleSheet.Row? requiredCountBoost)
+        {
+            if (requiredCountBoost is null || requiredCount <= 0)
+            {
+                return requiredCount;
+            }
+
+            return Math.Max(1, requiredCountBoost.Apply(requiredCount));
         }
 
         public static List<ItemBase> GetMaterialList(
