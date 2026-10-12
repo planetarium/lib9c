@@ -6,6 +6,8 @@ on:
       - development
       - main
       - release/*
+      # 기능 브랜치도 dev 패키지를 뽑아 하위 저장소(백오피스·헤드리스)에서 머지 전에 범프해 볼 수 있게
+      - feature/*
     tags:
       - "*.*.*"
 
