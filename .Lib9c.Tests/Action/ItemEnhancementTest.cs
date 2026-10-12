@@ -425,6 +425,16 @@ namespace Lib9c.Tests.Action
 
             Assert.Equal(3_000_000_000L, ItemEnhancement.GetHammerExp(costSheet, hammerId, boost));
             Assert.Equal(6_000_000_000L, boost.Apply(2_000_000_000L));
+
+            // A configured experience above long.MaxValue / 3 keeps long.MaxValue as the cap
+            // instead of overflowing it.
+            var hugeSheet = new EnhancementCostSheetV3();
+            hugeSheet.Set(
+                "id,item_sub_type,grade,level,cost,exp,required_block,base_stat_growth_min,base_stat_growth_max," +
+                "extra_stat_growth_min,extra_stat_growth_max,extra_skill_damage_growth_min,extra_skill_damage_growth_max," +
+                "extra_skill_chance_growth_min,extra_skill_chance_growth_max\n" +
+                $"600308,EquipmentMaterial,8,0,0,{long.MaxValue / 2},0,0,0,0,0,0,0,0,0\n");
+            Assert.Equal(long.MaxValue, ItemEnhancement.GetHammerExp(hugeSheet, hammerId, boost));
         }
 
         [Theory]
@@ -432,59 +442,40 @@ namespace Lib9c.Tests.Action
         [InlineData(250, false)] // after the schedule ends
         public void Execute_AppliesScheduledHammerExpBoost(long blockIndex, bool scheduled)
         {
-            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Id == 10110000);
-            var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, 0);
-            equipment.Exp = (long)row.Exp!;
-            var startExp = equipment.Exp;
-            var hammerId = ItemEnhancement.HammerIds.First();
-            _avatarState.inventory.AddItem(equipment, 1);
-            _avatarState.inventory.AddItem(
-                ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]),
-                3);
-            for (var i = 0; i < 100; i++)
-            {
-                _avatarState.Update(new CombinationMail(
-                    new CombinationConsumable5.ResultModel
-                    {
-                        id = default,
-                        materials = new Dictionary<Material, int>(),
-                        itemUsable = equipment,
-                    },
-                    i,
-                    default,
-                    0));
-            }
+            // Weapon grade 1 starts at 5 exp; 16 hammers give 160 (level 4, cost 20) or, doubled,
+            // 320 (level 5, cost 40): the boost raises the level reached and the NCG it costs.
+            var (state, startExp, hammerId) = PrepareHammerEnhancement(16);
+            var hammerExp = _tableSheets.EnhancementCostSheetV3.GetHammerExp(hammerId) * 16;
 
-            _avatarState.worldInformation.ClearStage(
-                1, 1, 1, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
-            var state = _initialState
-                .SetLegacyState(
-                    Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)),
-                    HammerBoostCsv(hammerId, "MUL,2").Serialize())
-                .SetAvatarState(_avatarAddress, _avatarState);
-
-            var nextState = new ItemEnhancement
-            {
-                itemId = default,
-                materialIds = new List<Guid>(),
-                avatarAddress = _avatarAddress,
-                slotIndex = 0,
-                hammers = new Dictionary<int, int> { [hammerId] = 3 },
-            }.Execute(new ActionContext
-            {
-                PreviousState = state,
-                Signer = _agentAddress,
-                BlockIndex = blockIndex,
-                RandomSeed = 0,
-            });
+            var nextState = ExecuteHammerEnhancement(state, hammerId, 16, blockIndex);
 
             var slotResult = (ItemEnhancement13.ResultModel)nextState
                 .GetAllCombinationSlotState(_avatarAddress).GetSlot(0).Result;
-            var hammerExp = _tableSheets.EnhancementCostSheetV3.GetHammerExp(hammerId) * 3;
+            var resultEquipment = (Equipment)slotResult.itemUsable;
             // The boosted experience is what the equipment keeps.
+            Assert.Equal(startExp + (scheduled ? hammerExp * 2 : hammerExp), resultEquipment.Exp);
+            Assert.Equal(scheduled ? 5 : 4, resultEquipment.level);
+            Assert.Equal(scheduled ? 40 : 20, slotResult.gold);
             Assert.Equal(
-                startExp + (scheduled ? hammerExp * 2 : hammerExp),
-                ((Equipment)slotResult.itemUsable).Exp);
+                (3_000_000 - slotResult.gold) * _currency,
+                nextState.GetBalance(_agentAddress, _currency));
+        }
+
+        [Fact]
+        public void Execute_FailsWhenOnlyTheUnboostedCostIsHeld()
+        {
+            // What an old client shows (level 4, 20 NCG) is not what the action charges while the
+            // row is active (level 5, 40 NCG): an avatar holding just the shown cost fails.
+            var (state, _, hammerId) = PrepareHammerEnhancement(16);
+            state = state.TransferAsset(
+                new ActionContext(),
+                _agentAddress,
+                Addresses.GoldCurrency,
+                _currency * (3_000_000 - 20));
+
+            ExecuteHammerEnhancement(state, hammerId, 16, 250); // unboosted: exactly affordable
+            Assert.Throws<InsufficientBalanceException>(
+                () => ExecuteHammerEnhancement(state, hammerId, 16, 150));
         }
 
         [Theory]
@@ -696,5 +687,55 @@ namespace Lib9c.Tests.Action
             sheet.Set(HammerBoostCsv(hammerId, opValue));
             return sheet;
         }
+
+        private (IWorld State, long StartExp, int HammerId) PrepareHammerEnhancement(int hammerCount)
+        {
+            var row = _tableSheets.EquipmentItemSheet.Values.First(r => r.Id == 10110000);
+            var equipment = (Equipment)ItemFactory.CreateItemUsable(row, default, 0, 0);
+            equipment.Exp = (long)row.Exp!;
+            var hammerId = ItemEnhancement.HammerIds.First();
+            _avatarState.inventory.AddItem(equipment, 1);
+            _avatarState.inventory.AddItem(
+                ItemFactory.CreateMaterial(_tableSheets.MaterialItemSheet[hammerId]),
+                hammerCount);
+            for (var i = 0; i < 100; i++)
+            {
+                _avatarState.Update(new CombinationMail(
+                    new CombinationConsumable5.ResultModel
+                    {
+                        id = default,
+                        materials = new Dictionary<Material, int>(),
+                        itemUsable = equipment,
+                    },
+                    i,
+                    default,
+                    0));
+            }
+
+            _avatarState.worldInformation.ClearStage(
+                1, 1, 1, _tableSheets.WorldSheet, _tableSheets.WorldUnlockSheet);
+            var state = _initialState
+                .SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)),
+                    HammerBoostCsv(hammerId, "MUL,2").Serialize())
+                .SetAvatarState(_avatarAddress, _avatarState);
+            return (state, equipment.Exp, hammerId);
+        }
+
+        private IWorld ExecuteHammerEnhancement(IWorld state, int hammerId, int hammerCount, long blockIndex) =>
+            new ItemEnhancement
+            {
+                itemId = default,
+                materialIds = new List<Guid>(),
+                avatarAddress = _avatarAddress,
+                slotIndex = 0,
+                hammers = new Dictionary<int, int> { [hammerId] = hammerCount },
+            }.Execute(new ActionContext
+            {
+                PreviousState = state,
+                Signer = _agentAddress,
+                BlockIndex = blockIndex,
+                RandomSeed = 0,
+            });
     }
 }

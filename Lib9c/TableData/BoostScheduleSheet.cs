@@ -56,8 +56,11 @@ namespace Nekoyume.TableData
         public const char TargetIdRangeSeparator = '~';
 
         /// <summary>
-        /// Upper bound of <c>|value|</c>. Keeps every <see cref="Row.Apply"/> inside
-        /// <see cref="decimal"/> range so that applying a row can never throw.
+        /// Upper bound of <c>|value|</c>. Keeps every <see cref="Row.Apply(int)"/> and
+        /// <see cref="Row.Apply(long)"/> inside <see cref="decimal"/> range so that applying a row
+        /// can never throw: the worst case, <see cref="long.MaxValue"/> × <c>int.MaxValue</c>
+        /// ≈ 2e28, stays under <see cref="decimal.MaxValue"/> ≈ 7.9e28. Raising this bound must keep
+        /// that true, or a row would make every action it applies to fail.
         /// </summary>
         public const decimal MaxAbsoluteValue = int.MaxValue;
 

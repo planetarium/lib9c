@@ -153,7 +153,7 @@ namespace Nekoyume.Helper
         /// <param name="amount">The amount the reward row and the draws grant.</param>
         /// <returns>
         /// <paramref name="amount"/> unchanged when there is no row or nothing is granted;
-        /// otherwise <see cref="BoostScheduleSheet.Row.Apply"/> of it. A result of 0 means the
+        /// otherwise <see cref="BoostScheduleSheet.Row.Apply(int)"/> of it. A result of 0 means the
         /// amount is not granted at all.
         /// </returns>
         /// <remarks>
