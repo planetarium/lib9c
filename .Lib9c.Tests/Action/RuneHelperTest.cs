@@ -84,7 +84,7 @@ namespace Lib9c.Tests.Action
         {
             var cost = new RuneCostSheet.RuneCostData(level, level, 240, 20000, 50, 7000);
 
-            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, level, TieredSheet(), 150);
+            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, level, Resolve(TieredSheet()), 150);
 
             Assert.Equal(expectedCrystal, boosted.CrystalQuantity);
             Assert.Equal(expectedRuneStone, boosted.RuneStoneQuantity);
@@ -101,7 +101,7 @@ namespace Lib9c.Tests.Action
         {
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
-            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, TieredSheet(), blockIndex));
+            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, Resolve(TieredSheet()), blockIndex));
             Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, null, 150));
         }
 
@@ -110,10 +110,11 @@ namespace Lib9c.Tests.Action
         {
             var sheet = CreateBoostSheet(
                 "1,RUNE_SUMMON_GUARANTEE,*,MUL,0.5,0,10",
-                "2,SUMMON_RUNE_ENHANCEMENT_NCG_COST,*,MUL,0.5,0,10");
+                "2,SUMMON_RUNE_ENHANCEMENT_NCG_COST,*,MUL,0.5,0,10",
+                "3,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,100~200,MUL,0.5,0,10");
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
-            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, sheet, 5));
+            Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, Resolve(sheet, 5), 5));
         }
 
         [Fact]
@@ -122,7 +123,7 @@ namespace Lib9c.Tests.Action
             var sheet = CreateBoostSheet("1,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~10,MUL,0.5,0,10");
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
-            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, 1, sheet, 5);
+            var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, 1, Resolve(sheet, 5), 5);
 
             Assert.Equal(120, boosted.RuneStoneQuantity);
             Assert.Equal(20000, boosted.CrystalQuantity);
@@ -152,7 +153,7 @@ namespace Lib9c.Tests.Action
                 boostRandom,
                 tryCount,
                 out var boostResult,
-                TieredSheet(),
+                Resolve(TieredSheet()),
                 150));
 
             // Same draws, same outcome, same NCG.
@@ -202,9 +203,12 @@ namespace Lib9c.Tests.Action
             RuneHelper.TryEnhancement(48, costRow, expectedRandom, 4, out var expected);
 
             var emptyRandom = new TestRandom(3);
-            RuneHelper.TryEnhancement(48, costRow, emptyRandom, 4, out var withEmptySheet, new BoostScheduleSheet(), 150);
+            var empty = Resolve(new BoostScheduleSheet());
+            Assert.Null(empty);
+            RuneHelper.TryEnhancement(48, costRow, emptyRandom, 4, out var withEmptySheet, empty, 150);
             var outsideRandom = new TestRandom(3);
-            RuneHelper.TryEnhancement(48, costRow, outsideRandom, 4, out var outsideSchedule, TieredSheet(), 250);
+            var resolved = Resolve(TieredSheet());
+            RuneHelper.TryEnhancement(48, costRow, outsideRandom, 4, out var outsideSchedule, resolved, 250);
 
             Assert.Equal(expected.ToString(), withEmptySheet.ToString());
             Assert.Equal(expected.ToString(), outsideSchedule.ToString());
@@ -220,15 +224,29 @@ namespace Lib9c.Tests.Action
             long blockIndex,
             bool expected)
         {
-            var sheet = TieredSheet();
-
             var resolved = RuneHelper.ResolveEnhancementCostBoost(
-                sheet,
+                TieredSheet(),
                 runeId,
                 blockIndex,
                 () => _tableSheets.RuneSummonSheet);
 
-            Assert.Equal(expected ? sheet : null, resolved);
+            Assert.Equal(expected, resolved is not null);
+        }
+
+        [Theory]
+        [InlineData(101, true)] // first group
+        [InlineData(102, true)] // first group, ratio 0: listed, so still summonable
+        [InlineData(104, true)] // only in a later group
+        [InlineData(999, false)] // in no group
+        public void ResolveEnhancementCostBoost_LooksAtEveryRecipeOfEveryGroup(int runeId, bool expected)
+        {
+            var resolved = RuneHelper.ResolveEnhancementCostBoost(
+                TieredSheet(),
+                runeId,
+                150,
+                InlineRuneSummonSheet);
+
+            Assert.Equal(expected, resolved is not null);
         }
 
         [Fact]
@@ -276,6 +294,25 @@ namespace Lib9c.Tests.Action
             RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var actual, resolved, 150);
 
             Assert.Equal(expected.ToString(), actual.ToString());
+        }
+
+        /// <summary>
+        /// Resolves <paramref name="sheet"/> for a rune <see cref="InlineRuneSummonSheet"/> lists.
+        /// </summary>
+        private static RuneEnhancementCostBoost Resolve(BoostScheduleSheet sheet, long blockIndex = 150) =>
+            RuneHelper.ResolveEnhancementCostBoost(sheet, 101, blockIndex, InlineRuneSummonSheet);
+
+        /// <summary>
+        /// Two groups: rune 102 is listed with ratio 0, rune 104 only in the second group.
+        /// </summary>
+        private static RuneSummonSheet InlineRuneSummonSheet()
+        {
+            var sheet = new RuneSummonSheet();
+            sheet.Set(
+                "groupID,cost_material,cost_material_count,cost_ncg,recipe1ID,recipe1ratio,recipe2ID,recipe2ratio\n" +
+                "1,600201,20,0,101,100,102,0\n" +
+                "2,600202,20,0,103,100,104,100\n");
+            return sheet;
         }
 
         /// <summary>

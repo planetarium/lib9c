@@ -101,7 +101,8 @@ namespace Nekoyume.TableData
             /// <summary>
             /// Crystal cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level, for
             /// <b>summonable runes only</b>: a rune whose id is a recipe id of any
-            /// <c>RuneSummonSheet</c> group, whatever its ratio. Other runes are never adjusted.
+            /// <c>RuneSummonSheet</c> row, whatever its ratio and whether or not that group is
+            /// currently sold. Other runes are never adjusted.
             /// The summon pool is read from the chain when the try is evaluated, so a rune added to
             /// or removed from <c>RuneSummonSheet</c> gains or loses the adjustment with it.
             /// <para>

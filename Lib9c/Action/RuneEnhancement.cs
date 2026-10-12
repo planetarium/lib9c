@@ -123,7 +123,7 @@ namespace Nekoyume.Action
             }
 
             states.TryGetPatchedSheet<BoostScheduleSheet>(out var patchedBoostScheduleSheet);
-            var boostScheduleSheet = RuneHelper.ResolveEnhancementCostBoost(
+            var costBoost = RuneHelper.ResolveEnhancementCostBoost(
                 patchedBoostScheduleSheet,
                 runeState.RuneId,
                 context.BlockIndex,
@@ -133,7 +133,7 @@ namespace Nekoyume.Action
 
             var random = context.GetRandom();
             if (!RuneHelper.TryEnhancement(runeState.Level, costRow, random, TryCount,
-                    out var levelUpResult, boostScheduleSheet, context.BlockIndex))
+                    out var levelUpResult, costBoost, context.BlockIndex))
             {
                 // Rune cost not found while level up
                 throw new RuneCostDataNotFoundException(
