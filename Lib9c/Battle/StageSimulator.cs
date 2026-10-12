@@ -266,13 +266,15 @@ namespace Nekoyume.Battle
         /// <returns>
         /// <paramref name="rewards"/> itself when <paramref name="itemRewardBoost"/> is
         /// <c>null</c>; otherwise a new list, ordered by item id, in which each distinct item
-        /// drawn <c>n</c> times appears <see cref="BoostScheduleSheet.Row.Apply"/>(<c>n</c>)
+        /// drawn <c>n</c> times appears <see cref="GetBoostedItemRewardCount"/>(row, <c>n</c>)
         /// times, at most <see cref="MaxItemRewardBoostFactor"/> × <c>n</c>.
         /// </returns>
         /// <remarks>
         /// Draws nothing, so the random sequence is the same as without a row. <c>MUL 2</c>
         /// grants exactly twice each drawn item; <c>ADD 1</c> one more of each distinct item; a
-        /// multiplier below 1 takes items away. The count can exceed the stage's
+        /// multiplier below 1 takes items away. A <c>MUL</c> above 1 turns an item drawn once
+        /// into at least 2, so <c>MUL 1.5</c> grants 2 of a single drop (and 3 of a double).
+        /// The count can exceed the stage's
         /// <c>DropItemMax</c>, which only limits the draws. Added items are created the way
         /// <see cref="Simulator.SetRewardV2"/> creates them, so a circle is tradable as usual.
         /// Equivalent to <see cref="SplitItemRewardBoost"/> followed by
@@ -335,9 +337,7 @@ namespace Nekoyume.Battle
             {
                 var drawn = group.ToList();
                 var count = drawn.Count;
-                var boosted = (int)Math.Min(
-                    itemRewardBoost.Apply(count),
-                    (long)count * MaxItemRewardBoostFactor);
+                var boosted = GetBoostedItemRewardCount(itemRewardBoost, count);
                 if (boosted <= count)
                 {
                     kept.AddRange(drawn.Take(boosted));
@@ -350,6 +350,31 @@ namespace Nekoyume.Battle
             }
 
             return kept;
+        }
+
+        /// <summary>
+        /// The boosted count of an item drawn <paramref name="count"/> times in one clear.
+        /// </summary>
+        /// <param name="itemRewardBoost">The row to apply.</param>
+        /// <param name="count">How many times the item was drawn in the clear.</param>
+        /// <returns>
+        /// <see cref="BoostScheduleSheet.Row.Apply"/>(<paramref name="count"/>), except that a
+        /// <see cref="BoostScheduleSheet.Operation.Mul"/> above 1 turns an item drawn once into
+        /// at least 2, so that a fractional multiplier still rewards the single drops most stages
+        /// make. A count of 2 or more keeps the plain floor (<c>MUL 1.2</c> on 2 stays 2). Capped
+        /// at <see cref="MaxItemRewardBoostFactor"/> × <paramref name="count"/>.
+        /// </returns>
+        public static int GetBoostedItemRewardCount(BoostScheduleSheet.Row itemRewardBoost, int count)
+        {
+            var boosted = itemRewardBoost.Apply(count);
+            if (count == 1 &&
+                itemRewardBoost.Op == BoostScheduleSheet.Operation.Mul &&
+                itemRewardBoost.Value > 1m)
+            {
+                boosted = Math.Max(boosted, 2);
+            }
+
+            return (int)Math.Min(boosted, (long)count * MaxItemRewardBoostFactor);
         }
 
         /// <summary>

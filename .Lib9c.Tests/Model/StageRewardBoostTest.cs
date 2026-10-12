@@ -33,7 +33,7 @@ namespace Lib9c.Tests.Model
 
         [Theory]
         [InlineData("MUL", "2", 3, 1, 6, 2)] // exactly twice each drawn item
-        [InlineData("MUL", "1.5", 3, 1, 4, 1)] // floor per distinct item: 1 × 1.5 stays 1
+        [InlineData("MUL", "1.5", 3, 1, 4, 2)] // floor per distinct item, but a single drop becomes 2
         [InlineData("ADD", "1", 3, 1, 4, 2)] // one more of each distinct item
         [InlineData("MUL", "0.5", 3, 1, 1, 0)] // a multiplier below 1 takes items away
         [InlineData("MUL", "100", 3, 1, 30, 10)] // capped at MaxItemRewardBoostFactor
@@ -98,6 +98,51 @@ namespace Lib9c.Tests.Model
 
             Assert.Same(rewards, StageSimulator.SplitItemRewardBoost(rewards, null, extraCounts));
             Assert.Empty(extraCounts);
+        }
+
+        [Theory]
+        [InlineData("MUL", "1.2", 1, 2)] // a single drop becomes at least 2 under MUL > 1
+        [InlineData("MUL", "1.01", 1, 2)] // however small the excess: effectively 100% here
+        [InlineData("MUL", "1.00", 1, 1)]
+        [InlineData("MUL", "1.5", 3, 4)]
+        [InlineData("MUL", "1.5", 1, 2)]
+        [InlineData("MUL", "2", 1, 2)]
+        [InlineData("MUL", "3", 1, 3)]
+        [InlineData("MUL", "1.2", 2, 2)] // not a general "at least one more": plain floor
+        [InlineData("MUL", "1.5", 2, 3)]
+        [InlineData("MUL", "1", 1, 1)]
+        [InlineData("MUL", "0.5", 1, 0)] // dropped as before
+        [InlineData("ADD", "1", 1, 2)] // ADD is unchanged
+        [InlineData("ADD", "0", 1, 1)]
+        [InlineData("ADD", "-1", 1, 0)]
+        [InlineData("MUL", "100", 1, 10)] // still capped at MaxItemRewardBoostFactor
+        public void GetBoostedItemRewardCount_TurnsASingleDropIntoTwoUnderMul(
+            string op,
+            string value,
+            int count,
+            int expected)
+        {
+            var boost = StageRewardBoostFixture.Row(Item, op, decimal.Parse(value, System.Globalization.CultureInfo.InvariantCulture));
+
+            Assert.Equal(expected, StageSimulator.GetBoostedItemRewardCount(boost, count));
+        }
+
+        [Fact]
+        public void ApplyItemRewardBoost_BoostsSingleAndDoubleDropsOfOneClearDifferently()
+        {
+            // Under MUL 1.5 one clear grants 2 of an item drawn once and 3 of an item drawn twice.
+            var rows = MaterialRows();
+            var rewards = new[] { rows[0], rows[1], rows[1] }
+                .Select(row => (ItemBase)ItemFactory.CreateMaterial(row))
+                .ToList();
+
+            var boosted = StageSimulator.ApplyItemRewardBoost(
+                rewards,
+                StageRewardBoostFixture.Row(Item, "MUL", 1.5m),
+                _tableSheets.MaterialItemSheet);
+
+            Assert.Equal(2, boosted.Count(item => item.Id == rows[0].Id));
+            Assert.Equal(3, boosted.Count(item => item.Id == rows[1].Id));
         }
 
         [Fact]

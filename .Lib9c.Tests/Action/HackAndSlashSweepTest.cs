@@ -1291,13 +1291,21 @@ namespace Lib9c.Tests.Action
                 foreach (var group in drawn.GroupBy(item => item.Id))
                 {
                     perClear.TryGetValue(group.Key, out var boosted);
-                    perClear[group.Key] = boosted + itemBoost.Apply(group.Count());
+                    perClear[group.Key] = boosted + ExpectedBoostedCount(op, value, itemBoost, group.Count());
                     drawnTotal.TryGetValue(group.Key, out var total);
                     drawnTotal[group.Key] = total + group.Count();
                 }
             }
 
             Assert.True(playCount > 1, "the sweep should cover several clears");
+            if (op == "MUL")
+            {
+                // Stage 1 drops one 303000 per clear; MUL 1.5 grants 2 of a single drop.
+                Assert.Equal(new[] { 303000 }, drawnTotal.Keys);
+                Assert.Equal(playCount, drawnTotal[303000]);
+                Assert.Equal(2 * playCount, perClear[303000]);
+            }
+
             Assert.Contains(perClear, pair => pair.Value != itemBoost.Apply(drawnTotal[pair.Key]));
 
             foreach (var id in perClear.Keys.Union(patched.Materials.Keys))
@@ -1457,6 +1465,19 @@ namespace Lib9c.Tests.Action
             Assert.Equal(
                 before.SelectMany(item => new[] { item.Id, item.Id }),
                 boosted.Select(item => item.Id));
+        }
+
+        /// <summary>
+        /// The per-clear item rule planning set, written out independently of the code under test:
+        /// plain floor, except that a MUL above 1 turns a single drop into 2, capped at
+        /// <see cref="StageSimulator.MaxItemRewardBoostFactor"/> times the drawn count.
+        /// </summary>
+        private static int ExpectedBoostedCount(string op, string value, BoostScheduleSheet.Row row, int count)
+        {
+            var applied = row.Apply(count);
+            var multiplier = decimal.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+            var expected = op == "MUL" && multiplier > 1m && count == 1 ? Math.Max(applied, 2) : applied;
+            return Math.Min(expected, count * StageSimulator.MaxItemRewardBoostFactor);
         }
 
         private static List<(int Id, bool Tradable, int Count)> Stacks(AvatarState avatarState) =>

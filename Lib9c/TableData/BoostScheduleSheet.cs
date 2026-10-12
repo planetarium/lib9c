@@ -106,17 +106,21 @@ namespace Nekoyume.TableData
             /// Applied per clear to the count of each distinct item after the items are drawn, so
             /// the random draws are the same as without the row: <c>MUL 2</c> grants exactly
             /// twice each drawn item and <c>ADD 1</c> one more of each. See
-            /// <c>StageSimulator.ApplyItemRewardBoost</c>.
+            /// <c>StageSimulator.GetBoostedItemRewardCount</c>.
             /// </para>
             /// <para>
             /// Boosted items are ordinary rewards everywhere else too: they count toward
             /// collect quest progress, and a circle stays tradable.
             /// </para>
             /// <para>
-            /// Rounding is per item id per clear, so a <c>MUL</c> between 1 and 2 has no effect on
-            /// an item drawn once in a clear — which is how most stages drop. Prefer <c>ADD</c> or
-            /// an integer <c>MUL</c> for items; <see cref="StageFavReward"/> amounts are large, so a
-            /// fractional <c>MUL</c> scales them as expected.
+            /// Rounding is down, per item id per clear, with one exception: a <c>MUL</c> above 1
+            /// turns an item drawn once in a clear (how most stages drop) into at least 2, so
+            /// <c>MUL 1.5</c> grants 2 of a single drop. A count of 2 or more keeps the plain floor
+            /// (<c>MUL 1.2</c> on 2 stays 2, <c>MUL 1.5</c> on 2 becomes 3); this is not a general
+            /// "at least one more". <c>ADD</c> and a <c>MUL</c> of 1 or below are unaffected.
+            /// Beware that any <c>MUL</c> just above 1 (e.g. <c>MUL 1.01</c>) also turns a single
+            /// drop into 2 — effectively a 100% boost for those items, however small the value.
+            /// <see cref="StageFavReward"/> amounts are large and always plainly floored.
             /// </para>
             /// </summary>
             public const string StageItemReward = "STAGE_ITEM_REWARD";

@@ -525,7 +525,9 @@ namespace Nekoyume.Action
         /// <param name="itemRewardBoost">
         /// The <see cref="BoostScheduleSheet"/> row adjusting each clear's items, or <c>null</c>
         /// for none. Applied per clear exactly as <c>HackAndSlash</c> applies it; see
-        /// <see cref="StageSimulator.ApplyItemRewardBoost"/>. It never changes the random draws.
+        /// <see cref="StageSimulator.ApplyItemRewardBoost"/> and
+        /// <see cref="StageSimulator.GetBoostedItemRewardCount"/>. It never changes the random
+        /// draws.
         /// A caller replaying a sweep must pass what the action resolved.
         /// </param>
         /// <returns>
