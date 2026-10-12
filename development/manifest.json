@@ -4692,6 +4692,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.Helper.RuneEnhancementCostBoost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.Helper.RuneEnhancementCostBoost.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Nekoyume.Helper.RuneHelper.yml",
       "output": {
         ".html": {
@@ -9236,6 +9246,56 @@
       "output": {
         ".html": {
           "relative_path": "api/Nekoyume.TableData.AvatarSheets.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.Operation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.Operation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.Row.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.Targets.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.Targets.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Nekoyume.TableData.BoostScheduleSheet.html"
         }
       },
       "version": ""

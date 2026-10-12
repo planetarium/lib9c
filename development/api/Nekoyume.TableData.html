@@ -131,6 +131,55 @@ Classes
       <dd></dd>
     </dl>
     <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a></dt>
+      <dd><p>Schedules a temporary adjustment of a game value — a reward amount, a cost, a guarantee
+count — for a block range, so that an event can be run with <code>patch_table_sheet</code>
+instead of rewriting the value's own sheet and patching it back afterwards.</p>
+<p>
+Columns: <code>id</code>, <code>target</code>, <code>target_id</code>, <code>op</code>, <code>value</code>,
+<code>start_block</code>, <code>end_block</code>. A <code>_memo</code> column, like any <code>_</code> prefixed
+column, is dropped on load and may be used for notes.
+</p><p><code>target_id</code> is a single id (<code>50</code>), an inclusive range (<code>1~50</code>) or
+<code>*</code> for every id. <code>~</code> rather than <code>-</code> keeps a spreadsheet from reading a
+range as a date on its way to the CSV.
+</p><p><code>target</code> names what is adjusted and is matched as a plain string by the call site that
+owns it, so the sheet itself never needs to know which targets exist. A node that predates a
+target simply finds no match for it instead of failing to read the sheet.
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html">BoostScheduleSheet.Targets</a> lists the targets this version applies.
+</p><p>
+A row applies in <code>[start_block, end_block)</code>. When several rows match, the one with the
+lowest <code>id</code> wins; rows are never combined, so overlapping rows cannot stack into a
+larger adjustment than any single row declares.
+</p><p>
+Reading is total: a row that does not parse is kept but marked invalid and never matches,
+so a typo fails toward "no adjustment" instead of aborting every action that reads the
+sheet. <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_ValidateCsv_System_String_">ValidateCsv(string)</a> rejects such a row at patch time so it should not reach
+the chain in the first place.
+</p><p>
+Callers must tolerate the sheet being absent — it reaches an existing chain only by
+<code>patch_table_sheet</code>. Absence means no adjustment, which is also what keeps
+re-evaluation of pre-patch blocks identical.
+</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">BoostScheduleSheet.Row</a></dt>
+      <dd><p>One scheduled adjustment.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html">BoostScheduleSheet.TargetInfo</a></dt>
+      <dd><p>How to write a row for one target: reference text for people and tools, never read by
+an action. See <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_Infos">Infos</a>.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html">BoostScheduleSheet.Targets</a></dt>
+      <dd><p>The targets this version applies. A row naming any other target is valid data but has
+no effect until a version that applies it is running.</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
       <dd></dd>
     </dl>
@@ -1107,6 +1156,11 @@ Interfaces
     <h3 id="enums">
 Enums
 </h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Operation.html">BoostScheduleSheet.Operation</a></dt>
+      <dd><p>How a row's <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Value">Value</a> is combined with the value it adjusts.</p>
+</dd>
+    </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Nekoyume.TableData.CreateAvatarFavSheet.Target.html">CreateAvatarFavSheet.Target</a></dt>
       <dd></dd>

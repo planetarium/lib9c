@@ -280,7 +280,7 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_AddExploreRewards_Libplanet_Action_IActionContext_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_Nekoyume_Model_Item_Inventory_System_Collections_Generic_IEnumerable_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData__" data-uid="Nekoyume.Helper.AdventureBossHelper.AddExploreRewards(Libplanet.Action.IActionContext,Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,Nekoyume.Model.Item.Inventory,System.Collections.Generic.IEnumerable{Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData})">
   AddExploreRewards(IActionContext, IWorld, Address, Inventory, IEnumerable&lt;RewardAmountData&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AdventureBossHelper.cs/#L367"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AdventureBossHelper.cs/#L402"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -316,6 +316,58 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
 
 
+
+
+
+
+  <a id="Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_" data-uid="Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost(Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  ApplyRewardBoost(RewardAmountData, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Helper/AdventureBossHelper.cs/#L387"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row to one explore or sweep reward entry.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AdventureBossSheet.RewardAmountData ApplyRewardBoost(AdventureBossSheet.RewardAmountData reward, BoostScheduleSheet.Row rewardBoost)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reward</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.html">AdventureBossSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html">RewardAmountData</a></dt>
+    <dd><p>The reward as the sheets and the random draws decided it.</p>
+</dd>
+    <dt><code>rewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row adjusting this floor's reward at the current block — see
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a> and
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward">AdventureBossFirstClearReward</a> — or
+<code>null</code> for none. A caller replaying an action must pass what the action resolved.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.html">AdventureBossSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html">RewardAmountData</a></dt>
+    <dd><p><code class="paramref">reward</code> itself when there is no row or nothing to adjust, otherwise a
+copy whose <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html#Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Amount">Amount</a> is adjusted.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Nekoyume_TableData_BoostScheduleSheet_Row__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Only the granted amount changes: the entry was already drawn, so a boost never adds or
+reorders random draws. A boost adjusts a reward but never creates one, so an entry with
+no amount stays as it is; and it never takes a reward below 1, because granting 0 of
+an item or a currency fails the action.</p>
+</div>
 
 
 

@@ -238,9 +238,9 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Battle_StageSimulator__ctor_" data-uid="Nekoyume.Battle.StageSimulator.#ctor*"></a>
 
-  <h3 id="Nekoyume_Battle_StageSimulator__ctor_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_System_Collections_Generic_List_Nekoyume_Model_Skill_Skill__System_Int32_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_StageWaveSheet_Row_System_Boolean_System_Int32_Nekoyume_TableData_SimulatorSheets_Nekoyume_TableData_EnemySkillSheet_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_System_Int64_" data-uid="Nekoyume.Battle.StageSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Collections.Generic.List{Nekoyume.Model.Skill.Skill},System.Int32,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.StageWaveSheet.Row,System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64)">
-  StageSimulator(IRandom, AvatarState, List&lt;Guid&gt;, AllRuneState, RuneSlotState, List&lt;Skill&gt;, int, int, Row, Row, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List&lt;ItemBase&gt;, List&lt;StatModifier&gt;, BuffLimitSheet, BuffLinkSheet, bool, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Battle_StageSimulator__ctor_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_System_Collections_Generic_List_Nekoyume_Model_Skill_Skill__System_Int32_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_StageWaveSheet_Row_System_Boolean_System_Int32_Nekoyume_TableData_SimulatorSheets_Nekoyume_TableData_EnemySkillSheet_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_System_Int64_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Battle.StageSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Collections.Generic.List{Nekoyume.Model.Skill.Skill},System.Int32,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.StageWaveSheet.Row,System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  StageSimulator(IRandom, AvatarState, List&lt;Guid&gt;, AllRuneState, RuneSlotState, List&lt;Skill&gt;, int, int, Row, Row, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List&lt;ItemBase&gt;, List&lt;StatModifier&gt;, BuffLimitSheet, BuffLinkSheet, bool, long, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L120"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the StageSimulator class.</p>
@@ -248,7 +248,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public StageSimulator(IRandom random, AvatarState avatarState, List&lt;Guid&gt; foods, AllRuneState runeStates, RuneSlotState runeSlotState, List&lt;Skill&gt; skillsOnWaveStart, int worldId, int stageId, StageSheet.Row stageRow, StageWaveSheet.Row stageWaveRow, bool isCleared, int exp, SimulatorSheets simulatorSheets, EnemySkillSheet enemySkillSheet, CostumeStatSheet costumeStatSheet, List&lt;ItemBase&gt; waveRewards, List&lt;StatModifier&gt; collectionModifiers, BuffLimitSheet buffLimitSheet, BuffLinkSheet buffLinkSheet, bool logEvent = true, long shatterStrikeMaxDamage = 400000)</code></pre>
+    <pre><code class="lang-csharp hljs">public StageSimulator(IRandom random, AvatarState avatarState, List&lt;Guid&gt; foods, AllRuneState runeStates, RuneSlotState runeSlotState, List&lt;Skill&gt; skillsOnWaveStart, int worldId, int stageId, StageSheet.Row stageRow, StageWaveSheet.Row stageWaveRow, bool isCleared, int exp, SimulatorSheets simulatorSheets, EnemySkillSheet enemySkillSheet, CostumeStatSheet costumeStatSheet, List&lt;ItemBase&gt; waveRewards, List&lt;StatModifier&gt; collectionModifiers, BuffLimitSheet buffLimitSheet, BuffLinkSheet buffLinkSheet, bool logEvent = true, long shatterStrikeMaxDamage = 400000, BoostScheduleSheet.Row favRewardBoost = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -296,23 +296,77 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
     <dd><p>The enemy skill sheet.</p>
 </dd>
     <dt><code>costumeStatSheet</code> <a class="xref" href="Nekoyume.TableData.CostumeStatSheet.html">CostumeStatSheet</a></dt>
-    <dd></dd>
+    <dd><p>The costume stat sheet.</p>
+</dd>
     <dt><code>waveRewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>The item rewards already drawn for this clear.</p>
+</dd>
     <dt><code>collectionModifiers</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Stat.StatModifier.html">StatModifier</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>The stat modifiers from activated collections.</p>
+</dd>
     <dt><code>buffLimitSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLimitSheet.html">BuffLimitSheet</a></dt>
-    <dd></dd>
+    <dd><p>The buff limit sheet.</p>
+</dd>
     <dt><code>buffLinkSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLinkSheet.html">BuffLinkSheet</a></dt>
-    <dd></dd>
+    <dd><p>The buff link sheet.</p>
+</dd>
     <dt><code>logEvent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>Whether to record the battle log.</p>
+</dd>
     <dt><code>shatterStrikeMaxDamage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
-    <dd></dd>
+    <dd><p>Maximum damage for shatter strike.</p>
+</dd>
+    <dt><code>favRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row adjusting this stage's fungible asset rewards,
+or <code>null</code> for none. See <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_System_Collections_Generic_List_System_ValueTuple_System_String_System_Int32___Nekoyume_TableData_BoostScheduleSheet_Row_">ApplyFavRewardBoost(List&lt;(string ticker, int amount)&gt;, Row)</a>. A caller replaying a
+battle must pass what the action resolved.</p>
+</dd>
   </dl>
 
 
 
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Nekoyume_Battle_StageSimulator_MaxItemRewardBoostFactor" data-uid="Nekoyume.Battle.StageSimulator.MaxItemRewardBoostFactor">
+  MaxItemRewardBoostFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Upper bound of the boosted count of each distinct item in one clear, as a multiple of
+how many times it was drawn in that clear: a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row
+grants at most this many times the drawn items per clear, whatever its value. It
+bounds a mistyped value (e.g. <code>MUL 200</code> for <code>MUL 2.00</code>) to a tenfold
+over-reward, and the objects <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_Nekoyume_TableData_MaterialItemSheet_">ApplyItemRewardBoost(List&lt;ItemBase&gt;, Row, MaterialItemSheet)</a> creates per clear to
+this many times <code>DropItemMax</code>. It is not a per-transaction bound;
+<code>HackAndSlashSweep</code> adds its extra units with one count per item id instead of one
+object per unit, so its cost does not grow with the value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int MaxItemRewardBoostFactor = 10</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
 
 
 
@@ -330,7 +384,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Battle_StageSimulator_EnemySkillSheet" data-uid="Nekoyume.Battle.StageSimulator.EnemySkillSheet">
   EnemySkillSheet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the enemy skill sheet.</p>
@@ -362,7 +416,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Battle_StageSimulator_FungibleAssetRewards" data-uid="Nekoyume.Battle.StageSimulator.FungibleAssetRewards">
   FungibleAssetRewards
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the fungible asset rewards (e.g., Crystal) obtained from wave 2 clear.</p>
@@ -394,7 +448,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Battle_StageSimulator_ItemMap" data-uid="Nekoyume.Battle.StageSimulator.ItemMap">
   ItemMap
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection map for items.</p>
@@ -426,7 +480,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Battle_StageSimulator_Reward" data-uid="Nekoyume.Battle.StageSimulator.Reward">
   Reward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the rewards from the battle.</p>
@@ -458,7 +512,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Battle_StageSimulator_StageId" data-uid="Nekoyume.Battle.StageSimulator.StageId">
   StageId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L69"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the stage ID.</p>
@@ -490,32 +544,281 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 </h2>
 
 
-  <a id="Nekoyume_Battle_StageSimulator_GetFavWaveRewards_" data-uid="Nekoyume.Battle.StageSimulator.GetFavWaveRewards*"></a>
+  <a id="Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_" data-uid="Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost*"></a>
 
-  <h3 id="Nekoyume_Battle_StageSimulator_GetFavWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_" data-uid="Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row)">
-  GetFavWaveRewards(IRandom, Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_System_Collections_Generic_List_System_ValueTuple_System_String_System_Int32___Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost(System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32}},Nekoyume.TableData.BoostScheduleSheet.Row)">
+  ApplyFavRewardBoost(List&lt;(string ticker, int amount)&gt;, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L231"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Applies a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row to the fungible asset rewards of one
+clear.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static List&lt;(string ticker, int amount)&gt; GetFavWaveRewards(IRandom random, StageSheet.Row stageRow)</code></pre>
+    <pre><code class="lang-csharp hljs">public static List&lt;(string ticker, int amount)&gt; ApplyFavRewardBoost(List&lt;(string ticker, int amount)&gt; rewards, BoostScheduleSheet.Row favRewardBoost)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
-    <dt><code>stageRow</code> <a class="xref" href="Nekoyume.TableData.StageSheet.html">StageSheet</a>.<a class="xref" href="Nekoyume.TableData.StageSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.ticker">ticker</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.amount">amount</a>)&gt;</dt>
+    <dd><p>The amount drawn for each ticker.</p>
+</dd>
+    <dt><code>favRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row to apply, or <code>null</code> for none.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.ticker">ticker</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.amount">amount</a>)&gt;</dt>
-    <dd></dd>
+    <dd><p><code class="paramref">rewards</code> itself when <code class="paramref">favRewardBoost</code> is
+<code>null</code>; otherwise a new list with each positive amount replaced by
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int32_">Apply(int)</a> of it, in the same order. A ticker whose
+adjusted amount is 0 is left out so that nothing mints a zero amount.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_System_Collections_Generic_List_System_ValueTuple_System_String_System_Int32___Nekoyume_TableData_BoostScheduleSheet_Row__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Draws nothing, so the random sequence is the same as without a row. A boost adjusts
+what was drawn and never creates a reward: a ticker that was not drawn, or drawn as 0,
+stays as it is.</p>
+</div>
+
+
+
+
+  <a id="Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_" data-uid="Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost*"></a>
+
+  <h3 id="Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},Nekoyume.TableData.BoostScheduleSheet.Row,Nekoyume.TableData.MaterialItemSheet)">
+  ApplyItemRewardBoost(List&lt;ItemBase&gt;, Row, MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row to the item rewards of one clear, one
+object per unit.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; ApplyItemRewardBoost(List&lt;ItemBase&gt; rewards, BoostScheduleSheet.Row itemRewardBoost, MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p>The items drawn in one clear, one object per unit.</p>
+</dd>
+    <dt><code>itemRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row to apply, or <code>null</code> for none.</p>
+</dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd><p>The sheet the rewards were created from.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p><code class="paramref">rewards</code> itself when <code class="paramref">itemRewardBoost</code> is
+<code>null</code>; otherwise a new list, ordered by item id, in which each distinct item
+drawn <code>n</code> times appears <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetBoostedItemRewardCount_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_">GetBoostedItemRewardCount(Row, int)</a>(row, <code>n</code>)
+times, at most <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_MaxItemRewardBoostFactor">MaxItemRewardBoostFactor</a> × <code>n</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_Nekoyume_TableData_MaterialItemSheet__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Draws nothing, so the random sequence is the same as without a row. <code>MUL 2</code>
+grants exactly twice each drawn item; <code>ADD 1</code> one more of each distinct item; a
+multiplier below 1 takes items away. A <code>MUL</code> above 1 turns an item drawn once
+into at least 2, so <code>MUL 1.5</code> grants 2 of a single drop (and 3 of a double).
+The count can exceed the stage's
+<code>DropItemMax</code>, which only limits the draws. Added items are created the way
+<a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SetRewardV2_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_StageSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_">SetRewardV2(WeightedSelector&lt;RewardData&gt;, int, IRandom, MaterialItemSheet)</a> creates them, so a circle is tradable as usual.
+Equivalent to <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_SplitItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_System_Collections_Generic_IDictionary_System_Int32_System_Int32__">SplitItemRewardBoost(List&lt;ItemBase&gt;, Row, IDictionary&lt;int, int&gt;)</a> followed by
+<a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_CreateItemRewardBoostExtras_System_Collections_Generic_IReadOnlyDictionary_System_Int32_System_Int32__Nekoyume_TableData_MaterialItemSheet_">CreateItemRewardBoostExtras(IReadOnlyDictionary&lt;int, int&gt;, MaterialItemSheet)</a>.</p>
+</div>
+
+
+
+
+  <a id="Nekoyume_Battle_StageSimulator_CreateItemRewardBoostExtras_" data-uid="Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras*"></a>
+
+  <h3 id="Nekoyume_Battle_StageSimulator_CreateItemRewardBoostExtras_System_Collections_Generic_IReadOnlyDictionary_System_Int32_System_Int32__Nekoyume_TableData_MaterialItemSheet_" data-uid="Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras(System.Collections.Generic.IReadOnlyDictionary{System.Int32,System.Int32},Nekoyume.TableData.MaterialItemSheet)">
+  CreateItemRewardBoostExtras(IReadOnlyDictionary&lt;int, int&gt;, MaterialItemSheet)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L387"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates the items <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_SplitItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_System_Collections_Generic_IDictionary_System_Int32_System_Int32__">SplitItemRewardBoost(List&lt;ItemBase&gt;, Row, IDictionary&lt;int, int&gt;)</a> counted, one object per unit,
+for a caller that needs objects (a battle's drop log, a result view).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; CreateItemRewardBoostExtras(IReadOnlyDictionary&lt;int, int&gt; extraCounts, MaterialItemSheet materialItemSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>extraCounts</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlydictionary-2">IReadOnlyDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Units to create per item id.</p>
+</dd>
+    <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
+    <dd><p>The sheet the rewards were created from.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p>The items, ordered by item id.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_StageSimulator_CreateItemRewardBoostItem_" data-uid="Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem*"></a>
+
+  <h3 id="Nekoyume_Battle_StageSimulator_CreateItemRewardBoostItem_Nekoyume_TableData_MaterialItemSheet_Row_" data-uid="Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem(Nekoyume.TableData.MaterialItemSheet.Row)">
+  CreateItemRewardBoostItem(Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L416"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates one unit of a boosted item reward the way <a class="xref" href="Nekoyume.Battle.Simulator.html#Nekoyume_Battle_Simulator_SetRewardV2_Nekoyume_Battle_WeightedSelector_Nekoyume_TableData_StageSheet_RewardData__System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_MaterialItemSheet_">SetRewardV2(WeightedSelector&lt;RewardData&gt;, int, IRandom, MaterialItemSheet)</a>
+creates a drawn one, so a circle is tradable as usual. A fungible item, so one object
+may stand for any number of units when added with a count.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ItemBase CreateItemRewardBoostItem(MaterialItemSheet.Row materialRow)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>materialRow</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a>.<a class="xref" href="Nekoyume.TableData.MaterialItemSheet.Row.html">Row</a></dt>
+    <dd><p>The item's row.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a></dt>
+    <dd><p>The item.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_StageSimulator_GetBoostedItemRewardCount_" data-uid="Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount*"></a>
+
+  <h3 id="Nekoyume_Battle_StageSimulator_GetBoostedItemRewardCount_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_" data-uid="Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)">
+  GetBoostedItemRewardCount(Row, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L367"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The boosted count of an item drawn <code class="paramref">count</code> times in one clear.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int GetBoostedItemRewardCount(BoostScheduleSheet.Row itemRewardBoost, int count)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>itemRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row to apply.</p>
+</dd>
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>How many times the item was drawn in the clear.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p><a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int32_">Apply(int)</a>(<code class="paramref">count</code>), except that a
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Operation.html#Nekoyume_TableData_BoostScheduleSheet_Operation_Mul">Mul</a> above 1 turns an item drawn once into
+at least 2, so that a fractional multiplier still rewards the single drops most stages
+make. A count of 2 or more keeps the plain floor (<code>MUL 1.2</code> on 2 stays 2). Capped
+at <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_MaxItemRewardBoostFactor">MaxItemRewardBoostFactor</a> × <code class="paramref">count</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_StageSimulator_GetFavWaveRewards_" data-uid="Nekoyume.Battle.StageSimulator.GetFavWaveRewards*"></a>
+
+  <h3 id="Nekoyume_Battle_StageSimulator_GetFavWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  GetFavWaveRewards(IRandom, Row, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draws the fungible asset rewards of one clear of <code class="paramref">stageRow</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;(string ticker, int amount)&gt; GetFavWaveRewards(IRandom random, StageSheet.Row stageRow, BoostScheduleSheet.Row favRewardBoost = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>random</code> <span class="xref">IRandom</span></dt>
+    <dd><p>The random number generator.</p>
+</dd>
+    <dt><code>stageRow</code> <a class="xref" href="Nekoyume.TableData.StageSheet.html">StageSheet</a>.<a class="xref" href="Nekoyume.TableData.StageSheet.Row.html">Row</a></dt>
+    <dd><p>The stage being cleared.</p>
+</dd>
+    <dt><code>favRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row adjusting the amounts, or <code>null</code> for none.
+See <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_System_Collections_Generic_List_System_ValueTuple_System_String_System_Int32___Nekoyume_TableData_BoostScheduleSheet_Row_">ApplyFavRewardBoost(List&lt;(string ticker, int amount)&gt;, Row)</a>. It never changes the random draws.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.ticker">ticker</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-system.string,system.int32-.amount">amount</a>)&gt;</dt>
+    <dd><p>The amount drawn for each ticker.</p>
+</dd>
   </dl>
 
 
@@ -530,34 +833,46 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <a id="Nekoyume_Battle_StageSimulator_GetWaveRewards_" data-uid="Nekoyume.Battle.StageSimulator.GetWaveRewards*"></a>
 
-  <h3 id="Nekoyume_Battle_StageSimulator_GetWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_System_Int32_" data-uid="Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32)">
-  GetWaveRewards(IRandom, Row, MaterialItemSheet, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Battle_StageSimulator_GetWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  GetWaveRewards(IRandom, Row, MaterialItemSheet, int, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L469"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Draws the item rewards of <code class="paramref">playCount</code> clears of
+<code class="paramref">stageRow</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; GetWaveRewards(IRandom random, StageSheet.Row stageRow, MaterialItemSheet materialItemSheet, int playCount = 1)</code></pre>
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; GetWaveRewards(IRandom random, StageSheet.Row stageRow, MaterialItemSheet materialItemSheet, int playCount = 1, BoostScheduleSheet.Row itemRewardBoost = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
+    <dd><p>The random number generator.</p>
+</dd>
     <dt><code>stageRow</code> <a class="xref" href="Nekoyume.TableData.StageSheet.html">StageSheet</a>.<a class="xref" href="Nekoyume.TableData.StageSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>The stage being cleared.</p>
+</dd>
     <dt><code>materialItemSheet</code> <a class="xref" href="Nekoyume.TableData.MaterialItemSheet.html">MaterialItemSheet</a></dt>
-    <dd></dd>
+    <dd><p>The sheet the rewards are created from.</p>
+</dd>
     <dt><code>playCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The number of clears.</p>
+</dd>
+    <dt><code>itemRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row adjusting each clear's items, or <code>null</code>
+for none. See <a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_Nekoyume_TableData_MaterialItemSheet_">ApplyItemRewardBoost(List&lt;ItemBase&gt;, Row, MaterialItemSheet)</a>. It never changes the random draws.
+A caller replaying a battle must pass what the action resolved.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
-    <dd></dd>
+    <dd><p>The items, one object per unit, each clear's ordered by item id.</p>
+</dd>
   </dl>
 
 
@@ -574,7 +889,7 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
 
   <h3 id="Nekoyume_Battle_StageSimulator_Simulate" data-uid="Nekoyume.Battle.StageSimulator.Simulate">
   Simulate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L228"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L497"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -589,6 +904,58 @@ Class StageSimulator  <a class="header-action link-secondary" title="View source
   <dl class="parameters">
     <dt><a class="xref" href="Nekoyume.Model.Player.html">Player</a></dt>
     <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Nekoyume_Battle_StageSimulator_SplitItemRewardBoost_" data-uid="Nekoyume.Battle.StageSimulator.SplitItemRewardBoost*"></a>
+
+  <h3 id="Nekoyume_Battle_StageSimulator_SplitItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_System_Collections_Generic_IDictionary_System_Int32_System_Int32__" data-uid="Nekoyume.Battle.StageSimulator.SplitItemRewardBoost(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},Nekoyume.TableData.BoostScheduleSheet.Row,System.Collections.Generic.IDictionary{System.Int32,System.Int32})">
+  SplitItemRewardBoost(List&lt;ItemBase&gt;, Row, IDictionary&lt;int, int&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Battle/StageSimulator.cs/#L325"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row to the item rewards of one clear
+without creating an object per added unit: units taken away are dropped from the
+returned list, and units added are only counted into
+<code class="paramref">extraCounts</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;ItemBase&gt; SplitItemRewardBoost(List&lt;ItemBase&gt; rewards, BoostScheduleSheet.Row itemRewardBoost, IDictionary&lt;int, int&gt; extraCounts)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rewards</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p>The items drawn in one clear, one object per unit.</p>
+</dd>
+    <dt><code>itemRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row to apply, or <code>null</code> for none.</p>
+</dd>
+    <dt><code>extraCounts</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>&gt;</dt>
+    <dd><p>Accumulates, per item id, how many units the row adds on top of the returned list.
+Left untouched when nothing is added, so one dictionary can collect several clears.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="Nekoyume.Model.Item.ItemBase.html">ItemBase</a>&gt;</dt>
+    <dd><p><code class="paramref">rewards</code> itself when <code class="paramref">itemRewardBoost</code> is
+<code>null</code>; otherwise the drawn items that remain, ordered by item id. Together with
+<code class="paramref">extraCounts</code> they add up to exactly what
+<a class="xref" href="Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_Nekoyume_TableData_MaterialItemSheet_">ApplyItemRewardBoost(List&lt;ItemBase&gt;, Row, MaterialItemSheet)</a> grants for the clear.</p>
+</dd>
   </dl>
 
 

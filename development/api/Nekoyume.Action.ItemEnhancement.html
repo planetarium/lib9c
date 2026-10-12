@@ -218,7 +218,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_HammerIds" data-uid="Nekoyume.Action.ItemEnhancement.HammerIds">
   HammerIds
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -276,9 +276,42 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
 
 
+  <h3 id="Nekoyume_Action_ItemEnhancement_MaxHammerExpBoostFactor" data-uid="Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor">
+  MaxHammerExpBoostFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Upper bound of a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_EnhancementHammerExp">EnhancementHammerExp</a> row: the
+adjusted hammer experience never exceeds this many times the configured one, so a
+mistyped multiplier cannot hand out the top hammer's 500,000,000 experience tenfold.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const long MaxHammerExpBoostFactor = 3</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
   <h3 id="Nekoyume_Action_ItemEnhancement_avatarAddress" data-uid="Nekoyume.Action.ItemEnhancement.avatarAddress">
   avatarAddress
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -308,7 +341,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_hammers" data-uid="Nekoyume.Action.ItemEnhancement.hammers">
   hammers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -338,7 +371,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_itemId" data-uid="Nekoyume.Action.ItemEnhancement.itemId">
   itemId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -368,7 +401,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_materialIds" data-uid="Nekoyume.Action.ItemEnhancement.materialIds">
   materialIds
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -398,7 +431,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_slotIndex" data-uid="Nekoyume.Action.ItemEnhancement.slotIndex">
   slotIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -433,7 +466,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_PlainValueInternal" data-uid="Nekoyume.Action.ItemEnhancement.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -468,7 +501,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.ItemEnhancement.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L155"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -504,7 +537,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_GetEquipmentMaxLevel_Nekoyume_Model_Item_Equipment_Nekoyume_TableData_EnhancementCostSheetV3_" data-uid="Nekoyume.Action.ItemEnhancement.GetEquipmentMaxLevel(Nekoyume.Model.Item.Equipment,Nekoyume.TableData.EnhancementCostSheetV3)">
   GetEquipmentMaxLevel(Equipment, EnhancementCostSheetV3)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L464"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L513"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -538,11 +571,60 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
 
 
+  <a id="Nekoyume_Action_ItemEnhancement_GetHammerExp_" data-uid="Nekoyume.Action.ItemEnhancement.GetHammerExp*"></a>
+
+  <h3 id="Nekoyume_Action_ItemEnhancement_GetHammerExp_Nekoyume_TableData_EnhancementCostSheetV3_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  GetHammerExp(EnhancementCostSheetV3, int, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Experience one hammer gives, adjusted by a
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_EnhancementHammerExp">EnhancementHammerExp</a> row.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long GetHammerExp(EnhancementCostSheetV3 enhancementCostSheet, int hammerId, BoostScheduleSheet.Row hammerExpBoost)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>enhancementCostSheet</code> <a class="xref" href="Nekoyume.TableData.EnhancementCostSheetV3.html">EnhancementCostSheetV3</a></dt>
+    <dd><p>The sheet configuring each hammer's experience.</p>
+</dd>
+    <dt><code>hammerId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The hammer item id.</p>
+</dd>
+    <dt><code>hammerExpBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row active for <code class="paramref">hammerId</code> at the block, or <code>null</code> for none.
+A client previewing an enhancement must pass the row for the block it expects, or it
+shows less experience, a lower level and a lower NCG cost than the action produces.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The configured experience adjusted by the row, rounded down and kept between the
+configured experience and <a class="xref" href="Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_MaxHammerExpBoostFactor">MaxHammerExpBoostFactor</a> times it.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="Nekoyume_Action_ItemEnhancement_GetRequiredBlockCount_" data-uid="Nekoyume.Action.ItemEnhancement.GetRequiredBlockCount*"></a>
 
   <h3 id="Nekoyume_Action_ItemEnhancement_GetRequiredBlockCount_Nekoyume_Model_Item_Equipment_Nekoyume_Model_Item_Equipment_Nekoyume_TableData_EnhancementCostSheetV3_" data-uid="Nekoyume.Action.ItemEnhancement.GetRequiredBlockCount(Nekoyume.Model.Item.Equipment,Nekoyume.Model.Item.Equipment,Nekoyume.TableData.EnhancementCostSheetV3)">
   GetRequiredBlockCount(Equipment, Equipment, EnhancementCostSheetV3)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L441"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L490"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -582,7 +664,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.ItemEnhancement.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -613,7 +695,7 @@ public class ItemEnhancement : GameAction, IAction, IItemEnhancementV5</code></p
 
   <h3 id="Nekoyume_Action_ItemEnhancement_TryGetRow_Nekoyume_Model_Item_Equipment_Nekoyume_TableData_EnhancementCostSheetV3_Nekoyume_TableData_EnhancementCostSheetV3_Row__" data-uid="Nekoyume.Action.ItemEnhancement.TryGetRow(Nekoyume.Model.Item.Equipment,Nekoyume.TableData.EnhancementCostSheetV3,Nekoyume.TableData.EnhancementCostSheetV3.Row@)">
   TryGetRow(Equipment, EnhancementCostSheetV3, out Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L453"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/Action/ItemEnhancement.cs/#L502"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
