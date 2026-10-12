@@ -40,6 +40,13 @@ namespace Nekoyume.Action
                 ItemSubType.Grimoire,
             };
 
+        /// <summary>
+        /// Upper bound of a <see cref="BoostScheduleSheet.Targets.EnhancementHammerExp"/> row: the
+        /// adjusted hammer experience never exceeds this many times the configured one, so a
+        /// mistyped multiplier cannot hand out the top hammer's 500,000,000 experience tenfold.
+        /// </summary>
+        public const long MaxHammerExpBoostFactor = 3;
+
         public static readonly IReadOnlyCollection<int> HammerIds = new List<int>
         {
             600301,
@@ -110,6 +117,39 @@ namespace Nekoyume.Action
                     hammers.Add((Integer)innerList[0], (Integer)innerList[1]);
                 }
             }
+        }
+
+        /// <summary>
+        /// Experience one hammer gives, adjusted by a
+        /// <see cref="BoostScheduleSheet.Targets.EnhancementHammerExp"/> row.
+        /// </summary>
+        /// <param name="enhancementCostSheet">The sheet configuring each hammer's experience.</param>
+        /// <param name="hammerId">The hammer item id.</param>
+        /// <param name="hammerExpBoost">
+        /// The row active for <paramref name="hammerId"/> at the block, or <c>null</c> for none.
+        /// A client previewing an enhancement must pass the row for the block it expects, or it
+        /// shows less experience, a lower level and a lower NCG cost than the action produces.
+        /// </param>
+        /// <returns>
+        /// The configured experience adjusted by the row, rounded down and kept between the
+        /// configured experience and <see cref="MaxHammerExpBoostFactor"/> times it.
+        /// </returns>
+        public static long GetHammerExp(
+            EnhancementCostSheetV3 enhancementCostSheet,
+            int hammerId,
+            BoostScheduleSheet.Row hammerExpBoost)
+        {
+            var exp = enhancementCostSheet.GetHammerExp(hammerId);
+            if (hammerExpBoost is null || exp <= 0)
+            {
+                return exp;
+            }
+
+            var boosted = hammerExpBoost.Apply(exp);
+            var max = exp > long.MaxValue / MaxHammerExpBoostFactor
+                ? long.MaxValue
+                : exp * MaxHammerExpBoostFactor;
+            return Math.Min(Math.Max(boosted, exp), max);
         }
 
         public override IWorld Execute(IActionContext context)
@@ -328,12 +368,21 @@ namespace Nekoyume.Action
                     (total, m) => total + m.GetRealExp(equipmentItemSheet, enhancementCostSheet));
 
             // Calculate hammer exp
+            // Absent until the sheet is patched onto this chain, in which case each hammer gives
+            // exactly what EnhancementCostSheetV3 configures, as before the sheet existed.
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
             var hammerExp = 0L;
             foreach (var (hammerId, hammerCount) in hammers.OrderBy(kv => kv.Key))
             {
                 if (avatarState.inventory.RemoveMaterial(hammerId, context.BlockIndex, hammerCount))
                 {
-                    var exp = enhancementCostSheet.GetHammerExp(hammerId);
+                    var exp = GetHammerExp(
+                        enhancementCostSheet,
+                        hammerId,
+                        boostScheduleSheet?.FindActive(
+                            BoostScheduleSheet.Targets.EnhancementHammerExp,
+                            hammerId,
+                            context.BlockIndex));
                     hammerExp += exp * hammerCount;
                 }
                 else

@@ -189,6 +189,14 @@ namespace Nekoyume.Action
                 }
             };
 
+            // Absent until the sheet is patched onto this chain, in which case the required count is
+            // the one SynthesizeSheet configures, exactly as before the sheet existed.
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var requiredCountBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.SynthesizeRequiredCount,
+                MaterialGradeId,
+                context.BlockIndex);
+
             var synthesizedItems = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData()
             {
                 Grade = materialGrade,
@@ -204,6 +212,7 @@ namespace Nekoyume.Action
                 SkillSheet = sheets.GetSheet<SkillSheet>(),
                 BlockIndex = context.BlockIndex,
                 RandomObject = context.GetRandom(),
+                RequiredCountBoost = requiredCountBoost,
             });
 
             // Add synthesized items to inventory

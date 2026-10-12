@@ -96,8 +96,11 @@ namespace Nekoyume.Module
             IRandom random,
             Inventory inventory,
             Address avatarAddress,
-            Address agentAddress)
+            Address agentAddress,
+            BoostScheduleSheet.Row killRewardBoost = null)
         {
+            // killRewardBoost is the BoostScheduleSheet row of
+            // BoostScheduleSheet.Targets.WorldBossKillReward active at the granting block, or null.
             if (!rewardRecord.IsClaimable(bossState.Level))
             {
                 throw new InvalidClaimException();
@@ -117,7 +120,8 @@ namespace Nekoyume.Module
                     worldBossKillRewardSheet,
                     runeSheet,
                     materialItemSheet,
-                    random
+                    random,
+                    killRewardBoost
                 );
                 rewardRecord[level] = true;
                 foreach (var reward in rewards.assets)

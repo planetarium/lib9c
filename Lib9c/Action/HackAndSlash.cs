@@ -663,9 +663,25 @@ namespace Nekoyume.Action
 
             var buffLimitSheet = sheets.GetSheet<BuffLimitSheet>();
             var buffLinkSheet = sheets.GetSheet<BuffLinkSheet>();
+
+            // Never GetSheets: the sheet exists only once patched, and an unpatched chain must
+            // evaluate exactly as before.
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var itemRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.StageItemReward,
+                StageId,
+                blockIndex);
+            var favRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.StageFavReward,
+                StageId,
+                blockIndex);
             for (var i = 0; i < TotalPlayCount; i++)
             {
-                var rewards = StageSimulator.GetWaveRewards(random, stageRow, materialItemSheet);
+                var rewards = StageSimulator.GetWaveRewards(
+                    random,
+                    stageRow,
+                    materialItemSheet,
+                    itemRewardBoost: itemRewardBoost);
                 sw.Restart();
                 // First simulating will use Foods and Random Skills.
                 // Remainder simulating will not use Foods.
@@ -690,7 +706,8 @@ namespace Nekoyume.Action
                     buffLimitSheet,
                     buffLinkSheet,
                     false,
-                    gameConfigState.ShatterStrikeMaxDamage);
+                    gameConfigState.ShatterStrikeMaxDamage,
+                    favRewardBoost);
                 sw.Stop();
                 Log.Verbose("{AddressesHex} {Source} HAS {Process} from #{BlockIndex}: {Elapsed}",
                     addressesHex, source, "Initialize Simulator", blockIndex, sw.Elapsed.TotalMilliseconds);

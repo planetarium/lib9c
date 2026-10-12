@@ -57,6 +57,11 @@ namespace Nekoyume.Action
             var rewardRecord = new WorldBossKillRewardRecord((List) states.GetLegacyState(worldBossKillRewardRecordAddress));
             Address worldBossAddress = Addresses.GetWorldBossAddress(raidId);
             var worldBossState = new WorldBossState((List) states.GetLegacyState(worldBossAddress));
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var killRewardBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.WorldBossKillReward,
+                worldBossState.Id,
+                context.BlockIndex);
             var random = context.GetRandom();
             var inventory = states.GetInventoryV2(AvatarAddress);
             return states.SetWorldBossKillReward(
@@ -72,7 +77,8 @@ namespace Nekoyume.Action
                 random,
                 inventory,
                 AvatarAddress,
-                context.Signer
+                context.Signer,
+                killRewardBoost
             );
         }
 

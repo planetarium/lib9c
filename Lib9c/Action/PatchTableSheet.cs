@@ -87,6 +87,13 @@ namespace Nekoyume.Action
                 RestrictionSheet.ValidateCsv(TableCsv);
             }
 
+            // Reject a malformed schedule here: a row that does not parse is read as no
+            // adjustment, so it would otherwise land and silently never apply.
+            if (TableName == nameof(BoostScheduleSheet))
+            {
+                BoostScheduleSheet.ValidateCsv(TableCsv);
+            }
+
             states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
