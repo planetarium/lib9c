@@ -5,6 +5,7 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Helper;
     using Nekoyume.Model.State;
     using Nekoyume.TableData;
+    using Nekoyume.TableData.Summon;
     using Xunit;
 
     public class RuneHelperTest
@@ -56,7 +57,7 @@ namespace Lib9c.Tests.Action
             int baseCost,
             int expected)
         {
-            var boost = CreateBoostSheet($"1,RUNE_ENHANCEMENT_CRYSTAL_COST,*,{op},{value},0,10")[1];
+            var boost = CreateBoostSheet($"1,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,*,{op},{value},0,10")[1];
             Assert.Equal(expected, RuneHelper.ApplyEnhancementCostBoostQuantity(boost, baseCost));
         }
 
@@ -109,7 +110,7 @@ namespace Lib9c.Tests.Action
         {
             var sheet = CreateBoostSheet(
                 "1,RUNE_SUMMON_GUARANTEE,*,MUL,0.5,0,10",
-                "2,RUNE_ENHANCEMENT_NCG_COST,*,MUL,0.5,0,10");
+                "2,SUMMON_RUNE_ENHANCEMENT_NCG_COST,*,MUL,0.5,0,10");
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
             Assert.Same(cost, RuneHelper.ApplyEnhancementCostBoost(cost, 1, sheet, 5));
@@ -118,7 +119,7 @@ namespace Lib9c.Tests.Action
         [Fact]
         public void ApplyEnhancementCostBoost_AdjustsOnlyTheScheduledCurrency()
         {
-            var sheet = CreateBoostSheet("1,RUNE_ENHANCEMENT_RUNE_STONE_COST,1~10,MUL,0.5,0,10");
+            var sheet = CreateBoostSheet("1,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~10,MUL,0.5,0,10");
             var cost = new RuneCostSheet.RuneCostData(1, 1, 240, 20000, 50, 7000);
 
             var boosted = RuneHelper.ApplyEnhancementCostBoost(cost, 1, sheet, 5);
@@ -210,19 +211,86 @@ namespace Lib9c.Tests.Action
             Assert.Equal(expectedRandom.Next(), emptyRandom.Next());
         }
 
+        [Theory]
+        [InlineData(10001, 150, true)] // summonable, inside the schedule
+        [InlineData(10036, 150, false)] // in no RuneSummonSheet group
+        [InlineData(10001, 250, false)] // after the schedule
+        public void ResolveEnhancementCostBoost_OnlyForSummonableRunes(
+            int runeId,
+            long blockIndex,
+            bool expected)
+        {
+            var sheet = TieredSheet();
+
+            var resolved = RuneHelper.ResolveEnhancementCostBoost(
+                sheet,
+                runeId,
+                blockIndex,
+                () => _tableSheets.RuneSummonSheet);
+
+            Assert.Equal(expected ? sheet : null, resolved);
+        }
+
+        [Fact]
+        public void ResolveEnhancementCostBoost_WithoutRuneSummonSheet_IsNone()
+        {
+            Assert.Null(RuneHelper.ResolveEnhancementCostBoost(TieredSheet(), 10001, 150, () => null));
+            Assert.Null(RuneHelper.ResolveEnhancementCostBoost(
+                TieredSheet(),
+                10001,
+                150,
+                () => new RuneSummonSheet()));
+        }
+
+        [Fact]
+        public void ResolveEnhancementCostBoost_ReadsRuneSummonSheetOnlyWhenARowIsActive()
+        {
+            var loads = 0;
+            RuneSummonSheet Load()
+            {
+                loads++;
+                return _tableSheets.RuneSummonSheet;
+            }
+
+            var otherTargets = CreateBoostSheet("1,RUNE_SUMMON_GUARANTEE,*,ADD,1,0,1000");
+            Assert.Null(RuneHelper.ResolveEnhancementCostBoost(null, 10001, 150, Load));
+            Assert.Null(RuneHelper.ResolveEnhancementCostBoost(new BoostScheduleSheet(), 10001, 150, Load));
+            Assert.Null(RuneHelper.ResolveEnhancementCostBoost(otherTargets, 10001, 150, Load));
+            Assert.Null(RuneHelper.ResolveEnhancementCostBoost(TieredSheet(), 10001, 99, Load));
+            Assert.Equal(0, loads);
+
+            Assert.NotNull(RuneHelper.ResolveEnhancementCostBoost(TieredSheet(), 10001, 150, Load));
+            Assert.Equal(1, loads);
+        }
+
+        [Fact]
+        public void TryEnhancement_NonSummonableRune_IsUnchanged()
+        {
+            var costRow = _tableSheets.RuneCostSheet[10036];
+            var resolved = RuneHelper.ResolveEnhancementCostBoost(
+                TieredSheet(),
+                10036,
+                150,
+                () => _tableSheets.RuneSummonSheet);
+            RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var expected);
+            RuneHelper.TryEnhancement(48, costRow, new TestRandom(3), 4, out var actual, resolved, 150);
+
+            Assert.Equal(expected.ToString(), actual.ToString());
+        }
+
         /// <summary>
         /// The rotation event E3 curve, scheduled for blocks [100, 200).
         /// </summary>
         private static BoostScheduleSheet TieredSheet() =>
             CreateBoostSheet(
-                "1,RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.60,100,200",
-                "2,RUNE_ENHANCEMENT_CRYSTAL_COST,51~100,MUL,0.65,100,200",
-                "3,RUNE_ENHANCEMENT_CRYSTAL_COST,101~200,MUL,0.75,100,200",
-                "4,RUNE_ENHANCEMENT_CRYSTAL_COST,201~300,MUL,0.80,100,200",
-                "5,RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.70,100,200",
-                "6,RUNE_ENHANCEMENT_RUNE_STONE_COST,51~100,MUL,0.80,100,200",
-                "7,RUNE_ENHANCEMENT_RUNE_STONE_COST,101~200,MUL,0.90,100,200",
-                "8,RUNE_ENHANCEMENT_RUNE_STONE_COST,201~300,MUL,1.00,100,200");
+                "1,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.60,100,200",
+                "2,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,51~100,MUL,0.65,100,200",
+                "3,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,101~200,MUL,0.75,100,200",
+                "4,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,201~300,MUL,0.80,100,200",
+                "5,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.70,100,200",
+                "6,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,51~100,MUL,0.80,100,200",
+                "7,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,101~200,MUL,0.90,100,200",
+                "8,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,201~300,MUL,1.00,100,200");
 
         private static BoostScheduleSheet CreateBoostSheet(params string[] rows)
         {

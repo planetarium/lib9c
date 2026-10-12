@@ -10,6 +10,7 @@ using Nekoyume.Battle;
 using Nekoyume.Model.State;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
+using Nekoyume.TableData.Summon;
 
 namespace Nekoyume.Helper
 {
@@ -41,9 +42,10 @@ namespace Nekoyume.Helper
         /// <param name="tryCount">The number of tries.</param>
         /// <param name="levelUpResult">The level-ups and the summed cost.</param>
         /// <param name="boostScheduleSheet">
-        /// The patched <see cref="BoostScheduleSheet"/>, or <c>null</c> when the chain has none.
-        /// Adjusts each try's crystal and rune stone cost; see
+        /// The sheet <see cref="ResolveEnhancementCostBoost"/> returns for this rune, or
+        /// <c>null</c> for none. Adjusts each try's crystal and rune stone cost; see
         /// <see cref="ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, int, BoostScheduleSheet, long)"/>.
+        /// Passing the patched sheet directly skips the summonable-rune check.
         /// </param>
         /// <param name="blockIndex">
         /// The block being evaluated, against which <paramref name="boostScheduleSheet"/> rows are
@@ -90,8 +92,74 @@ namespace Nekoyume.Helper
         }
 
         /// <summary>
-        /// Applies the <see cref="BoostScheduleSheet.Targets.RuneEnhancementCrystalCost"/> and
-        /// <see cref="BoostScheduleSheet.Targets.RuneEnhancementRuneStoneCost"/> rows active at
+        /// Decides whether a rune's enhancement cost may be adjusted at all, and returns the sheet
+        /// to pass to <see cref="TryEnhancement"/> and
+        /// <see cref="ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, int, BoostScheduleSheet, long)"/>.
+        /// </summary>
+        /// <param name="boostScheduleSheet">
+        /// The patched <see cref="BoostScheduleSheet"/>, or <c>null</c> when the chain has none.
+        /// </param>
+        /// <param name="runeId">The rune being enhanced.</param>
+        /// <param name="blockIndex">The block being evaluated.</param>
+        /// <param name="getRuneSummonSheet">
+        /// Loads the <see cref="RuneSummonSheet"/>, returning <c>null</c> when it is absent or
+        /// unreadable. Called only when an enhancement cost row is active at
+        /// <paramref name="blockIndex"/>, so that evaluation without one reads no extra state.
+        /// </param>
+        /// <returns>
+        /// <paramref name="boostScheduleSheet"/> when a
+        /// <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost"/> or
+        /// <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost"/> row is
+        /// active at <paramref name="blockIndex"/> and <paramref name="runeId"/> is a recipe id of
+        /// any <see cref="RuneSummonSheet"/> group; otherwise <c>null</c>, meaning no adjustment.
+        /// </returns>
+        /// <remarks>
+        /// The summon pool is derived from the sheet rather than listed, so the adjustment
+        /// follows later changes to it. A recipe counts whatever its ratio. A missing
+        /// <see cref="RuneSummonSheet"/> means no rune is summonable, never an error.
+        /// </remarks>
+        public static BoostScheduleSheet? ResolveEnhancementCostBoost(
+            BoostScheduleSheet? boostScheduleSheet,
+            int runeId,
+            long blockIndex,
+            Func<RuneSummonSheet?> getRuneSummonSheet)
+        {
+            if (boostScheduleSheet?.OrderedList is null ||
+                !boostScheduleSheet.OrderedList.Any(row => IsActiveEnhancementCostRow(row, blockIndex)))
+            {
+                return null;
+            }
+
+            var runeSummonSheet = getRuneSummonSheet();
+            if (runeSummonSheet?.OrderedList is null)
+            {
+                return null;
+            }
+
+            foreach (var summonRow in runeSummonSheet.OrderedList)
+            {
+                foreach (var (recipeId, _) in summonRow.Recipes)
+                {
+                    if (recipeId == runeId)
+                    {
+                        return boostScheduleSheet;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsActiveEnhancementCostRow(BoostScheduleSheet.Row row, long blockIndex) =>
+            row.IsValid &&
+            (row.Target == BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost ||
+             row.Target == BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost) &&
+            row.StartBlockIndex <= blockIndex &&
+            blockIndex < row.EndBlockIndex;
+
+        /// <summary>
+        /// Applies the <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost"/> and
+        /// <see cref="BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost"/> rows active at
         /// <paramref name="blockIndex"/> to the cost of one try that reaches
         /// <paramref name="targetLevel"/>.
         /// </summary>
@@ -100,7 +168,9 @@ namespace Nekoyume.Helper
         /// The level the try attempts to reach, matched against <c>target_id</c>.
         /// </param>
         /// <param name="boostScheduleSheet">
-        /// The patched <see cref="BoostScheduleSheet"/>, or <c>null</c> when the chain has none.
+        /// The sheet <see cref="ResolveEnhancementCostBoost"/> returns for the rune, or
+        /// <c>null</c> for none. Passing the patched sheet directly skips the summonable-rune
+        /// check.
         /// </param>
         /// <param name="blockIndex">The block being evaluated.</param>
         /// <returns>
@@ -111,7 +181,8 @@ namespace Nekoyume.Helper
         /// </returns>
         /// <remarks>
         /// Callers showing a cost — or a maximum try count — should pass every per-level cost
-        /// through this so that they agree with <see cref="RuneEnhancement"/>.
+        /// through this, with the sheet from <see cref="ResolveEnhancementCostBoost"/>, so that
+        /// they agree with <see cref="RuneEnhancement"/>.
         /// </remarks>
         public static RuneCostSheet.RuneCostData ApplyEnhancementCostBoost(
             RuneCostSheet.RuneCostData cost,
@@ -125,11 +196,11 @@ namespace Nekoyume.Helper
             }
 
             var crystalBoost = boostScheduleSheet.FindActive(
-                BoostScheduleSheet.Targets.RuneEnhancementCrystalCost,
+                BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost,
                 targetLevel,
                 blockIndex);
             var runeStoneBoost = boostScheduleSheet.FindActive(
-                BoostScheduleSheet.Targets.RuneEnhancementRuneStoneCost,
+                BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost,
                 targetLevel,
                 blockIndex);
             if (crystalBoost is null && runeStoneBoost is null)

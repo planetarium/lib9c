@@ -14,16 +14,17 @@ namespace Lib9c.Tests.Action
     using Nekoyume.Module;
     using Nekoyume.TableData;
     using Nekoyume.TableData.Rune;
+    using Nekoyume.TableData.Summon;
     using Xunit;
 
     public class RuneEnhancementTest
     {
         private const string BoostCsv =
             "id,target,target_id,op,value,start_block,end_block\n" +
-            "1,RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.60,100,200\n" +
-            "2,RUNE_ENHANCEMENT_CRYSTAL_COST,51~100,MUL,0.65,100,200\n" +
-            "3,RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.70,100,200\n" +
-            "4,RUNE_ENHANCEMENT_RUNE_STONE_COST,51~100,MUL,0.80,100,200\n";
+            "1,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.60,100,200\n" +
+            "2,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,51~100,MUL,0.65,100,200\n" +
+            "3,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.70,100,200\n" +
+            "4,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,51~100,MUL,0.80,100,200\n";
 
         private readonly Currency _goldCurrency;
 
@@ -272,19 +273,25 @@ namespace Lib9c.Tests.Action
         }
 
         [Theory]
-        // Rune 10001 from level 48, four sure tries reaching 49, 50, 51 and 52:
-        // base 3000 stones (240 + 2400 + 180 + 180), 70000 crystal (20000 * 2 + 15000 * 2), 50 NCG.
-        [InlineData(150, true, 2136, 43500)] // stones * 0.7 / 0.8, crystal * 0.6 / 0.65
-        [InlineData(99, true, 3000, 70000)] // before start_block
-        [InlineData(200, true, 3000, 70000)] // end_block is exclusive
-        [InlineData(150, false, 3000, 70000)] // never patched
+        // From level 48, four sure tries reaching 49, 50, 51 and 52.
+        // Rune 10001 is summonable: base 3000 stones (240 + 2400 + 180 + 180) and
+        // 70000 crystal (20000 * 2 + 15000 * 2).
+        [InlineData(10001, 150, true, true, 2136, 43500)] // stones * 0.7 / 0.8, crystal * 0.6 / 0.65
+        [InlineData(10001, 99, true, true, 3000, 70000)] // before start_block
+        [InlineData(10001, 200, true, true, 3000, 70000)] // end_block is exclusive
+        [InlineData(10001, 150, false, true, 3000, 70000)] // never patched
+        [InlineData(10001, 150, true, false, 3000, 70000)] // RuneSummonSheet absent
+        // Rune 10036 is not in any RuneSummonSheet group: base 240 stones (30 + 30 + 90 + 90) and
+        // 240000 crystal (30000 + 150000 + 30000 + 30000), same levels, same schedule.
+        [InlineData(10036, 150, true, true, 240, 240000)]
         public void Execute_AppliesScheduledCostBoost(
+            int runeId,
             long blockIndex,
             bool patched,
+            bool hasRuneSummonSheet,
             int expectedRuneCost,
             int expectedCrystalCost)
         {
-            const int runeId = 10001;
             const int initialNcg = 10_000;
             const int initialCrystal = 1_000_000;
             const int initialRune = 10_000;
@@ -315,6 +322,12 @@ namespace Lib9c.Tests.Action
             state = patched
                 ? state.SetLegacyState(boostAddress, BoostCsv.Serialize())
                 : state.SetLegacyState(boostAddress, Bencodex.Types.Null.Value);
+            if (!hasRuneSummonSheet)
+            {
+                state = state.SetLegacyState(
+                    Addresses.TableSheet.Derive(nameof(RuneSummonSheet)),
+                    Bencodex.Types.Null.Value);
+            }
 
             var allRuneState = new AllRuneState(runeId);
             allRuneState.GetRuneState(runeId).LevelUp(48);
