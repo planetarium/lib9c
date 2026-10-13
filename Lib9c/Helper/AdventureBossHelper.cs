@@ -27,6 +27,9 @@ namespace Nekoyume.Helper
             return $"{season:D40}";
         }
 
+        /// <summary>
+        /// Share of a season's total bounty, in percent, paid as the raffle reward.
+        /// </summary>
         public const int RaffleRewardPercent = 5;
 
         /// <summary>

@@ -13,10 +13,21 @@ using Nekoyume.Helper;
 
 namespace Nekoyume.Helper
 {
+    /// <summary>
+    /// World boss (raid) rules shared by the raid actions and clients: ranks, tickets, rewards
+    /// and their <see cref="BoostScheduleSheet"/> adjustments.
+    /// </summary>
     public static class WorldBossHelper
     {
+        /// <summary>
+        /// Legacy ticket refill interval in blocks, used by <see cref="CanRefillTicketV1"/>.
+        /// </summary>
         [Obsolete("Use GameConfigState.DailyWorldBossInterval")]
         public const long RefillInterval = 7200L;
+
+        /// <summary>
+        /// Number of raid tickets a raider holds after a refill.
+        /// </summary>
         public const int MaxChallengeCount = 3;
 
         /// <summary>
