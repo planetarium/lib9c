@@ -368,6 +368,29 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(Combine(baseRewards, firstClear, 1), firstBoosted);
         }
 
+        // Each target grants at most AdventureBossHelper.MaxAdventureBossRewardBoostFactor (5)
+        // times its own part, however large the value.
+        [Theory]
+        [InlineData("2", 2)]
+        [InlineData("100", 5)]
+        [InlineData("2147483647", 5)]
+        public void Execute_CapsScheduledRewardBoost(string value, int multiplier)
+        {
+            var (baseRewards, baseScore, adventureBossId) = ExploreWithBoostSchedule(null);
+            var firstClear = FirstClearRewards(adventureBossId, 1, 5);
+            var floorRewards = Combine(baseRewards, firstClear, -1);
+
+            var (floorBoosted, floorBoostedScore, _) = ExploreWithBoostSchedule(
+                BoostCsv(BoostScheduleSheet.Targets.AdventureBossFloorReward, "1~5", 0, 10, value));
+            var (firstBoosted, firstBoostedScore, _) = ExploreWithBoostSchedule(
+                BoostCsv(BoostScheduleSheet.Targets.AdventureBossFirstClearReward, "1~5", 0, 10, value));
+
+            Assert.Equal(baseScore, floorBoostedScore);
+            Assert.Equal(baseScore, firstBoostedScore);
+            Assert.Equal(Combine(baseRewards, Scale(floorRewards, multiplier - 1), 1), floorBoosted);
+            Assert.Equal(Combine(baseRewards, Scale(firstClear, multiplier - 1), 1), firstBoosted);
+        }
+
         [Fact]
         public void Execute_MatchesFloorRewardBoostByFloorNumber()
         {
@@ -437,9 +460,19 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(neverPatched, emptySheet);
         }
 
-        private static string BoostCsv(string target, string targetId, long start, long end) =>
+        private static string BoostCsv(
+            string target,
+            string targetId,
+            long start,
+            long end,
+            string value = "2") =>
             "id,target,target_id,op,value,start_block,end_block\n" +
-            $"1,{target},{targetId},MUL,2,{start},{end}\n";
+            $"1,{target},{targetId},MUL,{value},{start},{end}\n";
+
+        private static Dictionary<string, BigInteger> Scale(
+            Dictionary<string, BigInteger> rewards,
+            int factor) =>
+            rewards.ToDictionary(pair => pair.Key, pair => pair.Value * factor);
 
         // Sums or subtracts per key, leaving out keys that end at zero.
         private static Dictionary<string, BigInteger> Combine(

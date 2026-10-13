@@ -170,6 +170,26 @@ namespace Lib9c.Tests.Action
             AssertRankReward(csv.Serialize(), expectedMultiplier);
         }
 
+        // At most WorldBossHelper.MaxWorldBossRewardBoostFactor (5) times each amount. 19930424 is a
+        // block index pasted into the value cell: uncapped, the circles of ranks 1~5 (two of them
+        // clamped to int.MaxValue) add up past int.MaxValue in one inventory slot and overflow it
+        // to a negative count.
+        [Theory]
+        [InlineData("2", 2)]
+        [InlineData("100", 5)]
+        [InlineData("19930424", 5)]
+        [InlineData("2147483647", 5)]
+        public void Execute_CapsScheduledRankRewardBoost(string value, int expectedMultiplier)
+        {
+            var bossRow = _tableSheets.WorldBossListSheet.OrderedList.First();
+            var csv =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                $"1,{BoostScheduleSheet.Targets.WorldBossRankReward},{bossRow.BossId},MUL,{value}," +
+                $"0,{long.MaxValue}\n";
+
+            AssertRankReward(csv.Serialize(), expectedMultiplier);
+        }
+
         [Fact]
         public void Execute_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
         {

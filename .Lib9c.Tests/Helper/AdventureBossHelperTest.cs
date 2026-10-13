@@ -137,6 +137,18 @@ namespace Lib9c.Tests.Helper
         [InlineData("ADD", "-10", 3, 1)]
         [InlineData("MUL", "2", 0, 0)]
         [InlineData("ADD", "5", 0, 0)]
+        // Capped at MaxAdventureBossRewardBoostFactor (5) times the drawn amount, ADD included.
+        [InlineData("MUL", "4.9", 3, 14)]
+        [InlineData("MUL", "5", 3, 15)]
+        [InlineData("MUL", "5.5", 3, 15)]
+        [InlineData("MUL", "100", 3, 15)]
+        [InlineData("ADD", "100", 3, 15)]
+        [InlineData("ADD", "10", 1, 5)]
+        // Huge values: never negative, never above int.MaxValue.
+        [InlineData("MUL", "2147483647", int.MaxValue, int.MaxValue)]
+        [InlineData("ADD", "2147483647", int.MaxValue, int.MaxValue)]
+        [InlineData("MUL", "2147483647", 1_000_000_000, int.MaxValue)]
+        [InlineData("MUL", "2147483647", 1, 5)]
         public void ApplyRewardBoost(string op, string value, int amount, int expected)
         {
             var boost = RewardBoost(op, value);

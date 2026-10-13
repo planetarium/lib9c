@@ -505,6 +505,28 @@ namespace Lib9c.Tests.Action
             ExecuteWithReward(csv.Serialize(), battleMultiplier, killMultiplier);
         }
 
+        // Each lever grants at most WorldBossHelper.MaxWorldBossRewardBoostFactor (5) times what was
+        // drawn, however large the value: below the cap a row applies as written.
+        [Theory]
+        [InlineData("2", "2", 2, 2)]
+        [InlineData("100", "100", 5, 5)]
+        [InlineData("2", "100", 2, 5)]
+        [InlineData("2147483647", "2147483647", 5, 5)]
+        public void Execute_With_Reward_CapsScheduledBoost(
+            string battleValue,
+            string killValue,
+            int battleMultiplier,
+            int killMultiplier)
+        {
+            var bossRow = _tableSheets.WorldBossListSheet.First().Value;
+            var csv =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                $"1,{BoostScheduleSheet.Targets.WorldBossBattleReward},{bossRow.BossId},MUL,{battleValue},0,{long.MaxValue}\n" +
+                $"2,{BoostScheduleSheet.Targets.WorldBossKillReward},{bossRow.BossId},MUL,{killValue},0,{long.MaxValue}\n";
+
+            ExecuteWithReward(csv.Serialize(), battleMultiplier, killMultiplier);
+        }
+
         [Fact]
         public void Execute_With_Reward_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
         {

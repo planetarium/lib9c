@@ -167,6 +167,11 @@ namespace Nekoyume.TableData
             /// <c>ExploreAdventureBoss</c> and <c>SweepAdventureBoss</c>. <c>target_id</c> is the
             /// floor number (<c>AdventureBossFloorSheet</c> <c>floor</c>, 1 for the first floor of
             /// every boss), not the floor row id.
+            /// <para>
+            /// The adjusted amount is kept between 1 and
+            /// <c>AdventureBossHelper.MaxAdventureBossRewardBoostFactor</c> (5) times the drawn
+            /// amount, <c>ADD</c> included. See <c>AdventureBossHelper.ApplyRewardBoost</c>.
+            /// </para>
             /// </summary>
             public const string AdventureBossFloorReward = "ADVENTURE_BOSS_FLOOR_REWARD";
 
@@ -174,6 +179,7 @@ namespace Nekoyume.TableData
             /// Amount of each <c>AdventureBossFloorFirstRewardSheet</c> reward, granted by
             /// <c>ExploreAdventureBoss</c> when a floor is cleared for the first time in a season.
             /// <c>target_id</c> is the floor number, as for <see cref="AdventureBossFloorReward"/>.
+            /// Bounded as <see cref="AdventureBossFloorReward"/> (at most 5 times each amount).
             /// </summary>
             public const string AdventureBossFirstClearReward = "ADVENTURE_BOSS_FIRST_CLEAR_REWARD";
 
@@ -182,6 +188,12 @@ namespace Nekoyume.TableData
             /// <c>WorldBossBattleRewardSheet</c> reward a <c>Raid</c> grants for its battle.
             /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>, e.g.
             /// <c>900001</c>), and the block is the one the raid is played in.
+            /// <para>
+            /// Each adjusted amount is capped at <c>WorldBossHelper.MaxWorldBossRewardBoostFactor</c>
+            /// (5) times the drawn amount, <c>ADD</c> included; the same cap holds for
+            /// <see cref="WorldBossKillReward"/> and <see cref="WorldBossRankReward"/>. See
+            /// <c>WorldBossHelper.ApplyRewardBoost</c>.
+            /// </para>
             /// </summary>
             public const string WorldBossBattleReward = "WORLD_BOSS_BATTLE_REWARD";
 
@@ -191,7 +203,8 @@ namespace Nekoyume.TableData
             /// raises the boss level or by <c>ClaimWordBossKillReward</c>. <c>target_id</c> is the
             /// boss id (<c>WorldBossListSheet.boss_id</c>), and the block is the one the reward is
             /// granted in, not the one the boss was killed in: a kill left unclaimed until the
-            /// event is boosted when it is claimed during the event.
+            /// event is boosted when it is claimed during the event. Capped at 5 times each amount,
+            /// as <see cref="WorldBossBattleReward"/>.
             /// </summary>
             public const string WorldBossKillReward = "WORLD_BOSS_KILL_REWARD";
 
@@ -201,6 +214,7 @@ namespace Nekoyume.TableData
             /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>), and the block
             /// is the one the reward is claimed in, not the one the rank was reached in: a rank
             /// left unclaimed until the event is boosted when it is claimed during the event.
+            /// Capped at 5 times each amount, as <see cref="WorldBossBattleReward"/>.
             /// </summary>
             public const string WorldBossRankReward = "WORLD_BOSS_RANK_REWARD";
 
@@ -322,7 +336,9 @@ namespace Nekoyume.TableData
                     "is reused across seasons, so the row covers every season of that boss within the block range",
                     "WorldBossListSheet",
                     "MUL above 1",
-                    "Each drawn amount is scaled after the draw and floored, so the draws are unchanged.",
+                    "Each drawn amount is scaled after the draw and floored, so the draws are unchanged. The result " +
+                    "is capped at 5 times each drawn amount (ADD too); the value itself is not rejected, so MUL 100 " +
+                    "grants 5×.",
                     "The block is the one the raid is played in. An old client shows the unboosted battle reward " +
                     "(granted correctly).",
                     "7,WORLD_BOSS_BATTLE_REWARD,*,MUL,2,<start>,<end>"),
@@ -354,7 +370,8 @@ namespace Nekoyume.TableData
                     "floor number (AdventureBossFloorSheet floor, 1 is every boss's first floor), not the row id",
                     "AdventureBossFloorSheet",
                     "MUL above 1",
-                    "Scaled after the draw, floored, never below 1.",
+                    "Scaled after the draw, floored, kept between 1 and 5 times the drawn amount (ADD too); the " +
+                    "value itself is not rejected, so MUL 100 grants 5×.",
                     "NCG and season-end claim rewards are not adjustable. An old client shows the unboosted " +
                     "reward (granted correctly).",
                     "10,ADVENTURE_BOSS_FLOOR_REWARD,*,MUL,2,<start>,<end>"),
@@ -364,7 +381,7 @@ namespace Nekoyume.TableData
                     "floor number, as ADVENTURE_BOSS_FLOOR_REWARD",
                     "AdventureBossFloorFirstRewardSheet",
                     "MUL above 1",
-                    "Scaled, floored, never below 1.",
+                    "Scaled, floored, kept between 1 and 5 times the configured amount (ADD too).",
                     "As ADVENTURE_BOSS_FLOOR_REWARD.",
                     "11,ADVENTURE_BOSS_FIRST_CLEAR_REWARD,*,MUL,2,<start>,<end>"),
                 new TargetInfo(
