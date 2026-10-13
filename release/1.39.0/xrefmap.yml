@@ -39899,6 +39899,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.AdventureBossHelper.GetSeasonAsAddressForm
   nameWithType: AdventureBossHelper.GetSeasonAsAddressForm
+- uid: Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor
+  name: MaxAdventureBossRewardBoostFactor
+  href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_MaxAdventureBossRewardBoostFactor
+  commentId: F:Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor
+  fullName: Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor
+  nameWithType: AdventureBossHelper.MaxAdventureBossRewardBoostFactor
 - uid: Nekoyume.Helper.AdventureBossHelper.PickExploreRaffle(Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.ExplorerList,Libplanet.Action.IRandom)
   name: PickExploreRaffle(BountyBoard, ExploreBoard, ExplorerList, IRandom)
   href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_PickExploreRaffle_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_ExplorerList_Libplanet_Action_IRandom_
@@ -41356,6 +41362,12 @@ references:
   commentId: F:Nekoyume.Helper.WorldBossHelper.MaxChallengeCount
   fullName: Nekoyume.Helper.WorldBossHelper.MaxChallengeCount
   nameWithType: WorldBossHelper.MaxChallengeCount
+- uid: Nekoyume.Helper.WorldBossHelper.MaxWorldBossRewardBoostFactor
+  name: MaxWorldBossRewardBoostFactor
+  href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_MaxWorldBossRewardBoostFactor
+  commentId: F:Nekoyume.Helper.WorldBossHelper.MaxWorldBossRewardBoostFactor
+  fullName: Nekoyume.Helper.WorldBossHelper.MaxWorldBossRewardBoostFactor
+  nameWithType: WorldBossHelper.MaxWorldBossRewardBoostFactor
 - uid: Nekoyume.Helper.WorldBossHelper.RefillInterval
   name: RefillInterval
   href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_RefillInterval
