@@ -13,11 +13,33 @@ using Nekoyume.Helper;
 
 namespace Nekoyume.Helper
 {
+    /// <summary>
+    /// World boss (raid) rules shared by the raid actions and clients: ranks, tickets, rewards
+    /// and their <see cref="BoostScheduleSheet"/> adjustments.
+    /// </summary>
     public static class WorldBossHelper
     {
+        /// <summary>
+        /// Legacy ticket refill interval in blocks, used by <see cref="CanRefillTicketV1"/>.
+        /// </summary>
         [Obsolete("Use GameConfigState.DailyWorldBossInterval")]
         public const long RefillInterval = 7200L;
+
+        /// <summary>
+        /// Number of raid tickets a raider holds after a refill.
+        /// </summary>
         public const int MaxChallengeCount = 3;
+
+        /// <summary>
+        /// Upper bound of a <see cref="BoostScheduleSheet.Targets.WorldBossBattleReward"/>,
+        /// <see cref="BoostScheduleSheet.Targets.WorldBossKillReward"/> or
+        /// <see cref="BoostScheduleSheet.Targets.WorldBossRankReward"/> row: each boosted amount
+        /// never exceeds this many times the amount drawn, whatever the row's <c>op</c> and value.
+        /// It bounds a mistyped value (e.g. a block index pasted into the value cell) to a fivefold
+        /// over-reward and keeps several boosted amounts added to one inventory slot from
+        /// overflowing.
+        /// </summary>
+        public const long MaxWorldBossRewardBoostFactor = 5;
 
         public static int CalculateRank(WorldBossCharacterSheet.Row row, long score)
         {
@@ -153,15 +175,18 @@ namespace Nekoyume.Helper
         /// <param name="amount">The amount the reward row and the draws grant.</param>
         /// <returns>
         /// <paramref name="amount"/> unchanged when there is no row or nothing is granted;
-        /// otherwise <see cref="BoostScheduleSheet.Row.Apply(int)"/> of it. A result of 0 means the
-        /// amount is not granted at all.
+        /// otherwise <see cref="BoostScheduleSheet.Row.Apply(int)"/> of it, capped at
+        /// <see cref="MaxWorldBossRewardBoostFactor"/> times <paramref name="amount"/>. A result
+        /// of 0 means the amount is not granted at all.
         /// </returns>
         /// <remarks>
         /// A boost adjusts what a reward grants but never adds a kind the row does not grant — a
         /// row with no crystal stays without crystal under <c>ADD</c> — since a reward that exists
         /// only during an event reads as one taken away when the event ends. <c>ADD</c> applies to
         /// every amount separately, i.e. once per distinct rune drawn; use <c>MUL</c> to scale a
-        /// reward as a whole.
+        /// reward as a whole. The cap applies to <c>ADD</c> too, so <c>ADD 10</c> on a single
+        /// drawn rune grants 5, not 11. Lowering is not bounded: a <c>MUL</c> below 1 or a
+        /// negative <c>ADD</c> still lowers an amount, down to 0.
         /// </remarks>
         public static int ApplyRewardBoost(BoostScheduleSheet.Row rewardBoost, int amount)
         {
@@ -170,7 +195,11 @@ namespace Nekoyume.Helper
                 return amount;
             }
 
-            return rewardBoost.Apply(amount);
+            // In 64 bits: amount × the factor exceeds int.MaxValue for amounts above ~429M, and
+            // the minimum never does since Apply(int) is at most int.MaxValue.
+            return (int)Math.Min(
+                (long)rewardBoost.Apply(amount),
+                amount * MaxWorldBossRewardBoostFactor);
         }
 
         /// <summary>

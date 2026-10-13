@@ -279,6 +279,24 @@ namespace Lib9c.Tests.Action.AdventureBoss
                 boosted);
         }
 
+        // At most AdventureBossHelper.MaxAdventureBossRewardBoostFactor (5) times each amount.
+        [Theory]
+        [InlineData("2", 2)]
+        [InlineData("100", 5)]
+        [InlineData("2147483647", 5)]
+        public void Execute_CapsScheduledFloorRewardBoost(string value, int multiplier)
+        {
+            var (baseRewards, baseScore) = SweepWithBoostSchedule(null);
+            var (boosted, boostedScore) = SweepWithBoostSchedule(
+                BoostCsv(BoostScheduleSheet.Targets.AdventureBossFloorReward, "*", 0, 10, value));
+
+            Assert.Contains(baseRewards, pair => pair.Value > 0);
+            Assert.Equal(baseScore, boostedScore);
+            Assert.Equal(
+                baseRewards.ToDictionary(pair => pair.Key, pair => pair.Value * multiplier),
+                boosted);
+        }
+
         [Fact]
         public void Execute_MatchesFloorRewardBoostByFloorNumber()
         {
@@ -352,9 +370,14 @@ namespace Lib9c.Tests.Action.AdventureBoss
             Assert.Equal(neverPatched, emptySheet);
         }
 
-        private static string BoostCsv(string target, string targetId, long start, long end) =>
+        private static string BoostCsv(
+            string target,
+            string targetId,
+            long start,
+            long end,
+            string value = "2") =>
             "id,target,target_id,op,value,start_block,end_block\n" +
-            $"1,{target},{targetId},MUL,2,{start},{end}\n";
+            $"1,{target},{targetId},MUL,{value},{start},{end}\n";
 
         // Sums or subtracts per key, leaving out keys that end at zero.
         private static Dictionary<string, BigInteger> Combine(

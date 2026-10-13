@@ -299,15 +299,25 @@ namespace Lib9c.Tests.Helper
             var equipmentItemRecipeSheet = CreateTestEquipmentItemRecipeSheet();
             var boost = CreateBoostRow("ADD", "5");
 
-            // 110 summons guarantee 2 at grade 4; the boost raises that to 7.
-            var result = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
+            // 110 summons guarantee 2 at grade 4; the boost raises that to 7. The guarantee is
+            // forced on the last N summons, so the boost must turn the last 7 — not just 2 — into
+            // grade 4 or above, and leave every summon before them as drawn without it.
+            var boosted = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
                 summonRow, 110, new TestRandom(), equipmentItemSheet, equipmentItemRecipeSheet, boost);
+            var unboosted = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
+                summonRow, 110, new TestRandom(), equipmentItemSheet, equipmentItemRecipeSheet);
 
-            var atLeastMinimumGrade = result.Count(recipeId =>
+            bool AtLeastMinimumGrade(int recipeId) =>
                 TryGetItemGradeFromRecipeId(recipeId, equipmentItemSheet, equipmentItemRecipeSheet, out var grade) &&
-                grade >= 4);
-            Assert.Equal(110, result.Count);
-            Assert.True(atLeastMinimumGrade >= 7, $"expected at least 7 but got {atLeastMinimumGrade}");
+                grade >= 4;
+
+            Assert.Equal(110, boosted.Count);
+            Assert.All(boosted.Skip(103), recipeId => Assert.True(AtLeastMinimumGrade(recipeId)));
+            Assert.Equal(unboosted.Take(103), boosted.Take(103));
+
+            // Without the boost the same seed leaves part of that tail below grade 4, so the
+            // assertion above fails if the boost is not applied.
+            Assert.Contains(unboosted.Skip(103), recipeId => !AtLeastMinimumGrade(recipeId));
         }
 
         private static BoostScheduleSheet.Row CreateBoostRow(string op, string value)
