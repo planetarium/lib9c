@@ -157,12 +157,13 @@ no effect until a version that applies it is running.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFirstClearReward">
   AdventureBossFirstClearReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L184"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Amount of each <code>AdventureBossFloorFirstRewardSheet</code> reward, granted by
 <code>ExploreAdventureBoss</code> when a floor is cleared for the first time in a season.
-<code>target_id</code> is the floor number, as for <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a>.</p>
+<code>target_id</code> is the floor number, as for <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a>.
+Bounded as <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a> (at most 5 times each amount).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -190,7 +191,7 @@ no effect until a version that applies it is running.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFloorReward">
   AdventureBossFloorReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L176"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Amount of the reward an adventure boss floor drops on every clear — the one entry
@@ -198,6 +199,11 @@ drawn from <code>AdventureBossFloorSheet</code> rewards per floor, by both
 <code>ExploreAdventureBoss</code> and <code>SweepAdventureBoss</code>. <code>target_id</code> is the
 floor number (<code>AdventureBossFloorSheet</code><code>floor</code>, 1 for the first floor of
 every boss), not the floor row id.</p>
+<p>
+The adjusted amount is kept between 1 and
+<code>AdventureBossHelper.MaxAdventureBossRewardBoostFactor</code> (5) times the drawn
+amount, <code>ADD</code> included. See <code>AdventureBossHelper.ApplyRewardBoost</code>.
+</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -225,7 +231,7 @@ every boss), not the floor row id.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Applied" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Applied">
   Applied
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L424"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L441"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every target above, for tooling that warns about rows no running code applies.</p>
@@ -366,7 +372,7 @@ group id.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_Infos" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.Infos">
   Infos
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L269"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>How to write a row for each target above, for tooling that helps people fill the
@@ -400,7 +406,7 @@ it, so changing it never changes what a row does. Rules shared by every row are 
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_RowRules" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules">
   RowRules
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L409"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L426"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Rules every row follows whatever its target, for the same tooling as
@@ -552,7 +558,7 @@ drop into 2 — effectively a 100% boost for those items, however small the valu
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost">
   SummonRuneEnhancementCrystalCost
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L222"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L236"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Crystal cost of one <code>RuneEnhancement</code> try, per <code>RuneCostSheet</code> level, for
@@ -594,7 +600,7 @@ success rate are not adjustable.
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementRuneStoneCost" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost">
   SummonRuneEnhancementRuneStoneCost
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L244"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Rune stone cost of one <code>RuneEnhancement</code> try, per <code>RuneCostSheet</code> level,
@@ -627,7 +633,7 @@ for summonable runes only. Scope, <code>target_id</code> and bounds as in
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_SynthesizeRequiredCount" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.SynthesizeRequiredCount">
   SynthesizeRequiredCount
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L247"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L261"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p><code>required_count</code> of a <code>SynthesizeSheet</code> grade — how many materials one
@@ -669,13 +675,19 @@ active.
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossBattleReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossBattleReward">
   WorldBossBattleReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L198"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of the
 <code>WorldBossBattleRewardSheet</code> reward a <code>Raid</code> grants for its battle.
 <code>target_id</code> is the boss id (<code>WorldBossListSheet.boss_id</code>, e.g.
 <code>900001</code>), and the block is the one the raid is played in.</p>
+<p>
+Each adjusted amount is capped at <code>WorldBossHelper.MaxWorldBossRewardBoostFactor</code>
+(5) times the drawn amount, <code>ADD</code> included; the same cap holds for
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossKillReward">WorldBossKillReward</a> and <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossRankReward">WorldBossRankReward</a>. See
+<code>WorldBossHelper.ApplyRewardBoost</code>.
+</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -703,7 +715,7 @@ active.
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossKillReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossKillReward">
   WorldBossKillReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L209"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of each
@@ -711,7 +723,8 @@ active.
 raises the boss level or by <code>ClaimWordBossKillReward</code>. <code>target_id</code> is the
 boss id (<code>WorldBossListSheet.boss_id</code>), and the block is the one the reward is
 granted in, not the one the boss was killed in: a kill left unclaimed until the
-event is boosted when it is claimed during the event.</p>
+event is boosted when it is claimed during the event. Capped at 5 times each amount,
+as <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossBattleReward">WorldBossBattleReward</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -739,14 +752,15 @@ event is boosted when it is claimed during the event.</p>
 
   <h3 id="Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossRankReward" data-uid="Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossRankReward">
   WorldBossRankReward
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/development/Lib9c/TableData/BoostScheduleSheet.cs/#L219"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Every amount — each drawn rune, crystal, circle — of each
 <code>WorldBossRankRewardSheet</code> reward <code>ClaimRaidReward</code> grants.
 <code>target_id</code> is the boss id (<code>WorldBossListSheet.boss_id</code>), and the block
 is the one the reward is claimed in, not the one the rank was reached in: a rank
-left unclaimed until the event is boosted when it is claimed during the event.</p>
+left unclaimed until the event is boosted when it is claimed during the event.
+Capped at 5 times each amount, as <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossBattleReward">WorldBossBattleReward</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
