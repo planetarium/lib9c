@@ -16,6 +16,7 @@ using Nekoyume.Model.State;
 using Nekoyume.Module;
 using Nekoyume.TableData;
 using Nekoyume.TableData.Rune;
+using Nekoyume.TableData.Summon;
 
 namespace Nekoyume.Action
 {
@@ -121,9 +122,18 @@ namespace Nekoyume.Action
                     $"[{nameof(RuneEnhancement)}] my avatar address : {AvatarAddress}");
             }
 
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var patchedBoostScheduleSheet);
+            var costBoost = RuneHelper.ResolveEnhancementCostBoost(
+                patchedBoostScheduleSheet,
+                runeState.RuneId,
+                context.BlockIndex,
+                () => states.TryGetSheet<RuneSummonSheet>(out var runeSummonSheet)
+                    ? runeSummonSheet
+                    : null);
+
             var random = context.GetRandom();
             if (!RuneHelper.TryEnhancement(runeState.Level, costRow, random, TryCount,
-                    out var levelUpResult))
+                    out var levelUpResult, costBoost, context.BlockIndex))
             {
                 // Rune cost not found while level up
                 throw new RuneCostDataNotFoundException(

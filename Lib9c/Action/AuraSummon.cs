@@ -82,6 +82,10 @@ namespace Nekoyume.Action
         /// <param name="summonCount">Number of items to summon (before 10+1 bonus)</param>
         /// <param name="random">Random number generator</param>
         /// <param name="blockIndex">Current block index for item creation</param>
+        /// <param name="guaranteeBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting this group's guarantee count, or
+        /// <c>null</c> for none. A caller replaying a summon must pass what the action resolved.
+        /// </param>
         /// <returns>Collection of (recipe ID, equipment) pairs</returns>
         public static IEnumerable<(int, Equipment)> SimulateSummon(
             string addressesHex,
@@ -93,7 +97,8 @@ namespace Nekoyume.Action
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
-            long blockIndex
+            long blockIndex,
+            BoostScheduleSheet.Row guaranteeBoost = null
         )
         {
             summonCount = SummonHelper.CalculateSummonCount(summonCount);
@@ -105,7 +110,7 @@ namespace Nekoyume.Action
             {
                 // Use grade guarantee system with settings from SummonSheet.Row based on summon count
                 recipeIds = SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(
-                    summonRow, summonCount, random, equipmentItemSheet, recipeSheet);
+                    summonRow, summonCount, random, equipmentItemSheet, recipeSheet, guaranteeBoost);
             }
             else
             {
@@ -313,6 +318,12 @@ namespace Nekoyume.Action
                 );
             }
 
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
+            var guaranteeBoost = boostScheduleSheet?.FindActive(
+                BoostScheduleSheet.Targets.EquipmentSummonGuarantee,
+                GroupId,
+                context.BlockIndex);
+
             var random = context.GetRandom();
             var summonResult = SimulateSummon(
                 addressesHex,
@@ -322,7 +333,8 @@ namespace Nekoyume.Action
                 sheets.GetSheet<EquipmentItemOptionSheet>(),
                 sheets.GetSheet<SkillSheet>(),
                 summonRow, SummonCount,
-                random, context.BlockIndex
+                random, context.BlockIndex,
+                guaranteeBoost
             );
 
             foreach (var (recipeId, equipment) in summonResult)

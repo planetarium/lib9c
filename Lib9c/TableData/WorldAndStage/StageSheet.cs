@@ -118,7 +118,7 @@ namespace Nekoyume.TableData
                 EnemyInitialStatModifiers = new List<StatModifier>();
                 for (var i = 0; i < 6; i++)
                 {
-                    if (!TryParseInt(fields[3 + i], out var option) ||
+                    if (!TryParseLong(fields[3 + i], out var option) ||
                         option == 0)
                         continue;
 

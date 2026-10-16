@@ -67,8 +67,57 @@ namespace Nekoyume.Helper
         /// </summary>
         /// <param name="summonRow">The summon row containing guarantee settings</param>
         /// <param name="summonCount">The number of summons</param>
+        /// <param name="guaranteeBoost">
+        /// The <see cref="BoostScheduleSheet"/> row adjusting this group's guarantee count at the
+        /// current block, or <c>null</c> for none. See <see cref="ApplyGuaranteeBoost"/>.
+        /// </param>
         /// <returns>A tuple containing (useGuarantee, minimumGrade, guaranteeCount)</returns>
         public static (bool useGuarantee, int minimumGrade, int guaranteeCount) GetGuaranteeSettings(
+            SummonSheet.Row summonRow,
+            int summonCount,
+            BoostScheduleSheet.Row guaranteeBoost = null)
+        {
+            var (useGuarantee, minimumGrade, guaranteeCount) =
+                GetBaseGuaranteeSettings(summonRow, summonCount);
+            if (useGuarantee && guaranteeBoost is not null)
+            {
+                guaranteeCount = ApplyGuaranteeBoost(guaranteeBoost, guaranteeCount, summonCount);
+            }
+
+            return (useGuarantee, minimumGrade, guaranteeCount);
+        }
+
+        /// <summary>
+        /// Applies a <see cref="BoostScheduleSheet"/> row to a configured guarantee count.
+        /// </summary>
+        /// <param name="guaranteeBoost">The row to apply.</param>
+        /// <param name="guaranteeCount">The guarantee count the summon sheet configures.</param>
+        /// <param name="summonCount">The number of summons, bonus included.</param>
+        /// <returns>
+        /// The adjusted count, kept below <paramref name="summonCount"/> so that at least one draw
+        /// stays a normal draw — unless the sheet itself already configures more.
+        /// </returns>
+        /// <remarks>
+        /// A boost adjusts a guarantee but never creates one, since a guarantee that exists only
+        /// during an event reads as one taken away when the event ends. That also covers a group
+        /// configured with a count of 0: its guaranteed-grade path has never run, so starting it
+        /// mid-event could surface a grade with no eligible recipe and fail every summon.
+        /// </remarks>
+        public static int ApplyGuaranteeBoost(
+            BoostScheduleSheet.Row guaranteeBoost,
+            int guaranteeCount,
+            int summonCount)
+        {
+            if (guaranteeCount <= 0)
+            {
+                return guaranteeCount;
+            }
+
+            var cap = Math.Max(guaranteeCount, summonCount - 1);
+            return Math.Min(guaranteeBoost.Apply(guaranteeCount), cap);
+        }
+
+        private static (bool useGuarantee, int minimumGrade, int guaranteeCount) GetBaseGuaranteeSettings(
             SummonSheet.Row summonRow,
             int summonCount)
         {
@@ -106,19 +155,22 @@ namespace Nekoyume.Helper
         /// <param name="random">Random number generator</param>
         /// <param name="equipmentItemSheet">Equipment item sheet to check grades</param>
         /// <param name="equipmentItemRecipeSheet">Equipment item recipe sheet to map recipe IDs to equipment IDs</param>
+        /// <param name="guaranteeBoost">Guarantee count adjustment, or <c>null</c> for none.</param>
         /// <returns>List of recipe IDs with grade guarantee applied</returns>
         public static List<int> GetSummonRecipeIdsWithGradeGuarantee(
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
             EquipmentItemSheet equipmentItemSheet,
-            EquipmentItemRecipeSheet equipmentItemRecipeSheet)
+            EquipmentItemRecipeSheet equipmentItemRecipeSheet,
+            BoostScheduleSheet.Row guaranteeBoost = null)
         {
             var result = new List<int>();
             var guaranteedCount = 0;
 
             // Get guarantee settings
-            var (useGuarantee, minimumGrade, guaranteeCount) = GetGuaranteeSettings(summonRow, summonCount);
+            var (useGuarantee, minimumGrade, guaranteeCount) =
+                GetGuaranteeSettings(summonRow, summonCount, guaranteeBoost);
 
             // Process each item one by one to maintain random call order
             for (var i = 0; i < summonCount; i++)
@@ -160,19 +212,22 @@ namespace Nekoyume.Helper
         /// <param name="random">Random number generator</param>
         /// <param name="costumeItemSheet">Costume item sheet to check grades</param>
         /// <param name="equipmentItemRecipeSheet">Equipment item recipe sheet (not used for costumes, can be null)</param>
+        /// <param name="guaranteeBoost">Guarantee count adjustment, or <c>null</c> for none.</param>
         /// <returns>List of recipe IDs with grade guarantee applied</returns>
         public static List<int> GetSummonRecipeIdsWithGradeGuarantee(
             SummonSheet.Row summonRow,
             int summonCount,
             IRandom random,
             CostumeItemSheet costumeItemSheet,
-            EquipmentItemRecipeSheet equipmentItemRecipeSheet)
+            EquipmentItemRecipeSheet equipmentItemRecipeSheet,
+            BoostScheduleSheet.Row guaranteeBoost = null)
         {
             var result = new List<int>();
             var guaranteedCount = 0;
 
             // Get guarantee settings
-            var (useGuarantee, minimumGrade, guaranteeCount) = GetGuaranteeSettings(summonRow, summonCount);
+            var (useGuarantee, minimumGrade, guaranteeCount) =
+                GetGuaranteeSettings(summonRow, summonCount, guaranteeBoost);
 
             // Process each item one by one to maintain random call order
             for (var i = 0; i < summonCount; i++)

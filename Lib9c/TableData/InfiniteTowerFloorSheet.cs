@@ -366,7 +366,7 @@ namespace Nekoyume.TableData
                     for (var i = 0; i < 6; i++)
                     {
                         var fieldIndex = 47 + i;
-                        if (fieldIndex < fields.Count && TryParseInt(fields[fieldIndex], out var option) && option != 0)
+                        if (fieldIndex < fields.Count && TryParseLong(fields[fieldIndex], out var option) && option != 0)
                         {
                             switch (i)
                             {

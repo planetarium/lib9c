@@ -227,6 +227,7 @@ namespace Nekoyume.Action.AdventureBoss
                 .First(row => row.BossId == latestSeason.BossId).Id;
             var floorPointSheet = states.GetSheet<AdventureBossFloorPointSheet>();
             var floorSheet = states.GetSheet<AdventureBossFloorSheet>();
+            states.TryGetPatchedSheet<BoostScheduleSheet>(out var boostScheduleSheet);
             for (var fl = 1; fl <= explorer.Floor; fl++)
             {
                 var floorRow = floorSheet.Values.Where(row => row.AdventureBossId == bossId)
@@ -241,11 +242,16 @@ namespace Nekoyume.Action.AdventureBoss
                 }
 
                 var selected = selector.Select(1).First();
-                rewardList.Add(new AdventureBossSheet.RewardAmountData(
-                    selected.ItemType,
-                    selected.ItemId,
-                    random.Next(selected.Min, selected.Max + 1)
-                ));
+                var floorBoost = boostScheduleSheet?.FindActive(
+                    BoostScheduleSheet.Targets.AdventureBossFloorReward,
+                    fl,
+                    context.BlockIndex);
+                rewardList.Add(AdventureBossHelper.ApplyRewardBoost(
+                    new AdventureBossSheet.RewardAmountData(
+                        selected.ItemType,
+                        selected.ItemId,
+                        random.Next(selected.Min, selected.Max + 1)),
+                    floorBoost));
             }
 
             exploreBoard.TotalPoint += point;

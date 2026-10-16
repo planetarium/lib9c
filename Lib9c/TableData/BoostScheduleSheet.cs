@@ -1,0 +1,953 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static Nekoyume.TableData.TableExtensions;
+
+namespace Nekoyume.TableData
+{
+    /// <summary>
+    /// Schedules a temporary adjustment of a game value — a reward amount, a cost, a guarantee
+    /// count — for a block range, so that an event can be run with <c>patch_table_sheet</c>
+    /// instead of rewriting the value's own sheet and patching it back afterwards.
+    /// <para>
+    /// Columns: <c>id</c>, <c>target</c>, <c>target_id</c>, <c>op</c>, <c>value</c>,
+    /// <c>start_block</c>, <c>end_block</c>. A <c>_memo</c> column, like any <c>_</c> prefixed
+    /// column, is dropped on load and may be used for notes.
+    /// </para>
+    /// <para>
+    /// <c>target_id</c> is a single id (<c>50</c>), an inclusive range (<c>1~50</c>) or
+    /// <c>*</c> for every id. <c>~</c> rather than <c>-</c> keeps a spreadsheet from reading a
+    /// range as a date on its way to the CSV.
+    /// </para>
+    /// <para>
+    /// <c>target</c> names what is adjusted and is matched as a plain string by the call site that
+    /// owns it, so the sheet itself never needs to know which targets exist. A node that predates a
+    /// target simply finds no match for it instead of failing to read the sheet.
+    /// <see cref="Targets"/> lists the targets this version applies.
+    /// </para>
+    /// <para>
+    /// A row applies in <c>[start_block, end_block)</c>. When several rows match, the one with the
+    /// lowest <c>id</c> wins; rows are never combined, so overlapping rows cannot stack into a
+    /// larger adjustment than any single row declares.
+    /// </para>
+    /// <para>
+    /// Reading is total: a row that does not parse is kept but marked invalid and never matches,
+    /// so a typo fails toward "no adjustment" instead of aborting every action that reads the
+    /// sheet. <see cref="ValidateCsv"/> rejects such a row at patch time so it should not reach
+    /// the chain in the first place.
+    /// </para>
+    /// <para>
+    /// Callers must tolerate the sheet being absent — it reaches an existing chain only by
+    /// <c>patch_table_sheet</c>. Absence means no adjustment, which is also what keeps
+    /// re-evaluation of pre-patch blocks identical.
+    /// </para>
+    /// </summary>
+    [Serializable]
+    public class BoostScheduleSheet : Sheet<int, BoostScheduleSheet.Row>
+    {
+        /// <summary>
+        /// The <c>target_id</c> cell that matches every id of a target.
+        /// </summary>
+        public const string AnyTargetId = "*";
+
+        /// <summary>
+        /// Separates the two ends of a <c>target_id</c> range, as in <c>1~50</c>.
+        /// </summary>
+        public const char TargetIdRangeSeparator = '~';
+
+        /// <summary>
+        /// Upper bound of <c>|value|</c>. Keeps every <see cref="Row.Apply(int)"/> and
+        /// <see cref="Row.Apply(long)"/> inside <see cref="decimal"/> range so that applying a row
+        /// can never throw: the worst case, <see cref="long.MaxValue"/> × <c>int.MaxValue</c>
+        /// ≈ 2e28, stays under <see cref="decimal.MaxValue"/> ≈ 7.9e28. Raising this bound must keep
+        /// that true, or a row would make every action it applies to fail.
+        /// </summary>
+        public const decimal MaxAbsoluteValue = int.MaxValue;
+
+        /// <summary>
+        /// Column names in their expected order, after <c>_</c> prefixed columns are dropped.
+        /// </summary>
+        public static readonly string[] ColumnNames =
+        {
+            "id",
+            "target",
+            "target_id",
+            "op",
+            "value",
+            "start_block",
+            "end_block",
+        };
+
+        /// <summary>
+        /// The targets this version applies. A row naming any other target is valid data but has
+        /// no effect until a version that applies it is running.
+        /// </summary>
+        public static class Targets
+        {
+            /// <summary>
+            /// Guarantee count of an <c>EquipmentSummonSheet</c> group. <c>target_id</c> is the
+            /// group id.
+            /// </summary>
+            public const string EquipmentSummonGuarantee = "EQUIPMENT_SUMMON_GUARANTEE";
+
+            /// <summary>
+            /// Guarantee count of a <c>RuneSummonSheet</c> group. <c>target_id</c> is the group id.
+            /// </summary>
+            public const string RuneSummonGuarantee = "RUNE_SUMMON_GUARANTEE";
+
+            /// <summary>
+            /// Guarantee count of a <c>CostumeSummonSheet</c> group. <c>target_id</c> is the
+            /// group id.
+            /// </summary>
+            public const string CostumeSummonGuarantee = "COSTUME_SUMMON_GUARANTEE";
+
+            /// <summary>
+            /// Material item rewards of an adventure stage clear (<c>HackAndSlash</c>,
+            /// <c>HackAndSlashSweep</c>). <c>target_id</c> is the <c>StageSheet</c> stage id, so
+            /// <c>1~300</c> covers stages 1 through 300. Event dungeon stages are not covered.
+            /// <para>
+            /// Applied per clear to the count of each distinct item after the items are drawn, so
+            /// the random draws are the same as without the row: <c>MUL 2</c> grants exactly
+            /// twice each drawn item and <c>ADD 1</c> one more of each. See
+            /// <c>StageSimulator.GetBoostedItemRewardCount</c>.
+            /// </para>
+            /// <para>
+            /// Boosted items are ordinary rewards everywhere else too: they count toward
+            /// collect quest progress, and a circle stays tradable.
+            /// </para>
+            /// <para>
+            /// Rounding is down, per item id per clear, with one exception: a <c>MUL</c> above 1
+            /// turns an item drawn once in a clear (how most stages drop) into at least 2, so
+            /// <c>MUL 1.5</c> grants 2 of a single drop. A count of 2 or more keeps the plain floor
+            /// (<c>MUL 1.2</c> on 2 stays 2, <c>MUL 1.5</c> on 2 becomes 3); this is not a general
+            /// "at least one more". <c>ADD</c> and a <c>MUL</c> of 1 or below are unaffected.
+            /// Beware that any <c>MUL</c> just above 1 (e.g. <c>MUL 1.01</c>) also turns a single
+            /// drop into 2 — effectively a 100% boost for those items, however small the value.
+            /// <see cref="StageFavReward"/> amounts are large and always plainly floored.
+            /// </para>
+            /// </summary>
+            public const string StageItemReward = "STAGE_ITEM_REWARD";
+
+            /// <summary>
+            /// Fungible asset rewards (e.g. crystal, rune stones) of an adventure stage clear
+            /// (<c>HackAndSlash</c>, <c>HackAndSlashSweep</c>). <c>target_id</c> is the
+            /// <c>StageSheet</c> stage id. Event dungeon stages are not covered.
+            /// <para>
+            /// Applied per clear to the amount of each drawn ticker after it is drawn, so the
+            /// random draws are the same as without the row. See
+            /// <c>StageSimulator.ApplyFavRewardBoost</c>.
+            /// </para>
+            /// </summary>
+            public const string StageFavReward = "STAGE_FAV_REWARD";
+
+            /// <summary>
+            /// Experience one enhancement hammer gives an equipment in <c>ItemEnhancement</c>
+            /// (<c>EnhancementCostSheetV3</c> hammer rows). <c>target_id</c> is the hammer item id
+            /// (<c>600301~600308</c>), so grades can get different multipliers.
+            /// <para>
+            /// The adjusted experience is stored on the equipment like any other experience: the
+            /// equipment ends up exactly as if it had gathered that much normally, so it neither
+            /// owes the boost back on its next enhancement nor is worth less as a material. The
+            /// result is kept between the configured experience and
+            /// <c>ItemEnhancement.MaxHammerExpBoostFactor</c> times it — a row can only raise it.
+            /// See <c>ItemEnhancement.GetHammerExp</c>.
+            /// </para>
+            /// <para>
+            /// Patch a row only after a client that previews with the adjusted experience is
+            /// released: an old client shows a lower target level and a lower NCG cost than the
+            /// action charges (cost follows the level reached), so an avatar holding only the
+            /// shown NCG fails, and it lets players add more hammers than the max level needs.
+            /// </para>
+            /// </summary>
+            public const string EnhancementHammerExp = "ENHANCEMENT_HAMMER_EXP";
+
+            /// <summary>
+            /// Amount of the reward an adventure boss floor drops on every clear — the one entry
+            /// drawn from <c>AdventureBossFloorSheet</c> rewards per floor, by both
+            /// <c>ExploreAdventureBoss</c> and <c>SweepAdventureBoss</c>. <c>target_id</c> is the
+            /// floor number (<c>AdventureBossFloorSheet</c> <c>floor</c>, 1 for the first floor of
+            /// every boss), not the floor row id.
+            /// <para>
+            /// The adjusted amount is kept between 1 and
+            /// <c>AdventureBossHelper.MaxAdventureBossRewardBoostFactor</c> (5) times the drawn
+            /// amount, <c>ADD</c> included. See <c>AdventureBossHelper.ApplyRewardBoost</c>.
+            /// </para>
+            /// </summary>
+            public const string AdventureBossFloorReward = "ADVENTURE_BOSS_FLOOR_REWARD";
+
+            /// <summary>
+            /// Amount of each <c>AdventureBossFloorFirstRewardSheet</c> reward, granted by
+            /// <c>ExploreAdventureBoss</c> when a floor is cleared for the first time in a season.
+            /// <c>target_id</c> is the floor number, as for <see cref="AdventureBossFloorReward"/>.
+            /// Bounded as <see cref="AdventureBossFloorReward"/> (at most 5 times each amount).
+            /// </summary>
+            public const string AdventureBossFirstClearReward = "ADVENTURE_BOSS_FIRST_CLEAR_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of the
+            /// <c>WorldBossBattleRewardSheet</c> reward a <c>Raid</c> grants for its battle.
+            /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>, e.g.
+            /// <c>900001</c>), and the block is the one the raid is played in.
+            /// <para>
+            /// Each adjusted amount is capped at <c>WorldBossHelper.MaxWorldBossRewardBoostFactor</c>
+            /// (5) times the drawn amount, <c>ADD</c> included; the same cap holds for
+            /// <see cref="WorldBossKillReward"/> and <see cref="WorldBossRankReward"/>. See
+            /// <c>WorldBossHelper.ApplyRewardBoost</c>.
+            /// </para>
+            /// </summary>
+            public const string WorldBossBattleReward = "WORLD_BOSS_BATTLE_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of each
+            /// <c>WorldBossKillRewardSheet</c> reward, granted either by the <c>Raid</c> that
+            /// raises the boss level or by <c>ClaimWordBossKillReward</c>. <c>target_id</c> is the
+            /// boss id (<c>WorldBossListSheet.boss_id</c>), and the block is the one the reward is
+            /// granted in, not the one the boss was killed in: a kill left unclaimed until the
+            /// event is boosted when it is claimed during the event. Capped at 5 times each amount,
+            /// as <see cref="WorldBossBattleReward"/>.
+            /// </summary>
+            public const string WorldBossKillReward = "WORLD_BOSS_KILL_REWARD";
+
+            /// <summary>
+            /// Every amount — each drawn rune, crystal, circle — of each
+            /// <c>WorldBossRankRewardSheet</c> reward <c>ClaimRaidReward</c> grants.
+            /// <c>target_id</c> is the boss id (<c>WorldBossListSheet.boss_id</c>), and the block
+            /// is the one the reward is claimed in, not the one the rank was reached in: a rank
+            /// left unclaimed until the event is boosted when it is claimed during the event.
+            /// Capped at 5 times each amount, as <see cref="WorldBossBattleReward"/>.
+            /// </summary>
+            public const string WorldBossRankReward = "WORLD_BOSS_RANK_REWARD";
+
+            /// <summary>
+            /// Crystal cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level, for
+            /// <b>summonable runes only</b>: a rune whose id is a recipe id of any
+            /// <c>RuneSummonSheet</c> row, whatever its ratio and whether or not that group is
+            /// currently sold. Other runes are never adjusted.
+            /// The summon pool is read from the chain when the try is evaluated, so a rune added to
+            /// or removed from <c>RuneSummonSheet</c> gains or loses the adjustment with it.
+            /// <para>
+            /// <c>target_id</c> is the rune level the try attempts to reach — the current level
+            /// plus one — so <c>1~50</c> adjusts the tries from level 0 up to level 50. It cannot
+            /// narrow the row to particular rune ids. The adjusted cost never exceeds the sheet's
+            /// cost and never drops below 1 while the sheet's cost is positive. NCG cost and
+            /// success rate are not adjustable.
+            /// </para>
+            /// </summary>
+            public const string SummonRuneEnhancementCrystalCost =
+                "SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST";
+
+            /// <summary>
+            /// Rune stone cost of one <c>RuneEnhancement</c> try, per <c>RuneCostSheet</c> level,
+            /// for summonable runes only. Scope, <c>target_id</c> and bounds as in
+            /// <see cref="SummonRuneEnhancementCrystalCost"/>.
+            /// </summary>
+            public const string SummonRuneEnhancementRuneStoneCost =
+                "SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST";
+
+            /// <summary>
+            /// <c>required_count</c> of a <c>SynthesizeSheet</c> grade — how many materials one
+            /// synthesis consumes. <c>target_id</c> is the material grade id (<c>grade_id</c>,
+            /// e.g. <c>1~4</c>), and a row applies to every <c>item_sub_type</c> of that grade
+            /// alike. The adjusted count never drops below 1 — which keeps synthesis from being
+            /// free, not from being cheap: a typo such as <c>MUL 0.06</c> brings every grade down
+            /// to 1, so keep values within the range planning intended.
+            /// <para>
+            /// Patch a row only after a client that picks materials by the adjusted count is
+            /// released: the action still requires the material count to be a multiple of it, so
+            /// a client choosing by the configured count fails every synthesis while the row is
+            /// active.
+            /// </para>
+            /// </summary>
+            public const string SynthesizeRequiredCount = "SYNTHESIZE_REQUIRED_COUNT";
+
+            /// <summary>
+            /// How to write a row for each target above, for tooling that helps people fill the
+            /// sheet (the backoffice serves this as is). It is reference text only: no action reads
+            /// it, so changing it never changes what a row does. Rules shared by every row are in
+            /// <see cref="RowRules"/>.
+            /// </summary>
+            public static readonly IReadOnlyList<TargetInfo> Infos = new[]
+            {
+                new TargetInfo(
+                    EquipmentSummonGuarantee,
+                    "Guaranteed count of minimum-grade results in one equipment (aura) summon.",
+                    "EquipmentSummonSheet group id",
+                    "EquipmentSummonSheet",
+                    "ADD",
+                    "Applied to the group's configured guarantee count, floored. One row adjusts both the 11-summon " +
+                    "(GuaranteeCount11) and the 110-summon (GuaranteeCount110) guarantee: ADD 1 turns 1 into 2 for 11 " +
+                    "but e.g. 10 into 11 for 110. Capped at the summon count minus one unless the sheet already " +
+                    "configures more. MUL below 1 or a negative ADD lowers it, down to 0.",
+                    "Never creates a guarantee: a group configured with 0 stays 0, and single summons have none. " +
+                    "An old client replays the summon without the row and shows results that differ from what is granted: release a client that passes the row first.",
+                    "1,EQUIPMENT_SUMMON_GUARANTEE,*,ADD,1,<start>,<end>"),
+                new TargetInfo(
+                    RuneSummonGuarantee,
+                    "Guaranteed count of minimum-grade results in one rune summon.",
+                    "RuneSummonSheet group id",
+                    "RuneSummonSheet",
+                    "ADD",
+                    "As EQUIPMENT_SUMMON_GUARANTEE (11 and 110 summons alike).",
+                    "As EQUIPMENT_SUMMON_GUARANTEE. An old client replays the summon without the row and shows results that differ from what is granted: release a client that passes the row first.",
+                    "2,RUNE_SUMMON_GUARANTEE,*,ADD,1,<start>,<end>"),
+                new TargetInfo(
+                    CostumeSummonGuarantee,
+                    "Guaranteed count of minimum-grade results in one costume summon.",
+                    "CostumeSummonSheet group id",
+                    "CostumeSummonSheet",
+                    "ADD",
+                    "As EQUIPMENT_SUMMON_GUARANTEE (11 and 110 summons alike).",
+                    "As EQUIPMENT_SUMMON_GUARANTEE. An old client replays the summon without the row and shows results that differ from what is granted: release a client that passes the row first.",
+                    "3,COSTUME_SUMMON_GUARANTEE,*,ADD,1,<start>,<end>"),
+                new TargetInfo(
+                    SynthesizeRequiredCount,
+                    "Materials one synthesis consumes (SynthesizeSheet required_count).",
+                    "material grade id (SynthesizeSheet grade_id, e.g. 1~4); applies to every item_sub_type of the grade",
+                    "SynthesizeSheet",
+                    "MUL below 1 (cheaper) or a negative ADD",
+                    "Floored, never below 1. A typo such as MUL 0.06 brings every grade down to 1.",
+                    "Patch only after a client that picks materials by the adjusted count is released: an old " +
+                    "client fails every synthesis while the row is active (the action requires a multiple of the " +
+                    "adjusted count).",
+                    "4,SYNTHESIZE_REQUIRED_COUNT,1~4,MUL,0.5,<start>,<end>"),
+                new TargetInfo(
+                    SummonRuneEnhancementCrystalCost,
+                    "Crystal cost of one rune enhancement try, for summonable runes only (rune ids in any RuneSummonSheet recipe).",
+                    "the rune level the try reaches (current level + 1): 1~50 covers the tries 0→1 through 49→50",
+                    "RuneCostSheet",
+                    "MUL below 1",
+                    "Floored, kept between 1 and the sheet's cost: a row can only discount.",
+                    "Cannot narrow to particular rune ids. NCG cost and success rate are not adjustable. " +
+                    "An old client shows and checks the sheet's cost (charged correctly, displayed wrong): release a client first.",
+                    "5,SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST,1~50,MUL,0.5,<start>,<end>"),
+                new TargetInfo(
+                    SummonRuneEnhancementRuneStoneCost,
+                    "Rune stone cost of one rune enhancement try, for summonable runes only.",
+                    "the rune level the try reaches, as SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST",
+                    "RuneCostSheet",
+                    "MUL below 1",
+                    "As SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST.",
+                    "As SUMMON_RUNE_ENHANCEMENT_CRYSTAL_COST.",
+                    "6,SUMMON_RUNE_ENHANCEMENT_RUNE_STONE_COST,1~50,MUL,0.5,<start>,<end>"),
+                new TargetInfo(
+                    WorldBossBattleReward,
+                    "Every amount (runes, crystal, circles) of the reward a raid battle grants.",
+                    "boss id (WorldBossListSheet boss_id, e.g. 900001), not the raid id (the row id); a boss id " +
+                    "is reused across seasons, so the row covers every season of that boss within the block range",
+                    "WorldBossListSheet",
+                    "MUL above 1",
+                    "Each drawn amount is scaled after the draw and floored, so the draws are unchanged. The result " +
+                    "is capped at 5 times each drawn amount (ADD too); the value itself is not rejected, so MUL 100 " +
+                    "grants 5×.",
+                    "The block is the one the raid is played in. An old client shows the unboosted battle reward " +
+                    "(granted correctly).",
+                    "7,WORLD_BOSS_BATTLE_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    WorldBossKillReward,
+                    "Every amount of each boss kill (level up) reward.",
+                    "boss id (WorldBossListSheet boss_id), not the raid id; as WORLD_BOSS_BATTLE_REWARD",
+                    "WorldBossListSheet",
+                    "MUL above 1",
+                    "As WORLD_BOSS_BATTLE_REWARD.",
+                    "Judged at the block the reward is granted or claimed, not when the boss was killed: kills " +
+                    "left unclaimed before the event are boosted if claimed during it. An old client shows the " +
+                    "unboosted reward (granted correctly).",
+                    "8,WORLD_BOSS_KILL_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    WorldBossRankReward,
+                    "Every amount of each rank reward ClaimRaidReward grants.",
+                    "boss id (WorldBossListSheet boss_id), not the raid id; as WORLD_BOSS_BATTLE_REWARD",
+                    "WorldBossListSheet",
+                    "MUL above 1",
+                    "As WORLD_BOSS_BATTLE_REWARD.",
+                    "Judged at the claim block, not when the rank was reached: unclaimed ranks are boosted if " +
+                    "claimed during the event. The contribution reward is not adjustable. An old client shows the " +
+                    "unboosted reward (granted correctly).",
+                    "9,WORLD_BOSS_RANK_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    AdventureBossFloorReward,
+                    "Amount of the reward an adventure boss floor drops on every clear (explore and sweep).",
+                    "floor number (AdventureBossFloorSheet floor, 1 is every boss's first floor), not the row id",
+                    "AdventureBossFloorSheet",
+                    "MUL above 1",
+                    "Scaled after the draw, floored, kept between 1 and 5 times the drawn amount (ADD too); the " +
+                    "value itself is not rejected, so MUL 100 grants 5×.",
+                    "NCG and season-end claim rewards are not adjustable. An old client shows the unboosted " +
+                    "reward (granted correctly).",
+                    "10,ADVENTURE_BOSS_FLOOR_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    AdventureBossFirstClearReward,
+                    "Amount of each first-clear reward of an adventure boss floor (once per season).",
+                    "floor number, as ADVENTURE_BOSS_FLOOR_REWARD",
+                    "AdventureBossFloorFirstRewardSheet",
+                    "MUL above 1",
+                    "Scaled, floored, kept between 1 and 5 times the configured amount (ADD too).",
+                    "As ADVENTURE_BOSS_FLOOR_REWARD.",
+                    "11,ADVENTURE_BOSS_FIRST_CLEAR_REWARD,*,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    StageItemReward,
+                    "Material item rewards of an adventure stage clear (HackAndSlash, sweep).",
+                    "StageSheet stage id (1~300 covers stages 1 to 300)",
+                    "StageSheet",
+                    "MUL 2 or more, or ADD",
+                    "Per item id per clear, after the draw, floored. The result is capped at 10 times the drawn " +
+                    "count (ADD too); the value itself is not rejected, so MUL 20 grants 10×. Any MUL above 1 " +
+                    "turns an item drawn once into 2, so MUL 1.01 doubles single drops.",
+                    "Event dungeon stages are not covered. Boosted items count toward quests like any reward. " +
+                    "An old client shows the unboosted rewards (granted correctly).",
+                    "12,STAGE_ITEM_REWARD,1~300,MUL,2,<start>,<end>"),
+                new TargetInfo(
+                    StageFavReward,
+                    "Fungible asset rewards (crystal, rune stones) of an adventure stage clear.",
+                    "StageSheet stage id",
+                    "StageSheet",
+                    "MUL above 1",
+                    "Each drawn ticker amount is scaled after the draw and floored.",
+                    "Event dungeon stages are not covered. An old client shows the unboosted rewards (granted correctly).",
+                    "13,STAGE_FAV_REWARD,1~300,MUL,1.5,<start>,<end>"),
+                new TargetInfo(
+                    EnhancementHammerExp,
+                    "Experience one enhancement hammer gives an equipment (ItemEnhancement).",
+                    "hammer item id (600301~600308; e.g. 600301~600304 for normal to unique)",
+                    "EnhancementCostSheetV3",
+                    "MUL above 1",
+                    "Floored, computed in 64 bits, kept between the configured experience and 3 times it: " +
+                    "a row can only raise it. The boosted experience stays on the equipment like any experience.",
+                    "Aura and grimoire cannot use hammers. An old client previews the unboosted level and NCG cost; " +
+                    "the action charges the cost of the level actually reached, so an avatar holding only the shown " +
+                    "NCG fails: release a client that previews with the row first.",
+                    "14,ENHANCEMENT_HAMMER_EXP,600301~600304,MUL,2,<start>,<end>"),
+            };
+
+            /// <summary>
+            /// Rules every row follows whatever its target, for the same tooling as
+            /// <see cref="Infos"/>. Reference text only.
+            /// </summary>
+            public static readonly IReadOnlyList<string> RowRules = new[]
+            {
+                "Columns: id,target,target_id,op,value,start_block,end_block, optionally followed by \"_\" memo columns (never first).",
+                "id: a unique positive integer. When rows for the same target and target_id overlap, the lowest id wins; rows never add up.",
+                "target_id: \"*\" for every id, a single id such as 3, or an inclusive range such as 1~50.",
+                "op MUL: value greater than 0 (decimals allowed). op ADD: an integer, negative allowed. |value| at most 2147483647.",
+                "Period: start_block inclusive, end_block exclusive, start_block < end_block. Blocks differ per planet.",
+                "A patch replaces the whole sheet: keep every row that should stay.",
+                "Results are floored and never negative; each target adds its own bounds (see its value rule).",
+                "Patch a row only after every node runs a lib9c that applies its target, or nodes disagree while it is active.",
+            };
+
+            /// <summary>
+            /// Every target above, for tooling that warns about rows no running code applies.
+            /// </summary>
+            public static readonly IReadOnlyCollection<string> Applied =
+                Infos.Select(info => info.Target).ToArray();
+        }
+
+        /// <summary>
+        /// How to write a row for one target: reference text for people and tools, never read by
+        /// an action. See <see cref="Targets.Infos"/>.
+        /// </summary>
+        public sealed class TargetInfo
+        {
+            /// <summary>Creates a description.</summary>
+            public TargetInfo(
+                string target,
+                string adjusts,
+                string targetIdMeaning,
+                string targetIdSheet,
+                string usualOp,
+                string valueRule,
+                string notes,
+                string example)
+            {
+                Target = target;
+                Adjusts = adjusts;
+                TargetIdMeaning = targetIdMeaning;
+                TargetIdSheet = targetIdSheet;
+                UsualOp = usualOp;
+                ValueRule = valueRule;
+                Notes = notes;
+                Example = example;
+            }
+
+            /// <summary>The <c>target</c> cell.</summary>
+            public string Target { get; }
+
+            /// <summary>What a row changes.</summary>
+            public string Adjusts { get; }
+
+            /// <summary>What the <c>target_id</c> cell names (a description, not a value).</summary>
+            public string TargetIdMeaning { get; }
+
+            /// <summary>The sheet whose ids <c>target_id</c> takes.</summary>
+            public string TargetIdSheet { get; }
+
+            /// <summary>The <c>op</c> and value direction an event normally uses.</summary>
+            public string UsualOp { get; }
+
+            /// <summary>How the value is applied: rounding and bounds.</summary>
+            public string ValueRule { get; }
+
+            /// <summary>What the row does not cover, and what to release first.</summary>
+            public string Notes { get; }
+
+            /// <summary>An example row, with the block range left as placeholders.</summary>
+            public string Example { get; }
+        }
+
+        /// <summary>
+        /// How a row's <see cref="Row.Value"/> is combined with the value it adjusts.
+        /// </summary>
+        public enum Operation
+        {
+            /// <summary>
+            /// <c>floor(base × value)</c>.
+            /// </summary>
+            Mul,
+
+            /// <summary>
+            /// <c>base + value</c>. <c>value</c> must be an integer.
+            /// </summary>
+            Add,
+        }
+
+        /// <summary>
+        /// One scheduled adjustment.
+        /// </summary>
+        [Serializable]
+        public class Row : SheetRow<int>
+        {
+            /// <inheritdoc />
+            public override int Key => Id;
+
+            /// <summary>
+            /// The row id. Also the precedence among overlapping rows: lower wins.
+            /// </summary>
+            public int Id { get; private set; }
+
+            /// <summary>
+            /// What this row adjusts. See <see cref="Targets"/>.
+            /// </summary>
+            public string Target { get; private set; } = string.Empty;
+
+            /// <summary>
+            /// First id within <see cref="Target"/> this row applies to, or <c>null</c> for all.
+            /// </summary>
+            public int? TargetIdBegin { get; private set; }
+
+            /// <summary>
+            /// Last id within <see cref="Target"/> this row applies to, inclusive, or
+            /// <c>null</c> for all. Equals <see cref="TargetIdBegin"/> for a single id.
+            /// </summary>
+            public int? TargetIdEnd { get; private set; }
+
+            /// <summary>
+            /// How <see cref="Value"/> is combined with the adjusted value.
+            /// </summary>
+            public Operation Op { get; private set; }
+
+            /// <summary>
+            /// The operand of <see cref="Op"/>.
+            /// </summary>
+            public decimal Value { get; private set; }
+
+            /// <summary>
+            /// First block index this row applies to.
+            /// </summary>
+            public long StartBlockIndex { get; private set; }
+
+            /// <summary>
+            /// First block index this row no longer applies to.
+            /// </summary>
+            public long EndBlockIndex { get; private set; }
+
+            /// <summary>
+            /// Whether every cell parsed. An invalid row never matches.
+            /// </summary>
+            public bool IsValid { get; private set; }
+
+            /// <summary>
+            /// Reads one row.
+            /// </summary>
+            /// <param name="fields">The row's cells, with "_" prefixed columns already dropped.</param>
+            /// <remarks>
+            /// Total by design: <see cref="Sheet{TKey,TValue}"/> does not guard this call, so a
+            /// throw here would fail every action that reads the sheet.
+            /// </remarks>
+            public override void Set(IReadOnlyList<string> fields)
+            {
+                Id = Cell(fields, 0) is { } idCell && TryParseInt(idCell, out var id) ? id : 0;
+                Target = Cell(fields, 1) ?? string.Empty;
+                IsValid = TryParseRest(fields, out var targetIdBegin, out var targetIdEnd,
+                    out var op, out var value, out var start, out var end);
+                TargetIdBegin = targetIdBegin;
+                TargetIdEnd = targetIdEnd;
+                Op = op;
+                Value = value;
+                StartBlockIndex = start;
+                EndBlockIndex = end;
+                IsValid = IsValid && Id > 0 && Target.Length > 0;
+            }
+
+            /// <summary>
+            /// Whether this row applies to <paramref name="targetId"/> of
+            /// <paramref name="target"/> at <paramref name="blockIndex"/>.
+            /// </summary>
+            /// <param name="target">The target being adjusted.</param>
+            /// <param name="targetId">The id within the target.</param>
+            /// <param name="blockIndex">The block being evaluated.</param>
+            /// <returns><c>true</c> when the row is valid and covers all three.</returns>
+            public bool Matches(string target, int targetId, long blockIndex) =>
+                IsValid &&
+                string.Equals(Target, target, StringComparison.Ordinal) &&
+                (TargetIdBegin is null || (TargetIdBegin <= targetId && targetId <= TargetIdEnd)) &&
+                StartBlockIndex <= blockIndex &&
+                blockIndex < EndBlockIndex;
+
+            /// <summary>
+            /// Applies this row to <paramref name="baseValue"/>, rounding down and clamping the
+            /// result to <c>[0, int.MaxValue]</c>.
+            /// </summary>
+            /// <param name="baseValue">The value before adjustment.</param>
+            /// <returns>The adjusted value.</returns>
+            /// <remarks>
+            /// Rounding down means a small base can be left unchanged by a multiplier — e.g.
+            /// <c>1 × 1.5</c> stays <c>1</c>. Use <see cref="Operation.Add"/> when every target
+            /// must actually move.
+            /// </remarks>
+            public int Apply(int baseValue)
+            {
+                var result = Op == Operation.Add
+                    ? baseValue + Value
+                    : baseValue * Value;
+                result = decimal.Floor(result);
+                if (result <= 0m)
+                {
+                    return 0;
+                }
+
+                return result >= int.MaxValue ? int.MaxValue : (int)result;
+            }
+
+            /// <summary>
+            /// <see cref="Apply(int)"/> for 64-bit values: same rounding (down) and lower bound
+            /// (<c>0</c>), clamped to <see cref="long.MaxValue"/> instead of
+            /// <see cref="int.MaxValue"/> so that large bases such as hammer experience are not cut.
+            /// </summary>
+            /// <param name="baseValue">The value before adjustment.</param>
+            /// <returns>The adjusted value.</returns>
+            public long Apply(long baseValue)
+            {
+                var result = Op == Operation.Add
+                    ? baseValue + Value
+                    : baseValue * Value;
+                result = decimal.Floor(result);
+                if (result <= 0m)
+                {
+                    return 0;
+                }
+
+                return result >= long.MaxValue ? long.MaxValue : (long)result;
+            }
+
+            private static bool TryParseRest(
+                IReadOnlyList<string> fields,
+                out int? targetIdBegin,
+                out int? targetIdEnd,
+                out Operation op,
+                out decimal value,
+                out long start,
+                out long end)
+            {
+                targetIdBegin = null;
+                targetIdEnd = null;
+                op = default;
+                value = default;
+                start = default;
+                end = default;
+
+                if (!TryParseTargetIds(Cell(fields, 2), out targetIdBegin, out targetIdEnd) ||
+                    !TryParseOperation(Cell(fields, 3), out op) ||
+                    !(Cell(fields, 4) is { } valueCell && TryParseDecimal(valueCell, out value)) ||
+                    !(Cell(fields, 5) is { } startCell && TryParseLong(startCell, out start)) ||
+                    !(Cell(fields, 6) is { } endCell && TryParseLong(endCell, out end)))
+                {
+                    return false;
+                }
+
+                return IsValueValid(op, value) && 0 <= start && start < end;
+            }
+        }
+
+        /// <summary>
+        /// Creates an empty sheet.
+        /// </summary>
+        public BoostScheduleSheet() : base(nameof(BoostScheduleSheet))
+        {
+        }
+
+        /// <summary>
+        /// Finds the row that applies to <paramref name="targetId"/> of
+        /// <paramref name="target"/> at <paramref name="blockIndex"/>.
+        /// </summary>
+        /// <param name="target">The target being adjusted. See <see cref="Targets"/>.</param>
+        /// <param name="targetId">The id within the target.</param>
+        /// <param name="blockIndex">The block being evaluated.</param>
+        /// <returns>The matching row with the lowest id, or <c>null</c> when none applies.</returns>
+        public Row FindActive(string target, int targetId, long blockIndex)
+        {
+            if (OrderedList is null)
+            {
+                return null;
+            }
+
+            foreach (var row in OrderedList)
+            {
+                if (row.Matches(target, targetId, blockIndex))
+                {
+                    return row;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Adds a parsed row to the sheet.
+        /// </summary>
+        /// <param name="key">The row's key.</param>
+        /// <param name="value">The row to add.</param>
+        /// <remarks>
+        /// A row without a usable id is dropped and a duplicated id keeps the first row instead of
+        /// throwing, because a throw here would fail every action that reads the sheet.
+        /// </remarks>
+        protected override void AddRow(int key, Row value)
+        {
+            if (key <= 0 || ContainsKey(key))
+            {
+                return;
+            }
+
+            base.AddRow(key, value);
+        }
+
+        /// <summary>
+        /// Parses <paramref name="csv"/> strictly so that a malformed schedule fails the
+        /// <c>patch_table_sheet</c> transaction instead of landing on the chain as a row that
+        /// silently never applies.
+        /// </summary>
+        /// <param name="csv">The sheet's CSV, as the patch would write it.</param>
+        /// <exception cref="SheetRowValidateException">
+        /// The header does not match <see cref="ColumnNames"/>, or a row has an unusable or
+        /// duplicated id, an empty target, an unparsable cell, a value out of range for its
+        /// operation, or a block range that is empty.
+        /// </exception>
+        /// <remarks>
+        /// Whether a target is applied by any running code is deliberately not checked here: the
+        /// set of targets grows with releases, and a patch must not be accepted by one node version
+        /// and rejected by another. Compare against <see cref="Targets.Applied"/> off-chain.
+        /// </remarks>
+        public static void ValidateCsv(string csv)
+        {
+            var lines = csv.Trim().Split('\n');
+
+            // Mirror Sheet<TKey, TValue>.Set: it drops "_" prefixed columns from every line
+            // based on the header, so validating raw fields would judge different columns than
+            // the ones the runtime reads.
+            var droppedColumns = new HashSet<int>();
+            var headerFields = lines[0].Trim().Split(',');
+            for (var i = 0; i < headerFields.Length; i++)
+            {
+                if (headerFields[i].StartsWith("_"))
+                {
+                    droppedColumns.Add(i);
+                }
+            }
+
+            var columnNames = Select(headerFields, droppedColumns);
+            if (!columnNames.SequenceEqual(ColumnNames))
+            {
+                throw new SheetRowValidateException(
+                    $"header must be \"{string.Join(",", ColumnNames)}\"" +
+                    $" but was \"{string.Join(",", columnNames)}\".");
+            }
+
+            // Sheet.Set skips any line starting with "," or "_", so a dropped column in front
+            // would make every row whose memo is empty (or starts with "_") vanish.
+            if (droppedColumns.Contains(0))
+            {
+                throw new SheetRowValidateException(
+                    $"the first column must be \"{ColumnNames[0]}\"; put \"_\" columns after it.");
+            }
+
+            var ids = new HashSet<int>();
+            var lineNumber = 1;
+            foreach (var rawLine in lines.Skip(1))
+            {
+                lineNumber++;
+
+                // Sheet.Set skips these lines, so a row written there would never apply. Only a
+                // blank line — what a spreadsheet export leaves as ",,,,,," — may be skipped.
+                if (rawLine.Trim().Trim(',').Trim().Length == 0)
+                {
+                    continue;
+                }
+
+                if (rawLine.StartsWith(",") || rawLine.StartsWith("_"))
+                {
+                    throw new SheetRowValidateException(
+                        $"line {lineNumber}: starts with \"{rawLine[0]}\" so the sheet would skip" +
+                        " it. Is the id missing?");
+                }
+
+                var fields = Select(rawLine.Trim().Split(','), droppedColumns);
+                if (fields.Count != ColumnNames.Length)
+                {
+                    throw new SheetRowValidateException(
+                        $"line {lineNumber}: expected {ColumnNames.Length} cells" +
+                        $" but found {fields.Count}. A \"_\" column cannot contain a comma.");
+                }
+
+                var row = new Row();
+                row.Set(fields);
+                if (row.Id <= 0)
+                {
+                    throw new SheetRowValidateException(
+                        $"line {lineNumber}: id({fields[0].Trim()}) must be a positive integer.");
+                }
+
+                if (!ids.Add(row.Id))
+                {
+                    throw new SheetRowValidateException(
+                        $"line {lineNumber}: duplicated id({row.Id}).");
+                }
+
+                if (!row.IsValid)
+                {
+                    throw new SheetRowValidateException(
+                        $"line {lineNumber}: {Describe(fields)}");
+                }
+            }
+
+            // Guards against this validator and Sheet.Set disagreeing about which rows exist.
+            var sheet = new BoostScheduleSheet();
+            sheet.Set(csv);
+            if (sheet.Count != ids.Count)
+            {
+                throw new SheetRowValidateException(
+                    $"validated {ids.Count} row(s) but the sheet parsed {sheet.Count}.");
+            }
+        }
+
+        private static string Describe(IReadOnlyList<string> fields)
+        {
+            var target = fields[1].Trim();
+            if (target.Length == 0)
+            {
+                return "target is empty.";
+            }
+
+            var targetId = fields[2].Trim();
+            if (!TryParseTargetIds(targetId, out _, out _))
+            {
+                return $"target_id({targetId}) must be a positive integer, a range such as" +
+                       $" \"1{TargetIdRangeSeparator}50\" whose ends are positive and in order," +
+                       $" or \"{AnyTargetId}\".";
+            }
+
+            if (!TryParseOperation(fields[3].Trim(), out var op))
+            {
+                return $"op({fields[3].Trim()}) must be MUL or ADD.";
+            }
+
+            if (!TryParseDecimal(fields[4].Trim(), out var value) || !IsValueValid(op, value))
+            {
+                return op == Operation.Add
+                    ? $"value({fields[4].Trim()}) must be an integer for ADD" +
+                      $" and at most {MaxAbsoluteValue} in magnitude."
+                    : $"value({fields[4].Trim()}) must be greater than 0 for MUL" +
+                      $" and at most {MaxAbsoluteValue}.";
+            }
+
+            if (!TryParseLong(fields[5].Trim(), out var start) || start < 0)
+            {
+                return $"start_block({fields[5].Trim()}) must be a non-negative integer.";
+            }
+
+            if (!TryParseLong(fields[6].Trim(), out var end) || end <= start)
+            {
+                return $"end_block({fields[6].Trim()}) must be an integer greater than" +
+                       $" start_block({start}).";
+            }
+
+            return "row is invalid.";
+        }
+
+        private static bool TryParseTargetIds(string cell, out int? begin, out int? end)
+        {
+            begin = null;
+            end = null;
+            if (cell is null)
+            {
+                return false;
+            }
+
+            if (cell == AnyTargetId)
+            {
+                return true;
+            }
+
+            var ends = cell.Split(TargetIdRangeSeparator);
+            if (ends.Length > 2 ||
+                !TryParsePositiveInt(ends[0], out var parsedBegin) ||
+                !TryParsePositiveInt(ends[ends.Length - 1], out var parsedEnd) ||
+                parsedBegin > parsedEnd)
+            {
+                return false;
+            }
+
+            begin = parsedBegin;
+            end = parsedEnd;
+            return true;
+        }
+
+        private static bool TryParsePositiveInt(string cell, out int value) =>
+            TryParseInt(cell.Trim(), out value) && value > 0;
+
+        private static bool TryParseOperation(string cell, out Operation op)
+        {
+            switch (cell)
+            {
+                case "MUL":
+                    op = Operation.Mul;
+                    return true;
+                case "ADD":
+                    op = Operation.Add;
+                    return true;
+                default:
+                    op = default;
+                    return false;
+            }
+        }
+
+        private static bool IsValueValid(Operation op, decimal value) =>
+            op == Operation.Add
+                ? decimal.Truncate(value) == value && Math.Abs(value) <= MaxAbsoluteValue
+                : value > 0m && value <= MaxAbsoluteValue;
+
+        private static string Cell(IReadOnlyList<string> fields, int index)
+        {
+            if (fields.Count <= index)
+            {
+                return null;
+            }
+
+            var cell = fields[index].Trim();
+            return cell.Length == 0 ? null : cell;
+        }
+
+        private static IReadOnlyList<string> Select(
+            IReadOnlyList<string> fields,
+            ICollection<int> droppedColumns) =>
+            fields.Where((_, index) => !droppedColumns.Contains(index)).ToList();
+    }
+}

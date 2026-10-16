@@ -17,6 +17,9 @@ _value of successful_rate is between 0 and 10000,,,
 7,Aura,9,10000
 7,Grimoire,9,10000
 7,FullCostume,11,10000
-8,Aura,1,0
-8,Grimoire,1,0
-8,FullCostume,1,0
+8,Aura,4,10000
+8,Grimoire,4,10000
+8,FullCostume,4,10000
+9,Aura,1,0
+9,Grimoire,1,0
+9,FullCostume,1,0

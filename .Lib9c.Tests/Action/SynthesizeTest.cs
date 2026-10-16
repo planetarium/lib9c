@@ -3,6 +3,7 @@ namespace Lib9c.Tests.Action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Bencodex.Types;
 using Libplanet.Action.State;
 using Libplanet.Crypto;
@@ -481,6 +482,150 @@ public class SynthesizeTest
     }
 
     /// <summary>
+    /// A <see cref="BoostScheduleSheet.Targets.SynthesizeRequiredCount"/> row changes how many
+    /// materials one synthesis consumes, but only inside its block range. Grade 4 auras need 11;
+    /// the schedule makes it 6, so 12 materials synthesize twice in range and do not divide
+    /// outside it.
+    /// </summary>
+    /// <param name="offset">The executed block, relative to the schedule's first block.</param>
+    /// <param name="scheduled">Whether that block is inside the schedule.</param>
+    [Theory]
+    [InlineData(0, true)]
+    [InlineData(9, true)]
+    [InlineData(-1, false)]
+    [InlineData(10, false)]
+    public void Execute_AppliesScheduledRequiredCountBoost(long offset, bool scheduled)
+    {
+        const Grade grade = Grade.Unique;
+        const ItemSubType itemSubType = ItemSubType.Aura;
+        const int materialCount = 12;
+        Assert.Equal(11, GetSucceededMaterialCount(itemSubType, grade));
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var start);
+        (state, var items) = UpdateItemsFromSubType(
+            grade,
+            GetSubTypeArray(itemSubType, materialCount),
+            state,
+            avatarAddress);
+        var csv = RequiredCountBoostCsv((int)grade, start);
+        state = state
+            .SetActionPoint(avatarAddress, 120)
+            .SetLegacyState(Addresses.TableSheet.Derive(nameof(BoostScheduleSheet)), csv.Serialize());
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+        var ctx = new ActionContext
+        {
+            BlockIndex = start + offset,
+            PreviousState = state,
+            RandomSeed = 0,
+            Signer = agentAddress,
+        };
+
+        if (!scheduled)
+        {
+            Assert.Throws<NotEnoughMaterialException>(() => action.Execute(ctx));
+            return;
+        }
+
+        var nextState = action.Execute(ctx);
+
+        var boostScheduleSheet = new BoostScheduleSheet();
+        boostScheduleSheet.Set(csv);
+        var boost = boostScheduleSheet.FindActive(
+            BoostScheduleSheet.Targets.SynthesizeRequiredCount,
+            (int)grade,
+            ctx.BlockIndex);
+        Assert.NotNull(boost);
+        var expected = SynthesizeSimulator.Simulate(new SynthesizeSimulator.InputData
+        {
+            Grade = grade,
+            ItemSubType = itemSubType,
+            MaterialCount = materialCount,
+            SynthesizeSheet = TableSheets.SynthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
+            BlockIndex = ctx.BlockIndex,
+            RandomObject = new TestRandom(0),
+            RequiredCountBoost = boost,
+        });
+        Assert.Equal(2, expected.Count);
+
+        var actual = nextState.GetInventoryV2(avatarAddress).Items.Select(i => i.item).ToList();
+        Assert.Equal(
+            SynthesizeSimulator.GetItemGuids(expected.Select(r => r.ItemBase)).OrderBy(id => id),
+            SynthesizeSimulator.GetItemGuids(actual).OrderBy(id => id));
+    }
+
+    /// <summary>
+    /// A chain never patched with <see cref="BoostScheduleSheet"/>, one patched with an empty
+    /// sheet, and one whose rows miss this grade or this block all synthesize exactly as before
+    /// the sheet existed: same materials consumed, same draws, same items.
+    /// </summary>
+    [Fact]
+    public void Execute_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
+    {
+        const Grade grade = Grade.Unique;
+        const ItemSubType itemSubType = ItemSubType.Aura;
+        var target = BoostScheduleSheet.Targets.SynthesizeRequiredCount;
+        var materialCount = GetSucceededMaterialCount(itemSubType, grade) * 2;
+
+        var state = Init(out var agentAddress, out var avatarAddress, out var blockIndex);
+        (state, var items) = UpdateItemsFromSubType(
+            grade,
+            GetSubTypeArray(itemSubType, materialCount),
+            state,
+            avatarAddress);
+        state = state.SetActionPoint(avatarAddress, 120);
+
+        var sheetAddress = Addresses.TableSheet.Derive(nameof(BoostScheduleSheet));
+        var missingCsv =
+            "id,target,target_id,op,value,start_block,end_block\n" +
+            $"1,{target},5~9,MUL,0.5,{blockIndex},{blockIndex + 10}\n" +
+            $"2,{target},{(int)grade},MUL,0.5,{blockIndex + 1},{blockIndex + 10}\n";
+        IValue[] sheets =
+        {
+            Null.Value,
+            "id,target,target_id,op,value,start_block,end_block\n".Serialize(),
+            missingCsv.Serialize(),
+        };
+
+        var action = new Synthesize
+        {
+            AvatarAddress = avatarAddress,
+            MaterialIds = SynthesizeSimulator.GetItemGuids(items),
+            ChargeAp = false,
+            MaterialGradeId = (int)grade,
+            MaterialItemSubTypeId = (int)itemSubType,
+        };
+        var inventories = sheets
+            .Select(sheet => action.Execute(
+                new ActionContext
+                {
+                    BlockIndex = blockIndex,
+                    PreviousState = state.SetLegacyState(sheetAddress, sheet),
+                    RandomSeed = 0,
+                    Signer = agentAddress,
+                }))
+            .Select(nextState => nextState.GetInventoryV2(avatarAddress))
+            .ToList();
+
+        Assert.Equal(2, inventories[0].Items.Count);
+        Assert.All(inventories, inventory => Assert.Equal(inventories[0].Serialize(), inventory.Serialize()));
+    }
+
+    /// <summary>
     /// A result pool is what the weight sheet spells out. An item it does not list is not drawn,
     /// so adding one to an item sheet no longer puts it into circulation on its own.
     /// </summary>
@@ -635,63 +780,57 @@ public class SynthesizeTest
     }
 
     /// <summary>
-    /// A grade above the highest one the sheets currently carry arrives by sheet rows alone. Give
-    /// <see cref="Grade.Ultimate"/> an Aura to be, a recipe to be built from and a weight to be
-    /// drawn by, open the grade 8 row for synthesis, and grade 8 material synthesizes into it with
-    /// no code change. This is what removing the hard-coded cap in
+    /// <see cref="Grade.Ultimate"/> arrived by sheet rows alone: the sheets ship its items with a
+    /// weight to be drawn by and open the grade 8 rows for synthesis, and grade 8 material
+    /// synthesizes into it with no code change. This is what removing the hard-coded cap in
     /// <see cref="SynthesizeSimulator.GetTargetGrade(int)"/> buys.
     /// </summary>
-    [Fact]
-    public void SynthesizingIntoAGradeTheSheetsAddNeedsNoCodeChange()
+    /// <param name="itemSubType">The item sub type synthesized from grade 8 into grade 9.</param>
+    [Theory]
+    [InlineData(ItemSubType.Aura)]
+    [InlineData(ItemSubType.Grimoire)]
+    [InlineData(ItemSubType.FullCostume)]
+    public void SynthesizingIntoAGradeTheSheetsAddNeedsNoCodeChange(ItemSubType itemSubType)
     {
-        const int ultimateAuraId = 10690000;
-        var sheets = new Dictionary<string, string>(Sheets);
-        sheets["EquipmentItemSheet"] = AppendRow(
-            sheets["EquipmentItemSheet"],
-            $"{ultimateAuraId},Ymir Aura G9,Aura,{(int)Grade.Ultimate},Normal,0,ATK,10,0,10620001,1300000");
-        sheets["EquipmentItemRecipeSheet"] = AppendRow(
-            sheets["EquipmentItemRecipeSheet"],
-            $"336,{ultimateAuraId},0,0,0,0,10000000,999,106900001,,,0,Aura");
+        // Grade 8 shipped closed (`8,<type>,1,0`) until the Ultimate items did; it must be open now.
+        var synthesizeData = TableSheets.SynthesizeSheet[(int)Grade.Transcendent]
+            .RequiredCountDict[itemSubType];
+        Assert.True(synthesizeData.SucceedRate > SynthesizeSheet.SucceedRateMin);
 
-        // Reuses the Aegis Aura option rows: this test is about the grade, not the stats.
-        sheets["EquipmentItemSubRecipeSheetV2"] = AppendRow(
-            sheets["EquipmentItemSubRecipeSheetV2"],
-            "106900001,0,0,1,,,,,,,1068000211,10000,0,1068000212,10000,0,1068000213,10000,0,,,,FALSE,1");
-        sheets["SynthesizeWeightSheet"] = AppendRow(
-            sheets["SynthesizeWeightSheet"],
-            $"{ultimateAuraId},10000");
+        // Only whether the roll succeeds is left to the rate the sheet ships, so pin it to certain:
+        // this test is about the grade being reachable, not about how often.
+        var synthesizeSheet = new SynthesizeSheet();
+        synthesizeSheet.Set(Regex.Replace(
+            Sheets[nameof(SynthesizeSheet)],
+            $@"^{(int)Grade.Transcendent},{itemSubType},(\d+),\d+",
+            $"{(int)Grade.Transcendent},{itemSubType},$1,{SynthesizeSheet.SucceedRateMax}",
+            RegexOptions.Multiline));
+        Assert.Equal(
+            SynthesizeSheet.SucceedRateMax,
+            synthesizeSheet[(int)Grade.Transcendent].RequiredCountDict[itemSubType].SucceedRate);
 
-        // Grade 8 Aura ships closed (`8,Aura,1,0`); open it at the coefficient the plan calls for.
-        var openedSynthesizeSheet = sheets["SynthesizeSheet"].Replace("8,Aura,1,0", "8,Aura,4,10000");
-        Assert.NotEqual(sheets["SynthesizeSheet"], openedSynthesizeSheet);
-        sheets["SynthesizeSheet"] = openedSynthesizeSheet;
-
-        var tableSheets = new TableSheets(sheets);
         var inputData = new SynthesizeSimulator.InputData
         {
             Grade = Grade.Transcendent,
-            ItemSubType = ItemSubType.Aura,
-            MaterialCount = 4,
-            SynthesizeSheet = tableSheets.SynthesizeSheet,
-            SynthesizeWeightSheet = tableSheets.SynthesizeWeightSheet,
-            CostumeItemSheet = tableSheets.CostumeItemSheet,
-            EquipmentItemSheet = tableSheets.EquipmentItemSheet,
-            EquipmentItemRecipeSheet = tableSheets.EquipmentItemRecipeSheet,
-            EquipmentItemSubRecipeSheetV2 = tableSheets.EquipmentItemSubRecipeSheetV2,
-            EquipmentItemOptionSheet = tableSheets.EquipmentItemOptionSheet,
-            SkillSheet = tableSheets.SkillSheet,
+            ItemSubType = itemSubType,
+            MaterialCount = synthesizeData.RequiredCount,
+            SynthesizeSheet = synthesizeSheet,
+            SynthesizeWeightSheet = TableSheets.SynthesizeWeightSheet,
+            CostumeItemSheet = TableSheets.CostumeItemSheet,
+            EquipmentItemSheet = TableSheets.EquipmentItemSheet,
+            EquipmentItemRecipeSheet = TableSheets.EquipmentItemRecipeSheet,
+            EquipmentItemSubRecipeSheetV2 = TableSheets.EquipmentItemSubRecipeSheetV2,
+            EquipmentItemOptionSheet = TableSheets.EquipmentItemOptionSheet,
+            SkillSheet = TableSheets.SkillSheet,
             RandomObject = new TestRandom(),
         };
 
         var result = Assert.Single(SynthesizeSimulator.Simulate(inputData));
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(ultimateAuraId, result.ItemBase.Id);
+        Assert.Equal(itemSubType, result.ItemBase.ItemSubType);
         Assert.Equal((int)Grade.Ultimate, result.ItemBase.Grade);
     }
-
-    private static string AppendRow(string csv, string row) =>
-        csv.EndsWith("\n") ? csv + row + "\n" : csv + "\n" + row + "\n";
 
     private static HashSet<int> GetResultPool(Grade grade, ItemSubType itemSubType) =>
         itemSubType is ItemSubType.FullCostume or ItemSubType.Title
@@ -810,4 +949,8 @@ public class SynthesizeTest
         var row = synthesizeSheet.Values.First(r => (Grade)r.GradeId == grade);
         return row.RequiredCountDict[itemSubType].RequiredCount;
     }
+
+    private static string RequiredCountBoostCsv(int grade, long start) =>
+        "id,target,target_id,op,value,start_block,end_block\n" +
+        $"1,{BoostScheduleSheet.Targets.SynthesizeRequiredCount},1~{grade},MUL,0.6,{start},{start + 10}\n";
 }
