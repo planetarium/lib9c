@@ -27,7 +27,19 @@ namespace Nekoyume.Helper
             return $"{season:D40}";
         }
 
+        /// <summary>
+        /// Share of a season's total bounty, in percent, paid as the raffle reward.
+        /// </summary>
         public const int RaffleRewardPercent = 5;
+
+        /// <summary>
+        /// Upper bound of a <see cref="BoostScheduleSheet.Targets.AdventureBossFloorReward"/> or
+        /// <see cref="BoostScheduleSheet.Targets.AdventureBossFirstClearReward"/> row: a boosted
+        /// reward amount never exceeds this many times the amount drawn, whatever the row's
+        /// <c>op</c> and value. It bounds a mistyped value to a fivefold over-reward and keeps
+        /// boosted amounts added to one inventory slot from overflowing.
+        /// </summary>
+        public const long MaxAdventureBossRewardBoostFactor = 5;
 
         public const decimal TotalRewardMultiplier = 1.2m;
         public const decimal FixedRewardRatio = 0.7m;
@@ -376,13 +388,16 @@ namespace Nekoyume.Helper
         /// </param>
         /// <returns>
         /// <paramref name="reward"/> itself when there is no row or nothing to adjust, otherwise a
-        /// copy whose <see cref="AdventureBossSheet.RewardAmountData.Amount"/> is adjusted.
+        /// copy whose <see cref="AdventureBossSheet.RewardAmountData.Amount"/> is adjusted and
+        /// kept between 1 and <see cref="MaxAdventureBossRewardBoostFactor"/> times the drawn
+        /// amount.
         /// </returns>
         /// <remarks>
         /// Only the granted amount changes: the entry was already drawn, so a boost never adds or
         /// reorders random draws. A boost adjusts a reward but never creates one, so an entry with
         /// no amount stays as it is; and it never takes a reward below 1, because granting 0 of
-        /// an item or a currency fails the action.
+        /// an item or a currency fails the action. The cap applies to <c>ADD</c> too, so
+        /// <c>ADD 10</c> on an amount of 1 grants 5.
         /// </remarks>
         public static AdventureBossSheet.RewardAmountData ApplyRewardBoost(
             AdventureBossSheet.RewardAmountData reward,
@@ -396,7 +411,11 @@ namespace Nekoyume.Helper
             return new AdventureBossSheet.RewardAmountData(
                 reward.ItemType,
                 reward.ItemId,
-                Math.Max(1, rewardBoost.Apply(reward.Amount)));
+                // In 64 bits, as Amount × the factor can exceed int.MaxValue; the minimum
+                // cannot, since Apply(int) is at most int.MaxValue.
+                (int)Math.Min(
+                    Math.Max(1L, rewardBoost.Apply(reward.Amount)),
+                    reward.Amount * MaxAdventureBossRewardBoostFactor));
         }
 
         public static IWorld AddExploreRewards(IActionContext context, IWorld states,

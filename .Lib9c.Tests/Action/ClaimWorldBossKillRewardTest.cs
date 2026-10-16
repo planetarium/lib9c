@@ -162,6 +162,20 @@ namespace Lib9c.Tests.Action
             AssertKillReward(csv.Serialize(), blockIndex, multiplier);
         }
 
+        // At most WorldBossHelper.MaxWorldBossRewardBoostFactor (5) times each amount.
+        [Theory]
+        [InlineData("2", 2)]
+        [InlineData("100", 5)]
+        [InlineData("2147483647", 5)]
+        public void Execute_CapsScheduledKillRewardBoost(string value, int multiplier)
+        {
+            var csv =
+                "id,target,target_id,op,value,start_block,end_block\n" +
+                $"1,{BoostScheduleSheet.Targets.WorldBossKillReward},900001,MUL,{value},100,200\n";
+
+            AssertKillReward(csv.Serialize(), 150L, multiplier);
+        }
+
         [Fact]
         public void Execute_IsUnchangedWhenTheChainWasNeverPatchedWithBoostScheduleSheet()
         {

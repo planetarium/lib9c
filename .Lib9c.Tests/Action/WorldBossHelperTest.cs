@@ -221,7 +221,26 @@ namespace Lib9c.Tests.Action
         [InlineData("MUL", "1.5", 3, 4)]
         [InlineData("ADD", "5", 7, 12)]
         [InlineData("ADD", "-10", 7, 0)]
+        // Capped at MaxWorldBossRewardBoostFactor (5) times the drawn amount, ADD included.
+        [InlineData("MUL", "5", 7, 35)]
+        [InlineData("MUL", "100", 7, 35)]
+        [InlineData("ADD", "100", 7, 35)]
+        [InlineData("ADD", "10", 1, 5)]
         public void ApplyRewardBoost(string op, string value, int amount, int expected)
+        {
+            Assert.Equal(expected, WorldBossHelper.ApplyRewardBoost(CreateBoostRow(op, value), amount));
+        }
+
+        // Amount × 5 exceeds int.MaxValue from ~429M up; the result must stay positive and never
+        // exceed int.MaxValue, nor 5 times the amount below that.
+        [Theory]
+        [InlineData("MUL", "2147483647", int.MaxValue, int.MaxValue)]
+        [InlineData("ADD", "2147483647", int.MaxValue, int.MaxValue)]
+        [InlineData("MUL", "2147483647", 1_000_000_000, int.MaxValue)]
+        [InlineData("MUL", "2147483647", 429_496_729, 2_147_483_645)]
+        [InlineData("MUL", "19930424", 1000, 5000)]
+        [InlineData("MUL", "2147483647", 1, 5)]
+        public void ApplyRewardBoost_DoesNotOverflow(string op, string value, int amount, int expected)
         {
             Assert.Equal(expected, WorldBossHelper.ApplyRewardBoost(CreateBoostRow(op, value), amount));
         }
