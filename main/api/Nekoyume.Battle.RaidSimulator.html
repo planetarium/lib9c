@@ -236,16 +236,16 @@ Class RaidSimulator  <a class="header-action link-secondary" title="View source"
 
   <a id="Nekoyume_Battle_RaidSimulator__ctor_" data-uid="Nekoyume.Battle.RaidSimulator.#ctor*"></a>
 
-  <h3 id="Nekoyume_Battle_RaidSimulator__ctor_System_Int32_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_Nekoyume_TableData_RaidSimulatorSheets_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Int64_" data-uid="Nekoyume.Battle.RaidSimulator.#ctor(System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.RaidSimulatorSheets,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Int64)">
-  RaidSimulator(int, IRandom, AvatarState, List&lt;Guid&gt;, AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List&lt;StatModifier&gt;, BuffLimitSheet, BuffLinkSheet, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/RaidSimulator.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Battle_RaidSimulator__ctor_System_Int32_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_Nekoyume_TableData_RaidSimulatorSheets_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Int64_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Battle.RaidSimulator.#ctor(System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.RaidSimulatorSheets,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  RaidSimulator(int, IRandom, AvatarState, List&lt;Guid&gt;, AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List&lt;StatModifier&gt;, BuffLimitSheet, BuffLinkSheet, long, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/RaidSimulator.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public RaidSimulator(int bossId, IRandom random, AvatarState avatarState, List&lt;Guid&gt; foods, AllRuneState runeStates, RuneSlotState runeSlotState, RaidSimulatorSheets simulatorSheets, CostumeStatSheet costumeStatSheet, List&lt;StatModifier&gt; collectionModifiers, BuffLimitSheet buffLimitSheet, BuffLinkSheet buffLinkSheet, long shatterStrikeMaxDamage = 400000)</code></pre>
+    <pre><code class="lang-csharp hljs">public RaidSimulator(int bossId, IRandom random, AvatarState avatarState, List&lt;Guid&gt; foods, AllRuneState runeStates, RuneSlotState runeSlotState, RaidSimulatorSheets simulatorSheets, CostumeStatSheet costumeStatSheet, List&lt;StatModifier&gt; collectionModifiers, BuffLimitSheet buffLimitSheet, BuffLinkSheet buffLinkSheet, long shatterStrikeMaxDamage = 400000, BoostScheduleSheet.Row battleRewardBoost = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -273,6 +273,8 @@ Class RaidSimulator  <a class="header-action link-secondary" title="View source"
     <dt><code>buffLinkSheet</code> <a class="xref" href="Nekoyume.TableData.BuffLinkSheet.html">BuffLinkSheet</a></dt>
     <dd></dd>
     <dt><code>shatterStrikeMaxDamage</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>battleRewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
     <dd></dd>
   </dl>
 
@@ -423,7 +425,7 @@ Class RaidSimulator  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Nekoyume_Battle_RaidSimulator_Simulate" data-uid="Nekoyume.Battle.RaidSimulator.Simulate">
   Simulate()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/RaidSimulator.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/RaidSimulator.cs/#L123"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -454,7 +456,7 @@ Class RaidSimulator  <a class="header-action link-secondary" title="View source"
 
   <h3 id="Nekoyume_Battle_RaidSimulator_SpawnBoss_Nekoyume_Model_RaidBoss_" data-uid="Nekoyume.Battle.RaidSimulator.SpawnBoss(Nekoyume.Model.RaidBoss)">
   SpawnBoss(RaidBoss)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/RaidSimulator.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Battle/RaidSimulator.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

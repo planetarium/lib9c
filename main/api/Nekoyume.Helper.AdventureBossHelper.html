@@ -155,7 +155,7 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_FixedRewardRatio" data-uid="Nekoyume.Helper.AdventureBossHelper.FixedRewardRatio">
   FixedRewardRatio
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -183,12 +183,48 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
 
 
-  <h3 id="Nekoyume_Helper_AdventureBossHelper_RaffleRewardPercent" data-uid="Nekoyume.Helper.AdventureBossHelper.RaffleRewardPercent">
-  RaffleRewardPercent
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_MaxAdventureBossRewardBoostFactor" data-uid="Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor">
+  MaxAdventureBossRewardBoostFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Upper bound of a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a> or
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward">AdventureBossFirstClearReward</a> row: a boosted
+reward amount never exceeds this many times the amount drawn, whatever the row's
+<code>op</code> and value. It bounds a mistyped value to a fivefold over-reward and keeps
+boosted amounts added to one inventory slot from overflowing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const long MaxAdventureBossRewardBoostFactor = 5</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_RaffleRewardPercent" data-uid="Nekoyume.Helper.AdventureBossHelper.RaffleRewardPercent">
+  RaffleRewardPercent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Share of a season's total bounty, in percent, paid as the raffle reward.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -215,7 +251,7 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_RandomRewardRatio" data-uid="Nekoyume.Helper.AdventureBossHelper.RandomRewardRatio">
   RandomRewardRatio
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -245,7 +281,7 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_TotalRewardMultiplier" data-uid="Nekoyume.Helper.AdventureBossHelper.TotalRewardMultiplier">
   TotalRewardMultiplier
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -280,7 +316,7 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_AddExploreRewards_Libplanet_Action_IActionContext_Libplanet_Action_State_IWorld_Libplanet_Crypto_Address_Nekoyume_Model_Item_Inventory_System_Collections_Generic_IEnumerable_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData__" data-uid="Nekoyume.Helper.AdventureBossHelper.AddExploreRewards(Libplanet.Action.IActionContext,Libplanet.Action.State.IWorld,Libplanet.Crypto.Address,Nekoyume.Model.Item.Inventory,System.Collections.Generic.IEnumerable{Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData})">
   AddExploreRewards(IActionContext, IWorld, Address, Inventory, IEnumerable&lt;RewardAmountData&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L367"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L421"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -320,11 +356,66 @@ Class AdventureBossHelper  <a class="header-action link-secondary" title="View s
 
 
 
+  <a id="Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_" data-uid="Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost*"></a>
+
+  <h3 id="Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost(Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  ApplyRewardBoost(RewardAmountData, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L402"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies a <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row to one explore or sweep reward entry.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static AdventureBossSheet.RewardAmountData ApplyRewardBoost(AdventureBossSheet.RewardAmountData reward, BoostScheduleSheet.Row rewardBoost)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reward</code> <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.html">AdventureBossSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html">RewardAmountData</a></dt>
+    <dd><p>The reward as the sheets and the random draws decided it.</p>
+</dd>
+    <dt><code>rewardBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row adjusting this floor's reward at the current block — see
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward">AdventureBossFloorReward</a> and
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward">AdventureBossFirstClearReward</a> — or
+<code>null</code> for none. A caller replaying an action must pass what the action resolved.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.html">AdventureBossSheet</a>.<a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html">RewardAmountData</a></dt>
+    <dd><p><code class="paramref">reward</code> itself when there is no row or nothing to adjust, otherwise a
+copy whose <a class="xref" href="Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData.html#Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Amount">Amount</a> is adjusted and
+kept between 1 and <a class="xref" href="Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_MaxAdventureBossRewardBoostFactor">MaxAdventureBossRewardBoostFactor</a> times the drawn
+amount.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Nekoyume_TableData_BoostScheduleSheet_Row__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Only the granted amount changes: the entry was already drawn, so a boost never adds or
+reorders random draws. A boost adjusts a reward but never creates one, so an entry with
+no amount stays as it is; and it never takes a reward below 1, because granting 0 of
+an item or a currency fails the action. The cap applies to <code>ADD</code> too, so
+<code>ADD 10</code> on an amount of 1 grants 5.</p>
+</div>
+
+
+
+
   <a id="Nekoyume_Helper_AdventureBossHelper_CalculateExploreReward_" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateExploreReward*"></a>
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_CalculateExploreReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_Explorer_Libplanet_Crypto_Address_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_System_Decimal_System_Decimal_System_Boolean_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateExploreReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.Explorer,Libplanet.Crypto.Address,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,System.Decimal,System.Decimal,System.Boolean,Libplanet.Types.Assets.FungibleAssetValue@)">
   CalculateExploreReward(ClaimableReward, BountyBoard, ExploreBoard, Explorer, Address, AdventureBossNcgRewardRatioSheet, decimal, decimal, bool, out FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L258"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L270"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calculate reward for adventure boss explorers.
@@ -391,7 +482,7 @@ We must handle NCG reward separately because NCG reward must be transferred from
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_CalculateRaffleReward_Nekoyume_Model_AdventureBoss_BountyBoard_" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateRaffleReward(Nekoyume.Model.AdventureBoss.BountyBoard)">
   CalculateRaffleReward(BountyBoard)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -427,7 +518,7 @@ We must handle NCG reward separately because NCG reward must be transferred from
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_CalculateWantedReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_AdventureBoss_BountyBoard_Libplanet_Crypto_Address_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_System_Decimal_Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Helper.AdventureBossHelper.CalculateWantedReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.AdventureBoss.BountyBoard,Libplanet.Crypto.Address,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,System.Decimal,Libplanet.Types.Assets.FungibleAssetValue@)">
   CalculateWantedReward(ClaimableReward, BountyBoard, Address, AdventureBossNcgRewardRatioSheet, decimal, out FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calculate reward for adventure boss operators.
@@ -483,7 +574,7 @@ We must handle NCG reward separately because NCG reward must be transferred from
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_CollectExploreReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_State_GameConfigState_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_Nekoyume_Model_AdventureBoss_SeasonInfo_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_Explorer_System_Int64_Libplanet_Crypto_Address_Nekoyume_Data_AdventureBossGameData_ClaimableReward__Libplanet_Types_Assets_FungibleAssetValue__" data-uid="Nekoyume.Helper.AdventureBossHelper.CollectExploreReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.State.GameConfigState,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,Nekoyume.Model.AdventureBoss.SeasonInfo,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.Explorer,System.Int64,Libplanet.Crypto.Address,Nekoyume.Data.AdventureBossGameData.ClaimableReward@,Libplanet.Types.Assets.FungibleAssetValue@)">
   CollectExploreReward(ClaimableReward, GameConfigState, AdventureBossNcgRewardRatioSheet, SeasonInfo, BountyBoard, ExploreBoard, Explorer, long, Address, ref ClaimableReward, out FungibleAssetValue)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L330"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L342"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -539,7 +630,7 @@ We must handle NCG reward separately because NCG reward must be transferred from
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_CollectWantedReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_State_GameConfigState_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_Nekoyume_Model_AdventureBoss_SeasonInfo_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_Investor_System_Int64_Libplanet_Crypto_Address_Nekoyume_Data_AdventureBossGameData_ClaimableReward__" data-uid="Nekoyume.Helper.AdventureBossHelper.CollectWantedReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.State.GameConfigState,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,Nekoyume.Model.AdventureBoss.SeasonInfo,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.Investor,System.Int64,Libplanet.Crypto.Address,Nekoyume.Data.AdventureBossGameData.ClaimableReward@)">
   CollectWantedReward(ClaimableReward, GameConfigState, AdventureBossNcgRewardRatioSheet, SeasonInfo, BountyBoard, Investor, long, Address, ref ClaimableReward)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L222"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -627,7 +718,7 @@ We must handle NCG reward separately because NCG reward must be transferred from
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_PickExploreRaffle_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_ExplorerList_Libplanet_Action_IRandom_" data-uid="Nekoyume.Helper.AdventureBossHelper.PickExploreRaffle(Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.ExplorerList,Libplanet.Action.IRandom)">
   PickExploreRaffle(BountyBoard, ExploreBoard, ExplorerList, IRandom)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -669,7 +760,7 @@ We must handle NCG reward separately because NCG reward must be transferred from
 
   <h3 id="Nekoyume_Helper_AdventureBossHelper_PickReward_Libplanet_Action_IRandom_System_Collections_Generic_IEnumerable_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardRatioData__" data-uid="Nekoyume.Helper.AdventureBossHelper.PickReward(Libplanet.Action.IRandom,System.Collections.Generic.IEnumerable{Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardRatioData})">
   PickReward(IRandom, IEnumerable&lt;RewardRatioData&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/AdventureBossHelper.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

@@ -89,7 +89,7 @@
 
 
   <h1 id="Nekoyume_Helper_RuneHelper" data-uid="Nekoyume.Helper.RuneHelper" class="text-break">
-Class RuneHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L16"><i class="bi bi-code-slash"></i></a>
+Class RuneHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -155,7 +155,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Nekoyume_Helper_RuneHelper_DailyRewardRune" data-uid="Nekoyume.Helper.RuneHelper.DailyRewardRune">
   DailyRewardRune
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -185,7 +185,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Nekoyume_Helper_RuneHelper_StakeRune" data-uid="Nekoyume.Helper.RuneHelper.StakeRune">
   StakeRune
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -216,11 +216,132 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 </h2>
 
 
+  <a id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_" data-uid="Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost*"></a>
+
+  <h3 id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_" data-uid="Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)">
+  ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies the <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost">SummonRuneEnhancementCrystalCost</a> and
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementRuneStoneCost">SummonRuneEnhancementRuneStoneCost</a> rows active at
+<code class="paramref">blockIndex</code> to the cost of one try that reaches
+<code class="paramref">targetLevel</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static RuneCostSheet.RuneCostData ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData cost, int runeId, int targetLevel, RuneEnhancementCostBoost? boost, long blockIndex)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cost</code> <a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneCostSheet.RuneCostData.html">RuneCostData</a></dt>
+    <dd><p>The sheet's cost for <code class="paramref">targetLevel</code>.</p>
+</dd>
+    <dt><code>runeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The rune <code class="paramref">cost</code> belongs to. <code class="paramref">boost</code> applies only when
+it was resolved for this rune.</p>
+</dd>
+    <dt><code>targetLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The level the try attempts to reach, matched against <code>target_id</code>.</p>
+</dd>
+    <dt><code>boost</code> <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html">RuneEnhancementCostBoost</a></dt>
+    <dd><p>What <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a> returned for the rune, or <code>null</code>
+for none. Ignored when resolved for a rune other than <code class="paramref">runeId</code>.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block being evaluated.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneCostSheet.RuneCostData.html">RuneCostData</a></dt>
+    <dd><p><code class="paramref">cost</code> itself when no row applies; otherwise a copy whose crystal and
+rune stone quantities are adjusted by
+<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_">ApplyEnhancementCostBoostQuantity(Row?, int)</a>. NCG quantity and
+success rate are always copied unchanged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Callers showing a cost — or a maximum try count — should pass every per-level cost
+through this, with the boost from <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a>, so that
+they agree with <a class="xref" href="Nekoyume.Action.RuneEnhancement.html">RuneEnhancement</a>.</p>
+</div>
+
+
+
+
+  <a id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_" data-uid="Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity*"></a>
+
+  <h3 id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_" data-uid="Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)">
+  ApplyEnhancementCostBoostQuantity(Row?, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L256"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applies one <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row to one enhancement cost quantity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row? boost, int baseCost)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>boost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The row to apply, or <code>null</code> for none.</p>
+</dd>
+    <dt><code>baseCost</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The sheet's quantity.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The adjusted quantity, kept within <code>[1, baseCost]</code> when <code class="paramref">baseCost</code>
+is positive. A non-positive <code class="paramref">baseCost</code> is returned unchanged.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+Discount only: a row can never raise a cost. Raising one is not an event anyone has
+asked for, and it would let a mistyped row push the per-try sum in
+<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> past <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32.maxvalue">MaxValue</a>, where it wraps negative
+and the cost is skipped instead of charged.
+</p>
+<p>
+At least 1: rounding down a small cost (4 stones × 0.2 = 0.8) would otherwise make the
+try free, turning a discount into a giveaway that the row never declared. A free
+enhancement has to be configured in <a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a> itself. A cost the
+sheet already sets to 0 stays 0, so a boost never creates a cost either.
+</p>
+</div>
+
+
+
+
   <a id="Nekoyume_Helper_RuneHelper_CalculateRuneLevelBonus_" data-uid="Nekoyume.Helper.RuneHelper.CalculateRuneLevelBonus*"></a>
 
   <h3 id="Nekoyume_Helper_RuneHelper_CalculateRuneLevelBonus_Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_Rune_RuneLevelBonusSheet_" data-uid="Nekoyume.Helper.RuneHelper.CalculateRuneLevelBonus(Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.Rune.RuneLevelBonusSheet)">
   CalculateRuneLevelBonus(AllRuneState, RuneListSheet, RuneLevelBonusSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L273"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -260,7 +381,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Nekoyume_Helper_RuneHelper_CalculateStakeReward_Libplanet_Types_Assets_FungibleAssetValue_System_Int32_" data-uid="Nekoyume.Helper.RuneHelper.CalculateStakeReward(Libplanet.Types.Assets.FungibleAssetValue,System.Int32)">
   CalculateStakeReward(FungibleAssetValue, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L266"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -298,7 +419,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Nekoyume_Helper_RuneHelper_GetRuneOptions_System_Collections_Generic_IEnumerable_Nekoyume_Action_RuneSlotInfo__Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_RuneOptionSheet_" data-uid="Nekoyume.Helper.RuneHelper.GetRuneOptions(System.Collections.Generic.IEnumerable{Nekoyume.Action.RuneSlotInfo},Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.RuneOptionSheet)">
   GetRuneOptions(IEnumerable&lt;RuneSlotInfo&gt;, AllRuneState, RuneOptionSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L330"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -338,7 +459,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Nekoyume_Helper_RuneHelper_GetRuneOptions_System_Collections_Generic_IEnumerable_Nekoyume_TableData_RuneWeightSheet_RuneInfo__Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_RuneOptionSheet_" data-uid="Nekoyume.Helper.RuneHelper.GetRuneOptions(System.Collections.Generic.IEnumerable{Nekoyume.TableData.RuneWeightSheet.RuneInfo},Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.RuneOptionSheet)">
   GetRuneOptions(IEnumerable&lt;RuneInfo&gt;, AllRuneState, RuneOptionSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L301"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -374,11 +495,73 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
 
 
+  <a id="Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_" data-uid="Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost*"></a>
+
+  <h3 id="Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__" data-uid="Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost(Nekoyume.TableData.BoostScheduleSheet,System.Int32,System.Int64,System.Func{Nekoyume.TableData.Summon.RuneSummonSheet})">
+  ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Decides whether a rune's enhancement cost may be adjusted at all, and returns what to
+pass to <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)</a> and <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static RuneEnhancementCostBoost? ResolveEnhancementCostBoost(BoostScheduleSheet? boostScheduleSheet, int runeId, long blockIndex, Func&lt;RuneSummonSheet?&gt; getRuneSummonSheet)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>boostScheduleSheet</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a></dt>
+    <dd><p>The patched <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>, or <code>null</code> when the chain has none.</p>
+</dd>
+    <dt><code>runeId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The rune being enhanced.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block being evaluated.</p>
+</dd>
+    <dt><code>getRuneSummonSheet</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-1">Func</a>&lt;<a class="xref" href="Nekoyume.TableData.Summon.RuneSummonSheet.html">RuneSummonSheet</a>&gt;</dt>
+    <dd><p>Loads the <a class="xref" href="Nekoyume.TableData.Summon.RuneSummonSheet.html">RuneSummonSheet</a>, returning <code>null</code> when it is absent or
+unreadable. Called only when an enhancement cost row is active at
+<code class="paramref">blockIndex</code>, so that evaluation without one reads no extra state.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html">RuneEnhancementCostBoost</a></dt>
+    <dd><p>A <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html">RuneEnhancementCostBoost</a> over <code class="paramref">boostScheduleSheet</code>
+when a
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost">SummonRuneEnhancementCrystalCost</a> or
+<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementRuneStoneCost">SummonRuneEnhancementRuneStoneCost</a> row is
+active at <code class="paramref">blockIndex</code> and <code class="paramref">runeId</code> is a recipe id of
+any <a class="xref" href="Nekoyume.TableData.Summon.RuneSummonSheet.html">RuneSummonSheet</a> group; otherwise <code>null</code>, meaning no adjustment.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The summon pool is derived from the sheet rather than listed, so the adjustment
+follows later changes to it. A recipe counts whatever its ratio and whether or not its
+group is currently sold. A missing
+<a class="xref" href="Nekoyume.TableData.Summon.RuneSummonSheet.html">RuneSummonSheet</a> means no rune is summonable, never an error.</p>
+</div>
+
+
+
+
   <a id="Nekoyume_Helper_RuneHelper_ToCurrency_" data-uid="Nekoyume.Helper.RuneHelper.ToCurrency*"></a>
 
   <h3 id="Nekoyume_Helper_RuneHelper_ToCurrency_Nekoyume_TableData_RuneSheet_Row_" data-uid="Nekoyume.Helper.RuneHelper.ToCurrency(Nekoyume.TableData.RuneSheet.Row)">
   ToCurrency(Row)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -414,7 +597,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <h3 id="Nekoyume_Helper_RuneHelper_ToFungibleAssetValue_Nekoyume_TableData_RuneSheet_Row_System_Int32_" data-uid="Nekoyume.Helper.RuneHelper.ToFungibleAssetValue(Nekoyume.TableData.RuneSheet.Row,System.Int32)">
   ToFungibleAssetValue(Row, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -450,36 +633,56 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 
   <a id="Nekoyume_Helper_RuneHelper_TryEnhancement_" data-uid="Nekoyume.Helper.RuneHelper.TryEnhancement*"></a>
 
-  <h3 id="Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__" data-uid="Nekoyume.Helper.RuneHelper.TryEnhancement(System.Int32,Nekoyume.TableData.RuneCostSheet.Row,Libplanet.Action.IRandom,System.Int32,Nekoyume.Action.RuneEnhancement.LevelUpResult@)">
-  TryEnhancement(int, Row, IRandom, int, out LevelUpResult)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_" data-uid="Nekoyume.Helper.RuneHelper.TryEnhancement(System.Int32,Nekoyume.TableData.RuneCostSheet.Row,Libplanet.Action.IRandom,System.Int32,Nekoyume.Action.RuneEnhancement.LevelUpResult@,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)">
+  TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Simulates <code class="paramref">tryCount</code> enhancement tries from
+<code class="paramref">startRuneLevel</code>, summing the cost of every try and drawing one random
+number per try for its success.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool TryEnhancement(int startRuneLevel, RuneCostSheet.Row costRow, IRandom random, int tryCount, out RuneEnhancement.LevelUpResult levelUpResult)</code></pre>
+    <pre><code class="lang-csharp hljs">public static bool TryEnhancement(int startRuneLevel, RuneCostSheet.Row costRow, IRandom random, int tryCount, out RuneEnhancement.LevelUpResult levelUpResult, RuneEnhancementCostBoost? boost = null, long blockIndex = 0)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>startRuneLevel</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The rune level before the first try.</p>
+</dd>
     <dt><code>costRow</code> <a class="xref" href="Nekoyume.TableData.RuneCostSheet.html">RuneCostSheet</a>.<a class="xref" href="Nekoyume.TableData.RuneCostSheet.Row.html">Row</a></dt>
-    <dd></dd>
+    <dd><p>The rune's cost row.</p>
+</dd>
     <dt><code>random</code> <span class="xref">IRandom</span></dt>
-    <dd></dd>
+    <dd><p>The random source; one draw per try.</p>
+</dd>
     <dt><code>tryCount</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The number of tries.</p>
+</dd>
     <dt><code>levelUpResult</code> <a class="xref" href="Nekoyume.Action.RuneEnhancement.html">RuneEnhancement</a>.<a class="xref" href="Nekoyume.Action.RuneEnhancement.LevelUpResult.html">LevelUpResult</a></dt>
-    <dd></dd>
+    <dd><p>The level-ups and the summed cost.</p>
+</dd>
+    <dt><code>boost</code> <a class="xref" href="Nekoyume.Helper.RuneEnhancementCostBoost.html">RuneEnhancementCostBoost</a></dt>
+    <dd><p>What <a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__">ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func&lt;RuneSummonSheet?&gt;)</a> returned for this rune, or <code>null</code>
+for none. Adjusts each try's crystal and rune stone cost; see
+<a class="xref" href="Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_">ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)</a>. Ignored, not rejected, when it was resolved
+for a rune other than <code class="paramref">costRow</code>'s, so a preview holding on to a stale
+boost shows the undiscounted cost the chain would charge.</p>
+</dd>
+    <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd><p>The block being evaluated, against which <code class="paramref">boost</code> rows are matched.
+Ignored when <code class="paramref">boost</code> is <code>null</code>.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p><code>false</code> when a try reaches a level <code class="paramref">costRow</code> has no cost for.</p>
+</dd>
   </dl>
 
 
@@ -496,7 +699,7 @@ Class RuneHelper  <a class="header-action link-secondary" title="View source" hr
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L16" class="edit-link">Edit this page</a>
+          <a href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Helper/RuneHelper.cs/#L17" class="edit-link">Edit this page</a>
         </div>
 
 

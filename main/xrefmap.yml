@@ -4776,15 +4776,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.AuraSummon.PlainValueInternal
   nameWithType: AuraSummon.PlainValueInternal
-- uid: Nekoyume.Action.AuraSummon.SimulateSummon(System.String,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,System.Int64)
-  name: SimulateSummon(string, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, Row, int, IRandom, long)
-  href: api/Nekoyume.Action.AuraSummon.html#Nekoyume_Action_AuraSummon_SimulateSummon_System_String_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_Nekoyume_TableData_SkillSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_System_Int64_
-  commentId: M:Nekoyume.Action.AuraSummon.SimulateSummon(System.String,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,System.Int64)
-  name.vb: SimulateSummon(String, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, Row, Integer, IRandom, Long)
-  fullName: Nekoyume.Action.AuraSummon.SimulateSummon(string, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemSubRecipeSheetV2, Nekoyume.TableData.EquipmentItemOptionSheet, Nekoyume.TableData.SkillSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, long)
-  fullName.vb: Nekoyume.Action.AuraSummon.SimulateSummon(String, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemSubRecipeSheetV2, Nekoyume.TableData.EquipmentItemOptionSheet, Nekoyume.TableData.SkillSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Long)
-  nameWithType: AuraSummon.SimulateSummon(string, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, SummonSheet.Row, int, IRandom, long)
-  nameWithType.vb: AuraSummon.SimulateSummon(String, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, SummonSheet.Row, Integer, IRandom, Long)
+- uid: Nekoyume.Action.AuraSummon.SimulateSummon(System.String,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: SimulateSummon(string, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, Row, int, IRandom, long, Row)
+  href: api/Nekoyume.Action.AuraSummon.html#Nekoyume_Action_AuraSummon_SimulateSummon_System_String_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_Nekoyume_TableData_SkillSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_System_Int64_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.AuraSummon.SimulateSummon(System.String,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: SimulateSummon(String, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, Row, Integer, IRandom, Long, Row)
+  fullName: Nekoyume.Action.AuraSummon.SimulateSummon(string, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemSubRecipeSheetV2, Nekoyume.TableData.EquipmentItemOptionSheet, Nekoyume.TableData.SkillSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, long, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.AuraSummon.SimulateSummon(String, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemSubRecipeSheetV2, Nekoyume.TableData.EquipmentItemOptionSheet, Nekoyume.TableData.SkillSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Long, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: AuraSummon.SimulateSummon(string, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, SummonSheet.Row, int, IRandom, long, BoostScheduleSheet.Row)
+  nameWithType.vb: AuraSummon.SimulateSummon(String, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, SummonSheet.Row, Integer, IRandom, Long, BoostScheduleSheet.Row)
 - uid: Nekoyume.Action.AuraSummon.SimulateSummon*
   name: SimulateSummon
   href: api/Nekoyume.Action.AuraSummon.html#Nekoyume_Action_AuraSummon_SimulateSummon_
@@ -7896,15 +7896,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.CostumeSummon.PlainValueInternal
   nameWithType: CostumeSummon.PlainValueInternal
-- uid: Nekoyume.Action.CostumeSummon.SimulateSummon(System.String,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom)
-  name: SimulateSummon(string, CostumeItemSheet, Row, int, IRandom)
-  href: api/Nekoyume.Action.CostumeSummon.html#Nekoyume_Action_CostumeSummon_SimulateSummon_System_String_Nekoyume_TableData_CostumeItemSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_
-  commentId: M:Nekoyume.Action.CostumeSummon.SimulateSummon(System.String,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom)
-  name.vb: SimulateSummon(String, CostumeItemSheet, Row, Integer, IRandom)
-  fullName: Nekoyume.Action.CostumeSummon.SimulateSummon(string, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom)
-  fullName.vb: Nekoyume.Action.CostumeSummon.SimulateSummon(String, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom)
-  nameWithType: CostumeSummon.SimulateSummon(string, CostumeItemSheet, SummonSheet.Row, int, IRandom)
-  nameWithType.vb: CostumeSummon.SimulateSummon(String, CostumeItemSheet, SummonSheet.Row, Integer, IRandom)
+- uid: Nekoyume.Action.CostumeSummon.SimulateSummon(System.String,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: SimulateSummon(string, CostumeItemSheet, Row, int, IRandom, Row)
+  href: api/Nekoyume.Action.CostumeSummon.html#Nekoyume_Action_CostumeSummon_SimulateSummon_System_String_Nekoyume_TableData_CostumeItemSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.CostumeSummon.SimulateSummon(System.String,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: SimulateSummon(String, CostumeItemSheet, Row, Integer, IRandom, Row)
+  fullName: Nekoyume.Action.CostumeSummon.SimulateSummon(string, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.CostumeSummon.SimulateSummon(String, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: CostumeSummon.SimulateSummon(string, CostumeItemSheet, SummonSheet.Row, int, IRandom, BoostScheduleSheet.Row)
+  nameWithType.vb: CostumeSummon.SimulateSummon(String, CostumeItemSheet, SummonSheet.Row, Integer, IRandom, BoostScheduleSheet.Row)
 - uid: Nekoyume.Action.CostumeSummon.SimulateSummon*
   name: SimulateSummon
   href: api/Nekoyume.Action.CostumeSummon.html#Nekoyume_Action_CostumeSummon_SimulateSummon_
@@ -13133,15 +13133,24 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.HackAndSlashSweep.Execute
   nameWithType: HackAndSlashSweep.Execute
-- uid: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet)
-  name: GetRewardItems(IRandom, int, Row, MaterialItemSheet)
-  href: api/Nekoyume.Action.HackAndSlashSweep.html#Nekoyume_Action_HackAndSlashSweep_GetRewardItems_Libplanet_Action_IRandom_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_
-  commentId: M:Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet)
-  name.vb: GetRewardItems(IRandom, Integer, Row, MaterialItemSheet)
-  fullName: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom, int, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet)
-  fullName.vb: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom, Integer, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet)
-  nameWithType: HackAndSlashSweep.GetRewardItems(IRandom, int, StageSheet.Row, MaterialItemSheet)
-  nameWithType.vb: HackAndSlashSweep.GetRewardItems(IRandom, Integer, StageSheet.Row, MaterialItemSheet)
+- uid: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetRewardItems(IRandom, int, Row, MaterialItemSheet, Row)
+  href: api/Nekoyume.Action.HackAndSlashSweep.html#Nekoyume_Action_HackAndSlashSweep_GetRewardItems_Libplanet_Action_IRandom_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetRewardItems(IRandom, Integer, Row, MaterialItemSheet, Row)
+  fullName: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom, int, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom, Integer, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: HackAndSlashSweep.GetRewardItems(IRandom, int, StageSheet.Row, MaterialItemSheet, BoostScheduleSheet.Row)
+  nameWithType.vb: HackAndSlashSweep.GetRewardItems(IRandom, Integer, StageSheet.Row, MaterialItemSheet, BoostScheduleSheet.Row)
+- uid: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.BoostScheduleSheet.Row,System.Collections.Generic.IDictionary{System.Int32,System.Int32})
+  name: GetRewardItems(IRandom, int, Row, MaterialItemSheet, Row, IDictionary<int, int>)
+  href: api/Nekoyume.Action.HackAndSlashSweep.html#Nekoyume_Action_HackAndSlashSweep_GetRewardItems_Libplanet_Action_IRandom_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_Nekoyume_TableData_BoostScheduleSheet_Row_System_Collections_Generic_IDictionary_System_Int32_System_Int32__
+  commentId: M:Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,Nekoyume.TableData.BoostScheduleSheet.Row,System.Collections.Generic.IDictionary{System.Int32,System.Int32})
+  name.vb: GetRewardItems(IRandom, Integer, Row, MaterialItemSheet, Row, IDictionary(Of Integer, Integer))
+  fullName: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom, int, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, Nekoyume.TableData.BoostScheduleSheet.Row, System.Collections.Generic.IDictionary<int, int>)
+  fullName.vb: Nekoyume.Action.HackAndSlashSweep.GetRewardItems(Libplanet.Action.IRandom, Integer, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, Nekoyume.TableData.BoostScheduleSheet.Row, System.Collections.Generic.IDictionary(Of Integer, Integer))
+  nameWithType: HackAndSlashSweep.GetRewardItems(IRandom, int, StageSheet.Row, MaterialItemSheet, BoostScheduleSheet.Row, IDictionary<int, int>)
+  nameWithType.vb: HackAndSlashSweep.GetRewardItems(IRandom, Integer, StageSheet.Row, MaterialItemSheet, BoostScheduleSheet.Row, IDictionary(Of Integer, Integer))
 - uid: Nekoyume.Action.HackAndSlashSweep.GetRewardItems*
   name: GetRewardItems
   href: api/Nekoyume.Action.HackAndSlashSweep.html#Nekoyume_Action_HackAndSlashSweep_GetRewardItems_
@@ -15957,6 +15966,22 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.ItemEnhancement.GetEquipmentMaxLevel
   nameWithType: ItemEnhancement.GetEquipmentMaxLevel
+- uid: Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetHammerExp(EnhancementCostSheetV3, int, Row)
+  href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_GetHammerExp_Nekoyume_TableData_EnhancementCostSheetV3_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetHammerExp(EnhancementCostSheetV3, Integer, Row)
+  fullName: Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3, int, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.ItemEnhancement.GetHammerExp(Nekoyume.TableData.EnhancementCostSheetV3, Integer, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: ItemEnhancement.GetHammerExp(EnhancementCostSheetV3, int, BoostScheduleSheet.Row)
+  nameWithType.vb: ItemEnhancement.GetHammerExp(EnhancementCostSheetV3, Integer, BoostScheduleSheet.Row)
+- uid: Nekoyume.Action.ItemEnhancement.GetHammerExp*
+  name: GetHammerExp
+  href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_GetHammerExp_
+  commentId: Overload:Nekoyume.Action.ItemEnhancement.GetHammerExp
+  isSpec: "True"
+  fullName: Nekoyume.Action.ItemEnhancement.GetHammerExp
+  nameWithType: ItemEnhancement.GetHammerExp
 - uid: Nekoyume.Action.ItemEnhancement.GetRequiredBlockCount(Nekoyume.Model.Item.Equipment,Nekoyume.Model.Item.Equipment,Nekoyume.TableData.EnhancementCostSheetV3)
   name: GetRequiredBlockCount(Equipment, Equipment, EnhancementCostSheetV3)
   href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_GetRequiredBlockCount_Nekoyume_Model_Item_Equipment_Nekoyume_Model_Item_Equipment_Nekoyume_TableData_EnhancementCostSheetV3_
@@ -16004,6 +16029,12 @@ references:
   commentId: F:Nekoyume.Action.ItemEnhancement.MaterialCountLimit
   fullName: Nekoyume.Action.ItemEnhancement.MaterialCountLimit
   nameWithType: ItemEnhancement.MaterialCountLimit
+- uid: Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor
+  name: MaxHammerExpBoostFactor
+  href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_MaxHammerExpBoostFactor
+  commentId: F:Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor
+  fullName: Nekoyume.Action.ItemEnhancement.MaxHammerExpBoostFactor
+  nameWithType: ItemEnhancement.MaxHammerExpBoostFactor
 - uid: Nekoyume.Action.ItemEnhancement.PlainValueInternal
   name: PlainValueInternal
   href: api/Nekoyume.Action.ItemEnhancement.html#Nekoyume_Action_ItemEnhancement_PlainValueInternal
@@ -22658,15 +22689,15 @@ references:
   commentId: F:Nekoyume.Action.RuneSummon.RuneQuantity
   fullName: Nekoyume.Action.RuneSummon.RuneQuantity
   nameWithType: RuneSummon.RuneQuantity
-- uid: Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.Rune.RuneListSheet)
-  name: SimulateSummon(RuneSheet, Row, int, IRandom, RuneListSheet)
-  href: api/Nekoyume.Action.RuneSummon.html#Nekoyume_Action_RuneSummon_SimulateSummon_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_Rune_RuneListSheet_
-  commentId: M:Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.Rune.RuneListSheet)
-  name.vb: SimulateSummon(RuneSheet, Row, Integer, IRandom, RuneListSheet)
-  fullName: Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.Rune.RuneListSheet)
-  fullName.vb: Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.Rune.RuneListSheet)
-  nameWithType: RuneSummon.SimulateSummon(RuneSheet, SummonSheet.Row, int, IRandom, RuneListSheet)
-  nameWithType.vb: RuneSummon.SimulateSummon(RuneSheet, SummonSheet.Row, Integer, IRandom, RuneListSheet)
+- uid: Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: SimulateSummon(RuneSheet, Row, int, IRandom, RuneListSheet, Row)
+  href: api/Nekoyume.Action.RuneSummon.html#Nekoyume_Action_RuneSummon_SimulateSummon_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: SimulateSummon(RuneSheet, Row, Integer, IRandom, RuneListSheet, Row)
+  fullName: Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.Rune.RuneListSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.Rune.RuneListSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: RuneSummon.SimulateSummon(RuneSheet, SummonSheet.Row, int, IRandom, RuneListSheet, BoostScheduleSheet.Row)
+  nameWithType.vb: RuneSummon.SimulateSummon(RuneSheet, SummonSheet.Row, Integer, IRandom, RuneListSheet, BoostScheduleSheet.Row)
 - uid: Nekoyume.Action.RuneSummon.SimulateSummon*
   name: SimulateSummon
   href: api/Nekoyume.Action.RuneSummon.html#Nekoyume_Action_RuneSummon_SimulateSummon_
@@ -22674,15 +22705,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Action.RuneSummon.SimulateSummon
   nameWithType: RuneSummon.SimulateSummon
-- uid: Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Libplanet.Action.State.IWorld,Nekoyume.TableData.Rune.RuneListSheet)
-  name: Summon(IActionContext, Address, RuneSheet, Row, int, IRandom, IWorld, RuneListSheet)
-  href: api/Nekoyume.Action.RuneSummon.html#Nekoyume_Action_RuneSummon_Summon_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Libplanet_Action_State_IWorld_Nekoyume_TableData_Rune_RuneListSheet_
-  commentId: M:Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Libplanet.Action.State.IWorld,Nekoyume.TableData.Rune.RuneListSheet)
-  name.vb: Summon(IActionContext, Address, RuneSheet, Row, Integer, IRandom, IWorld, RuneListSheet)
-  fullName: Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Libplanet.Action.State.IWorld, Nekoyume.TableData.Rune.RuneListSheet)
-  fullName.vb: Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Libplanet.Action.State.IWorld, Nekoyume.TableData.Rune.RuneListSheet)
-  nameWithType: RuneSummon.Summon(IActionContext, Address, RuneSheet, SummonSheet.Row, int, IRandom, IWorld, RuneListSheet)
-  nameWithType.vb: RuneSummon.Summon(IActionContext, Address, RuneSheet, SummonSheet.Row, Integer, IRandom, IWorld, RuneListSheet)
+- uid: Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Libplanet.Action.State.IWorld,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: Summon(IActionContext, Address, RuneSheet, Row, int, IRandom, IWorld, RuneListSheet, Row)
+  href: api/Nekoyume.Action.RuneSummon.html#Nekoyume_Action_RuneSummon_Summon_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Libplanet_Action_State_IWorld_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Libplanet.Action.State.IWorld,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: Summon(IActionContext, Address, RuneSheet, Row, Integer, IRandom, IWorld, RuneListSheet, Row)
+  fullName: Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Libplanet.Action.State.IWorld, Nekoyume.TableData.Rune.RuneListSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Libplanet.Action.State.IWorld, Nekoyume.TableData.Rune.RuneListSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: RuneSummon.Summon(IActionContext, Address, RuneSheet, SummonSheet.Row, int, IRandom, IWorld, RuneListSheet, BoostScheduleSheet.Row)
+  nameWithType.vb: RuneSummon.Summon(IActionContext, Address, RuneSheet, SummonSheet.Row, Integer, IRandom, IWorld, RuneListSheet, BoostScheduleSheet.Row)
 - uid: Nekoyume.Action.RuneSummon.Summon*
   name: Summon
   href: api/Nekoyume.Action.RuneSummon.html#Nekoyume_Action_RuneSummon_Summon_
@@ -29755,15 +29786,15 @@ references:
   commentId: T:Nekoyume.Battle.RaidSimulator
   fullName: Nekoyume.Battle.RaidSimulator
   nameWithType: RaidSimulator
-- uid: Nekoyume.Battle.RaidSimulator.#ctor(System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.RaidSimulatorSheets,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Int64)
-  name: RaidSimulator(int, IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, long)
-  href: api/Nekoyume.Battle.RaidSimulator.html#Nekoyume_Battle_RaidSimulator__ctor_System_Int32_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_Nekoyume_TableData_RaidSimulatorSheets_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Int64_
-  commentId: M:Nekoyume.Battle.RaidSimulator.#ctor(System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.RaidSimulatorSheets,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Int64)
-  name.vb: New(Integer, IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Long)
-  fullName: Nekoyume.Battle.RaidSimulator.RaidSimulator(int, Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List<System.Guid>, Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, Nekoyume.TableData.RaidSimulatorSheets, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List<Nekoyume.Model.Stat.StatModifier>, Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, long)
-  fullName.vb: Nekoyume.Battle.RaidSimulator.New(Integer, Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List(Of System.Guid), Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, Nekoyume.TableData.RaidSimulatorSheets, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List(Of Nekoyume.Model.Stat.StatModifier), Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, Long)
-  nameWithType: RaidSimulator.RaidSimulator(int, IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, long)
-  nameWithType.vb: RaidSimulator.New(Integer, IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Long)
+- uid: Nekoyume.Battle.RaidSimulator.#ctor(System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.RaidSimulatorSheets,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: RaidSimulator(int, IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, long, Row)
+  href: api/Nekoyume.Battle.RaidSimulator.html#Nekoyume_Battle_RaidSimulator__ctor_System_Int32_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_Nekoyume_TableData_RaidSimulatorSheets_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Int64_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Battle.RaidSimulator.#ctor(System.Int32,Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,Nekoyume.TableData.RaidSimulatorSheets,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: New(Integer, IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Long, Row)
+  fullName: Nekoyume.Battle.RaidSimulator.RaidSimulator(int, Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List<System.Guid>, Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, Nekoyume.TableData.RaidSimulatorSheets, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List<Nekoyume.Model.Stat.StatModifier>, Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, long, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Battle.RaidSimulator.New(Integer, Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List(Of System.Guid), Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, Nekoyume.TableData.RaidSimulatorSheets, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List(Of Nekoyume.Model.Stat.StatModifier), Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, Long, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: RaidSimulator.RaidSimulator(int, IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, long, BoostScheduleSheet.Row)
+  nameWithType.vb: RaidSimulator.New(Integer, IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, RaidSimulatorSheets, CostumeStatSheet, List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Long, BoostScheduleSheet.Row)
 - uid: Nekoyume.Battle.RaidSimulator.#ctor*
   name: RaidSimulator
   href: api/Nekoyume.Battle.RaidSimulator.html#Nekoyume_Battle_RaidSimulator__ctor_
@@ -30655,15 +30686,15 @@ references:
   commentId: T:Nekoyume.Battle.StageSimulator
   fullName: Nekoyume.Battle.StageSimulator
   nameWithType: StageSimulator
-- uid: Nekoyume.Battle.StageSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Collections.Generic.List{Nekoyume.Model.Skill.Skill},System.Int32,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.StageWaveSheet.Row,System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64)
-  name: StageSimulator(IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, List<Skill>, int, int, Row, Row, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List<ItemBase>, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, bool, long)
-  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator__ctor_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_System_Collections_Generic_List_Nekoyume_Model_Skill_Skill__System_Int32_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_StageWaveSheet_Row_System_Boolean_System_Int32_Nekoyume_TableData_SimulatorSheets_Nekoyume_TableData_EnemySkillSheet_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_System_Int64_
-  commentId: M:Nekoyume.Battle.StageSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Collections.Generic.List{Nekoyume.Model.Skill.Skill},System.Int32,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.StageWaveSheet.Row,System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64)
-  name.vb: New(IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, List(Of Skill), Integer, Integer, Row, Row, Boolean, Integer, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List(Of ItemBase), List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Boolean, Long)
-  fullName: Nekoyume.Battle.StageSimulator.StageSimulator(Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List<System.Guid>, Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, System.Collections.Generic.List<Nekoyume.Model.Skill.Skill>, int, int, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.StageWaveSheet.Row, bool, int, Nekoyume.TableData.SimulatorSheets, Nekoyume.TableData.EnemySkillSheet, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List<Nekoyume.Model.Item.ItemBase>, System.Collections.Generic.List<Nekoyume.Model.Stat.StatModifier>, Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, bool, long)
-  fullName.vb: Nekoyume.Battle.StageSimulator.New(Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List(Of System.Guid), Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, System.Collections.Generic.List(Of Nekoyume.Model.Skill.Skill), Integer, Integer, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.StageWaveSheet.Row, Boolean, Integer, Nekoyume.TableData.SimulatorSheets, Nekoyume.TableData.EnemySkillSheet, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List(Of Nekoyume.Model.Item.ItemBase), System.Collections.Generic.List(Of Nekoyume.Model.Stat.StatModifier), Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, Boolean, Long)
-  nameWithType: StageSimulator.StageSimulator(IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, List<Skill>, int, int, StageSheet.Row, StageWaveSheet.Row, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List<ItemBase>, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, bool, long)
-  nameWithType.vb: StageSimulator.New(IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, List(Of Skill), Integer, Integer, StageSheet.Row, StageWaveSheet.Row, Boolean, Integer, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List(Of ItemBase), List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Boolean, Long)
+- uid: Nekoyume.Battle.StageSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Collections.Generic.List{Nekoyume.Model.Skill.Skill},System.Int32,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.StageWaveSheet.Row,System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: StageSimulator(IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, List<Skill>, int, int, Row, Row, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List<ItemBase>, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, bool, long, Row)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator__ctor_Libplanet_Action_IRandom_Nekoyume_Model_State_AvatarState_System_Collections_Generic_List_System_Guid__Nekoyume_Model_State_AllRuneState_Nekoyume_Model_State_RuneSlotState_System_Collections_Generic_List_Nekoyume_Model_Skill_Skill__System_Int32_System_Int32_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_StageWaveSheet_Row_System_Boolean_System_Int32_Nekoyume_TableData_SimulatorSheets_Nekoyume_TableData_EnemySkillSheet_Nekoyume_TableData_CostumeStatSheet_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__System_Collections_Generic_List_Nekoyume_Model_Stat_StatModifier__Nekoyume_TableData_BuffLimitSheet_Nekoyume_TableData_BuffLinkSheet_System_Boolean_System_Int64_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Battle.StageSimulator.#ctor(Libplanet.Action.IRandom,Nekoyume.Model.State.AvatarState,System.Collections.Generic.List{System.Guid},Nekoyume.Model.State.AllRuneState,Nekoyume.Model.State.RuneSlotState,System.Collections.Generic.List{Nekoyume.Model.Skill.Skill},System.Int32,System.Int32,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.StageWaveSheet.Row,System.Boolean,System.Int32,Nekoyume.TableData.SimulatorSheets,Nekoyume.TableData.EnemySkillSheet,Nekoyume.TableData.CostumeStatSheet,System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},System.Collections.Generic.List{Nekoyume.Model.Stat.StatModifier},Nekoyume.TableData.BuffLimitSheet,Nekoyume.TableData.BuffLinkSheet,System.Boolean,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: New(IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, List(Of Skill), Integer, Integer, Row, Row, Boolean, Integer, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List(Of ItemBase), List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Boolean, Long, Row)
+  fullName: Nekoyume.Battle.StageSimulator.StageSimulator(Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List<System.Guid>, Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, System.Collections.Generic.List<Nekoyume.Model.Skill.Skill>, int, int, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.StageWaveSheet.Row, bool, int, Nekoyume.TableData.SimulatorSheets, Nekoyume.TableData.EnemySkillSheet, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List<Nekoyume.Model.Item.ItemBase>, System.Collections.Generic.List<Nekoyume.Model.Stat.StatModifier>, Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, bool, long, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Battle.StageSimulator.New(Libplanet.Action.IRandom, Nekoyume.Model.State.AvatarState, System.Collections.Generic.List(Of System.Guid), Nekoyume.Model.State.AllRuneState, Nekoyume.Model.State.RuneSlotState, System.Collections.Generic.List(Of Nekoyume.Model.Skill.Skill), Integer, Integer, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.StageWaveSheet.Row, Boolean, Integer, Nekoyume.TableData.SimulatorSheets, Nekoyume.TableData.EnemySkillSheet, Nekoyume.TableData.CostumeStatSheet, System.Collections.Generic.List(Of Nekoyume.Model.Item.ItemBase), System.Collections.Generic.List(Of Nekoyume.Model.Stat.StatModifier), Nekoyume.TableData.BuffLimitSheet, Nekoyume.TableData.BuffLinkSheet, Boolean, Long, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: StageSimulator.StageSimulator(IRandom, AvatarState, List<Guid>, AllRuneState, RuneSlotState, List<Skill>, int, int, StageSheet.Row, StageWaveSheet.Row, bool, int, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List<ItemBase>, List<StatModifier>, BuffLimitSheet, BuffLinkSheet, bool, long, BoostScheduleSheet.Row)
+  nameWithType.vb: StageSimulator.New(IRandom, AvatarState, List(Of Guid), AllRuneState, RuneSlotState, List(Of Skill), Integer, Integer, StageSheet.Row, StageWaveSheet.Row, Boolean, Integer, SimulatorSheets, EnemySkillSheet, CostumeStatSheet, List(Of ItemBase), List(Of StatModifier), BuffLimitSheet, BuffLinkSheet, Boolean, Long, BoostScheduleSheet.Row)
 - uid: Nekoyume.Battle.StageSimulator.#ctor*
   name: StageSimulator
   href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator__ctor_
@@ -30674,6 +30705,67 @@ references:
   fullName.vb: Nekoyume.Battle.StageSimulator.New
   nameWithType: StageSimulator.StageSimulator
   nameWithType.vb: StageSimulator.New
+- uid: Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost(System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32}},Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: ApplyFavRewardBoost(List<(string ticker, int amount)>, Row)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_System_Collections_Generic_List_System_ValueTuple_System_String_System_Int32___Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost(System.Collections.Generic.List{System.ValueTuple{System.String,System.Int32}},Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: ApplyFavRewardBoost(List(Of (ticker As String, amount As Integer)), Row)
+  fullName: Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost(System.Collections.Generic.List<(string ticker, int amount)>, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost(System.Collections.Generic.List(Of (ticker As String, amount As Integer)), Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: StageSimulator.ApplyFavRewardBoost(List<(string ticker, int amount)>, BoostScheduleSheet.Row)
+  nameWithType.vb: StageSimulator.ApplyFavRewardBoost(List(Of (ticker As String, amount As Integer)), BoostScheduleSheet.Row)
+- uid: Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost*
+  name: ApplyFavRewardBoost
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyFavRewardBoost_
+  commentId: Overload:Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost
+  isSpec: "True"
+  fullName: Nekoyume.Battle.StageSimulator.ApplyFavRewardBoost
+  nameWithType: StageSimulator.ApplyFavRewardBoost
+- uid: Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},Nekoyume.TableData.BoostScheduleSheet.Row,Nekoyume.TableData.MaterialItemSheet)
+  name: ApplyItemRewardBoost(List<ItemBase>, Row, MaterialItemSheet)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_Nekoyume_TableData_MaterialItemSheet_
+  commentId: M:Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},Nekoyume.TableData.BoostScheduleSheet.Row,Nekoyume.TableData.MaterialItemSheet)
+  name.vb: ApplyItemRewardBoost(List(Of ItemBase), Row, MaterialItemSheet)
+  fullName: Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost(System.Collections.Generic.List<Nekoyume.Model.Item.ItemBase>, Nekoyume.TableData.BoostScheduleSheet.Row, Nekoyume.TableData.MaterialItemSheet)
+  fullName.vb: Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost(System.Collections.Generic.List(Of Nekoyume.Model.Item.ItemBase), Nekoyume.TableData.BoostScheduleSheet.Row, Nekoyume.TableData.MaterialItemSheet)
+  nameWithType: StageSimulator.ApplyItemRewardBoost(List<ItemBase>, BoostScheduleSheet.Row, MaterialItemSheet)
+  nameWithType.vb: StageSimulator.ApplyItemRewardBoost(List(Of ItemBase), BoostScheduleSheet.Row, MaterialItemSheet)
+- uid: Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost*
+  name: ApplyItemRewardBoost
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_ApplyItemRewardBoost_
+  commentId: Overload:Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost
+  isSpec: "True"
+  fullName: Nekoyume.Battle.StageSimulator.ApplyItemRewardBoost
+  nameWithType: StageSimulator.ApplyItemRewardBoost
+- uid: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras(System.Collections.Generic.IReadOnlyDictionary{System.Int32,System.Int32},Nekoyume.TableData.MaterialItemSheet)
+  name: CreateItemRewardBoostExtras(IReadOnlyDictionary<int, int>, MaterialItemSheet)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_CreateItemRewardBoostExtras_System_Collections_Generic_IReadOnlyDictionary_System_Int32_System_Int32__Nekoyume_TableData_MaterialItemSheet_
+  commentId: M:Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras(System.Collections.Generic.IReadOnlyDictionary{System.Int32,System.Int32},Nekoyume.TableData.MaterialItemSheet)
+  name.vb: CreateItemRewardBoostExtras(IReadOnlyDictionary(Of Integer, Integer), MaterialItemSheet)
+  fullName: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras(System.Collections.Generic.IReadOnlyDictionary<int, int>, Nekoyume.TableData.MaterialItemSheet)
+  fullName.vb: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras(System.Collections.Generic.IReadOnlyDictionary(Of Integer, Integer), Nekoyume.TableData.MaterialItemSheet)
+  nameWithType: StageSimulator.CreateItemRewardBoostExtras(IReadOnlyDictionary<int, int>, MaterialItemSheet)
+  nameWithType.vb: StageSimulator.CreateItemRewardBoostExtras(IReadOnlyDictionary(Of Integer, Integer), MaterialItemSheet)
+- uid: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras*
+  name: CreateItemRewardBoostExtras
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_CreateItemRewardBoostExtras_
+  commentId: Overload:Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras
+  isSpec: "True"
+  fullName: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostExtras
+  nameWithType: StageSimulator.CreateItemRewardBoostExtras
+- uid: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem(Nekoyume.TableData.MaterialItemSheet.Row)
+  name: CreateItemRewardBoostItem(Row)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_CreateItemRewardBoostItem_Nekoyume_TableData_MaterialItemSheet_Row_
+  commentId: M:Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem(Nekoyume.TableData.MaterialItemSheet.Row)
+  fullName: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem(Nekoyume.TableData.MaterialItemSheet.Row)
+  nameWithType: StageSimulator.CreateItemRewardBoostItem(MaterialItemSheet.Row)
+- uid: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem*
+  name: CreateItemRewardBoostItem
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_CreateItemRewardBoostItem_
+  commentId: Overload:Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem
+  isSpec: "True"
+  fullName: Nekoyume.Battle.StageSimulator.CreateItemRewardBoostItem
+  nameWithType: StageSimulator.CreateItemRewardBoostItem
 - uid: Nekoyume.Battle.StageSimulator.EnemySkillSheet
   name: EnemySkillSheet
   href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_EnemySkillSheet
@@ -30700,12 +30792,28 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Battle.StageSimulator.FungibleAssetRewards
   nameWithType: StageSimulator.FungibleAssetRewards
-- uid: Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row)
-  name: GetFavWaveRewards(IRandom, Row)
-  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetFavWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_
-  commentId: M:Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row)
-  fullName: Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom, Nekoyume.TableData.StageSheet.Row)
-  nameWithType: StageSimulator.GetFavWaveRewards(IRandom, StageSheet.Row)
+- uid: Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)
+  name: GetBoostedItemRewardCount(Row, int)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetBoostedItemRewardCount_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_
+  commentId: M:Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)
+  name.vb: GetBoostedItemRewardCount(Row, Integer)
+  fullName: Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount(Nekoyume.TableData.BoostScheduleSheet.Row, int)
+  fullName.vb: Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount(Nekoyume.TableData.BoostScheduleSheet.Row, Integer)
+  nameWithType: StageSimulator.GetBoostedItemRewardCount(BoostScheduleSheet.Row, int)
+  nameWithType.vb: StageSimulator.GetBoostedItemRewardCount(BoostScheduleSheet.Row, Integer)
+- uid: Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount*
+  name: GetBoostedItemRewardCount
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetBoostedItemRewardCount_
+  commentId: Overload:Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount
+  isSpec: "True"
+  fullName: Nekoyume.Battle.StageSimulator.GetBoostedItemRewardCount
+  nameWithType: StageSimulator.GetBoostedItemRewardCount
+- uid: Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetFavWaveRewards(IRandom, Row, Row)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetFavWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName: Nekoyume.Battle.StageSimulator.GetFavWaveRewards(Libplanet.Action.IRandom, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: StageSimulator.GetFavWaveRewards(IRandom, StageSheet.Row, BoostScheduleSheet.Row)
 - uid: Nekoyume.Battle.StageSimulator.GetFavWaveRewards*
   name: GetFavWaveRewards
   href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetFavWaveRewards_
@@ -30713,15 +30821,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Battle.StageSimulator.GetFavWaveRewards
   nameWithType: StageSimulator.GetFavWaveRewards
-- uid: Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32)
-  name: GetWaveRewards(IRandom, Row, MaterialItemSheet, int)
-  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_System_Int32_
-  commentId: M:Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32)
-  name.vb: GetWaveRewards(IRandom, Row, MaterialItemSheet, Integer)
-  fullName: Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, int)
-  fullName.vb: Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, Integer)
-  nameWithType: StageSimulator.GetWaveRewards(IRandom, StageSheet.Row, MaterialItemSheet, int)
-  nameWithType.vb: StageSimulator.GetWaveRewards(IRandom, StageSheet.Row, MaterialItemSheet, Integer)
+- uid: Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetWaveRewards(IRandom, Row, MaterialItemSheet, int, Row)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetWaveRewards_Libplanet_Action_IRandom_Nekoyume_TableData_StageSheet_Row_Nekoyume_TableData_MaterialItemSheet_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom,Nekoyume.TableData.StageSheet.Row,Nekoyume.TableData.MaterialItemSheet,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetWaveRewards(IRandom, Row, MaterialItemSheet, Integer, Row)
+  fullName: Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, int, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Battle.StageSimulator.GetWaveRewards(Libplanet.Action.IRandom, Nekoyume.TableData.StageSheet.Row, Nekoyume.TableData.MaterialItemSheet, Integer, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: StageSimulator.GetWaveRewards(IRandom, StageSheet.Row, MaterialItemSheet, int, BoostScheduleSheet.Row)
+  nameWithType.vb: StageSimulator.GetWaveRewards(IRandom, StageSheet.Row, MaterialItemSheet, Integer, BoostScheduleSheet.Row)
 - uid: Nekoyume.Battle.StageSimulator.GetWaveRewards*
   name: GetWaveRewards
   href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_GetWaveRewards_
@@ -30742,6 +30850,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Battle.StageSimulator.ItemMap
   nameWithType: StageSimulator.ItemMap
+- uid: Nekoyume.Battle.StageSimulator.MaxItemRewardBoostFactor
+  name: MaxItemRewardBoostFactor
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_MaxItemRewardBoostFactor
+  commentId: F:Nekoyume.Battle.StageSimulator.MaxItemRewardBoostFactor
+  fullName: Nekoyume.Battle.StageSimulator.MaxItemRewardBoostFactor
+  nameWithType: StageSimulator.MaxItemRewardBoostFactor
 - uid: Nekoyume.Battle.StageSimulator.Reward
   name: Reward
   href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_Reward
@@ -30768,6 +30882,22 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Battle.StageSimulator.Simulate
   nameWithType: StageSimulator.Simulate
+- uid: Nekoyume.Battle.StageSimulator.SplitItemRewardBoost(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},Nekoyume.TableData.BoostScheduleSheet.Row,System.Collections.Generic.IDictionary{System.Int32,System.Int32})
+  name: SplitItemRewardBoost(List<ItemBase>, Row, IDictionary<int, int>)
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_SplitItemRewardBoost_System_Collections_Generic_List_Nekoyume_Model_Item_ItemBase__Nekoyume_TableData_BoostScheduleSheet_Row_System_Collections_Generic_IDictionary_System_Int32_System_Int32__
+  commentId: M:Nekoyume.Battle.StageSimulator.SplitItemRewardBoost(System.Collections.Generic.List{Nekoyume.Model.Item.ItemBase},Nekoyume.TableData.BoostScheduleSheet.Row,System.Collections.Generic.IDictionary{System.Int32,System.Int32})
+  name.vb: SplitItemRewardBoost(List(Of ItemBase), Row, IDictionary(Of Integer, Integer))
+  fullName: Nekoyume.Battle.StageSimulator.SplitItemRewardBoost(System.Collections.Generic.List<Nekoyume.Model.Item.ItemBase>, Nekoyume.TableData.BoostScheduleSheet.Row, System.Collections.Generic.IDictionary<int, int>)
+  fullName.vb: Nekoyume.Battle.StageSimulator.SplitItemRewardBoost(System.Collections.Generic.List(Of Nekoyume.Model.Item.ItemBase), Nekoyume.TableData.BoostScheduleSheet.Row, System.Collections.Generic.IDictionary(Of Integer, Integer))
+  nameWithType: StageSimulator.SplitItemRewardBoost(List<ItemBase>, BoostScheduleSheet.Row, IDictionary<int, int>)
+  nameWithType.vb: StageSimulator.SplitItemRewardBoost(List(Of ItemBase), BoostScheduleSheet.Row, IDictionary(Of Integer, Integer))
+- uid: Nekoyume.Battle.StageSimulator.SplitItemRewardBoost*
+  name: SplitItemRewardBoost
+  href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_SplitItemRewardBoost_
+  commentId: Overload:Nekoyume.Battle.StageSimulator.SplitItemRewardBoost
+  isSpec: "True"
+  fullName: Nekoyume.Battle.StageSimulator.SplitItemRewardBoost
+  nameWithType: StageSimulator.SplitItemRewardBoost
 - uid: Nekoyume.Battle.StageSimulator.StageId
   name: StageId
   href: api/Nekoyume.Battle.StageSimulator.html#Nekoyume_Battle_StageSimulator_StageId
@@ -39657,6 +39787,19 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.AdventureBossHelper.AddExploreRewards
   nameWithType: AdventureBossHelper.AddExploreRewards
+- uid: Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost(Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: ApplyRewardBoost(RewardAmountData, Row)
+  href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_Nekoyume_TableData_AdventureBoss_AdventureBossSheet_RewardAmountData_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost(Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData,Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName: Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost(Nekoyume.TableData.AdventureBoss.AdventureBossSheet.RewardAmountData, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: AdventureBossHelper.ApplyRewardBoost(AdventureBossSheet.RewardAmountData, BoostScheduleSheet.Row)
+- uid: Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost*
+  name: ApplyRewardBoost
+  href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_ApplyRewardBoost_
+  commentId: Overload:Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost
+  isSpec: "True"
+  fullName: Nekoyume.Helper.AdventureBossHelper.ApplyRewardBoost
+  nameWithType: AdventureBossHelper.ApplyRewardBoost
 - uid: Nekoyume.Helper.AdventureBossHelper.CalculateExploreReward(Nekoyume.Data.AdventureBossGameData.ClaimableReward,Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.Explorer,Libplanet.Crypto.Address,Nekoyume.TableData.AdventureBoss.AdventureBossNcgRewardRatioSheet,System.Decimal,System.Decimal,System.Boolean,Libplanet.Types.Assets.FungibleAssetValue@)
   name: CalculateExploreReward(ClaimableReward, BountyBoard, ExploreBoard, Explorer, Address, AdventureBossNcgRewardRatioSheet, decimal, decimal, bool, out FungibleAssetValue)
   href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_CalculateExploreReward_Nekoyume_Data_AdventureBossGameData_ClaimableReward_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_Explorer_Libplanet_Crypto_Address_Nekoyume_TableData_AdventureBoss_AdventureBossNcgRewardRatioSheet_System_Decimal_System_Decimal_System_Boolean_Libplanet_Types_Assets_FungibleAssetValue__
@@ -39756,6 +39899,12 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.AdventureBossHelper.GetSeasonAsAddressForm
   nameWithType: AdventureBossHelper.GetSeasonAsAddressForm
+- uid: Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor
+  name: MaxAdventureBossRewardBoostFactor
+  href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_MaxAdventureBossRewardBoostFactor
+  commentId: F:Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor
+  fullName: Nekoyume.Helper.AdventureBossHelper.MaxAdventureBossRewardBoostFactor
+  nameWithType: AdventureBossHelper.MaxAdventureBossRewardBoostFactor
 - uid: Nekoyume.Helper.AdventureBossHelper.PickExploreRaffle(Nekoyume.Model.AdventureBoss.BountyBoard,Nekoyume.Model.AdventureBoss.ExploreBoard,Nekoyume.Model.AdventureBoss.ExplorerList,Libplanet.Action.IRandom)
   name: PickExploreRaffle(BountyBoard, ExploreBoard, ExplorerList, IRandom)
   href: api/Nekoyume.Helper.AdventureBossHelper.html#Nekoyume_Helper_AdventureBossHelper_PickExploreRaffle_Nekoyume_Model_AdventureBoss_BountyBoard_Nekoyume_Model_AdventureBoss_ExploreBoard_Nekoyume_Model_AdventureBoss_ExplorerList_Libplanet_Action_IRandom_
@@ -40439,12 +40588,63 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.PetHelper.GetSoulstoneCurrency
   nameWithType: PetHelper.GetSoulstoneCurrency
+- uid: Nekoyume.Helper.RuneEnhancementCostBoost
+  name: RuneEnhancementCostBoost
+  href: api/Nekoyume.Helper.RuneEnhancementCostBoost.html
+  commentId: T:Nekoyume.Helper.RuneEnhancementCostBoost
+  fullName: Nekoyume.Helper.RuneEnhancementCostBoost
+  nameWithType: RuneEnhancementCostBoost
+- uid: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  name: RuneId
+  href: api/Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_RuneId
+  commentId: P:Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  fullName: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  nameWithType: RuneEnhancementCostBoost.RuneId
+- uid: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId*
+  name: RuneId
+  href: api/Nekoyume.Helper.RuneEnhancementCostBoost.html#Nekoyume_Helper_RuneEnhancementCostBoost_RuneId_
+  commentId: Overload:Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  isSpec: "True"
+  fullName: Nekoyume.Helper.RuneEnhancementCostBoost.RuneId
+  nameWithType: RuneEnhancementCostBoost.RuneId
 - uid: Nekoyume.Helper.RuneHelper
   name: RuneHelper
   href: api/Nekoyume.Helper.RuneHelper.html
   commentId: T:Nekoyume.Helper.RuneHelper
   fullName: Nekoyume.Helper.RuneHelper
   nameWithType: RuneHelper
+- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
+  name: ApplyEnhancementCostBoost(RuneCostData, int, int, RuneEnhancementCostBoost?, long)
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_Nekoyume_TableData_RuneCostSheet_RuneCostData_System_Int32_System_Int32_Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_
+  commentId: M:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData,System.Int32,System.Int32,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
+  name.vb: ApplyEnhancementCostBoost(RuneCostData, Integer, Integer, RuneEnhancementCostBoost, Long)
+  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData, int, int, Nekoyume.Helper.RuneEnhancementCostBoost?, long)
+  fullName.vb: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost(Nekoyume.TableData.RuneCostSheet.RuneCostData, Integer, Integer, Nekoyume.Helper.RuneEnhancementCostBoost, Long)
+  nameWithType: RuneHelper.ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, int, int, RuneEnhancementCostBoost?, long)
+  nameWithType.vb: RuneHelper.ApplyEnhancementCostBoost(RuneCostSheet.RuneCostData, Integer, Integer, RuneEnhancementCostBoost, Long)
+- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost*
+  name: ApplyEnhancementCostBoost
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoost_
+  commentId: Overload:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost
+  isSpec: "True"
+  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoost
+  nameWithType: RuneHelper.ApplyEnhancementCostBoost
+- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)
+  name: ApplyEnhancementCostBoostQuantity(Row?, int)
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_
+  commentId: M:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)
+  name.vb: ApplyEnhancementCostBoostQuantity(Row, Integer)
+  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row?, int)
+  fullName.vb: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity(Nekoyume.TableData.BoostScheduleSheet.Row, Integer)
+  nameWithType: RuneHelper.ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row?, int)
+  nameWithType.vb: RuneHelper.ApplyEnhancementCostBoostQuantity(BoostScheduleSheet.Row, Integer)
+- uid: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity*
+  name: ApplyEnhancementCostBoostQuantity
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ApplyEnhancementCostBoostQuantity_
+  commentId: Overload:Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity
+  isSpec: "True"
+  fullName: Nekoyume.Helper.RuneHelper.ApplyEnhancementCostBoostQuantity
+  nameWithType: RuneHelper.ApplyEnhancementCostBoostQuantity
 - uid: Nekoyume.Helper.RuneHelper.CalculateRuneLevelBonus(Nekoyume.Model.State.AllRuneState,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.Rune.RuneLevelBonusSheet)
   name: CalculateRuneLevelBonus(AllRuneState, RuneListSheet, RuneLevelBonusSheet)
   href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_CalculateRuneLevelBonus_Nekoyume_Model_State_AllRuneState_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_Rune_RuneLevelBonusSheet_
@@ -40505,6 +40705,22 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.RuneHelper.GetRuneOptions
   nameWithType: RuneHelper.GetRuneOptions
+- uid: Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost(Nekoyume.TableData.BoostScheduleSheet,System.Int32,System.Int64,System.Func{Nekoyume.TableData.Summon.RuneSummonSheet})
+  name: ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func<RuneSummonSheet?>)
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_Nekoyume_TableData_BoostScheduleSheet_System_Int32_System_Int64_System_Func_Nekoyume_TableData_Summon_RuneSummonSheet__
+  commentId: M:Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost(Nekoyume.TableData.BoostScheduleSheet,System.Int32,System.Int64,System.Func{Nekoyume.TableData.Summon.RuneSummonSheet})
+  name.vb: ResolveEnhancementCostBoost(BoostScheduleSheet, Integer, Long, Func(Of RuneSummonSheet))
+  fullName: Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost(Nekoyume.TableData.BoostScheduleSheet?, int, long, System.Func<Nekoyume.TableData.Summon.RuneSummonSheet?>)
+  fullName.vb: Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost(Nekoyume.TableData.BoostScheduleSheet, Integer, Long, System.Func(Of Nekoyume.TableData.Summon.RuneSummonSheet))
+  nameWithType: RuneHelper.ResolveEnhancementCostBoost(BoostScheduleSheet?, int, long, Func<RuneSummonSheet?>)
+  nameWithType.vb: RuneHelper.ResolveEnhancementCostBoost(BoostScheduleSheet, Integer, Long, Func(Of RuneSummonSheet))
+- uid: Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost*
+  name: ResolveEnhancementCostBoost
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_ResolveEnhancementCostBoost_
+  commentId: Overload:Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost
+  isSpec: "True"
+  fullName: Nekoyume.Helper.RuneHelper.ResolveEnhancementCostBoost
+  nameWithType: RuneHelper.ResolveEnhancementCostBoost
 - uid: Nekoyume.Helper.RuneHelper.StakeRune
   name: StakeRune
   href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_StakeRune
@@ -40540,15 +40756,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.RuneHelper.ToFungibleAssetValue
   nameWithType: RuneHelper.ToFungibleAssetValue
-- uid: Nekoyume.Helper.RuneHelper.TryEnhancement(System.Int32,Nekoyume.TableData.RuneCostSheet.Row,Libplanet.Action.IRandom,System.Int32,Nekoyume.Action.RuneEnhancement.LevelUpResult@)
-  name: TryEnhancement(int, Row, IRandom, int, out LevelUpResult)
-  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__
-  commentId: M:Nekoyume.Helper.RuneHelper.TryEnhancement(System.Int32,Nekoyume.TableData.RuneCostSheet.Row,Libplanet.Action.IRandom,System.Int32,Nekoyume.Action.RuneEnhancement.LevelUpResult@)
-  name.vb: TryEnhancement(Integer, Row, IRandom, Integer, LevelUpResult)
-  fullName: Nekoyume.Helper.RuneHelper.TryEnhancement(int, Nekoyume.TableData.RuneCostSheet.Row, Libplanet.Action.IRandom, int, out Nekoyume.Action.RuneEnhancement.LevelUpResult)
-  fullName.vb: Nekoyume.Helper.RuneHelper.TryEnhancement(Integer, Nekoyume.TableData.RuneCostSheet.Row, Libplanet.Action.IRandom, Integer, Nekoyume.Action.RuneEnhancement.LevelUpResult)
-  nameWithType: RuneHelper.TryEnhancement(int, RuneCostSheet.Row, IRandom, int, out RuneEnhancement.LevelUpResult)
-  nameWithType.vb: RuneHelper.TryEnhancement(Integer, RuneCostSheet.Row, IRandom, Integer, RuneEnhancement.LevelUpResult)
+- uid: Nekoyume.Helper.RuneHelper.TryEnhancement(System.Int32,Nekoyume.TableData.RuneCostSheet.Row,Libplanet.Action.IRandom,System.Int32,Nekoyume.Action.RuneEnhancement.LevelUpResult@,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
+  name: TryEnhancement(int, Row, IRandom, int, out LevelUpResult, RuneEnhancementCostBoost?, long)
+  href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_System_Int32_Nekoyume_TableData_RuneCostSheet_Row_Libplanet_Action_IRandom_System_Int32_Nekoyume_Action_RuneEnhancement_LevelUpResult__Nekoyume_Helper_RuneEnhancementCostBoost_System_Int64_
+  commentId: M:Nekoyume.Helper.RuneHelper.TryEnhancement(System.Int32,Nekoyume.TableData.RuneCostSheet.Row,Libplanet.Action.IRandom,System.Int32,Nekoyume.Action.RuneEnhancement.LevelUpResult@,Nekoyume.Helper.RuneEnhancementCostBoost,System.Int64)
+  name.vb: TryEnhancement(Integer, Row, IRandom, Integer, LevelUpResult, RuneEnhancementCostBoost, Long)
+  fullName: Nekoyume.Helper.RuneHelper.TryEnhancement(int, Nekoyume.TableData.RuneCostSheet.Row, Libplanet.Action.IRandom, int, out Nekoyume.Action.RuneEnhancement.LevelUpResult, Nekoyume.Helper.RuneEnhancementCostBoost?, long)
+  fullName.vb: Nekoyume.Helper.RuneHelper.TryEnhancement(Integer, Nekoyume.TableData.RuneCostSheet.Row, Libplanet.Action.IRandom, Integer, Nekoyume.Action.RuneEnhancement.LevelUpResult, Nekoyume.Helper.RuneEnhancementCostBoost, Long)
+  nameWithType: RuneHelper.TryEnhancement(int, RuneCostSheet.Row, IRandom, int, out RuneEnhancement.LevelUpResult, RuneEnhancementCostBoost?, long)
+  nameWithType.vb: RuneHelper.TryEnhancement(Integer, RuneCostSheet.Row, IRandom, Integer, RuneEnhancement.LevelUpResult, RuneEnhancementCostBoost, Long)
 - uid: Nekoyume.Helper.RuneHelper.TryEnhancement*
   name: TryEnhancement
   href: api/Nekoyume.Helper.RuneHelper.html#Nekoyume_Helper_RuneHelper_TryEnhancement_
@@ -40568,6 +40784,22 @@ references:
   commentId: F:Nekoyume.Helper.SummonHelper.AllowedSummonCount
   fullName: Nekoyume.Helper.SummonHelper.AllowedSummonCount
   nameWithType: SummonHelper.AllowedSummonCount
+- uid: Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32,System.Int32)
+  name: ApplyGuaranteeBoost(Row, int, int)
+  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_ApplyGuaranteeBoost_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_System_Int32_
+  commentId: M:Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32,System.Int32)
+  name.vb: ApplyGuaranteeBoost(Row, Integer, Integer)
+  fullName: Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost(Nekoyume.TableData.BoostScheduleSheet.Row, int, int)
+  fullName.vb: Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost(Nekoyume.TableData.BoostScheduleSheet.Row, Integer, Integer)
+  nameWithType: SummonHelper.ApplyGuaranteeBoost(BoostScheduleSheet.Row, int, int)
+  nameWithType.vb: SummonHelper.ApplyGuaranteeBoost(BoostScheduleSheet.Row, Integer, Integer)
+- uid: Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost*
+  name: ApplyGuaranteeBoost
+  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_ApplyGuaranteeBoost_
+  commentId: Overload:Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost
+  isSpec: "True"
+  fullName: Nekoyume.Helper.SummonHelper.ApplyGuaranteeBoost
+  nameWithType: SummonHelper.ApplyGuaranteeBoost
 - uid: Nekoyume.Helper.SummonHelper.CalculateSummonCount(System.Int32)
   name: CalculateSummonCount(int)
   href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_CalculateSummonCount_System_Int32_
@@ -40600,15 +40832,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.SummonHelper.CheckSummonCountIsValid
   nameWithType: SummonHelper.CheckSummonCountIsValid
-- uid: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32)
-  name: GetGuaranteeSettings(Row, int)
-  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetGuaranteeSettings_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_
-  commentId: M:Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32)
-  name.vb: GetGuaranteeSettings(Row, Integer)
-  fullName: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row, int)
-  fullName.vb: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row, Integer)
-  nameWithType: SummonHelper.GetGuaranteeSettings(SummonSheet.Row, int)
-  nameWithType.vb: SummonHelper.GetGuaranteeSettings(SummonSheet.Row, Integer)
+- uid: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetGuaranteeSettings(Row, int, Row)
+  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetGuaranteeSettings_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetGuaranteeSettings(Row, Integer, Row)
+  fullName: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row, int, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings(Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: SummonHelper.GetGuaranteeSettings(SummonSheet.Row, int, BoostScheduleSheet.Row)
+  nameWithType.vb: SummonHelper.GetGuaranteeSettings(SummonSheet.Row, Integer, BoostScheduleSheet.Row)
 - uid: Nekoyume.Helper.SummonHelper.GetGuaranteeSettings*
   name: GetGuaranteeSettings
   href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetGuaranteeSettings_
@@ -40629,24 +40861,24 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdByRandom
   nameWithType: SummonHelper.GetSummonRecipeIdByRandom
-- uid: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet)
-  name: GetSummonRecipeIdsWithGradeGuarantee(Row, int, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet)
-  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetSummonRecipeIdsWithGradeGuarantee_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_CostumeItemSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_
-  commentId: M:Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet)
-  name.vb: GetSummonRecipeIdsWithGradeGuarantee(Row, Integer, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet)
-  fullName: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet)
-  fullName.vb: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet)
-  nameWithType: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, int, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet)
-  nameWithType.vb: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, Integer, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet)
-- uid: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet)
-  name: GetSummonRecipeIdsWithGradeGuarantee(Row, int, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet)
-  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetSummonRecipeIdsWithGradeGuarantee_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_
-  commentId: M:Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet)
-  name.vb: GetSummonRecipeIdsWithGradeGuarantee(Row, Integer, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet)
-  fullName: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet)
-  fullName.vb: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet)
-  nameWithType: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, int, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet)
-  nameWithType.vb: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, Integer, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet)
+- uid: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetSummonRecipeIdsWithGradeGuarantee(Row, int, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet, Row)
+  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetSummonRecipeIdsWithGradeGuarantee_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_CostumeItemSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.CostumeItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetSummonRecipeIdsWithGradeGuarantee(Row, Integer, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet, Row)
+  fullName: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.CostumeItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, int, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet, BoostScheduleSheet.Row)
+  nameWithType.vb: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, Integer, IRandom, CostumeItemSheet, EquipmentItemRecipeSheet, BoostScheduleSheet.Row)
+- uid: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetSummonRecipeIdsWithGradeGuarantee(Row, int, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet, Row)
+  href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetSummonRecipeIdsWithGradeGuarantee_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetSummonRecipeIdsWithGradeGuarantee(Row, Integer, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet, Row)
+  fullName: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, int, Libplanet.Action.IRandom, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(Nekoyume.TableData.Summon.SummonSheet.Row, Integer, Libplanet.Action.IRandom, Nekoyume.TableData.EquipmentItemSheet, Nekoyume.TableData.EquipmentItemRecipeSheet, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, int, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet, BoostScheduleSheet.Row)
+  nameWithType.vb: SummonHelper.GetSummonRecipeIdsWithGradeGuarantee(SummonSheet.Row, Integer, IRandom, EquipmentItemSheet, EquipmentItemRecipeSheet, BoostScheduleSheet.Row)
 - uid: Nekoyume.Helper.SummonHelper.GetSummonRecipeIdsWithGradeGuarantee*
   name: GetSummonRecipeIdsWithGradeGuarantee
   href: api/Nekoyume.Helper.SummonHelper.html#Nekoyume_Helper_SummonHelper_GetSummonRecipeIdsWithGradeGuarantee_
@@ -40780,6 +41012,22 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.SynthesizeSimulator.GetMaterialList
   nameWithType: SynthesizeSimulator.GetMaterialList
+- uid: Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount(System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: GetRequiredCount(int, Row?)
+  href: api/Nekoyume.Helper.SynthesizeSimulator.html#Nekoyume_Helper_SynthesizeSimulator_GetRequiredCount_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount(System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: GetRequiredCount(Integer, Row)
+  fullName: Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount(int, Nekoyume.TableData.BoostScheduleSheet.Row?)
+  fullName.vb: Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount(Integer, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: SynthesizeSimulator.GetRequiredCount(int, BoostScheduleSheet.Row?)
+  nameWithType.vb: SynthesizeSimulator.GetRequiredCount(Integer, BoostScheduleSheet.Row)
+- uid: Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount*
+  name: GetRequiredCount
+  href: api/Nekoyume.Helper.SynthesizeSimulator.html#Nekoyume_Helper_SynthesizeSimulator_GetRequiredCount_
+  commentId: Overload:Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount
+  isSpec: "True"
+  fullName: Nekoyume.Helper.SynthesizeSimulator.GetRequiredCount
+  nameWithType: SynthesizeSimulator.GetRequiredCount
 - uid: Nekoyume.Helper.SynthesizeSimulator.GetSynthesizeResultPool(Nekoyume.Model.EnumType.Grade,Nekoyume.Model.Item.ItemSubType,Nekoyume.TableData.CostumeItemSheet)
   name: GetSynthesizeResultPool(Grade, ItemSubType, CostumeItemSheet)
   href: api/Nekoyume.Helper.SynthesizeSimulator.html#Nekoyume_Helper_SynthesizeSimulator_GetSynthesizeResultPool_Nekoyume_Model_EnumType_Grade_Nekoyume_Model_Item_ItemSubType_Nekoyume_TableData_CostumeItemSheet_
@@ -40940,6 +41188,12 @@ references:
   commentId: F:Nekoyume.Helper.SynthesizeSimulator.InputData.RandomObject
   fullName: Nekoyume.Helper.SynthesizeSimulator.InputData.RandomObject
   nameWithType: SynthesizeSimulator.InputData.RandomObject
+- uid: Nekoyume.Helper.SynthesizeSimulator.InputData.RequiredCountBoost
+  name: RequiredCountBoost
+  href: api/Nekoyume.Helper.SynthesizeSimulator.InputData.html#Nekoyume_Helper_SynthesizeSimulator_InputData_RequiredCountBoost
+  commentId: F:Nekoyume.Helper.SynthesizeSimulator.InputData.RequiredCountBoost
+  fullName: Nekoyume.Helper.SynthesizeSimulator.InputData.RequiredCountBoost
+  nameWithType: SynthesizeSimulator.InputData.RequiredCountBoost
 - uid: Nekoyume.Helper.SynthesizeSimulator.InputData.SkillSheet
   name: SkillSheet
   href: api/Nekoyume.Helper.SynthesizeSimulator.InputData.html#Nekoyume_Helper_SynthesizeSimulator_InputData_SkillSheet
@@ -40977,6 +41231,22 @@ references:
   commentId: T:Nekoyume.Helper.WorldBossHelper
   fullName: Nekoyume.Helper.WorldBossHelper
   nameWithType: WorldBossHelper
+- uid: Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)
+  name: ApplyRewardBoost(Row, int)
+  href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_ApplyRewardBoost_Nekoyume_TableData_BoostScheduleSheet_Row_System_Int32_
+  commentId: M:Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost(Nekoyume.TableData.BoostScheduleSheet.Row,System.Int32)
+  name.vb: ApplyRewardBoost(Row, Integer)
+  fullName: Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost(Nekoyume.TableData.BoostScheduleSheet.Row, int)
+  fullName.vb: Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost(Nekoyume.TableData.BoostScheduleSheet.Row, Integer)
+  nameWithType: WorldBossHelper.ApplyRewardBoost(BoostScheduleSheet.Row, int)
+  nameWithType.vb: WorldBossHelper.ApplyRewardBoost(BoostScheduleSheet.Row, Integer)
+- uid: Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost*
+  name: ApplyRewardBoost
+  href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_ApplyRewardBoost_
+  commentId: Overload:Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost
+  isSpec: "True"
+  fullName: Nekoyume.Helper.WorldBossHelper.ApplyRewardBoost
+  nameWithType: WorldBossHelper.ApplyRewardBoost
 - uid: Nekoyume.Helper.WorldBossHelper.CalculateContribution(System.Numerics.BigInteger,System.Int64)
   name: CalculateContribution(BigInteger, long)
   href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_CalculateContribution_System_Numerics_BigInteger_System_Int64_
@@ -41025,15 +41295,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Helper.WorldBossHelper.CalculateRank
   nameWithType: WorldBossHelper.CalculateRank
-- uid: Nekoyume.Helper.WorldBossHelper.CalculateReward(System.Int32,System.Int32,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.IWorldBossRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom)
-  name: CalculateReward(int, int, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom)
-  href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_CalculateReward_System_Int32_System_Int32_Nekoyume_TableData_RuneWeightSheet_Nekoyume_TableData_IWorldBossRewardSheet_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_MaterialItemSheet_Libplanet_Action_IRandom_
-  commentId: M:Nekoyume.Helper.WorldBossHelper.CalculateReward(System.Int32,System.Int32,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.IWorldBossRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom)
-  name.vb: CalculateReward(Integer, Integer, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom)
-  fullName: Nekoyume.Helper.WorldBossHelper.CalculateReward(int, int, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.IWorldBossRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom)
-  fullName.vb: Nekoyume.Helper.WorldBossHelper.CalculateReward(Integer, Integer, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.IWorldBossRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom)
-  nameWithType: WorldBossHelper.CalculateReward(int, int, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom)
-  nameWithType.vb: WorldBossHelper.CalculateReward(Integer, Integer, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom)
+- uid: Nekoyume.Helper.WorldBossHelper.CalculateReward(System.Int32,System.Int32,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.IWorldBossRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: CalculateReward(int, int, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Row)
+  href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_CalculateReward_System_Int32_System_Int32_Nekoyume_TableData_RuneWeightSheet_Nekoyume_TableData_IWorldBossRewardSheet_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_MaterialItemSheet_Libplanet_Action_IRandom_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Helper.WorldBossHelper.CalculateReward(System.Int32,System.Int32,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.IWorldBossRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: CalculateReward(Integer, Integer, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Row)
+  fullName: Nekoyume.Helper.WorldBossHelper.CalculateReward(int, int, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.IWorldBossRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Helper.WorldBossHelper.CalculateReward(Integer, Integer, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.IWorldBossRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: WorldBossHelper.CalculateReward(int, int, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom, BoostScheduleSheet.Row)
+  nameWithType.vb: WorldBossHelper.CalculateReward(Integer, Integer, RuneWeightSheet, IWorldBossRewardSheet, RuneSheet, MaterialItemSheet, IRandom, BoostScheduleSheet.Row)
 - uid: Nekoyume.Helper.WorldBossHelper.CalculateReward*
   name: CalculateReward
   href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_CalculateReward_
@@ -41092,6 +41362,12 @@ references:
   commentId: F:Nekoyume.Helper.WorldBossHelper.MaxChallengeCount
   fullName: Nekoyume.Helper.WorldBossHelper.MaxChallengeCount
   nameWithType: WorldBossHelper.MaxChallengeCount
+- uid: Nekoyume.Helper.WorldBossHelper.MaxWorldBossRewardBoostFactor
+  name: MaxWorldBossRewardBoostFactor
+  href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_MaxWorldBossRewardBoostFactor
+  commentId: F:Nekoyume.Helper.WorldBossHelper.MaxWorldBossRewardBoostFactor
+  fullName: Nekoyume.Helper.WorldBossHelper.MaxWorldBossRewardBoostFactor
+  nameWithType: WorldBossHelper.MaxWorldBossRewardBoostFactor
 - uid: Nekoyume.Helper.WorldBossHelper.RefillInterval
   name: RefillInterval
   href: api/Nekoyume.Helper.WorldBossHelper.html#Nekoyume_Helper_WorldBossHelper_RefillInterval
@@ -81218,15 +81494,15 @@ references:
   isSpec: "True"
   fullName: Nekoyume.Module.LegacyModule.SetLegacyState
   nameWithType: LegacyModule.SetLegacyState
-- uid: Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.Model.State.WorldBossKillRewardRecord,System.Int32,Nekoyume.Model.State.WorldBossState,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.WorldBossKillRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom,Nekoyume.Model.Item.Inventory,Libplanet.Crypto.Address,Libplanet.Crypto.Address)
-  name: SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, int, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address)
-  href: api/Nekoyume.Module.LegacyModule.html#Nekoyume_Module_LegacyModule_SetWorldBossKillReward_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Nekoyume_Model_State_WorldBossKillRewardRecord_System_Int32_Nekoyume_Model_State_WorldBossState_Nekoyume_TableData_RuneWeightSheet_Nekoyume_TableData_WorldBossKillRewardSheet_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_MaterialItemSheet_Libplanet_Action_IRandom_Nekoyume_Model_Item_Inventory_Libplanet_Crypto_Address_Libplanet_Crypto_Address_
-  commentId: M:Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.Model.State.WorldBossKillRewardRecord,System.Int32,Nekoyume.Model.State.WorldBossState,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.WorldBossKillRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom,Nekoyume.Model.Item.Inventory,Libplanet.Crypto.Address,Libplanet.Crypto.Address)
-  name.vb: SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, Integer, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address)
-  fullName: Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld, Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.Model.State.WorldBossKillRewardRecord, int, Nekoyume.Model.State.WorldBossState, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.WorldBossKillRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom, Nekoyume.Model.Item.Inventory, Libplanet.Crypto.Address, Libplanet.Crypto.Address)
-  fullName.vb: Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld, Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.Model.State.WorldBossKillRewardRecord, Integer, Nekoyume.Model.State.WorldBossState, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.WorldBossKillRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom, Nekoyume.Model.Item.Inventory, Libplanet.Crypto.Address, Libplanet.Crypto.Address)
-  nameWithType: LegacyModule.SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, int, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address)
-  nameWithType.vb: LegacyModule.SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, Integer, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address)
+- uid: Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.Model.State.WorldBossKillRewardRecord,System.Int32,Nekoyume.Model.State.WorldBossState,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.WorldBossKillRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom,Nekoyume.Model.Item.Inventory,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, int, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address, Row)
+  href: api/Nekoyume.Module.LegacyModule.html#Nekoyume_Module_LegacyModule_SetWorldBossKillReward_Libplanet_Action_State_IWorld_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Nekoyume_Model_State_WorldBossKillRewardRecord_System_Int32_Nekoyume_Model_State_WorldBossState_Nekoyume_TableData_RuneWeightSheet_Nekoyume_TableData_WorldBossKillRewardSheet_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_MaterialItemSheet_Libplanet_Action_IRandom_Nekoyume_Model_Item_Inventory_Libplanet_Crypto_Address_Libplanet_Crypto_Address_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld,Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.Model.State.WorldBossKillRewardRecord,System.Int32,Nekoyume.Model.State.WorldBossState,Nekoyume.TableData.RuneWeightSheet,Nekoyume.TableData.WorldBossKillRewardSheet,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.MaterialItemSheet,Libplanet.Action.IRandom,Nekoyume.Model.Item.Inventory,Libplanet.Crypto.Address,Libplanet.Crypto.Address,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, Integer, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address, Row)
+  fullName: Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld, Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.Model.State.WorldBossKillRewardRecord, int, Nekoyume.Model.State.WorldBossState, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.WorldBossKillRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom, Nekoyume.Model.Item.Inventory, Libplanet.Crypto.Address, Libplanet.Crypto.Address, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.Module.LegacyModule.SetWorldBossKillReward(Libplanet.Action.State.IWorld, Libplanet.Action.IActionContext, Libplanet.Crypto.Address, Nekoyume.Model.State.WorldBossKillRewardRecord, Integer, Nekoyume.Model.State.WorldBossState, Nekoyume.TableData.RuneWeightSheet, Nekoyume.TableData.WorldBossKillRewardSheet, Nekoyume.TableData.RuneSheet, Nekoyume.TableData.MaterialItemSheet, Libplanet.Action.IRandom, Nekoyume.Model.Item.Inventory, Libplanet.Crypto.Address, Libplanet.Crypto.Address, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: LegacyModule.SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, int, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address, BoostScheduleSheet.Row)
+  nameWithType.vb: LegacyModule.SetWorldBossKillReward(IWorld, IActionContext, Address, WorldBossKillRewardRecord, Integer, WorldBossState, RuneWeightSheet, WorldBossKillRewardSheet, RuneSheet, MaterialItemSheet, IRandom, Inventory, Address, Address, BoostScheduleSheet.Row)
 - uid: Nekoyume.Module.LegacyModule.SetWorldBossKillReward*
   name: SetWorldBossKillReward
   href: api/Nekoyume.Module.LegacyModule.html#Nekoyume_Module_LegacyModule_SetWorldBossKillReward_
@@ -83868,6 +84144,551 @@ references:
   commentId: F:Nekoyume.TableData.AvatarSheets.WorldSheet
   fullName: Nekoyume.TableData.AvatarSheets.WorldSheet
   nameWithType: AvatarSheets.WorldSheet
+- uid: Nekoyume.TableData.BoostScheduleSheet
+  name: BoostScheduleSheet
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html
+  commentId: T:Nekoyume.TableData.BoostScheduleSheet
+  fullName: Nekoyume.TableData.BoostScheduleSheet
+  nameWithType: BoostScheduleSheet
+- uid: Nekoyume.TableData.BoostScheduleSheet.#ctor
+  name: BoostScheduleSheet()
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet__ctor
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.#ctor
+  name.vb: New()
+  fullName: Nekoyume.TableData.BoostScheduleSheet.BoostScheduleSheet()
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.New()
+  nameWithType: BoostScheduleSheet.BoostScheduleSheet()
+  nameWithType.vb: BoostScheduleSheet.New()
+- uid: Nekoyume.TableData.BoostScheduleSheet.#ctor*
+  name: BoostScheduleSheet
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet__ctor_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.BoostScheduleSheet.BoostScheduleSheet
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.New
+  nameWithType: BoostScheduleSheet.BoostScheduleSheet
+  nameWithType.vb: BoostScheduleSheet.New
+- uid: Nekoyume.TableData.BoostScheduleSheet.AddRow(System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name: AddRow(int, Row)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_AddRow_System_Int32_Nekoyume_TableData_BoostScheduleSheet_Row_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.AddRow(System.Int32,Nekoyume.TableData.BoostScheduleSheet.Row)
+  name.vb: AddRow(Integer, Row)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.AddRow(int, Nekoyume.TableData.BoostScheduleSheet.Row)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.AddRow(Integer, Nekoyume.TableData.BoostScheduleSheet.Row)
+  nameWithType: BoostScheduleSheet.AddRow(int, BoostScheduleSheet.Row)
+  nameWithType.vb: BoostScheduleSheet.AddRow(Integer, BoostScheduleSheet.Row)
+- uid: Nekoyume.TableData.BoostScheduleSheet.AddRow*
+  name: AddRow
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_AddRow_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.AddRow
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.AddRow
+  nameWithType: BoostScheduleSheet.AddRow
+- uid: Nekoyume.TableData.BoostScheduleSheet.AnyTargetId
+  name: AnyTargetId
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_AnyTargetId
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.AnyTargetId
+  fullName: Nekoyume.TableData.BoostScheduleSheet.AnyTargetId
+  nameWithType: BoostScheduleSheet.AnyTargetId
+- uid: Nekoyume.TableData.BoostScheduleSheet.ColumnNames
+  name: ColumnNames
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_ColumnNames
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.ColumnNames
+  fullName: Nekoyume.TableData.BoostScheduleSheet.ColumnNames
+  nameWithType: BoostScheduleSheet.ColumnNames
+- uid: Nekoyume.TableData.BoostScheduleSheet.FindActive(System.String,System.Int32,System.Int64)
+  name: FindActive(string, int, long)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_FindActive_System_String_System_Int32_System_Int64_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.FindActive(System.String,System.Int32,System.Int64)
+  name.vb: FindActive(String, Integer, Long)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.FindActive(string, int, long)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.FindActive(String, Integer, Long)
+  nameWithType: BoostScheduleSheet.FindActive(string, int, long)
+  nameWithType.vb: BoostScheduleSheet.FindActive(String, Integer, Long)
+- uid: Nekoyume.TableData.BoostScheduleSheet.FindActive*
+  name: FindActive
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_FindActive_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.FindActive
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.FindActive
+  nameWithType: BoostScheduleSheet.FindActive
+- uid: Nekoyume.TableData.BoostScheduleSheet.MaxAbsoluteValue
+  name: MaxAbsoluteValue
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_MaxAbsoluteValue
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.MaxAbsoluteValue
+  fullName: Nekoyume.TableData.BoostScheduleSheet.MaxAbsoluteValue
+  nameWithType: BoostScheduleSheet.MaxAbsoluteValue
+- uid: Nekoyume.TableData.BoostScheduleSheet.Operation
+  name: BoostScheduleSheet.Operation
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Operation.html
+  commentId: T:Nekoyume.TableData.BoostScheduleSheet.Operation
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Operation
+  nameWithType: BoostScheduleSheet.Operation
+- uid: Nekoyume.TableData.BoostScheduleSheet.Operation.Add
+  name: Add
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Operation.html#Nekoyume_TableData_BoostScheduleSheet_Operation_Add
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Operation.Add
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Operation.Add
+  nameWithType: BoostScheduleSheet.Operation.Add
+- uid: Nekoyume.TableData.BoostScheduleSheet.Operation.Mul
+  name: Mul
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Operation.html#Nekoyume_TableData_BoostScheduleSheet_Operation_Mul
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Operation.Mul
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Operation.Mul
+  nameWithType: BoostScheduleSheet.Operation.Mul
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row
+  name: BoostScheduleSheet.Row
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html
+  commentId: T:Nekoyume.TableData.BoostScheduleSheet.Row
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row
+  nameWithType: BoostScheduleSheet.Row
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(System.Int32)
+  name: Apply(int)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int32_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.Row.Apply(System.Int32)
+  name.vb: Apply(Integer)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(int)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(Integer)
+  nameWithType: BoostScheduleSheet.Row.Apply(int)
+  nameWithType.vb: BoostScheduleSheet.Row.Apply(Integer)
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(System.Int64)
+  name: Apply(long)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_System_Int64_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.Row.Apply(System.Int64)
+  name.vb: Apply(Long)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(long)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.Row.Apply(Long)
+  nameWithType: BoostScheduleSheet.Row.Apply(long)
+  nameWithType.vb: BoostScheduleSheet.Row.Apply(Long)
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Apply*
+  name: Apply
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Apply_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Apply
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Apply
+  nameWithType: BoostScheduleSheet.Row.Apply
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.EndBlockIndex
+  name: EndBlockIndex
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_EndBlockIndex
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.EndBlockIndex
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.EndBlockIndex
+  nameWithType: BoostScheduleSheet.Row.EndBlockIndex
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.EndBlockIndex*
+  name: EndBlockIndex
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_EndBlockIndex_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.EndBlockIndex
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.EndBlockIndex
+  nameWithType: BoostScheduleSheet.Row.EndBlockIndex
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Id
+  name: Id
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Id
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.Id
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Id
+  nameWithType: BoostScheduleSheet.Row.Id
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Id*
+  name: Id
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Id_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Id
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Id
+  nameWithType: BoostScheduleSheet.Row.Id
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.IsValid
+  name: IsValid
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_IsValid
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.IsValid
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.IsValid
+  nameWithType: BoostScheduleSheet.Row.IsValid
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.IsValid*
+  name: IsValid
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_IsValid_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.IsValid
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.IsValid
+  nameWithType: BoostScheduleSheet.Row.IsValid
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Key
+  name: Key
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Key
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.Key
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Key
+  nameWithType: BoostScheduleSheet.Row.Key
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Key*
+  name: Key
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Key_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Key
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Key
+  nameWithType: BoostScheduleSheet.Row.Key
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Matches(System.String,System.Int32,System.Int64)
+  name: Matches(string, int, long)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Matches_System_String_System_Int32_System_Int64_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.Row.Matches(System.String,System.Int32,System.Int64)
+  name.vb: Matches(String, Integer, Long)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Matches(string, int, long)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.Row.Matches(String, Integer, Long)
+  nameWithType: BoostScheduleSheet.Row.Matches(string, int, long)
+  nameWithType.vb: BoostScheduleSheet.Row.Matches(String, Integer, Long)
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Matches*
+  name: Matches
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Matches_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Matches
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Matches
+  nameWithType: BoostScheduleSheet.Row.Matches
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Op
+  name: Op
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Op
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.Op
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Op
+  nameWithType: BoostScheduleSheet.Row.Op
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Op*
+  name: Op
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Op_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Op
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Op
+  nameWithType: BoostScheduleSheet.Row.Op
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name: Set(IReadOnlyList<string>)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Set_System_Collections_Generic_IReadOnlyList_System_String__
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.Row.Set(System.Collections.Generic.IReadOnlyList{System.String})
+  name.vb: Set(IReadOnlyList(Of String))
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Set(System.Collections.Generic.IReadOnlyList<string>)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.Row.Set(System.Collections.Generic.IReadOnlyList(Of String))
+  nameWithType: BoostScheduleSheet.Row.Set(IReadOnlyList<string>)
+  nameWithType.vb: BoostScheduleSheet.Row.Set(IReadOnlyList(Of String))
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Set*
+  name: Set
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Set_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Set
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Set
+  nameWithType: BoostScheduleSheet.Row.Set
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.StartBlockIndex
+  name: StartBlockIndex
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_StartBlockIndex
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.StartBlockIndex
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.StartBlockIndex
+  nameWithType: BoostScheduleSheet.Row.StartBlockIndex
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.StartBlockIndex*
+  name: StartBlockIndex
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_StartBlockIndex_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.StartBlockIndex
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.StartBlockIndex
+  nameWithType: BoostScheduleSheet.Row.StartBlockIndex
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Target
+  name: Target
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Target
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.Target
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Target
+  nameWithType: BoostScheduleSheet.Row.Target
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Target*
+  name: Target
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Target_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Target
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Target
+  nameWithType: BoostScheduleSheet.Row.Target
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  name: TargetIdBegin
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdBegin
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  nameWithType: BoostScheduleSheet.Row.TargetIdBegin
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin*
+  name: TargetIdBegin
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdBegin_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdBegin
+  nameWithType: BoostScheduleSheet.Row.TargetIdBegin
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  name: TargetIdEnd
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdEnd
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  nameWithType: BoostScheduleSheet.Row.TargetIdEnd
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd*
+  name: TargetIdEnd
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_TargetIdEnd_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.TargetIdEnd
+  nameWithType: BoostScheduleSheet.Row.TargetIdEnd
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Value
+  name: Value
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Value
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.Row.Value
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Value
+  nameWithType: BoostScheduleSheet.Row.Value
+- uid: Nekoyume.TableData.BoostScheduleSheet.Row.Value*
+  name: Value
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Row.html#Nekoyume_TableData_BoostScheduleSheet_Row_Value_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.Row.Value
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Row.Value
+  nameWithType: BoostScheduleSheet.Row.Value
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
+  name: TargetIdRangeSeparator
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_TargetIdRangeSeparator
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetIdRangeSeparator
+  nameWithType: BoostScheduleSheet.TargetIdRangeSeparator
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo
+  name: BoostScheduleSheet.TargetInfo
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html
+  commentId: T:Nekoyume.TableData.BoostScheduleSheet.TargetInfo
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo
+  nameWithType: BoostScheduleSheet.TargetInfo
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)
+  name: TargetInfo(string, string, string, string, string, string, string, string)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo__ctor_System_String_System_String_System_String_System_String_System_String_System_String_System_String_System_String_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)
+  name.vb: New(String, String, String, String, String, String, String, String)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetInfo(string, string, string, string, string, string, string, string)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.New(String, String, String, String, String, String, String, String)
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetInfo(string, string, string, string, string, string, string, string)
+  nameWithType.vb: BoostScheduleSheet.TargetInfo.New(String, String, String, String, String, String, String, String)
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor*
+  name: TargetInfo
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo__ctor_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetInfo
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.New
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetInfo
+  nameWithType.vb: BoostScheduleSheet.TargetInfo.New
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  name: Adjusts
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Adjusts
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  nameWithType: BoostScheduleSheet.TargetInfo.Adjusts
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts*
+  name: Adjusts
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Adjusts_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Adjusts
+  nameWithType: BoostScheduleSheet.TargetInfo.Adjusts
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  name: Example
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Example
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  nameWithType: BoostScheduleSheet.TargetInfo.Example
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example*
+  name: Example
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Example_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Example
+  nameWithType: BoostScheduleSheet.TargetInfo.Example
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  name: Notes
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Notes
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  nameWithType: BoostScheduleSheet.TargetInfo.Notes
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes*
+  name: Notes
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Notes_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Notes
+  nameWithType: BoostScheduleSheet.TargetInfo.Notes
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  name: Target
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Target
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  nameWithType: BoostScheduleSheet.TargetInfo.Target
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target*
+  name: Target
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_Target_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.Target
+  nameWithType: BoostScheduleSheet.TargetInfo.Target
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  name: TargetIdMeaning
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdMeaning
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdMeaning
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning*
+  name: TargetIdMeaning
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdMeaning_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdMeaning
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdMeaning
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  name: TargetIdSheet
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdSheet
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdSheet
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet*
+  name: TargetIdSheet
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_TargetIdSheet_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.TargetIdSheet
+  nameWithType: BoostScheduleSheet.TargetInfo.TargetIdSheet
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  name: UsualOp
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_UsualOp
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  nameWithType: BoostScheduleSheet.TargetInfo.UsualOp
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp*
+  name: UsualOp
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_UsualOp_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.UsualOp
+  nameWithType: BoostScheduleSheet.TargetInfo.UsualOp
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  name: ValueRule
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_ValueRule
+  commentId: P:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  nameWithType: BoostScheduleSheet.TargetInfo.ValueRule
+- uid: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule*
+  name: ValueRule
+  href: api/Nekoyume.TableData.BoostScheduleSheet.TargetInfo.html#Nekoyume_TableData_BoostScheduleSheet_TargetInfo_ValueRule_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.TargetInfo.ValueRule
+  nameWithType: BoostScheduleSheet.TargetInfo.ValueRule
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets
+  name: BoostScheduleSheet.Targets
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html
+  commentId: T:Nekoyume.TableData.BoostScheduleSheet.Targets
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets
+  nameWithType: BoostScheduleSheet.Targets
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFirstClearReward
+  name: AdventureBossFirstClearReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFirstClearReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFirstClearReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFirstClearReward
+  nameWithType: BoostScheduleSheet.Targets.AdventureBossFirstClearReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFloorReward
+  name: AdventureBossFloorReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_AdventureBossFloorReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFloorReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.AdventureBossFloorReward
+  nameWithType: BoostScheduleSheet.Targets.AdventureBossFloorReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.Applied
+  name: Applied
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_Applied
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.Applied
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.Applied
+  nameWithType: BoostScheduleSheet.Targets.Applied
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.CostumeSummonGuarantee
+  name: CostumeSummonGuarantee
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_CostumeSummonGuarantee
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.CostumeSummonGuarantee
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.CostumeSummonGuarantee
+  nameWithType: BoostScheduleSheet.Targets.CostumeSummonGuarantee
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp
+  name: EnhancementHammerExp
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_EnhancementHammerExp
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.EnhancementHammerExp
+  nameWithType: BoostScheduleSheet.Targets.EnhancementHammerExp
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee
+  name: EquipmentSummonGuarantee
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_EquipmentSummonGuarantee
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.EquipmentSummonGuarantee
+  nameWithType: BoostScheduleSheet.Targets.EquipmentSummonGuarantee
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.Infos
+  name: Infos
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_Infos
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.Infos
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.Infos
+  nameWithType: BoostScheduleSheet.Targets.Infos
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules
+  name: RowRules
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_RowRules
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.RowRules
+  nameWithType: BoostScheduleSheet.Targets.RowRules
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.RuneSummonGuarantee
+  name: RuneSummonGuarantee
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_RuneSummonGuarantee
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.RuneSummonGuarantee
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.RuneSummonGuarantee
+  nameWithType: BoostScheduleSheet.Targets.RuneSummonGuarantee
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.StageFavReward
+  name: StageFavReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_StageFavReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.StageFavReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.StageFavReward
+  nameWithType: BoostScheduleSheet.Targets.StageFavReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.StageItemReward
+  name: StageItemReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_StageItemReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.StageItemReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.StageItemReward
+  nameWithType: BoostScheduleSheet.Targets.StageItemReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost
+  name: SummonRuneEnhancementCrystalCost
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementCrystalCost
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost
+  nameWithType: BoostScheduleSheet.Targets.SummonRuneEnhancementCrystalCost
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost
+  name: SummonRuneEnhancementRuneStoneCost
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SummonRuneEnhancementRuneStoneCost
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost
+  nameWithType: BoostScheduleSheet.Targets.SummonRuneEnhancementRuneStoneCost
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.SynthesizeRequiredCount
+  name: SynthesizeRequiredCount
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_SynthesizeRequiredCount
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.SynthesizeRequiredCount
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.SynthesizeRequiredCount
+  nameWithType: BoostScheduleSheet.Targets.SynthesizeRequiredCount
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossBattleReward
+  name: WorldBossBattleReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossBattleReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossBattleReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossBattleReward
+  nameWithType: BoostScheduleSheet.Targets.WorldBossBattleReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossKillReward
+  name: WorldBossKillReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossKillReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossKillReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossKillReward
+  nameWithType: BoostScheduleSheet.Targets.WorldBossKillReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossRankReward
+  name: WorldBossRankReward
+  href: api/Nekoyume.TableData.BoostScheduleSheet.Targets.html#Nekoyume_TableData_BoostScheduleSheet_Targets_WorldBossRankReward
+  commentId: F:Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossRankReward
+  fullName: Nekoyume.TableData.BoostScheduleSheet.Targets.WorldBossRankReward
+  nameWithType: BoostScheduleSheet.Targets.WorldBossRankReward
+- uid: Nekoyume.TableData.BoostScheduleSheet.ValidateCsv(System.String)
+  name: ValidateCsv(string)
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_ValidateCsv_System_String_
+  commentId: M:Nekoyume.TableData.BoostScheduleSheet.ValidateCsv(System.String)
+  name.vb: ValidateCsv(String)
+  fullName: Nekoyume.TableData.BoostScheduleSheet.ValidateCsv(string)
+  fullName.vb: Nekoyume.TableData.BoostScheduleSheet.ValidateCsv(String)
+  nameWithType: BoostScheduleSheet.ValidateCsv(string)
+  nameWithType.vb: BoostScheduleSheet.ValidateCsv(String)
+- uid: Nekoyume.TableData.BoostScheduleSheet.ValidateCsv*
+  name: ValidateCsv
+  href: api/Nekoyume.TableData.BoostScheduleSheet.html#Nekoyume_TableData_BoostScheduleSheet_ValidateCsv_
+  commentId: Overload:Nekoyume.TableData.BoostScheduleSheet.ValidateCsv
+  isSpec: "True"
+  fullName: Nekoyume.TableData.BoostScheduleSheet.ValidateCsv
+  nameWithType: BoostScheduleSheet.ValidateCsv
 - uid: Nekoyume.TableData.BuffLimitSheet
   name: BuffLimitSheet
   href: api/Nekoyume.TableData.BuffLimitSheet.html

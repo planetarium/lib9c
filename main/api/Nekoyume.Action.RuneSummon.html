@@ -402,7 +402,7 @@ public class RuneSummon : GameAction, IAction, IRuneSummonV1</code></pre>
 
   <h3 id="Nekoyume_Action_RuneSummon_PlainValueInternal" data-uid="Nekoyume.Action.RuneSummon.PlainValueInternal">
   PlainValueInternal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L139"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -473,7 +473,7 @@ public class RuneSummon : GameAction, IAction, IRuneSummonV1</code></pre>
 
   <h3 id="Nekoyume_Action_RuneSummon_LoadPlainValueInternal_System_Collections_Immutable_IImmutableDictionary_System_String_Bencodex_Types_IValue__" data-uid="Nekoyume.Action.RuneSummon.LoadPlainValueInternal(System.Collections.Immutable.IImmutableDictionary{System.String,Bencodex.Types.IValue})">
   LoadPlainValueInternal(IImmutableDictionary&lt;string, IValue&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L147"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -502,9 +502,9 @@ public class RuneSummon : GameAction, IAction, IRuneSummonV1</code></pre>
 
   <a id="Nekoyume_Action_RuneSummon_SimulateSummon_" data-uid="Nekoyume.Action.RuneSummon.SimulateSummon*"></a>
 
-  <h3 id="Nekoyume_Action_RuneSummon_SimulateSummon_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_Rune_RuneListSheet_" data-uid="Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.Rune.RuneListSheet)">
-  SimulateSummon(RuneSheet, Row, int, IRandom, RuneListSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_RuneSummon_SimulateSummon_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Action.RuneSummon.SimulateSummon(Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  SimulateSummon(RuneSheet, Row, int, IRandom, RuneListSheet, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L199"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Simulates rune summoning with optional grade guarantee system.
@@ -515,7 +515,7 @@ Each summon yields 10 runes of the selected type.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Dictionary&lt;Currency, int&gt; SimulateSummon(RuneSheet runeSheet, SummonSheet.Row summonRow, int summonCount, IRandom random, RuneListSheet runeListSheet)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Dictionary&lt;Currency, int&gt; SimulateSummon(RuneSheet runeSheet, SummonSheet.Row summonRow, int summonCount, IRandom random, RuneListSheet runeListSheet, BoostScheduleSheet.Row guaranteeBoost = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -534,6 +534,10 @@ Each summon yields 10 runes of the selected type.</p>
 </dd>
     <dt><code>runeListSheet</code> <a class="xref" href="Nekoyume.TableData.Rune.RuneListSheet.html">RuneListSheet</a></dt>
     <dd><p>Rune list sheet for grade information</p>
+</dd>
+    <dt><code>guaranteeBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row adjusting this group's guarantee count, or
+<code>null</code> for none. A caller replaying a summon must pass what the action resolved.</p>
 </dd>
   </dl>
 
@@ -556,16 +560,16 @@ Each summon yields 10 runes of the selected type.</p>
 
   <a id="Nekoyume_Action_RuneSummon_Summon_" data-uid="Nekoyume.Action.RuneSummon.Summon*"></a>
 
-  <h3 id="Nekoyume_Action_RuneSummon_Summon_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Libplanet_Action_State_IWorld_Nekoyume_TableData_Rune_RuneListSheet_" data-uid="Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Libplanet.Action.State.IWorld,Nekoyume.TableData.Rune.RuneListSheet)">
-  Summon(IActionContext, Address, RuneSheet, Row, int, IRandom, IWorld, RuneListSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_RuneSummon_Summon_Libplanet_Action_IActionContext_Libplanet_Crypto_Address_Nekoyume_TableData_RuneSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_Libplanet_Action_State_IWorld_Nekoyume_TableData_Rune_RuneListSheet_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Action.RuneSummon.Summon(Libplanet.Action.IActionContext,Libplanet.Crypto.Address,Nekoyume.TableData.RuneSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,Libplanet.Action.State.IWorld,Nekoyume.TableData.Rune.RuneListSheet,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  Summon(IActionContext, Address, RuneSheet, Row, int, IRandom, IWorld, RuneListSheet, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/RuneSummon.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IWorld Summon(IActionContext context, Address avatarAddress, RuneSheet runeSheet, SummonSheet.Row summonRow, int summonCount, IRandom random, IWorld states, RuneListSheet runeListSheet)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IWorld Summon(IActionContext context, Address avatarAddress, RuneSheet runeSheet, SummonSheet.Row summonRow, int summonCount, IRandom random, IWorld states, RuneListSheet runeListSheet, BoostScheduleSheet.Row guaranteeBoost = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -585,6 +589,8 @@ Each summon yields 10 runes of the selected type.</p>
     <dt><code>states</code> <span class="xref">IWorld</span></dt>
     <dd></dd>
     <dt><code>runeListSheet</code> <a class="xref" href="Nekoyume.TableData.Rune.RuneListSheet.html">RuneListSheet</a></dt>
+    <dd></dd>
+    <dt><code>guaranteeBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
     <dd></dd>
   </dl>
 

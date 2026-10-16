@@ -472,7 +472,7 @@ public class AuraSummon : GameAction, IAction, IAuraSummonV1</code></pre>
 
   <h3 id="Nekoyume_Action_AuraSummon_AddAndUnlockOption_Nekoyume_Model_Item_Equipment_Libplanet_Action_IRandom_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Row_Nekoyume_TableData_EquipmentItemOptionSheet_Nekoyume_TableData_SkillSheet_" data-uid="Nekoyume.Action.AuraSummon.AddAndUnlockOption(Nekoyume.Model.Item.Equipment,Libplanet.Action.IRandom,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2.Row,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet)">
   AddAndUnlockOption(Equipment, IRandom, Row, EquipmentItemOptionSheet, SkillSheet)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/AuraSummon.cs/#L348"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/AuraSummon.cs/#L360"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -511,7 +511,7 @@ public class AuraSummon : GameAction, IAction, IAuraSummonV1</code></pre>
 
   <h3 id="Nekoyume_Action_AuraSummon_Execute_Libplanet_Action_IActionContext_" data-uid="Nekoyume.Action.AuraSummon.Execute(Libplanet.Action.IActionContext)">
   Execute(IActionContext)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/AuraSummon.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/AuraSummon.cs/#L247"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -576,9 +576,9 @@ public class AuraSummon : GameAction, IAction, IAuraSummonV1</code></pre>
 
   <a id="Nekoyume_Action_AuraSummon_SimulateSummon_" data-uid="Nekoyume.Action.AuraSummon.SimulateSummon*"></a>
 
-  <h3 id="Nekoyume_Action_AuraSummon_SimulateSummon_System_String_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_Nekoyume_TableData_SkillSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_System_Int64_" data-uid="Nekoyume.Action.AuraSummon.SimulateSummon(System.String,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,System.Int64)">
-  SimulateSummon(string, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, Row, int, IRandom, long)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/AuraSummon.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <h3 id="Nekoyume_Action_AuraSummon_SimulateSummon_System_String_Nekoyume_TableData_EquipmentItemRecipeSheet_Nekoyume_TableData_EquipmentItemSheet_Nekoyume_TableData_EquipmentItemSubRecipeSheetV2_Nekoyume_TableData_EquipmentItemOptionSheet_Nekoyume_TableData_SkillSheet_Nekoyume_TableData_Summon_SummonSheet_Row_System_Int32_Libplanet_Action_IRandom_System_Int64_Nekoyume_TableData_BoostScheduleSheet_Row_" data-uid="Nekoyume.Action.AuraSummon.SimulateSummon(System.String,Nekoyume.TableData.EquipmentItemRecipeSheet,Nekoyume.TableData.EquipmentItemSheet,Nekoyume.TableData.EquipmentItemSubRecipeSheetV2,Nekoyume.TableData.EquipmentItemOptionSheet,Nekoyume.TableData.SkillSheet,Nekoyume.TableData.Summon.SummonSheet.Row,System.Int32,Libplanet.Action.IRandom,System.Int64,Nekoyume.TableData.BoostScheduleSheet.Row)">
+  SimulateSummon(string, EquipmentItemRecipeSheet, EquipmentItemSheet, EquipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet, SkillSheet, Row, int, IRandom, long, Row)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/planetarium/lib9c/blob/main/Lib9c/Action/AuraSummon.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Simulates aura equipment summoning with optional grade guarantee system.
@@ -588,7 +588,7 @@ When grade guarantee is enabled, ensures minimum grade items are obtained based 
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IEnumerable&lt;(int, Equipment)&gt; SimulateSummon(string addressesHex, EquipmentItemRecipeSheet recipeSheet, EquipmentItemSheet equipmentItemSheet, EquipmentItemSubRecipeSheetV2 equipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet optionSheet, SkillSheet skillSheet, SummonSheet.Row summonRow, int summonCount, IRandom random, long blockIndex)</code></pre>
+    <pre><code class="lang-csharp hljs">public static IEnumerable&lt;(int, Equipment)&gt; SimulateSummon(string addressesHex, EquipmentItemRecipeSheet recipeSheet, EquipmentItemSheet equipmentItemSheet, EquipmentItemSubRecipeSheetV2 equipmentItemSubRecipeSheetV2, EquipmentItemOptionSheet optionSheet, SkillSheet skillSheet, SummonSheet.Row summonRow, int summonCount, IRandom random, long blockIndex, BoostScheduleSheet.Row guaranteeBoost = null)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -622,6 +622,10 @@ When grade guarantee is enabled, ensures minimum grade items are obtained based 
 </dd>
     <dt><code>blockIndex</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
     <dd><p>Current block index for item creation</p>
+</dd>
+    <dt><code>guaranteeBoost</code> <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a>.<a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.Row.html">Row</a></dt>
+    <dd><p>The <a class="xref" href="Nekoyume.TableData.BoostScheduleSheet.html">BoostScheduleSheet</a> row adjusting this group's guarantee count, or
+<code>null</code> for none. A caller replaying a summon must pass what the action resolved.</p>
 </dd>
   </dl>
 
