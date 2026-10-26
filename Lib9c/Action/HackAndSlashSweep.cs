@@ -223,6 +223,11 @@ namespace Nekoyume.Action
                     $"{worldRow.StageBegin}-{worldRow.StageEnd}");
             }
 
+            if (!WorldOpenGate.IsStageOpen(states, worldRow, stageId, context.BlockIndex))
+            {
+                throw new StageNotOpenedException(stageId, worldId);
+            }
+
             if (!sheets.GetSheet<StageSheet>().TryGetValue(stageId, out var stageRow))
             {
                 throw new SheetRowNotFoundException(addressesHex, nameof(StageSheet), stageId);
@@ -490,6 +495,9 @@ namespace Nekoyume.Action
                 UpdateInventory(avatarState, rewardItems, extraRewardCounts, materialItemSheet);
             }
 
+            // Captured before the sweep: a level-up during it must not change how this action
+            // counts toward world openings.
+            var levelAtStart = avatarState.level;
             var levelSheet = sheets.GetSheet<CharacterLevelSheet>();
             for (var i = 0; i < playCount; i++)
             {
@@ -505,6 +513,15 @@ namespace Nekoyume.Action
             }
 
             states = states.SetAvatarState(avatarAddress, avatarState).SetCp(avatarAddress, BattleType.Adventure, cp);
+
+            // Sweeping never counts as a first clear: the stage must already be cleared.
+            states = WorldOpenCounter.Tick(
+                states,
+                GlobalCounterType.STAGE_PLAY,
+                stageId,
+                playCount,
+                levelAtStart,
+                context.BlockIndex);
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug(
