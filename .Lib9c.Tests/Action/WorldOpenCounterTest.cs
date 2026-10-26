@@ -134,6 +134,59 @@ namespace Lib9c.Tests.Action
             Assert.False(WorldOpenCounter.IsSatisfied(s, cond, 1));
         }
 
+        [Fact]
+        public void Tick_ProcessesCountersInAscendingId_SkipsCounterOfJustConfirmedOpen()
+        {
+            // Counter 2 is listed first in the CSV but counter 1 is processed first. Its tick
+            // confirms open 1, and counter 2 is referenced only by open 1, so open 1 is no longer
+            // pending when counter 2's turn comes and counter 2 is not written in this call.
+            var s = Build(
+                "2,STAGE_PLAY,10,10,0\n1,STAGE_PLAY,10,10,0\n",
+                "1,12,570,,0,1000,0\n",
+                "1,1,1,1\n1,2,2,100\n");
+            s = WorldOpenCounter.Tick(s, GlobalCounterType.STAGE_PLAY, 10, 1, 300, 5);
+            Assert.True(s.TryGetConfirmedBlock(1, out var b));
+            Assert.Equal(5, b);
+            Assert.Equal(1, s.GetCounter(1));
+            Assert.Equal(0, s.GetCounter(2));
+        }
+
+        [Fact]
+        public void Tick_CounterSharedByTwoOpens()
+        {
+            var s = Build(
+                "1,STAGE_FIRST_CLEAR,10,10,0\n",
+                "1,12,570,,0,1000,0\n2,13,620,,0,1000,0\n",
+                "1,1,1,1\n2,1,1,2\n");
+            s = WorldOpenCounter.Tick(s, Clear, 10, 1, 300, 5);
+            Assert.Equal(1, s.GetCounter(1));
+            Assert.True(s.TryGetConfirmedBlock(1, out var b1));
+            Assert.Equal(5, b1);
+            Assert.False(s.TryGetConfirmedBlock(2, out _));
+
+            // Still pending for open 2, so it keeps counting, once per tick.
+            s = WorldOpenCounter.Tick(s, Clear, 10, 1, 300, 8);
+            Assert.Equal(2, s.GetCounter(1));
+            Assert.True(s.TryGetConfirmedBlock(1, out b1));
+            Assert.Equal(5, b1);
+            Assert.True(s.TryGetConfirmedBlock(2, out var b2));
+            Assert.Equal(8, b2);
+
+            // Both confirmed: no longer written.
+            s = WorldOpenCounter.Tick(s, Clear, 10, 1, 300, 9);
+            Assert.Equal(2, s.GetCounter(1));
+        }
+
+        [Fact]
+        public void Tick_MissingWorldOpenSheet_NoWrite()
+        {
+            var s = NewWorld()
+                .SetLegacyState(Addresses.GetSheetAddress<GlobalCounterSheet>(), (Text)(CounterHeader + "1,STAGE_FIRST_CLEAR,10,10,0\n"))
+                .SetLegacyState(Addresses.GetSheetAddress<WorldOpenConditionSheet>(), (Text)(CondHeader + "1,1,1,1\n"));
+            Assert.Same(s, WorldOpenCounter.Tick(s, Clear, 10, 1, 300, 5));
+            Assert.Equal(0, s.GetCounter(1));
+        }
+
         private static IWorld NewWorld() => new World(MockUtil.MockModernWorldState);
 
         private static IWorld Build(string counters, string opens, string conds) =>

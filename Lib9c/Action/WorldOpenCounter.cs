@@ -17,6 +17,23 @@ namespace Nekoyume.Action
         /// openings whose conditions are now met. Writes nothing when no sheet defines such a
         /// counter, so ordinary actions cost nothing extra.
         /// </summary>
+        /// <remarks>
+        /// Matching counters are processed one at a time in ascending id (not CSV order), and
+        /// whether an opening is still pending is re-read for each counter. So if counter A's
+        /// tick confirms opening X, a later counter B that only X references is not written in
+        /// the same call: X is no longer pending by then. A counter shared by several pending
+        /// openings is written once per call, not once per opening.
+        /// </remarks>
+        /// <param name="states">The world to update.</param>
+        /// <param name="type">What happened.</param>
+        /// <param name="target">The stage or recipe id it happened to.</param>
+        /// <param name="delta">How much to add; a non-positive delta writes nothing.</param>
+        /// <param name="avatarLevel">The acting avatar's level, checked against
+        /// <c>min_avatar_level</c>.</param>
+        /// <param name="blockIndex">The block being evaluated; recorded as the confirmed block.
+        /// </param>
+        /// <returns>The updated world, or <paramref name="states"/> itself when nothing was
+        /// written.</returns>
         public static IWorld Tick(
             IWorld states,
             GlobalCounterType type,
