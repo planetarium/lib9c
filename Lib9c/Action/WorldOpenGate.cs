@@ -14,7 +14,10 @@ namespace Nekoyume.Action
     {
         /// <summary>
         /// Whether <paramref name="stageId"/> of <paramref name="worldRow"/> is open at
-        /// <paramref name="blockIndex"/>. A missing sheet leaves gated stages locked.
+        /// <paramref name="blockIndex"/>. A missing sheet leaves gated stages locked. Mimisbrunnr
+        /// is never gated. Precondition: the caller has already validated that
+        /// <paramref name="stageId"/> lies within <c>StageBegin..StageEnd</c> of
+        /// <paramref name="worldRow"/>.
         /// </summary>
         public static bool IsStageOpen(
             IWorldState state,
@@ -22,7 +25,8 @@ namespace Nekoyume.Action
             int stageId,
             long blockIndex)
         {
-            if (stageId < GameConfig.ProgressGatedStageBegin)
+            if (worldRow.Id == GameConfig.MimisbrunnrWorldId
+                || stageId < GameConfig.ProgressGatedStageBegin)
             {
                 return true;
             }
@@ -39,6 +43,11 @@ namespace Nekoyume.Action
             WorldSheet.Row worldRow,
             long blockIndex)
         {
+            if (worldRow.Id == GameConfig.MimisbrunnrWorldId)
+            {
+                return worldRow.StageEnd;
+            }
+
             var ungated = Math.Max(
                 worldRow.StageBegin - 1,
                 Math.Min(worldRow.StageEnd, GameConfig.ProgressGatedStageBegin - 1));

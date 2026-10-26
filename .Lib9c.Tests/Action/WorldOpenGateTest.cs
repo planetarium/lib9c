@@ -55,6 +55,24 @@ namespace Lib9c.Tests.Action
         }
 
         [Fact]
+        public void Mimisbrunnr_IsNeverGated()
+        {
+            var state = NewWorld();
+            var row = World(GameConfig.MimisbrunnrWorldId, 10000001, 10000020);
+            Assert.True(WorldOpenGate.IsStageOpen(state, row, GameConfig.MimisbrunnrStartStageId, 0));
+            Assert.Equal(10000020, WorldOpenGate.GetOpenedStageEnd(state, row, 0));
+        }
+
+        [Fact]
+        public void MaxStageEndOfAppliedRowsWins()
+        {
+            var state = WithSheet(NewWorld(), "1,12,570,,0,10,0\n2,12,600,,0,10,0\n3,12,580,,0,10,0\n");
+            var world = World(12, 551, 600);
+            Assert.Equal(600, WorldOpenGate.GetOpenedStageEnd(state, world, 10));
+            Assert.True(WorldOpenGate.IsStageOpen(state, world, 600, 10));
+        }
+
+        [Fact]
         public void StageNotOpenedException_IsInvalidStage()
         {
             var e = new StageNotOpenedException(530, 11);
