@@ -1470,11 +1470,6 @@ namespace Lib9c.Tests.Action
                 boosted.Select(item => item.Id));
         }
 
-        /// <summary>
-        /// The per-clear item rule planning set, written out independently of the code under test:
-        /// plain floor, except that a MUL above 1 turns a single drop into 2, capped at
-        /// <see cref="StageSimulator.MaxItemRewardBoostFactor"/> times the drawn count.
-        /// </summary>
         [Fact]
         public void Execute_StageNotOpened_Throws()
         {
@@ -1556,6 +1551,11 @@ namespace Lib9c.Tests.Action
             AssertAccountUnchanged(state, next, Addresses.WorldOpen);
         }
 
+        /// <summary>
+        /// The per-clear item rule planning set, written out independently of the code under test:
+        /// plain floor, except that a MUL above 1 turns a single drop into 2, capped at
+        /// <see cref="StageSimulator.MaxItemRewardBoostFactor"/> times the drawn count.
+        /// </summary>
         private static int ExpectedBoostedCount(string op, string value, BoostScheduleSheet.Row row, int count)
         {
             var applied = row.Apply(count);
@@ -1622,10 +1622,6 @@ namespace Lib9c.Tests.Action
         }
 
         /// <summary>
-        /// World 11 spanning 501-550 with stages 520-521 copied from stage 1, and an avatar that
-        /// cleared up to <paramref name="clearedStageId"/> and unlocked world 11.
-        /// </summary>
-        /// <summary>
         /// An avatar that can sweep <paramref name="stageId"/>, which grants 1000 crystal per
         /// clear.
         /// </summary>
@@ -1681,6 +1677,10 @@ namespace Lib9c.Tests.Action
                 nextAvatarState.exp);
         }
 
+        /// <summary>
+        /// World 11 spanning 501-550 with stages 520-521 copied from stage 1, and an avatar that
+        /// cleared up to <paramref name="clearedStageId"/> and unlocked world 11.
+        /// </summary>
         private IWorld PrepareWorld11(int clearedStageId, int level = 100, long exp = -1)
         {
             var state = _initialState
