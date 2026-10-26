@@ -28,6 +28,11 @@ namespace Nekoyume.Module
         /// <summary>
         /// Adds <paramref name="delta"/> to counter <paramref name="id"/>.
         /// </summary>
+        /// <remarks>
+        /// Does not check <paramref name="delta"/>; it must be positive, since counters only
+        /// grow. <see cref="Nekoyume.Action.WorldOpenCounter.Tick"/> guards this for every
+        /// action path.
+        /// </remarks>
         public static IWorld AddCounter(this IWorld world, int id, long delta)
         {
             var account = world.GetAccount(Addresses.GlobalCounter);

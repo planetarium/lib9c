@@ -19,6 +19,13 @@ namespace Nekoyume.Action
         /// <paramref name="stageId"/> lies within <c>StageBegin..StageEnd</c> of
         /// <paramref name="worldRow"/>.
         /// </summary>
+        /// <param name="state">The world to read the sheet and confirmed openings from.</param>
+        /// <param name="worldRow">The world the stage belongs to.</param>
+        /// <param name="stageId">The stage to check.</param>
+        /// <param name="blockIndex">The block the entry is evaluated at. Inside an action this is
+        /// <c>context.BlockIndex</c>; a caller outside the chain predicting whether its next
+        /// action will pass must pass <c>tip + 1</c>, the block that action lands in at the
+        /// earliest, not the tip itself.</param>
         public static bool IsStageOpen(
             IWorldState state,
             WorldSheet.Row worldRow,
@@ -38,6 +45,15 @@ namespace Nekoyume.Action
         /// The last enterable stage of <paramref name="worldRow"/>;
         /// <c>StageBegin - 1</c> when all of it is locked.
         /// </summary>
+        /// <remarks>
+        /// Global only: this ignores whether the avatar has unlocked the world or cleared the
+        /// previous stage. Combine it with the avatar's own progress to know what that avatar
+        /// can enter.
+        /// </remarks>
+        /// <param name="state">The world to read the sheet and confirmed openings from.</param>
+        /// <param name="worldRow">The world to check.</param>
+        /// <param name="blockIndex">The block to evaluate at. A caller predicting the next
+        /// action must pass <c>tip + 1</c>, not the tip (see <see cref="IsStageOpen"/>).</param>
         public static int GetOpenedStageEnd(
             IWorldState state,
             WorldSheet.Row worldRow,
