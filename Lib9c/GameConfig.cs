@@ -14,6 +14,12 @@ namespace Nekoyume
         public const int SlotCount = 3;
         public const string AvatarNickNamePattern = @"^[0-9a-zA-Z]{2,20}$";
 
+        /// <summary>
+        /// The first stage that is locked by default and opens only through
+        /// <see cref="Nekoyume.TableData.WorldOpenSheet"/>. Stages below it are always open.
+        /// </summary>
+        public const int ProgressGatedStageBegin = 521;
+
         public const int MimisbrunnrWorldId = 10001;
         public const int MimisbrunnrStartStageId = 10000001;
         public const int DefaultAttackId = 100000;
