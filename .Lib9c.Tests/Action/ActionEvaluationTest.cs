@@ -100,6 +100,7 @@ namespace Lib9c.Tests.Action
         [InlineData(typeof(SetAddressStateCompressed))]
         [InlineData(typeof(PatchTableSheetCompressed))]
         [InlineData(typeof(GrantItems))]
+        [InlineData(typeof(ConfirmWorldOpen))]
         public void Serialize_With_MessagePack(Type actionType)
         {
             var action = GetAction(actionType);
@@ -515,6 +516,7 @@ namespace Lib9c.Tests.Action
                     CompressedTableCsv = new byte[] { 1, 2, 3, 4, 5 },
                 },
                 GrantItems _ => new GrantItems(),
+                ConfirmWorldOpen _ => new ConfirmWorldOpen { OpenId = 1 },
                 EventDungeonBattleSweep _ => new EventDungeonBattleSweep
                 {
                     AvatarAddress = default,
