@@ -94,6 +94,23 @@ namespace Nekoyume.Action
                 BoostScheduleSheet.ValidateCsv(TableCsv);
             }
 
+            // Reject malformed world-open sheets here: every HackAndSlash reads them, so a
+            // malformed one on the chain would make all of them throw.
+            if (TableName == nameof(GlobalCounterSheet))
+            {
+                GlobalCounterSheet.ValidateCsv(TableCsv);
+            }
+
+            if (TableName == nameof(WorldOpenSheet))
+            {
+                WorldOpenSheet.ValidateCsv(TableCsv);
+            }
+
+            if (TableName == nameof(WorldOpenConditionSheet))
+            {
+                WorldOpenConditionSheet.ValidateCsv(TableCsv);
+            }
+
             states = states.SetLegacyState(sheetAddress, TableCsv.Serialize());
 
             if (TableName == nameof(GameConfigSheet))
