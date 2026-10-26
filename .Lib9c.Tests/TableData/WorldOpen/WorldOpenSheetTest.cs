@@ -86,6 +86,7 @@ namespace Lib9c.Tests.TableData.WorldOpen
         [InlineData("1,101,300,1,1000,5000,10")] // self reference
         [InlineData("1,101,300,2,1000,5000,10\n2,101,400,1,1000,5000,10")] // cycle
         [InlineData("1,101,300,9,1000,5000,10")] // unknown prerequisite
+        [InlineData("1,101,200,2,1000,5000,10\n2,101,100,9,1000,5000,10")] // unknown prerequisite deeper in chain
         [InlineData("1,101,300,,1000,0,10")] // fallback not positive
         [InlineData("1,101,300,,-5,-1,10")] // fallback negative
         [InlineData("1,101,300,,6000,5000,10")] // min > fallback

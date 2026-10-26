@@ -233,7 +233,11 @@ namespace Nekoyume.TableData
                             $"id({row.Id}): prerequisite chain loops back to id({next}).");
                     }
 
-                    current = rows[next];
+                    if (!rows.TryGetValue(next, out current))
+                    {
+                        throw new SheetRowValidateException(
+                            $"id({row.Id}): prerequisite_open_id({next}) in its chain does not exist.");
+                    }
                 }
             }
 
