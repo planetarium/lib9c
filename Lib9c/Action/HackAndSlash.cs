@@ -306,6 +306,11 @@ namespace Nekoyume.Action
                     $"{worldRow.StageBegin}-{worldRow.StageEnd}");
             }
 
+            if (!WorldOpenGate.IsStageOpen(states, worldRow, StageId, blockIndex))
+            {
+                throw new StageNotOpenedException(StageId, WorldId);
+            }
+
             sw.Restart();
             var stageSheetActivity = ActivitySource.StartActivity(
                 "GetStageSheet",
@@ -675,6 +680,10 @@ namespace Nekoyume.Action
                 BoostScheduleSheet.Targets.StageFavReward,
                 StageId,
                 blockIndex);
+            // Captured before the battles: a level-up or the first clear during them must not
+            // change how this action counts toward world openings.
+            var wasCleared = avatarState.worldInformation.IsStageCleared(StageId);
+            var levelAtStart = avatarState.level;
             for (var i = 0; i < TotalPlayCount; i++)
             {
                 var rewards = StageSimulator.GetWaveRewards(
@@ -900,6 +909,25 @@ namespace Nekoyume.Action
 
             states = states.SetAvatarState(AvatarAddress, avatarState);
             states = states.SetCp(AvatarAddress, BattleType.Adventure, cp);
+
+            if (!wasCleared && avatarState.worldInformation.IsStageCleared(StageId))
+            {
+                states = WorldOpenCounter.Tick(
+                    states,
+                    GlobalCounterType.STAGE_FIRST_CLEAR,
+                    StageId,
+                    1,
+                    levelAtStart,
+                    blockIndex);
+            }
+
+            states = WorldOpenCounter.Tick(
+                states,
+                GlobalCounterType.STAGE_PLAY,
+                StageId,
+                TotalPlayCount,
+                levelAtStart,
+                blockIndex);
 
             setStateActivity?.Dispose();
             sw.Stop();
