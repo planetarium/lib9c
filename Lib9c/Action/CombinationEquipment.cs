@@ -496,11 +496,20 @@ namespace Nekoyume.Action
 
             var ended = DateTimeOffset.UtcNow;
             Log.Debug("{AddressesHex}CombinationEquipment Total Executed Time: {Elapsed}", addressesHex, ended - started);
-            return states
+            states = states
                 .SetAvatarState(avatarAddress, avatarState)
                 .SetCombinationSlotState(avatarAddress, allSlotState)
                 .SetLegacyState(hammerPointAddress,hammerPointState.Serialize())
                 .SetAgentState(context.Signer, agentState);
+
+            // The action never changes the avatar's level, so it is read as is.
+            return WorldOpenCounter.Tick(
+                states,
+                GlobalCounterType.RECIPE_CRAFT,
+                recipeId,
+                1,
+                avatarState.level,
+                context.BlockIndex);
         }
 
         private IWorld UseAssetsBySuperCraft(
