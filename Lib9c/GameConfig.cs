@@ -11,7 +11,15 @@ namespace Nekoyume
         public static readonly bool IsEditor = false;
 #endif
 
+        /// <summary>
+        /// The number of avatar slots available per agent (valid avatar indices are 0 to SlotCount - 1).
+        /// </summary>
         public const int SlotCount = 3;
+
+        /// <summary>
+        /// Regular expression pattern that a valid avatar nickname must match
+        /// (2 to 20 ASCII letters or digits).
+        /// </summary>
         public const string AvatarNickNamePattern = @"^[0-9a-zA-Z]{2,20}$";
 
         /// <summary>
